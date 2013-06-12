@@ -28,40 +28,33 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-MG-CSI ::= SEQUENCE {
-	mobilityTriggers	MobilityTriggers,
-	serviceKey	ServiceKey,
-	gsmSCF-Address	[0]	ISDN-AddressString,
-	extensionContainer	[1]	ExtensionContainer	OPTIONAL,
-	notificationToCSE	[2] NULL		OPTIONAL,
-	csi-Active	[3] NULL		OPTIONAL,
-	...}
---	notificationToCSE and csi-Active shall not be present when MG-CSI is sent to SGSN.
---	They may only be included in ATSI/ATM ack/NSDC message.
-
-ServiceKey ::= INTEGER (0..2147483647)
-
-MobilityTriggers  ::= SEQUENCE SIZE (1..10) OF MM-Code
-
- * 
- * 
+ *
+ MG-CSI ::= SEQUENCE { mobilityTriggers MobilityTriggers, serviceKey ServiceKey, gsmSCF-Address [0] ISDN-AddressString,
+ * extensionContainer [1] ExtensionContainer OPTIONAL, notificationToCSE [2] NULL OPTIONAL, csi-Active [3] NULL OPTIONAL, ...}
+ * -- notificationToCSE and csi-Active shall not be present when MG-CSI is sent to SGSN. -- They may only be included in
+ * ATSI/ATM ack/NSDC message.
+ *
+ * ServiceKey ::= INTEGER (0..2147483647)
+ *
+ * MobilityTriggers ::= SEQUENCE SIZE (1..10) OF MM-Code
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MGCSI {
 
-	public ArrayList<MMCode> getMobilityTriggers();
+    ArrayList<MMCode> getMobilityTriggers();
 
-	public long getServiceKey();
+    long getServiceKey();
 
-	public ISDNAddressString getGsmSCFAddress();
+    ISDNAddressString getGsmSCFAddress();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public boolean getNotificationToCSE();
+    boolean getNotificationToCSE();
 
-	public boolean getCsiActive();
+    boolean getCsiActive();
 
 }

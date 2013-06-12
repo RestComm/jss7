@@ -25,20 +25,17 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
 import org.mobicents.protocols.ss7.cap.api.primitives.BurstList;
 
 /**
-*
-AudibleIndicator ::= CHOICE {
-tone BOOLEAN,
-burstList [1] BurstList
-}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ AudibleIndicator ::= CHOICE { tone BOOLEAN, burstList [1] BurstList }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface AudibleIndicator {
 
-	public Boolean getTone();
+    Boolean getTone();
 
-	public BurstList getBurstList();
+    BurstList getBurstList();
 
 }

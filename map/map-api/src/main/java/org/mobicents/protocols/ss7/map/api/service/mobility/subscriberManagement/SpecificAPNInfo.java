@@ -25,24 +25,20 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-SpecificAPNInfo ::= SEQUENCE {
-	apn			[0] APN,
-	pdn-gw-Identity	[1] PDN-GW-Identity,
-	extensionContainer	[2] ExtensionContainer	OPTIONAL,
-	... }
-
- * 
+ *
+ SpecificAPNInfo ::= SEQUENCE { apn [0] APN, pdn-gw-Identity [1] PDN-GW-Identity, extensionContainer [2] ExtensionContainer
+ * OPTIONAL, ... }
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SpecificAPNInfo {
 
-	public APN getAPN();
+    APN getAPN();
 
-	public PDNGWIdentity getPdnGwIdentity();
+    PDNGWIdentity getPdnGwIdentity();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.tcap;
 
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -32,44 +31,44 @@ import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 /**
  * @author amit bhayani
  * @author baranowb
- * 
+ *
  */
 public class TCAPStackImpl implements TCAPStack {
 
-	private static final Logger logger = Logger.getLogger(TCAPStackImpl.class);
+    private static final Logger logger = Logger.getLogger(TCAPStackImpl.class);
 
-	// default value of idle timeout and after TC_END remove of task.
-	public static final long _DIALOG_TIMEOUT = 60000;
-	public static final long _INVOKE_TIMEOUT = 30000;
-	public static final int _MAX_DIALOGS = 5000;
-	public static final long _EMPTY_INVOKE_TIMEOUT = -1;
-	// TCAP state data, it is used ONLY on client side
+    // default value of idle timeout and after TC_END remove of task.
+    public static final long _DIALOG_TIMEOUT = 60000;
+    public static final long _INVOKE_TIMEOUT = 30000;
+    public static final int _MAX_DIALOGS = 5000;
+    public static final long _EMPTY_INVOKE_TIMEOUT = -1;
+    // TCAP state data, it is used ONLY on client side
     protected TCAPProviderImpl tcapProvider;
     private SccpProvider sccpProvider;
     private SccpAddress address;
-    
-    private State state = State.IDLE;
-    
-	private long dialogTimeout = _DIALOG_TIMEOUT;
-	private long invokeTimeout = _INVOKE_TIMEOUT;
-	// TODO: make this configurable
-	protected int maxDialogs = _MAX_DIALOGS;
 
-	// TODO: make this configurable
-	private long dialogIdRangeStart = 1;
-	private long dialogIdRangeEnd = Integer.MAX_VALUE;
-	private boolean previewMode = false;
+    private State state = State.IDLE;
+
+    private long dialogTimeout = _DIALOG_TIMEOUT;
+    private long invokeTimeout = _INVOKE_TIMEOUT;
+    // TODO: make this configurable
+    protected int maxDialogs = _MAX_DIALOGS;
+
+    // TODO: make this configurable
+    private long dialogIdRangeStart = 1;
+    private long dialogIdRangeEnd = Integer.MAX_VALUE;
+    private boolean previewMode = false;
 
     public TCAPStackImpl() {
         super();
 
     }
 
-	public TCAPStackImpl(SccpProvider sccpProvider, int ssn) {
-		this.sccpProvider = sccpProvider;
-		this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, ssn);
-		this.state = State.CONFIGURED;
-	}
+    public TCAPStackImpl(SccpProvider sccpProvider, int ssn) {
+        this.sccpProvider = sccpProvider;
+        this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, ssn);
+        this.state = State.CONFIGURED;
+    }
 
     public void start() throws IllegalStateException {
         logger.info("Starting ..." + tcapProvider);
@@ -77,28 +76,28 @@ public class TCAPStackImpl implements TCAPStack {
     }
 
     public void stop() {
-		this.tcapProvider.stop();
-		this.state = State.CONFIGURED;
+        this.tcapProvider.stop();
+        this.state = State.CONFIGURED;
     }
 
-//    // ///////////////
-//    // CONF METHOD //
-//    // ///////////////
-//    /**
-//     *
-//     */
-//    public void configure(Properties props) throws ConfigurationException {
-//    	if (state != State.IDLE) {
-//			throw new IllegalStateException("Stack already been configured or is already running!");
-//		}
-//		//this.sccpProvider = this.sccpStack.getSccpProvider();
-//		this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, address);
-//		this.state = State.CONFIGURED;
-//    }
+    // // ///////////////
+    // // CONF METHOD //
+    // // ///////////////
+    // /**
+    // *
+    // */
+    // public void configure(Properties props) throws ConfigurationException {
+    // if (state != State.IDLE) {
+    // throw new IllegalStateException("Stack already been configured or is already running!");
+    // }
+    // //this.sccpProvider = this.sccpStack.getSccpProvider();
+    // this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, address);
+    // this.state = State.CONFIGURED;
+    // }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#getProvider()
      */
     public TCAPProvider getProvider() {
@@ -106,87 +105,95 @@ public class TCAPStackImpl implements TCAPStack {
         return tcapProvider;
     }
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#setDialogIdleTimeout(long)
-	 */
-	public void setDialogIdleTimeout(long v) {
-		if (v < 0) {
-			throw new IllegalArgumentException("Timeout value must be greater or equal to zero.");
-		}
-		if (v < this.invokeTimeout) {
-			throw new IllegalArgumentException("Timeout value must be greater or equal to invoke timeout.");
-		}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#setDialogIdleTimeout(long)
+     */
+    public void setDialogIdleTimeout(long v) {
+        if (v < 0) {
+            throw new IllegalArgumentException("Timeout value must be greater or equal to zero.");
+        }
+        if (v < this.invokeTimeout) {
+            throw new IllegalArgumentException("Timeout value must be greater or equal to invoke timeout.");
+        }
 
-		this.dialogTimeout = v;
-	}
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#getDialogIdleTimeout()
-	 */
-	public long getDialogIdleTimeout() {
-		return this.dialogTimeout;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#setInvokeTimeout(long)
-	 */
-	public void setInvokeTimeout(long v) {
-		if (v < 0) {
-			throw new IllegalArgumentException("Timeout value must be greater or equal to zero.");
-		}
-		if (v > this.dialogTimeout) {
-			throw new IllegalArgumentException("Timeout value must be smaller or equal to dialog timeout.");
-		}
-		this.invokeTimeout = v;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#getInvokeTimeout()
-	 */
-	public long getInvokeTimeout() {
-		return this.invokeTimeout;
-	}
-	
-	private enum State {
+        this.dialogTimeout = v;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#getDialogIdleTimeout()
+     */
+    public long getDialogIdleTimeout() {
+        return this.dialogTimeout;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#setInvokeTimeout(long)
+     */
+    public void setInvokeTimeout(long v) {
+        if (v < 0) {
+            throw new IllegalArgumentException("Timeout value must be greater or equal to zero.");
+        }
+        if (v > this.dialogTimeout) {
+            throw new IllegalArgumentException("Timeout value must be smaller or equal to dialog timeout.");
+        }
+        this.invokeTimeout = v;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#getInvokeTimeout()
+     */
+    public long getInvokeTimeout() {
+        return this.invokeTimeout;
+    }
+
+    private enum State {
 
         IDLE, CONFIGURED, RUNNING;
     }
 
-	public void setMaxDialogs(int v) {
-		if (v < 1)
-			throw new IllegalArgumentException("At least one Dialog must be accepted");
-		if (v >= dialogIdRangeEnd - dialogIdRangeStart)
-			throw new IllegalArgumentException("MaxDialog must be less than DialogIdRange");
+    public void setMaxDialogs(int v) {
+        if (v < 1)
+            throw new IllegalArgumentException("At least one Dialog must be accepted");
+        if (v >= dialogIdRangeEnd - dialogIdRangeStart)
+            throw new IllegalArgumentException("MaxDialog must be less than DialogIdRange");
 
-		maxDialogs = v;
-	}
-	
-	public int getMaxDialogs() {
-		return maxDialogs;
-	}
+        maxDialogs = v;
+    }
 
-	public void setDialogIdRangeStart(long val){
-		dialogIdRangeStart = val;
-	}
+    public int getMaxDialogs() {
+        return maxDialogs;
+    }
 
-	public void setDialogIdRangeEnd(long val) {
-		dialogIdRangeEnd = val;
-	}
+    public void setDialogIdRangeStart(long val) {
+        dialogIdRangeStart = val;
+    }
 
-	public long getDialogIdRangeStart() {
-		return dialogIdRangeStart;
-	}
+    public void setDialogIdRangeEnd(long val) {
+        dialogIdRangeEnd = val;
+    }
 
-	public long getDialogIdRangeEnd() {
-		return dialogIdRangeEnd;
-	}
+    public long getDialogIdRangeStart() {
+        return dialogIdRangeStart;
+    }
 
-	public void setPreviewMode(boolean val) {
-		previewMode = val;
-	}
+    public long getDialogIdRangeEnd() {
+        return dialogIdRangeEnd;
+    }
 
-	public boolean getPreviewMode() {
-		return previewMode;
-	}
+    public void setPreviewMode(boolean val) {
+        previewMode = val;
+    }
+
+    public boolean getPreviewMode() {
+        return previewMode;
+    }
 
 }
-

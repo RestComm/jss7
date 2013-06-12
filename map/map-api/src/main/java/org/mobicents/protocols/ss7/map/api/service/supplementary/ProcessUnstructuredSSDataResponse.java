@@ -22,21 +22,18 @@
 
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
-/**	
- * 
- 
-RESULT
-	ss-UserData
-	-- optional
-
-SS-UserData ::= IA5String (SIZE (1.. 200))
-
- * 
+/**
+ *
+ RESULT ss-UserData -- optional
+ *
+ * SS-UserData ::= IA5String (SIZE (1.. 200))
+ *
+ *
  * @author sergey vetyutnev
  *
  */
-public interface ProcessUnstructuredSSDataResponse extends  SupplementaryMessage {
+public interface ProcessUnstructuredSSDataResponse extends SupplementaryMessage {
 
-	String getData();
+    String getData();
 
 }

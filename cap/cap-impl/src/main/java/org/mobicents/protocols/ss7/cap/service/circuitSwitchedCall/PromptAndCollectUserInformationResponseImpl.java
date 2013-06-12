@@ -38,150 +38,151 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAnd
 import org.mobicents.protocols.ss7.cap.isup.DigitsImpl;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
-public class PromptAndCollectUserInformationResponseImpl extends CircuitSwitchedCallMessageImpl implements PromptAndCollectUserInformationResponse {
+public class PromptAndCollectUserInformationResponseImpl extends CircuitSwitchedCallMessageImpl implements
+        PromptAndCollectUserInformationResponse {
 
-	public static final int _ID_digitsResponse = 0;
+    public static final int _ID_digitsResponse = 0;
 
-	public static final String _PrimitiveName = "PromptAndCollectUserInformationResponseIndication";
+    public static final String _PrimitiveName = "PromptAndCollectUserInformationResponseIndication";
 
-	public Digits digitsResponse;
+    public Digits digitsResponse;
 
+    public PromptAndCollectUserInformationResponseImpl() {
+    }
 
-	public PromptAndCollectUserInformationResponseImpl() {
-	}
+    public PromptAndCollectUserInformationResponseImpl(Digits digitsResponse) {
+        this.digitsResponse = digitsResponse;
+    }
 
-	public PromptAndCollectUserInformationResponseImpl(Digits digitsResponse) {
-		this.digitsResponse = digitsResponse;
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.promptAndCollectUserInformation_Response;
+    }
 
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.promptAndCollectUserInformation_Response;
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.promptAndCollectUserInformation;
+    }
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.promptAndCollectUserInformation;
-	}
+    @Override
+    public Digits getDigitsResponse() {
+        return digitsResponse;
+    }
 
-	@Override
-	public Digits getDigitsResponse() {
-		return digitsResponse;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return _ID_digitsResponse;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return _ID_digitsResponse;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_CONTEXT_SPECIFIC;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
+        this.digitsResponse = null;
 
-		this.digitsResponse = null;
+        if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": bad tagClass or is not primitive", CAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || !ais.isTagPrimitive())
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tagClass or is not primitive",
-					CAPParsingComponentExceptionReason.MistypedParameter);
+        switch (ais.getTag()) {
+            case _ID_digitsResponse:
+                this.digitsResponse = new DigitsImpl();
+                ((DigitsImpl) this.digitsResponse).decodeData(ais, length);
+                break;
+            default:
+                throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: " + ais.getTag(),
+                        CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		switch (ais.getTag()) {
-		case _ID_digitsResponse:
-			this.digitsResponse = new DigitsImpl();
-			((DigitsImpl) this.digitsResponse).decodeData(ais, length);
-			break;
-		default:
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: " + ais.getTag(),
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+        int choiceCnt = 0;
+        if (this.digitsResponse != null)
+            choiceCnt++;
 
-		int choiceCnt = 0;
-		if (this.digitsResponse != null)
-			choiceCnt++;
-		
-		if (choiceCnt != 1)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice must be definite, found: " + choiceCnt);
+        if (choiceCnt != 1)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice must be definite, found: "
+                    + choiceCnt);
 
-		if (this.digitsResponse != null)
-			((DigitsImpl) this.digitsResponse).encodeData(asnOs);
-	}
+        if (this.digitsResponse != null)
+            ((DigitsImpl) this.digitsResponse).encodeData(asnOs);
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		
-		if (this.digitsResponse != null) {
-			sb.append("digitsResponse=");
-			sb.append(digitsResponse.toString());
-		}
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		sb.append("]");
+        if (this.digitsResponse != null) {
+            sb.append("digitsResponse=");
+            sb.append(digitsResponse.toString());
+        }
 
-		return sb.toString();
-	}
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

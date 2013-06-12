@@ -23,16 +23,15 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-TraceRecordingSessionReference ::= OCTET STRING (SIZE (2))
-
- * 
+ *
+ TraceRecordingSessionReference ::= OCTET STRING (SIZE (2))
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface TraceRecordingSessionReference {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

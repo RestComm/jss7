@@ -27,47 +27,47 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class TeleserviceCodeImpl extends OctetStringLength1Base implements TeleserviceCode {
 
-	public TeleserviceCodeImpl() {
-		super("TeleserviceCode");
-	}
+    public TeleserviceCodeImpl() {
+        super("TeleserviceCode");
+    }
 
-	public TeleserviceCodeImpl(int data) {
-		super("TeleserviceCode", data);
-	}
+    public TeleserviceCodeImpl(int data) {
+        super("TeleserviceCode", data);
+    }
 
-	public TeleserviceCodeImpl(TeleserviceCodeValue value) {
-		super("TeleserviceCode", value != null ? value.getCode() : 0);
-	}
+    public TeleserviceCodeImpl(TeleserviceCodeValue value) {
+        super("TeleserviceCode", value != null ? value.getCode() : 0);
+    }
 
-	public int getData() {
-		return data;
-	}
+    public int getData() {
+        return data;
+    }
 
-	public TeleserviceCodeValue getTeleserviceCodeValue() {
-		return TeleserviceCodeValue.getInstance(this.data);
-	}
+    public TeleserviceCodeValue getTeleserviceCodeValue() {
+        return TeleserviceCodeValue.getInstance(this.data);
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(this._PrimitiveName);
-		sb.append(" [");
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this._PrimitiveName);
+        sb.append(" [");
 
-		sb.append("Value=");
-		sb.append(this.getTeleserviceCodeValue());
+        sb.append("Value=");
+        sb.append(this.getTeleserviceCodeValue());
 
-		sb.append(", Data=");
-		sb.append(this.data);
+        sb.append(", Data=");
+        sb.append(this.data);
 
-		sb.append("]");
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
 }

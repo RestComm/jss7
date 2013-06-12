@@ -23,14 +23,12 @@
 /**
  * Start time:12:36:18 2009-04-04<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
- * 
+ *
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
-
-import java.io.IOException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformationPrime;
@@ -38,36 +36,36 @@ import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation
 /**
  * Start time:12:36:18 2009-04-04<br>
  * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
+ *
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class UserServiceInformationPrimeImpl extends AbstractISUPParameter implements UserServiceInformationPrime{
-	
-//FIXME Q.931
+public class UserServiceInformationPrimeImpl extends AbstractISUPParameter implements UserServiceInformationPrime {
 
-	public int decode(byte[] b) throws ParameterException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    // FIXME Q.931
 
-	public byte[] encode() throws ParameterException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public int getCode() {
+    public int decode(byte[] b) throws ParameterException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-		return _PARAMETER_CODE;
-	}
+    public byte[] encode() throws ParameterException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	public UserServiceInformationPrimeImpl() {
-		super();
-		
-	}
+    public int getCode() {
 
-	public UserServiceInformationPrimeImpl(byte[] b) throws ParameterException {
-		super();
-		decode(b);
-	}
-	
+        return _PARAMETER_CODE;
+    }
+
+    public UserServiceInformationPrimeImpl() {
+        super();
+
+    }
+
+    public UserServiceInformationPrimeImpl(byte[] b) throws ParameterException {
+        super();
+        decode(b);
+    }
+
 }

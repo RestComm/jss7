@@ -27,58 +27,58 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
-public class ExtBearerServiceCodeImpl extends OctetStringBase implements ExtBearerServiceCode  {
+public class ExtBearerServiceCodeImpl extends OctetStringBase implements ExtBearerServiceCode {
 
-	public ExtBearerServiceCodeImpl() {
-		super(1, 5, "ExtBearerServiceCode");
-	}
+    public ExtBearerServiceCodeImpl() {
+        super(1, 5, "ExtBearerServiceCode");
+    }
 
-	public ExtBearerServiceCodeImpl(byte[] data) {
-		super(1, 5, "ExtBearerServiceCode", data);
-	}
+    public ExtBearerServiceCodeImpl(byte[] data) {
+        super(1, 5, "ExtBearerServiceCode", data);
+    }
 
-	public ExtBearerServiceCodeImpl(BearerServiceCodeValue value) {
-		super(1, 5, "ExtBearerServiceCode");
+    public ExtBearerServiceCodeImpl(BearerServiceCodeValue value) {
+        super(1, 5, "ExtBearerServiceCode");
 
-		if (value != null)
-			this.data = new byte[] { (byte) (value.getBearerServiceCode()) };
-	}
+        if (value != null)
+            this.data = new byte[] { (byte) (value.getBearerServiceCode()) };
+    }
 
-	public byte[] getData() {
-		return data;
-	}
+    public byte[] getData() {
+        return data;
+    }
 
-	public BearerServiceCodeValue getBearerServiceCodeValue() {
-		if (data == null || data.length < 1)
-			return null;
-		else
-			return BearerServiceCodeValue.getInstance(this.data[0]);
-	}
+    public BearerServiceCodeValue getBearerServiceCodeValue() {
+        if (data == null || data.length < 1)
+            return null;
+        else
+            return BearerServiceCodeValue.getInstance(this.data[0]);
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(this._PrimitiveName);
-		sb.append(" [");
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this._PrimitiveName);
+        sb.append(" [");
 
-		sb.append("Value=");
-		sb.append(this.getBearerServiceCodeValue());
+        sb.append("Value=");
+        sb.append(this.getBearerServiceCodeValue());
 
-		sb.append(", Data=[");
-		if (data != null) {
-			for (int i1 : data) {
-				sb.append(i1);
-				sb.append(", ");
-			}
-		}
-		sb.append("]");
+        sb.append(", Data=[");
+        if (data != null) {
+            for (int i1 : data) {
+                sb.append(i1);
+                sb.append(", ");
+            }
+        }
+        sb.append("]");
 
-		sb.append("]");
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 }

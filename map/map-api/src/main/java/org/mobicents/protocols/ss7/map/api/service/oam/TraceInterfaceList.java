@@ -23,45 +23,36 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-TraceInterfaceList ::= SEQUENCE {
-	msc-s-List	[0] MSC-S-InterfaceList	OPTIONAL,
-	mgw-List		[1] MGW-InterfaceList	OPTIONAL,
-	sgsn-List		[2] SGSN-InterfaceList	OPTIONAL,
-	ggsn-List		[3] GGSN-InterfaceList	OPTIONAL,
-	rnc-List		[4] RNC-InterfaceList	OPTIONAL,
-	bmsc-List		[5] BMSC-InterfaceList	OPTIONAL,
-	...,
-	mme-List		[6] MME-InterfaceList	OPTIONAL,
-	sgw-List		[7] SGW-InterfaceList	OPTIONAL,
-	pgw-List		[8] PGW-InterfaceList	OPTIONAL,
-	eNB-List		[9] ENB-InterfaceList	OPTIONAL}
-
- * 
+ *
+ TraceInterfaceList ::= SEQUENCE { msc-s-List [0] MSC-S-InterfaceList OPTIONAL, mgw-List [1] MGW-InterfaceList OPTIONAL,
+ * sgsn-List [2] SGSN-InterfaceList OPTIONAL, ggsn-List [3] GGSN-InterfaceList OPTIONAL, rnc-List [4] RNC-InterfaceList
+ * OPTIONAL, bmsc-List [5] BMSC-InterfaceList OPTIONAL, ..., mme-List [6] MME-InterfaceList OPTIONAL, sgw-List [7]
+ * SGW-InterfaceList OPTIONAL, pgw-List [8] PGW-InterfaceList OPTIONAL, eNB-List [9] ENB-InterfaceList OPTIONAL}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface TraceInterfaceList {
 
-	public MSCSInterfaceList getMscSList();
+    MSCSInterfaceList getMscSList();
 
-	public MGWInterfaceList getMgwList();
+    MGWInterfaceList getMgwList();
 
-	public SGSNInterfaceList getSgsnList();
+    SGSNInterfaceList getSgsnList();
 
-	public GGSNInterfaceList getGgsnList();
+    GGSNInterfaceList getGgsnList();
 
-	public RNCInterfaceList getRncList();
+    RNCInterfaceList getRncList();
 
-	public BMSCInterfaceList getBmscList();
+    BMSCInterfaceList getBmscList();
 
-	public MMEInterfaceList getMmeList();
+    MMEInterfaceList getMmeList();
 
-	public SGWInterfaceList getSgwList();
+    SGWInterfaceList getSgwList();
 
-	public PGWInterfaceList getPgwList();
+    PGWInterfaceList getPgwList();
 
-	public ENBInterfaceList getEnbList();
+    ENBInterfaceList getEnbList();
 
 }

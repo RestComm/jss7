@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -24,58 +24,58 @@ package org.mobicents.protocols.ss7.sccp;
 import java.util.Map;
 
 /**
- * 
+ *
  * @author Amit Bhayani
  *
  */
 public interface SccpResource {
 
-	/**
-	 * Add remote sub system number.
-	 * 
-	 * @param remoteSsnid
-	 * @param remoteSpc
-	 * @param remoteSsn
-	 * @param remoteSsnFlag
-	 * @param markProhibitedWhenSpcResuming
-	 * @throws Exception
-	 */
-	public void addRemoteSsn(int remoteSsnid, int remoteSpc, int remoteSsn, int remoteSsnFlag,
-			boolean markProhibitedWhenSpcResuming) throws Exception;
+    /**
+     * Add remote sub system number.
+     *
+     * @param remoteSsnid
+     * @param remoteSpc
+     * @param remoteSsn
+     * @param remoteSsnFlag
+     * @param markProhibitedWhenSpcResuming
+     * @throws Exception
+     */
+    void addRemoteSsn(int remoteSsnid, int remoteSpc, int remoteSsn, int remoteSsnFlag,
+            boolean markProhibitedWhenSpcResuming) throws Exception;
 
-	public void modifyRemoteSsn(int remoteSsnid, int remoteSpc, int remoteSsn, int remoteSsnFlag,
-			boolean markProhibitedWhenSpcResuming) throws Exception;
+    void modifyRemoteSsn(int remoteSsnid, int remoteSpc, int remoteSsn, int remoteSsnFlag,
+            boolean markProhibitedWhenSpcResuming) throws Exception;
 
-	public void removeRemoteSsn(int remoteSsnid) throws Exception;
+    void removeRemoteSsn(int remoteSsnid) throws Exception;
 
-	public RemoteSubSystem getRemoteSsn(int remoteSsnid);
+    RemoteSubSystem getRemoteSsn(int remoteSsnid);
 
-	public RemoteSubSystem getRemoteSsn(int spc, int remoteSsn);
+    RemoteSubSystem getRemoteSsn(int spc, int remoteSsn);
 
-	public Map<Integer, RemoteSubSystem> getRemoteSsns();
+    Map<Integer, RemoteSubSystem> getRemoteSsns();
 
-	public void addRemoteSpc(int remoteSpcId, int remoteSpc, int remoteSpcFlag, int mask) throws Exception;
+    void addRemoteSpc(int remoteSpcId, int remoteSpc, int remoteSpcFlag, int mask) throws Exception;
 
-	public void modifyRemoteSpc(int remoteSpcId, int remoteSpc, int remoteSpcFlag, int mask) throws Exception;
+    void modifyRemoteSpc(int remoteSpcId, int remoteSpc, int remoteSpcFlag, int mask) throws Exception;
 
-	public void removeRemoteSpc(int remoteSpcId) throws Exception;
+    void removeRemoteSpc(int remoteSpcId) throws Exception;
 
-	public RemoteSignalingPointCode getRemoteSpc(int remoteSpcId);
+    RemoteSignalingPointCode getRemoteSpc(int remoteSpcId);
 
-	public RemoteSignalingPointCode getRemoteSpcByPC(int remotePC);
+    RemoteSignalingPointCode getRemoteSpcByPC(int remotePC);
 
-	public Map<Integer, RemoteSignalingPointCode> getRemoteSpcs();
+    Map<Integer, RemoteSignalingPointCode> getRemoteSpcs();
 
-	public void addConcernedSpc(int concernedSpcId, int remoteSpc) throws Exception;
+    void addConcernedSpc(int concernedSpcId, int remoteSpc) throws Exception;
 
-	public void removeConcernedSpc(int concernedSpcId) throws Exception;
-	
-	public void modifyConcernedSpc(int concernedSpcId, int remoteSpc) throws Exception;
+    void removeConcernedSpc(int concernedSpcId) throws Exception;
 
-	public ConcernedSignalingPointCode getConcernedSpc(int concernedSpcId);
+    void modifyConcernedSpc(int concernedSpcId, int remoteSpc) throws Exception;
 
-	public ConcernedSignalingPointCode getConcernedSpcByPC(int remotePC);
+    ConcernedSignalingPointCode getConcernedSpc(int concernedSpcId);
 
-	public Map<Integer, ConcernedSignalingPointCode> getConcernedSpcs();
+    ConcernedSignalingPointCode getConcernedSpcByPC(int remotePC);
+
+    Map<Integer, ConcernedSignalingPointCode> getConcernedSpcs();
 
 }

@@ -42,254 +42,256 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwoImpl;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class ConnectToResourceRequestImpl extends CircuitSwitchedCallMessageImpl implements ConnectToResourceRequest {
 
-	public static final int _ID_resourceAddress_ipRoutingAddress = 0;
-	public static final int _ID_resourceAddress_none = 3;
-	public static final int _ID_extensions = 4;
-	public static final int _ID_serviceInteractionIndicatorsTwo = 7;
-	public static final int _ID_callSegmentID = 50;
-	
-	public static final String _PrimitiveName = "ConnectToResourceIndication";
+    public static final int _ID_resourceAddress_ipRoutingAddress = 0;
+    public static final int _ID_resourceAddress_none = 3;
+    public static final int _ID_extensions = 4;
+    public static final int _ID_serviceInteractionIndicatorsTwo = 7;
+    public static final int _ID_callSegmentID = 50;
 
-	private CalledPartyNumberCap resourceAddress_IPRoutingAddress;
-	private boolean resourceAddress_Null;
-	private CAPExtensions extensions;
-	private ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo;
-	private Integer callSegmentID;
+    public static final String _PrimitiveName = "ConnectToResourceIndication";
 
-	
-	public ConnectToResourceRequestImpl() {
-	}
-	
-	public ConnectToResourceRequestImpl(CalledPartyNumberCap resourceAddress_IPRoutingAddress, boolean resourceAddress_Null, CAPExtensions extensions,
-			ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, Integer callSegmentID) {
-		this.resourceAddress_IPRoutingAddress = resourceAddress_IPRoutingAddress;
-		this.resourceAddress_Null = resourceAddress_Null;
-		this.extensions = extensions;
-		this.serviceInteractionIndicatorsTwo = serviceInteractionIndicatorsTwo;
-		this.callSegmentID = callSegmentID;
-	}
+    private CalledPartyNumberCap resourceAddress_IPRoutingAddress;
+    private boolean resourceAddress_Null;
+    private CAPExtensions extensions;
+    private ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo;
+    private Integer callSegmentID;
 
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.connectToResource_Request;
-	}
+    public ConnectToResourceRequestImpl() {
+    }
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.connectToResource;
-	}
+    public ConnectToResourceRequestImpl(CalledPartyNumberCap resourceAddress_IPRoutingAddress, boolean resourceAddress_Null,
+            CAPExtensions extensions, ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, Integer callSegmentID) {
+        this.resourceAddress_IPRoutingAddress = resourceAddress_IPRoutingAddress;
+        this.resourceAddress_Null = resourceAddress_Null;
+        this.extensions = extensions;
+        this.serviceInteractionIndicatorsTwo = serviceInteractionIndicatorsTwo;
+        this.callSegmentID = callSegmentID;
+    }
 
-	@Override
-	public CalledPartyNumberCap getResourceAddress_IPRoutingAddress() {
-		return resourceAddress_IPRoutingAddress;
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.connectToResource_Request;
+    }
 
-	@Override
-	public boolean getResourceAddress_Null() {
-		return resourceAddress_Null;
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.connectToResource;
+    }
 
-	@Override
-	public CAPExtensions getExtensions() {
-		return extensions;
-	}
+    @Override
+    public CalledPartyNumberCap getResourceAddress_IPRoutingAddress() {
+        return resourceAddress_IPRoutingAddress;
+    }
 
-	@Override
-	public ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo() {
-		return serviceInteractionIndicatorsTwo;
-	}
+    @Override
+    public boolean getResourceAddress_Null() {
+        return resourceAddress_Null;
+    }
 
-	@Override
-	public Integer getCallSegmentID() {
-		return callSegmentID;
-	}
+    @Override
+    public CAPExtensions getExtensions() {
+        return extensions;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo() {
+        return serviceInteractionIndicatorsTwo;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public Integer getCallSegmentID() {
+        return callSegmentID;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		this.resourceAddress_IPRoutingAddress = null;
-		this.resourceAddress_Null = false;
-		this.extensions = null;
-		this.serviceInteractionIndicatorsTwo = null;
-		this.callSegmentID = null;
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-			int tag = ais.readTag();
+        this.resourceAddress_IPRoutingAddress = null;
+        this.resourceAddress_Null = false;
+        this.extensions = null;
+        this.serviceInteractionIndicatorsTwo = null;
+        this.callSegmentID = null;
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-				case _ID_resourceAddress_ipRoutingAddress:
-					this.resourceAddress_IPRoutingAddress = new CalledPartyNumberCapImpl();
-					((CalledPartyNumberCapImpl) this.resourceAddress_IPRoutingAddress).decodeAll(ais);
-					break;
-				case _ID_resourceAddress_none:
-					ais.readNull();
-					this.resourceAddress_Null = true;
-					break;
-				case _ID_extensions:
-					this.extensions = new CAPExtensionsImpl();
-					((CAPExtensionsImpl) this.extensions).decodeAll(ais);
-					break;
-				case _ID_serviceInteractionIndicatorsTwo:
-					this.serviceInteractionIndicatorsTwo = new ServiceInteractionIndicatorsTwoImpl();
-					((ServiceInteractionIndicatorsTwoImpl) this.serviceInteractionIndicatorsTwo).decodeAll(ais);
-					break;
-				case _ID_callSegmentID:
-					this.callSegmentID = (int) ais.readInteger();
-					break;
+            int tag = ais.readTag();
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
 
-		int choiceCnt = 0;
-		if (this.resourceAddress_IPRoutingAddress != null)
-			choiceCnt++;
-		if (this.resourceAddress_Null)
-			choiceCnt++;
-		if (choiceCnt != 1)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": resourceAddress parameter must have 1 choice, found: "
-					+ choiceCnt, CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+                    case _ID_resourceAddress_ipRoutingAddress:
+                        this.resourceAddress_IPRoutingAddress = new CalledPartyNumberCapImpl();
+                        ((CalledPartyNumberCapImpl) this.resourceAddress_IPRoutingAddress).decodeAll(ais);
+                        break;
+                    case _ID_resourceAddress_none:
+                        ais.readNull();
+                        this.resourceAddress_Null = true;
+                        break;
+                    case _ID_extensions:
+                        this.extensions = new CAPExtensionsImpl();
+                        ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
+                        break;
+                    case _ID_serviceInteractionIndicatorsTwo:
+                        this.serviceInteractionIndicatorsTwo = new ServiceInteractionIndicatorsTwoImpl();
+                        ((ServiceInteractionIndicatorsTwoImpl) this.serviceInteractionIndicatorsTwo).decodeAll(ais);
+                        break;
+                    case _ID_callSegmentID:
+                        this.callSegmentID = (int) ais.readInteger();
+                        break;
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        int choiceCnt = 0;
+        if (this.resourceAddress_IPRoutingAddress != null)
+            choiceCnt++;
+        if (this.resourceAddress_Null)
+            choiceCnt++;
+        if (choiceCnt != 1)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": resourceAddress parameter must have 1 choice, found: " + choiceCnt,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		int choiceCnt = 0;
-		if (this.resourceAddress_IPRoutingAddress != null)
-			choiceCnt++;
-		if (this.resourceAddress_Null)
-			choiceCnt++;
-		if (choiceCnt != 1)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": resourceAddress parameter must have 1 choice, found: " + choiceCnt);
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		try {
+    @Override
+    public void encodeData(AsnOutputStream aos) throws CAPException {
 
-			if (this.resourceAddress_IPRoutingAddress != null)
-				((CalledPartyNumberCapImpl) this.resourceAddress_IPRoutingAddress).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_resourceAddress_ipRoutingAddress);
-			if (this.resourceAddress_Null)
-				aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_resourceAddress_none);
-			if (this.extensions != null)
-				((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
-			if (this.serviceInteractionIndicatorsTwo != null)
-				((ServiceInteractionIndicatorsTwoImpl) this.serviceInteractionIndicatorsTwo).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_serviceInteractionIndicatorsTwo);
-			if (this.callSegmentID != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callSegmentID, this.callSegmentID);
+        int choiceCnt = 0;
+        if (this.resourceAddress_IPRoutingAddress != null)
+            choiceCnt++;
+        if (this.resourceAddress_Null)
+            choiceCnt++;
+        if (choiceCnt != 1)
+            throw new CAPException("Error while encoding " + _PrimitiveName
+                    + ": resourceAddress parameter must have 1 choice, found: " + choiceCnt);
 
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
 
-	@Override
-	public String toString() {
+            if (this.resourceAddress_IPRoutingAddress != null)
+                ((CalledPartyNumberCapImpl) this.resourceAddress_IPRoutingAddress).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_resourceAddress_ipRoutingAddress);
+            if (this.resourceAddress_Null)
+                aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_resourceAddress_none);
+            if (this.extensions != null)
+                ((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
+            if (this.serviceInteractionIndicatorsTwo != null)
+                ((ServiceInteractionIndicatorsTwoImpl) this.serviceInteractionIndicatorsTwo).encodeAll(aos,
+                        Tag.CLASS_CONTEXT_SPECIFIC, _ID_serviceInteractionIndicatorsTwo);
+            if (this.callSegmentID != null)
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callSegmentID, this.callSegmentID);
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		if (this.resourceAddress_IPRoutingAddress != null) {
-			sb.append("resourceAddress: IPRoutingAddress=");
-			sb.append(resourceAddress_IPRoutingAddress.toString());
-		}
-		if (this.resourceAddress_Null) {
-			sb.append(" resourceAddress: Null");
-		}
-		if (this.extensions != null) {
-			sb.append(", extensions=");
-			sb.append(extensions.toString());
-		}
-		if (this.serviceInteractionIndicatorsTwo != null) {
-			sb.append(", serviceInteractionIndicatorsTwo=");
-			sb.append(serviceInteractionIndicatorsTwo.toString());
-		}
-		if (this.callSegmentID != null) {
-			sb.append(", callSegmentID=");
-			sb.append(callSegmentID.toString());
-		}
+    @Override
+    public String toString() {
 
-		sb.append("]");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		return sb.toString();
-	}
+        if (this.resourceAddress_IPRoutingAddress != null) {
+            sb.append("resourceAddress: IPRoutingAddress=");
+            sb.append(resourceAddress_IPRoutingAddress.toString());
+        }
+        if (this.resourceAddress_Null) {
+            sb.append(" resourceAddress: Null");
+        }
+        if (this.extensions != null) {
+            sb.append(", extensions=");
+            sb.append(extensions.toString());
+        }
+        if (this.serviceInteractionIndicatorsTwo != null) {
+            sb.append(", serviceInteractionIndicatorsTwo=");
+            sb.append(serviceInteractionIndicatorsTwo.toString());
+        }
+        if (this.callSegmentID != null) {
+            sb.append(", callSegmentID=");
+            sb.append(callSegmentID.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

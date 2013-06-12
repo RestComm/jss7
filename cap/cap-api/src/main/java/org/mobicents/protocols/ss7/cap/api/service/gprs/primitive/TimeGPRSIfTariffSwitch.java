@@ -22,24 +22,19 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
-
 /**
-*
-
-timeGPRSIfTariffSwitch [1] SEQUENCE {
-timeGPRSSinceLastTariffSwitch [0] INTEGER (0..86400),
-timeGPRSTariffSwitchInterval [1] INTEGER (0..86400) OPTIONAL
-}
-}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ timeGPRSIfTariffSwitch [1] SEQUENCE { timeGPRSSinceLastTariffSwitch [0] INTEGER (0..86400), timeGPRSTariffSwitchInterval [1]
+ * INTEGER (0..86400) OPTIONAL } }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface TimeGPRSIfTariffSwitch {
 
-	public int getTimeGPRSSinceLastTariffSwitch();
+    int getTimeGPRSSinceLastTariffSwitch();
 
-	public Integer getTimeGPRSTariffSwitchInterval();
+    Integer getTimeGPRSTariffSwitchInterval();
 
 }

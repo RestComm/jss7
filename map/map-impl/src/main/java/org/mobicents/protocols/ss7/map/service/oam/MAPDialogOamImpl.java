@@ -31,15 +31,15 @@ import org.mobicents.protocols.ss7.map.api.service.oam.MAPServiceOam;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class MAPDialogOamImpl extends MAPDialogImpl implements MAPDialogOam {
 
-	protected MAPDialogOamImpl(MAPApplicationContext appCntx, Dialog tcapDialog, MAPProviderImpl mapProviderImpl, MAPServiceOam mapService,
-			AddressString origReference, AddressString destReference) {
-		super(appCntx, tcapDialog, mapProviderImpl, mapService, origReference, destReference);
-	}
+    protected MAPDialogOamImpl(MAPApplicationContext appCntx, Dialog tcapDialog, MAPProviderImpl mapProviderImpl,
+            MAPServiceOam mapService, AddressString origReference, AddressString destReference) {
+        super(appCntx, tcapDialog, mapProviderImpl, mapService, origReference, destReference);
+    }
 
 }

@@ -40,212 +40,213 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class TBusySpecificInfoImpl implements TBusySpecificInfo, CAPAsnPrimitive {
 
-	public static final int _ID_busyCause = 0;
-	public static final int _ID_callForwarded = 50;
-	public static final int _ID_routeNotPermitted = 51;
-	public static final int _ID_forwardingDestinationNumber = 52;
+    public static final int _ID_busyCause = 0;
+    public static final int _ID_callForwarded = 50;
+    public static final int _ID_routeNotPermitted = 51;
+    public static final int _ID_forwardingDestinationNumber = 52;
 
-	public static final String _PrimitiveName = "TBusySpecificInfo";
+    public static final String _PrimitiveName = "TBusySpecificInfo";
 
-	private CauseCap busyCause;
-	private boolean callForwarded;
-	private boolean routeNotPermitted;
-	private CalledPartyNumberCap forwardingDestinationNumber;
+    private CauseCap busyCause;
+    private boolean callForwarded;
+    private boolean routeNotPermitted;
+    private CalledPartyNumberCap forwardingDestinationNumber;
 
+    public TBusySpecificInfoImpl() {
+    }
 
-	public TBusySpecificInfoImpl() {
-	}
+    public TBusySpecificInfoImpl(CauseCap busyCause, boolean callForwarded, boolean routeNotPermitted,
+            CalledPartyNumberCap forwardingDestinationNumber) {
+        this.busyCause = busyCause;
+        this.callForwarded = callForwarded;
+        this.routeNotPermitted = routeNotPermitted;
+        this.forwardingDestinationNumber = forwardingDestinationNumber;
+    }
 
-	public TBusySpecificInfoImpl(CauseCap busyCause, boolean callForwarded, boolean routeNotPermitted, CalledPartyNumberCap forwardingDestinationNumber) {
-		this.busyCause = busyCause;
-		this.callForwarded = callForwarded;
-		this.routeNotPermitted = routeNotPermitted;
-		this.forwardingDestinationNumber = forwardingDestinationNumber;
-	}
+    @Override
+    public CauseCap getBusyCause() {
+        return busyCause;
+    }
 
-	@Override
-	public CauseCap getBusyCause() {
-		return busyCause;
-	}
+    @Override
+    public boolean getCallForwarded() {
+        return callForwarded;
+    }
 
-	@Override
-	public boolean getCallForwarded() {
-		return callForwarded;
-	}
+    @Override
+    public boolean getRouteNotPermitted() {
+        return routeNotPermitted;
+    }
 
-	@Override
-	public boolean getRouteNotPermitted() {
-		return routeNotPermitted;
-	}
+    @Override
+    public CalledPartyNumberCap getForwardingDestinationNumber() {
+        return forwardingDestinationNumber;
+    }
 
-	@Override
-	public CalledPartyNumberCap getForwardingDestinationNumber() {
-		return forwardingDestinationNumber;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException,
+            IOException, AsnException {
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+        this.busyCause = null;
+        this.callForwarded = false;
+        this.routeNotPermitted = false;
+        this.forwardingDestinationNumber = null;
 
-		this.busyCause = null;
-		this.callForwarded = false;
-		this.routeNotPermitted = false;
-		this.forwardingDestinationNumber = null;
-		
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-			int tag = ais.readTag();
+            int tag = ais.readTag();
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_busyCause:
-					this.busyCause = new CauseCapImpl();
-					((CauseCapImpl) this.busyCause).decodeAll(ais);
-					break;
-				case _ID_callForwarded:
-					ais.readNull();
-					this.callForwarded = true;
-					break;
-				case _ID_routeNotPermitted:
-					ais.readNull();
-					this.routeNotPermitted = true;
-					break;
-				case _ID_forwardingDestinationNumber:
-					this.forwardingDestinationNumber = new CalledPartyNumberCapImpl();
-					((CalledPartyNumberCapImpl) this.forwardingDestinationNumber).decodeAll(ais);
-					break;
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_busyCause:
+                        this.busyCause = new CauseCapImpl();
+                        ((CauseCapImpl) this.busyCause).decodeAll(ais);
+                        break;
+                    case _ID_callForwarded:
+                        ais.readNull();
+                        this.callForwarded = true;
+                        break;
+                    case _ID_routeNotPermitted:
+                        ais.readNull();
+                        this.routeNotPermitted = true;
+                        break;
+                    case _ID_forwardingDestinationNumber:
+                        this.forwardingDestinationNumber = new CalledPartyNumberCapImpl();
+                        ((CalledPartyNumberCapImpl) this.forwardingDestinationNumber).decodeAll(ais);
+                        break;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
-	}
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		try {
-			asnOs.writeTag(tagClass, false, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            asnOs.writeTag(tagClass, false, tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		try {
-			if (this.busyCause != null)
-				((CauseCapImpl) this.busyCause).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_busyCause);
-			if (this.callForwarded)
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callForwarded);
-			if (this.routeNotPermitted)
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_routeNotPermitted);
-			if (this.forwardingDestinationNumber != null)
-				((CalledPartyNumberCapImpl) this.forwardingDestinationNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_forwardingDestinationNumber);
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            if (this.busyCause != null)
+                ((CauseCapImpl) this.busyCause).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_busyCause);
+            if (this.callForwarded)
+                asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callForwarded);
+            if (this.routeNotPermitted)
+                asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_routeNotPermitted);
+            if (this.forwardingDestinationNumber != null)
+                ((CalledPartyNumberCapImpl) this.forwardingDestinationNumber).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_forwardingDestinationNumber);
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		if (this.busyCause != null) {
-			sb.append("busyCause= [");
-			sb.append(busyCause);
-			sb.append("]");
-		}
-		if (this.callForwarded) {
-			sb.append(", callForwarded");
-		}
-		if (this.routeNotPermitted) {
-			sb.append(", routeNotPermitted");
-		}
-		if (this.forwardingDestinationNumber != null) {
-			sb.append("forwardingDestinationNumber= [");
-			sb.append(forwardingDestinationNumber);
-			sb.append("]");
-		}
+        if (this.busyCause != null) {
+            sb.append("busyCause= [");
+            sb.append(busyCause);
+            sb.append("]");
+        }
+        if (this.callForwarded) {
+            sb.append(", callForwarded");
+        }
+        if (this.routeNotPermitted) {
+            sb.append(", routeNotPermitted");
+        }
+        if (this.forwardingDestinationNumber != null) {
+            sb.append("forwardingDestinationNumber= [");
+            sb.append(forwardingDestinationNumber);
+            sb.append("]");
+        }
 
-		sb.append("]");
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 }
-

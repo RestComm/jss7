@@ -35,269 +35,269 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 
 /**
- * 
+ *
  * @author amit bhayani
  * @author sergey vetyutnev
- * 
+ *
  */
 public abstract class TbcdString implements CAPAsnPrimitive {
 
-	protected static int DIGIT_1_MASK = 0x0F;
-	protected static int DIGIT_2_MASK = 0xF0;
+    protected static int DIGIT_1_MASK = 0x0F;
+    protected static int DIGIT_2_MASK = 0xF0;
 
-	protected String data;
+    protected String data;
 
-	protected int minLength;
-	protected int maxLength;
-	protected String _PrimitiveName;
+    protected int minLength;
+    protected int maxLength;
+    protected String _PrimitiveName;
 
-	public TbcdString(int minLength, int maxLength, String _PrimitiveName) {
-		this.minLength = minLength;
-		this.maxLength = maxLength;
-		this._PrimitiveName = _PrimitiveName;
-	}
+    public TbcdString(int minLength, int maxLength, String _PrimitiveName) {
+        this.minLength = minLength;
+        this.maxLength = maxLength;
+        this._PrimitiveName = _PrimitiveName;
+    }
 
-	public TbcdString(int minLength, int maxLength, String _PrimitiveName, String data) {
-		this(minLength, maxLength, _PrimitiveName);
+    public TbcdString(int minLength, int maxLength, String _PrimitiveName, String data) {
+        this(minLength, maxLength, _PrimitiveName);
 
-		this.data = data;
-	}
+        this.data = data;
+    }
 
-	public int getTag() throws CAPException {
-		return Tag.STRING_OCTET;
-	}
+    public int getTag() throws CAPException {
+        return Tag.STRING_OCTET;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException {
+    protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException {
 
-		if (!ansIS.isTagPrimitive())
-			throw new CAPParsingComponentException("Error decoding " + _PrimitiveName + ": field must be primitive",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		
-		if (length < this.minLength || length > this.maxLength)
-			throw new CAPParsingComponentException("Error decoding " + _PrimitiveName + ": the field must contain from " + this.minLength + " to "
-					+ this.maxLength + " octets. Contains: " + length, CAPParsingComponentExceptionReason.MistypedParameter);
+        if (!ansIS.isTagPrimitive())
+            throw new CAPParsingComponentException("Error decoding " + _PrimitiveName + ": field must be primitive",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
-		try {
-			this.data = decodeString(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding IMSI: " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-	
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        if (length < this.minLength || length > this.maxLength)
+            throw new CAPParsingComponentException("Error decoding " + _PrimitiveName + ": the field must contain from "
+                    + this.minLength + " to " + this.maxLength + " octets. Contains: " + length,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            this.data = decodeString(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding IMSI: " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
 
-		if (this.data == null)
-			throw new CAPException("Error while encoding the " + _PrimitiveName + ": data is not defined");
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-		encodeString(asnOs, this.data);
-	}
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-	public static String decodeString(InputStream ansIS, int length) throws IOException, CAPParsingComponentException {
-		StringBuilder s = new StringBuilder();
-		for (int i1 = 0; i1 < length; i1++) {
-			int b = ansIS.read();
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-			int digit1 = (b & DIGIT_1_MASK);
-			if (digit1 == 15) {
-				// this is mask
-			} else {
-				s.append(decodeNumber(digit1));
-			}
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-			int digit2 = ((b & DIGIT_2_MASK) >> 4);
-			if (digit2 == 15) {
-				// this is mask
-			} else {
-				s.append(decodeNumber(digit2));
-			}
-		}
+        if (this.data == null)
+            throw new CAPException("Error while encoding the " + _PrimitiveName + ": data is not defined");
 
-		return s.toString();
-	}
+        encodeString(asnOs, this.data);
+    }
 
-	public static void encodeString(OutputStream asnOs, String data) throws CAPException {
-		char[] chars = data.toCharArray();
-		for (int i = 0; i < chars.length; i = i + 2) {
-			char a = chars[i];
+    public static String decodeString(InputStream ansIS, int length) throws IOException, CAPParsingComponentException {
+        StringBuilder s = new StringBuilder();
+        for (int i1 = 0; i1 < length; i1++) {
+            int b = ansIS.read();
 
-			int digit1 = encodeNumber(a);
-			int digit2;
-			if ((i + 1) == chars.length) {
-				// add the filler instead
-				digit2 = 15;
-			} else {
-				char b = chars[i + 1];
-				digit2 = encodeNumber(b);
-			}
+            int digit1 = (b & DIGIT_1_MASK);
+            if (digit1 == 15) {
+                // this is mask
+            } else {
+                s.append(decodeNumber(digit1));
+            }
 
-			int digit = (digit2 << 4) | digit1;
+            int digit2 = ((b & DIGIT_2_MASK) >> 4);
+            if (digit2 == 15) {
+                // this is mask
+            } else {
+                s.append(decodeNumber(digit2));
+            }
+        }
 
-			try {
-				asnOs.write(digit);
-			} catch (IOException e) {
-				throw new CAPException("Error when encoding TbcdString: " + e.getMessage(), e);
-			}
-		}
-		
-	}
-	
-	protected static int encodeNumber(char c) throws CAPException {
-		switch (c) {
-		case '0':
-			return 0;
-		case '1':
-			return 1;
-		case '2':
-			return 2;
-		case '3':
-			return 3;
-		case '4':
-			return 4;
-		case '5':
-			return 5;
-		case '6':
-			return 6;
-		case '7':
-			return 7;
-		case '8':
-			return 8;
-		case '9':
-			return 9;
-		case '*':
-			return 10;
-		case '#':
-			return 11;
-		case 'a':
-			return 12;
-		case 'b':
-			return 13;
-		case 'c':
-			return 14;
-		default:
-			throw new CAPException(
-					"char should be between 0 - 9, *, #, a, b, c for Telephony Binary Coded Decimal String. Received "
-							+ c);
+        return s.toString();
+    }
 
-		}
-	}
+    public static void encodeString(OutputStream asnOs, String data) throws CAPException {
+        char[] chars = data.toCharArray();
+        for (int i = 0; i < chars.length; i = i + 2) {
+            char a = chars[i];
 
-	protected static char decodeNumber(int i) throws CAPParsingComponentException {
-		switch (i) {
-		case 0:
-			return '0';
-		case 1:
-			return '1';
-		case 2:
-			return '2';
-		case 3:
-			return '3';
-		case 4:
-			return '4';
-		case 5:
-			return '5';
-		case 6:
-			return '6';
-		case 7:
-			return '7';
-		case 8:
-			return '8';
-		case 9:
-			return '9';
-		case 10:
-			return '*';
-		case 11:
-			return '#';
-		case 12:
-			return 'a';
-		case 13:
-			return 'b';
-		case 14:
-			return 'c';
-			// case 15:
-			// return 'd';
-		default:
-			throw new CAPParsingComponentException(
-					"Integer should be between 0 - 15 for Telephony Binary Coded Decimal String. Received "
-							+ i, CAPParsingComponentExceptionReason.MistypedParameter);
+            int digit1 = encodeNumber(a);
+            int digit2;
+            if ((i + 1) == chars.length) {
+                // add the filler instead
+                digit2 = 15;
+            } else {
+                char b = chars[i + 1];
+                digit2 = encodeNumber(b);
+            }
 
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return _PrimitiveName + " [" + this.data + "]";
-	}
+            int digit = (digit2 << 4) | digit1;
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
-		return result;
-	}
+            try {
+                asnOs.write(digit);
+            } catch (IOException e) {
+                throw new CAPException("Error when encoding TbcdString: " + e.getMessage(), e);
+            }
+        }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		TbcdString other = (TbcdString) obj;
-		if (data == null) {
-			if (other.data != null)
-				return false;
-		} else if (!data.equals(other.data))
-			return false;
-		return true;
-	}
+    }
+
+    protected static int encodeNumber(char c) throws CAPException {
+        switch (c) {
+            case '0':
+                return 0;
+            case '1':
+                return 1;
+            case '2':
+                return 2;
+            case '3':
+                return 3;
+            case '4':
+                return 4;
+            case '5':
+                return 5;
+            case '6':
+                return 6;
+            case '7':
+                return 7;
+            case '8':
+                return 8;
+            case '9':
+                return 9;
+            case '*':
+                return 10;
+            case '#':
+                return 11;
+            case 'a':
+                return 12;
+            case 'b':
+                return 13;
+            case 'c':
+                return 14;
+            default:
+                throw new CAPException(
+                        "char should be between 0 - 9, *, #, a, b, c for Telephony Binary Coded Decimal String. Received " + c);
+
+        }
+    }
+
+    protected static char decodeNumber(int i) throws CAPParsingComponentException {
+        switch (i) {
+            case 0:
+                return '0';
+            case 1:
+                return '1';
+            case 2:
+                return '2';
+            case 3:
+                return '3';
+            case 4:
+                return '4';
+            case 5:
+                return '5';
+            case 6:
+                return '6';
+            case 7:
+                return '7';
+            case 8:
+                return '8';
+            case 9:
+                return '9';
+            case 10:
+                return '*';
+            case 11:
+                return '#';
+            case 12:
+                return 'a';
+            case 13:
+                return 'b';
+            case 14:
+                return 'c';
+                // case 15:
+                // return 'd';
+            default:
+                throw new CAPParsingComponentException(
+                        "Integer should be between 0 - 15 for Telephony Binary Coded Decimal String. Received " + i,
+                        CAPParsingComponentExceptionReason.MistypedParameter);
+
+        }
+    }
+
+    @Override
+    public String toString() {
+        return _PrimitiveName + " [" + this.data + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((data == null) ? 0 : data.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        TbcdString other = (TbcdString) obj;
+        if (data == null) {
+            if (other.data != null)
+                return false;
+        } else if (!data.equals(other.data))
+            return false;
+        return true;
+    }
 }

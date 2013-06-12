@@ -21,7 +21,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.mobicents.protocols.ss7.tcap.asn.comp;
 
@@ -32,24 +32,24 @@ import org.mobicents.protocols.ss7.tcap.asn.Encodable;
  * @author baranowb
  *
  */
-public interface OperationCode extends Encodable{
+public interface OperationCode extends Encodable {
 
-	public static final int _TAG_LOCAL = Tag.INTEGER;
-	public static final int _TAG_GLOBAL = Tag.OBJECT_IDENTIFIER;
-	public static final int _TAG_CLASS = Tag.CLASS_UNIVERSAL;
-	public static final boolean _TAG_PRIMITIVE = true;
-	
-	
-	//it integer, but two different tags denotate this.
+    int _TAG_LOCAL = Tag.INTEGER;
+    int _TAG_GLOBAL = Tag.OBJECT_IDENTIFIER;
+    int _TAG_CLASS = Tag.CLASS_UNIVERSAL;
+    boolean _TAG_PRIMITIVE = true;
 
-	//public void setOperationType(OperationCodeType t);
-	public OperationCodeType getOperationType();
-	
-	public void setLocalOperationCode(Long localOperationCode);
-	public void setGlobalOperationCode(long[] globalOperationCode);
+    // it integer, but two different tags denotate this.
 
+    // void setOperationType(OperationCodeType t);
+    OperationCodeType getOperationType();
 
-	public Long getLocalOperationCode();
-	public long[] getGlobalOperationCode();
+    void setLocalOperationCode(Long localOperationCode);
+
+    void setGlobalOperationCode(long[] globalOperationCode);
+
+    Long getLocalOperationCode();
+
+    long[] getGlobalOperationCode();
 
 }

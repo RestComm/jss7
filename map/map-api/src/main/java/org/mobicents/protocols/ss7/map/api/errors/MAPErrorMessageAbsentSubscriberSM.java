@@ -26,42 +26,31 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  *
- * absentSubscriberSM  ERROR ::= {
- *	PARAMETER
- *		AbsentSubscriberSM-Param
- *		-- optional
- *	CODE	local:6 }
+ * absentSubscriberSM ERROR ::= { PARAMETER AbsentSubscriberSM-Param -- optional CODE local:6 }
  *
  *
- * AbsentSubscriberSM-Param ::= SEQUENCE {
- *	absentSubscriberDiagnosticSM	AbsentSubscriberDiagnosticSM	OPTIONAL,
- *	-- AbsentSubscriberDiagnosticSM can be either for non-GPRS 
- *	-- or for GPRS
- *	extensionContainer	ExtensionContainer	OPTIONAL,
- *	...,
- *	additionalAbsentSubscriberDiagnosticSM  	[0] 	AbsentSubscriberDiagnosticSM	OPTIONAL }
- *	-- if received, additionalAbsentSubscriberDiagnosticSM 
- *	-- is for GPRS and absentSubscriberDiagnosticSM is 
- *	-- for non-GPRS
+ * AbsentSubscriberSM-Param ::= SEQUENCE { absentSubscriberDiagnosticSM AbsentSubscriberDiagnosticSM OPTIONAL, --
+ * AbsentSubscriberDiagnosticSM can be either for non-GPRS -- or for GPRS extensionContainer ExtensionContainer OPTIONAL, ...,
+ * additionalAbsentSubscriberDiagnosticSM [0] AbsentSubscriberDiagnosticSM OPTIONAL } -- if received,
+ * additionalAbsentSubscriberDiagnosticSM -- is for GPRS and absentSubscriberDiagnosticSM is -- for non-GPRS
  *
  *
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MAPErrorMessageAbsentSubscriberSM extends MAPErrorMessage {
-	
-	public MAPExtensionContainer getExtensionContainer();
 
-	public AbsentSubscriberDiagnosticSM getAbsentSubscriberDiagnosticSM();
+    MAPExtensionContainer getExtensionContainer();
 
-	public AbsentSubscriberDiagnosticSM getAdditionalAbsentSubscriberDiagnosticSM();
+    AbsentSubscriberDiagnosticSM getAbsentSubscriberDiagnosticSM();
 
-	public void setAbsentSubscriberDiagnosticSM(AbsentSubscriberDiagnosticSM absentSubscriberDiagnosticSM);
+    AbsentSubscriberDiagnosticSM getAdditionalAbsentSubscriberDiagnosticSM();
 
-	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
+    void setAbsentSubscriberDiagnosticSM(AbsentSubscriberDiagnosticSM absentSubscriberDiagnosticSM);
 
-	public void setAdditionalAbsentSubscriberDiagnosticSM(AbsentSubscriberDiagnosticSM additionalAbsentSubscriberDiagnosticSM);
-	
+    void setExtensionContainer(MAPExtensionContainer extensionContainer);
+
+    void setAdditionalAbsentSubscriberDiagnosticSM(AbsentSubscriberDiagnosticSM additionalAbsentSubscriberDiagnosticSM);
+
 }
-

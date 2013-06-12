@@ -25,19 +25,15 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-SS-InvocationNotificationRes ::= SEQUENCE {
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...
-	}
-
- * 
+ *
+ SS-InvocationNotificationRes ::= SEQUENCE { extensionContainer ExtensionContainer OPTIONAL, ... }
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SSInvocationNotificationResponse extends SupplementaryMessage {
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

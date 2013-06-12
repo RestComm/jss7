@@ -23,26 +23,25 @@
 package org.mobicents.protocols.ss7.inap.api;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  *
  */
 public class INAPException extends Exception {
 
-	public INAPException() {
-	}
+    public INAPException() {
+    }
 
-	public INAPException(String message) {
-		super(message);
-	}
+    public INAPException(String message) {
+        super(message);
+    }
 
-	public INAPException(Throwable cause) {
-		super(cause);
-	}
+    public INAPException(Throwable cause) {
+        super(cause);
+    }
 
-	public INAPException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
+    public INAPException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

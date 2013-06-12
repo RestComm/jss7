@@ -25,16 +25,15 @@ package org.mobicents.protocols.ss7.map.api.smstpdu;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 
 /**
- * A Super class for SMS-DELIVER, SMS-DELIVER-REPORT, SMS-STATUS-REPORT,
- * SMS-COMMAND, SMS-SUBMIT, SMS-SUBMIT-REPORT pdu's
- * 
+ * A Super class for SMS-DELIVER, SMS-DELIVER-REPORT, SMS-STATUS-REPORT, SMS-COMMAND, SMS-SUBMIT, SMS-SUBMIT-REPORT pdu's
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SmsTpdu {
-	
-	public SmsTpduType getSmsTpduType();
 
-	public byte[] encodeData() throws MAPException;
+    SmsTpduType getSmsTpduType();
+
+    byte[] encodeData() throws MAPException;
 
 }

@@ -26,21 +26,21 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class ExtPDPTypeImpl extends OctetStringBase implements ExtPDPType {
 
-	public ExtPDPTypeImpl() {
-		super(2, 2, "ExtPDPType");
-	}
+    public ExtPDPTypeImpl() {
+        super(2, 2, "ExtPDPType");
+    }
 
-	public ExtPDPTypeImpl(byte[] data) {
-		super(2, 2, "ExtPDPType", data);
-	}
+    public ExtPDPTypeImpl(byte[] data) {
+        super(2, 2, "ExtPDPType", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 }

@@ -26,27 +26,22 @@ import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 
 /**
-*
-tBusySpecificInfo [8] SEQUENCE {
-busyCause [0] Cause {bound} OPTIONAL,
-callForwarded [50] NULL OPTIONAL,
-routeNotPermitted [51] NULL OPTIONAL,
-forwardingDestinationNumber [52] CalledPartyNumber {bound} OPTIONAL,
-...
-},
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ tBusySpecificInfo [8] SEQUENCE { busyCause [0] Cause {bound} OPTIONAL, callForwarded [50] NULL OPTIONAL, routeNotPermitted
+ * [51] NULL OPTIONAL, forwardingDestinationNumber [52] CalledPartyNumber {bound} OPTIONAL, ... },
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface TBusySpecificInfo {
 
-	public CauseCap getBusyCause();
+    CauseCap getBusyCause();
 
-	public boolean getCallForwarded();
+    boolean getCallForwarded();
 
-	public boolean getRouteNotPermitted();
+    boolean getRouteNotPermitted();
 
-	public CalledPartyNumberCap getForwardingDestinationNumber();
+    CalledPartyNumberCap getForwardingDestinationNumber();
 
 }

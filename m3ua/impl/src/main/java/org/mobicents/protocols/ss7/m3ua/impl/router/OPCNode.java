@@ -27,9 +27,9 @@ import javolution.util.FastList;
 import org.mobicents.protocols.ss7.m3ua.impl.AsImpl;
 
 /**
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class OPCNode {
 
@@ -50,8 +50,7 @@ public class OPCNode {
         for (FastList.Node<SINode> n = siList.head(), end = siList.tail(); (n = n.getNext()) != end;) {
             SINode siNode = n.getValue();
             if (siNode.si == si) {
-                throw new Exception(String.format("Service indicator %d already exist for OPC %d and DPC %d", si, opc,
-                        dpc));
+                throw new Exception(String.format("Service indicator %d already exist for OPC %d and DPC %d", si, opc, dpc));
             }
         }
 

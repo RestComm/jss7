@@ -25,9 +25,9 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs;
 import org.mobicents.protocols.ss7.cap.api.CAPServiceListener;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPServiceGprsListener extends CAPServiceListener {
 

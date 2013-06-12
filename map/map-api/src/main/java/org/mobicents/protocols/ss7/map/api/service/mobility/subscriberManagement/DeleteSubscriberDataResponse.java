@@ -26,27 +26,20 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
- * 
-
-MAP V3:
-DeleteSubscriberDataRes ::= SEQUENCE {
-	regionalSubscriptionResponse	[0] RegionalSubscriptionResponse	OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
-MAP V2:
-DeleteSubscriberDataRes ::= SEQUENCE { 
-	regionalSubscriptionResponse 	[0] RegionalSubscriptionResponse OPTIONAL, 
-...}
-
- * 
+ *
+ MAP V3: DeleteSubscriberDataRes ::= SEQUENCE { regionalSubscriptionResponse [0] RegionalSubscriptionResponse OPTIONAL,
+ * extensionContainer ExtensionContainer OPTIONAL, ...}
+ *
+ * MAP V2: DeleteSubscriberDataRes ::= SEQUENCE { regionalSubscriptionResponse [0] RegionalSubscriptionResponse OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface DeleteSubscriberDataResponse extends MobilityMessage {
 
-	public RegionalSubscriptionResponse getRegionalSubscriptionResponse();
+    RegionalSubscriptionResponse getRegionalSubscriptionResponse();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

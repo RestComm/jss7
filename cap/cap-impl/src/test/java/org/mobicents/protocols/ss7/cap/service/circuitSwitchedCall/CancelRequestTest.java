@@ -22,7 +22,10 @@
 
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -32,78 +35,77 @@ import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.Cal
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CancelRequestTest {
 
-	public byte[] getData1() {
-		return new byte[] { (byte) 128, 2, 42, (byte) 248 };
-	}
+    public byte[] getData1() {
+        return new byte[] { (byte) 128, 2, 42, (byte) 248 };
+    }
 
-	public byte[] getData2() {
-		return new byte[] { (byte) 129, 0 };
-	}
+    public byte[] getData2() {
+        return new byte[] { (byte) 129, 0 };
+    }
 
-	public byte[] getData3() {
-		return new byte[] { (byte) 162, 3, (byte) 129, 1, 20 };
-	}
-	
-	@Test(groups = { "functional.decode","circuitSwitchedCall"})
-	public void testDecode() throws Exception {
+    public byte[] getData3() {
+        return new byte[] { (byte) 162, 3, (byte) 129, 1, 20 };
+    }
 
-		byte[] data = this.getData1();
-		AsnInputStream ais = new AsnInputStream(data);
-		CancelRequestImpl elem = new CancelRequestImpl();
-		int tag = ais.readTag();
-		assertEquals(tag, 0);
-		elem.decodeAll(ais);
-		assertEquals((int) elem.getInvokeID(), 11000);
-		assertFalse(elem.getAllRequests());
-		assertNull(elem.getCallSegmentToCancel());
+    @Test(groups = { "functional.decode", "circuitSwitchedCall" })
+    public void testDecode() throws Exception {
 
-		data = this.getData2();
-		ais = new AsnInputStream(data);
-		elem = new CancelRequestImpl();
-		tag = ais.readTag();
-		assertEquals(tag, 1);
-		elem.decodeAll(ais);
-		assertNull(elem.getInvokeID());
-		assertTrue(elem.getAllRequests());
-		assertNull(elem.getCallSegmentToCancel());
+        byte[] data = this.getData1();
+        AsnInputStream ais = new AsnInputStream(data);
+        CancelRequestImpl elem = new CancelRequestImpl();
+        int tag = ais.readTag();
+        assertEquals(tag, 0);
+        elem.decodeAll(ais);
+        assertEquals((int) elem.getInvokeID(), 11000);
+        assertFalse(elem.getAllRequests());
+        assertNull(elem.getCallSegmentToCancel());
 
-		data = this.getData3();
-		ais = new AsnInputStream(data);
-		elem = new CancelRequestImpl();
-		tag = ais.readTag();
-		assertEquals(tag, 2);
-		elem.decodeAll(ais);
-		assertNull(elem.getInvokeID());
-		assertFalse(elem.getAllRequests());
-		assertNull(elem.getCallSegmentToCancel().getInvokeID());
-		assertEquals((int)elem.getCallSegmentToCancel().getCallSegmentID(), 20);
-	}
+        data = this.getData2();
+        ais = new AsnInputStream(data);
+        elem = new CancelRequestImpl();
+        tag = ais.readTag();
+        assertEquals(tag, 1);
+        elem.decodeAll(ais);
+        assertNull(elem.getInvokeID());
+        assertTrue(elem.getAllRequests());
+        assertNull(elem.getCallSegmentToCancel());
 
-	@Test(groups = { "functional.encode","circuitSwitchedCall"})
-	public void testEncode() throws Exception {
+        data = this.getData3();
+        ais = new AsnInputStream(data);
+        elem = new CancelRequestImpl();
+        tag = ais.readTag();
+        assertEquals(tag, 2);
+        elem.decodeAll(ais);
+        assertNull(elem.getInvokeID());
+        assertFalse(elem.getAllRequests());
+        assertNull(elem.getCallSegmentToCancel().getInvokeID());
+        assertEquals((int) elem.getCallSegmentToCancel().getCallSegmentID(), 20);
+    }
 
-		CancelRequestImpl elem = new CancelRequestImpl(11000);
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+    @Test(groups = { "functional.encode", "circuitSwitchedCall" })
+    public void testEncode() throws Exception {
 
-		elem = new CancelRequestImpl(true);
-		aos = new AsnOutputStream();
-		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
+        CancelRequestImpl elem = new CancelRequestImpl(11000);
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 
-		CallSegmentToCancelImpl callSegmentToCancel = new CallSegmentToCancelImpl(null, 20);
-		// Integer invokeID, Integer callSegmentID
-		elem = new CancelRequestImpl(callSegmentToCancel);
-		aos = new AsnOutputStream();
-		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData3()));
-	}
+        elem = new CancelRequestImpl(true);
+        aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
+
+        CallSegmentToCancelImpl callSegmentToCancel = new CallSegmentToCancelImpl(null, 20);
+        // Integer invokeID, Integer callSegmentID
+        elem = new CancelRequestImpl(callSegmentToCancel);
+        aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData3()));
+    }
 }
-

@@ -28,31 +28,30 @@ import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
 
 /**
- * 
- * This interface represents a SCCP message for connectionless data transfer (UDT, XUDT and LUDT) 
- * 
+ *
+ * This interface represents a SCCP message for connectionless data transfer (UDT, XUDT and LUDT)
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SccpDataMessage extends SccpAddressedMessage {
 
-	public ProtocolClass getProtocolClass();
+    ProtocolClass getProtocolClass();
 
-	public HopCounter getHopCounter();
+    HopCounter getHopCounter();
 
-	public byte[] getData();
+    byte[] getData();
 
-	public Segmentation getSegmentation();
-	
-	public Importance getImportance();
-	
-	
-	public void setProtocolClass(ProtocolClass v);
+    Segmentation getSegmentation();
 
-	public void setHopCounter(HopCounter hopCounter);
+    Importance getImportance();
 
-	public void setData(byte[] data);
+    void setProtocolClass(ProtocolClass v);
 
-	public void setImportance(Importance p);
-	
+    void setHopCounter(HopCounter hopCounter);
+
+    void setData(byte[] data);
+
+    void setImportance(Importance p);
+
 }

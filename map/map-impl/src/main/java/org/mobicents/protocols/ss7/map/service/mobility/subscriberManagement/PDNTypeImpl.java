@@ -26,32 +26,31 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class PDNTypeImpl extends OctetStringLength1Base  implements PDNType {
+public class PDNTypeImpl extends OctetStringLength1Base implements PDNType {
 
-	public PDNTypeImpl() {
-		super("PDNType");
-	}
-	
-	public PDNTypeImpl(int data) {
-		super("PDNType", data);
-	}
-	
+    public PDNTypeImpl() {
+        super("PDNType");
+    }
 
-	public PDNTypeImpl(PDNTypeValue value) {
-		super("PDNType", value != null ? value.getCode() : 0);
-	}
-	
-	@Override
-	public int getData() {
-		return data;
-	}
+    public PDNTypeImpl(int data) {
+        super("PDNType", data);
+    }
 
-	public PDNTypeValue getPDNTypeValue() {
-		return PDNTypeValue.getInstance(this.data);
-	}
-	
+    public PDNTypeImpl(PDNTypeValue value) {
+        super("PDNType", value != null ? value.getCode() : 0);
+    }
+
+    @Override
+    public int getData() {
+        return data;
+    }
+
+    public PDNTypeValue getPDNTypeValue() {
+        return PDNTypeValue.getInstance(this.data);
+    }
+
 }

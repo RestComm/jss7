@@ -23,26 +23,20 @@
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
 /**
-*
-
-ElapsedTime ::= CHOICE {
-timeGPRSIfNoTariffSwitch [0] INTEGER (0..86400),
-timeGPRSIfTariffSwitch [1] SEQUENCE {
-timeGPRSSinceLastTariffSwitch [0] INTEGER (0..86400),
-timeGPRSTariffSwitchInterval [1] INTEGER (0..86400) OPTIONAL
-}
-}
--- timeGPRSIfNoTariffSwitch is measured in seconds
--- timeGPRSSinceLastTariffSwitch and timeGPRSTariffSwitchInterval are measured in seconds
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ElapsedTime ::= CHOICE { timeGPRSIfNoTariffSwitch [0] INTEGER (0..86400), timeGPRSIfTariffSwitch [1] SEQUENCE {
+ * timeGPRSSinceLastTariffSwitch [0] INTEGER (0..86400), timeGPRSTariffSwitchInterval [1] INTEGER (0..86400) OPTIONAL } } --
+ * timeGPRSIfNoTariffSwitch is measured in seconds -- timeGPRSSinceLastTariffSwitch and timeGPRSTariffSwitchInterval are
+ * measured in seconds
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ElapsedTime {
 
-	public Integer getTimeGPRSIfNoTariffSwitch();
+    Integer getTimeGPRSIfNoTariffSwitch();
 
-	public TimeGPRSIfTariffSwitch getTimeGPRSIfTariffSwitch();
+    TimeGPRSIfTariffSwitch getTimeGPRSIfTariffSwitch();
 
 }

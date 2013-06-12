@@ -22,7 +22,8 @@
 
 package org.mobicents.protocols.ss7.inap.isup;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -31,50 +32,50 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CallingPartyCategoryImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CallingPartysCategoryInapTest {
 
-	public byte[] getData() {
-		return new byte[] { (byte) 133, 1, 10 };
-	}
+    public byte[] getData() {
+        return new byte[] { (byte) 133, 1, 10 };
+    }
 
-	public byte[] getIntData() {
-		return new byte[] { 10 };
-	}
+    public byte[] getIntData() {
+        return new byte[] { 10 };
+    }
 
-	@Test(groups = { "functional.decode","isup"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "isup" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData();
-		AsnInputStream ais = new AsnInputStream(data);
-		CallingPartysCategoryInapImpl elem = new CallingPartysCategoryInapImpl();
-		int tag = ais.readTag();
-		elem.decodeAll(ais);
-		CallingPartyCategory cpc = elem.getCallingPartyCategory();
-		assertTrue(Arrays.equals(elem.getData(), this.getIntData()));
-		assertEquals(cpc.getCallingPartyCategory(), 10);
-	}
+        byte[] data = this.getData();
+        AsnInputStream ais = new AsnInputStream(data);
+        CallingPartysCategoryInapImpl elem = new CallingPartysCategoryInapImpl();
+        int tag = ais.readTag();
+        elem.decodeAll(ais);
+        CallingPartyCategory cpc = elem.getCallingPartyCategory();
+        assertTrue(Arrays.equals(elem.getData(), this.getIntData()));
+        assertEquals(cpc.getCallingPartyCategory(), 10);
+    }
 
-	@Test(groups = { "functional.encode","isup"})
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "isup" })
+    public void testEncode() throws Exception {
 
-		CallingPartysCategoryInapImpl elem = new CallingPartysCategoryInapImpl(this.getIntData());
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 5);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+        CallingPartysCategoryInapImpl elem = new CallingPartysCategoryInapImpl(this.getIntData());
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 5);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
 
-		CallingPartyCategory cpc = new CallingPartyCategoryImpl((byte)10);
-		elem = new CallingPartysCategoryInapImpl(cpc);
-		aos = new AsnOutputStream();
-		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 5);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
-		
-//		byte callingPartyCategory
-	}
+        CallingPartyCategory cpc = new CallingPartyCategoryImpl((byte) 10);
+        elem = new CallingPartysCategoryInapImpl(cpc);
+        aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 5);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+
+        // byte callingPartyCategory
+    }
 }

@@ -23,19 +23,17 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 /**
-*
-Ext-BasicServiceCode ::= CHOICE {
-	ext-BearerService	[2] Ext-BearerServiceCode,
-	ext-Teleservice	[3] Ext-TeleserviceCode}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ Ext-BasicServiceCode ::= CHOICE { ext-BearerService [2] Ext-BearerServiceCode, ext-Teleservice [3] Ext-TeleserviceCode}
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ExtBasicServiceCode {
 
-	public ExtBearerServiceCode getExtBearerService();
+    ExtBearerServiceCode getExtBearerService();
 
-	public ExtTeleserviceCode getExtTeleservice();
+    ExtTeleserviceCode getExtTeleservice();
 
 }

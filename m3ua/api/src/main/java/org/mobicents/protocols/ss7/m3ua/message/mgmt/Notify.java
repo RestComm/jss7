@@ -29,26 +29,25 @@ import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 
 /**
- * The Notify message used to provide an autonomous indication of M3UA events to
- * an M3UA peer.
- * 
+ * The Notify message used to provide an autonomous indication of M3UA events to an M3UA peer.
+ *
  * @author amit bhayani
- * 
+ *
  */
 public interface Notify extends M3UAMessage {
-    public Status getStatus();
+    Status getStatus();
 
-    public void setStatus(Status status);
+    void setStatus(Status status);
 
-    public ASPIdentifier getASPIdentifier();
+    ASPIdentifier getASPIdentifier();
 
-    public void setASPIdentifier(ASPIdentifier id);
+    void setASPIdentifier(ASPIdentifier id);
 
-    public RoutingContext getRoutingContext();
+    RoutingContext getRoutingContext();
 
-    public void setRoutingContext(RoutingContext rc);
+    void setRoutingContext(RoutingContext rc);
 
-    public InfoString getInfoString();
+    InfoString getInfoString();
 
-    public void setInfoString(InfoString str);
+    void setInfoString(InfoString str);
 }

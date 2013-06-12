@@ -34,165 +34,166 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 
 /**
-*
-* Super class for implementing primitives that are BIT STRING (SIZE (x..y))
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ * Super class for implementing primitives that are BIT STRING (SIZE (x..y))
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public abstract class BitStringBase implements CAPAsnPrimitive {
 
-	protected BitSetStrictLength bitString;
+    protected BitSetStrictLength bitString;
 
-	protected int minLength;
-	protected int maxLength;
-	protected int curLength;
-	protected String _PrimitiveName;
+    protected int minLength;
+    protected int maxLength;
+    protected int curLength;
+    protected String _PrimitiveName;
 
-	public BitStringBase(int minLength, int maxLength, int curLength, String _PrimitiveName) {
-		this.minLength = minLength;
-		this.maxLength = maxLength;
-		this.curLength = curLength;
-		this._PrimitiveName = _PrimitiveName;
-		
-		this.bitString = new BitSetStrictLength(curLength);
-	}
+    public BitStringBase(int minLength, int maxLength, int curLength, String _PrimitiveName) {
+        this.minLength = minLength;
+        this.maxLength = maxLength;
+        this.curLength = curLength;
+        this._PrimitiveName = _PrimitiveName;
 
-	public BitStringBase(int minLength, int maxLength, int curLength, String _PrimitiveName, BitSetStrictLength data) {
-		this(minLength, maxLength, curLength, _PrimitiveName);
+        this.bitString = new BitSetStrictLength(curLength);
+    }
 
-		this.bitString = data;
-	}
+    public BitStringBase(int minLength, int maxLength, int curLength, String _PrimitiveName, BitSetStrictLength data) {
+        this(minLength, maxLength, curLength, _PrimitiveName);
 
-	public int getTag() throws CAPException {
-		return Tag.STRING_BIT;
-	}
+        this.bitString = data;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public int getTag() throws CAPException {
+        return Tag.STRING_BIT;
+    }
 
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-	protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		if (!ansIS.isTagPrimitive())
-			throw new CAPParsingComponentException("Error decoding " + _PrimitiveName + ": field must be primitive",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		
-		int minLen = (this.minLength - 1) / 8 + 2;
-		int maxLen = (this.maxLength - 1) / 8 + 2;
-		if (length < minLen || length > maxLen)
-			throw new CAPParsingComponentException("Error decoding " + _PrimitiveName + ": the field must contain from " + minLen + " to " + maxLen
-					+ " octets. Contains: " + length, CAPParsingComponentExceptionReason.MistypedParameter);
+    protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		this.bitString = ansIS.readBitStringData(length);
-	}
-	
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        if (!ansIS.isTagPrimitive())
+            throw new CAPParsingComponentException("Error decoding " + _PrimitiveName + ": field must be primitive",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        int minLen = (this.minLength - 1) / 8 + 2;
+        int maxLen = (this.maxLength - 1) / 8 + 2;
+        if (length < minLen || length > maxLen)
+            throw new CAPParsingComponentException("Error decoding " + _PrimitiveName + ": the field must contain from "
+                    + minLen + " to " + maxLen + " octets. Contains: " + length,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+        this.bitString = ansIS.readBitStringData(length);
+    }
 
-		if (this.bitString == null)
-			throw new CAPException("Error while encoding the " + _PrimitiveName + ": data is not defined");
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
 
-		try {
-			asnOs.writeBitStringData(this.bitString);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((bitString == null) ? 0 : bitString.hashCode());
-		return result;
-	}
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		BitStringBase other = (BitStringBase) obj;
-		if (bitString == null) {
-			if (other.bitString != null)
-				return false;
-		} else if (!bitString.equals(other.bitString))
-			return false;
-		return true;
-	}
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [Data=");
-		if (this.bitString != null) {
-			for (int i = 0; i < this.bitString.getStrictLength(); i++) {
-				if (i % 8 == 0) {
-					sb.append(" ");
-				}
-				if (this.bitString.get(i))
-					sb.append("1");
-				else
-					sb.append("0");
-			}
-		}
-		sb.append("]");
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		return sb.toString();
-	}
+        if (this.bitString == null)
+            throw new CAPException("Error while encoding the " + _PrimitiveName + ": data is not defined");
+
+        try {
+            asnOs.writeBitStringData(this.bitString);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((bitString == null) ? 0 : bitString.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        BitStringBase other = (BitStringBase) obj;
+        if (bitString == null) {
+            if (other.bitString != null)
+                return false;
+        } else if (!bitString.equals(other.bitString))
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [Data=");
+        if (this.bitString != null) {
+            for (int i = 0; i < this.bitString.getStrictLength(); i++) {
+                if (i % 8 == 0) {
+                    sb.append(" ");
+                }
+                if (this.bitString.get(i))
+                    sb.append("1");
+                else
+                    sb.append("0");
+            }
+        }
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

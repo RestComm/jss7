@@ -23,16 +23,15 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
 /**
-*
-TA-Id ::= OCTET STRING (SIZE (5))
-	-- Octets are coded as described in 3GPP TS 29.118.
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ TA-Id ::= OCTET STRING (SIZE (5)) -- Octets are coded as described in 3GPP TS 29.118.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface TAId {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

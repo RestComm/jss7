@@ -41,71 +41,73 @@ import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  *
  */
-public class ISDNAddressStringTest  {
-	
-	private byte[] getEncodedData() {
-		return new byte[] { -126, 7, -111, -105, 114, 99, 80, 24, -7 };
-	}
+public class ISDNAddressStringTest {
 
-	@Test(groups = { "functional.decode","primitives"})
-	public void testDecode() throws Exception {
-		
-		byte[] rawData = getEncodedData();
-		
-		AsnInputStream asn = new AsnInputStream(rawData);
+    private byte[] getEncodedData() {
+        return new byte[] { -126, 7, -111, -105, 114, 99, 80, 24, -7 };
+    }
 
-		int tag = asn.readTag();
-		ISDNAddressStringImpl addStr = new ISDNAddressStringImpl();
-		addStr.decodeAll(asn);
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
 
-		assertEquals( tag,2);
-		assertEquals( asn.getTagClass(),Tag.CLASS_CONTEXT_SPECIFIC);
-		assertFalse(addStr.isExtension());
-		assertEquals( addStr.getAddressNature(),AddressNature.international_number);
-		assertEquals( addStr.getNumberingPlan(),NumberingPlan.ISDN);
-		assertEquals( addStr.getAddress(),"79273605819");
-	}
-	
-	@Test(groups = { "functional.encode","primitives"})
-	public void testEncode() throws Exception {
-		
-		ISDNAddressStringImpl addStr = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "79273605819");
-		AsnOutputStream asnOS = new AsnOutputStream();
-		
-		addStr.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 2);
-		
-		byte[] encodedData = asnOS.toByteArray();
-		
-		byte[] rawData = getEncodedData();		
-		
-		assertTrue( Arrays.equals(rawData,encodedData));
-		
-	}
-	
-	@Test(groups = { "functional.serialize", "primitives" })
-	public void testSerialization() throws Exception {
-		ISDNAddressStringImpl original = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "79273605819");
-		// serialize
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(out);
-		oos.writeObject(original);
-		oos.close();
+        byte[] rawData = getEncodedData();
 
-		// deserialize
-		byte[] pickled = out.toByteArray();
-		InputStream in = new ByteArrayInputStream(pickled);
-		ObjectInputStream ois = new ObjectInputStream(in);
-		Object o = ois.readObject();
-		ISDNAddressStringImpl copy = (ISDNAddressStringImpl) o;
-		
-		//test result
-		assertEquals(copy.getAddressNature(), original.getAddressNature());
-		assertEquals(copy.getNumberingPlan(), original.getNumberingPlan());
-		assertEquals(copy.getAddress(), original.getAddress());
-	}
+        AsnInputStream asn = new AsnInputStream(rawData);
+
+        int tag = asn.readTag();
+        ISDNAddressStringImpl addStr = new ISDNAddressStringImpl();
+        addStr.decodeAll(asn);
+
+        assertEquals(tag, 2);
+        assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
+        assertFalse(addStr.isExtension());
+        assertEquals(addStr.getAddressNature(), AddressNature.international_number);
+        assertEquals(addStr.getNumberingPlan(), NumberingPlan.ISDN);
+        assertEquals(addStr.getAddress(), "79273605819");
+    }
+
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
+
+        ISDNAddressStringImpl addStr = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN,
+                "79273605819");
+        AsnOutputStream asnOS = new AsnOutputStream();
+
+        addStr.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 2);
+
+        byte[] encodedData = asnOS.toByteArray();
+
+        byte[] rawData = getEncodedData();
+
+        assertTrue(Arrays.equals(rawData, encodedData));
+
+    }
+
+    @Test(groups = { "functional.serialize", "primitives" })
+    public void testSerialization() throws Exception {
+        ISDNAddressStringImpl original = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN,
+                "79273605819");
+        // serialize
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(out);
+        oos.writeObject(original);
+        oos.close();
+
+        // deserialize
+        byte[] pickled = out.toByteArray();
+        InputStream in = new ByteArrayInputStream(pickled);
+        ObjectInputStream ois = new ObjectInputStream(in);
+        Object o = ois.readObject();
+        ISDNAddressStringImpl copy = (ISDNAddressStringImpl) o;
+
+        // test result
+        assertEquals(copy.getAddressNature(), original.getAddressNature());
+        assertEquals(copy.getNumberingPlan(), original.getNumberingPlan());
+        assertEquals(copy.getAddress(), original.getAddress());
+    }
 
 }

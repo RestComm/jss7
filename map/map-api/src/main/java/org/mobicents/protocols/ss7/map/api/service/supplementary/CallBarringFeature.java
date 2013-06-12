@@ -25,21 +25,17 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
 
 /**
- * 
-
-CallBarringFeature ::= SEQUENCE {
-	basicService	BasicServiceCode	OPTIONAL,
-	ss-Status	[4] SS-Status	OPTIONAL,
-	...}
-
- * 
+ *
+ CallBarringFeature ::= SEQUENCE { basicService BasicServiceCode OPTIONAL, ss-Status [4] SS-Status OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CallBarringFeature {
 
-	public BasicServiceCode getBasicService();
+    BasicServiceCode getBasicService();
 
-	public SSStatus getSsStatus();
+    SSStatus getSsStatus();
 
 }

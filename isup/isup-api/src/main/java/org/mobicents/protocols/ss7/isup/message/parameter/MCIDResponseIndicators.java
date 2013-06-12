@@ -23,7 +23,7 @@
 /**
  * Start time:13:27:33 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 package org.mobicents.protocols.ss7.isup.message.parameter;
@@ -31,29 +31,28 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
 /**
  * Start time:13:27:33 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface MCIDResponseIndicators extends ISUPParameter {
-	public static final int _PARAMETER_CODE = 0x3C;
-	
+    int _PARAMETER_CODE = 0x3C;
 
-	//FIXME: its byte[], there may be more indicators than one byte
-	/**
-	 * Flag that indicates that information is requested
-	 */
-	public static final boolean _INDICATOR_PROVIDED = true;
+    // FIXME: its byte[], there may be more indicators than one byte
+    /**
+     * Flag that indicates that information is requested
+     */
+    boolean _INDICATOR_PROVIDED = true;
 
-	/**
-	 * Flag that indicates that information is not requested
-	 */
-	public static final boolean _INDICATOR_NOT_PROVIDED = false;
+    /**
+     * Flag that indicates that information is not requested
+     */
+    boolean _INDICATOR_NOT_PROVIDED = false;
 
-	public boolean isMcidIncludedIndicator();
+    boolean isMcidIncludedIndicator();
 
-	public void setMcidIncludedIndicator(boolean mcidIncludedIndicator);
+    void setMcidIncludedIndicator(boolean mcidIncludedIndicator);
 
-	public boolean isHoldingProvidedIndicator();
+    boolean isHoldingProvidedIndicator();
 
-	public void setHoldingProvidedIndicator(boolean holdingProvidedIndicator);
+    void setHoldingProvidedIndicator(boolean holdingProvidedIndicator);
 }

@@ -28,54 +28,36 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
- * 
-
-MAP V3:
-authenticationFailureReport  OPERATION ::= {			--Timer m
-	ARGUMENT
-		AuthenticationFailureReportArg
-	RESULT
-		AuthenticationFailureReportRes
-		-- optional
-	ERRORS {
-		systemFailure |
-		unexpectedDataValue |
-		unknownSubscriber}
-	CODE	local:15 }
-
-AuthenticationFailureReportArg ::= SEQUENCE {
-	imsi			IMSI,
-	failureCause	FailureCause,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	... ,
-	re-attempt	BOOLEAN		OPTIONAL,
-	accessType	AccessType	OPTIONAL,
-	rand			RAND			OPTIONAL,
-	vlr-Number	[0] ISDN-AddressString	OPTIONAL,
-	sgsn-Number	[1] ISDN-AddressString	OPTIONAL }
-
-RAND ::= OCTET STRING (SIZE (16))
-
- * 
+ *
+ MAP V3: authenticationFailureReport OPERATION ::= { --Timer m ARGUMENT AuthenticationFailureReportArg RESULT
+ * AuthenticationFailureReportRes -- optional ERRORS { systemFailure | unexpectedDataValue | unknownSubscriber} CODE local:15 }
+ *
+ * AuthenticationFailureReportArg ::= SEQUENCE { imsi IMSI, failureCause FailureCause, extensionContainer ExtensionContainer
+ * OPTIONAL, ... , re-attempt BOOLEAN OPTIONAL, accessType AccessType OPTIONAL, rand RAND OPTIONAL, vlr-Number [0]
+ * ISDN-AddressString OPTIONAL, sgsn-Number [1] ISDN-AddressString OPTIONAL }
+ *
+ * RAND ::= OCTET STRING (SIZE (16))
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface AuthenticationFailureReportRequest extends MobilityMessage {
 
-	public IMSI getImsi();
+    IMSI getImsi();
 
-	public FailureCause getFailureCause();
+    FailureCause getFailureCause();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public boolean getReAttempt();
+    boolean getReAttempt();
 
-	public AccessType getAccessType();
+    AccessType getAccessType();
 
-	public byte[] getRand();
+    byte[] getRand();
 
-	public ISDNAddressString getVlrNumber();
+    ISDNAddressString getVlrNumber();
 
-	public ISDNAddressString getSgsnNumber();
+    ISDNAddressString getSgsnNumber();
 
 }

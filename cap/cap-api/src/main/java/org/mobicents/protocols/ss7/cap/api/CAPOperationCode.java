@@ -23,144 +23,144 @@
 package org.mobicents.protocols.ss7.cap.api;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPOperationCode {
 
-	// -- gsmSCF activation Package
-	public static final int initialDP = 0;
+    // -- gsmSCF activation Package
+    int initialDP = 0;
 
-	// -- gsmSCF/gsmSRF activation of assist Package
-	public static final int assistRequestInstructions = 16;
+    // -- gsmSCF/gsmSRF activation of assist Package
+    int assistRequestInstructions = 16;
 
-	// -- Assist connection establishment Package
-	public static final int establishTemporaryConnection = 17;
+    // -- Assist connection establishment Package
+    int establishTemporaryConnection = 17;
 
-	// -- Generic disconnect resource Package
-	public static final int disconnectForwardConnection = 18;
-	public static final int dFCWithArgument = 86;
+    // -- Generic disconnect resource Package
+    int disconnectForwardConnection = 18;
+    int dFCWithArgument = 86;
 
-	// -- Non-assisted connection establishment Package
-	public static final int connectToResource = 19;
+    // -- Non-assisted connection establishment Package
+    int connectToResource = 19;
 
-	// -- Connect Package (elementary gsmSSF function)
-	public static final int connect = 20;
+    // -- Connect Package (elementary gsmSSF function)
+    int connect = 20;
 
-	// -- Call handling Package (elementary gsmSSF function)
-	public static final int releaseCall = 22;
+    // -- Call handling Package (elementary gsmSSF function)
+    int releaseCall = 22;
 
-	// -- BCSM Event handling Package
-	public static final int requestReportBCSMEvent = 23;
-	public static final int eventReportBCSM = 24;
-	
-	// -- gsmSSF call processing Package
-	public static final int collectInformation = 27;
-	public static final int continueCode = 31;
+    // -- BCSM Event handling Package
+    int requestReportBCSMEvent = 23;
+    int eventReportBCSM = 24;
 
-	// -- gsmSCF call initiation Package
-	public static final int initiateCallAttempt = 32;
+    // -- gsmSSF call processing Package
+    int collectInformation = 27;
+    int continueCode = 31;
 
-	// -- Timer Package
-	public static final int resetTimer = 33;
+    // -- gsmSCF call initiation Package
+    int initiateCallAttempt = 32;
 
-	// -- Billing Package
-	public static final int furnishChargingInformation = 34;
+    // -- Timer Package
+    int resetTimer = 33;
 
-	// -- Charging Package
-	public static final int applyCharging = 35;
-	public static final int applyChargingReport = 36;
+    // -- Billing Package
+    int furnishChargingInformation = 34;
 
-	// -- Traffic management Package
-	public static final int callGap = 41;
+    // -- Charging Package
+    int applyCharging = 35;
+    int applyChargingReport = 36;
 
-	// -- Call report Package
-	public static final int callInformationReport = 44;
-	public static final int callInformationRequest = 45;
+    // -- Traffic management Package
+    int callGap = 41;
 
-	// -- Signalling control Package
-	public static final int sendChargingInformation = 46;
+    // -- Call report Package
+    int callInformationReport = 44;
+    int callInformationRequest = 45;
 
-	// -- Specialized resource control Package
-	public static final int playAnnouncement = 47;
-	public static final int promptAndCollectUserInformation = 48;
-	public static final int specializedResourceReport = 49;
+    // -- Signalling control Package
+    int sendChargingInformation = 46;
 
-	// -- Cancel Package
-	public static final int cancelCode = 53;
+    // -- Specialized resource control Package
+    int playAnnouncement = 47;
+    int promptAndCollectUserInformation = 48;
+    int specializedResourceReport = 49;
 
-	// -- Activity Test Package
-	public static final int activityTest = 55;
+    // -- Cancel Package
+    int cancelCode = 53;
 
-	// -- CPH Response Package
-	public static final int continueWithArgument = 88;
-	public static final int disconnectLeg = 90;
-	public static final int moveLeg = 93;
-	public static final int splitLeg = 95;
+    // -- Activity Test Package
+    int activityTest = 55;
 
-	// -- Exception Inform Package
-	public static final int entityReleased = 96;
+    // -- CPH Response Package
+    int continueWithArgument = 88;
+    int disconnectLeg = 90;
+    int moveLeg = 93;
+    int splitLeg = 95;
 
-	// -- Play Tone Package
-	public static final int playTone = 97;
+    // -- Exception Inform Package
+    int entityReleased = 96;
 
-	// -- Sms Activation Package
-	public static final int initialDPSMS = 60;
+    // -- Play Tone Package
+    int playTone = 97;
 
-	// -- Sms Billing Package
-	public static final int furnishChargingInformationSMS = 61;
+    // -- Sms Activation Package
+    int initialDPSMS = 60;
 
-	// -- Sms Connect Package
-	public static final int connectSMS = 62;
+    // -- Sms Billing Package
+    int furnishChargingInformationSMS = 61;
 
-	// -- Sms Event Handling Package
-	public static final int requestReportSMSEvent = 63;
-	public static final int eventReportSMS = 64;
+    // -- Sms Connect Package
+    int connectSMS = 62;
 
-	// -- Sms Processing Package
-	public static final int continueSMS = 65;
+    // -- Sms Event Handling Package
+    int requestReportSMSEvent = 63;
+    int eventReportSMS = 64;
 
-	// -- Sms Release Package
-	public static final int releaseSMS = 66;
+    // -- Sms Processing Package
+    int continueSMS = 65;
 
-	// -- Sms Timer Package
-	public static final int resetTimerSMS = 67;
+    // -- Sms Release Package
+    int releaseSMS = 66;
 
-	// -- Gprs Activity Test Package
-	public static final int activityTestGPRS = 70;
-	// -- Gprs Charging Package
-	public static final int applyChargingGPRS = 71;
-	public static final int applyChargingReportGPRS = 72;
+    // -- Sms Timer Package
+    int resetTimerSMS = 67;
 
-	// -- Gprs Cancel Package
-	public static final int cancelGPRS = 73;
+    // -- Gprs Activity Test Package
+    int activityTestGPRS = 70;
+    // -- Gprs Charging Package
+    int applyChargingGPRS = 71;
+    int applyChargingReportGPRS = 72;
 
-	// -- Gprs Connect Package
-	public static final int connectGPRS = 74;
+    // -- Gprs Cancel Package
+    int cancelGPRS = 73;
 
-	// -- Gprs Processing Package
-	public static final int continueGPRS = 75;
+    // -- Gprs Connect Package
+    int connectGPRS = 74;
 
-	// -- Gprs Exception Information Package
-	public static final int entityReleasedGPRS = 76;
+    // -- Gprs Processing Package
+    int continueGPRS = 75;
 
-	// -- Gprs Billing Package
-	public static final int furnishChargingInformationGPRS = 77;
+    // -- Gprs Exception Information Package
+    int entityReleasedGPRS = 76;
 
-	// -- Gprs Scf Activation Package
-	public static final int initialDPGPRS = 78;
+    // -- Gprs Billing Package
+    int furnishChargingInformationGPRS = 77;
 
-	// -- Gprs Release Package
-	public static final int releaseGPRS = 79;
+    // -- Gprs Scf Activation Package
+    int initialDPGPRS = 78;
 
-	// -- Gprs Event Handling Package
-	public static final int eventReportGPRS = 80;
-	public static final int requestReportGPRSEvent = 81;
+    // -- Gprs Release Package
+    int releaseGPRS = 79;
 
-	// -- Gprs Timer Package
-	public static final int resetTimerGPRS = 82;
+    // -- Gprs Event Handling Package
+    int eventReportGPRS = 80;
+    int requestReportGPRSEvent = 81;
 
-	// -- Gprs Charge Advice Package
-	public static final int sendChargingInformationGPRS = 83;
+    // -- Gprs Timer Package
+    int resetTimerGPRS = 82;
+
+    // -- Gprs Charge Advice Package
+    int sendChargingInformationGPRS = 83;
 }

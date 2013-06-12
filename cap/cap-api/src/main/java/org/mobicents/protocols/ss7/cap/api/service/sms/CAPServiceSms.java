@@ -28,16 +28,17 @@ import org.mobicents.protocols.ss7.cap.api.CAPServiceBase;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPServiceSms extends CAPServiceBase {
 
-	public CAPDialogSms createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress) throws CAPException;
+    CAPDialogSms createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress)
+            throws CAPException;
 
-	public void addCAPServiceListener(CAPServiceSmsListener capServiceListener);
+    void addCAPServiceListener(CAPServiceSmsListener capServiceListener);
 
-	public void removeCAPServiceListener(CAPServiceSmsListener capServiceListener);
+    void removeCAPServiceListener(CAPServiceSmsListener capServiceListener);
 
 }

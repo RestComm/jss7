@@ -23,10 +23,10 @@
 /**
  * Start time:11:36:27 2009-04-27<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
  *         </a>
- * 
+ *
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
@@ -40,60 +40,77 @@ import org.testng.annotations.Test;
 /**
  * Start time:11:36:27 2009-04-27<br>
  * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
- *         </a>
+ *
+ * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public class UserTeleserviceInformationTest extends ParameterHarness {
 
-	public UserTeleserviceInformationTest() {
-		super();
-		super.goodBodies.add(getBody(UserTeleserviceInformationImpl._PRESENTATION_METHOD_HLPP, UserTeleserviceInformationImpl._INTERPRETATION_FHGCI, UserTeleserviceInformationImpl._CODING_STANDARD_ISO_IEC,
-				UserTeleserviceInformationImpl._HLCI_IVTI));
-		super.goodBodies.add(getBody(UserTeleserviceInformationImpl._PRESENTATION_METHOD_HLPP, UserTeleserviceInformationImpl._INTERPRETATION_FHGCI, UserTeleserviceInformationImpl._CODING_STANDARD_ISO_IEC,
-				UserTeleserviceInformationImpl._HLCI_AUDIO_VID_LOW_RANGE));
-		super.goodBodies.add(getBody(UserTeleserviceInformationImpl._PRESENTATION_METHOD_HLPP, UserTeleserviceInformationImpl._INTERPRETATION_FHGCI, UserTeleserviceInformationImpl._CODING_STANDARD_ISO_IEC,
-				UserTeleserviceInformationImpl._HLCI_AUDIO_VID_LOW_RANGE, UserTeleserviceInformationImpl._EACI_CSIC_AA_3_1_CALL));
-	}
-	@Test(groups = { "functional.encode","functional.decode","parameter"})
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
-		UserTeleserviceInformationImpl bci = new UserTeleserviceInformationImpl(getBody(UserTeleserviceInformationImpl._PRESENTATION_METHOD_HLPP, UserTeleserviceInformationImpl._INTERPRETATION_FHGCI,
-				UserTeleserviceInformationImpl._CODING_STANDARD_ISO_IEC, UserTeleserviceInformationImpl._HLCI_IVTI));
+    public UserTeleserviceInformationTest() {
+        super();
+        super.goodBodies.add(getBody(UserTeleserviceInformationImpl._PRESENTATION_METHOD_HLPP,
+                UserTeleserviceInformationImpl._INTERPRETATION_FHGCI, UserTeleserviceInformationImpl._CODING_STANDARD_ISO_IEC,
+                UserTeleserviceInformationImpl._HLCI_IVTI));
+        super.goodBodies.add(getBody(UserTeleserviceInformationImpl._PRESENTATION_METHOD_HLPP,
+                UserTeleserviceInformationImpl._INTERPRETATION_FHGCI, UserTeleserviceInformationImpl._CODING_STANDARD_ISO_IEC,
+                UserTeleserviceInformationImpl._HLCI_AUDIO_VID_LOW_RANGE));
+        super.goodBodies
+                .add(getBody(UserTeleserviceInformationImpl._PRESENTATION_METHOD_HLPP,
+                        UserTeleserviceInformationImpl._INTERPRETATION_FHGCI,
+                        UserTeleserviceInformationImpl._CODING_STANDARD_ISO_IEC,
+                        UserTeleserviceInformationImpl._HLCI_AUDIO_VID_LOW_RANGE,
+                        UserTeleserviceInformationImpl._EACI_CSIC_AA_3_1_CALL));
+    }
 
-		String[] methodNames = { "getPresentationMethod", "getInterpretation", "getCodingStandard", "getHighLayerCharIdentification" };
-		Object[] expectedValues = { UserTeleserviceInformationImpl._PRESENTATION_METHOD_HLPP, UserTeleserviceInformationImpl._INTERPRETATION_FHGCI, UserTeleserviceInformationImpl._CODING_STANDARD_ISO_IEC,
-				UserTeleserviceInformationImpl._HLCI_IVTI };
-		super.testValues(bci, methodNames, expectedValues);
-	}
-	@Test(groups = { "functional.encode","functional.decode","parameter"})
-	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
-		UserTeleserviceInformationImpl bci = new UserTeleserviceInformationImpl(getBody(UserTeleserviceInformationImpl._PRESENTATION_METHOD_HLPP, UserTeleserviceInformationImpl._INTERPRETATION_FHGCI,
-				UserTeleserviceInformationImpl._CODING_STANDARD_ISO_IEC, UserTeleserviceInformationImpl._HLCI_AUDIO_VID_LOW_RANGE, UserTeleserviceInformationImpl._EACI_CSIC_AA_3_1_CALL));
+    @Test(groups = { "functional.encode", "functional.decode", "parameter" })
+    public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException, IOException, ParameterException {
+        UserTeleserviceInformationImpl bci = new UserTeleserviceInformationImpl(getBody(
+                UserTeleserviceInformationImpl._PRESENTATION_METHOD_HLPP, UserTeleserviceInformationImpl._INTERPRETATION_FHGCI,
+                UserTeleserviceInformationImpl._CODING_STANDARD_ISO_IEC, UserTeleserviceInformationImpl._HLCI_IVTI));
 
-		String[] methodNames = { "getPresentationMethod", "getInterpretation", "getCodingStandard", "getHighLayerCharIdentification", "getEVidedoTelephonyCharIdentification" };
-		Object[] expectedValues = { UserTeleserviceInformationImpl._PRESENTATION_METHOD_HLPP, UserTeleserviceInformationImpl._INTERPRETATION_FHGCI, UserTeleserviceInformationImpl._CODING_STANDARD_ISO_IEC,
-				UserTeleserviceInformationImpl._HLCI_AUDIO_VID_LOW_RANGE, UserTeleserviceInformationImpl._EACI_CSIC_AA_3_1_CALL };
-		super.testValues(bci, methodNames, expectedValues);
-	}
+        String[] methodNames = { "getPresentationMethod", "getInterpretation", "getCodingStandard",
+                "getHighLayerCharIdentification" };
+        Object[] expectedValues = { UserTeleserviceInformationImpl._PRESENTATION_METHOD_HLPP,
+                UserTeleserviceInformationImpl._INTERPRETATION_FHGCI, UserTeleserviceInformationImpl._CODING_STANDARD_ISO_IEC,
+                UserTeleserviceInformationImpl._HLCI_IVTI };
+        super.testValues(bci, methodNames, expectedValues);
+    }
 
-	private byte[] getBody(int _PRESENTATION_METHOD, int _INTERPRETATION, int _CODING_STANDARD, int _HLCI) {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		bos.write(0x80 | (_CODING_STANDARD << 5) | (_INTERPRETATION << 2) | _PRESENTATION_METHOD);
-		bos.write(0x80 | _HLCI);
-		return bos.toByteArray();
-	}
+    @Test(groups = { "functional.encode", "functional.decode", "parameter" })
+    public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException, IOException, ParameterException {
+        UserTeleserviceInformationImpl bci = new UserTeleserviceInformationImpl(
+                getBody(UserTeleserviceInformationImpl._PRESENTATION_METHOD_HLPP,
+                        UserTeleserviceInformationImpl._INTERPRETATION_FHGCI,
+                        UserTeleserviceInformationImpl._CODING_STANDARD_ISO_IEC,
+                        UserTeleserviceInformationImpl._HLCI_AUDIO_VID_LOW_RANGE,
+                        UserTeleserviceInformationImpl._EACI_CSIC_AA_3_1_CALL));
 
-	private byte[] getBody(int _PRESENTATION_METHOD, int _INTERPRETATION, int _CODING_STANDARD, int _HLCI, int _EACI) {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		bos.write(0x80 | (_CODING_STANDARD << 5) | (_INTERPRETATION << 2) | _PRESENTATION_METHOD);
-		bos.write(_HLCI);
-		bos.write(0x80 | _EACI);
-		return bos.toByteArray();
-	}
+        String[] methodNames = { "getPresentationMethod", "getInterpretation", "getCodingStandard",
+                "getHighLayerCharIdentification", "getEVidedoTelephonyCharIdentification" };
+        Object[] expectedValues = { UserTeleserviceInformationImpl._PRESENTATION_METHOD_HLPP,
+                UserTeleserviceInformationImpl._INTERPRETATION_FHGCI, UserTeleserviceInformationImpl._CODING_STANDARD_ISO_IEC,
+                UserTeleserviceInformationImpl._HLCI_AUDIO_VID_LOW_RANGE, UserTeleserviceInformationImpl._EACI_CSIC_AA_3_1_CALL };
+        super.testValues(bci, methodNames, expectedValues);
+    }
 
-	
-	public AbstractISUPParameter getTestedComponent() {
-		return new UserTeleserviceInformationImpl(1, 1, 1, 1);
-	}
+    private byte[] getBody(int _PRESENTATION_METHOD, int _INTERPRETATION, int _CODING_STANDARD, int _HLCI) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bos.write(0x80 | (_CODING_STANDARD << 5) | (_INTERPRETATION << 2) | _PRESENTATION_METHOD);
+        bos.write(0x80 | _HLCI);
+        return bos.toByteArray();
+    }
+
+    private byte[] getBody(int _PRESENTATION_METHOD, int _INTERPRETATION, int _CODING_STANDARD, int _HLCI, int _EACI) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bos.write(0x80 | (_CODING_STANDARD << 5) | (_INTERPRETATION << 2) | _PRESENTATION_METHOD);
+        bos.write(_HLCI);
+        bos.write(0x80 | _EACI);
+        return bos.toByteArray();
+    }
+
+    public AbstractISUPParameter getTestedComponent() {
+        return new UserTeleserviceInformationImpl(1, 1, 1, 1);
+    }
 
 }

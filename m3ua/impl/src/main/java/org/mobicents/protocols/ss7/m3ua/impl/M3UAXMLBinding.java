@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -31,83 +31,83 @@ import javolution.xml.stream.XMLStreamException;
 import org.mobicents.protocols.ss7.m3ua.As;
 
 /**
- * 
+ *
  * @author amit bhayani
  *
  */
 public class M3UAXMLBinding extends XMLBinding {
 
-	private M3UAManagementImpl m3uaManagement = null;
+    private M3UAManagementImpl m3uaManagement = null;
 
-	public void setM3uaManagement(M3UAManagementImpl m3uaManagement) {
-		this.m3uaManagement = m3uaManagement;
-	}
+    public void setM3uaManagement(M3UAManagementImpl m3uaManagement) {
+        this.m3uaManagement = m3uaManagement;
+    }
 
-	protected XMLFormat getFormat(Class forClass) throws XMLStreamException {
-		if (RouteMap.class.equals(forClass)) {
-			return ROUTEMAP;
-		}
-		return super.getFormat(forClass);
-	}
+    protected XMLFormat getFormat(Class forClass) throws XMLStreamException {
+        if (RouteMap.class.equals(forClass)) {
+            return ROUTEMAP;
+        }
+        return super.getFormat(forClass);
+    }
 
-	protected final XMLFormat<RouteMap> ROUTEMAP = new XMLFormat<RouteMap>(RouteMap.class) {
+    protected final XMLFormat<RouteMap> ROUTEMAP = new XMLFormat<RouteMap>(RouteMap.class) {
 
-		@Override
-		public void write(RouteMap obj, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+        @Override
+        public void write(RouteMap obj, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
 
-			final Map map = (Map) obj;
-			for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
-				Map.Entry entry = (Map.Entry) it.next();
-				AsImpl[] asList = (AsImpl[]) entry.getValue();
+            final Map map = (Map) obj;
+            for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
+                Map.Entry entry = (Map.Entry) it.next();
+                AsImpl[] asList = (AsImpl[]) entry.getValue();
 
-				if (asList == null) {
-					continue;
-				}
+                if (asList == null) {
+                    continue;
+                }
 
-				xml.add((String) entry.getKey(), "key", String.class);
+                xml.add((String) entry.getKey(), "key", String.class);
 
-				StringBuffer sb = new StringBuffer();
-				for (int count = 0; count < asList.length; count++) {
-					AsImpl asImpl = asList[count];
-					if (asImpl != null) {
-						sb.append(asImpl.getName()).append(",");
-					}
-				}
+                StringBuffer sb = new StringBuffer();
+                for (int count = 0; count < asList.length; count++) {
+                    AsImpl asImpl = asList[count];
+                    if (asImpl != null) {
+                        sb.append(asImpl.getName()).append(",");
+                    }
+                }
 
-				String value = sb.toString();
+                String value = sb.toString();
 
-				if (!value.equals("")) {
-					// remove last comma
-					value = value.substring(0, (value.length() - 1));
-				}
+                if (!value.equals("")) {
+                    // remove last comma
+                    value = value.substring(0, (value.length() - 1));
+                }
 
-				xml.add(value, "value", String.class);
-			}
-		}
+                xml.add(value, "value", String.class);
+            }
+        }
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, RouteMap obj) throws XMLStreamException {
-			while (xml.hasNext()) {
-				String key = xml.get("key", String.class);
-				String value = xml.get("value", String.class);
-				AsImpl[] asList = new AsImpl[m3uaManagement.getMaxAsForRoute()];
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, RouteMap obj) throws XMLStreamException {
+            while (xml.hasNext()) {
+                String key = xml.get("key", String.class);
+                String value = xml.get("value", String.class);
+                AsImpl[] asList = new AsImpl[m3uaManagement.getMaxAsForRoute()];
 
-				if (value != null && !value.equals("")) {
-					String[] asNames = value.split(",");
-					for (int count = 0; count < m3uaManagement.getMaxAsForRoute() && count < asNames.length; count++) {
-						String asName = asNames[count];
-						As as = m3uaManagement.getAs(asName);
-						if (as == null) {
-							// TODO add warning
-							continue;
-						}
-						asList[count] = (AsImpl)as;
-					}
-				}// if (value != null && !value.equals(""))
+                if (value != null && !value.equals("")) {
+                    String[] asNames = value.split(",");
+                    for (int count = 0; count < m3uaManagement.getMaxAsForRoute() && count < asNames.length; count++) {
+                        String asName = asNames[count];
+                        As as = m3uaManagement.getAs(asName);
+                        if (as == null) {
+                            // TODO add warning
+                            continue;
+                        }
+                        asList[count] = (AsImpl) as;
+                    }
+                }// if (value != null && !value.equals(""))
 
-				obj.put(key, asList);
-			}// while
-		}
+                obj.put(key, asList);
+            }// while
+        }
 
-	};
+    };
 }

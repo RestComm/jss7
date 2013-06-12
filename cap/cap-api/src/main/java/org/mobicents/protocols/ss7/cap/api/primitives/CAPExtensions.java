@@ -25,16 +25,15 @@ package org.mobicents.protocols.ss7.cap.api.primitives;
 import java.util.ArrayList;
 
 /**
-*
-Extensions {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE (1..bound.&numOfExtensions) OF ExtensionField
-numOfExtensions ::= 10
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ Extensions {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE (1..bound.&numOfExtensions) OF ExtensionField numOfExtensions ::= 10
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface CAPExtensions {
 
-	public ArrayList<ExtensionField> getExtensionFields();
+    ArrayList<ExtensionField> getExtensionFields();
 
-	public void setExtensionFields(ArrayList<ExtensionField> fieldsList);
+    void setExtensionFields(ArrayList<ExtensionField> fieldsList);
 }

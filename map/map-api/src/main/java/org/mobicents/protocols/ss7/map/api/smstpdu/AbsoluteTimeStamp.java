@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -28,38 +28,37 @@ import java.io.Serializable;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 
 /**
-The TP-Service-Centre-Time-Stamp field is given in semi-octet representation, and represents the local time in the 
-following way:
- 
-Year:  Month:  Day:  Hour:  Minute:  Second:  Time Zone 
-Digits:  2  2  2  2  2  2  2 (Semi-octets) 
-
-The Time Zone indicates the difference, expressed in quarters of an hour, between the local time and GMT. In the first 
-of the two semi-octets, the first bit (bit 3 of the seventh octet of the TP-Service-Centre-Time-Stamp field) represents the 
-algebraic sign of this difference (0: positive, 1: negative).
- * 
+ * The TP-Service-Centre-Time-Stamp field is given in semi-octet representation, and represents the local time in the following
+ * way:
+ *
+ * Year: Month: Day: Hour: Minute: Second: Time Zone Digits: 2 2 2 2 2 2 2 (Semi-octets)
+ *
+ * The Time Zone indicates the difference, expressed in quarters of an hour, between the local time and GMT. In the first of the
+ * two semi-octets, the first bit (bit 3 of the seventh octet of the TP-Service-Centre-Time-Stamp field) represents the
+ * algebraic sign of this difference (0: positive, 1: negative).
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface AbsoluteTimeStamp extends Serializable {
 
-	public int getYear();
+    int getYear();
 
-	public int getMonth();
+    int getMonth();
 
-	public int getDay();
+    int getDay();
 
-	public int getHour();
+    int getHour();
 
-	public int getMinute();
+    int getMinute();
 
-	public int getSecond();
+    int getSecond();
 
-	/**
-	 * @return the timeZone in in quarters of an hour
-	 */
-	public int getTimeZone();
+    /**
+     * @return the timeZone in in quarters of an hour
+     */
+    int getTimeZone();
 
-	public void encodeData(OutputStream stm) throws MAPException;
+    void encodeData(OutputStream stm) throws MAPException;
 
 }

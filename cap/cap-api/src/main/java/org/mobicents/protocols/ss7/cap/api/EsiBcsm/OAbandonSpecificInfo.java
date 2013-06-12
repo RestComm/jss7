@@ -23,18 +23,15 @@
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
 /**
-*
-oAbandonSpecificInfo [21] SEQUENCE {
-routeNotPermitted [50] NULL OPTIONAL,
-...
-},
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ oAbandonSpecificInfo [21] SEQUENCE { routeNotPermitted [50] NULL OPTIONAL, ... },
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface OAbandonSpecificInfo {
 
-	public boolean getRouteNotPermitted();
+    boolean getRouteNotPermitted();
 
 }

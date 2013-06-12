@@ -25,24 +25,21 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 import java.util.ArrayList;
 
 /**
- * 
-
-MT-smsCAMELTDP-Criteria ::= SEQUENCE {
-	sms-TriggerDetectionPoint	SMS-TriggerDetectionPoint,
-	tpdu-TypeCriterion	[0]	TPDU-TypeCriterion		OPTIONAL,
-	... }
-
-TPDU-TypeCriterion ::= SEQUENCE SIZE (1..6) OF MT-SMS-TPDU-Type
-
- * 
- * 
+ *
+ MT-smsCAMELTDP-Criteria ::= SEQUENCE { sms-TriggerDetectionPoint SMS-TriggerDetectionPoint, tpdu-TypeCriterion [0]
+ * TPDU-TypeCriterion OPTIONAL, ... }
+ *
+ * TPDU-TypeCriterion ::= SEQUENCE SIZE (1..6) OF MT-SMS-TPDU-Type
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MTsmsCAMELTDPCriteria {
 
-	public SMSTriggerDetectionPoint getSMSTriggerDetectionPoint();
+    SMSTriggerDetectionPoint getSMSTriggerDetectionPoint();
 
-	public ArrayList<MTSMSTPDUType> getTPDUTypeCriterion();
+    ArrayList<MTSMSTPDUType> getTPDUTypeCriterion();
 
 }

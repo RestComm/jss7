@@ -26,23 +26,21 @@ import org.mobicents.protocols.ss7.map.api.service.callhandling.CallReferenceNum
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CallReferenceNumberImpl extends OctetStringBase implements CallReferenceNumber {
 
+    public CallReferenceNumberImpl() {
+        super(1, 8, "CallReferenceNumber");
+    }
 
-	public CallReferenceNumberImpl() {
-		super(1, 8, "CallReferenceNumber");
-	}
+    public CallReferenceNumberImpl(byte[] data) {
+        super(1, 8, "CallReferenceNumber", data);
+    }
 
-	public CallReferenceNumberImpl(byte[] data) {
-		super(1, 8, "CallReferenceNumber", data);
-	}
-
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 }
-

@@ -27,37 +27,29 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSStatus;
 
 /**
-*
-
-ss-Incompatibility  ERROR ::= {
-	PARAMETER
-		SS-IncompatibilityCause
-		-- optional
-	CODE	local:20 }
-
-SS-IncompatibilityCause ::= SEQUENCE {
-	ss-Code		[1] SS-Code	OPTIONAL,
-	basicService	BasicServiceCode	OPTIONAL,
-	ss-Status		[4] SS-Status	OPTIONAL,
-	...}
-
-  
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ss-Incompatibility ERROR ::= { PARAMETER SS-IncompatibilityCause -- optional CODE local:20 }
+ *
+ * SS-IncompatibilityCause ::= SEQUENCE { ss-Code [1] SS-Code OPTIONAL, basicService BasicServiceCode OPTIONAL, ss-Status [4]
+ * SS-Status OPTIONAL, ...}
+ *
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface MAPErrorMessageSsIncompatibility extends MAPErrorMessage {
 
-	public SSCode getSSCode();
+    SSCode getSSCode();
 
-	public BasicServiceCode getBasicService();
+    BasicServiceCode getBasicService();
 
-	public SSStatus getSSStatus();
+    SSStatus getSSStatus();
 
-	public void setSSCode(SSCode val);
+    void setSSCode(SSCode val);
 
-	public void setBasicService(BasicServiceCode val);
+    void setBasicService(BasicServiceCode val);
 
-	public void setSSStatus(SSStatus val);
+    void setSSStatus(SSStatus val);
 
 }

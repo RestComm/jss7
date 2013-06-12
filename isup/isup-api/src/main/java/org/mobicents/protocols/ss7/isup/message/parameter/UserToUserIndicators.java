@@ -23,7 +23,7 @@
 /**
  * Start time:14:23:10 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 package org.mobicents.protocols.ss7.isup.message.parameter;
@@ -31,70 +31,69 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
 /**
  * Start time:14:23:10 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface UserToUserIndicators extends ISUPParameter {
-	public static final int _PARAMETER_CODE = 0x2A;
+    int _PARAMETER_CODE = 0x2A;
 
-	//FIXME: Add C defs
-	
-	/**
-	 * Service 1,2,3 request : no info
-	 */
-	public static final int _REQ_Sx_NO_INFO = 0;
-	/**
-	 * Service 1,2,3 request : not essential
-	 */
-	public static final int _REQ_Sx_RNE = 2;
-	/**
-	 * Service 1,2,3 request : essential
-	 */
-	public static final int _REQ_Sx_RE = 3;
+    // FIXME: Add C defs
 
-	/**
-	 * Service 1,2,3 request : no info
-	 */
-	public static final int _RESP_Sx_NO_INFO = 0;
-	/**
-	 * Service 1,2,3 request : not provided
-	 */
-	public static final int _RESP_Sx_NOT_PROVIDED = 1;
+    /**
+     * Service 1,2,3 request : no info
+     */
+    int _REQ_Sx_NO_INFO = 0;
+    /**
+     * Service 1,2,3 request : not essential
+     */
+    int _REQ_Sx_RNE = 2;
+    /**
+     * Service 1,2,3 request : essential
+     */
+    int _REQ_Sx_RE = 3;
 
-	/**
-	 * Service 1,2,3 request : provided
-	 */
-	public static final int _RESP_Sx_PROVIDED = 2;
+    /**
+     * Service 1,2,3 request : no info
+     */
+    int _RESP_Sx_NO_INFO = 0;
+    /**
+     * Service 1,2,3 request : not provided
+     */
+    int _RESP_Sx_NOT_PROVIDED = 1;
 
-	/**
-	 * See Q.763 3.60 Network discard indicator : no information
-	 */
-	public static final boolean _NDI_NO_INFO = false;
+    /**
+     * Service 1,2,3 request : provided
+     */
+    int _RESP_Sx_PROVIDED = 2;
 
-	/**
-	 * See Q.763 3.60 Network discard indicator : user-to-user information
-	 * discarded by the network
-	 */
-	public static final boolean _NDI_UTUIDBTN = true;
-	
-	public boolean isResponse();
+    /**
+     * See Q.763 3.60 Network discard indicator : no information
+     */
+    boolean _NDI_NO_INFO = false;
 
-	public void setResponse(boolean response);
+    /**
+     * See Q.763 3.60 Network discard indicator : user-to-user information discarded by the network
+     */
+    boolean _NDI_UTUIDBTN = true;
 
-	public int getServiceOne();
+    boolean isResponse();
 
-	public void setServiceOne(int serviceOne);
+    void setResponse(boolean response);
 
-	public int getServiceTwo();
+    int getServiceOne();
 
-	public void setServiceTwo(int serviceTwo);
+    void setServiceOne(int serviceOne);
 
-	public int getServiceThree();
+    int getServiceTwo();
 
-	public void setServiceThree(int serviceThree);
+    void setServiceTwo(int serviceTwo);
 
-	public boolean isNetworkDiscardIndicator();
+    int getServiceThree();
 
-	public void setNetworkDiscardIndicator(boolean networkDiscardIndicator);
+    void setServiceThree(int serviceThree);
+
+    boolean isNetworkDiscardIndicator();
+
+    void setNetworkDiscardIndicator(boolean networkDiscardIndicator);
 
 }

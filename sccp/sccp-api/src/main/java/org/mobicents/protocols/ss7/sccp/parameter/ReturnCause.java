@@ -24,35 +24,34 @@ package org.mobicents.protocols.ss7.sccp.parameter;
 
 /**
  * Return cause values parameter for connectionless message
- * 
+ *
  * @author baranowb
  * @author sergey vetyutnev
  */
-public interface ReturnCause extends Parameter{
-	
-	public final static int PARAMETER_CODE = 0xB;
-	
-	
-//	public final static int NO_TRANSLATION_FOR_NATURE = 0x0;
-//	public final static int NO_TRANSLATION_FOR_ADDRESS = 0x1;
-//	public final static int SUBSYSTEM_CONGESTION = 0x2;
-//	public final static int SUBSYSTEM_FAILURE = 0x3;
-//	public final static int UNEQUIPED_USER = 0x4;
-//	public final static int MTP_FAILURE = 0x5;
-//	public final static int NETWORK_CONGESTION = 0x6;
-//	public final static int UNQALIFIED = 0x7;
-//	public final static int ERR_IN_MSG_TRANSPORT = 0x8;
-//	public final static int ERR_IN_LOCAL_PROCESSING = 0x9;
-//	public final static int CANNOT_REASEMBLE = 0xA;
-//	public final static int SCCP_FAILURE = 0xB;
-//	public final static int HOP_COUNTER_VIOLATION = 0xC;
-//	public final static int SEG_NOT_SUPPORTED = 0xD;
-//	public final static int SEG_FAILURE = 0xE;
-	
+public interface ReturnCause extends Parameter {
+
+    int PARAMETER_CODE = 0xB;
+
+    // int NO_TRANSLATION_FOR_NATURE = 0x0;
+    // int NO_TRANSLATION_FOR_ADDRESS = 0x1;
+    // int SUBSYSTEM_CONGESTION = 0x2;
+    // int SUBSYSTEM_FAILURE = 0x3;
+    // int UNEQUIPED_USER = 0x4;
+    // int MTP_FAILURE = 0x5;
+    // int NETWORK_CONGESTION = 0x6;
+    // int UNQALIFIED = 0x7;
+    // int ERR_IN_MSG_TRANSPORT = 0x8;
+    // int ERR_IN_LOCAL_PROCESSING = 0x9;
+    // int CANNOT_REASEMBLE = 0xA;
+    // int SCCP_FAILURE = 0xB;
+    // int HOP_COUNTER_VIOLATION = 0xC;
+    // int SEG_NOT_SUPPORTED = 0xD;
+    // int SEG_FAILURE = 0xE;
+
     /**
      * Gets the value of this parameter.
-     * 
+     *
      * @return the value of this parameter.
      */
-    public ReturnCauseValue getValue();
+    ReturnCauseValue getValue();
 }

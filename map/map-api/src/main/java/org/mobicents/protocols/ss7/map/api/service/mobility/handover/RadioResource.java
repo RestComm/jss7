@@ -23,24 +23,20 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
 /**
- * 
-
-RadioResource ::= SEQUENCE {
-	radioResourceInformation	RadioResourceInformation,
-	rab-Id		RAB-Id,
-	-- RAB Identity is needed to relate the radio resources with the radio access bearers. 
-	...}
-
-RAB-Id ::= INTEGER (1..255)
-
- * 
+ *
+ RadioResource ::= SEQUENCE { radioResourceInformation RadioResourceInformation, rab-Id RAB-Id, -- RAB Identity is needed to
+ * relate the radio resources with the radio access bearers. ...}
+ *
+ * RAB-Id ::= INTEGER (1..255)
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface RadioResource {
 
-	public RadioResourceInformation getRadioResourceInformation();
+    RadioResourceInformation getRadioResourceInformation();
 
-	public int getRABId();
+    int getRABId();
 
 }

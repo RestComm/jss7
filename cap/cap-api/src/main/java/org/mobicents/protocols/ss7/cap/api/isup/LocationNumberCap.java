@@ -26,25 +26,23 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 
 /**
-*
-ISUP LocationNumber wrapper
-
-LocationNumber {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE ( 
- bound.&minLocationNumberLength .. bound.&maxLocationNumberLength)) 
--- Indicates the Location Number for the calling party. 
--- Refer to ETSI EN 300 356-1 [23] for encoding.
-
-minLocationNumberLength ::= 2
-maxLocationNumberLength ::= 10
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ISUP LocationNumber wrapper
+ *
+ * LocationNumber {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE ( bound.&minLocationNumberLength ..
+ * bound.&maxLocationNumberLength)) -- Indicates the Location Number for the calling party. -- Refer to ETSI EN 300 356-1 [23]
+ * for encoding.
+ *
+ * minLocationNumberLength ::= 2 maxLocationNumberLength ::= 10
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface LocationNumberCap {
 
-	public byte[] getData();
+    byte[] getData();
 
-	public LocationNumber getLocationNumber() throws CAPException;
+    LocationNumber getLocationNumber() throws CAPException;
 
 }

@@ -37,8 +37,6 @@ package org.mobicents.protocols.ss7.utils;
 
 import java.net.DatagramPacket;
 
-
-
 /**
  * This class contains various static utility methods.
  *
@@ -48,6 +46,7 @@ import java.net.DatagramPacket;
 public class Utils {
     /**
      * Construct a String containing a hex-dump of a byte array
+     *
      * @param bytes the data to dump
      * @return a string containing the hexdump
      */
@@ -57,6 +56,7 @@ public class Utils {
 
     /**
      * Construct a String containing a hex-dump of a byte array
+     *
      * @param label the label of the hexdump or null
      * @param bytes the data to dump
      * @return a string containing the hexdump
@@ -115,7 +115,7 @@ public class Utils {
             }
 
             sb.append(hx);
-            cb.append((c < 0x21 || c > 0x7e )? '.' : (char) (c));
+            cb.append((c < 0x21 || c > 0x7e) ? '.' : (char) (c));
 
             if ((i % brk) == 0) {
                 sb.append(" ");

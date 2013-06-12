@@ -45,208 +45,211 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Return;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 
 /**
- * 
+ *
  * @author amit bhayani
  * @author baranowb
  * @author sergey vetyutnev
- * 
+ *
  */
 public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDialogSupplementary {
 
-	protected MAPDialogSupplementaryImpl(MAPApplicationContext appCntx, Dialog tcapDialog, MAPProviderImpl mapProviderImpl, MAPServiceSupplementary mapService,
-			AddressString origReference, AddressString destReference) {
-		super(appCntx, tcapDialog, mapProviderImpl, mapService, origReference, destReference);
-	}
+    protected MAPDialogSupplementaryImpl(MAPApplicationContext appCntx, Dialog tcapDialog, MAPProviderImpl mapProviderImpl,
+            MAPServiceSupplementary mapService, AddressString origReference, AddressString destReference) {
+        super(appCntx, tcapDialog, mapProviderImpl, mapService, origReference, destReference);
+    }
 
-	public Long addProcessUnstructuredSSRequest(CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
-			ISDNAddressString msisdn) throws MAPException {
-		return this.addProcessUnstructuredSSRequest(_Timer_Default, ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
-	}
+    public Long addProcessUnstructuredSSRequest(CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString,
+            AlertingPattern alertingPatter, ISDNAddressString msisdn) throws MAPException {
+        return this.addProcessUnstructuredSSRequest(_Timer_Default, ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
+    }
 
-	public Long addProcessUnstructuredSSRequest(int customInvokeTimeout, CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString,
-			AlertingPattern alertingPatter, ISDNAddressString msisdn) throws MAPException {
+    public Long addProcessUnstructuredSSRequest(int customInvokeTimeout, CBSDataCodingScheme ussdDataCodingScheme,
+            USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn) throws MAPException {
 
-		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
-		if (customInvokeTimeout == _Timer_Default)
-			invoke.setTimeout(600000); // 10 minutes
-		else
-			invoke.setTimeout(customInvokeTimeout);
+        Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+        if (customInvokeTimeout == _Timer_Default)
+            invoke.setTimeout(600000); // 10 minutes
+        else
+            invoke.setTimeout(customInvokeTimeout);
 
-		// Operation Code
-		OperationCode oc = TcapFactory.createOperationCode();
-		oc.setLocalOperationCode((long) MAPOperationCode.processUnstructuredSS_Request);
-		invoke.setOperationCode(oc);
+        // Operation Code
+        OperationCode oc = TcapFactory.createOperationCode();
+        oc.setLocalOperationCode((long) MAPOperationCode.processUnstructuredSS_Request);
+        invoke.setOperationCode(oc);
 
-		ProcessUnstructuredSSRequestImpl req = new ProcessUnstructuredSSRequestImpl(ussdDataCodingScheme, ussdString, alertingPatter,
-				msisdn);
-		AsnOutputStream aos = new AsnOutputStream();
-		req.encodeData(aos);
+        ProcessUnstructuredSSRequestImpl req = new ProcessUnstructuredSSRequestImpl(ussdDataCodingScheme, ussdString,
+                alertingPatter, msisdn);
+        AsnOutputStream aos = new AsnOutputStream();
+        req.encodeData(aos);
 
-		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-		p.setTagClass(req.getTagClass());
-		p.setPrimitive(req.getIsPrimitive());
-		p.setTag(req.getTag());
-		p.setData(aos.toByteArray());
-		invoke.setParameter(p);
+        Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+        p.setTagClass(req.getTagClass());
+        p.setPrimitive(req.getIsPrimitive());
+        p.setTag(req.getTag());
+        p.setData(aos.toByteArray());
+        invoke.setParameter(p);
 
-		Long invokeId;
-		try {
-			invokeId = this.tcapDialog.getNewInvokeId();
-			invoke.setInvokeId(invokeId);
-		} catch (TCAPException e) {
-			throw new MAPException(e.getMessage(), e);
-		}
+        Long invokeId;
+        try {
+            invokeId = this.tcapDialog.getNewInvokeId();
+            invoke.setInvokeId(invokeId);
+        } catch (TCAPException e) {
+            throw new MAPException(e.getMessage(), e);
+        }
 
-		this.sendInvokeComponent(invoke);
+        this.sendInvokeComponent(invoke);
 
-		return invokeId;
+        return invokeId;
 
-	}
+    }
 
-	public void addProcessUnstructuredSSResponse(long invokeId, CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString) throws MAPException {
-		Return returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
+    public void addProcessUnstructuredSSResponse(long invokeId, CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString)
+            throws MAPException {
+        Return returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
 
-		returnResult.setInvokeId(invokeId);
+        returnResult.setInvokeId(invokeId);
 
-		// Operation Code
-		OperationCode oc = TcapFactory.createOperationCode();
-		oc.setLocalOperationCode((long) MAPOperationCode.processUnstructuredSS_Request);
-		returnResult.setOperationCode(oc);
+        // Operation Code
+        OperationCode oc = TcapFactory.createOperationCode();
+        oc.setLocalOperationCode((long) MAPOperationCode.processUnstructuredSS_Request);
+        returnResult.setOperationCode(oc);
 
-		ProcessUnstructuredSSResponseImpl req = new ProcessUnstructuredSSResponseImpl(ussdDataCodingScheme, ussdString);
-		AsnOutputStream aos = new AsnOutputStream();
-		req.encodeData(aos);
+        ProcessUnstructuredSSResponseImpl req = new ProcessUnstructuredSSResponseImpl(ussdDataCodingScheme, ussdString);
+        AsnOutputStream aos = new AsnOutputStream();
+        req.encodeData(aos);
 
-		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-		p.setTagClass(req.getTagClass());
-		p.setPrimitive(req.getIsPrimitive());
-		p.setTag(req.getTag());
-		p.setData(aos.toByteArray());
-		returnResult.setParameter(p);
+        Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+        p.setTagClass(req.getTagClass());
+        p.setPrimitive(req.getIsPrimitive());
+        p.setTag(req.getTag());
+        p.setData(aos.toByteArray());
+        returnResult.setParameter(p);
 
-		this.sendReturnResultLastComponent((ReturnResultLast) returnResult);
-	}
+        this.sendReturnResultLastComponent((ReturnResultLast) returnResult);
+    }
 
-	public Long addUnstructuredSSRequest(CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
-			ISDNAddressString msisdn) throws MAPException {
-		return this.addUnstructuredSSRequest(_Timer_Default, ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
-	}
+    public Long addUnstructuredSSRequest(CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString,
+            AlertingPattern alertingPatter, ISDNAddressString msisdn) throws MAPException {
+        return this.addUnstructuredSSRequest(_Timer_Default, ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
+    }
 
-	public Long addUnstructuredSSRequest(int customInvokeTimeout, CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
-			ISDNAddressString msisdn) throws MAPException {
+    public Long addUnstructuredSSRequest(int customInvokeTimeout, CBSDataCodingScheme ussdDataCodingScheme,
+            USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn) throws MAPException {
 
-		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
-		if (customInvokeTimeout == _Timer_Default)
-			invoke.setTimeout(_Timer_ml);
-		else
-			invoke.setTimeout(customInvokeTimeout);
+        Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+        if (customInvokeTimeout == _Timer_Default)
+            invoke.setTimeout(_Timer_ml);
+        else
+            invoke.setTimeout(customInvokeTimeout);
 
-		// Operation Code
-		OperationCode oc = TcapFactory.createOperationCode();
-		oc.setLocalOperationCode((long) MAPOperationCode.unstructuredSS_Request);
-		invoke.setOperationCode(oc);
+        // Operation Code
+        OperationCode oc = TcapFactory.createOperationCode();
+        oc.setLocalOperationCode((long) MAPOperationCode.unstructuredSS_Request);
+        invoke.setOperationCode(oc);
 
-		UnstructuredSSRequestImpl req = new UnstructuredSSRequestImpl(ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
-		AsnOutputStream aos = new AsnOutputStream();
-		req.encodeData(aos);
+        UnstructuredSSRequestImpl req = new UnstructuredSSRequestImpl(ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
+        AsnOutputStream aos = new AsnOutputStream();
+        req.encodeData(aos);
 
-		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-		p.setTagClass(req.getTagClass());
-		p.setPrimitive(req.getIsPrimitive());
-		p.setTag(req.getTag());
-		p.setData(aos.toByteArray());
-		invoke.setParameter(p);
+        Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+        p.setTagClass(req.getTagClass());
+        p.setPrimitive(req.getIsPrimitive());
+        p.setTag(req.getTag());
+        p.setData(aos.toByteArray());
+        invoke.setParameter(p);
 
-		Long invokeId;
-		try {
-			invokeId = this.tcapDialog.getNewInvokeId();
-			invoke.setInvokeId(invokeId);
-		} catch (TCAPException e) {
-			throw new MAPException(e.getMessage(), e);
-		}
+        Long invokeId;
+        try {
+            invokeId = this.tcapDialog.getNewInvokeId();
+            invoke.setInvokeId(invokeId);
+        } catch (TCAPException e) {
+            throw new MAPException(e.getMessage(), e);
+        }
 
-		this.sendInvokeComponent(invoke);
+        this.sendInvokeComponent(invoke);
 
-		return invokeId;
-	}
-	
-	public Long addUnstructuredSSNotifyRequest(CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString, AlertingPattern alertingPatter,
-			ISDNAddressString msisdn) throws MAPException {
-		return this.addUnstructuredSSNotifyRequest(_Timer_Default, ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
-	}
+        return invokeId;
+    }
 
-	public Long addUnstructuredSSNotifyRequest(int customInvokeTimeout, CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString,
-			AlertingPattern alertingPatter, ISDNAddressString msisdn) throws MAPException {
+    public Long addUnstructuredSSNotifyRequest(CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString,
+            AlertingPattern alertingPatter, ISDNAddressString msisdn) throws MAPException {
+        return this.addUnstructuredSSNotifyRequest(_Timer_Default, ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
+    }
 
-		Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
-		if (customInvokeTimeout == _Timer_Default)
-			invoke.setTimeout(_Timer_ml);
-		else
-			invoke.setTimeout(customInvokeTimeout);
+    public Long addUnstructuredSSNotifyRequest(int customInvokeTimeout, CBSDataCodingScheme ussdDataCodingScheme,
+            USSDString ussdString, AlertingPattern alertingPatter, ISDNAddressString msisdn) throws MAPException {
 
-		// Operation Code
-		OperationCode oc = TcapFactory.createOperationCode();
-		oc.setLocalOperationCode((long) MAPOperationCode.unstructuredSS_Notify);
-		invoke.setOperationCode(oc);
+        Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+        if (customInvokeTimeout == _Timer_Default)
+            invoke.setTimeout(_Timer_ml);
+        else
+            invoke.setTimeout(customInvokeTimeout);
 
-		UnstructuredSSRequestImpl req = new UnstructuredSSRequestImpl(ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
-		AsnOutputStream aos = new AsnOutputStream();
-		req.encodeData(aos);
+        // Operation Code
+        OperationCode oc = TcapFactory.createOperationCode();
+        oc.setLocalOperationCode((long) MAPOperationCode.unstructuredSS_Notify);
+        invoke.setOperationCode(oc);
 
-		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-		p.setTagClass(req.getTagClass());
-		p.setPrimitive(req.getIsPrimitive());
-		p.setTag(req.getTag());
-		p.setData(aos.toByteArray());
-		invoke.setParameter(p);
+        UnstructuredSSRequestImpl req = new UnstructuredSSRequestImpl(ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
+        AsnOutputStream aos = new AsnOutputStream();
+        req.encodeData(aos);
 
-		Long invokeId;
-		try {
-			invokeId = this.tcapDialog.getNewInvokeId();
-			invoke.setInvokeId(invokeId);
-		} catch (TCAPException e) {
-			throw new MAPException(e.getMessage(), e);
-		}
+        Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+        p.setTagClass(req.getTagClass());
+        p.setPrimitive(req.getIsPrimitive());
+        p.setTag(req.getTag());
+        p.setData(aos.toByteArray());
+        invoke.setParameter(p);
 
-		this.sendInvokeComponent(invoke);
+        Long invokeId;
+        try {
+            invokeId = this.tcapDialog.getNewInvokeId();
+            invoke.setInvokeId(invokeId);
+        } catch (TCAPException e) {
+            throw new MAPException(e.getMessage(), e);
+        }
 
-		return invokeId;
-	}
+        this.sendInvokeComponent(invoke);
 
-	public void addUnstructuredSSResponse(long invokeId, CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString) throws MAPException {
+        return invokeId;
+    }
 
-		Return returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
+    public void addUnstructuredSSResponse(long invokeId, CBSDataCodingScheme ussdDataCodingScheme, USSDString ussdString)
+            throws MAPException {
 
-		returnResult.setInvokeId(invokeId);
+        Return returnResult = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
 
-		// Operation Code
-		OperationCode oc = TcapFactory.createOperationCode();
-		oc.setLocalOperationCode((long) MAPOperationCode.unstructuredSS_Request);
-		returnResult.setOperationCode(oc);
+        returnResult.setInvokeId(invokeId);
 
-		UnstructuredSSResponseImpl req = new UnstructuredSSResponseImpl(ussdDataCodingScheme, ussdString);
-		AsnOutputStream aos = new AsnOutputStream();
-		req.encodeData(aos);
+        // Operation Code
+        OperationCode oc = TcapFactory.createOperationCode();
+        oc.setLocalOperationCode((long) MAPOperationCode.unstructuredSS_Request);
+        returnResult.setOperationCode(oc);
 
-		Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-		p.setTagClass(req.getTagClass());
-		p.setPrimitive(req.getIsPrimitive());
-		p.setTag(req.getTag());
-		p.setData(aos.toByteArray());
-		returnResult.setParameter(p);
+        UnstructuredSSResponseImpl req = new UnstructuredSSResponseImpl(ussdDataCodingScheme, ussdString);
+        AsnOutputStream aos = new AsnOutputStream();
+        req.encodeData(aos);
 
-		this.sendReturnResultLastComponent((ReturnResultLast) returnResult);
-	}
+        Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+        p.setTagClass(req.getTagClass());
+        p.setPrimitive(req.getIsPrimitive());
+        p.setTag(req.getTag());
+        p.setData(aos.toByteArray());
+        returnResult.setParameter(p);
 
-	public void addUnstructuredSSNotifyResponse(long invokeId) throws MAPException {
+        this.sendReturnResultLastComponent((ReturnResultLast) returnResult);
+    }
 
-		ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
+    public void addUnstructuredSSNotifyResponse(long invokeId) throws MAPException {
 
-		resultLast.setInvokeId(invokeId);
+        ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
+                .createTCResultLastRequest();
 
-		// we need not Operation Code because no answer
+        resultLast.setInvokeId(invokeId);
 
-		this.sendReturnResultLastComponent(resultLast);
-	}
+        // we need not Operation Code because no answer
+
+        this.sendReturnResultLastComponent(resultLast);
+    }
 
 }

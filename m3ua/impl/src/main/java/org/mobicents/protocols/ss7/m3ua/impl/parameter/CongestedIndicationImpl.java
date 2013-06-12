@@ -26,12 +26,11 @@ import org.mobicents.protocols.ss7.m3ua.parameter.CongestedIndication;
 import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 
 /**
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
-public class CongestedIndicationImpl extends ParameterImpl implements
-        CongestedIndication {
+public class CongestedIndicationImpl extends ParameterImpl implements CongestedIndication {
 
     private CongestionLevel level;
 
@@ -41,7 +40,7 @@ public class CongestedIndicationImpl extends ParameterImpl implements
     }
 
     protected CongestedIndicationImpl(byte[] data) {
-        //data[0], data[1] and data[2] are reserved
+        // data[0], data[1] and data[2] are reserved
         this.level = CongestionLevel.getCongestionLevel(data[3]);
         this.tag = Parameter.Congestion_Indications;
     }

@@ -26,49 +26,32 @@ import org.mobicents.protocols.ss7.map.api.primitives.GlobalCellId;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
- * 
-
-MAP V1:
-PerformHandover ::= OPERATION --Timer s
-ARGUMENT
-	performHO-Arg PerformHO-Arg
-RESULT
-	performHO-Res PerformHO-Res
-ERRORS {
-	SystemFailure, 
-	UnexpectedDataValue,
-	UnknownBaseStation, 
-	InvalidTargetBaseStation, 
-	NoRadioResourceAvailable, 
-	NoHandoverNumberAvailable}
-
-MAP V1:
-PerformHO-Arg ::= SEQUENCE { 146
-	targetCellId 		GlobalCellId, 
-	servingCellId 		GlobalCellId, 
-	channelType 		ChannelType, 
-	classmarkInfo 		ClassmarkInfo, 
-	handoverPriority 	[11] HandoverPriority OPTIONAL, 
-	kc 					[12] Kc OPTIONAL}
-
-Kc ::= octet STRING (SIZE (8))
-
- * 
+ *
+ MAP V1: PerformHandover ::= OPERATION --Timer s ARGUMENT performHO-Arg PerformHO-Arg RESULT performHO-Res PerformHO-Res
+ * ERRORS { SystemFailure, UnexpectedDataValue, UnknownBaseStation, InvalidTargetBaseStation, NoRadioResourceAvailable,
+ * NoHandoverNumberAvailable}
+ *
+ * MAP V1: PerformHO-Arg ::= SEQUENCE { 146 targetCellId GlobalCellId, servingCellId GlobalCellId, channelType ChannelType,
+ * classmarkInfo ClassmarkInfo, handoverPriority [11] HandoverPriority OPTIONAL, kc [12] Kc OPTIONAL}
+ *
+ * Kc ::= octet STRING (SIZE (8))
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface PerformHandoverRequest extends MobilityMessage {
 
-	public GlobalCellId getTargetCellId();
+    GlobalCellId getTargetCellId();
 
-	public GlobalCellId getServingCellId();
+    GlobalCellId getServingCellId();
 
-	public ChannelType getChannelType();
+    ChannelType getChannelType();
 
-	public ClassmarkInfo getClassmarkInfo();
+    ClassmarkInfo getClassmarkInfo();
 
-	public HandoverPriority getHandoverPriority();
+    HandoverPriority getHandoverPriority();
 
-	public byte[] getKc();
+    byte[] getKc();
 
 }

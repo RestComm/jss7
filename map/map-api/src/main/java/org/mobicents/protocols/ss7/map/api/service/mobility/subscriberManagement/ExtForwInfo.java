@@ -28,27 +28,23 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 
 /**
- * 
-
-Ext-ForwInfo ::= SEQUENCE {
-	ss-Code		SS-Code,
-	forwardingFeatureList	Ext-ForwFeatureList,
-	extensionContainer	[0] ExtensionContainer	OPTIONAL,
-	...}
-
-Ext-ForwFeatureList ::= SEQUENCE SIZE (1..32) OF Ext-ForwFeature
-
- * 
- * 
+ *
+ Ext-ForwInfo ::= SEQUENCE { ss-Code SS-Code, forwardingFeatureList Ext-ForwFeatureList, extensionContainer [0]
+ * ExtensionContainer OPTIONAL, ...}
+ *
+ * Ext-ForwFeatureList ::= SEQUENCE SIZE (1..32) OF Ext-ForwFeature
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ExtForwInfo {
 
-	public SSCode getSsCode();
+    SSCode getSsCode();
 
-	public ArrayList<ExtForwFeature> getForwardingFeatureList();
+    ArrayList<ExtForwFeature> getForwardingFeatureList();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

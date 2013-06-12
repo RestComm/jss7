@@ -38,182 +38,180 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class MAPErrorMessageUnknownSubscriberImpl extends MAPErrorMessageImpl implements MAPErrorMessageUnknownSubscriber {
 
-	private MAPExtensionContainer extensionContainer;
-	private UnknownSubscriberDiagnostic unknownSubscriberDiagnostic;	
+    private MAPExtensionContainer extensionContainer;
+    private UnknownSubscriberDiagnostic unknownSubscriberDiagnostic;
 
-	
-	public MAPErrorMessageUnknownSubscriberImpl(MAPExtensionContainer extensionContainer, UnknownSubscriberDiagnostic unknownSubscriberDiagnostic) {
-		super((long) MAPErrorCode.unknownSubscriber);
+    public MAPErrorMessageUnknownSubscriberImpl(MAPExtensionContainer extensionContainer,
+            UnknownSubscriberDiagnostic unknownSubscriberDiagnostic) {
+        super((long) MAPErrorCode.unknownSubscriber);
 
-		this.extensionContainer = extensionContainer;
-		this.unknownSubscriberDiagnostic = unknownSubscriberDiagnostic;
-	}
-	
-	protected MAPErrorMessageUnknownSubscriberImpl() {
-		super((long) MAPErrorCode.unknownSubscriber);
-	}
-	
+        this.extensionContainer = extensionContainer;
+        this.unknownSubscriberDiagnostic = unknownSubscriberDiagnostic;
+    }
 
-	public boolean isEmUnknownSubscriber() {
-		return true;
-	}
+    protected MAPErrorMessageUnknownSubscriberImpl() {
+        super((long) MAPErrorCode.unknownSubscriber);
+    }
 
-	public MAPErrorMessageUnknownSubscriber getEmUnknownSubscriber() {
-		return this;
-	}
+    public boolean isEmUnknownSubscriber() {
+        return true;
+    }
 
-	public MAPExtensionContainer getExtensionContainer() {
-		return this.extensionContainer;
-	}
+    public MAPErrorMessageUnknownSubscriber getEmUnknownSubscriber() {
+        return this;
+    }
 
-	public UnknownSubscriberDiagnostic getUnknownSubscriberDiagnostic() {
-		return this.unknownSubscriberDiagnostic;
-	}
+    public MAPExtensionContainer getExtensionContainer() {
+        return this.extensionContainer;
+    }
 
-	public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
-		this.extensionContainer = extensionContainer;
-	}
+    public UnknownSubscriberDiagnostic getUnknownSubscriberDiagnostic() {
+        return this.unknownSubscriberDiagnostic;
+    }
 
-	public void setUnknownSubscriberDiagnostic(UnknownSubscriberDiagnostic unknownSubscriberDiagnostic) {
-		this.unknownSubscriberDiagnostic = unknownSubscriberDiagnostic;
-	}	
+    public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
+        this.extensionContainer = extensionContainer;
+    }
 
-	
-	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
-	}
+    public void setUnknownSubscriberDiagnostic(UnknownSubscriberDiagnostic unknownSubscriberDiagnostic) {
+        this.unknownSubscriberDiagnostic = unknownSubscriberDiagnostic;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public int getTag() throws MAPException {
+        return Tag.SEQUENCE;
+    }
 
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageUnknownSubscriberImpl: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageUnknownSubscriberImpl: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageUnknownSubscriberImpl: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageUnknownSubscriberImpl: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageUnknownSubscriberImpl: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageUnknownSubscriberImpl: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
-	private void _decode(AsnInputStream localAis, int length) throws MAPParsingComponentException, IOException, AsnException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageUnknownSubscriberImpl: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageUnknownSubscriberImpl: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		this.unknownSubscriberDiagnostic = null;
-		this.extensionContainer = null;
-		
-		if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.SEQUENCE || localAis.isTagPrimitive())
-			throw new MAPParsingComponentException(
-					"Error decoding MAPErrorMessageUnknownSubscriberImpl: bad tag class or tag or parameter is primitive",
-					MAPParsingComponentExceptionReason.MistypedParameter);
+    private void _decode(AsnInputStream localAis, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		AsnInputStream ais = localAis.readSequenceStreamData(length);
+        this.unknownSubscriberDiagnostic = null;
+        this.extensionContainer = null;
 
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.SEQUENCE || localAis.isTagPrimitive())
+            throw new MAPParsingComponentException(
+                    "Error decoding MAPErrorMessageUnknownSubscriberImpl: bad tag class or tag or parameter is primitive",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
 
-			int tag = ais.readTag();
+        AsnInputStream ais = localAis.readSequenceStreamData(length);
 
-			switch (ais.getTagClass()) {
-			case Tag.CLASS_UNIVERSAL:
-				switch (tag) {
-				case Tag.SEQUENCE:
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
-					break;
-					
-				case Tag.ENUMERATED:
-					int code = (int) ais.readInteger();
-					this.unknownSubscriberDiagnostic = UnknownSubscriberDiagnostic.getInstance(code);
-					break;
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-				break;
+            int tag = ais.readTag();
 
-			default:
-				ais.advanceElement();
-				break;
-			}
-		}
-	}
+            switch (ais.getTagClass()) {
+                case Tag.CLASS_UNIVERSAL:
+                    switch (tag) {
+                        case Tag.SEQUENCE:
+                            this.extensionContainer = new MAPExtensionContainerImpl();
+                            ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                            break;
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+                        case Tag.ENUMERATED:
+                            int code = (int) ais.readInteger();
+                            this.unknownSubscriberDiagnostic = UnknownSubscriberDiagnostic.getInstance(code);
+                            break;
 
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
-	}
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+                    break;
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, false, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MAPErrorMessageUnknownSubscriber: " + e.getMessage(), e);
-		}
-	}
+                default:
+                    ais.advanceElement();
+                    break;
+            }
+        }
+    }
 
-	public void encodeData(AsnOutputStream aos) throws MAPException {
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
-		if (this.unknownSubscriberDiagnostic == null && this.extensionContainer == null)
-			return;
+        this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+    }
 
-		try {
-			if (this.extensionContainer != null)
-				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(aos);
-			if (this.unknownSubscriberDiagnostic != null)
-				aos.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.unknownSubscriberDiagnostic.getCode());
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding MAPErrorMessageUnknownSubscriber: " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MAPErrorMessageUnknownSubscriber: " + e.getMessage(), e);
-		}
-	}
+        try {
+            asnOs.writeTag(tagClass, false, tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding MAPErrorMessageUnknownSubscriber: " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append("MAPErrorMessageUnknownSubscriber [");
-		if (this.extensionContainer != null)
-			sb.append("extensionContainer=" + this.extensionContainer.toString());
-		if (this.unknownSubscriberDiagnostic != null)
-			sb.append(", unknownSubscriberDiagnostic=" + this.unknownSubscriberDiagnostic.toString());
-		sb.append("]");
-		
-		return sb.toString();
-	}
+    public void encodeData(AsnOutputStream aos) throws MAPException {
+
+        if (this.unknownSubscriberDiagnostic == null && this.extensionContainer == null)
+            return;
+
+        try {
+            if (this.extensionContainer != null)
+                ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(aos);
+            if (this.unknownSubscriberDiagnostic != null)
+                aos.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.unknownSubscriberDiagnostic.getCode());
+
+        } catch (IOException e) {
+            throw new MAPException("IOException when encoding MAPErrorMessageUnknownSubscriber: " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding MAPErrorMessageUnknownSubscriber: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("MAPErrorMessageUnknownSubscriber [");
+        if (this.extensionContainer != null)
+            sb.append("extensionContainer=" + this.extensionContainer.toString());
+        if (this.unknownSubscriberDiagnostic != null)
+            sb.append(", unknownSubscriberDiagnostic=" + this.unknownSubscriberDiagnostic.toString());
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

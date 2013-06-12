@@ -25,27 +25,22 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-PDN-GW-Identity ::= SEQUENCE {
-	pdn-gw-ipv4-Address	[0] PDP-Address	OPTIONAL,
-	pdn-gw-ipv6-Address	[1] PDP-Address	OPTIONAL,
-	pdn-gw-name	[2] FQDN		OPTIONAL,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	... }
-
- * 
+ *
+ PDN-GW-Identity ::= SEQUENCE { pdn-gw-ipv4-Address [0] PDP-Address OPTIONAL, pdn-gw-ipv6-Address [1] PDP-Address OPTIONAL,
+ * pdn-gw-name [2] FQDN OPTIONAL, extensionContainer [3] ExtensionContainer OPTIONAL, ... }
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface PDNGWIdentity {
 
-	public PDPAddress getPdnGwIpv4Address();
+    PDPAddress getPdnGwIpv4Address();
 
-	public PDPAddress getPdnGwIpv6Address();
+    PDPAddress getPdnGwIpv6Address();
 
-	public FQDN getPdnGwName();
+    FQDN getPdnGwName();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

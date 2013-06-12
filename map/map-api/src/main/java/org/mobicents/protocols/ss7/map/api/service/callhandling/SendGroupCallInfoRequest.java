@@ -32,64 +32,42 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.LongGroupId;
 
 /**
- * 
-
-MAP V3:
-
-sendGroupCallInfo  OPERATION ::= {				--Timer m
-	ARGUMENT
-		SendGroupCallInfoArg
-	RESULT
-		SendGroupCallInfoRes
-	ERRORS {
-		systemFailure |
-		ongoingGroupCall |
-		unexpectedDataValue |
-		dataMissing |
-		teleserviceNotProvisioned |
-		unknownSubscriber}
-	CODE	local:84 }
-
-SendGroupCallInfoArg ::= SEQUENCE {
-	requestedInfo	RequestedInfo,
-	groupId		Long-GroupId, 
-	teleservice	Ext-TeleserviceCode,
-	cellId		[0] GlobalCellId	OPTIONAL,
-	imsi			[1] IMSI		OPTIONAL,
-	tmsi			[2] TMSI		OPTIONAL,
-	additionalInfo	[3] AdditionalInfo	OPTIONAL,
-	talkerPriority	[4] TalkerPriority	OPTIONAL,
-	cksn			[5] Cksn		OPTIONAL,
-	extensionContainer	[6] ExtensionContainer	OPTIONAL,
-	... }
-
-Cksn ::= OCTET STRING (SIZE (1))
-	-- The internal structure is defined in 3GPP TS 24.008
-
- * 
+ *
+ MAP V3:
+ *
+ * sendGroupCallInfo OPERATION ::= { --Timer m ARGUMENT SendGroupCallInfoArg RESULT SendGroupCallInfoRes ERRORS { systemFailure
+ * | ongoingGroupCall | unexpectedDataValue | dataMissing | teleserviceNotProvisioned | unknownSubscriber} CODE local:84 }
+ *
+ * SendGroupCallInfoArg ::= SEQUENCE { requestedInfo RequestedInfo, groupId Long-GroupId, teleservice Ext-TeleserviceCode,
+ * cellId [0] GlobalCellId OPTIONAL, imsi [1] IMSI OPTIONAL, tmsi [2] TMSI OPTIONAL, additionalInfo [3] AdditionalInfo OPTIONAL,
+ * talkerPriority [4] TalkerPriority OPTIONAL, cksn [5] Cksn OPTIONAL, extensionContainer [6] ExtensionContainer OPTIONAL, ... }
+ *
+ * Cksn ::= OCTET STRING (SIZE (1)) -- The internal structure is defined in 3GPP TS 24.008
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SendGroupCallInfoRequest extends CallHandlingMessage {
 
-	public RequestedInfo getRequestedInfo();
+    RequestedInfo getRequestedInfo();
 
-	public LongGroupId getGroupId();
+    LongGroupId getGroupId();
 
-	public ExtTeleserviceCode getTeleservice();
+    ExtTeleserviceCode getTeleservice();
 
-	public GlobalCellId getCellId();
+    GlobalCellId getCellId();
 
-	public IMSI getImsi();
+    IMSI getImsi();
 
-	public TMSI getTmsi();
+    TMSI getTmsi();
 
-	public AdditionalInfo getAdditionalInfo();
+    AdditionalInfo getAdditionalInfo();
 
-	public TalkerPriority getTalkerPriority();
+    TalkerPriority getTalkerPriority();
 
-	public byte[] getCksn();
+    byte[] getCksn();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

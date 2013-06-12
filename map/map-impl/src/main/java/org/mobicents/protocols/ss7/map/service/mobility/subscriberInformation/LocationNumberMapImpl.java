@@ -38,151 +38,152 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class LocationNumberMapImpl implements LocationNumberMap, MAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "LocationNumber";
-	
-	private byte[] data;
+    public static final String _PrimitiveName = "LocationNumber";
 
-	public LocationNumberMapImpl() {
-	}
+    private byte[] data;
 
-	public LocationNumberMapImpl(byte[] data) {
-		this.data = data;
-	}
+    public LocationNumberMapImpl() {
+    }
 
-	public LocationNumberMapImpl(LocationNumber locationNumber) throws MAPException {
-		if (locationNumber == null)
-			throw new MAPException("The locationNumber parameter must not be null");
-		try {
-			this.data = ((LocationNumberImpl) locationNumber).encode();
-		} catch (ParameterException e) {
-			throw new MAPException("ParameterException when encoding locationNumber: " + e.getMessage(), e);
-		}
-	}
-	
-	public byte[] getData() {
-		return data;
-	}
+    public LocationNumberMapImpl(byte[] data) {
+        this.data = data;
+    }
 
-	public LocationNumber getLocationNumber() throws MAPException {
-		if (this.data == null)
-			throw new MAPException("The data has not been filled");
-		
-		try {
-			LocationNumberImpl ln = new LocationNumberImpl();
-			ln.decode(this.data);
-			return ln;
-		} catch (ParameterException e) {
-			throw new MAPException("ParameterException when decoding locationNumber: " + e.getMessage(), e);
-		}
-	}
+    public LocationNumberMapImpl(LocationNumber locationNumber) throws MAPException {
+        if (locationNumber == null)
+            throw new MAPException("The locationNumber parameter must not be null");
+        try {
+            this.data = ((LocationNumberImpl) locationNumber).encode();
+        } catch (ParameterException e) {
+            throw new MAPException("ParameterException when encoding locationNumber: " + e.getMessage(), e);
+        }
+    }
 
-	public int getTag() throws MAPException {
-		return Tag.STRING_OCTET;
-	}
+    public byte[] getData() {
+        return data;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public LocationNumber getLocationNumber() throws MAPException {
+        if (this.data == null)
+            throw new MAPException("The data has not been filled");
 
-	public boolean getIsPrimitive() {
-		return true;
-	}
+        try {
+            LocationNumberImpl ln = new LocationNumberImpl();
+            ln.decode(this.data);
+            return ln;
+        } catch (ParameterException e) {
+            throw new MAPException("ParameterException when decoding locationNumber: " + e.getMessage(), e);
+        }
+    }
 
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+    public int getTag() throws MAPException {
+        return Tag.STRING_OCTET;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-	private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		this.data = ais.readOctetStringData(length);
-		if (this.data.length < 2 || this.data.length > 10)
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": value must be from 2 to 10 bytes length, found: "
-					+ this.data.length, MAPParsingComponentExceptionReason.MistypedParameter);
-	}
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
-	}
+    private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        this.data = ais.readOctetStringData(length);
+        if (this.data.length < 2 || this.data.length > 10)
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": value must be from 2 to 10 bytes length, found: " + this.data.length,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		
-		if (this.data == null)
-			throw new MAPException("Data must not be null");
-		if (this.data.length < 2 || this.data.length > 10)
-			throw new MAPException("Data length must be from 2 to 10");
-		
-		asnOs.writeOctetStringData(data);
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("LocationNumberMap [");
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
-		if (this.data != null) {
-			sb.append("data=");
-			sb.append(this.printDataArr(this.data));
-			sb.append("\n");
-			try {
-				sb.append(this.getLocationNumber().toString());
-			} catch (MAPException e) {
-			}
-		}
+        this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, this.getTag());
+    }
 
-		sb.append("]");
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 
-		return sb.toString();
-	}
-	
-	private String printDataArr(byte[] arr) {
-		StringBuilder sb = new StringBuilder();
-		for (int b : arr) {
-			sb.append(b);
-			sb.append(", ");
-		}
+        try {
+            asnOs.writeTag(tagClass, true, tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		return sb.toString();
-	}
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
+
+        if (this.data == null)
+            throw new MAPException("Data must not be null");
+        if (this.data.length < 2 || this.data.length > 10)
+            throw new MAPException("Data length must be from 2 to 10");
+
+        asnOs.writeOctetStringData(data);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("LocationNumberMap [");
+
+        if (this.data != null) {
+            sb.append("data=");
+            sb.append(this.printDataArr(this.data));
+            sb.append("\n");
+            try {
+                sb.append(this.getLocationNumber().toString());
+            } catch (MAPException e) {
+            }
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
+
+    private String printDataArr(byte[] arr) {
+        StringBuilder sb = new StringBuilder();
+        for (int b : arr) {
+            sb.append(b);
+            sb.append(", ");
+        }
+
+        return sb.toString();
+    }
 }

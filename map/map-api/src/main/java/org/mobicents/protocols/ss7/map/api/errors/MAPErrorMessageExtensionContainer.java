@@ -25,19 +25,17 @@ package org.mobicents.protocols.ss7.map.api.errors;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * The MAP ReturnError message: with a single parameter - ExtensionContainer 
- * 
+ * The MAP ReturnError message: with a single parameter - ExtensionContainer
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MAPErrorMessageExtensionContainer extends MAPErrorMessage {
 
-	public Long getErrorCode();
+    Long getErrorCode();
 
-	public MAPExtensionContainer getExtensionContainer();
-	
-	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
-	
+    MAPExtensionContainer getExtensionContainer();
+
+    void setExtensionContainer(MAPExtensionContainer extensionContainer);
+
 }
-
-

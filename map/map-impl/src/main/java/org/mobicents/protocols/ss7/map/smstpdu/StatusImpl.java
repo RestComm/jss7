@@ -25,30 +25,30 @@ package org.mobicents.protocols.ss7.map.smstpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.Status;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class StatusImpl implements Status {
 
-	private int code;
+    private int code;
 
-	public StatusImpl(int code) {
-		this.code = code;
-	}
+    public StatusImpl(int code) {
+        this.code = code;
+    }
 
-	public int getCode() {
-		return this.code;
-	}
+    public int getCode() {
+        return this.code;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
 
-		sb.append("TP-Status [");
-		sb.append(this.code);
-		sb.append("]");
+        sb.append("TP-Status [");
+        sb.append(this.code);
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 }

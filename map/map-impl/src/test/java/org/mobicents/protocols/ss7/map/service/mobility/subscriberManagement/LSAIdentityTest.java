@@ -33,66 +33,65 @@ import org.mobicents.protocols.asn.Tag;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public class LSAIdentityTest {
 
-	public byte[] getData() {
-		return new byte[] { 4, 3, 12, 10, 1 };
-	};
-	
-	public byte[] getData2() {
-		return new byte[] { 4, 3, 4, 1, 0 };
-	};
-	
-	public byte[] getLSAIdentityData() {
-		return new byte[] { 12, 10, 1 };
-	};
-	
-	public byte[] getLSAIdentityData2() {
-		return new byte[] { 4, 1, 0 };
-	};
-	
-	
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testDecode() throws Exception {
-		//option 1
-		byte[] data = this.getData();
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
-		LSAIdentityImpl prim = new LSAIdentityImpl();
-		prim.decodeAll(asn);
-		assertEquals(tag, Tag.STRING_OCTET);
-		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
-		assertTrue( prim.isPlmnSignificantLSA());
-		
-		//option 2
-		data = this.getData2();
-		asn = new AsnInputStream(data);
-		tag = asn.readTag();
-		prim = new LSAIdentityImpl();
-		prim.decodeAll(asn);
-		assertEquals(tag, Tag.STRING_OCTET);
-		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
-		assertFalse( prim.isPlmnSignificantLSA());
-		
-	}
-	
-	@Test(groups = { "functional.encode", "primitives" })
-	public void testEncode() throws Exception {
-		//option 1
-		LSAIdentityImpl prim = new LSAIdentityImpl(this.getLSAIdentityData());
-		AsnOutputStream asn = new AsnOutputStream();
-		prim.encodeAll(asn);
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
-		
-		//option 2
-		prim = new LSAIdentityImpl(this.getLSAIdentityData2());
-		asn = new AsnOutputStream();
-		prim.encodeAll(asn);
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
-	}
+    public byte[] getData() {
+        return new byte[] { 4, 3, 12, 10, 1 };
+    };
+
+    public byte[] getData2() {
+        return new byte[] { 4, 3, 4, 1, 0 };
+    };
+
+    public byte[] getLSAIdentityData() {
+        return new byte[] { 12, 10, 1 };
+    };
+
+    public byte[] getLSAIdentityData2() {
+        return new byte[] { 4, 1, 0 };
+    };
+
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
+        // option 1
+        byte[] data = this.getData();
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
+        LSAIdentityImpl prim = new LSAIdentityImpl();
+        prim.decodeAll(asn);
+        assertEquals(tag, Tag.STRING_OCTET);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+        assertTrue(prim.isPlmnSignificantLSA());
+
+        // option 2
+        data = this.getData2();
+        asn = new AsnInputStream(data);
+        tag = asn.readTag();
+        prim = new LSAIdentityImpl();
+        prim.decodeAll(asn);
+        assertEquals(tag, Tag.STRING_OCTET);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+        assertFalse(prim.isPlmnSignificantLSA());
+
+    }
+
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
+        // option 1
+        LSAIdentityImpl prim = new LSAIdentityImpl(this.getLSAIdentityData());
+        AsnOutputStream asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+
+        // option 2
+        prim = new LSAIdentityImpl(this.getLSAIdentityData2());
+        asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
+    }
 
 }

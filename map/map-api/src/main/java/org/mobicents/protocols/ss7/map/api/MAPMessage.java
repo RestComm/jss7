@@ -24,25 +24,24 @@ package org.mobicents.protocols.ss7.map.api;
 
 import java.io.Serializable;
 
-
 /**
  * This is super interface for all service message in MAP
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public interface MAPMessage extends Serializable {
 
-	public long getInvokeId();
+    long getInvokeId();
 
-	public void setInvokeId(long invokeId);
+    void setInvokeId(long invokeId);
 
-	public MAPDialog getMAPDialog();
+    MAPDialog getMAPDialog();
 
-	public void setMAPDialog(MAPDialog mapDialog);
+    void setMAPDialog(MAPDialog mapDialog);
 
-	public MAPMessageType getMessageType(); 
+    MAPMessageType getMessageType();
 
-	public int getOperationCode(); 
+    int getOperationCode();
 
 }

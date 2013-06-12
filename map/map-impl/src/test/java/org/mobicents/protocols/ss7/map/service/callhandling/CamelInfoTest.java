@@ -22,7 +22,10 @@
 
 package org.mobicents.protocols.ss7.map.service.callhandling;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -42,113 +45,111 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 /**
-*
-* @author  sergey vetyutnev
-* 
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class CamelInfoTest {
     Logger logger = Logger.getLogger(ExtendedRoutingInfoTest.class);
-    
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
 
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
 
-	@BeforeTest
-	public void setUp() {
-	}
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
-	@AfterTest
-	public void tearDown() {
-	}
+    @BeforeTest
+    public void setUp() {
+    }
 
-	public static byte[] getData() {
-		return new byte[] { (byte) 171, 4, 3, 2, 4, (byte) 224 };
-	}
+    @AfterTest
+    public void tearDown() {
+    }
 
-	public static byte[] getDataFull() {
-		return new byte[] { -85, 51, 3, 2, 4, -64, 5, 0, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42,
-				3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -128, 2, 1, -86 };
-	}
+    public static byte[] getData() {
+        return new byte[] { (byte) 171, 4, 3, 2, 4, (byte) 224 };
+    }
 
-	@Test(groups = { "functional.decode", "service.callhandling" })
-	public void testDecode() throws Exception {
+    public static byte[] getDataFull() {
+        return new byte[] { -85, 51, 3, 2, 4, -64, 5, 0, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6,
+                3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -128, 2, 1, -86 };
+    }
 
-		AsnInputStream asn = new AsnInputStream(getData());
-		int tag = asn.readTag();
-		assertEquals(tag, 11);
-		
-		CamelInfoImpl impl = new CamelInfoImpl();
-		impl.decodeAll(asn);
+    @Test(groups = { "functional.decode", "service.callhandling" })
+    public void testDecode() throws Exception {
 
-		SupportedCamelPhases scf = impl.getSupportedCamelPhases();
-		assertTrue(scf.getPhase1Supported());
-		assertTrue(scf.getPhase2Supported());
-		assertTrue(scf.getPhase3Supported());
-		assertFalse(scf.getPhase4Supported());
+        AsnInputStream asn = new AsnInputStream(getData());
+        int tag = asn.readTag();
+        assertEquals(tag, 11);
 
-		assertFalse(impl.getSuppressTCSI());
-		assertNull(impl.getExtensionContainer());
-		assertNull(impl.getOfferedCamel4CSIs());
+        CamelInfoImpl impl = new CamelInfoImpl();
+        impl.decodeAll(asn);
 
-		
-		asn = new AsnInputStream(getDataFull());
-		tag = asn.readTag();
-		assertEquals(tag, 11);
-		
-		impl = new CamelInfoImpl();
-		impl.decodeAll(asn);
+        SupportedCamelPhases scf = impl.getSupportedCamelPhases();
+        assertTrue(scf.getPhase1Supported());
+        assertTrue(scf.getPhase2Supported());
+        assertTrue(scf.getPhase3Supported());
+        assertFalse(scf.getPhase4Supported());
 
-		scf = impl.getSupportedCamelPhases();
-		assertTrue(scf.getPhase1Supported());
-		assertTrue(scf.getPhase2Supported());
-		assertFalse(scf.getPhase3Supported());
-		assertFalse(scf.getPhase4Supported());
+        assertFalse(impl.getSuppressTCSI());
+        assertNull(impl.getExtensionContainer());
+        assertNull(impl.getOfferedCamel4CSIs());
 
-		assertTrue(impl.getSuppressTCSI());
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(impl.getExtensionContainer()));
-		OfferedCamel4CSIs ofc = impl.getOfferedCamel4CSIs();
-		assertTrue(ofc.getOCsi());
-		assertFalse(ofc.getDCsi());
-		assertTrue(ofc.getVtCsi());
-		assertFalse(ofc.getTCsi());
-		assertTrue(ofc.getMtSmsCsi());
-		assertFalse(ofc.getMgCsi());
-		assertTrue(ofc.getPsiEnhancements());
-	}
+        asn = new AsnInputStream(getDataFull());
+        tag = asn.readTag();
+        assertEquals(tag, 11);
 
-	@Test(groups = { "functional.encode", "service.callhandling" })
-	public void testEncode() throws Exception {
+        impl = new CamelInfoImpl();
+        impl.decodeAll(asn);
 
-		SupportedCamelPhases scf = new SupportedCamelPhasesImpl(true, true, true, false);
-		CamelInfoImpl impl = new CamelInfoImpl(scf, false, null, null);
-//		SupportedCamelPhases supportedCamelPhases, boolean suppressTCSI, MAPExtensionContainer extensionContainer,
-//		OfferedCamel4CSIs offeredCamel4CSIs
+        scf = impl.getSupportedCamelPhases();
+        assertTrue(scf.getPhase1Supported());
+        assertTrue(scf.getPhase2Supported());
+        assertFalse(scf.getPhase3Supported());
+        assertFalse(scf.getPhase4Supported());
 
-		AsnOutputStream asnOS = new AsnOutputStream();
-		impl.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 11);
+        assertTrue(impl.getSuppressTCSI());
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(impl.getExtensionContainer()));
+        OfferedCamel4CSIs ofc = impl.getOfferedCamel4CSIs();
+        assertTrue(ofc.getOCsi());
+        assertFalse(ofc.getDCsi());
+        assertTrue(ofc.getVtCsi());
+        assertFalse(ofc.getTCsi());
+        assertTrue(ofc.getMtSmsCsi());
+        assertFalse(ofc.getMgCsi());
+        assertTrue(ofc.getPsiEnhancements());
+    }
 
-	    byte[] encodedData = asnOS.toByteArray();
-		assertTrue(Arrays.equals(getData(), encodedData));
+    @Test(groups = { "functional.encode", "service.callhandling" })
+    public void testEncode() throws Exception {
 
+        SupportedCamelPhases scf = new SupportedCamelPhasesImpl(true, true, true, false);
+        CamelInfoImpl impl = new CamelInfoImpl(scf, false, null, null);
+        // SupportedCamelPhases supportedCamelPhases, boolean suppressTCSI, MAPExtensionContainer extensionContainer,
+        // OfferedCamel4CSIs offeredCamel4CSIs
 
-		scf = new SupportedCamelPhasesImpl(true, true, false, false);
-		OfferedCamel4CSIs ofc = new OfferedCamel4CSIsImpl(true, false, true, false, true, false, true);
-//		boolean oCsi, boolean dCsi, boolean vtCsi, boolean tCsi, boolean mtSMSCsi, boolean mgCsi, boolean psiEnhancements
-		impl = new CamelInfoImpl(scf, true, MAPExtensionContainerTest.GetTestExtensionContainer(), ofc);
+        AsnOutputStream asnOS = new AsnOutputStream();
+        impl.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 11);
 
-		asnOS = new AsnOutputStream();
-		impl.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 11);
+        byte[] encodedData = asnOS.toByteArray();
+        assertTrue(Arrays.equals(getData(), encodedData));
 
-	    encodedData = asnOS.toByteArray();
-		assertTrue(Arrays.equals(getDataFull(), encodedData));
-	}
+        scf = new SupportedCamelPhasesImpl(true, true, false, false);
+        OfferedCamel4CSIs ofc = new OfferedCamel4CSIsImpl(true, false, true, false, true, false, true);
+        // boolean oCsi, boolean dCsi, boolean vtCsi, boolean tCsi, boolean mtSMSCsi, boolean mgCsi, boolean psiEnhancements
+        impl = new CamelInfoImpl(scf, true, MAPExtensionContainerTest.GetTestExtensionContainer(), ofc);
 
-	@Test(groups = { "functional.serialize", "service.callhandling" })
-	public void testSerialization() throws Exception {
-		
-	}
+        asnOS = new AsnOutputStream();
+        impl.encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, 11);
+
+        encodedData = asnOS.toByteArray();
+        assertTrue(Arrays.equals(getDataFull(), encodedData));
+    }
+
+    @Test(groups = { "functional.serialize", "service.callhandling" })
+    public void testSerialization() throws Exception {
+
+    }
 }

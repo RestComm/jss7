@@ -22,7 +22,8 @@
 
 package org.mobicents.protocols.ss7.inap.isup;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -31,53 +32,53 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.RedirectionInformationImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class RedirectionInformationInapTest {
 
-	public byte[] getData() {
-		return new byte[] { (byte) 158, 2, 3, 97 };
-	}
+    public byte[] getData() {
+        return new byte[] { (byte) 158, 2, 3, 97 };
+    }
 
-	public byte[] getIntData() {
-		return new byte[] { 3, 97 };
-	}
+    public byte[] getIntData() {
+        return new byte[] { 3, 97 };
+    }
 
-	@Test(groups = { "functional.decode","isup"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "isup" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData();
-		AsnInputStream ais = new AsnInputStream(data);
-		RedirectionInformationInapImpl elem = new RedirectionInformationInapImpl();
-		int tag = ais.readTag();
-		elem.decodeAll(ais);
-		RedirectionInformation ri = elem.getRedirectionInformation();
-		assertTrue(Arrays.equals(elem.getData(), this.getIntData()));
-		assertEquals(ri.getOriginalRedirectionReason(), 0);
-		assertEquals(ri.getRedirectingIndicator(), 3);
-		assertEquals(ri.getRedirectionCounter(), 1);
-		assertEquals(ri.getRedirectionReason(), 6);
-	}
+        byte[] data = this.getData();
+        AsnInputStream ais = new AsnInputStream(data);
+        RedirectionInformationInapImpl elem = new RedirectionInformationInapImpl();
+        int tag = ais.readTag();
+        elem.decodeAll(ais);
+        RedirectionInformation ri = elem.getRedirectionInformation();
+        assertTrue(Arrays.equals(elem.getData(), this.getIntData()));
+        assertEquals(ri.getOriginalRedirectionReason(), 0);
+        assertEquals(ri.getRedirectingIndicator(), 3);
+        assertEquals(ri.getRedirectionCounter(), 1);
+        assertEquals(ri.getRedirectionReason(), 6);
+    }
 
-	@Test(groups = { "functional.encode","isup"})
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "isup" })
+    public void testEncode() throws Exception {
 
-		RedirectionInformationInapImpl elem = new RedirectionInformationInapImpl(this.getIntData());
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 30);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+        RedirectionInformationInapImpl elem = new RedirectionInformationInapImpl(this.getIntData());
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 30);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
 
-		RedirectionInformation ri = new RedirectionInformationImpl(3, 0, 1, 6);
-		elem = new RedirectionInformationInapImpl(ri);
-		aos = new AsnOutputStream();
-		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 30);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
-		
-//		int redirectingIndicator, int originalRedirectionReason, int redirectionCounter, int redirectionReason
-	}
+        RedirectionInformation ri = new RedirectionInformationImpl(3, 0, 1, 6);
+        elem = new RedirectionInformationInapImpl(ri);
+        aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 30);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+
+        // int redirectingIndicator, int originalRedirectionReason, int redirectionCounter, int redirectionReason
+    }
 }

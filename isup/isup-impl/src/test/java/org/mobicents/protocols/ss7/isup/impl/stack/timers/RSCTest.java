@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.isup.impl.stack.timers;
 
-import java.util.Properties;
-
 import org.mobicents.protocols.ss7.isup.ISUPTimeoutEvent;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.ReleaseCompleteMessage;
@@ -31,75 +29,70 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationC
 
 /**
  * @author baranowb
- * 
+ *
  */
 public class RSCTest extends DoubleTimers {
-	// thanks to magic of super class, this is whole test :)
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.isup.impl.stack.DoubleTimers#getSmallerT()
-	 */
+    // thanks to magic of super class, this is whole test :)
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.isup.impl.stack.DoubleTimers#getSmallerT()
+     */
 
-	protected long getSmallerT() {
-		return ISUPTimeoutEvent.T16_DEFAULT;
-	}
+    protected long getSmallerT() {
+        return ISUPTimeoutEvent.T16_DEFAULT;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.isup.impl.stack.DoubleTimers#getBiggerT()
-	 */
-	protected long getBiggerT() {
-		return ISUPTimeoutEvent.T17_DEFAULT;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.isup.impl.stack.DoubleTimers#getBiggerT()
+     */
+    protected long getBiggerT() {
+        return ISUPTimeoutEvent.T17_DEFAULT;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.isup.impl.stack.DoubleTimers#getSmallerT_ID()
-	 */
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.isup.impl.stack.DoubleTimers#getSmallerT_ID()
+     */
 
-	protected int getSmallerT_ID() {
-		return ISUPTimeoutEvent.T16;
-	}
+    protected int getSmallerT_ID() {
+        return ISUPTimeoutEvent.T16;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.isup.impl.stack.DoubleTimers#getBiggerT_ID()
-	 */
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.isup.impl.stack.DoubleTimers#getBiggerT_ID()
+     */
 
-	protected int getBiggerT_ID() {
-		return ISUPTimeoutEvent.T17;
-	}
+    protected int getBiggerT_ID() {
+        return ISUPTimeoutEvent.T17;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.isup.impl.stack.DoubleTimers#getRequest()
-	 */
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.isup.impl.stack.DoubleTimers#getRequest()
+     */
 
-	protected ISUPMessage getRequest() {
-		return super.provider.getMessageFactory().createRSC(1);
-	}
+    protected ISUPMessage getRequest() {
+        return super.provider.getMessageFactory().createRSC(1);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.isup.impl.stack.DoubleTimers#getAnswer()
-	 */
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.isup.impl.stack.DoubleTimers#getAnswer()
+     */
 
-	protected ISUPMessage getAnswer() {
-		ReleaseCompleteMessage rlc = super.provider.getMessageFactory().createRLC();
-		CircuitIdentificationCode cic = super.provider.getParameterFactory().createCircuitIdentificationCode();
-		cic.setCIC(1);
-		rlc.setCircuitIdentificationCode(cic);
-		return rlc; // asnwer to RSC is... RLC :P
-	}	
+    protected ISUPMessage getAnswer() {
+        ReleaseCompleteMessage rlc = super.provider.getMessageFactory().createRLC();
+        CircuitIdentificationCode cic = super.provider.getParameterFactory().createCircuitIdentificationCode();
+        cic.setCIC(1);
+        rlc.setCircuitIdentificationCode(cic);
+        return rlc; // asnwer to RSC is... RLC :P
+    }
 }

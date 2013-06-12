@@ -25,24 +25,20 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-SupportedCodecsList ::= SEQUENCE {
-	utranCodecList	[0] CodecList	OPTIONAL,
-	geranCodecList	[1] CodecList	OPTIONAL,
-	extensionContainer	[2] ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ SupportedCodecsList ::= SEQUENCE { utranCodecList [0] CodecList OPTIONAL, geranCodecList [1] CodecList OPTIONAL,
+ * extensionContainer [2] ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SupportedCodecsList {
 
-	public CodecList getUtranCodecList();
+    CodecList getUtranCodecList();
 
-	public CodecList getGeranCodecList();
+    CodecList getGeranCodecList();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

@@ -31,24 +31,24 @@ import org.mobicents.protocols.asn.Tag;
  */
 public interface Reject extends Component {
 
-	public static final int _TAG = 0x04;
-	public static final boolean _TAG_PC_PRIMITIVE = false;
-	public static final int _TAG_CLASS = Tag.CLASS_CONTEXT_SPECIFIC;
-	
-	
-	public static final int _TAG_IID = 0x02;
-	public static final boolean _TAG_IID_PC_PRIMITIVE = true;
-	public static final int _TAG_IID_CLASS = Tag.CLASS_UNIVERSAL;
+    int _TAG = 0x04;
+    boolean _TAG_PC_PRIMITIVE = false;
+    int _TAG_CLASS = Tag.CLASS_CONTEXT_SPECIFIC;
 
-	public Problem getProblem();
-	public void setProblem(Problem p);
+    int _TAG_IID = 0x02;
+    boolean _TAG_IID_PC_PRIMITIVE = true;
+    int _TAG_IID_CLASS = Tag.CLASS_UNIVERSAL;
 
-	/**
-	 * @return
-	 * true:  local originated Reject (rejecting a bad incoming primitive by a local side) 
-	 * false: remote originated Reject (rejecting a bad outgoing primitive by a peer) 
-	 */
-	public boolean isLocalOriginated();
-	public void setLocalOriginated(boolean p);
-	
+    Problem getProblem();
+
+    void setProblem(Problem p);
+
+    /**
+     * @return true: local originated Reject (rejecting a bad incoming primitive by a local side) false: remote originated
+     *         Reject (rejecting a bad outgoing primitive by a peer)
+     */
+    boolean isLocalOriginated();
+
+    void setLocalOriginated(boolean p);
+
 }

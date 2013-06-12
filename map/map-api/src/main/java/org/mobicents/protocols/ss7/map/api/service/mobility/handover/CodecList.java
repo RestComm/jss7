@@ -25,43 +25,34 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-CodecList ::= SEQUENCE {
-	codec1		[1] Codec,
-	codec2		[2] Codec		OPTIONAL,
-	codec3		[3] Codec		OPTIONAL,
-	codec4		[4] Codec		OPTIONAL,
-	codec5		[5] Codec		OPTIONAL,
-	codec6		[6] Codec		OPTIONAL,
-	codec7		[7] Codec		OPTIONAL,
-	codec8		[8] Codec		OPTIONAL,
-	extensionContainer	[9] ExtensionContainer	OPTIONAL,
-	...}
-	-- Codecs are sent in priority order where codec1 has highest priority
-
- * 
+ *
+ CodecList ::= SEQUENCE { codec1 [1] Codec, codec2 [2] Codec OPTIONAL, codec3 [3] Codec OPTIONAL, codec4 [4] Codec OPTIONAL,
+ * codec5 [5] Codec OPTIONAL, codec6 [6] Codec OPTIONAL, codec7 [7] Codec OPTIONAL, codec8 [8] Codec OPTIONAL,
+ * extensionContainer [9] ExtensionContainer OPTIONAL, ...} -- Codecs are sent in priority order where codec1 has highest
+ * priority
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CodecList {
 
-	public Codec getCodec1();
+    Codec getCodec1();
 
-	public Codec getCodec2();
+    Codec getCodec2();
 
-	public Codec getCodec3();
+    Codec getCodec3();
 
-	public Codec getCodec4();
+    Codec getCodec4();
 
-	public Codec getCodec5();
+    Codec getCodec5();
 
-	public Codec getCodec6();
+    Codec getCodec6();
 
-	public Codec getCodec7();
+    Codec getCodec7();
 
-	public Codec getCodec8();
+    Codec getCodec8();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

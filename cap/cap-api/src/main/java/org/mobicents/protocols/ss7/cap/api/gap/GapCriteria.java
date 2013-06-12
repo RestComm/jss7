@@ -23,21 +23,18 @@
 package org.mobicents.protocols.ss7.cap.api.gap;
 
 /**
-*
-GapCriteria {PARAMETERS-BOUND : bound}::= CHOICE { 
- basicGapCriteria     BasicGapCriteria {bound}, 
- compoundGapCriteria     CompoundCriteria {bound} 
- } 
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ GapCriteria {PARAMETERS-BOUND : bound}::= CHOICE { basicGapCriteria BasicGapCriteria {bound}, compoundGapCriteria
+ * CompoundCriteria {bound} }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface GapCriteria {
 
-	public BasicGapCriteria getBasicGapCriteria();
+    BasicGapCriteria getBasicGapCriteria();
 
-	public CompoundCriteria getCompoundGapCriteria();
+    CompoundCriteria getCompoundGapCriteria();
 
 }
-

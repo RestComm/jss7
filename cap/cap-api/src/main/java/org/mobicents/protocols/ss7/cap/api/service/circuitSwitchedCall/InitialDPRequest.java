@@ -51,130 +51,99 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 
-
 /**
-*
-initialDP {PARAMETERS-BOUND : bound} OPERATION ::= {
-ARGUMENT InitialDPArg {bound}
-RETURN RESULT FALSE
-ERRORS {missingCustomerRecord |
-missingParameter |
-parameterOutOfRange |
-systemFailure |
-taskRefused |
-unexpectedComponentSequence |
-unexpectedDataValue |
-unexpectedParameter}
-CODE opcode-initialDP}
--- Direction: gsmSSF -> gsmSCF, Timer: Tidp
--- This operation is used after a TDP to indicate request for service. 
-
-InitialDPArg {PARAMETERS-BOUND : bound} ::= SEQUENCE {
-serviceKey [0] ServiceKey , (= Integer4)
-calledPartyNumber [2] CalledPartyNumber {bound} OPTIONAL,
-callingPartyNumber [3] CallingPartyNumber {bound} OPTIONAL,
-callingPartysCategory [5] CallingPartysCategory OPTIONAL,
-cGEncountered [7] CGEncountered OPTIONAL,
-iPSSPCapabilities [8] IPSSPCapabilities {bound} OPTIONAL, (OCTET STRING (1..4))
-locationNumber [10] LocationNumber {bound} OPTIONAL,
-originalCalledPartyID [12] OriginalCalledPartyID {bound} OPTIONAL,
-extensions [15] Extensions {bound} OPTIONAL,
-highLayerCompatibility [23] HighLayerCompatibility OPTIONAL,
-additionalCallingPartyNumber [25] AdditionalCallingPartyNumber {bound} OPTIONAL,
-bearerCapability [27] BearerCapability {bound} OPTIONAL,
-eventTypeBCSM [28] EventTypeBCSM OPTIONAL,
-redirectingPartyID [29] RedirectingPartyID {bound} OPTIONAL,
-redirectionInformation [30] RedirectionInformation OPTIONAL,
-cause [17] Cause {bound} OPTIONAL,
-serviceInteractionIndicatorsTwo [32] ServiceInteractionIndicatorsTwo OPTIONAL,
-carrier [37] Carrier {bound} OPTIONAL,
-cug-Index [45] CUG-Index OPTIONAL,
-cug-Interlock [46] CUG-Interlock OPTIONAL,
-cug-OutgoingAccess [47] NULL OPTIONAL,
-iMSI [50] IMSI OPTIONAL,
-subscriberState [51] SubscriberState OPTIONAL,
-locationInformation [52] LocationInformation OPTIONAL,
-ext-basicServiceCode [53] Ext-BasicServiceCode OPTIONAL,
-callReferenceNumber [54] CallReferenceNumber OPTIONAL,
-mscAddress [55] ISDN-AddressString OPTIONAL,
-calledPartyBCDNumber [56] CalledPartyBCDNumber {bound} OPTIONAL,
-timeAndTimezone [57] TimeAndTimezone {bound} OPTIONAL,
-callForwardingSS-Pending [58] NULL OPTIONAL,
-initialDPArgExtension [59] InitialDPArgExtension {bound} OPTIONAL,
-...
-} 
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ initialDP {PARAMETERS-BOUND : bound} OPERATION ::= { ARGUMENT InitialDPArg {bound} RETURN RESULT FALSE ERRORS
+ * {missingCustomerRecord | missingParameter | parameterOutOfRange | systemFailure | taskRefused | unexpectedComponentSequence |
+ * unexpectedDataValue | unexpectedParameter} CODE opcode-initialDP} -- Direction: gsmSSF -> gsmSCF, Timer: Tidp -- This
+ * operation is used after a TDP to indicate request for service.
+ *
+ * InitialDPArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { serviceKey [0] ServiceKey , (= Integer4) calledPartyNumber [2]
+ * CalledPartyNumber {bound} OPTIONAL, callingPartyNumber [3] CallingPartyNumber {bound} OPTIONAL, callingPartysCategory [5]
+ * CallingPartysCategory OPTIONAL, cGEncountered [7] CGEncountered OPTIONAL, iPSSPCapabilities [8] IPSSPCapabilities {bound}
+ * OPTIONAL, (OCTET STRING (1..4)) locationNumber [10] LocationNumber {bound} OPTIONAL, originalCalledPartyID [12]
+ * OriginalCalledPartyID {bound} OPTIONAL, extensions [15] Extensions {bound} OPTIONAL, highLayerCompatibility [23]
+ * HighLayerCompatibility OPTIONAL, additionalCallingPartyNumber [25] AdditionalCallingPartyNumber {bound} OPTIONAL,
+ * bearerCapability [27] BearerCapability {bound} OPTIONAL, eventTypeBCSM [28] EventTypeBCSM OPTIONAL, redirectingPartyID [29]
+ * RedirectingPartyID {bound} OPTIONAL, redirectionInformation [30] RedirectionInformation OPTIONAL, cause [17] Cause {bound}
+ * OPTIONAL, serviceInteractionIndicatorsTwo [32] ServiceInteractionIndicatorsTwo OPTIONAL, carrier [37] Carrier {bound}
+ * OPTIONAL, cug-Index [45] CUG-Index OPTIONAL, cug-Interlock [46] CUG-Interlock OPTIONAL, cug-OutgoingAccess [47] NULL
+ * OPTIONAL, iMSI [50] IMSI OPTIONAL, subscriberState [51] SubscriberState OPTIONAL, locationInformation [52]
+ * LocationInformation OPTIONAL, ext-basicServiceCode [53] Ext-BasicServiceCode OPTIONAL, callReferenceNumber [54]
+ * CallReferenceNumber OPTIONAL, mscAddress [55] ISDN-AddressString OPTIONAL, calledPartyBCDNumber [56] CalledPartyBCDNumber
+ * {bound} OPTIONAL, timeAndTimezone [57] TimeAndTimezone {bound} OPTIONAL, callForwardingSS-Pending [58] NULL OPTIONAL,
+ * initialDPArgExtension [59] InitialDPArgExtension {bound} OPTIONAL, ... }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface InitialDPRequest extends CircuitSwitchedCallMessage {
 
-	public int getServiceKey();
+    int getServiceKey();
 
-	public CalledPartyNumberCap getCalledPartyNumber();
+    CalledPartyNumberCap getCalledPartyNumber();
 
-	public CallingPartyNumberCap getCallingPartyNumber();
+    CallingPartyNumberCap getCallingPartyNumber();
 
-	public CallingPartysCategoryInap getCallingPartysCategory();
+    CallingPartysCategoryInap getCallingPartysCategory();
 
-	public CGEncountered getCGEncountered();
+    CGEncountered getCGEncountered();
 
-	public IPSSPCapabilities getIPSSPCapabilities();
+    IPSSPCapabilities getIPSSPCapabilities();
 
-	public LocationNumberCap getLocationNumber();
+    LocationNumberCap getLocationNumber();
 
-	public OriginalCalledNumberCap getOriginalCalledPartyID();
+    OriginalCalledNumberCap getOriginalCalledPartyID();
 
-	public CAPExtensions getExtensions();
+    CAPExtensions getExtensions();
 
-	public HighLayerCompatibilityInap getHighLayerCompatibility();
+    HighLayerCompatibilityInap getHighLayerCompatibility();
 
-	/**
-	 * Use Digits.getGenericNumber() for AdditionalCallingPartyNumber 
-	 * 
-	 * @return
-	 */
-	public Digits getAdditionalCallingPartyNumber();
+    /**
+     * Use Digits.getGenericNumber() for AdditionalCallingPartyNumber
+     *
+     * @return
+     */
+    Digits getAdditionalCallingPartyNumber();
 
-	public BearerCapability getBearerCapability();
+    BearerCapability getBearerCapability();
 
-	public EventTypeBCSM getEventTypeBCSM();
+    EventTypeBCSM getEventTypeBCSM();
 
-	public RedirectingPartyIDCap getRedirectingPartyID();
+    RedirectingPartyIDCap getRedirectingPartyID();
 
-	public RedirectionInformationInap getRedirectionInformation();
+    RedirectionInformationInap getRedirectionInformation();
 
-	public CauseCap getCause();
+    CauseCap getCause();
 
-	public ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo();
+    ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo();
 
-	public Carrier getCarrier();
+    Carrier getCarrier();
 
-	public CUGIndex getCugIndex();
+    CUGIndex getCugIndex();
 
-	public CUGInterlock getCugInterlock();
+    CUGInterlock getCugInterlock();
 
-	public boolean getCugOutgoingAccess();
+    boolean getCugOutgoingAccess();
 
-	public IMSI getIMSI();
+    IMSI getIMSI();
 
-	public SubscriberState getSubscriberState();
+    SubscriberState getSubscriberState();
 
-	public LocationInformation getLocationInformation();
+    LocationInformation getLocationInformation();
 
-	public ExtBasicServiceCode getExtBasicServiceCode();
+    ExtBasicServiceCode getExtBasicServiceCode();
 
-	public CallReferenceNumber getCallReferenceNumber();
+    CallReferenceNumber getCallReferenceNumber();
 
-	public ISDNAddressString getMscAddress();
+    ISDNAddressString getMscAddress();
 
-	public CalledPartyBCDNumber getCalledPartyBCDNumber();
+    CalledPartyBCDNumber getCalledPartyBCDNumber();
 
-	public TimeAndTimezone getTimeAndTimezone();
+    TimeAndTimezone getTimeAndTimezone();
 
-	public boolean getCallForwardingSSPending();
+    boolean getCallForwardingSSPending();
 
-	public InitialDPArgExtension getInitialDPArgExtension();
+    InitialDPArgExtension getInitialDPArgExtension();
 }
-

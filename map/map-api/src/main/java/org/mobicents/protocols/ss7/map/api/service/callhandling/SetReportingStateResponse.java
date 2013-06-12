@@ -25,21 +25,18 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-SetReportingStateRes ::= SEQUENCE{
-	ccbs-SubscriberStatus 	[0]	CCBS-SubscriberStatus	OPTIONAL,
-	extensionContainer	[1]	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ SetReportingStateRes ::= SEQUENCE{ ccbs-SubscriberStatus [0] CCBS-SubscriberStatus OPTIONAL, extensionContainer [1]
+ * ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SetReportingStateResponse {
 
-	public CCBSSubscriberStatus getCcbsSubscriberStatus();
+    CCBSSubscriberStatus getCcbsSubscriberStatus();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

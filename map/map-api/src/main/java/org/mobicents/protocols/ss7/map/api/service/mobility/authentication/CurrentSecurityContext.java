@@ -22,22 +22,19 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
-
 /**
- * 
-
-CurrentSecurityContext ::= CHOICE {
-	gsm-SecurityContextData	[0] GSM-SecurityContextData,
-	umts-SecurityContextData	[1] UMTS-SecurityContextData }
-
- * 
+ *
+ CurrentSecurityContext ::= CHOICE { gsm-SecurityContextData [0] GSM-SecurityContextData, umts-SecurityContextData [1]
+ * UMTS-SecurityContextData }
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CurrentSecurityContext {
 
-	public GSMSecurityContextData getGSMSecurityContextData();
+    GSMSecurityContextData getGSMSecurityContextData();
 
-	public UMTSSecurityContextData getUMTSSecurityContextData();
+    UMTSSecurityContextData getUMTSSecurityContextData();
 
 }

@@ -26,21 +26,21 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class GPRSChargingIDImpl extends OctetStringBase implements GPRSChargingID {
 
-	public GPRSChargingIDImpl() {
-		super(4, 4, "GPRSChargingID");
-	}
+    public GPRSChargingIDImpl() {
+        super(4, 4, "GPRSChargingID");
+    }
 
-	public GPRSChargingIDImpl(byte[] data) {
-		super(4, 4, "GPRSChargingID", data);
-	}
+    public GPRSChargingIDImpl(byte[] data) {
+        super(4, 4, "GPRSChargingID", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 }

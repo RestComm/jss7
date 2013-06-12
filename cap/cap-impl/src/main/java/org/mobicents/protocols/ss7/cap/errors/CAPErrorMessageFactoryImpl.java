@@ -37,55 +37,56 @@ import org.mobicents.protocols.ss7.cap.api.errors.UnavailableNetworkResource;
 
 /**
  * The factory of CAP ReturnError messages
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CAPErrorMessageFactoryImpl implements CAPErrorMessageFactory {
 
-	@Override
-	public CAPErrorMessage createMessageFromErrorCode(Long errorCode) {
-		int ec = (int)(long)errorCode;
-		switch (ec) {
-		case CAPErrorCode.cancelFailed:
-			CAPErrorMessageCancelFailedImpl emCancelFailed = new CAPErrorMessageCancelFailedImpl();
-			return emCancelFailed;
-		case CAPErrorCode.requestedInfoError:
-			CAPErrorMessageRequestedInfoErrorImpl emRequestedInfoError = new CAPErrorMessageRequestedInfoErrorImpl();
-			return emRequestedInfoError;
-		case CAPErrorCode.systemFailure:
-			CAPErrorMessageSystemFailureImpl emSystemFailure = new CAPErrorMessageSystemFailureImpl();
-			return emSystemFailure;
-		case CAPErrorCode.taskRefused:
-			CAPErrorMessageTaskRefusedImpl emTaskRefused = new CAPErrorMessageTaskRefusedImpl();
-			return emTaskRefused;
-		default:
-			return new CAPErrorMessageParameterlessImpl(errorCode);
-		}
-	}
+    @Override
+    public CAPErrorMessage createMessageFromErrorCode(Long errorCode) {
+        int ec = (int) (long) errorCode;
+        switch (ec) {
+            case CAPErrorCode.cancelFailed:
+                CAPErrorMessageCancelFailedImpl emCancelFailed = new CAPErrorMessageCancelFailedImpl();
+                return emCancelFailed;
+            case CAPErrorCode.requestedInfoError:
+                CAPErrorMessageRequestedInfoErrorImpl emRequestedInfoError = new CAPErrorMessageRequestedInfoErrorImpl();
+                return emRequestedInfoError;
+            case CAPErrorCode.systemFailure:
+                CAPErrorMessageSystemFailureImpl emSystemFailure = new CAPErrorMessageSystemFailureImpl();
+                return emSystemFailure;
+            case CAPErrorCode.taskRefused:
+                CAPErrorMessageTaskRefusedImpl emTaskRefused = new CAPErrorMessageTaskRefusedImpl();
+                return emTaskRefused;
+            default:
+                return new CAPErrorMessageParameterlessImpl(errorCode);
+        }
+    }
 
-	@Override
-	public CAPErrorMessageParameterless createCAPErrorMessageParameterless(Long errorCode) {
-		return new CAPErrorMessageParameterlessImpl(errorCode);
-	}
+    @Override
+    public CAPErrorMessageParameterless createCAPErrorMessageParameterless(Long errorCode) {
+        return new CAPErrorMessageParameterlessImpl(errorCode);
+    }
 
-	@Override
-	public CAPErrorMessageCancelFailed createCAPErrorMessageCancelFailed(CancelProblem cancelProblem) {
-		return new CAPErrorMessageCancelFailedImpl(cancelProblem);
-	}
+    @Override
+    public CAPErrorMessageCancelFailed createCAPErrorMessageCancelFailed(CancelProblem cancelProblem) {
+        return new CAPErrorMessageCancelFailedImpl(cancelProblem);
+    }
 
-	@Override
-	public CAPErrorMessageRequestedInfoError createCAPErrorMessageRequestedInfoError(RequestedInfoErrorParameter requestedInfoErrorParameter) {
-		return new CAPErrorMessageRequestedInfoErrorImpl(requestedInfoErrorParameter);
-	}
+    @Override
+    public CAPErrorMessageRequestedInfoError createCAPErrorMessageRequestedInfoError(
+            RequestedInfoErrorParameter requestedInfoErrorParameter) {
+        return new CAPErrorMessageRequestedInfoErrorImpl(requestedInfoErrorParameter);
+    }
 
-	@Override
-	public CAPErrorMessageSystemFailure createCAPErrorMessageSystemFailure(UnavailableNetworkResource unavailableNetworkResource) {
-		return new CAPErrorMessageSystemFailureImpl(unavailableNetworkResource);
-	}
+    @Override
+    public CAPErrorMessageSystemFailure createCAPErrorMessageSystemFailure(UnavailableNetworkResource unavailableNetworkResource) {
+        return new CAPErrorMessageSystemFailureImpl(unavailableNetworkResource);
+    }
 
-	@Override
-	public CAPErrorMessageTaskRefused createCAPErrorMessageTaskRefused(TaskRefusedParameter taskRefusedParameter) {
-		return new CAPErrorMessageTaskRefusedImpl(taskRefusedParameter);
-	}
+    @Override
+    public CAPErrorMessageTaskRefused createCAPErrorMessageTaskRefused(TaskRefusedParameter taskRefusedParameter) {
+        return new CAPErrorMessageTaskRefusedImpl(taskRefusedParameter);
+    }
 }

@@ -39,139 +39,136 @@ import org.mobicents.protocols.ss7.cap.isup.CauseCapImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class ReleaseCallRequestImpl extends CircuitSwitchedCallMessageImpl implements ReleaseCallRequest {
 
-	public static final String _PrimitiveName = "ReleaseCalltRequestIndication";
-	
-	private CauseCap cause;
+    public static final String _PrimitiveName = "ReleaseCalltRequestIndication";
 
-	
-	public ReleaseCallRequestImpl() {
-	}
-	
-	public ReleaseCallRequestImpl(CauseCap cause) {
-		this.cause = cause;
-	}
+    private CauseCap cause;
 
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.releaseCall_Request;
-	}
+    public ReleaseCallRequestImpl() {
+    }
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.releaseCall;
-	}
+    public ReleaseCallRequestImpl(CauseCap cause) {
+        this.cause = cause;
+    }
 
-	@Override
-	public CauseCap getCause() {
-		return cause;
-	}
-	
-	
-	
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.STRING_OCTET;
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.releaseCall_Request;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.releaseCall;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    @Override
+    public CauseCap getCause() {
+        return cause;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.STRING_OCTET;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		this.cause = new CauseCapImpl();
-		((CauseCapImpl) this.cause).decodeData(ansIS, length);
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException,
+            IOException, AsnException {
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        this.cause = new CauseCapImpl();
+        ((CauseCapImpl) this.cause).decodeData(ansIS, length);
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-		if (this.cause == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": cause must not be null");
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		((CauseCapImpl) this.cause).encodeData(asnOs);
-	}
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        if (this.cause == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": cause must not be null");
 
-		if (this.cause != null) {
-			sb.append("cause=");
-			sb.append(cause.toString());
-		}
+        ((CauseCapImpl) this.cause).encodeData(asnOs);
+    }
 
-		sb.append("]");
+    @Override
+    public String toString() {
 
-		return sb.toString();
-	}
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.cause != null) {
+            sb.append("cause=");
+            sb.append(cause.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

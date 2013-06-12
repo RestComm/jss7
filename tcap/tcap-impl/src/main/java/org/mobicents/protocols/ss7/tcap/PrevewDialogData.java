@@ -34,126 +34,126 @@ import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
 /**
  *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class PrevewDialogData {
-	private ApplicationContextName lastACN;
-	private InvokeImpl[] operationsSentA;
-	private InvokeImpl[] operationsSentB;
+    private ApplicationContextName lastACN;
+    private InvokeImpl[] operationsSentA;
+    private InvokeImpl[] operationsSentB;
 
-	private Object upperDialog;
+    private Object upperDialog;
 
-	private TCAPProviderImpl.PrevewDialogDataKey prevewDialogDataKey1;
-	private TCAPProviderImpl.PrevewDialogDataKey prevewDialogDataKey2;
+    private TCAPProviderImpl.PrevewDialogDataKey prevewDialogDataKey1;
+    private TCAPProviderImpl.PrevewDialogDataKey prevewDialogDataKey2;
 
-	private ReentrantLock dialogLock = new ReentrantLock();
-	private Future idleTimerFuture;
-	private ScheduledExecutorService executor;
-	private TCAPProviderImpl provider;
-	private long idleTaskTimeout;
+    private ReentrantLock dialogLock = new ReentrantLock();
+    private Future idleTimerFuture;
+    private ScheduledExecutorService executor;
+    private TCAPProviderImpl provider;
+    private long idleTaskTimeout;
 
-	public PrevewDialogData(TCAPProviderImpl provider) {
-		this.provider = provider;
-		TCAPStack stack = provider.getStack();
-		this.idleTaskTimeout = stack.getDialogIdleTimeout();
-		this.executor = provider._EXECUTOR;
-	}
+    public PrevewDialogData(TCAPProviderImpl provider) {
+        this.provider = provider;
+        TCAPStack stack = provider.getStack();
+        this.idleTaskTimeout = stack.getDialogIdleTimeout();
+        this.executor = provider._EXECUTOR;
+    }
 
-	public ApplicationContextName getLastACN() {
-		return lastACN;
-	}
+    public ApplicationContextName getLastACN() {
+        return lastACN;
+    }
 
-	public InvokeImpl[] getOperationsSentA() {
-		return operationsSentA;
-	}
+    public InvokeImpl[] getOperationsSentA() {
+        return operationsSentA;
+    }
 
-	public InvokeImpl[] getOperationsSentB() {
-		return operationsSentB;
-	}
+    public InvokeImpl[] getOperationsSentB() {
+        return operationsSentB;
+    }
 
-	public Object getUpperDialog() {
-		return upperDialog;
-	}
+    public Object getUpperDialog() {
+        return upperDialog;
+    }
 
-	public void setLastACN(ApplicationContextName val) {
-		lastACN = val;
-	}
+    public void setLastACN(ApplicationContextName val) {
+        lastACN = val;
+    }
 
-	public void setOperationsSentA(InvokeImpl[] val) {
-		operationsSentA = val;
-	}
+    public void setOperationsSentA(InvokeImpl[] val) {
+        operationsSentA = val;
+    }
 
-	public void setOperationsSentB(InvokeImpl[] val) {
-		operationsSentB = val;
-	}
+    public void setOperationsSentB(InvokeImpl[] val) {
+        operationsSentB = val;
+    }
 
-	public void setUpperDialog(Object val) {
-		upperDialog = val;
-	}
+    public void setUpperDialog(Object val) {
+        upperDialog = val;
+    }
 
-	protected TCAPProviderImpl.PrevewDialogDataKey getPrevewDialogDataKey1() {
-		return prevewDialogDataKey1;
-	}
+    protected TCAPProviderImpl.PrevewDialogDataKey getPrevewDialogDataKey1() {
+        return prevewDialogDataKey1;
+    }
 
-	protected TCAPProviderImpl.PrevewDialogDataKey getPrevewDialogDataKey2() {
-		return prevewDialogDataKey2;
-	}
+    protected TCAPProviderImpl.PrevewDialogDataKey getPrevewDialogDataKey2() {
+        return prevewDialogDataKey2;
+    }
 
-	protected void setPrevewDialogDataKey1(TCAPProviderImpl.PrevewDialogDataKey val) {
-		prevewDialogDataKey1 = val;
-	}
+    protected void setPrevewDialogDataKey1(TCAPProviderImpl.PrevewDialogDataKey val) {
+        prevewDialogDataKey1 = val;
+    }
 
-	protected void setPrevewDialogDataKey2(TCAPProviderImpl.PrevewDialogDataKey val) {
-		prevewDialogDataKey2 = val;
-	}
+    protected void setPrevewDialogDataKey2(TCAPProviderImpl.PrevewDialogDataKey val) {
+        prevewDialogDataKey2 = val;
+    }
 
-	protected void startIdleTimer() {
+    protected void startIdleTimer() {
 
-		try {
-			this.dialogLock.lock();
-			if (this.idleTimerFuture != null) {
-				throw new IllegalStateException();
-			}
+        try {
+            this.dialogLock.lock();
+            if (this.idleTimerFuture != null) {
+                throw new IllegalStateException();
+            }
 
-			IdleTimerTask t = new IdleTimerTask();
-			t.pdd = this;
-			this.idleTimerFuture = this.executor.schedule(t, this.idleTaskTimeout, TimeUnit.MILLISECONDS);
+            IdleTimerTask t = new IdleTimerTask();
+            t.pdd = this;
+            this.idleTimerFuture = this.executor.schedule(t, this.idleTaskTimeout, TimeUnit.MILLISECONDS);
 
-		} finally {
-			this.dialogLock.unlock();
-		}
-	}
+        } finally {
+            this.dialogLock.unlock();
+        }
+    }
 
-	protected void stopIdleTimer() {
-		try {
-			this.dialogLock.lock();
-			if (this.idleTimerFuture != null) {
-				this.idleTimerFuture.cancel(false);
-				this.idleTimerFuture = null;
-			}
+    protected void stopIdleTimer() {
+        try {
+            this.dialogLock.lock();
+            if (this.idleTimerFuture != null) {
+                this.idleTimerFuture.cancel(false);
+                this.idleTimerFuture = null;
+            }
 
-		} finally {
-			this.dialogLock.unlock();
-		}
-	}
+        } finally {
+            this.dialogLock.unlock();
+        }
+    }
 
-	protected void restartIdleTimer() {
-		stopIdleTimer();
-		startIdleTimer();
-	}
+    protected void restartIdleTimer() {
+        stopIdleTimer();
+        startIdleTimer();
+    }
 
-	private class IdleTimerTask implements Runnable {
-		PrevewDialogData pdd;
+    private class IdleTimerTask implements Runnable {
+        PrevewDialogData pdd;
 
-		public void run() {
-			try {
-				dialogLock.lock();
+        public void run() {
+            try {
+                dialogLock.lock();
 
-				provider.removePreviewDialog(pdd);
-			} finally {
-				dialogLock.unlock();
-			}
-		}
+                provider.removePreviewDialog(pdd);
+            } finally {
+                dialogLock.unlock();
+            }
+        }
 
-	}
+    }
 }

@@ -37,172 +37,171 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class InformationToSendImpl implements InformationToSend, CAPAsnPrimitive {
 
-	public static final int _ID_inbandInfo = 0;
-	public static final int _ID_tone = 1;
+    public static final int _ID_inbandInfo = 0;
+    public static final int _ID_tone = 1;
 
-	public static final String _PrimitiveName = "InformationToSend";
+    public static final String _PrimitiveName = "InformationToSend";
 
-	private InbandInfo inbandInfo;
-	private Tone tone;
+    private InbandInfo inbandInfo;
+    private Tone tone;
 
-	
-	public InformationToSendImpl() {
-	}
+    public InformationToSendImpl() {
+    }
 
-	public InformationToSendImpl(InbandInfo inbandInfo) {
-		this.inbandInfo = inbandInfo;
-	}
+    public InformationToSendImpl(InbandInfo inbandInfo) {
+        this.inbandInfo = inbandInfo;
+    }
 
-	public InformationToSendImpl(Tone tone) {
-		this.tone = tone;
-	}
-	
-	@Override
-	public InbandInfo getInbandInfo() {
-		return inbandInfo;
-	}
-	
-	@Override
-	public Tone getTone() {
-		return tone;
-	}
+    public InformationToSendImpl(Tone tone) {
+        this.tone = tone;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
+    @Override
+    public InbandInfo getInbandInfo() {
+        return inbandInfo;
+    }
 
-		if (this.inbandInfo != null) {
-			return _ID_inbandInfo;
-		} else if (this.tone != null) {
-			return _ID_tone;
-		} else {
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": no of choices has been definite");
-		}
-	}
+    @Override
+    public Tone getTone() {
+        return tone;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
-	}
+    @Override
+    public int getTag() throws CAPException {
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+        if (this.inbandInfo != null) {
+            return _ID_inbandInfo;
+        } else if (this.tone != null) {
+            return _ID_tone;
+        } else {
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": no of choices has been definite");
+        }
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_CONTEXT_SPECIFIC;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		this.inbandInfo = null;
-		this.tone = null;
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive())
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tagClass or is primitive",
-					CAPParsingComponentExceptionReason.MistypedParameter);
+    private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		switch (ais.getTag()) {
-		case _ID_inbandInfo:
-			this.inbandInfo = new InbandInfoImpl();
-			((InbandInfoImpl) this.inbandInfo).decodeData(ais, length);
-			break;
-		case _ID_tone:
-			this.tone = new ToneImpl();
-			((ToneImpl) this.tone).decodeData(ais, length);
-			break;
-		default:
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: " + ais.getTag(),
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        this.inbandInfo = null;
+        this.tone = null;
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive())
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tagClass or is primitive",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        switch (ais.getTag()) {
+            case _ID_inbandInfo:
+                this.inbandInfo = new InbandInfoImpl();
+                ((InbandInfoImpl) this.inbandInfo).decodeData(ais, length);
+                break;
+            case _ID_tone:
+                this.tone = new ToneImpl();
+                ((ToneImpl) this.tone).decodeData(ais, length);
+                break;
+            default:
+                throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: " + ais.getTag(),
+                        CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		int choiceCnt = 0;
-		if (this.inbandInfo != null)
-			choiceCnt++;
-		if (this.tone != null)
-			choiceCnt++;
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		if (choiceCnt != 1)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice must be definite, found: " + choiceCnt);
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		if (this.inbandInfo != null)
-			((InbandInfoImpl) this.inbandInfo).encodeData(asnOs);
-		if (this.tone != null)
-			((ToneImpl) this.tone).encodeData(asnOs);
-	}
+        int choiceCnt = 0;
+        if (this.inbandInfo != null)
+            choiceCnt++;
+        if (this.tone != null)
+            choiceCnt++;
 
-	@Override
-	public String toString() {
+        if (choiceCnt != 1)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice must be definite, found: "
+                    + choiceCnt);
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		
-		if (this.inbandInfo != null) {
-			sb.append("inbandInfo=");
-			sb.append(inbandInfo.toString());
-		}
-		if (this.tone != null) {
-			sb.append(" tone=");
-			sb.append(tone.toString());
-		}
+        if (this.inbandInfo != null)
+            ((InbandInfoImpl) this.inbandInfo).encodeData(asnOs);
+        if (this.tone != null)
+            ((ToneImpl) this.tone).encodeData(asnOs);
+    }
 
-		sb.append("]");
+    @Override
+    public String toString() {
 
-		return sb.toString();
-	}
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.inbandInfo != null) {
+            sb.append("inbandInfo=");
+            sb.append(inbandInfo.toString());
+        }
+        if (this.tone != null) {
+            sb.append(" tone=");
+            sb.append(tone.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

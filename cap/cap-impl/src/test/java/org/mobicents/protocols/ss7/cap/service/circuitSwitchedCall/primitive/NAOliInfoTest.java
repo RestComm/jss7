@@ -22,47 +22,48 @@
 
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class NAOliInfoTest {
 
-	public byte[] getData1() {
-		return new byte[] { 4, 1, 0x3D };
-	}
+    public byte[] getData1() {
+        return new byte[] { 4, 1, 0x3D };
+    }
 
-	public byte[] getIntData1() {
-		return new byte[] { 0x3D };
-	}
+    public byte[] getIntData1() {
+        return new byte[] { 0x3D };
+    }
 
-	@Test(groups = { "functional.decode","circuitSwitchedCall.primitive"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData1();
-		AsnInputStream ais = new AsnInputStream(data);
-		NAOliInfoImpl elem = new NAOliInfoImpl();
-		int tag = ais.readTag();
-		elem.decodeAll(ais);
-		assertTrue(Arrays.equals(elem.getData(), this.getIntData1()));
-		assertEquals((int)elem.getValue(), 0x3D);
-	}
+        byte[] data = this.getData1();
+        AsnInputStream ais = new AsnInputStream(data);
+        NAOliInfoImpl elem = new NAOliInfoImpl();
+        int tag = ais.readTag();
+        elem.decodeAll(ais);
+        assertTrue(Arrays.equals(elem.getData(), this.getIntData1()));
+        assertEquals((int) elem.getValue(), 0x3D);
+    }
 
-	@Test(groups = { "functional.encode","circuitSwitchedCall.primitive"})
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
+    public void testEncode() throws Exception {
 
-		NAOliInfoImpl elem = new NAOliInfoImpl(0x3D);
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
-	}
+        NAOliInfoImpl elem = new NAOliInfoImpl(0x3D);
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+    }
 }

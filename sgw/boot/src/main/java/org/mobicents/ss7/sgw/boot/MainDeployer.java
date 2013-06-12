@@ -34,16 +34,13 @@ import org.jboss.kernel.spi.deployment.KernelDeployment;
 import org.mobicents.ss7.sgw.Version;
 
 /**
- * Simplified deployement framework designed for hot deployement of endpoints
- * and media components.
- * 
- * Deployement is represented by tree of folders. Each folder may contains one
- * or more deployement descriptors. The most top deployment directory is
- * referenced as root. Maindeployer creates recursively HDScanner for root and
- * each nested directoty. The HDScanner corresponding to the root directory is
- * triggered periodicaly by local timer and in it order starts nested scanners
- * recursively.
- * 
+ * Simplified deployement framework designed for hot deployement of endpoints and media components.
+ *
+ * Deployement is represented by tree of folders. Each folder may contains one or more deployement descriptors. The most top
+ * deployment directory is referenced as root. Maindeployer creates recursively HDScanner for root and each nested directoty.
+ * The HDScanner corresponding to the root directory is triggered periodicaly by local timer and in it order starts nested
+ * scanners recursively.
+ *
  * @author kulikov
  * @author amit bhayani
  */
@@ -63,9 +60,9 @@ public class MainDeployer {
     private File root;
     /** Logger instance */
     private Logger logger = Logger.getLogger(MainDeployer.class);
-    
-	private static final String rLogo = " ]]]]]]]]] ";
-	private static final String lLogo = " [[[[[[[[[ ";
+
+    private static final String rLogo = " ]]]]]]]]] ";
+    private static final String lLogo = " [[[[[[[[[ ";
 
     /**
      * Creates new instance of deployer.
@@ -75,7 +72,7 @@ public class MainDeployer {
 
     /**
      * Gets the path to the to the root deployment directory.
-     * 
+     *
      * @return path to deployment directory.
      */
     public String getPath() {
@@ -84,7 +81,7 @@ public class MainDeployer {
 
     /**
      * Modify the path to the root deployment directory
-     * 
+     *
      * @param path
      */
     public void setPath(String path) {
@@ -94,7 +91,7 @@ public class MainDeployer {
 
     /**
      * Gets the filter used by Deployer to select files for deployement.
-     * 
+     *
      * @return the file filter object.
      */
     public FileFilter getFileFilter() {
@@ -103,9 +100,8 @@ public class MainDeployer {
 
     /**
      * Assigns file filter used for selection files for deploy.
-     * 
-     * @param fileFilter
-     *            the file filter object.
+     *
+     * @param fileFilter the file filter object.
      */
     public void setFileFilter(FileFilter fileFilter) {
         this.fileFilter = fileFilter;
@@ -113,11 +109,9 @@ public class MainDeployer {
 
     /**
      * Starts main deployer.
-     * 
-     * @param kernel
-     *            the jboss microntainer kernel instance.
-     * @param kernelDeployer
-     *            the jboss basic deployer.
+     *
+     * @param kernel the jboss microntainer kernel instance.
+     * @param kernelDeployer the jboss basic deployer.
      */
     public void start(Kernel kernel, BasicXMLDeployer kernelDeployer) throws Throwable {
         Version version = Version.instance;
@@ -129,44 +123,44 @@ public class MainDeployer {
             URL url = d.getConfig();
             deployment = kernelDeployer.deploy(url);
             kernelDeployer.validate();
-            
+
             logger.info(generateMessageWithLogo("service started"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
     }
-    
-	private String generateMessageWithLogo(String message) {
-		return lLogo + getSS7Name() + " " + getSS7Version() + " " + message + rLogo;
-	}
 
-	public String getSS7Name() {
-		String name = Version.instance.getProperty("name");
-		if (name != null) {
-			return name;
-		} else {
-			return "Mobicents SGW";
-		}
-	}
+    private String generateMessageWithLogo(String message) {
+        return lLogo + getSS7Name() + " " + getSS7Version() + " " + message + rLogo;
+    }
 
-	public String getSS7Vendor() {
-		String vendor = Version.instance.getProperty("vendor");
-		if (vendor != null) {
-			return vendor;
-		} else {
-			return "TeleStax Inc";
-		}
-	}
+    public String getSS7Name() {
+        String name = Version.instance.getProperty("name");
+        if (name != null) {
+            return name;
+        } else {
+            return "Mobicents SGW";
+        }
+    }
 
-	public String getSS7Version() {
-		String version = Version.instance.getProperty("version");
-		if (version != null) {
-			return version;
-		} else {
-			return "2.0";
-		}
-	}   
+    public String getSS7Vendor() {
+        String vendor = Version.instance.getProperty("vendor");
+        if (vendor != null) {
+            return vendor;
+        } else {
+            return "TeleStax Inc";
+        }
+    }
+
+    public String getSS7Version() {
+        String version = Version.instance.getProperty("version");
+        if (version != null) {
+            return version;
+        } else {
+            return "2.0";
+        }
+    }
 
     /**
      * Shuts down deployer.

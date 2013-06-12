@@ -23,18 +23,15 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-MGW-EventList ::= BIT STRING {
-	context (0)} (SIZE (1..8))
--- Other bits than listed above shall be discarded.
-
- * 
+ *
+ MGW-EventList ::= BIT STRING { context (0)} (SIZE (1..8)) -- Other bits than listed above shall be discarded.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MGWEventList {
 
-	public boolean getContext();
+    boolean getContext();
 
 }

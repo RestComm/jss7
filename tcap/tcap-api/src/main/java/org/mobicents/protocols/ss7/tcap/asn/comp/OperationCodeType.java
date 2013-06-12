@@ -21,7 +21,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.mobicents.protocols.ss7.tcap.asn.comp;
 
@@ -31,6 +31,6 @@ package org.mobicents.protocols.ss7.tcap.asn.comp;
  */
 public enum OperationCodeType {
 
-	Local,Global
-	
+    Local, Global
+
 }

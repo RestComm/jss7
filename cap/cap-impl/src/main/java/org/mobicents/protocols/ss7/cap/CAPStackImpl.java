@@ -30,72 +30,72 @@ import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CAPStackImpl implements CAPStack {
 
-	protected TCAPStack tcapStack = null;
+    protected TCAPStack tcapStack = null;
 
-	protected CAPProviderImpl capProvider = null;
+    protected CAPProviderImpl capProvider = null;
 
-	private State state = State.IDLE;
+    private State state = State.IDLE;
 
-	public CAPStackImpl(SccpProvider sccpPprovider, int ssn) {
-		this.tcapStack = new TCAPStackImpl(sccpPprovider, ssn);
-		TCAPProvider tcapProvider = tcapStack.getProvider();
-		capProvider = new CAPProviderImpl(tcapProvider);
+    public CAPStackImpl(SccpProvider sccpPprovider, int ssn) {
+        this.tcapStack = new TCAPStackImpl(sccpPprovider, ssn);
+        TCAPProvider tcapProvider = tcapStack.getProvider();
+        capProvider = new CAPProviderImpl(tcapProvider);
 
-		this.state = State.CONFIGURED;
-	}
+        this.state = State.CONFIGURED;
+    }
 
-	public CAPStackImpl(TCAPProvider tcapProvider) {
+    public CAPStackImpl(TCAPProvider tcapProvider) {
 
-		capProvider = new CAPProviderImpl(tcapProvider);
-		this.state = State.CONFIGURED;
-	}
+        capProvider = new CAPProviderImpl(tcapProvider);
+        this.state = State.CONFIGURED;
+    }
 
-	@Override
-	public CAPProvider getCAPProvider() {
-		return this.capProvider;
-	}
+    @Override
+    public CAPProvider getCAPProvider() {
+        return this.capProvider;
+    }
 
-	@Override
-	public void start() throws IllegalStateException {
-		if (state != State.CONFIGURED) {
-			throw new IllegalStateException("Stack has not been configured or is already running!");
-		}
-		if (tcapStack != null) {
-			// this is null in junits!
-			this.tcapStack.start();
-		}
-		this.capProvider.start();
+    @Override
+    public void start() throws IllegalStateException {
+        if (state != State.CONFIGURED) {
+            throw new IllegalStateException("Stack has not been configured or is already running!");
+        }
+        if (tcapStack != null) {
+            // this is null in junits!
+            this.tcapStack.start();
+        }
+        this.capProvider.start();
 
-		this.state = State.RUNNING;
+        this.state = State.RUNNING;
 
-	}
+    }
 
-	@Override
-	public void stop() {
-		if (state != State.RUNNING) {
-			throw new IllegalStateException("Stack is not running!");
-		}
-		this.capProvider.stop();
-		if (tcapStack != null) {
-			this.tcapStack.stop();
-		}
+    @Override
+    public void stop() {
+        if (state != State.RUNNING) {
+            throw new IllegalStateException("Stack is not running!");
+        }
+        this.capProvider.stop();
+        if (tcapStack != null) {
+            this.tcapStack.stop();
+        }
 
-		this.state = State.CONFIGURED;
-	}
+        this.state = State.CONFIGURED;
+    }
 
-	@Override
-	public TCAPStack getTCAPStack() {
-		return this.tcapStack;
-	}
+    @Override
+    public TCAPStack getTCAPStack() {
+        return this.tcapStack;
+    }
 
-	private enum State {
-		IDLE, CONFIGURED, RUNNING;
-	}
+    private enum State {
+        IDLE, CONFIGURED, RUNNING;
+    }
 
 }

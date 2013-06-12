@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -28,27 +28,26 @@ import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 
 /**
  * <p>
- * When the far end As transitions to INACTIVE, the local As should also
- * transition on INACTIVE
+ * When the far end As transitions to INACTIVE, the local As should also transition on INACTIVE
  * </p>
  * <p>
  * Clear the pending queue
  * </p>
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class THPeerAsPenToInAct implements TransitionHandler {
 
-	private AsImpl asImpl;
+    private AsImpl asImpl;
 
-	public THPeerAsPenToInAct(AsImpl asImpl, FSM fsm) {
-		this.asImpl = asImpl;
-	}
+    public THPeerAsPenToInAct(AsImpl asImpl, FSM fsm) {
+        this.asImpl = asImpl;
+    }
 
-	public boolean process(FSMState state) {
-		this.asImpl.clearPendingQueue();
-		return true;
-	}
+    public boolean process(FSMState state) {
+        this.asImpl.clearPendingQueue();
+        return true;
+    }
 
 }

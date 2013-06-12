@@ -23,20 +23,17 @@
 package org.mobicents.protocols.ss7.cap.api.gap;
 
 /**
-*
-GapOnService ::= SEQUENCE { 
- serviceKey       [0] ServiceKey, 
- ... 
- } 
-
-ServiceKey::= Integer4
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ GapOnService ::= SEQUENCE { serviceKey [0] ServiceKey, ... }
+ *
+ * ServiceKey::= Integer4
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface GapOnService {
 
-	public int getServiceKey();
+    int getServiceKey();
 
 }

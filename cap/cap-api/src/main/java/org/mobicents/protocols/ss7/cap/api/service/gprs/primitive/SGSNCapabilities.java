@@ -23,29 +23,20 @@
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
 /**
-*
-
-SGSNCapabilities ::= OCTET STRING (SIZE (1))
--- Indicates the SGSN capabilities. The coding of the parameter is as follows:
--- Bit Value Meaning
--- 0 0 AoC not supported by SGSN
---   1 AoC supported by SGSN
--- 1 - This bit is reserved in CAP V.3
--- 2 - This bit is reserved in CAP V.3
--- 3 - This bit is reserved in CAP V.3
--- 4 - This bit is reserved in CAP V.3
--- 5 - This bit is reserved in CAP V.3
--- 6 - This bit is reserved in CAP V.3
--- 7 - This bit is reserved in CAP V.3
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ SGSNCapabilities ::= OCTET STRING (SIZE (1)) -- Indicates the SGSN capabilities. The coding of the parameter is as follows:
+ * -- Bit Value Meaning -- 0 0 AoC not supported by SGSN -- 1 AoC supported by SGSN -- 1 - This bit is reserved in CAP V.3 -- 2
+ * - This bit is reserved in CAP V.3 -- 3 - This bit is reserved in CAP V.3 -- 4 - This bit is reserved in CAP V.3 -- 5 - This
+ * bit is reserved in CAP V.3 -- 6 - This bit is reserved in CAP V.3 -- 7 - This bit is reserved in CAP V.3
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface SGSNCapabilities {
 
-	public byte[] getData();
+    byte[] getData();
 
-	public boolean getAoCSupportedBySGSN();
+    boolean getAoCSupportedBySGSN();
 
 }

@@ -40,190 +40,194 @@ import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.service.lsm.LCSClientExternalIDImpl;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class ExternalClientImpl extends SequenceBase implements ExternalClient{
+public class ExternalClientImpl extends SequenceBase implements ExternalClient {
 
-	private static final int _TAG_gmlcRestriction = 0;
-	private static final int _TAG_notificationToMSUser = 1;
-	private static final int _TAG_extensionContainer = 2;
-	
-	private LCSClientExternalID clientIdentity;
-	private GMLCRestriction gmlcRestriction;
-	private NotificationToMSUser notificationToMSUser;
-	private MAPExtensionContainer extensionContainer; 
-	
-	public ExternalClientImpl() {
-		super("ExternalClient");
-	}
-	
-	public ExternalClientImpl(
-			LCSClientExternalID clientIdentity,
-			GMLCRestriction gmlcRestriction,
-			NotificationToMSUser notificationToMSUser,
-			MAPExtensionContainer extensionContainer) {
-		super("ExternalClient");
-		this.clientIdentity = clientIdentity;
-		this.gmlcRestriction = gmlcRestriction;
-		this.notificationToMSUser = notificationToMSUser;
-		this.extensionContainer = extensionContainer;
-	}
+    private static final int _TAG_gmlcRestriction = 0;
+    private static final int _TAG_notificationToMSUser = 1;
+    private static final int _TAG_extensionContainer = 2;
 
-	@Override
-	public LCSClientExternalID getClientIdentity() {
-		return this.clientIdentity;
-	}
-	@Override
-	public GMLCRestriction getGMLCRestriction() {
-		return this.gmlcRestriction;
-	}
-	@Override
-	public NotificationToMSUser getNotificationToMSUser() {
-		return this.notificationToMSUser;
-	}
-	@Override
-	public MAPExtensionContainer getExtensionContainer() {
-		return this.extensionContainer;
-	}
-	@Override
-	protected void _decode(AsnInputStream asnIS, int length)
-			throws MAPParsingComponentException, IOException, AsnException {
+    private LCSClientExternalID clientIdentity;
+    private GMLCRestriction gmlcRestriction;
+    private NotificationToMSUser notificationToMSUser;
+    private MAPExtensionContainer extensionContainer;
 
-		this.clientIdentity = null;
-		this.gmlcRestriction = null;
-		this.notificationToMSUser = null;
-		this.extensionContainer = null;
+    public ExternalClientImpl() {
+        super("ExternalClient");
+    }
 
-		AsnInputStream ais = asnIS.readSequenceStreamData(length);
+    public ExternalClientImpl(LCSClientExternalID clientIdentity, GMLCRestriction gmlcRestriction,
+            NotificationToMSUser notificationToMSUser, MAPExtensionContainer extensionContainer) {
+        super("ExternalClient");
+        this.clientIdentity = clientIdentity;
+        this.gmlcRestriction = gmlcRestriction;
+        this.notificationToMSUser = notificationToMSUser;
+        this.extensionContainer = extensionContainer;
+    }
 
-		int num = 0;
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    @Override
+    public LCSClientExternalID getClientIdentity() {
+        return this.clientIdentity;
+    }
 
-			int tag = ais.readTag();
+    @Override
+    public GMLCRestriction getGMLCRestriction() {
+        return this.gmlcRestriction;
+    }
 
-			switch (num) {
-			case 0:
-				if (tag != Tag.SEQUENCE || ais.getTagClass() != Tag.CLASS_UNIVERSAL || ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".clientIdentity: Parameter bad tag, tag class or primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.clientIdentity = new LCSClientExternalIDImpl();
-				((LCSClientExternalIDImpl) this.clientIdentity).decodeAll(ais);
-				break;
-			default:
-				switch (ais.getTagClass()) {
-				case Tag.CLASS_CONTEXT_SPECIFIC: {
-					switch (tag) {
-					case _TAG_gmlcRestriction: 
-						if (!ais.isTagPrimitive())
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".gmlcRestriction: Parameter is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						int code = (int) ais.readInteger();
-						this.gmlcRestriction = GMLCRestriction.getInstance(code);
-						break;
-					case _TAG_notificationToMSUser: 
-						if (!ais.isTagPrimitive())
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".notificationToMSUser: Parameter is not primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						int code1 = (int) ais.readInteger();
-						this.notificationToMSUser = NotificationToMSUser.getInstance(code1);
-						break;
-					case _TAG_extensionContainer: 
-						if (ais.isTagPrimitive())
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: Parameter is primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						this.extensionContainer = new MAPExtensionContainerImpl();
-						((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
-						break;
-					default:
-						ais.advanceElement();
-						break;
-					}
-				}
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-			}
+    @Override
+    public NotificationToMSUser getNotificationToMSUser() {
+        return this.notificationToMSUser;
+    }
 
-			num++;
-		}
+    @Override
+    public MAPExtensionContainer getExtensionContainer() {
+        return this.extensionContainer;
+    }
 
-		
-		if (this.clientIdentity == null) {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament clientIdentity is mandatory but does not found",
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
+    @Override
+    protected void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-	}
-	
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		
-		try {
-			if (this.clientIdentity == null)
-				throw new MAPException("Error while encoding" + _PrimitiveName + ": clientIdentity must not be null");
-			
-			try {
+        this.clientIdentity = null;
+        this.gmlcRestriction = null;
+        this.notificationToMSUser = null;
+        this.extensionContainer = null;
 
-				((LCSClientExternalIDImpl) this.clientIdentity).encodeAll(asnOs);
+        AsnInputStream ais = asnIS.readSequenceStreamData(length);
 
-				if (this.gmlcRestriction != null)
-					asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_gmlcRestriction, gmlcRestriction.getCode());
+        int num = 0;
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-				if (this.notificationToMSUser != null)
-					asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_notificationToMSUser, notificationToMSUser.getCode());
+            int tag = ais.readTag();
 
-				if (this.extensionContainer != null)
-					((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs,Tag.CLASS_CONTEXT_SPECIFIC, _TAG_extensionContainer);
+            switch (num) {
+                case 0:
+                    if (tag != Tag.SEQUENCE || ais.getTagClass() != Tag.CLASS_UNIVERSAL || ais.isTagPrimitive())
+                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ".clientIdentity: Parameter bad tag, tag class or primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.clientIdentity = new LCSClientExternalIDImpl();
+                    ((LCSClientExternalIDImpl) this.clientIdentity).decodeAll(ais);
+                    break;
+                default:
+                    switch (ais.getTagClass()) {
+                        case Tag.CLASS_CONTEXT_SPECIFIC: {
+                            switch (tag) {
+                                case _TAG_gmlcRestriction:
+                                    if (!ais.isTagPrimitive())
+                                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                                + ".gmlcRestriction: Parameter is not primitive",
+                                                MAPParsingComponentExceptionReason.MistypedParameter);
+                                    int code = (int) ais.readInteger();
+                                    this.gmlcRestriction = GMLCRestriction.getInstance(code);
+                                    break;
+                                case _TAG_notificationToMSUser:
+                                    if (!ais.isTagPrimitive())
+                                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                                + ".notificationToMSUser: Parameter is not primitive",
+                                                MAPParsingComponentExceptionReason.MistypedParameter);
+                                    int code1 = (int) ais.readInteger();
+                                    this.notificationToMSUser = NotificationToMSUser.getInstance(code1);
+                                    break;
+                                case _TAG_extensionContainer:
+                                    if (ais.isTagPrimitive())
+                                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                                + ".extensionContainer: Parameter is primitive",
+                                                MAPParsingComponentExceptionReason.MistypedParameter);
+                                    this.extensionContainer = new MAPExtensionContainerImpl();
+                                    ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                                    break;
+                                default:
+                                    ais.advanceElement();
+                                    break;
+                            }
+                        }
+                            break;
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+            }
 
-			} catch (IOException e) {
-				throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-			} catch (AsnException e) {
-				throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+            num++;
+        }
 
-		if (this.clientIdentity != null) {
-			sb.append("clientIdentity=");
-			sb.append(this.clientIdentity.toString());
-			sb.append(", ");
-		}
-		
-		if (this.gmlcRestriction != null) {
-			sb.append("gmlcRestriction=");
-			sb.append(this.gmlcRestriction.toString());
-			sb.append(", ");
-		}
-		
-		if (this.notificationToMSUser != null) {
-			sb.append("notificationToMSUser=");
-			sb.append(this.notificationToMSUser.toString());
-			sb.append(", ");
-		}
+        if (this.clientIdentity == null) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": Parament clientIdentity is mandatory but does not found",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
 
-		if (this.extensionContainer != null) {
-			sb.append("extensionContainer=");
-			sb.append(this.extensionContainer.toString());
-			sb.append(", ");
-		}
+    }
 
-		sb.append("]");
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		return sb.toString();
-	}
-	
-	
+        try {
+            if (this.clientIdentity == null)
+                throw new MAPException("Error while encoding" + _PrimitiveName + ": clientIdentity must not be null");
+
+            try {
+
+                ((LCSClientExternalIDImpl) this.clientIdentity).encodeAll(asnOs);
+
+                if (this.gmlcRestriction != null)
+                    asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_gmlcRestriction, gmlcRestriction.getCode());
+
+                if (this.notificationToMSUser != null)
+                    asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_notificationToMSUser, notificationToMSUser.getCode());
+
+                if (this.extensionContainer != null)
+                    ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                            _TAG_extensionContainer);
+
+            } catch (IOException e) {
+                throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            } catch (AsnException e) {
+                throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.clientIdentity != null) {
+            sb.append("clientIdentity=");
+            sb.append(this.clientIdentity.toString());
+            sb.append(", ");
+        }
+
+        if (this.gmlcRestriction != null) {
+            sb.append("gmlcRestriction=");
+            sb.append(this.gmlcRestriction.toString());
+            sb.append(", ");
+        }
+
+        if (this.notificationToMSUser != null) {
+            sb.append("notificationToMSUser=");
+            sb.append(this.notificationToMSUser.toString());
+            sb.append(", ");
+        }
+
+        if (this.extensionContainer != null) {
+            sb.append("extensionContainer=");
+            sb.append(this.extensionContainer.toString());
+            sb.append(", ");
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 }

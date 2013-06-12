@@ -22,6 +22,7 @@
 
 package org.mobicents.ss7.management.transceiver;
 
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -29,12 +30,13 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.channels.SelectionKey;
 
-import javolution.util.FastList;
 import javolution.util.FastSet;
 
-import org.testng.*;
-import org.testng.annotations.*;
-import static org.testng.Assert.*;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 public class ShellTransceiverTest {
     private InetAddress localhost;
@@ -115,8 +117,7 @@ public class ShellTransceiverTest {
             channel.bind(new InetSocketAddress(address, port));
 
             selector = provider.openSelector();
-            skey = channel.register(selector, SelectionKey.OP_READ
-                    | SelectionKey.OP_WRITE);
+            skey = channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
         }
 
         @SuppressWarnings("static-access")
@@ -152,10 +153,8 @@ public class ShellTransceiverTest {
                 try {
                     FastSet<ChannelSelectionKey> keys = selector.selectNow();
 
-                    for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record
-                            .getNext()) != end;) {
-                        ChannelSelectionKey key = (ChannelSelectionKey) keys
-                                .valueOf(record);
+                    for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record.getNext()) != end;) {
+                        ChannelSelectionKey key = (ChannelSelectionKey) keys.valueOf(record);
                         ShellChannel chan = (ShellChannel) key.channel();
                         if (key.isReadable()) {
                             Message msg = (Message) chan.receive();
@@ -164,8 +163,7 @@ public class ShellTransceiverTest {
                         }
 
                         if (key.isWritable() && i < txMessage.length) {
-                            chan.send(createMessage(this.provider,
-                                    txMessage[i++]));
+                            chan.send(createMessage(this.provider, txMessage[i++]));
                         }
                     }
                 } catch (Exception e) {
@@ -221,8 +219,7 @@ public class ShellTransceiverTest {
         private void accept() throws IOException {
             channel = serverChannel.accept();
             skey.cancel();
-            skey = channel.register(selector, SelectionKey.OP_READ
-                    | SelectionKey.OP_WRITE);
+            skey = channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
         }
 
         public void run() {
@@ -231,14 +228,11 @@ public class ShellTransceiverTest {
                 try {
                     FastSet<ChannelSelectionKey> keys = selector.selectNow();
 
-                    for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record
-                            .getNext()) != end;) {
-                        ChannelSelectionKey key = (ChannelSelectionKey) keys
-                                .valueOf(record);
+                    for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record.getNext()) != end;) {
+                        ChannelSelectionKey key = (ChannelSelectionKey) keys.valueOf(record);
 
                         if (key.isAcceptable()) {
-                            ShellServerChannel chan = (ShellServerChannel) key
-                                    .channel();
+                            ShellServerChannel chan = (ShellServerChannel) key.channel();
                             accept();
                         } else if (key.isReadable()) {
                             ShellChannel chan = (ShellChannel) key.channel();
@@ -247,8 +241,7 @@ public class ShellTransceiverTest {
                             rxMessage += msg.toString();
                         } else if (key.isWritable() && i < txMessage.length) {
                             ShellChannel chan = (ShellChannel) key.channel();
-                            chan.send(createMessage(this.provider,
-                                    txMessage[i++]));
+                            chan.send(createMessage(this.provider, txMessage[i++]));
                         }
                     }
                 } catch (IOException e) {

@@ -31,16 +31,15 @@ import org.mobicents.protocols.stream.api.SelectorProvider;
 import org.mobicents.protocols.stream.api.StreamSelector;
 
 /**
- * Implementation for {@link org.mobicents.protocols.ss7.mtp.Mtp1}. Opens the
- * channel (JNI) and works with underlying dahdi link
- * 
+ * Implementation for {@link org.mobicents.protocols.ss7.mtp.Mtp1}. Opens the channel (JNI) and works with underlying dahdi link
+ *
  * @author kulikov
  * @author baranowb
  * @author amit bhayani
  */
 public class Channel implements Mtp1 {
 
-    private final static String LIB_NAME = "mobicents-dahdi-linux";
+    private static final String LIB_NAME = "mobicents-dahdi-linux";
 
     static {
         try {
@@ -112,47 +111,40 @@ public class Channel implements Mtp1 {
 
     /**
      * Opens this channel and prepares it for reading.
-     * 
-     * @param id -
-     *            id of zap device, its appended at the end of path, for
-     *            instance: /dev/dahdi/${id}
-     * @param bufferSize -
-     *            size of buffer to be used for I/O ops.
+     *
+     * @param id - id of zap device, its appended at the end of path, for instance: /dev/dahdi/${id}
+     * @param bufferSize - size of buffer to be used for I/O ops.
      */
     public native int openChannel(int id, int bufferSize);
 
     /**
      * Reads data from this pipe.
-     * 
-     * @param buffer
-     *            the byte buffer to read data.
+     *
+     * @param buffer the byte buffer to read data.
      * @return the number of bytes actualy read.
      */
     public int read(byte[] buffer) throws IOException {
-    	int result=readData(fd, buffer,ioBufferSize);
-    	if(result==-1)
-    	{
-    		doUnregister(fd);
-    		close();
-    		int zapid = 31 * (span - 1) + channelID;
+        int result = readData(fd, buffer, ioBufferSize);
+        if (result == -1) {
+            doUnregister(fd);
+            close();
+            int zapid = 31 * (span - 1) + channelID;
             fd = openChannel(zapid, ioBufferSize);
             doRegister(fd);
-            
-    		return 0;
-    	}
-    	
-    	return result;
+
+            return 0;
+        }
+
+        return result;
     }
 
     public native int readData(int fd, byte[] buffer, int bufferSize);
 
     /**
      * Writes specified data to the pipe.
-     * 
-     * @param buffer
-     *            the buffer with data to write
-     * @param len
-     *            the length of the buffer.
+     *
+     * @param buffer the buffer with data to write
+     * @param len the length of the buffer.
      */
     public int write(byte[] buffer) throws IOException {
         writeData(fd, buffer, buffer.length);
@@ -163,17 +155,15 @@ public class Channel implements Mtp1 {
 
     /**
      * Registers pipe for polling.
-     * 
-     * @param fd
-     *            the file descriptor.
+     *
+     * @param fd the file descriptor.
      */
     public native void doRegister(int fd);
 
     /**
      * Unregisters pipe from polling.
-     * 
-     * @param fd
-     *            the file descriptor.
+     *
+     * @param fd the file descriptor.
      */
     public native void doUnregister(int fd);
 
@@ -227,14 +217,14 @@ public class Channel implements Mtp1 {
         this.writeData(fd, data, len);
     }
 
-	public int read(ByteBuffer arg0) throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public int read(ByteBuffer arg0) throws IOException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-	public int write(ByteBuffer arg0) throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public int write(ByteBuffer arg0) throws IOException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
 }

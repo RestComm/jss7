@@ -26,7 +26,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ConcernedDPC;
 import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 
 /**
- * 
+ *
  * @author amit bhayani
  *
  */
@@ -40,8 +40,8 @@ public class ConcernedDPCImpl extends ParameterImpl implements ConcernedDPC {
     }
 
     protected ConcernedDPCImpl(byte[] data) {
-        //data[0] is reserved
-        
+        // data[0] is reserved
+
         this.pointCode = 0;
         this.pointCode |= data[1] & 0xFF;
         this.pointCode <<= 8;
@@ -54,10 +54,10 @@ public class ConcernedDPCImpl extends ParameterImpl implements ConcernedDPC {
     @Override
     protected byte[] getValue() {
         byte[] data = new byte[4];
-        //reserved
+        // reserved
         data[0] = 0;
-        
-        //DPC
+
+        // DPC
         data[1] = (byte) (pointCode >>> 16);
         data[2] = (byte) (pointCode >>> 8);
         data[3] = (byte) (pointCode);

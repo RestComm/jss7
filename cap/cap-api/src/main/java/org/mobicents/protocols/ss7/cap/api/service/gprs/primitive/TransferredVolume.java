@@ -23,26 +23,19 @@
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
 /**
-*
-
-TransferredVolume ::= CHOICE {
-volumeIfNoTariffSwitch [0] INTEGER (0..4294967295),
-volumeIfTariffSwitch [1] SEQUENCE {
-volumeSinceLastTariffSwitch [0] INTEGER (0..4294967295),
-volumeTariffSwitchInterval [1] INTEGER (0..4294967295) OPTIONAL
-}
-}
--- volumeIfNoTariffSwitch, volumeSinceLastTariffSwitch and volumeTariffSwitchInterval
--- are measured in bytes.
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ TransferredVolume ::= CHOICE { volumeIfNoTariffSwitch [0] INTEGER (0..4294967295), volumeIfTariffSwitch [1] SEQUENCE {
+ * volumeSinceLastTariffSwitch [0] INTEGER (0..4294967295), volumeTariffSwitchInterval [1] INTEGER (0..4294967295) OPTIONAL } }
+ * -- volumeIfNoTariffSwitch, volumeSinceLastTariffSwitch and volumeTariffSwitchInterval -- are measured in bytes.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface TransferredVolume {
 
-	public Long getVolumeIfNoTariffSwitch();
+    Long getVolumeIfNoTariffSwitch();
 
-	public VolumeIfTariffSwitch getVolumeIfTariffSwitch();
+    VolumeIfTariffSwitch getVolumeIfTariffSwitch();
 
 }

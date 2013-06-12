@@ -25,43 +25,31 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 
 /**
-*
-
-specializedResourceReport OPERATION ::= { 
- ARGUMENT  SpecializedResourceReportArg 
- RETURN RESULT FALSE 
- ALWAYS RESPONDS FALSE 
- CODE   opcode-specializedResourceReport} 
--- Direction: gsmSRF -> gsmSCF, Timer: Tsrr 
--- This operation is used as the response to a PlayAnnouncement operation when the announcement  
--- completed report indication is set. 
-
-CAP V2 & V3:
-SpecializedResourceReportArg::=NULL
- 
-CAP V4:
-SpecializedResourceReportArg ::= CHOICE { 
- allAnnouncementsComplete   [50] NULL, 
- firstAnnouncementStarted   [51] NULL 
- } 
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ specializedResourceReport OPERATION ::= { ARGUMENT SpecializedResourceReportArg RETURN RESULT FALSE ALWAYS RESPONDS FALSE
+ * CODE opcode-specializedResourceReport} -- Direction: gsmSRF -> gsmSCF, Timer: Tsrr -- This operation is used as the response
+ * to a PlayAnnouncement operation when the announcement -- completed report indication is set.
+ *
+ * CAP V2 & V3: SpecializedResourceReportArg::=NULL
+ *
+ * CAP V4: SpecializedResourceReportArg ::= CHOICE { allAnnouncementsComplete [50] NULL, firstAnnouncementStarted [51] NULL }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface SpecializedResourceReportRequest extends CircuitSwitchedCallMessage {
 
-	public boolean getAllAnnouncementsComplete();
+    boolean getAllAnnouncementsComplete();
 
-	public boolean getFirstAnnouncementStarted();
+    boolean getFirstAnnouncementStarted();
 
-	public Long getLinkedId();
+    Long getLinkedId();
 
-	public void setLinkedId(Long val);
+    void setLinkedId(Long val);
 
-	public Invoke getLinkedInvoke ();
+    Invoke getLinkedInvoke();
 
-	public void setLinkedInvoke (Invoke  val);
+    void setLinkedInvoke(Invoke val);
 
 }
-

@@ -28,27 +28,23 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 
-/**	
- * 
-
-MSISDN-BS ::= SEQUENCE {
-	msisdn			ISDN-AddressString,	
-	basicServiceList	[0]	BasicServiceList	OPTIONAL,
-	extensionContainer	[1]	ExtensionContainer	OPTIONAL,
-	...}
-
-BasicServiceList ::= SEQUENCE SIZE (1..70) OF Ext-BasicServiceCode
-
- * 
+/**
+ *
+ MSISDN-BS ::= SEQUENCE { msisdn ISDN-AddressString, basicServiceList [0] BasicServiceList OPTIONAL, extensionContainer [1]
+ * ExtensionContainer OPTIONAL, ...}
+ *
+ * BasicServiceList ::= SEQUENCE SIZE (1..70) OF Ext-BasicServiceCode
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface MSISDNBS {
 
-	public ISDNAddressString getMsisdn();
+    ISDNAddressString getMsisdn();
 
-	public ArrayList<ExtBasicServiceCode> getBasicServiceList();
+    ArrayList<ExtBasicServiceCode> getBasicServiceList();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

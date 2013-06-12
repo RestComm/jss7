@@ -53,7 +53,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * Project: mobicents-isup-stack<br>
  * <TABLE id="Table3" style="FONT-SIZE: 9pt; WIDTH: 584px; COLOR: black; HEIGHT: 72px; TEXT-ALIGN: center" cellSpacing="1" cellPadding="1" width="584" align="center" border="1">
  * <TR>
- * 
+ *
  * <TD style="FONT-WEIGHT: bold; WIDTH: 328px; COLOR: teal; HEIGHT: 28px" align="center" colSpan="3">
  * <TABLE id="Table33" style="WIDTH: 575px; HEIGHT: 49px" cellSpacing="1" cellPadding="1" width="575" border="0">
  * <TR>
@@ -63,14 +63,13 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TR>
  * <TD style="FONT-SIZE: 9pt; COLOR: navy" colSpan="3">
  * <P>
- * 
- * An Address Complete Message (ACM) is sent in the "backward" direction to
- * indicate that the remote end of a trunk circuit has been reserved.
+ *
+ * An Address Complete Message (ACM) is sent in the "backward" direction to indicate that the remote end of a trunk circuit has
+ * been reserved.
  * <P>
- * The originating switch responds to an ACM message by connecting the calling
- * party's line to the trunk to complete the voice circuit from the calling
- * party to the called party. The terminating switch sends a ringing tone to the
- * calling party's line. <BR>
+ * The originating switch responds to an ACM message by connecting the calling party's line to the trunk to complete the voice
+ * circuit from the calling party to the called party. The terminating switch sends a ringing tone to the calling party's line.
+ * <BR>
  * </P>
  * </TD>
  * </TR>
@@ -78,7 +77,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * </TD>
  * </TR>
  * <TR>
- * 
+ *
  * <TD style="FONT-WEIGHT: bold; WIDTH: 239px; HEIGHT: 30px; TEXT-ALIGN: center">
  * Parameter</TD>
  * <TD style="FONT-WEIGHT: bold; WIDTH: 145px; HEIGHT: 30px">Type</TD>
@@ -87,7 +86,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TR>
  * <TD style="WIDTH: 239px; TEXT-ALIGN: left">Message type</TD>
  * <TD style="WIDTH: 145px">F</TD>
- * 
+ *
  * <TD>1</TD>
  * </TR>
  * <TR>
@@ -95,7 +94,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="WIDTH: 145px">F</TD>
  * <TD>2</TD>
  * </TR>
- * 
+ *
  * <TR>
  * <TD style="WIDTH: 239px; TEXT-ALIGN: left">Optional Backward Call Indicators</TD>
  * <TD style="WIDTH: 145px">O</TD>
@@ -103,7 +102,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * </TR>
  * <TR>
  * <TD style="WIDTH: 239px; TEXT-ALIGN: left">Call Reference</TD>
- * 
+ *
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>7</TD>
  * </TR>
@@ -111,7 +110,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="WIDTH: 239px; TEXT-ALIGN: left">Cause Indicators</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>4-?</TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="WIDTH: 239px; TEXT-ALIGN: left">User to User Indicators</TD>
@@ -119,7 +118,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD>3</TD>
  * </TR>
  * <TR>
- * 
+ *
  * <TD style="WIDTH: 239px; TEXT-ALIGN: left">User to User Information</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>3-131</TD>
@@ -127,7 +126,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TR>
  * <TD style="WIDTH: 239px; TEXT-ALIGN: left">Access Transport</TD>
  * <TD style="WIDTH: 145px">O</TD>
- * 
+ *
  * <TD>3-?</TD>
  * </TR>
  * <TR>
@@ -135,7 +134,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>3</TD>
  * </TR>
- * 
+ *
  * <TR>
  * <TD style="WIDTH: 239px; TEXT-ALIGN: left">Transmission Medium Used</TD>
  * <TD style="WIDTH: 145px">O</TD>
@@ -143,7 +142,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * </TR>
  * <TR>
  * <TD style="WIDTH: 239px; TEXT-ALIGN: left">Echo Control Information</TD>
- * 
+ *
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>3</TD>
  * </TR>
@@ -151,7 +150,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="WIDTH: 239px; TEXT-ALIGN: left">Access Delivery Information</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>3</TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="WIDTH: 239px; TEXT-ALIGN: left">Redirection Number</TD>
@@ -159,16 +158,15 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD>5-12</TD>
  * </TR>
  * <TR>
- * 
- * <TD style="WIDTH: 239px; TEXT-ALIGN: left">Parameter Compatibility
- * Information</TD>
+ *
+ * <TD style="WIDTH: 239px; TEXT-ALIGN: left">Parameter Compatibility Information</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>4-?</TD>
  * </TR>
  * <TR>
  * <TD style="WIDTH: 239px; TEXT-ALIGN: left">Call Diversion Information</TD>
  * <TD style="WIDTH: 145px">O</TD>
- * 
+ *
  * <TD>3</TD>
  * </TR>
  * <TR>
@@ -176,7 +174,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>4-?</TD>
  * </TR>
- * 
+ *
  * <TR>
  * <TD style="WIDTH: 239px; TEXT-ALIGN: left">Remote Operations</TD>
  * <TD style="WIDTH: 145px">O</TD>
@@ -184,7 +182,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * </TR>
  * <TR>
  * <TD style="WIDTH: 239px; TEXT-ALIGN: left">Service Activation</TD>
- * 
+ *
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>3-?</TD>
  * </TR>
@@ -192,7 +190,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="WIDTH: 239px; TEXT-ALIGN: left">Redirection Number Restriction</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>3</TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="WIDTH: 239px; TEXT-ALIGN: left">End of Optional Parameters</TD>
@@ -200,116 +198,116 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD>1</TD>
  * </TR>
  * </TABLE>
- * 
- * 
+ *
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface AddressCompleteMessage extends ISUPMessage {
 
-	/**
-	 * Address Complete Message, Q.763 reference table 21 <br>
-	 * {@link AddressCompleteMessage}
-	 */
-	public static final int MESSAGE_CODE= 0x06;
-	
-	public void setBackwardCallIndicators(BackwardCallIndicators indicators);
+    /**
+     * Address Complete Message, Q.763 reference table 21 <br>
+     * {@link AddressCompleteMessage}
+     */
+    int MESSAGE_CODE = 0x06;
 
-	public BackwardCallIndicators getBackwardCallIndicators();
+    void setBackwardCallIndicators(BackwardCallIndicators indicators);
 
-	public void setOptionalBackwardCallIndicators(OptionalBackwardCallIndicators value);
+    BackwardCallIndicators getBackwardCallIndicators();
 
-	public OptionalBackwardCallIndicators getOptionalBackwardCallIndicators();
+    void setOptionalBackwardCallIndicators(OptionalBackwardCallIndicators value);
 
-	public void setCallReference(CallReference value);
+    OptionalBackwardCallIndicators getOptionalBackwardCallIndicators();
 
-	public CallReference getCallReference();
+    void setCallReference(CallReference value);
 
-	public void setCauseIndicators(CauseIndicators value);
+    CallReference getCallReference();
 
-	public CauseIndicators getCauseIndicators();
+    void setCauseIndicators(CauseIndicators value);
 
-	public void setUserToUserIndicators(UserToUserIndicators value);
+    CauseIndicators getCauseIndicators();
 
-	public UserToUserIndicators getUserToUserIndicators();
+    void setUserToUserIndicators(UserToUserIndicators value);
 
-	public void setUserToUserInformation(UserToUserInformation value);
+    UserToUserIndicators getUserToUserIndicators();
 
-	public UserToUserInformation getUserToUserInformation();
+    void setUserToUserInformation(UserToUserInformation value);
 
-	public void setAccessTransport(AccessTransport value);
+    UserToUserInformation getUserToUserInformation();
 
-	public AccessTransport getAccessTransport();
+    void setAccessTransport(AccessTransport value);
 
-	public void setGenericNotificationIndicator(GenericNotificationIndicator value);
+    AccessTransport getAccessTransport();
 
-	public GenericNotificationIndicator getGenericNotificationIndicator();
+    void setGenericNotificationIndicator(GenericNotificationIndicator value);
 
-	public void setTransmissionMediumUsed(TransmissionMediumUsed value);
+    GenericNotificationIndicator getGenericNotificationIndicator();
 
-	public TransmissionMediumUsed getTransmissionMediumUsed();
+    void setTransmissionMediumUsed(TransmissionMediumUsed value);
 
-	public void setEchoControlInformation(EchoControlInformation value);
+    TransmissionMediumUsed getTransmissionMediumUsed();
 
-	public EchoControlInformation getEchoControlInformation();
+    void setEchoControlInformation(EchoControlInformation value);
 
-	public void setAccessDeliveryInformation(AccessDeliveryInformation value);
+    EchoControlInformation getEchoControlInformation();
 
-	public AccessDeliveryInformation getAccessDeliveryInformation();
+    void setAccessDeliveryInformation(AccessDeliveryInformation value);
 
-	public void setRedirectionNumber(RedirectionNumber value);
+    AccessDeliveryInformation getAccessDeliveryInformation();
 
-	public RedirectionNumber getRedirectionNumber();
+    void setRedirectionNumber(RedirectionNumber value);
 
-	public void setParameterCompatibilityInformation(ParameterCompatibilityInformation value);
+    RedirectionNumber getRedirectionNumber();
 
-	public ParameterCompatibilityInformation getParameterCompatibilityInformation();
+    void setParameterCompatibilityInformation(ParameterCompatibilityInformation value);
 
-	public void setCallDiversionInformation(CallDiversionInformation value);
+    ParameterCompatibilityInformation getParameterCompatibilityInformation();
 
-	public CallDiversionInformation getCallDiversionInformation();
+    void setCallDiversionInformation(CallDiversionInformation value);
 
-	public void setNetworkSpecificFacility(NetworkSpecificFacility value);
+    CallDiversionInformation getCallDiversionInformation();
 
-	public NetworkSpecificFacility getNetworkSpecificFacility();
+    void setNetworkSpecificFacility(NetworkSpecificFacility value);
 
-	public void setRemoteOperations(RemoteOperations value);
+    NetworkSpecificFacility getNetworkSpecificFacility();
 
-	public RemoteOperations getRemoteOperations();
+    void setRemoteOperations(RemoteOperations value);
 
-	public void setServiceActivation(ServiceActivation value);
+    RemoteOperations getRemoteOperations();
 
-	public RedirectionNumberRestriction getRedirectionNumberRestriction();
+    void setServiceActivation(ServiceActivation value);
 
-	public void setRedirectionNumberRestriction(RedirectionNumberRestriction value);
+    RedirectionNumberRestriction getRedirectionNumberRestriction();
 
-	public ServiceActivation getServiceActivation();
+    void setRedirectionNumberRestriction(RedirectionNumberRestriction value);
 
-	public void setConferenceTreatmentIndicators(ConferenceTreatmentIndicators value);
+    ServiceActivation getServiceActivation();
 
-	public ConferenceTreatmentIndicators getConferenceTreatmentIndicators();
+    void setConferenceTreatmentIndicators(ConferenceTreatmentIndicators value);
 
-	public void setUIDActionIndicators(UIDActionIndicators value);
+    ConferenceTreatmentIndicators getConferenceTreatmentIndicators();
 
-	public UIDActionIndicators getUIDActionIndicators();
+    void setUIDActionIndicators(UIDActionIndicators value);
 
-	public void setApplicationTransportParameter(ApplicationTransportParameter value);
+    UIDActionIndicators getUIDActionIndicators();
 
-	public ApplicationTransportParameter getApplicationTransportParameter();
+    void setApplicationTransportParameter(ApplicationTransportParameter value);
 
-	public void setCCNRPossibleIndicator(CCNRPossibleIndicator value);
+    ApplicationTransportParameter getApplicationTransportParameter();
 
-	public CCNRPossibleIndicator getCCNRPossibleIndicator();
+    void setCCNRPossibleIndicator(CCNRPossibleIndicator value);
 
-	public void setHTRInformation(HTRInformation value);
+    CCNRPossibleIndicator getCCNRPossibleIndicator();
 
-	public HTRInformation getHTRInformation();
+    void setHTRInformation(HTRInformation value);
 
-	public void setPivotRoutingBackwardInformation(PivotRoutingBackwardInformation value);
+    HTRInformation getHTRInformation();
 
-	public PivotRoutingBackwardInformation getPivotRoutingBackwardInformation();
+    void setPivotRoutingBackwardInformation(PivotRoutingBackwardInformation value);
 
-	public void setRedirectStatus(RedirectStatus value);
+    PivotRoutingBackwardInformation getPivotRoutingBackwardInformation();
 
-	public RedirectStatus getRedirectStatus();
+    void setRedirectStatus(RedirectStatus value);
+
+    RedirectStatus getRedirectStatus();
 
 }

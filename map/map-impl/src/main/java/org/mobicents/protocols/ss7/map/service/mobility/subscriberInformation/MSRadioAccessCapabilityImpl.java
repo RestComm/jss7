@@ -28,19 +28,19 @@ import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 /**
  * @author amit bhayani
  * @author sergey vetyutnev
- * 
+ *
  */
 public class MSRadioAccessCapabilityImpl extends OctetStringBase implements MSRadioAccessCapability {
 
-	public MSRadioAccessCapabilityImpl() {
-		super(1, 50, "MSRadioAccessCapability");
-	}
+    public MSRadioAccessCapabilityImpl() {
+        super(1, 50, "MSRadioAccessCapability");
+    }
 
-	public MSRadioAccessCapabilityImpl(byte[] data) {
-		super(1, 50, "MSRadioAccessCapability", data);
-	}
+    public MSRadioAccessCapabilityImpl(byte[] data) {
+        super(1, 50, "MSRadioAccessCapability", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 }

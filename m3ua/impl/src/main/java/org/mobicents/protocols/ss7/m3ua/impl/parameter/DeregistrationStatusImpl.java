@@ -26,12 +26,11 @@ import org.mobicents.protocols.ss7.m3ua.parameter.DeregistrationStatus;
 import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 
 /**
- * 
+ *
  * @author amit bhayani
  *
  */
-public class DeregistrationStatusImpl extends ParameterImpl implements
-        DeregistrationStatus {
+public class DeregistrationStatusImpl extends ParameterImpl implements DeregistrationStatus {
 
     private int status;
 

@@ -33,58 +33,57 @@ import org.mobicents.protocols.asn.Tag;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class VariablePartPriceTest {
 
-	public byte[] getData1() {
-		return new byte[] { (byte) 132, 4, 0, 0, 32, 69 };
-	}
+    public byte[] getData1() {
+        return new byte[] { (byte) 132, 4, 0, 0, 32, 69 };
+    }
 
-	public byte[] getData2() {
-		return new byte[] { (byte) 132, 4, (byte) 135, (byte) 152, (byte) 137, (byte) 151 };
-	}
+    public byte[] getData2() {
+        return new byte[] { (byte) 132, 4, (byte) 135, (byte) 152, (byte) 137, (byte) 151 };
+    }
 
-	public byte[] getData3() {
-		return new byte[] {  };
-	}
+    public byte[] getData3() {
+        return new byte[] {};
+    }
 
-	@Test(groups = { "functional.decode","circuitSwitchedCall.primitive"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData1();
-		AsnInputStream ais = new AsnInputStream(data);
-		VariablePartPriceImpl elem = new VariablePartPriceImpl();
-		int tag = ais.readTag();
-		assertEquals(tag, 4);
-		elem.decodeAll(ais);
-		assertEquals(elem.getPriceIntegerPart(), 2);
-		assertEquals(elem.getPriceHundredthPart(), 54);
+        byte[] data = this.getData1();
+        AsnInputStream ais = new AsnInputStream(data);
+        VariablePartPriceImpl elem = new VariablePartPriceImpl();
+        int tag = ais.readTag();
+        assertEquals(tag, 4);
+        elem.decodeAll(ais);
+        assertEquals(elem.getPriceIntegerPart(), 2);
+        assertEquals(elem.getPriceHundredthPart(), 54);
 
-		data = this.getData2();
-		ais = new AsnInputStream(data);
-		elem = new VariablePartPriceImpl();
-		tag = ais.readTag();
-		assertEquals(tag, 4);
-		elem.decodeAll(ais);
-		assertEquals(elem.getPriceIntegerPart(), 788998);
-		assertEquals(elem.getPriceHundredthPart(), 79);
-	}
+        data = this.getData2();
+        ais = new AsnInputStream(data);
+        elem = new VariablePartPriceImpl();
+        tag = ais.readTag();
+        assertEquals(tag, 4);
+        elem.decodeAll(ais);
+        assertEquals(elem.getPriceIntegerPart(), 788998);
+        assertEquals(elem.getPriceHundredthPart(), 79);
+    }
 
-	@Test(groups = { "functional.encode","circuitSwitchedCall.primitive"})
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
+    public void testEncode() throws Exception {
 
-		VariablePartPriceImpl elem = new VariablePartPriceImpl(2, 54);
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 4);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+        VariablePartPriceImpl elem = new VariablePartPriceImpl(2, 54);
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 4);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 
-		elem = new VariablePartPriceImpl(99788998, 79);
-		aos = new AsnOutputStream();
-		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 4);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
-	}
+        elem = new VariablePartPriceImpl(99788998, 79);
+        aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 4);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
+    }
 }
-

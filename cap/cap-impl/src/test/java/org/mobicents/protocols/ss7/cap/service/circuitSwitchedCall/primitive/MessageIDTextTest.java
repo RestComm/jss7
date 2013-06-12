@@ -33,41 +33,41 @@ import org.mobicents.protocols.asn.Tag;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class MessageIDTextTest {
 
-	public byte[] getData1() {
-		return new byte[] { 48, 17, (byte) 128, 9, 72, 101, 108, 108, 111, 32, 33, 33, 33, (byte) 129, 4, 1, 2, 3, 4 };
-	}
+    public byte[] getData1() {
+        return new byte[] { 48, 17, (byte) 128, 9, 72, 101, 108, 108, 111, 32, 33, 33, 33, (byte) 129, 4, 1, 2, 3, 4 };
+    }
 
-	public byte[] getDataInt() {
-		return new byte[] { 1, 2, 3, 4 };
-	}
+    public byte[] getDataInt() {
+        return new byte[] { 1, 2, 3, 4 };
+    }
 
-	@Test(groups = { "functional.decode","circuitSwitchedCall.primitive"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData1();
-		AsnInputStream ais = new AsnInputStream(data);
-		MessageIDTextImpl elem = new MessageIDTextImpl();
-		int tag = ais.readTag();
-		assertEquals(tag, Tag.SEQUENCE);
-		elem.decodeAll(ais);
-		assertTrue(elem.getMessageContent().equals("Hello !!!"));
-		assertTrue(Arrays.equals(elem.getAttributes(), this.getDataInt()));
-	}
+        byte[] data = this.getData1();
+        AsnInputStream ais = new AsnInputStream(data);
+        MessageIDTextImpl elem = new MessageIDTextImpl();
+        int tag = ais.readTag();
+        assertEquals(tag, Tag.SEQUENCE);
+        elem.decodeAll(ais);
+        assertTrue(elem.getMessageContent().equals("Hello !!!"));
+        assertTrue(Arrays.equals(elem.getAttributes(), this.getDataInt()));
+    }
 
-	@Test(groups = { "functional.encode","circuitSwitchedCall.primitive"})
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
+    public void testEncode() throws Exception {
 
-		MessageIDTextImpl elem = new MessageIDTextImpl("Hello !!!", getDataInt());
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
-		
-		// String messageContent, byte[] attributes
-	}
+        MessageIDTextImpl elem = new MessageIDTextImpl("Hello !!!", getDataInt());
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+
+        // String messageContent, byte[] attributes
+    }
 }

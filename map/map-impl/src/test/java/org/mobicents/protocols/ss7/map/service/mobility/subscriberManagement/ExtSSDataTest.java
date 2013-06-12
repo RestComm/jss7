@@ -47,116 +47,113 @@ import org.mobicents.protocols.ss7.map.service.supplementary.SSSubscriptionOptio
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public class ExtSSDataTest {
-	
-	public byte[] getData() {
-		return new byte[] { 48, 55, 4, 1, 0, -124, 1, 5, -126, 1, 0, 48, 3,
-				-126, 1, 22, -91, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12,
-				13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21,
-				22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
-	};
-	
-	public byte[] getData1() {
-		return new byte[] { 48, 55, 4, 1, 0, -124, 1, 5, -127, 1, 1, 48, 3,
-				-126, 1, 22, -91, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12,
-				13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21,
-				22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
-	};
 
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testDecode() throws Exception {
-		{
-			byte[] data = this.getData();
-			AsnInputStream asn = new AsnInputStream(data);
-			int tag = asn.readTag();
-			ExtSSDataImpl prim = new ExtSSDataImpl();
-			prim.decodeAll(asn);
-			
-			assertEquals(tag, Tag.SEQUENCE);
-			assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
-			
-			MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
-			assertEquals(prim.getSsCode().getSupplementaryCodeValue(), SupplementaryCodeValue.allServices);
-			assertNotNull(prim.getSsStatus());
-			assertTrue(prim.getSsStatus().getBitA());
-			assertTrue(prim.getSsStatus().getBitP());
-			assertTrue(!prim.getSsStatus().getBitQ());
-			assertTrue(!prim.getSsStatus().getBitR());
-			assertNotNull(prim.getSSSubscriptionOption());
-			assertNotNull(prim.getSSSubscriptionOption().getCliRestrictionOption());
-			assertEquals(prim.getSSSubscriptionOption().getCliRestrictionOption(), CliRestrictionOption.permanent);
-			assertNull(prim.getSSSubscriptionOption().getOverrideCategory());
-			
-			assertEquals(prim.getBasicServiceGroupList().size(), 1);
-			ExtBasicServiceCode ebsc = prim.getBasicServiceGroupList().get(0);
-			assertEquals(ebsc.getExtBearerService().getBearerServiceCodeValue(), BearerServiceCodeValue.Asynchronous9_6kbps);
-			
-			assertNotNull(extensionContainer);
-			assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
-		}
-	
-		{
-			byte[] data = this.getData1();
-			AsnInputStream asn = new AsnInputStream(data);
-			int tag = asn.readTag();
-			ExtSSDataImpl prim = new ExtSSDataImpl();
-			prim.decodeAll(asn);
-			
-			assertEquals(tag, Tag.SEQUENCE);
-			assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
-			
-			MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
-			assertEquals(prim.getSsCode().getSupplementaryCodeValue(), SupplementaryCodeValue.allServices);
-			assertNotNull(prim.getSsStatus());
-			assertTrue(prim.getSsStatus().getBitA());
-			assertTrue(prim.getSsStatus().getBitP());
-			assertTrue(!prim.getSsStatus().getBitQ());
-			assertTrue(!prim.getSsStatus().getBitR());
-			assertNotNull(prim.getSSSubscriptionOption());
-			assertNotNull(prim.getSSSubscriptionOption().getOverrideCategory());
-			assertEquals(prim.getSSSubscriptionOption().getOverrideCategory(), OverrideCategory.overrideDisabled);
-			assertNull(prim.getSSSubscriptionOption().getCliRestrictionOption());
-			
-			assertEquals(prim.getBasicServiceGroupList().size(), 1);
-			ExtBasicServiceCode ebsc = prim.getBasicServiceGroupList().get(0);
-			assertEquals(ebsc.getExtBearerService().getBearerServiceCodeValue(), BearerServiceCodeValue.Asynchronous9_6kbps);
-			
-			assertNotNull(extensionContainer);
-			assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
-		}
-			
-	}
-	
-	@Test(groups = { "functional.encode", "primitives" })
-	public void testEncode() throws Exception {
-		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
-		SSCode ssCode = new SSCodeImpl(SupplementaryCodeValue.allServices);
-		ExtSSStatus ssStatus = new ExtSSStatusImpl(false, true, false, true);
-		
-		SSSubscriptionOption ssSubscriptionOption = new SSSubscriptionOptionImpl(CliRestrictionOption.permanent);
-		
-		ExtBearerServiceCodeImpl b = new ExtBearerServiceCodeImpl(BearerServiceCodeValue.Asynchronous9_6kbps);
-		ExtBasicServiceCodeImpl basicService = new ExtBasicServiceCodeImpl(b);
-		ArrayList<ExtBasicServiceCode> basicServiceGroupList = new ArrayList<ExtBasicServiceCode>();
-		basicServiceGroupList.add(basicService);
+    public byte[] getData() {
+        return new byte[] { 48, 55, 4, 1, 0, -124, 1, 5, -126, 1, 0, 48, 3, -126, 1, 22, -91, 39, -96, 32, 48, 10, 6, 3, 42, 3,
+                4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32,
+                33 };
+    };
 
-		ExtSSDataImpl prim = new ExtSSDataImpl(ssCode, ssStatus, ssSubscriptionOption,
-				basicServiceGroupList, extensionContainer);
-		AsnOutputStream asn = new AsnOutputStream();
-		prim.encodeAll(asn);
-		
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
-		
-		ssSubscriptionOption = new SSSubscriptionOptionImpl(OverrideCategory.overrideDisabled);
-		prim = new ExtSSDataImpl(ssCode, ssStatus, ssSubscriptionOption,
-				basicServiceGroupList, extensionContainer);
-		asn = new AsnOutputStream();
-		prim.encodeAll(asn);
-		
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData1()));
-	}
+    public byte[] getData1() {
+        return new byte[] { 48, 55, 4, 1, 0, -124, 1, 5, -127, 1, 1, 48, 3, -126, 1, 22, -91, 39, -96, 32, 48, 10, 6, 3, 42, 3,
+                4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32,
+                33 };
+    };
+
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
+        {
+            byte[] data = this.getData();
+            AsnInputStream asn = new AsnInputStream(data);
+            int tag = asn.readTag();
+            ExtSSDataImpl prim = new ExtSSDataImpl();
+            prim.decodeAll(asn);
+
+            assertEquals(tag, Tag.SEQUENCE);
+            assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+
+            MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
+            assertEquals(prim.getSsCode().getSupplementaryCodeValue(), SupplementaryCodeValue.allServices);
+            assertNotNull(prim.getSsStatus());
+            assertTrue(prim.getSsStatus().getBitA());
+            assertTrue(prim.getSsStatus().getBitP());
+            assertTrue(!prim.getSsStatus().getBitQ());
+            assertTrue(!prim.getSsStatus().getBitR());
+            assertNotNull(prim.getSSSubscriptionOption());
+            assertNotNull(prim.getSSSubscriptionOption().getCliRestrictionOption());
+            assertEquals(prim.getSSSubscriptionOption().getCliRestrictionOption(), CliRestrictionOption.permanent);
+            assertNull(prim.getSSSubscriptionOption().getOverrideCategory());
+
+            assertEquals(prim.getBasicServiceGroupList().size(), 1);
+            ExtBasicServiceCode ebsc = prim.getBasicServiceGroupList().get(0);
+            assertEquals(ebsc.getExtBearerService().getBearerServiceCodeValue(), BearerServiceCodeValue.Asynchronous9_6kbps);
+
+            assertNotNull(extensionContainer);
+            assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+        }
+
+        {
+            byte[] data = this.getData1();
+            AsnInputStream asn = new AsnInputStream(data);
+            int tag = asn.readTag();
+            ExtSSDataImpl prim = new ExtSSDataImpl();
+            prim.decodeAll(asn);
+
+            assertEquals(tag, Tag.SEQUENCE);
+            assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+
+            MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
+            assertEquals(prim.getSsCode().getSupplementaryCodeValue(), SupplementaryCodeValue.allServices);
+            assertNotNull(prim.getSsStatus());
+            assertTrue(prim.getSsStatus().getBitA());
+            assertTrue(prim.getSsStatus().getBitP());
+            assertTrue(!prim.getSsStatus().getBitQ());
+            assertTrue(!prim.getSsStatus().getBitR());
+            assertNotNull(prim.getSSSubscriptionOption());
+            assertNotNull(prim.getSSSubscriptionOption().getOverrideCategory());
+            assertEquals(prim.getSSSubscriptionOption().getOverrideCategory(), OverrideCategory.overrideDisabled);
+            assertNull(prim.getSSSubscriptionOption().getCliRestrictionOption());
+
+            assertEquals(prim.getBasicServiceGroupList().size(), 1);
+            ExtBasicServiceCode ebsc = prim.getBasicServiceGroupList().get(0);
+            assertEquals(ebsc.getExtBearerService().getBearerServiceCodeValue(), BearerServiceCodeValue.Asynchronous9_6kbps);
+
+            assertNotNull(extensionContainer);
+            assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+        }
+
+    }
+
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
+        MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
+        SSCode ssCode = new SSCodeImpl(SupplementaryCodeValue.allServices);
+        ExtSSStatus ssStatus = new ExtSSStatusImpl(false, true, false, true);
+
+        SSSubscriptionOption ssSubscriptionOption = new SSSubscriptionOptionImpl(CliRestrictionOption.permanent);
+
+        ExtBearerServiceCodeImpl b = new ExtBearerServiceCodeImpl(BearerServiceCodeValue.Asynchronous9_6kbps);
+        ExtBasicServiceCodeImpl basicService = new ExtBasicServiceCodeImpl(b);
+        ArrayList<ExtBasicServiceCode> basicServiceGroupList = new ArrayList<ExtBasicServiceCode>();
+        basicServiceGroupList.add(basicService);
+
+        ExtSSDataImpl prim = new ExtSSDataImpl(ssCode, ssStatus, ssSubscriptionOption, basicServiceGroupList,
+                extensionContainer);
+        AsnOutputStream asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+
+        ssSubscriptionOption = new SSSubscriptionOptionImpl(OverrideCategory.overrideDisabled);
+        prim = new ExtSSDataImpl(ssCode, ssStatus, ssSubscriptionOption, basicServiceGroupList, extensionContainer);
+        asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData1()));
+    }
 }

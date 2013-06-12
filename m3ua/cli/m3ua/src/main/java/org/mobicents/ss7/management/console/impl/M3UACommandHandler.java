@@ -28,71 +28,68 @@ import org.mobicents.ss7.management.console.Tree.Node;
 
 /**
  * @author amit bhayani
- * 
+ *
  */
 public class M3UACommandHandler extends CommandHandlerWithHelp {
 
-	static final Tree commandTree = new Tree("m3ua");
-	static {
-		Node parent = commandTree.getTopNode();
-		Node as = parent.addChild("as");
-		as.addChild("create");
-		as.addChild("destroy");
-		as.addChild("add");
-		as.addChild("remove");
-		as.addChild("show");
+    static final Tree commandTree = new Tree("m3ua");
+    static {
+        Node parent = commandTree.getTopNode();
+        Node as = parent.addChild("as");
+        as.addChild("create");
+        as.addChild("destroy");
+        as.addChild("add");
+        as.addChild("remove");
+        as.addChild("show");
 
-		Node asp = parent.addChild("asp");
-		asp.addChild("create");
-		asp.addChild("destroy");
-		asp.addChild("start");
-		asp.addChild("stop");
-		asp.addChild("show");
+        Node asp = parent.addChild("asp");
+        asp.addChild("create");
+        asp.addChild("destroy");
+        asp.addChild("start");
+        asp.addChild("stop");
+        asp.addChild("show");
 
-		Node route = parent.addChild("route");
-		route.addChild("add");
-		route.addChild("remove");
-		route.addChild("show");
+        Node route = parent.addChild("route");
+        route.addChild("add");
+        route.addChild("remove");
+        route.addChild("show");
 
-	};
+    };
 
-	public M3UACommandHandler() {
-		super(commandTree, CONNECT_MANDATORY_FLAG);
-	}
+    public M3UACommandHandler() {
+        super(commandTree, CONNECT_MANDATORY_FLAG);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.ss7.management.console.CommandHandler#isValid(java.lang
-	 * .String)
-	 */
-	@Override
-	public void handle(CommandContext ctx, String commandLine) {
-		// TODO Validate command
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.ss7.management.console.CommandHandler#isValid(java.lang .String)
+     */
+    @Override
+    public void handle(CommandContext ctx, String commandLine) {
+        // TODO Validate command
 
-		if (commandLine.contains("--help")) {
-			this.printHelp(commandLine, ctx);
-			return;
-		}
+        if (commandLine.contains("--help")) {
+            this.printHelp(commandLine, ctx);
+            return;
+        }
 
-		ctx.sendMessage(commandLine);
-	}
+        ctx.sendMessage(commandLine);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.ss7.management.console.CommandHandler#isAvailable(org.mobicents
-	 * .ss7.management.console.CommandContext)
-	 */
-	@Override
-	public boolean isAvailable(CommandContext ctx) {
-		if (!ctx.isControllerConnected()) {
-			ctx.printLine("The command is not available in the current context. Please connnect first");
-			return false;
-		}
-		return true;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.ss7.management.console.CommandHandler#isAvailable(org.mobicents
+     * .ss7.management.console.CommandContext)
+     */
+    @Override
+    public boolean isAvailable(CommandContext ctx) {
+        if (!ctx.isControllerConnected()) {
+            ctx.printLine("The command is not available in the current context. Please connnect first");
+            return false;
+        }
+        return true;
+    }
 
 }

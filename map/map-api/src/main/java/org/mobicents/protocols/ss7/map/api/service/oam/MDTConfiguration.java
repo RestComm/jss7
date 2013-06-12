@@ -25,52 +25,42 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-MDT-Configuration ::= SEQUENCE {
-	jobType		JobType,
-	areaScope		AreaScope		OPTIONAL,
-	listOfMeasurements	ListOfMeasurements	OPTIONAL,
-	reportingTrigger	[0] ReportingTrigger	OPTIONAL,
-	reportInterval	ReportInterval	OPTIONAL,
-	reportAmount	[1] ReportAmount	OPTIONAL,
-	eventThresholdRSRP	EventThresholdRSRP	OPTIONAL,
-	eventThresholdRSRQ	[2] EventThresholdRSRQ	OPTIONAL,
-	loggingInterval	[3] LoggingInterval	OPTIONAL,
-	loggingDuration	[4] LoggingDuration	OPTIONAL,
-	extensionContainer	[5] ExtensionContainer	OPTIONAL,
-	... }
-
-EventThresholdRSRP ::= INTEGER	(0..97)
-EventThresholdRSRQ ::= INTEGER	(0..34)
-
-
- * 
+ *
+ MDT-Configuration ::= SEQUENCE { jobType JobType, areaScope AreaScope OPTIONAL, listOfMeasurements ListOfMeasurements
+ * OPTIONAL, reportingTrigger [0] ReportingTrigger OPTIONAL, reportInterval ReportInterval OPTIONAL, reportAmount [1]
+ * ReportAmount OPTIONAL, eventThresholdRSRP EventThresholdRSRP OPTIONAL, eventThresholdRSRQ [2] EventThresholdRSRQ OPTIONAL,
+ * loggingInterval [3] LoggingInterval OPTIONAL, loggingDuration [4] LoggingDuration OPTIONAL, extensionContainer [5]
+ * ExtensionContainer OPTIONAL, ... }
+ *
+ * EventThresholdRSRP ::= INTEGER (0..97) EventThresholdRSRQ ::= INTEGER (0..34)
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MDTConfiguration {
 
-	public JobType getJobType();
+    JobType getJobType();
 
-	public AreaScope getAreaScope();
+    AreaScope getAreaScope();
 
-	public ListOfMeasurements getListOfMeasurements();
+    ListOfMeasurements getListOfMeasurements();
 
-	public ReportingTrigger getReportingTrigger();
+    ReportingTrigger getReportingTrigger();
 
-	public ReportInterval getReportInterval();
+    ReportInterval getReportInterval();
 
-	public ReportAmount getReportAmount();
+    ReportAmount getReportAmount();
 
-	public Integer getEventThresholdRSRP();
+    Integer getEventThresholdRSRP();
 
-	public Integer getEventThresholdRSRQ();
+    Integer getEventThresholdRSRQ();
 
-	public LoggingInterval getLoggingInterval();
+    LoggingInterval getLoggingInterval();
 
-	public LoggingDuration getLoggingDuration();
+    LoggingDuration getLoggingDuration();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

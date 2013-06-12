@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.cap.errors;
 
 import java.io.IOException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -35,141 +36,141 @@ import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageSystemFailure;
 import org.mobicents.protocols.ss7.cap.api.errors.UnavailableNetworkResource;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CAPErrorMessageSystemFailureImpl extends CAPErrorMessageImpl implements CAPErrorMessageSystemFailure {
 
-	public static final String _PrimitiveName = "CAPErrorMessageSystemFailure";
+    public static final String _PrimitiveName = "CAPErrorMessageSystemFailure";
 
-	private UnavailableNetworkResource unavailableNetworkResource;
+    private UnavailableNetworkResource unavailableNetworkResource;
 
+    protected CAPErrorMessageSystemFailureImpl(UnavailableNetworkResource unavailableNetworkResource) {
+        super((long) CAPErrorCode.systemFailure);
 
-	protected CAPErrorMessageSystemFailureImpl(UnavailableNetworkResource unavailableNetworkResource) {
-		super((long) CAPErrorCode.systemFailure);
+        this.unavailableNetworkResource = unavailableNetworkResource;
+    }
 
-		this.unavailableNetworkResource = unavailableNetworkResource;
-	}
+    protected CAPErrorMessageSystemFailureImpl() {
+        super((long) CAPErrorCode.systemFailure);
+    }
 
-	protected CAPErrorMessageSystemFailureImpl() {
-		super((long) CAPErrorCode.systemFailure);
-	}
+    public boolean isEmSystemFailure() {
+        return true;
+    }
 
-	public boolean isEmSystemFailure() {
-		return true;
-	}
+    public CAPErrorMessageSystemFailure getEmSystemFailure() {
+        return this;
+    }
 
-	public CAPErrorMessageSystemFailure getEmSystemFailure() {
-		return this;
-	}
+    @Override
+    public UnavailableNetworkResource getUnavailableNetworkResource() {
+        return unavailableNetworkResource;
+    }
 
-	@Override
-	public UnavailableNetworkResource getUnavailableNetworkResource() {
-		return unavailableNetworkResource;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.ENUMERATED;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.ENUMERATED;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    private void _decode(AsnInputStream localAis, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-	private void _decode(AsnInputStream localAis, int length) throws CAPParsingComponentException, IOException, AsnException {
+        this.unavailableNetworkResource = null;
 
-		this.unavailableNetworkResource = null;
+        if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.ENUMERATED || !localAis.isTagPrimitive())
+            throw new CAPParsingComponentException("Error decoding " + _PrimitiveName
+                    + ": bad tag class or tag or parameter is not primitive",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.ENUMERATED || !localAis.isTagPrimitive())
-			throw new CAPParsingComponentException(
-					"Error decoding " + _PrimitiveName + ": bad tag class or tag or parameter is not primitive",
-					CAPParsingComponentExceptionReason.MistypedParameter);
+        int i1 = (int) localAis.readIntegerData(length);
+        this.unavailableNetworkResource = UnavailableNetworkResource.getInstance(i1);
+    }
 
-		int i1 = (int) localAis.readIntegerData(length);
-		this.unavailableNetworkResource = UnavailableNetworkResource.getInstance(i1);
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    public void encodeData(AsnOutputStream aos) throws CAPException {
 
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+        if (this.unavailableNetworkResource == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName
+                    + ": unavailableNetworkResource field must not be null");
 
-		if (this.unavailableNetworkResource == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": unavailableNetworkResource field must not be null");
+        try {
+            aos.writeIntegerData(this.unavailableNetworkResource.getCode());
 
-		try {
-			aos.writeIntegerData(this.unavailableNetworkResource.getCode());
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		if (this.unavailableNetworkResource != null) {
-			sb.append("unavailableNetworkResource=");
-			sb.append(unavailableNetworkResource);
-			sb.append(",");
-		}
-		sb.append("]");
-		
-		return sb.toString();
-	}
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+        if (this.unavailableNetworkResource != null) {
+            sb.append("unavailableNetworkResource=");
+            sb.append(unavailableNetworkResource);
+            sb.append(",");
+        }
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

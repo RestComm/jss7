@@ -27,50 +27,50 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.SupplementaryCo
 import org.mobicents.protocols.ss7.map.primitives.OctetStringLength1Base;
 
 /**
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class SSCodeImpl extends OctetStringLength1Base implements SSCode {
 
-	public SSCodeImpl() {
-		super("SSCode");
-	}
+    public SSCodeImpl() {
+        super("SSCode");
+    }
 
-	public SSCodeImpl(int data) {
-		super("SSCode", data);
-	}
+    public SSCodeImpl(int data) {
+        super("SSCode", data);
+    }
 
-	public SSCodeImpl(SupplementaryCodeValue value) {
-		super("SSCode", value != null ? value.getCode() : 0);
-	}
+    public SSCodeImpl(SupplementaryCodeValue value) {
+        super("SSCode", value != null ? value.getCode() : 0);
+    }
 
-	@Override
-	public int getData() {
-		return this.data;
-	}
+    @Override
+    public int getData() {
+        return this.data;
+    }
 
-	@Override
-	public SupplementaryCodeValue getSupplementaryCodeValue() {
-		return SupplementaryCodeValue.getInstance(this.data);
-	}
+    @Override
+    public SupplementaryCodeValue getSupplementaryCodeValue() {
+        return SupplementaryCodeValue.getInstance(this.data);
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
 
-		SupplementaryCodeValue scv = this.getSupplementaryCodeValue();
-		if (scv != null) {
-			sb.append("SupplementaryCodeValue=" + scv);
-			sb.append(", ");
-		}
-		sb.append("Data=" + this.data);
-		sb.append("]");
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		return sb.toString();
-	}
+        SupplementaryCodeValue scv = this.getSupplementaryCodeValue();
+        if (scv != null) {
+            sb.append("SupplementaryCodeValue=" + scv);
+            sb.append(", ");
+        }
+        sb.append("Data=" + this.data);
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

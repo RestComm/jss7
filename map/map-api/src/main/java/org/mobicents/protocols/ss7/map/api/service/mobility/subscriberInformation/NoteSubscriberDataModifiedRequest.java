@@ -30,77 +30,56 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CSGSubscriptionData;
 
-/**	
- * 
-
-MAP V3:
-
-noteSubscriberDataModified  OPERATION ::= {				--Timer m
-	ARGUMENT
-		NoteSubscriberDataModifiedArg
-	RESULT
-		NoteSubscriberDataModifiedRes
-			-- optional
-	ERRORS {
-		dataMissing |
-		unexpectedDataValue |
-		unknownSubscriber}
-	CODE	local:5 }
-
-NoteSubscriberDataModifiedArg ::= SEQUENCE {
-	imsi			IMSI,
-	msisdn		ISDN-AddressString,
-	forwardingInfoFor-CSE	[0] Ext-ForwardingInfoFor-CSE	OPTIONAL,
-	callBarringInfoFor-CSE	[1] Ext-CallBarringInfoFor-CSE	OPTIONAL,
-	odb-Info		[2] ODB-Info	OPTIONAL,
-	camel-SubscriptionInfo	[3] CAMEL-SubscriptionInfo	OPTIONAL,
-	allInformationSent	[4] NULL		OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	ue-reachable	[5] ServingNode	OPTIONAL,
-	csg-SubscriptionDataList	[6] CSG-SubscriptionDataList	OPTIONAL,
-	cw-Data		[7]	CallWaitingData	OPTIONAL,
-	ch-Data		[8]	CallHoldData	OPTIONAL,
-	clip-Data 	[9] ClipData	OPTIONAL,
-	clir-Data		[10]	ClirData	OPTIONAL,
-	ect-data		[11] EctData	OPTIONAL }
-
-CSG-SubscriptionDataList ::= SEQUENCE SIZE (1..50) OF CSG-SubscriptionData
-
- * 
+/**
+ *
+ MAP V3:
+ *
+ * noteSubscriberDataModified OPERATION ::= { --Timer m ARGUMENT NoteSubscriberDataModifiedArg RESULT
+ * NoteSubscriberDataModifiedRes -- optional ERRORS { dataMissing | unexpectedDataValue | unknownSubscriber} CODE local:5 }
+ *
+ * NoteSubscriberDataModifiedArg ::= SEQUENCE { imsi IMSI, msisdn ISDN-AddressString, forwardingInfoFor-CSE [0]
+ * Ext-ForwardingInfoFor-CSE OPTIONAL, callBarringInfoFor-CSE [1] Ext-CallBarringInfoFor-CSE OPTIONAL, odb-Info [2] ODB-Info
+ * OPTIONAL, camel-SubscriptionInfo [3] CAMEL-SubscriptionInfo OPTIONAL, allInformationSent [4] NULL OPTIONAL,
+ * extensionContainer ExtensionContainer OPTIONAL, ..., ue-reachable [5] ServingNode OPTIONAL, csg-SubscriptionDataList [6]
+ * CSG-SubscriptionDataList OPTIONAL, cw-Data [7] CallWaitingData OPTIONAL, ch-Data [8] CallHoldData OPTIONAL, clip-Data [9]
+ * ClipData OPTIONAL, clir-Data [10] ClirData OPTIONAL, ect-data [11] EctData OPTIONAL }
+ *
+ * CSG-SubscriptionDataList ::= SEQUENCE SIZE (1..50) OF CSG-SubscriptionData
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface NoteSubscriberDataModifiedRequest extends MobilityMessage {
 
-	public IMSI getImsi();
+    IMSI getImsi();
 
-	public ISDNAddressString getMsisdn();
+    ISDNAddressString getMsisdn();
 
-	public ExtForwardingInfoForCSE getForwardingInfoForCSE();
+    ExtForwardingInfoForCSE getForwardingInfoForCSE();
 
-	public ExtCallBarringInfoForCSE getCallBarringInfoForCSE();
+    ExtCallBarringInfoForCSE getCallBarringInfoForCSE();
 
-	public ODBInfo getOdbInfo();
+    ODBInfo getOdbInfo();
 
-	public CAMELSubscriptionInfo getCamelSubscriptionInfo();
+    CAMELSubscriptionInfo getCamelSubscriptionInfo();
 
-	public boolean getAllInformationSent();
+    boolean getAllInformationSent();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public ServingNode getUeReachable();
+    ServingNode getUeReachable();
 
-	public ArrayList<CSGSubscriptionData> getCsgSubscriptionDataList();
+    ArrayList<CSGSubscriptionData> getCsgSubscriptionDataList();
 
-	public CallWaitingData getCwData();
+    CallWaitingData getCwData();
 
-	public CallHoldData getChData();
+    CallHoldData getChData();
 
-	public ClipData getClipData();
+    ClipData getClipData();
 
-	public ClirData getClirData();
+    ClirData getClirData();
 
-	public EctData getEctData();
+    EctData getEctData();
 
 }

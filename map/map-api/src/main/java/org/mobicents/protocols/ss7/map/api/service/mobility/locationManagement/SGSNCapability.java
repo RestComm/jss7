@@ -27,53 +27,43 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 
 /**
- * 
-
-SGSN-Capability ::= SEQUENCE{
-	solsaSupportIndicator	NULL			OPTIONAL,
-	extensionContainer	[1] ExtensionContainer	OPTIONAL,
-	... ,
-	superChargerSupportedInServingNetworkEntity	[2] SuperChargerInfo	OPTIONAL ,
-	gprsEnhancementsSupportIndicator 	[3] NULL		OPTIONAL,
-	supportedCamelPhases  	[4] SupportedCamelPhases	OPTIONAL,
-	supportedLCS-CapabilitySets	[5]  SupportedLCS-CapabilitySets	OPTIONAL,
-	offeredCamel4CSIs	[6] OfferedCamel4CSIs	OPTIONAL,
-	smsCallBarringSupportIndicator	[7]	NULL		OPTIONAL,	supportedRAT-TypesIndicator	[8]	SupportedRAT-Types	OPTIONAL,
-	supportedFeatures	[9] SupportedFeatures	OPTIONAL,
-	t-adsDataRetrieval	[10] NULL		OPTIONAL,
-	homogeneousSupportOfIMSVoiceOverPSSessions [11] BOOLEAN	OPTIONAL
-	--	"true" indicates homogeneous support, "false" indicates homogeneous non-support
-	--	in the complete SGSN area
- }
-
- * 
+ *
+ SGSN-Capability ::= SEQUENCE{ solsaSupportIndicator NULL OPTIONAL, extensionContainer [1] ExtensionContainer OPTIONAL, ... ,
+ * superChargerSupportedInServingNetworkEntity [2] SuperChargerInfo OPTIONAL , gprsEnhancementsSupportIndicator [3] NULL
+ * OPTIONAL, supportedCamelPhases [4] SupportedCamelPhases OPTIONAL, supportedLCS-CapabilitySets [5] SupportedLCS-CapabilitySets
+ * OPTIONAL, offeredCamel4CSIs [6] OfferedCamel4CSIs OPTIONAL, smsCallBarringSupportIndicator [7] NULL OPTIONAL,
+ * supportedRAT-TypesIndicator [8] SupportedRAT-Types OPTIONAL, supportedFeatures [9] SupportedFeatures OPTIONAL,
+ * t-adsDataRetrieval [10] NULL OPTIONAL, homogeneousSupportOfIMSVoiceOverPSSessions [11] BOOLEAN OPTIONAL -- "true" indicates
+ * homogeneous support, "false" indicates homogeneous non-support -- in the complete SGSN area }
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SGSNCapability {
 
-	public boolean getSolsaSupportIndicator();
+    boolean getSolsaSupportIndicator();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public SuperChargerInfo getSuperChargerSupportedInServingNetworkEntity();
+    SuperChargerInfo getSuperChargerSupportedInServingNetworkEntity();
 
-	public boolean getGprsEnhancementsSupportIndicator();
+    boolean getGprsEnhancementsSupportIndicator();
 
-	public SupportedCamelPhases getSupportedCamelPhases();
+    SupportedCamelPhases getSupportedCamelPhases();
 
-	public SupportedLCSCapabilitySets getSupportedLCSCapabilitySets();
+    SupportedLCSCapabilitySets getSupportedLCSCapabilitySets();
 
-	public OfferedCamel4CSIs getOfferedCamel4CSIs();
+    OfferedCamel4CSIs getOfferedCamel4CSIs();
 
-	public boolean getSmsCallBarringSupportIndicator();
+    boolean getSmsCallBarringSupportIndicator();
 
-	public SupportedRATTypes getSupportedRATTypesIndicator();
+    SupportedRATTypes getSupportedRATTypesIndicator();
 
-	public SupportedFeatures getSupportedFeatures();
+    SupportedFeatures getSupportedFeatures();
 
-	public boolean getTAdsDataRetrieval();
+    boolean getTAdsDataRetrieval();
 
-	public Boolean getHomogeneousSupportOfIMSVoiceOverPSSessions();
+    Boolean getHomogeneousSupportOfIMSVoiceOverPSSessions();
 
 }

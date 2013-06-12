@@ -44,15 +44,15 @@ public class SignalingGateway {
     }
 
     public void setScheduler(Scheduler scheduler) {
-        this.scheduler = scheduler;        
+        this.scheduler = scheduler;
     }
-    
+
     public NodalInterworkingFunction getNodalInterworkingFunction() {
         return nodalInterworkingFunction;
     }
 
     public void setNodalInterworkingFunction(NodalInterworkingFunction nodalInterworkingFunction) {
-        this.nodalInterworkingFunction = nodalInterworkingFunction;        
+        this.nodalInterworkingFunction = nodalInterworkingFunction;
     }
 
     /**
@@ -63,7 +63,7 @@ public class SignalingGateway {
     }
 
     public void start() throws Exception {
-        scheduler.start();        
+        scheduler.start();
     }
 
     public void destroy() {

@@ -23,14 +23,12 @@
 /**
  * Start time:14:44:20 2009-04-01<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
- * 
+ *
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
-
-import java.io.IOException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.MCIDRequestIndicators;
@@ -38,71 +36,71 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MCIDRequestIndicators;
 /**
  * Start time:14:44:20 2009-04-01<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
- * 
+ *
  */
 public class MCIDRequestIndicatorsImpl extends AbstractISUPParameter implements MCIDRequestIndicators {
 
-	private static final int _TURN_ON = 1;
-	private static final int _TURN_OFF = 0;
+    private static final int _TURN_ON = 1;
+    private static final int _TURN_OFF = 0;
 
-	private boolean mcidRequestIndicator;
-	private boolean holdingIndicator;
+    private boolean mcidRequestIndicator;
+    private boolean holdingIndicator;
 
-	public MCIDRequestIndicatorsImpl(byte[] b) throws ParameterException {
-		super();
-		decode(b);
-	}
+    public MCIDRequestIndicatorsImpl(byte[] b) throws ParameterException {
+        super();
+        decode(b);
+    }
 
-	public MCIDRequestIndicatorsImpl() {
-		super();
-		
-	}
+    public MCIDRequestIndicatorsImpl() {
+        super();
 
-	public MCIDRequestIndicatorsImpl(boolean mcidRequest, boolean holdingRequested) {
-		super();
-		this.mcidRequestIndicator = mcidRequest;
-		this.holdingIndicator = holdingRequested;
-	}
+    }
 
-	public int decode(byte[] b) throws ParameterException {
-		if (b == null || b.length != 1) {
-			throw new ParameterException("byte[] must  not be null and length must  be 1");
-		}
+    public MCIDRequestIndicatorsImpl(boolean mcidRequest, boolean holdingRequested) {
+        super();
+        this.mcidRequestIndicator = mcidRequest;
+        this.holdingIndicator = holdingRequested;
+    }
 
-		this.mcidRequestIndicator = (b[0] & 0x01) == _TURN_ON;
-		this.holdingIndicator = ((b[0] >> 1) & 0x01) == _TURN_ON;
-		return 1;
-	}
+    public int decode(byte[] b) throws ParameterException {
+        if (b == null || b.length != 1) {
+            throw new ParameterException("byte[] must  not be null and length must  be 1");
+        }
 
-	public byte[] encode() throws ParameterException {
-		int b0 = 0;
+        this.mcidRequestIndicator = (b[0] & 0x01) == _TURN_ON;
+        this.holdingIndicator = ((b[0] >> 1) & 0x01) == _TURN_ON;
+        return 1;
+    }
 
-		b0 |= (this.mcidRequestIndicator ? _TURN_ON : _TURN_OFF);
-		b0 |= ((this.holdingIndicator ? _TURN_ON : _TURN_OFF)) << 1;
+    public byte[] encode() throws ParameterException {
+        int b0 = 0;
 
-		return new byte[] { (byte) b0 };
-	}
+        b0 |= (this.mcidRequestIndicator ? _TURN_ON : _TURN_OFF);
+        b0 |= ((this.holdingIndicator ? _TURN_ON : _TURN_OFF)) << 1;
 
-	public boolean isMcidRequestIndicator() {
-		return mcidRequestIndicator;
-	}
+        return new byte[] { (byte) b0 };
+    }
 
-	public void setMcidRequestIndicator(boolean mcidRequestIndicator) {
-		this.mcidRequestIndicator = mcidRequestIndicator;
-	}
+    public boolean isMcidRequestIndicator() {
+        return mcidRequestIndicator;
+    }
 
-	public boolean isHoldingIndicator() {
-		return holdingIndicator;
-	}
+    public void setMcidRequestIndicator(boolean mcidRequestIndicator) {
+        this.mcidRequestIndicator = mcidRequestIndicator;
+    }
 
-	public void setHoldingIndicator(boolean holdingIndicator) {
-		this.holdingIndicator = holdingIndicator;
-	}
+    public boolean isHoldingIndicator() {
+        return holdingIndicator;
+    }
 
-	public int getCode() {
+    public void setHoldingIndicator(boolean holdingIndicator) {
+        this.holdingIndicator = holdingIndicator;
+    }
 
-		return _PARAMETER_CODE;
-	}
+    public int getCode() {
+
+        return _PARAMETER_CODE;
+    }
 }

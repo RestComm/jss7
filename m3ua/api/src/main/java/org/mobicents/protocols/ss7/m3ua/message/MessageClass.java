@@ -23,16 +23,16 @@
 package org.mobicents.protocols.ss7.m3ua.message;
 
 /**
- * Defines the list of valid message classes. 
- * 
+ * Defines the list of valid message classes.
+ *
  * @author kulikov
  */
 public interface MessageClass {
-    public final static int MANAGEMENT = 0;
-    public final static int TRANSFER_MESSAGES = 1;
-    public final static int SIGNALING_NETWORK_MANAGEMENT = 2;
-    public final static int ASP_STATE_MAINTENANCE = 3;
-    public final static int ASP_TRAFFIC_MAINTENANCE = 4;
-    public final static int ROUTING_KEY_MANAGEMENT = 9;
-    
+    int MANAGEMENT = 0;
+    int TRANSFER_MESSAGES = 1;
+    int SIGNALING_NETWORK_MANAGEMENT = 2;
+    int ASP_STATE_MAINTENANCE = 3;
+    int ASP_TRAFFIC_MAINTENANCE = 4;
+    int ROUTING_KEY_MANAGEMENT = 9;
+
 }

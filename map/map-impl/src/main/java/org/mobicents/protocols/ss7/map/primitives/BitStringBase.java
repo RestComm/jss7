@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.primitives;
 
 import java.io.IOException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -33,166 +34,166 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 
 /**
-*
-* Super class for implementing primitives that are BIT STRING (SIZE (x..y))
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ * Super class for implementing primitives that are BIT STRING (SIZE (x..y))
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public abstract class BitStringBase implements MAPAsnPrimitive {
 
-	protected BitSetStrictLength bitString;
+    protected BitSetStrictLength bitString;
 
-	protected int minLength;
-	protected int maxLength;
-	protected int curLength;
-	protected String _PrimitiveName;
+    protected int minLength;
+    protected int maxLength;
+    protected int curLength;
+    protected String _PrimitiveName;
 
-	public BitStringBase(int minLength, int maxLength, int curLength, String _PrimitiveName) {
-		this.minLength = minLength;
-		this.maxLength = maxLength;
-		this.curLength = curLength;
-		this._PrimitiveName = _PrimitiveName;
-		
-		this.bitString = new BitSetStrictLength(curLength);
-	}
+    public BitStringBase(int minLength, int maxLength, int curLength, String _PrimitiveName) {
+        this.minLength = minLength;
+        this.maxLength = maxLength;
+        this.curLength = curLength;
+        this._PrimitiveName = _PrimitiveName;
 
-	public BitStringBase(int minLength, int maxLength, int curLength, String _PrimitiveName, BitSetStrictLength data) {
-		this(minLength, maxLength, curLength, _PrimitiveName);
+        this.bitString = new BitSetStrictLength(curLength);
+    }
 
-		this.bitString = data;
-	}
+    public BitStringBase(int minLength, int maxLength, int curLength, String _PrimitiveName, BitSetStrictLength data) {
+        this(minLength, maxLength, curLength, _PrimitiveName);
 
-	public int getTag() throws MAPException {
-		return Tag.STRING_BIT;
-	}
+        this.bitString = data;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public int getTag() throws MAPException {
+        return Tag.STRING_BIT;
+    }
 
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
-	protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		if (!ansIS.isTagPrimitive())
-			throw new MAPParsingComponentException("Error decoding " + _PrimitiveName + ": field must be primitive",
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		
-		int minLen = (this.minLength - 1) / 8 + 2;
-		int maxLen = (this.maxLength - 1) / 8 + 2;
-		if (length < minLen || length > maxLen)
-			throw new MAPParsingComponentException("Error decoding " + _PrimitiveName + ": the field must contain from " + minLen + " to " + maxLen
-					+ " octets. Contains: " + length, MAPParsingComponentExceptionReason.MistypedParameter);
+    protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		this.bitString = ansIS.readBitStringData(length);
-	}
-	
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        if (!ansIS.isTagPrimitive())
+            throw new MAPParsingComponentException("Error decoding " + _PrimitiveName + ": field must be primitive",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        int minLen = (this.minLength - 1) / 8 + 2;
+        int maxLen = (this.maxLength - 1) / 8 + 2;
+        if (length < minLen || length > maxLen)
+            throw new MAPParsingComponentException("Error decoding " + _PrimitiveName + ": the field must contain from "
+                    + minLen + " to " + maxLen + " octets. Contains: " + length,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
 
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+        this.bitString = ansIS.readBitStringData(length);
+    }
 
-		if (this.bitString == null)
-			throw new MAPException("Error while encoding the " + _PrimitiveName + ": data is not defined");
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
-		try {
-			asnOs.writeBitStringData(this.bitString);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((bitString == null) ? 0 : bitString.hashCode());
-		return result;
-	}
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		BitStringBase other = (BitStringBase) obj;
-		if (bitString == null) {
-			if (other.bitString != null)
-				return false;
-		} else if (!bitString.equals(other.bitString))
-			return false;
-		return true;
-	}
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [Data=");
-		if (this.bitString != null) {
-			for (int i = 0; i < this.bitString.getStrictLength(); i++) {
-				if (i % 8 == 0) {
-					sb.append(" ");
-				}
-				if (this.bitString.get(i))
-					sb.append("1");
-				else
-					sb.append("0");
-			}
-		}
-		sb.append("]");
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		return sb.toString();
-	}
+        if (this.bitString == null)
+            throw new MAPException("Error while encoding the " + _PrimitiveName + ": data is not defined");
+
+        try {
+            asnOs.writeBitStringData(this.bitString);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((bitString == null) ? 0 : bitString.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        BitStringBase other = (BitStringBase) obj;
+        if (bitString == null) {
+            if (other.bitString != null)
+                return false;
+        } else if (!bitString.equals(other.bitString))
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [Data=");
+        if (this.bitString != null) {
+            for (int i = 0; i < this.bitString.getStrictLength(); i++) {
+                if (i % 8 == 0) {
+                    sb.append(" ");
+                }
+                if (this.bitString.get(i))
+                    sb.append("1");
+                else
+                    sb.append("0");
+            }
+        }
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

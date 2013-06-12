@@ -25,24 +25,20 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 
 /**
- * 
-
-RelocationNumber ::= SEQUENCE {
-	handoverNumber	ISDN-AddressString,
-	rab-Id		RAB-Id,
-	-- RAB Identity is needed to relate the calls with the radio access bearers. 
-	...}
-
-RAB-Id ::= INTEGER (1..255)
-
- * 
+ *
+ RelocationNumber ::= SEQUENCE { handoverNumber ISDN-AddressString, rab-Id RAB-Id, -- RAB Identity is needed to relate the
+ * calls with the radio access bearers. ...}
+ *
+ * RAB-Id ::= INTEGER (1..255)
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface RelocationNumber {
 
-	public ISDNAddressString getHandoverNumber();
+    ISDNAddressString getHandoverNumber();
 
-	public Integer getRABId();
+    Integer getRABId();
 
 }

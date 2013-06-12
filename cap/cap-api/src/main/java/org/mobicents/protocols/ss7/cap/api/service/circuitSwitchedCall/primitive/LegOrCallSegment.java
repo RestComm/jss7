@@ -25,22 +25,19 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 
 /**
-*
-LegOrCallSegment {PARAMETERS-BOUND : bound} ::= CHOICE { 
- callSegmentID      [0] CallSegmentID {bound}, 
- legID        [1] LegID 
- }
-
-CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..bound.&numOfCSs)
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ LegOrCallSegment {PARAMETERS-BOUND : bound} ::= CHOICE { callSegmentID [0] CallSegmentID {bound}, legID [1] LegID }
+ *
+ * CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..bound.&numOfCSs)
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface LegOrCallSegment {
 
-	public Integer getCallSegmentID();
+    Integer getCallSegmentID();
 
-	public LegID getLegID();
+    LegID getLegID();
 
 }

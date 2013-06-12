@@ -30,54 +30,53 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageParameterless;
 
 /**
  * The MAP ReturnError message without any parameters
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class MAPErrorMessageParameterlessImpl extends MAPErrorMessageImpl implements MAPErrorMessageParameterless {
 
-	public MAPErrorMessageParameterlessImpl(Long errorCode) {
-		super(errorCode);
-	}
-	
-	public boolean isEmParameterless() {
-		return true;
-	}
+    public MAPErrorMessageParameterlessImpl(Long errorCode) {
+        super(errorCode);
+    }
 
-	public MAPErrorMessageParameterless getEmParameterless() {
-		return this;
-	}	
-	
+    public boolean isEmParameterless() {
+        return true;
+    }
 
-	public int getTag() throws MAPException {
-		throw new MAPException("MAPErrorMessageParameterless does not support encoding");
-	}
+    public MAPErrorMessageParameterless getEmParameterless() {
+        return this;
+    }
 
-	public int getTagClass() {
-		return 0;
-	}
+    public int getTag() throws MAPException {
+        throw new MAPException("MAPErrorMessageParameterless does not support encoding");
+    }
 
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    public int getTagClass() {
+        return 0;
+    }
 
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-	}
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-	}
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+    }
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-	}
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+    }
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-	}
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+    }
 
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-	}
-	
-	@Override
-	public String toString() {
-		return "MAPErrorMessageParameterless [errorCode=" + this.errorCode + "]"; 
-	}
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+    }
+
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
+    }
+
+    @Override
+    public String toString() {
+        return "MAPErrorMessageParameterless [errorCode=" + this.errorCode + "]";
+    }
 }

@@ -25,7 +25,9 @@ package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
+
 import java.util.Arrays;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.BitSetStrictLength;
@@ -37,52 +39,54 @@ import org.testng.annotations.Test;
 /**
  *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class UserCSGInformationTest {
 
-	private byte[] getEncodedData() {
-		return new byte[] { 48, 54, -128, 5, 5, -128, 0, 0, 32, -95, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6,
-				3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -126, 1, 2, -125, 1, 3 };
-	}
+    private byte[] getEncodedData() {
+        return new byte[] { 48, 54, -128, 5, 5, -128, 0, 0, 32, -95, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15,
+                48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -126, 1, 2, -125, 1,
+                3 };
+    }
 
-	@Test(groups = { "functional.decode","subscriberInformation"})
-	public void testDecode() throws Exception {
-		
-		byte[] rawData = getEncodedData();
-		
-		AsnInputStream asn = new AsnInputStream(rawData);
+    @Test(groups = { "functional.decode", "subscriberInformation" })
+    public void testDecode() throws Exception {
 
-		int tag = asn.readTag();
-		UserCSGInformationImpl impl = new UserCSGInformationImpl();
-		impl.decodeAll(asn);
-		assertEquals(tag, Tag.SEQUENCE);
+        byte[] rawData = getEncodedData();
 
-		BitSetStrictLength bs = impl.getCSGId().getData();
-		assertTrue(bs.get(0));
-		assertFalse(bs.get(1));
-		assertFalse(bs.get(25));
-		assertTrue(bs.get(26));
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(impl.getExtensionContainer()));
-		assertEquals((int)impl.getAccessMode(), 2);
-		assertEquals((int)impl.getCmi(), 3);
+        AsnInputStream asn = new AsnInputStream(rawData);
 
-	}
-	
-	@Test(groups = { "functional.encode","subscriberInformation"})
-	public void testEncode() throws Exception {
+        int tag = asn.readTag();
+        UserCSGInformationImpl impl = new UserCSGInformationImpl();
+        impl.decodeAll(asn);
+        assertEquals(tag, Tag.SEQUENCE);
 
-		BitSetStrictLength bs = new BitSetStrictLength(27);
-		bs.set(0);
-		bs.set(26);
-		CSGIdImpl csgId = new CSGIdImpl(bs);
-		UserCSGInformationImpl impl = new UserCSGInformationImpl(csgId, MAPExtensionContainerTest.GetTestExtensionContainer(), 2, 3);
-		// CSGId csgId, MAPExtensionContainer extensionContainer, Integer accessMode, Integer cmi
-		AsnOutputStream asnOS = new AsnOutputStream();
-		impl.encodeAll(asnOS);
-		byte[] encodedData = asnOS.toByteArray();
-		byte[] rawData = getEncodedData();		
-		assertTrue( Arrays.equals(rawData,encodedData));
-	}
+        BitSetStrictLength bs = impl.getCSGId().getData();
+        assertTrue(bs.get(0));
+        assertFalse(bs.get(1));
+        assertFalse(bs.get(25));
+        assertTrue(bs.get(26));
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(impl.getExtensionContainer()));
+        assertEquals((int) impl.getAccessMode(), 2);
+        assertEquals((int) impl.getCmi(), 3);
+
+    }
+
+    @Test(groups = { "functional.encode", "subscriberInformation" })
+    public void testEncode() throws Exception {
+
+        BitSetStrictLength bs = new BitSetStrictLength(27);
+        bs.set(0);
+        bs.set(26);
+        CSGIdImpl csgId = new CSGIdImpl(bs);
+        UserCSGInformationImpl impl = new UserCSGInformationImpl(csgId, MAPExtensionContainerTest.GetTestExtensionContainer(),
+                2, 3);
+        // CSGId csgId, MAPExtensionContainer extensionContainer, Integer accessMode, Integer cmi
+        AsnOutputStream asnOS = new AsnOutputStream();
+        impl.encodeAll(asnOS);
+        byte[] encodedData = asnOS.toByteArray();
+        byte[] rawData = getEncodedData();
+        assertTrue(Arrays.equals(rawData, encodedData));
+    }
 
 }

@@ -23,21 +23,18 @@
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
-*
-TimeIfTariffSwitch ::= SEQUENCE {
-timeSinceTariffSwitch [0] INTEGER(0..864000),
-tariffSwitchInterval [1] INTEGER(1..864000) OPTIONAL
-}
--- timeSinceTariffSwitch and tariffSwitchInterval are measured in 100 millisecond intervals
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ TimeIfTariffSwitch ::= SEQUENCE { timeSinceTariffSwitch [0] INTEGER(0..864000), tariffSwitchInterval [1] INTEGER(1..864000)
+ * OPTIONAL } -- timeSinceTariffSwitch and tariffSwitchInterval are measured in 100 millisecond intervals
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface TimeIfTariffSwitch {
 
-	public int getTimeSinceTariffSwitch();
+    int getTimeSinceTariffSwitch();
 
-	public Integer getTariffSwitchInterval();
+    Integer getTariffSwitchInterval();
 
 }

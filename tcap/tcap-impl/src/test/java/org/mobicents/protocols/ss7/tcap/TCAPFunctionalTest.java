@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -22,9 +22,10 @@
 
 package org.mobicents.protocols.ss7.tcap;
 
-
-
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,14 +53,15 @@ import org.testng.annotations.Test;
 
 /**
  * Test for call flow.
+ *
  * @author baranowb
  *
  */
 public class TCAPFunctionalTest extends SccpHarness {
-	public static final long WAIT_TIME = 500;
-	private static final int _WAIT_TIMEOUT = 90000;
-	private static final int _WAIT_REMOVE = 30000;
-    public static final long[] _ACN_ = new long[]{0, 4, 0, 0, 1, 0, 19, 2};
+    public static final long WAIT_TIME = 500;
+    private static final int _WAIT_TIMEOUT = 90000;
+    private static final int _WAIT_REMOVE = 30000;
+    public static final long[] _ACN_ = new long[] { 0, 4, 0, 0, 1, 0, 19, 2 };
     private TCAPStackImpl tcapStack1;
     private TCAPStackImpl tcapStack2;
     private SccpAddress peer1Address;
@@ -68,128 +70,132 @@ public class TCAPFunctionalTest extends SccpHarness {
     private Server server;
     private TCAPListenerWrapper tcapListenerWrapper;
 
-    public TCAPFunctionalTest(){
-    	
+    public TCAPFunctionalTest() {
+
     }
-    	    
-	@BeforeClass
-	public void setUpClass() {
-		this.sccpStack1Name = "TCAPFunctionalTestSccpStack1";
-		this.sccpStack2Name = "TCAPFunctionalTestSccpStack2";
-		System.out.println("setUpClass");
-	}
 
-	@AfterClass
-	public void tearDownClass() throws Exception {
-		System.out.println("tearDownClass");
-	}
+    @BeforeClass
+    public void setUpClass() {
+        this.sccpStack1Name = "TCAPFunctionalTestSccpStack1";
+        this.sccpStack2Name = "TCAPFunctionalTestSccpStack2";
+        System.out.println("setUpClass");
+    }
 
-    /* (non-Javadoc)
+    @AfterClass
+    public void tearDownClass() throws Exception {
+        System.out.println("tearDownClass");
+    }
+
+    /*
+     * (non-Javadoc)
+     *
      * @see junit.framework.TestCase#setUp()
      */
-	@BeforeMethod
-	public void setUp() throws Exception {
-		System.out.println("setUp");
+    @BeforeMethod
+    public void setUp() throws Exception {
+        System.out.println("setUp");
         super.setUp();
-       
+
         peer1Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
-        peer2Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2,  null, 8);
-        
+        peer2Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
+
         this.tcapStack1 = new TCAPStackImpl(this.sccpProvider1, 8);
         this.tcapStack2 = new TCAPStackImpl(this.sccpProvider2, 8);
-        
+
         this.tcapListenerWrapper = new TCAPListenerWrapper();
         this.tcapStack1.getProvider().addTCListener(tcapListenerWrapper);
-        
+
         this.tcapStack1.setInvokeTimeout(0);
         this.tcapStack2.setInvokeTimeout(0);
-        
-       
+
         this.tcapStack1.start();
         this.tcapStack2.start();
-        //create test classes
+        // create test classes
         this.client = new Client(this.tcapStack1, peer1Address, peer2Address);
         this.server = new Server(this.tcapStack2, peer2Address, peer1Address);
 
     }
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     *
      * @see junit.framework.TestCase#tearDown()
      */
-	@AfterMethod
-	public void tearDown() {
+    @AfterMethod
+    public void tearDown() {
         this.tcapStack1.stop();
         this.tcapStack2.stop();
         super.tearDown();
 
     }
 
-	@Test(groups = { "functional.flow"})
-    public void simpleTCWithDialogTest() throws Exception{
+    @Test(groups = { "functional.flow" })
+    public void simpleTCWithDialogTest() throws Exception {
 
         long stamp = System.currentTimeMillis();
         List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
-        TestEvent te = TestEvent.createSentEvent(EventType.Begin, null, 0,stamp);
+        TestEvent te = TestEvent.createSentEvent(EventType.Begin, null, 0, stamp);
         clientExpectedEvents.add(te);
-        te = TestEvent.createReceivedEvent(EventType.Continue, null, 1,stamp+WAIT_TIME);
+        te = TestEvent.createReceivedEvent(EventType.Continue, null, 1, stamp + WAIT_TIME);
         clientExpectedEvents.add(te);
-        te = TestEvent.createSentEvent(EventType.End, null, 2,stamp+WAIT_TIME*2);
+        te = TestEvent.createSentEvent(EventType.End, null, 2, stamp + WAIT_TIME * 2);
         clientExpectedEvents.add(te);
-//        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2+_WAIT_REMOVE);
-        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2);
+        // te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2+_WAIT_REMOVE);
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3, stamp + WAIT_TIME * 2);
         clientExpectedEvents.add(te);
-        
+
         List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
-        te = TestEvent.createReceivedEvent(EventType.Begin, null, 0,stamp);
+        te = TestEvent.createReceivedEvent(EventType.Begin, null, 0, stamp);
         serverExpectedEvents.add(te);
-        te = TestEvent.createSentEvent(EventType.Continue, null, 1,stamp+WAIT_TIME);
+        te = TestEvent.createSentEvent(EventType.Continue, null, 1, stamp + WAIT_TIME);
         serverExpectedEvents.add(te);
-        te = TestEvent.createReceivedEvent(EventType.End, null, 2,stamp+WAIT_TIME*2);
+        te = TestEvent.createReceivedEvent(EventType.End, null, 2, stamp + WAIT_TIME * 2);
         serverExpectedEvents.add(te);
-//        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2+_WAIT_REMOVE);
-        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2);
+        // te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2+_WAIT_REMOVE);
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3, stamp + WAIT_TIME * 2);
         serverExpectedEvents.add(te);
 
-    	client.startClientDialog();
-    	assertNotNull(client.dialog.getLocalAddress());
-    	assertNull(client.dialog.getRemoteDialogId());
-    	
+        client.startClientDialog();
+        assertNotNull(client.dialog.getLocalAddress());
+        assertNull(client.dialog.getRemoteDialogId());
+
         client.sendBegin();
         client.waitFor(WAIT_TIME);
-        
+
         server.sendContinue();
         assertNotNull(server.dialog.getLocalAddress());
-    	assertNotNull(server.dialog.getRemoteDialogId());
-    	
+        assertNotNull(server.dialog.getRemoteDialogId());
+
         client.waitFor(WAIT_TIME);
         client.sendEnd(TerminationType.Basic);
-    	assertNotNull(client.dialog.getLocalAddress());
-    	assertNotNull(client.dialog.getRemoteDialogId());
-    	
+        assertNotNull(client.dialog.getLocalAddress());
+        assertNotNull(client.dialog.getRemoteDialogId());
+
         client.waitFor(WAIT_TIME);
-//        waitForEnd();
+        // waitForEnd();
 
         client.compareEvents(clientExpectedEvents);
         server.compareEvents(serverExpectedEvents);
 
     }
 
-	@Test(groups = { "functional.flow"})
-    public void uniMsgTest() throws Exception{
+    @Test(groups = { "functional.flow" })
+    public void uniMsgTest() throws Exception {
 
         long stamp = System.currentTimeMillis();
         List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
-		TestEvent te = TestEvent.createSentEvent(EventType.Uni, null, 0, stamp);
-		clientExpectedEvents.add(te);
-		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 1, stamp);
-		clientExpectedEvents.add(te);
+        TestEvent te = TestEvent.createSentEvent(EventType.Uni, null, 0, stamp);
+        clientExpectedEvents.add(te);
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 1, stamp);
+        clientExpectedEvents.add(te);
 
         List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
-        te = TestEvent.createReceivedEvent(EventType.Uni, null, 0,stamp);
+        te = TestEvent.createReceivedEvent(EventType.Uni, null, 0, stamp);
         serverExpectedEvents.add(te);
-		te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 1, stamp);
-		serverExpectedEvents.add(te);
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 1, stamp);
+        serverExpectedEvents.add(te);
 
-    	client.startUniDialog();
+        client.startUniDialog();
         client.sendUni();
         client.waitFor(WAIT_TIME);
 
@@ -205,83 +211,83 @@ public class TCAPFunctionalTest extends SccpHarness {
             fail("Interrupted on wait!");
         }
     }
-    
+
     private class TCAPListenerWrapper implements TCListener {
 
-		@Override
-		public void onTCUni(TCUniIndication ind) {
-			// TODO Auto-generated method stub
-			
-		}
+        @Override
+        public void onTCUni(TCUniIndication ind) {
+            // TODO Auto-generated method stub
 
-		@Override
-		public void onTCBegin(TCBeginIndication ind) {
-			// TODO Auto-generated method stub
-			
-		}
+        }
 
-		@Override
-		public void onTCContinue(TCContinueIndication ind) {
-			assertEquals(ind.getComponents().length, 2);
-			ReturnResultLast rrl = (ReturnResultLast)ind.getComponents()[0];
-			Invoke inv = (Invoke)ind.getComponents()[1];
+        @Override
+        public void onTCBegin(TCBeginIndication ind) {
+            // TODO Auto-generated method stub
 
-			// operationCode is not sent via ReturnResultLast because it does not contain a Parameter
-			// so operationCode is taken from a sent Invoke 
-			assertEquals((long)rrl.getInvokeId(), 1);
-			assertEquals((long)rrl.getOperationCode().getLocalOperationCode(), 12);
+        }
 
-			// second Invoke has its own operationCode and it has linkedId to the second sent Invoke
-			assertEquals((long)inv.getInvokeId(), 1);
-			assertEquals((long)inv.getOperationCode().getLocalOperationCode(), 14);
-			assertEquals((long)inv.getLinkedId(), 2);
+        @Override
+        public void onTCContinue(TCContinueIndication ind) {
+            assertEquals(ind.getComponents().length, 2);
+            ReturnResultLast rrl = (ReturnResultLast) ind.getComponents()[0];
+            Invoke inv = (Invoke) ind.getComponents()[1];
 
-			// we should see operationCode of the second sent Invoke
-			Invoke linkedInv = inv.getLinkedInvoke();
-			assertEquals((long)linkedInv.getOperationCode().getLocalOperationCode(), 13);
-		}
+            // operationCode is not sent via ReturnResultLast because it does not contain a Parameter
+            // so operationCode is taken from a sent Invoke
+            assertEquals((long) rrl.getInvokeId(), 1);
+            assertEquals((long) rrl.getOperationCode().getLocalOperationCode(), 12);
 
-		@Override
-		public void onTCEnd(TCEndIndication ind) {
-			// TODO Auto-generated method stub
-			
-		}
+            // second Invoke has its own operationCode and it has linkedId to the second sent Invoke
+            assertEquals((long) inv.getInvokeId(), 1);
+            assertEquals((long) inv.getOperationCode().getLocalOperationCode(), 14);
+            assertEquals((long) inv.getLinkedId(), 2);
 
-		@Override
-		public void onTCUserAbort(TCUserAbortIndication ind) {
-			// TODO Auto-generated method stub
-			
-		}
+            // we should see operationCode of the second sent Invoke
+            Invoke linkedInv = inv.getLinkedInvoke();
+            assertEquals((long) linkedInv.getOperationCode().getLocalOperationCode(), 13);
+        }
 
-		@Override
-		public void onTCPAbort(TCPAbortIndication ind) {
-			// TODO Auto-generated method stub
-			
-		}
+        @Override
+        public void onTCEnd(TCEndIndication ind) {
+            // TODO Auto-generated method stub
 
-		@Override
-		public void onTCNotice(TCNoticeIndication ind) {
-			// TODO Auto-generated method stub
-			
-		}
+        }
 
-		@Override
-		public void onDialogReleased(Dialog d) {
-			// TODO Auto-generated method stub
-			
-		}
+        @Override
+        public void onTCUserAbort(TCUserAbortIndication ind) {
+            // TODO Auto-generated method stub
 
-		@Override
-		public void onInvokeTimeout(Invoke tcInvokeRequest) {
-			// TODO Auto-generated method stub
-			
-		}
+        }
 
-		@Override
-		public void onDialogTimeout(Dialog d) {
-			// TODO Auto-generated method stub
-			
-		}
-    	
+        @Override
+        public void onTCPAbort(TCPAbortIndication ind) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onTCNotice(TCNoticeIndication ind) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onDialogReleased(Dialog d) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onInvokeTimeout(Invoke tcInvokeRequest) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onDialogTimeout(Dialog d) {
+            // TODO Auto-generated method stub
+
+        }
+
     }
 }

@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.service.lsm;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -37,189 +38,189 @@ import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 
 /**
  * @author amit bhayani
- * @author  sergey vetyutnev
- * 
+ * @author sergey vetyutnev
+ *
  */
 public class AreaDefinitionImpl extends SequenceBase implements AreaDefinition {
 
-	private static final int _TAG_areaList = 0;
+    private static final int _TAG_areaList = 0;
 
-	private ArrayList<Area> areaList = null;
+    private ArrayList<Area> areaList = null;
 
-	/**
-	 * 
-	 */
-	public AreaDefinitionImpl() {
-		super("AreaDefinition");
-	}
+    /**
+    *
+    */
+    public AreaDefinitionImpl() {
+        super("AreaDefinition");
+    }
 
-	/**
-	 * @param areaList
-	 */
-	public AreaDefinitionImpl(ArrayList<Area> areaList) {
-		super("AreaDefinition");
-		this.areaList = areaList;
-	}
+    /**
+     * @param areaList
+     */
+    public AreaDefinitionImpl(ArrayList<Area> areaList) {
+        super("AreaDefinition");
+        this.areaList = areaList;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.service.lsm.AreaDefinition#getAreaList
-	 * ()
-	 */
-	public ArrayList<Area> getAreaList() {
-		return this.areaList;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm.AreaDefinition#getAreaList ()
+     */
+    public ArrayList<Area> getAreaList() {
+        return this.areaList;
+    }
 
-	protected void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		
-		this.areaList = null;
-		
-		AsnInputStream ais = asnIS.readSequenceStreamData(length);
+    protected void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        this.areaList = null;
 
-			int tag = ais.readTag();
+        AsnInputStream ais = asnIS.readSequenceStreamData(length);
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _TAG_areaList:
-					if (ais.isTagPrimitive()) {
-						throw new MAPParsingComponentException(
-								"Error while decoding " + _PrimitiveName + ": Parameter areaList is primitive",
-								MAPParsingComponentExceptionReason.MistypedParameter);
-					}
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-					this.areaList = new ArrayList<Area>();
-					AsnInputStream ais2 = ais.readSequenceStream();
-					while (true) {
-						if (ais2.available() == 0)
-							break;
+            int tag = ais.readTag();
 
-						int tag2 = ais2.readTag();
-						if (tag2 != Tag.SEQUENCE || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || ais2.isTagPrimitive())
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ ": bad Area tag or tagClass or is primitive ", MAPParsingComponentExceptionReason.MistypedParameter);
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _TAG_areaList:
+                        if (ais.isTagPrimitive()) {
+                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ": Parameter areaList is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+                        }
 
-						AreaImpl el = new AreaImpl();
-						el.decodeAll(ais2);
-						this.areaList.add(el);
-					}
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+                        this.areaList = new ArrayList<Area>();
+                        AsnInputStream ais2 = ais.readSequenceStream();
+                        while (true) {
+                            if (ais2.available() == 0)
+                                break;
 
-		if (areaList == null) {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament areaList is mandatory but does not found",
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-		if (this.areaList.size() < 1 || this.areaList.size() > 10) {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament areaList size must be from 1 to 10, found: "
-					+ this.areaList.size(), MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+                            int tag2 = ais2.readTag();
+                            if (tag2 != Tag.SEQUENCE || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || ais2.isTagPrimitive())
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ": bad Area tag or tagClass or is primitive ",
+                                        MAPParsingComponentExceptionReason.MistypedParameter);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
-	 * (org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		if (this.areaList == null) {
-			throw new MAPException("Error while encoding " + _PrimitiveName + " the mandatory parameter[areaList [0] AreaList] is not defined");
-		}
-		if (this.areaList.size() < 1 || this.areaList.size() > 10) {
-			throw new MAPException("Error while encoding " + _PrimitiveName + " areaList size must be from 1 to 10, found: " + this.areaList.size());
-		}
+                            AreaImpl el = new AreaImpl();
+                            el.decodeAll(ais2);
+                            this.areaList.add(el);
+                        }
+                        break;
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-		try {
-			asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_areaList);
-			int pos = asnOs.StartContentDefiniteLength();
-			for (Area ri : this.areaList) {
-				if (ri != null) {
-					AreaImpl rii = (AreaImpl) ri;
-					rii.encodeAll(asnOs);
-				}
-			}
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        if (areaList == null) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": Parament areaList is mandatory but does not found",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+        if (this.areaList.size() < 1 || this.areaList.size() > 10) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": Parament areaList size must be from 1 to 10, found: " + this.areaList.size(),
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		if (this.areaList != null) {
-			for (int i = 0; i < areaList.size(); i++) {
-				Area a1 = areaList.get(i);
-				result = prime * result + ((a1 == null) ? 0 : a1.hashCode());
-			}
-		}
-		return result;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
+     * (org.mobicents.protocols.asn.AsnOutputStream)
+     */
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
+        if (this.areaList == null) {
+            throw new MAPException("Error while encoding " + _PrimitiveName
+                    + " the mandatory parameter[areaList [0] AreaList] is not defined");
+        }
+        if (this.areaList.size() < 1 || this.areaList.size() > 10) {
+            throw new MAPException("Error while encoding " + _PrimitiveName + " areaList size must be from 1 to 10, found: "
+                    + this.areaList.size());
+        }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		AreaDefinitionImpl other = (AreaDefinitionImpl) obj;
-		if (areaList == null) {
-			if (other.areaList != null)
-				return false;
-		} else {
-			if (areaList.size() != other.areaList.size())
-				return false;
-			for (int i = 0; i < areaList.size(); i++) {
-				Area a1 = areaList.get(i);
-				Area a2 = other.areaList.get(i);
-				if (a1 == null) {
-					if (a2 != null)
-						return false;
-				} else {
-					if (!a1.equals(a2))
-						return false;
-				}
-			}
-		}
-		return true;
-	}
+        try {
+            asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_areaList);
+            int pos = asnOs.StartContentDefiniteLength();
+            for (Area ri : this.areaList) {
+                if (ri != null) {
+                    AreaImpl rii = (AreaImpl) ri;
+                    rii.encodeAll(asnOs);
+                }
+            }
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        if (this.areaList != null) {
+            for (int i = 0; i < areaList.size(); i++) {
+                Area a1 = areaList.get(i);
+                result = prime * result + ((a1 == null) ? 0 : a1.hashCode());
+            }
+        }
+        return result;
+    }
 
-		if (this.areaList != null) {
-			sb.append("areaList [");
-			for (int i = 0; i < areaList.size(); i++) {
-				Area a1 = areaList.get(i);
-				sb.append("area=");
-				sb.append(a1);
-				sb.append(", ");
-			}
-			sb.append("]");
-		}
-		sb.append("]");
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AreaDefinitionImpl other = (AreaDefinitionImpl) obj;
+        if (areaList == null) {
+            if (other.areaList != null)
+                return false;
+        } else {
+            if (areaList.size() != other.areaList.size())
+                return false;
+            for (int i = 0; i < areaList.size(); i++) {
+                Area a1 = areaList.get(i);
+                Area a2 = other.areaList.get(i);
+                if (a1 == null) {
+                    if (a2 != null)
+                        return false;
+                } else {
+                    if (!a1.equals(a2))
+                        return false;
+                }
+            }
+        }
+        return true;
+    }
 
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.areaList != null) {
+            sb.append("areaList [");
+            for (int i = 0; i < areaList.size(); i++) {
+                Area a1 = areaList.get(i);
+                sb.append("area=");
+                sb.append(a1);
+                sb.append(", ");
+            }
+            sb.append("]");
+        }
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

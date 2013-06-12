@@ -26,22 +26,22 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class PDPAddressImpl extends OctetStringBase implements PDPAddress {
 
-	public PDPAddressImpl() {
-		super(1, 16, "PDPAddress");
-	}
+    public PDPAddressImpl() {
+        super(1, 16, "PDPAddress");
+    }
 
-	public PDPAddressImpl(byte[] data) {
-		super(1, 16, "PDPAddress", data);
-	}
+    public PDPAddressImpl(byte[] data) {
+        super(1, 16, "PDPAddress", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 
 }

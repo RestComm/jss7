@@ -26,22 +26,22 @@ import org.mobicents.protocols.ss7.inap.api.INAPException;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserTeleserviceInformation;
 
 /**
-*
-ISUP HighLayerCompatibility wrapper
-
-HighLayerCompatibility::= OCTET STRING (SIZE(highLayerCompatibilityLength))
---  Indicates the teleservice. For encoding, DSS1 (ETS 300 403-1 [8]) is used.
-
-highLayerCompatibilityLength ::= 2
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ISUP HighLayerCompatibility wrapper
+ *
+ * HighLayerCompatibility::= OCTET STRING (SIZE(highLayerCompatibilityLength)) -- Indicates the teleservice. For encoding, DSS1
+ * (ETS 300 403-1 [8]) is used.
+ *
+ * highLayerCompatibilityLength ::= 2
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface HighLayerCompatibilityInap {
 
-	public byte[] getData();
+    byte[] getData();
 
-	public UserTeleserviceInformation getHighLayerCompatibility() throws INAPException;
+    UserTeleserviceInformation getHighLayerCompatibility() throws INAPException;
 
 }

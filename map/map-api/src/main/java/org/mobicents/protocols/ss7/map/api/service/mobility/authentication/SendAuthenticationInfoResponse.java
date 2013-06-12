@@ -27,28 +27,23 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
  *
-MAP V3:
-SendAuthenticationInfoRes ::= [3] SEQUENCE {
- authenticationSetList	AuthenticationSetList 	OPTIONAL,
- extensionContainer	ExtensionContainer	OPTIONAL,
- ...,
- eps-AuthenticationSetList	[2] EPS-AuthenticationSetList	OPTIONAL }
- 
-MAP V2:
- SendAuthenticationInfoRes ::= AuthenticationSetList
- 
+ MAP V3: SendAuthenticationInfoRes ::= [3] SEQUENCE { authenticationSetList AuthenticationSetList OPTIONAL, extensionContainer
+ * ExtensionContainer OPTIONAL, ..., eps-AuthenticationSetList [2] EPS-AuthenticationSetList OPTIONAL }
+ *
+ * MAP V2: SendAuthenticationInfoRes ::= AuthenticationSetList
+ *
  *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SendAuthenticationInfoResponse extends MobilityMessage {
 
-	public AuthenticationSetList getAuthenticationSetList();
+    AuthenticationSetList getAuthenticationSetList();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public EpsAuthenticationSetList getEpsAuthenticationSetList();
+    EpsAuthenticationSetList getEpsAuthenticationSetList();
 
-	public long getMapProtocolVersion();
+    long getMapProtocolVersion();
 
 }

@@ -25,24 +25,20 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
 import java.io.Serializable;
 
 /**
- * 
- * Deferredmt-lrData ::= SEQUENCE {
- *		deferredLocationEventType DeferredLocationEventType,
- *		terminationCause [0] TerminationCause OPTIONAL,
- *		lcsLocationInfo [1] LCSLocationInfo OPTIONAL,
- *		...}
- *		-- lcsLocationInfo may be included only if a terminationCause is present
- *		-- indicating mt-lrRestart.
+ *
+ * Deferredmt-lrData ::= SEQUENCE { deferredLocationEventType DeferredLocationEventType, terminationCause [0] TerminationCause
+ * OPTIONAL, lcsLocationInfo [1] LCSLocationInfo OPTIONAL, ...} -- lcsLocationInfo may be included only if a terminationCause is
+ * present -- indicating mt-lrRestart.
  *
  * @author amit bhayani
  *
  */
 public interface DeferredmtlrData extends Serializable {
-	
-	public DeferredLocationEventType getDeferredLocationEventType();
-	
-	public TerminationCause getTerminationCause();
-	
-	public LCSLocationInfo getLCSLocationInfo();
+
+    DeferredLocationEventType getDeferredLocationEventType();
+
+    TerminationCause getTerminationCause();
+
+    LCSLocationInfo getLCSLocationInfo();
 
 }

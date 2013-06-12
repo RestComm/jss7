@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.service.mobility.locationManagement;
 
 import java.io.IOException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -40,267 +41,269 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class UpdateLocationResponseImpl extends MobilityMessageImpl implements UpdateLocationResponse {
 
-	protected static final int _TAG_pagingArea_Capability = 0;
+    protected static final int _TAG_pagingArea_Capability = 0;
 
-	public static final String _PrimitiveName = "UpdateLocationResponse";
+    public static final String _PrimitiveName = "UpdateLocationResponse";
 
-	private ISDNAddressString hlrNumber;
-	private MAPExtensionContainer extensionContainer;
-	private boolean addCapability;
-	private boolean pagingAreaCapability;
-	private long mapProtocolVersion;
+    private ISDNAddressString hlrNumber;
+    private MAPExtensionContainer extensionContainer;
+    private boolean addCapability;
+    private boolean pagingAreaCapability;
+    private long mapProtocolVersion;
 
-	public UpdateLocationResponseImpl(long mapProtocolVersion) {
-		this.mapProtocolVersion = mapProtocolVersion;
-	}
+    public UpdateLocationResponseImpl(long mapProtocolVersion) {
+        this.mapProtocolVersion = mapProtocolVersion;
+    }
 
-	public UpdateLocationResponseImpl(long mapProtocolVersion, ISDNAddressString hlrNumber, MAPExtensionContainer extensionContainer, boolean addCapability,
-			boolean pagingAreaCapability) {
-		this.mapProtocolVersion = mapProtocolVersion;
-		this.hlrNumber = hlrNumber;
-		this.extensionContainer = extensionContainer;
-		this.addCapability = addCapability;
-		this.pagingAreaCapability = pagingAreaCapability;
-	}
+    public UpdateLocationResponseImpl(long mapProtocolVersion, ISDNAddressString hlrNumber,
+            MAPExtensionContainer extensionContainer, boolean addCapability, boolean pagingAreaCapability) {
+        this.mapProtocolVersion = mapProtocolVersion;
+        this.hlrNumber = hlrNumber;
+        this.extensionContainer = extensionContainer;
+        this.addCapability = addCapability;
+        this.pagingAreaCapability = pagingAreaCapability;
+    }
 
-	public MAPMessageType getMessageType() {
-		return MAPMessageType.updateLocation_Response;
-	}
+    public MAPMessageType getMessageType() {
+        return MAPMessageType.updateLocation_Response;
+    }
 
-	public int getOperationCode() {
-		return MAPOperationCode.updateLocation;
-	}
+    public int getOperationCode() {
+        return MAPOperationCode.updateLocation;
+    }
 
-	public ISDNAddressString getHlrNumber() {
-		return hlrNumber;
-	}
+    public ISDNAddressString getHlrNumber() {
+        return hlrNumber;
+    }
 
-	public MAPExtensionContainer getExtensionContainer() {
-		return extensionContainer;
-	}
+    public MAPExtensionContainer getExtensionContainer() {
+        return extensionContainer;
+    }
 
-	public boolean getAddCapability() {
-		return addCapability;
-	}
+    public boolean getAddCapability() {
+        return addCapability;
+    }
 
-	public boolean getPagingAreaCapability() {
-		return pagingAreaCapability;
-	}
+    public boolean getPagingAreaCapability() {
+        return pagingAreaCapability;
+    }
 
-	public long getMapProtocolVersion() {
-		return mapProtocolVersion;
-	}
+    public long getMapProtocolVersion() {
+        return mapProtocolVersion;
+    }
 
+    public int getTag() throws MAPException {
+        if (this.mapProtocolVersion >= 2)
+            return Tag.SEQUENCE;
+        else
+            return Tag.STRING_OCTET;
+    }
 
-	public int getTag() throws MAPException {
-		if (this.mapProtocolVersion >= 2)
-			return Tag.SEQUENCE;
-		else
-			return Tag.STRING_OCTET;
-	}
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public boolean getIsPrimitive() {
+        if (this.mapProtocolVersion >= 2)
+            return false;
+        else
+            return true;
+    }
 
-	public boolean getIsPrimitive() {
-		if (this.mapProtocolVersion >= 2)
-			return false;
-		else
-			return true;
-	}
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+        hlrNumber = null;
+        extensionContainer = null;
+        addCapability = false;
+        pagingAreaCapability = false;
 
-		hlrNumber = null;
-		extensionContainer = null;
-		addCapability = false;
-		pagingAreaCapability = false;
+        if (this.mapProtocolVersion >= 2) {
+            AsnInputStream ais = ansIS.readSequenceStreamData(length);
+            int num = 0;
+            while (true) {
+                if (ais.available() == 0)
+                    break;
 
-		if (this.mapProtocolVersion >= 2) {
-			AsnInputStream ais = ansIS.readSequenceStreamData(length);
-			int num = 0;
-			while (true) {
-				if (ais.available() == 0)
-					break;
+                int tag = ais.readTag();
 
-				int tag = ais.readTag();
+                switch (num) {
+                    case 0:
+                        // hlrNumber
+                        if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive() || tag != Tag.STRING_OCTET)
+                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".hlrNumber: Parameter 0 bad tag or tag class or not primitive",
+                                    MAPParsingComponentExceptionReason.MistypedParameter);
+                        this.hlrNumber = new ISDNAddressStringImpl();
+                        ((ISDNAddressStringImpl) this.hlrNumber).decodeAll(ais);
+                        break;
 
-				switch (num) {
-				case 0:
-					// hlrNumber
-					if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive() || tag != Tag.STRING_OCTET)
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ".hlrNumber: Parameter 0 bad tag or tag class or not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-					this.hlrNumber = new ISDNAddressStringImpl();
-					((ISDNAddressStringImpl) this.hlrNumber).decodeAll(ais);
-					break;
+                    default:
+                        if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                            switch (tag) {
+                                case _TAG_pagingArea_Capability:
+                                    // pagingAreaCapability
+                                    if (!ais.isTagPrimitive())
+                                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                                + ".pagingAreaCapability: Parameter is not primitive",
+                                                MAPParsingComponentExceptionReason.MistypedParameter);
+                                    ais.readNull();
+                                    this.pagingAreaCapability = true;
+                                    break;
 
-				default:
-					if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-						switch (tag) {
-						case _TAG_pagingArea_Capability:
-							// pagingAreaCapability
-							if (!ais.isTagPrimitive())
-								throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-										+ ".pagingAreaCapability: Parameter is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-							ais.readNull();
-							this.pagingAreaCapability = true;
-							break;
+                                default:
+                                    ais.advanceElement();
+                                    break;
+                            }
+                        } else if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
 
-						default:
-							ais.advanceElement();
-							break;
-						}
-					} else if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
+                            switch (tag) {
+                                case Tag.SEQUENCE:
+                                    // extensionContainer
+                                    if (ais.isTagPrimitive())
+                                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                                + ".extensionContainer: Parameter extensionContainer is primitive",
+                                                MAPParsingComponentExceptionReason.MistypedParameter);
+                                    this.extensionContainer = new MAPExtensionContainerImpl();
+                                    ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                                    break;
+                                case Tag.NULL:
+                                    // addCapability
+                                    if (!ais.isTagPrimitive())
+                                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                                + ".addCapability: Parameter is not primitive",
+                                                MAPParsingComponentExceptionReason.MistypedParameter);
+                                    ais.readNull();
+                                    this.addCapability = true;
+                                    break;
 
-						switch (tag) {
-						case Tag.SEQUENCE:
-							// extensionContainer
-							if (ais.isTagPrimitive())
-								throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-										+ ".extensionContainer: Parameter extensionContainer is primitive",
-										MAPParsingComponentExceptionReason.MistypedParameter);
-							this.extensionContainer = new MAPExtensionContainerImpl();
-							((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
-							break;
-						case Tag.NULL:
-							// addCapability
-							if (!ais.isTagPrimitive())
-								throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-										+ ".addCapability: Parameter is not primitive",
-										MAPParsingComponentExceptionReason.MistypedParameter);
-							ais.readNull();
-							this.addCapability = true;
-							break;
+                                default:
+                                    ais.advanceElement();
+                                    break;
+                            }
+                        } else {
 
-						default:
-							ais.advanceElement();
-							break;
-						}
-					} else {
+                            ais.advanceElement();
+                        }
+                        break;
+                }
 
-						ais.advanceElement();
-					}
-					break;
-				}
+                num++;
+            }
 
-				num++;
-			}
+            if (num < 1)
+                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                        + ": Needs at least 1 mandatory parameters, found " + num,
+                        MAPParsingComponentExceptionReason.MistypedParameter);
+        } else {
 
-			if (num < 1)
-				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Needs at least 1 mandatory parameters, found " + num,
-						MAPParsingComponentExceptionReason.MistypedParameter);
-		} else {
+            this.hlrNumber = new ISDNAddressStringImpl();
+            ((ISDNAddressStringImpl) this.hlrNumber).decodeData(ansIS, length);
+        }
+    }
 
-			this.hlrNumber = new ISDNAddressStringImpl();
-			((ISDNAddressStringImpl) this.hlrNumber).decodeData(ansIS, length);
-		}
-	}
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		if (this.hlrNumber == null)
-			throw new MAPException("hlrNumber parameter must not be null");
+        if (this.hlrNumber == null)
+            throw new MAPException("hlrNumber parameter must not be null");
 
-		try {
-			if (this.mapProtocolVersion >= 2) {
+        try {
+            if (this.mapProtocolVersion >= 2) {
 
-				((ISDNAddressStringImpl) this.hlrNumber).encodeAll(asnOs);
+                ((ISDNAddressStringImpl) this.hlrNumber).encodeAll(asnOs);
 
-				if (this.extensionContainer != null)
-					((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
-				if (addCapability)
-					asnOs.writeNull();
-				if (pagingAreaCapability)
-					asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_pagingArea_Capability);
-			} else {
+                if (this.extensionContainer != null)
+                    ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
+                if (addCapability)
+                    asnOs.writeNull();
+                if (pagingAreaCapability)
+                    asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_pagingArea_Capability);
+            } else {
 
-				((ISDNAddressStringImpl) this.hlrNumber).encodeData(asnOs);
-			}
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+                ((ISDNAddressStringImpl) this.hlrNumber).encodeData(asnOs);
+            }
+        } catch (IOException e) {
+            throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("UpdateLocationResponse [");
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("UpdateLocationResponse [");
 
-		if (this.hlrNumber != null) {
-			sb.append("hlrNumber=");
-			sb.append(hlrNumber.toString());
-			sb.append(", ");
-		}
-		if (this.extensionContainer != null) {
-			sb.append("extensionContainer=");
-			sb.append(extensionContainer.toString());
-			sb.append(", ");
-		}
-		if (this.addCapability) {
-			sb.append("addCapability, ");
-		}
-		if (this.pagingAreaCapability) {
-			sb.append("pagingAreaCapability, ");
-		}
-		sb.append("mapProtocolVersion=");
-		sb.append(mapProtocolVersion);
+        if (this.hlrNumber != null) {
+            sb.append("hlrNumber=");
+            sb.append(hlrNumber.toString());
+            sb.append(", ");
+        }
+        if (this.extensionContainer != null) {
+            sb.append("extensionContainer=");
+            sb.append(extensionContainer.toString());
+            sb.append(", ");
+        }
+        if (this.addCapability) {
+            sb.append("addCapability, ");
+        }
+        if (this.pagingAreaCapability) {
+            sb.append("pagingAreaCapability, ");
+        }
+        sb.append("mapProtocolVersion=");
+        sb.append(mapProtocolVersion);
 
-		sb.append("]");
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 }

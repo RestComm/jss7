@@ -25,28 +25,24 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 
 /**
- * 
-
-SentParameter ::= CHOICE { 
-	imsi 				[0] IMSI, 
-	authenticationSet 	[1] AuthenticationSet, 
-	subscriberData 		[2] SubscriberData, 
-	ki 					[4] Ki}
-
-Ki ::= octet STRING (SIZE (16))
-
- * 
+ *
+ SentParameter ::= CHOICE { imsi [0] IMSI, authenticationSet [1] AuthenticationSet, subscriberData [2] SubscriberData, ki [4]
+ * Ki}
+ *
+ * Ki ::= octet STRING (SIZE (16))
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SentParameter {
 
-	public IMSI getImsu();
+    IMSI getImsu();
 
-	public AuthenticationSet getAuthenticationSet();
+    AuthenticationSet getAuthenticationSet();
 
-	public SubscriberData getSubscriberData();
+    SubscriberData getSubscriberData();
 
-	public byte[] getKi();
+    byte[] getKi();
 
 }

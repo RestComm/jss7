@@ -26,30 +26,24 @@ import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 
 /**
- * 
-
-CCBS-Data ::= SEQUENCE {
-	ccbs-Feature	[0]	CCBS-Feature,
-	translatedB-Number	[1]	ISDN-AddressString,
-	serviceIndicator	[2]	ServiceIndicator	OPTIONAL,
-	callInfo		[3]	ExternalSignalInfo,
-	networkSignalInfo	[4]	ExternalSignalInfo,
-	...}
-
- * 
+ *
+ CCBS-Data ::= SEQUENCE { ccbs-Feature [0] CCBS-Feature, translatedB-Number [1] ISDN-AddressString, serviceIndicator [2]
+ * ServiceIndicator OPTIONAL, callInfo [3] ExternalSignalInfo, networkSignalInfo [4] ExternalSignalInfo, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CCBSData {
 
-	public CCBSFeature getCcbsFeature();
+    CCBSFeature getCcbsFeature();
 
-	public ISDNAddressString getTranslatedBNumber();
+    ISDNAddressString getTranslatedBNumber();
 
-	public ServiceIndicator getServiceIndicator();
+    ServiceIndicator getServiceIndicator();
 
-	public ExternalSignalInfo getCallInfo();
+    ExternalSignalInfo getCallInfo();
 
-	public ExternalSignalInfo getNetworkSignalInfo();
+    ExternalSignalInfo getNetworkSignalInfo();
 
 }

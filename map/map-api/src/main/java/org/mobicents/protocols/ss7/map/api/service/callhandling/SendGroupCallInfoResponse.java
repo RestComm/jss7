@@ -30,38 +30,31 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.AdditionalSubscriptions;
 
 /**
- * 
-
-SendGroupCallInfoRes ::= SEQUENCE {
-	anchorMSC-Address	[0] ISDN-AddressString	OPTIONAL,
-	asciCallReference	[1] ASCI-CallReference	OPTIONAL,
-	imsi			[2] IMSI		OPTIONAL,
-	additionalInfo	[3] AdditionalInfo	OPTIONAL,
-	additionalSubscriptions	[4] AdditionalSubscriptions	OPTIONAL,
-	kc			[5] Kc		OPTIONAL,
-	extensionContainer	[6] ExtensionContainer	OPTIONAL,
-	... }
-
-Kc ::= OCTET STRING (SIZE (8))
-
- * 
+ *
+ SendGroupCallInfoRes ::= SEQUENCE { anchorMSC-Address [0] ISDN-AddressString OPTIONAL, asciCallReference [1]
+ * ASCI-CallReference OPTIONAL, imsi [2] IMSI OPTIONAL, additionalInfo [3] AdditionalInfo OPTIONAL, additionalSubscriptions [4]
+ * AdditionalSubscriptions OPTIONAL, kc [5] Kc OPTIONAL, extensionContainer [6] ExtensionContainer OPTIONAL, ... }
+ *
+ * Kc ::= OCTET STRING (SIZE (8))
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SendGroupCallInfoResponse extends CallHandlingMessage {
 
-	public ISDNAddressString getAnchorMscAddress();
+    ISDNAddressString getAnchorMscAddress();
 
-	public ASCICallReference getAsciCallReference();
+    ASCICallReference getAsciCallReference();
 
-	public IMSI getImsi();
+    IMSI getImsi();
 
-	public AdditionalInfo getAdditionalInfo();
+    AdditionalInfo getAdditionalInfo();
 
-	public AdditionalSubscriptions getAdditionalSubscriptions();
+    AdditionalSubscriptions getAdditionalSubscriptions();
 
-	public byte[] getKc();
+    byte[] getKc();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

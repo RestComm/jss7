@@ -29,136 +29,138 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class TestUssdServerConfigurationData {
 
-	protected static final String MSISDN_ADDRESS = "msisdnAddress";
-	protected static final String MSISDN_ADDRESS_NATURE = "msisdnAddressNature";
-	protected static final String MSISDN_NUMBERING_PLAN = "msisdnNumberingPlan";
-	protected static final String DATA_CODING_SCHEME = "dataCodingScheme";
-	protected static final String ALERTING_PATTERN = "alertingPattern";
-	protected static final String PROCESS_SS_REQUEST_ACTION = "processSsRequestAction";
-	protected static final String AUTO_RESPONSE_STRING = "autoResponseString";
-	protected static final String AUTO_UNSTRUCTURED_SS_REQUEST_STRING = "autoUnstructured_SS_RequestString";
-	protected static final String ONE_NOTIFICATION_FOR_100_DIALOGS = "oneNotificationFor100Dialogs";
+    protected static final String MSISDN_ADDRESS = "msisdnAddress";
+    protected static final String MSISDN_ADDRESS_NATURE = "msisdnAddressNature";
+    protected static final String MSISDN_NUMBERING_PLAN = "msisdnNumberingPlan";
+    protected static final String DATA_CODING_SCHEME = "dataCodingScheme";
+    protected static final String ALERTING_PATTERN = "alertingPattern";
+    protected static final String PROCESS_SS_REQUEST_ACTION = "processSsRequestAction";
+    protected static final String AUTO_RESPONSE_STRING = "autoResponseString";
+    protected static final String AUTO_UNSTRUCTURED_SS_REQUEST_STRING = "autoUnstructured_SS_RequestString";
+    protected static final String ONE_NOTIFICATION_FOR_100_DIALOGS = "oneNotificationFor100Dialogs";
 
-	protected String msisdnAddress = "";
-	protected AddressNature msisdnAddressNature = AddressNature.international_number;
-	protected NumberingPlan msisdnNumberingPlan = NumberingPlan.ISDN;
-	protected int dataCodingScheme = 0x0F;
-	protected int alertingPattern = -1;
-	protected ProcessSsRequestAction processSsRequestAction = new ProcessSsRequestAction(ProcessSsRequestAction.VAL_MANUAL_RESPONSE);
-	protected String autoResponseString = "";
-	protected String autoUnstructured_SS_RequestString = "";
-	protected boolean oneNotificationFor100Dialogs = false;
+    protected String msisdnAddress = "";
+    protected AddressNature msisdnAddressNature = AddressNature.international_number;
+    protected NumberingPlan msisdnNumberingPlan = NumberingPlan.ISDN;
+    protected int dataCodingScheme = 0x0F;
+    protected int alertingPattern = -1;
+    protected ProcessSsRequestAction processSsRequestAction = new ProcessSsRequestAction(
+            ProcessSsRequestAction.VAL_MANUAL_RESPONSE);
+    protected String autoResponseString = "";
+    protected String autoUnstructured_SS_RequestString = "";
+    protected boolean oneNotificationFor100Dialogs = false;
 
-	public String getMsisdnAddress() {
-		return msisdnAddress;
-	}
-	
-	public void setMsisdnAddress(String msisdnAddress) {
-		this.msisdnAddress = msisdnAddress;
-	}
+    public String getMsisdnAddress() {
+        return msisdnAddress;
+    }
 
-	public AddressNature getMsisdnAddressNature() {
-		return msisdnAddressNature;
-	}
+    public void setMsisdnAddress(String msisdnAddress) {
+        this.msisdnAddress = msisdnAddress;
+    }
 
-	public void setMsisdnAddressNature(AddressNature msisdnAddressNature) {
-		this.msisdnAddressNature = msisdnAddressNature;
-	}
+    public AddressNature getMsisdnAddressNature() {
+        return msisdnAddressNature;
+    }
 
-	public NumberingPlan getMsisdnNumberingPlan() {
-		return msisdnNumberingPlan;
-	}
+    public void setMsisdnAddressNature(AddressNature msisdnAddressNature) {
+        this.msisdnAddressNature = msisdnAddressNature;
+    }
 
-	public void setMsisdnNumberingPlan(NumberingPlan msisdnNumberingPlan) {
-		this.msisdnNumberingPlan = msisdnNumberingPlan;
-	}
+    public NumberingPlan getMsisdnNumberingPlan() {
+        return msisdnNumberingPlan;
+    }
 
-	public int getDataCodingScheme() {
-		return dataCodingScheme;
-	}
+    public void setMsisdnNumberingPlan(NumberingPlan msisdnNumberingPlan) {
+        this.msisdnNumberingPlan = msisdnNumberingPlan;
+    }
 
-	public void setDataCodingScheme(int dataCodingScheme) {
-		this.dataCodingScheme = dataCodingScheme;
-	}
+    public int getDataCodingScheme() {
+        return dataCodingScheme;
+    }
 
-	public int getAlertingPattern() {
-		return alertingPattern;
-	}
+    public void setDataCodingScheme(int dataCodingScheme) {
+        this.dataCodingScheme = dataCodingScheme;
+    }
 
-	public void setAlertingPattern(int alertingPattern) {
-		this.alertingPattern = alertingPattern;
-	}
+    public int getAlertingPattern() {
+        return alertingPattern;
+    }
 
-	public ProcessSsRequestAction getProcessSsRequestAction() {
-		return processSsRequestAction;
-	}
+    public void setAlertingPattern(int alertingPattern) {
+        this.alertingPattern = alertingPattern;
+    }
 
-	public void setProcessSsRequestAction(ProcessSsRequestAction processSsRequestAction) {
-		this.processSsRequestAction = processSsRequestAction;
-	}
+    public ProcessSsRequestAction getProcessSsRequestAction() {
+        return processSsRequestAction;
+    }
 
-	public String getAutoResponseString() {
-		return autoResponseString;
-	}
+    public void setProcessSsRequestAction(ProcessSsRequestAction processSsRequestAction) {
+        this.processSsRequestAction = processSsRequestAction;
+    }
 
-	public void setAutoResponseString(String autoResponseString) {
-		this.autoResponseString = autoResponseString;
-	}
+    public String getAutoResponseString() {
+        return autoResponseString;
+    }
 
-	public String getAutoUnstructured_SS_RequestString() {
-		return autoUnstructured_SS_RequestString;
-	}
+    public void setAutoResponseString(String autoResponseString) {
+        this.autoResponseString = autoResponseString;
+    }
 
-	public void setAutoUnstructured_SS_RequestString(String autoUnstructured_SS_RequestString) {
-		this.autoUnstructured_SS_RequestString = autoUnstructured_SS_RequestString;
-	}
+    public String getAutoUnstructured_SS_RequestString() {
+        return autoUnstructured_SS_RequestString;
+    }
 
-	public boolean isOneNotificationFor100Dialogs() {
-		return oneNotificationFor100Dialogs;
-	}
+    public void setAutoUnstructured_SS_RequestString(String autoUnstructured_SS_RequestString) {
+        this.autoUnstructured_SS_RequestString = autoUnstructured_SS_RequestString;
+    }
 
-	public void setOneNotificationFor100Dialogs(boolean oneNotificationFor100Dialogs) {
-		this.oneNotificationFor100Dialogs = oneNotificationFor100Dialogs;
-	}
+    public boolean isOneNotificationFor100Dialogs() {
+        return oneNotificationFor100Dialogs;
+    }
 
-	protected static final XMLFormat<TestUssdServerConfigurationData> XML = new XMLFormat<TestUssdServerConfigurationData>(TestUssdServerConfigurationData.class) {
+    public void setOneNotificationFor100Dialogs(boolean oneNotificationFor100Dialogs) {
+        this.oneNotificationFor100Dialogs = oneNotificationFor100Dialogs;
+    }
 
-		public void write(TestUssdServerConfigurationData srv, OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(DATA_CODING_SCHEME, srv.dataCodingScheme);
-			xml.setAttribute(ALERTING_PATTERN, srv.alertingPattern);
-			xml.setAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS, srv.oneNotificationFor100Dialogs);
+    protected static final XMLFormat<TestUssdServerConfigurationData> XML = new XMLFormat<TestUssdServerConfigurationData>(
+            TestUssdServerConfigurationData.class) {
 
-			xml.add(srv.msisdnAddress, MSISDN_ADDRESS, String.class);
-			xml.add(srv.autoResponseString, AUTO_RESPONSE_STRING, String.class);
-			xml.add(srv.autoUnstructured_SS_RequestString, AUTO_UNSTRUCTURED_SS_REQUEST_STRING, String.class);
-			
-			xml.add(srv.msisdnAddressNature.toString(), MSISDN_ADDRESS_NATURE, String.class);
-			xml.add(srv.msisdnNumberingPlan.toString(), MSISDN_NUMBERING_PLAN, String.class);
-			xml.add(srv.processSsRequestAction.toString(), PROCESS_SS_REQUEST_ACTION, String.class);
-		}
+        public void write(TestUssdServerConfigurationData srv, OutputElement xml) throws XMLStreamException {
+            xml.setAttribute(DATA_CODING_SCHEME, srv.dataCodingScheme);
+            xml.setAttribute(ALERTING_PATTERN, srv.alertingPattern);
+            xml.setAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS, srv.oneNotificationFor100Dialogs);
 
-		public void read(InputElement xml, TestUssdServerConfigurationData srv) throws XMLStreamException {
-			srv.dataCodingScheme = xml.getAttribute(DATA_CODING_SCHEME).toInt();
-			srv.alertingPattern = xml.getAttribute(ALERTING_PATTERN).toInt();
-			srv.oneNotificationFor100Dialogs = xml.getAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS).toBoolean();
+            xml.add(srv.msisdnAddress, MSISDN_ADDRESS, String.class);
+            xml.add(srv.autoResponseString, AUTO_RESPONSE_STRING, String.class);
+            xml.add(srv.autoUnstructured_SS_RequestString, AUTO_UNSTRUCTURED_SS_REQUEST_STRING, String.class);
 
-			srv.msisdnAddress = (String) xml.get(MSISDN_ADDRESS, String.class);
-			srv.autoResponseString = (String) xml.get(AUTO_RESPONSE_STRING, String.class);
-			srv.autoUnstructured_SS_RequestString = (String) xml.get(AUTO_UNSTRUCTURED_SS_REQUEST_STRING, String.class);
-			
-			String an = (String) xml.get(MSISDN_ADDRESS_NATURE, String.class);
-			srv.msisdnAddressNature = AddressNature.valueOf(an);
-			String np = (String) xml.get(MSISDN_NUMBERING_PLAN, String.class);
-			srv.msisdnNumberingPlan = NumberingPlan.valueOf(np);
-			String ss_act = (String) xml.get(PROCESS_SS_REQUEST_ACTION, String.class);
-			srv.processSsRequestAction = ProcessSsRequestAction.createInstance(ss_act);
-		}
-	};
+            xml.add(srv.msisdnAddressNature.toString(), MSISDN_ADDRESS_NATURE, String.class);
+            xml.add(srv.msisdnNumberingPlan.toString(), MSISDN_NUMBERING_PLAN, String.class);
+            xml.add(srv.processSsRequestAction.toString(), PROCESS_SS_REQUEST_ACTION, String.class);
+        }
+
+        public void read(InputElement xml, TestUssdServerConfigurationData srv) throws XMLStreamException {
+            srv.dataCodingScheme = xml.getAttribute(DATA_CODING_SCHEME).toInt();
+            srv.alertingPattern = xml.getAttribute(ALERTING_PATTERN).toInt();
+            srv.oneNotificationFor100Dialogs = xml.getAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS).toBoolean();
+
+            srv.msisdnAddress = (String) xml.get(MSISDN_ADDRESS, String.class);
+            srv.autoResponseString = (String) xml.get(AUTO_RESPONSE_STRING, String.class);
+            srv.autoUnstructured_SS_RequestString = (String) xml.get(AUTO_UNSTRUCTURED_SS_REQUEST_STRING, String.class);
+
+            String an = (String) xml.get(MSISDN_ADDRESS_NATURE, String.class);
+            srv.msisdnAddressNature = AddressNature.valueOf(an);
+            String np = (String) xml.get(MSISDN_NUMBERING_PLAN, String.class);
+            srv.msisdnNumberingPlan = NumberingPlan.valueOf(np);
+            String ss_act = (String) xml.get(PROCESS_SS_REQUEST_ACTION, String.class);
+            srv.processSsRequestAction = ProcessSsRequestAction.createInstance(ss_act);
+        }
+    };
 
 }

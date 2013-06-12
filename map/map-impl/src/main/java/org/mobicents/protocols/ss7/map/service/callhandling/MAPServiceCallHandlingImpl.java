@@ -51,267 +51,274 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
-
 /*
- * 
+ *
  * @author cristian veliscu
- * 
+ *
  */
 public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MAPServiceCallHandling {
-	private static final Logger loger = Logger.getLogger(MAPServiceCallHandlingImpl.class);
+    private static final Logger loger = Logger.getLogger(MAPServiceCallHandlingImpl.class);
 
-	// Include these constants in MAPApplicationContextName and MAPOperationCode
-	// sendRoutingInfo_Request: add constant to MAPMessageType
-	// sendRoutingInfo_Response: add constant to MAPMessageType
-	protected static final int locationInfoRetrievalContext = 5;
-	protected static final int sendRoutingInfo = 22;
-	protected static final int version = 3;
-	
-	
-	public MAPServiceCallHandlingImpl(MAPProviderImpl mapProviderImpl) {
-		super(mapProviderImpl);
-	}
-	
-	@Override
-	public MAPDialogCallHandling createNewDialog(MAPApplicationContext appCntx, 
-			    SccpAddress origAddress, AddressString origReference, 
-				SccpAddress destAddress, AddressString destReference) throws MAPException {
+    // Include these constants in MAPApplicationContextName and MAPOperationCode
+    // sendRoutingInfo_Request: add constant to MAPMessageType
+    // sendRoutingInfo_Response: add constant to MAPMessageType
+    protected static final int locationInfoRetrievalContext = 5;
+    protected static final int sendRoutingInfo = 22;
+    protected static final int version = 3;
 
-		// We cannot create a dialog if the service is not activated
-		if (!this.isActivated())
-			throw new MAPException("Cannot create MAPDialogRoutingInformation because MAPServiceRoutingInformation is not activated");
+    public MAPServiceCallHandlingImpl(MAPProviderImpl mapProviderImpl) {
+        super(mapProviderImpl);
+    }
 
-		Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
-		MAPDialogCallHandlingImpl dialog = new MAPDialogCallHandlingImpl(appCntx, tcapDialog, this.mapProviderImpl, this, origReference, destReference);
+    @Override
+    public MAPDialogCallHandling createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress,
+            AddressString origReference, SccpAddress destAddress, AddressString destReference) throws MAPException {
 
-		this.putMAPDialogIntoCollection(dialog);
-		return dialog;
-	}
-	
-	@Override
-	protected MAPDialogImpl createNewDialogIncoming(MAPApplicationContext appCntx, Dialog tcapDialog) {
-		return new MAPDialogCallHandlingImpl(appCntx, tcapDialog, this.mapProviderImpl, this, null, null);
-	}
-	
-	@Override
-	public void addMAPServiceListener(MAPServiceCallHandlingListener mapServiceListener) {
-		super.addMAPServiceListener(mapServiceListener);
-	}
+        // We cannot create a dialog if the service is not activated
+        if (!this.isActivated())
+            throw new MAPException(
+                    "Cannot create MAPDialogRoutingInformation because MAPServiceRoutingInformation is not activated");
 
-	@Override
-	public void removeMAPServiceListener(MAPServiceCallHandlingListener mapServiceListener) {
-		super.removeMAPServiceListener(mapServiceListener);
-	}
+        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
+        MAPDialogCallHandlingImpl dialog = new MAPDialogCallHandlingImpl(appCntx, tcapDialog, this.mapProviderImpl, this,
+                origReference, destReference);
 
-	@Override
-	public ServingCheckData isServingService(MAPApplicationContext dialogApplicationContext) {
-		MAPApplicationContextName ctx = dialogApplicationContext.getApplicationContextName();
-		int vers = dialogApplicationContext.getApplicationContextVersion().getVersion();
+        this.putMAPDialogIntoCollection(dialog);
+        return dialog;
+    }
 
-		switch (ctx) {
-		case locationInfoRetrievalContext:
-			if (vers >=1 && vers <= 3) {
-				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
-			} else {
-				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
-			}
-		case roamingNumberEnquiryContext:
-			if (vers >=1 && vers <= 3) {
-				return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
-			} else {
-				return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
-			}
-		}
+    @Override
+    protected MAPDialogImpl createNewDialogIncoming(MAPApplicationContext appCntx, Dialog tcapDialog) {
+        return new MAPDialogCallHandlingImpl(appCntx, tcapDialog, this.mapProviderImpl, this, null, null);
+    }
 
-		return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
-	}
-	
-	@Override
-	public MAPApplicationContext getMAPv1ApplicationContext(int operationCode, Invoke invoke) {
-		switch (operationCode) {
-			case MAPOperationCode.sendRoutingInfo:
-				return MAPApplicationContext.getInstance(MAPApplicationContextName.locationInfoRetrievalContext, 
-														 MAPApplicationContextVersion.version1);
-			case MAPOperationCode.provideRoamingNumber:
-				return MAPApplicationContext.getInstance(MAPApplicationContextName.roamingNumberEnquiryContext, 
-														 MAPApplicationContextVersion.version1);
-			}
+    @Override
+    public void addMAPServiceListener(MAPServiceCallHandlingListener mapServiceListener) {
+        super.addMAPServiceListener(mapServiceListener);
+    }
 
-		return null;
-	}
+    @Override
+    public void removeMAPServiceListener(MAPServiceCallHandlingListener mapServiceListener) {
+        super.removeMAPServiceListener(mapServiceListener);
+    }
 
-	@Override
-	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId,
-			Invoke linkedInvoke) throws MAPParsingComponentException {
-		
-		if (compType == ComponentType.Invoke && this.mapProviderImpl.isCongested()) {
-			// we reject all supplementary services when congestion
-			return;
-		}
-		
-		MAPDialogCallHandlingImpl mapDialogImpl = (MAPDialogCallHandlingImpl) mapDialog;
-	
-		Long ocValue = oc.getLocalOperationCode();
-		if (ocValue == null)
-			new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
-		MAPApplicationContextName acn = mapDialog.getApplicationContext().getApplicationContextName();
-		int vers = mapDialog.getApplicationContext().getApplicationContextVersion().getVersion();
-		int ocValueInt = (int) (long)ocValue;
+    @Override
+    public ServingCheckData isServingService(MAPApplicationContext dialogApplicationContext) {
+        MAPApplicationContextName ctx = dialogApplicationContext.getApplicationContextName();
+        int vers = dialogApplicationContext.getApplicationContextVersion().getVersion();
 
-		switch (ocValueInt) {
-		case MAPOperationCode.sendRoutingInfo:
-			if (compType == ComponentType.Invoke)
-				this.sendRoutingInformationRequest(parameter, mapDialogImpl, invokeId);
-			else if (compType == ComponentType.ReturnResult || compType == ComponentType.ReturnResultLast)
-				this.sendRoutingInformationResponse(parameter, mapDialogImpl, invokeId);
-			break;
+        switch (ctx) {
+            case locationInfoRetrievalContext:
+                if (vers >= 1 && vers <= 3) {
+                    return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
+                } else {
+                    return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
+                }
+            case roamingNumberEnquiryContext:
+                if (vers >= 1 && vers <= 3) {
+                    return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
+                } else {
+                    return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
+                }
+        }
 
-		case MAPOperationCode.provideRoamingNumber:
-			if (compType == ComponentType.Invoke)
-				this.provideRoamingNumberRequest(parameter, mapDialogImpl, invokeId);
-			else if (compType == ComponentType.ReturnResult || compType == ComponentType.ReturnResultLast)
-				this.provideRoamingNumberResponse(parameter, mapDialogImpl, invokeId);
-			break;
-		default:
-			throw new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
-		}
-	}
+        return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
+    }
 
-	private void sendRoutingInformationRequest(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
-		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
-		SendRoutingInformationRequestImpl ind = new SendRoutingInformationRequestImpl(version);
-		
-		if (parameter == null)
-			throw new MAPParsingComponentException("Error while decoding SendRoutingInformationRequestIndication: Parameter is mandatory but not found",
-			MAPParsingComponentExceptionReason.MistypedParameter);
+    @Override
+    public MAPApplicationContext getMAPv1ApplicationContext(int operationCode, Invoke invoke) {
+        switch (operationCode) {
+            case MAPOperationCode.sendRoutingInfo:
+                return MAPApplicationContext.getInstance(MAPApplicationContextName.locationInfoRetrievalContext,
+                        MAPApplicationContextVersion.version1);
+            case MAPOperationCode.provideRoamingNumber:
+                return MAPApplicationContext.getInstance(MAPApplicationContextName.roamingNumberEnquiryContext,
+                        MAPApplicationContextVersion.version1);
+        }
 
-		// No matter what MAP version V1,V2,V3: tag=Tag.SEQUENCE and tagClass=Tag.CLASS_UNIVERSAL
-	    if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-		   throw new MAPParsingComponentException(
-		   "Error while decoding SendRoutingInformationRequestIndication: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
-		   MAPParsingComponentExceptionReason.MistypedParameter);
+        return null;
+    }
 
-		byte[] buf = parameter.getData();
-		AsnInputStream ais = new AsnInputStream(buf);
-		
-		ind.decodeData(ais, buf.length);
-		ind.setInvokeId(invokeId);
-		ind.setMAPDialog(mapDialogImpl);
+    @Override
+    public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog,
+            Long invokeId, Long linkedId, Invoke linkedInvoke) throws MAPParsingComponentException {
 
-		for (MAPServiceListener serLis : this.serviceListeners) {
-			try {
-				serLis.onMAPMessage(ind);
-				((MAPServiceCallHandlingListener) serLis).onSendRoutingInformationRequest(ind);
-			} catch (Exception e) {
-				loger.error("Error processing SendRoutingInformationRequestIndication: " + e.getMessage(), e);
-			}
-		}
-	}
-	
-	private void sendRoutingInformationResponse(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
-		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
-		SendRoutingInformationResponseImpl ind = new SendRoutingInformationResponseImpl(version);
-		
-		if (parameter == null)
-			throw new MAPParsingComponentException("Error while decoding SendRoutingInformationResponseIndication: Parameter is mandatory but not found",
-			MAPParsingComponentExceptionReason.MistypedParameter);
+        if (compType == ComponentType.Invoke && this.mapProviderImpl.isCongested()) {
+            // we reject all supplementary services when congestion
+            return;
+        }
 
-		if (version >= 3) { // tag=3 and tagClass=Tag.CLASS_CONTEXT_SPECIFIC
-		   if (parameter.getTag() != SendRoutingInformationResponseImpl.TAG_sendRoutingInfoRes || 
-			  parameter.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || parameter.isPrimitive())
-			  throw new MAPParsingComponentException(
-			  "Error while decoding SendRoutingInformationResponseIndication: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
-			  MAPParsingComponentExceptionReason.MistypedParameter);
-		} else {
-			   if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-			      throw new MAPParsingComponentException(
-				  "Error while decoding SendRoutingInformationResponseIndication: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
-				  MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-		
-		byte[] buf = parameter.getData();
-		AsnInputStream ais = new AsnInputStream(buf);
+        MAPDialogCallHandlingImpl mapDialogImpl = (MAPDialogCallHandlingImpl) mapDialog;
 
-		ind.decodeData(ais, buf.length);
-		ind.setInvokeId(invokeId);
-		ind.setMAPDialog(mapDialogImpl);
+        Long ocValue = oc.getLocalOperationCode();
+        if (ocValue == null)
+            new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
+        MAPApplicationContextName acn = mapDialog.getApplicationContext().getApplicationContextName();
+        int vers = mapDialog.getApplicationContext().getApplicationContextVersion().getVersion();
+        int ocValueInt = (int) (long) ocValue;
 
-		for (MAPServiceListener serLis : this.serviceListeners) {
-			try {
-				serLis.onMAPMessage(ind);
-				((MAPServiceCallHandlingListener) serLis).onSendRoutingInformationResponse(ind);
-			} catch (Exception e) {
-				loger.error("Error processing SendRoutingInformationResponseIndication: " + e.getMessage(), e);
-			}
-		}
-	}
+        switch (ocValueInt) {
+            case MAPOperationCode.sendRoutingInfo:
+                if (compType == ComponentType.Invoke)
+                    this.sendRoutingInformationRequest(parameter, mapDialogImpl, invokeId);
+                else if (compType == ComponentType.ReturnResult || compType == ComponentType.ReturnResultLast)
+                    this.sendRoutingInformationResponse(parameter, mapDialogImpl, invokeId);
+                break;
 
-	private void provideRoamingNumberRequest(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId)
-			throws MAPParsingComponentException {
-		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
-		ProvideRoamingNumberRequestImpl ind = new ProvideRoamingNumberRequestImpl(version);
-		
-		if (parameter == null)
-			throw new MAPParsingComponentException("Error while decoding ProvideRoamingNumberRequestIndication: Parameter is mandatory but not found",
-			MAPParsingComponentExceptionReason.MistypedParameter);
+            case MAPOperationCode.provideRoamingNumber:
+                if (compType == ComponentType.Invoke)
+                    this.provideRoamingNumberRequest(parameter, mapDialogImpl, invokeId);
+                else if (compType == ComponentType.ReturnResult || compType == ComponentType.ReturnResultLast)
+                    this.provideRoamingNumberResponse(parameter, mapDialogImpl, invokeId);
+                break;
+            default:
+                throw new MAPParsingComponentException("", MAPParsingComponentExceptionReason.UnrecognizedOperation);
+        }
+    }
 
-		// No matter what MAP version V1,V2,V3: tag=Tag.SEQUENCE and tagClass=Tag.CLASS_UNIVERSAL
-	    if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-		   throw new MAPParsingComponentException(
-		   "Error while decoding ProvideRoamingNumberRequestIndication: Bad tag or tagClass or parameter is primitive, received tag=" + parameter.getTag(),
-		   MAPParsingComponentExceptionReason.MistypedParameter);
+    private void sendRoutingInformationRequest(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId)
+            throws MAPParsingComponentException {
+        long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+        SendRoutingInformationRequestImpl ind = new SendRoutingInformationRequestImpl(version);
 
-		byte[] buf = parameter.getData();
-		AsnInputStream ais = new AsnInputStream(buf);
-		
-		ind.decodeData(ais, buf.length);
-		ind.setInvokeId(invokeId);
-		ind.setMAPDialog(mapDialogImpl);
+        if (parameter == null)
+            throw new MAPParsingComponentException(
+                    "Error while decoding SendRoutingInformationRequestIndication: Parameter is mandatory but not found",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
 
-		for (MAPServiceListener serLis : this.serviceListeners) {
-			try {
-				serLis.onMAPMessage(ind);
-				((MAPServiceCallHandlingListener) serLis).onProvideRoamingNumberRequest(ind);
-			} catch (Exception e) {
-				loger.error("Error processing ProvideRoamingNumberRequestIndication: " + e.getMessage(), e);
-			}
-		}
-	}
-	
-	private void provideRoamingNumberResponse(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
-		long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
-		ProvideRoamingNumberResponseImpl ind = new ProvideRoamingNumberResponseImpl(version);
-		
-		if (parameter == null)
-			throw new MAPParsingComponentException("Error while decoding ProvideRoamingNumberResponseIndication: Parameter is mandatory but not found",
-			MAPParsingComponentExceptionReason.MistypedParameter);
+        // No matter what MAP version V1,V2,V3: tag=Tag.SEQUENCE and tagClass=Tag.CLASS_UNIVERSAL
+        if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+            throw new MAPParsingComponentException(
+                    "Error while decoding SendRoutingInformationRequestIndication: Bad tag or tagClass or parameter is primitive, received tag="
+                            + parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (version >= 3) {
-			if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-				throw new MAPParsingComponentException(
-						"Error while decoding ProvideRoamingNumberResponseIndication: Bad tag or tagClass or parameter is primitive, received tag="
-								+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
-		} else {
-			if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || !parameter.isPrimitive())
-				throw new MAPParsingComponentException(
-						"Error while decoding ProvideRoamingNumberResponseIndication: Bad tag or tagClass or parameter is primitive, received tag="
-								+ parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-		
-		byte[] buf = parameter.getData();
-		AsnInputStream ais = new AsnInputStream(buf, parameter.getTagClass(), parameter.isPrimitive(), parameter.getTag());
+        byte[] buf = parameter.getData();
+        AsnInputStream ais = new AsnInputStream(buf);
 
-		ind.decodeData(ais, buf.length);
-		ind.setInvokeId(invokeId);
-		ind.setMAPDialog(mapDialogImpl);
+        ind.decodeData(ais, buf.length);
+        ind.setInvokeId(invokeId);
+        ind.setMAPDialog(mapDialogImpl);
 
-		for (MAPServiceListener serLis : this.serviceListeners) {
-			try {
-				serLis.onMAPMessage(ind);
-				((MAPServiceCallHandlingListener) serLis).onProvideRoamingNumberResponse(ind);
-			} catch (Exception e) {
-				loger.error("Error processing ProvideRoamingNumberResponseIndication: " + e.getMessage(), e);
-			}
-		}
-	}
+        for (MAPServiceListener serLis : this.serviceListeners) {
+            try {
+                serLis.onMAPMessage(ind);
+                ((MAPServiceCallHandlingListener) serLis).onSendRoutingInformationRequest(ind);
+            } catch (Exception e) {
+                loger.error("Error processing SendRoutingInformationRequestIndication: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    private void sendRoutingInformationResponse(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId)
+            throws MAPParsingComponentException {
+        long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+        SendRoutingInformationResponseImpl ind = new SendRoutingInformationResponseImpl(version);
+
+        if (parameter == null)
+            throw new MAPParsingComponentException(
+                    "Error while decoding SendRoutingInformationResponseIndication: Parameter is mandatory but not found",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+
+        if (version >= 3) { // tag=3 and tagClass=Tag.CLASS_CONTEXT_SPECIFIC
+            if (parameter.getTag() != SendRoutingInformationResponseImpl.TAG_sendRoutingInfoRes
+                    || parameter.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || parameter.isPrimitive())
+                throw new MAPParsingComponentException(
+                        "Error while decoding SendRoutingInformationResponseIndication: Bad tag or tagClass or parameter is primitive, received tag="
+                                + parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+        } else {
+            if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+                throw new MAPParsingComponentException(
+                        "Error while decoding SendRoutingInformationResponseIndication: Bad tag or tagClass or parameter is primitive, received tag="
+                                + parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+
+        byte[] buf = parameter.getData();
+        AsnInputStream ais = new AsnInputStream(buf);
+
+        ind.decodeData(ais, buf.length);
+        ind.setInvokeId(invokeId);
+        ind.setMAPDialog(mapDialogImpl);
+
+        for (MAPServiceListener serLis : this.serviceListeners) {
+            try {
+                serLis.onMAPMessage(ind);
+                ((MAPServiceCallHandlingListener) serLis).onSendRoutingInformationResponse(ind);
+            } catch (Exception e) {
+                loger.error("Error processing SendRoutingInformationResponseIndication: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    private void provideRoamingNumberRequest(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId)
+            throws MAPParsingComponentException {
+        long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+        ProvideRoamingNumberRequestImpl ind = new ProvideRoamingNumberRequestImpl(version);
+
+        if (parameter == null)
+            throw new MAPParsingComponentException(
+                    "Error while decoding ProvideRoamingNumberRequestIndication: Parameter is mandatory but not found",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+
+        // No matter what MAP version V1,V2,V3: tag=Tag.SEQUENCE and tagClass=Tag.CLASS_UNIVERSAL
+        if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+            throw new MAPParsingComponentException(
+                    "Error while decoding ProvideRoamingNumberRequestIndication: Bad tag or tagClass or parameter is primitive, received tag="
+                            + parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+
+        byte[] buf = parameter.getData();
+        AsnInputStream ais = new AsnInputStream(buf);
+
+        ind.decodeData(ais, buf.length);
+        ind.setInvokeId(invokeId);
+        ind.setMAPDialog(mapDialogImpl);
+
+        for (MAPServiceListener serLis : this.serviceListeners) {
+            try {
+                serLis.onMAPMessage(ind);
+                ((MAPServiceCallHandlingListener) serLis).onProvideRoamingNumberRequest(ind);
+            } catch (Exception e) {
+                loger.error("Error processing ProvideRoamingNumberRequestIndication: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    private void provideRoamingNumberResponse(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId)
+            throws MAPParsingComponentException {
+        long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+        ProvideRoamingNumberResponseImpl ind = new ProvideRoamingNumberResponseImpl(version);
+
+        if (parameter == null)
+            throw new MAPParsingComponentException(
+                    "Error while decoding ProvideRoamingNumberResponseIndication: Parameter is mandatory but not found",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+
+        if (version >= 3) {
+            if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+                throw new MAPParsingComponentException(
+                        "Error while decoding ProvideRoamingNumberResponseIndication: Bad tag or tagClass or parameter is primitive, received tag="
+                                + parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+        } else {
+            if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL
+                    || !parameter.isPrimitive())
+                throw new MAPParsingComponentException(
+                        "Error while decoding ProvideRoamingNumberResponseIndication: Bad tag or tagClass or parameter is primitive, received tag="
+                                + parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+
+        byte[] buf = parameter.getData();
+        AsnInputStream ais = new AsnInputStream(buf, parameter.getTagClass(), parameter.isPrimitive(), parameter.getTag());
+
+        ind.decodeData(ais, buf.length);
+        ind.setInvokeId(invokeId);
+        ind.setMAPDialog(mapDialogImpl);
+
+        for (MAPServiceListener serLis : this.serviceListeners) {
+            try {
+                serLis.onMAPMessage(ind);
+                ((MAPServiceCallHandlingListener) serLis).onProvideRoamingNumberResponse(ind);
+            } catch (Exception e) {
+                loger.error("Error processing ProvideRoamingNumberResponseIndication: " + e.getMessage(), e);
+            }
+        }
+    }
 }

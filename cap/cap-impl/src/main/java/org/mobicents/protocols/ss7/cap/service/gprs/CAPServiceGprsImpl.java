@@ -30,11 +30,11 @@ import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
+import org.mobicents.protocols.ss7.cap.api.dialog.ServingCheckData;
+import org.mobicents.protocols.ss7.cap.api.dialog.ServingCheckResult;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPDialogGprs;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprs;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprsListener;
-import org.mobicents.protocols.ss7.cap.api.dialog.ServingCheckData;
-import org.mobicents.protocols.ss7.cap.api.dialog.ServingCheckResult;
 import org.mobicents.protocols.ss7.cap.dialog.ServingCheckDataImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
@@ -44,65 +44,65 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CAPServiceGprsImpl extends CAPServiceBaseImpl implements CAPServiceGprs {
 
-	protected Logger loger = Logger.getLogger(CAPServiceGprsImpl.class);
+    protected Logger loger = Logger.getLogger(CAPServiceGprsImpl.class);
 
-	public CAPServiceGprsImpl(CAPProviderImpl capProviderImpl) {
-		super(capProviderImpl);
-	}
+    public CAPServiceGprsImpl(CAPProviderImpl capProviderImpl) {
+        super(capProviderImpl);
+    }
 
-	@Override
-	public CAPDialogGprs createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress) throws CAPException {
+    @Override
+    public CAPDialogGprs createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress)
+            throws CAPException {
 
-		// We cannot create a dialog if the service is not activated
-		if (!this.isActivated())
-			throw new CAPException(
-					"Cannot create CAPDialogGprs because CAPServiceGprsl is not activated");
+        // We cannot create a dialog if the service is not activated
+        if (!this.isActivated())
+            throw new CAPException("Cannot create CAPDialogGprs because CAPServiceGprsl is not activated");
 
-		Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
-		CAPDialogGprsImpl dialog = new CAPDialogGprsImpl(appCntx, tcapDialog, this.capProviderImpl, this);
+        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
+        CAPDialogGprsImpl dialog = new CAPDialogGprsImpl(appCntx, tcapDialog, this.capProviderImpl, this);
 
-		this.putCAPDialogIntoCollection(dialog);
+        this.putCAPDialogIntoCollection(dialog);
 
-		return dialog;
-	}
+        return dialog;
+    }
 
-	@Override
-	public void addCAPServiceListener(CAPServiceGprsListener capServiceListener) {
-		super.addCAPServiceListener(capServiceListener);
-	}
+    @Override
+    public void addCAPServiceListener(CAPServiceGprsListener capServiceListener) {
+        super.addCAPServiceListener(capServiceListener);
+    }
 
-	@Override
-	public void removeCAPServiceListener(CAPServiceGprsListener capServiceListener) {
-		super.removeCAPServiceListener(capServiceListener);
-	}
+    @Override
+    public void removeCAPServiceListener(CAPServiceGprsListener capServiceListener) {
+        super.removeCAPServiceListener(capServiceListener);
+    }
 
-	@Override
-	protected CAPDialogImpl createNewDialogIncoming(CAPApplicationContext appCntx, Dialog tcapDialog) {
-		return new CAPDialogGprsImpl(appCntx, tcapDialog, this.capProviderImpl, this);
-	}
+    @Override
+    protected CAPDialogImpl createNewDialogIncoming(CAPApplicationContext appCntx, Dialog tcapDialog) {
+        return new CAPDialogGprsImpl(appCntx, tcapDialog, this.capProviderImpl, this);
+    }
 
-	@Override
-	public ServingCheckData isServingService(CAPApplicationContext dialogApplicationContext) {
-		switch (dialogApplicationContext) {
-		case CapV3_gprsSSF_gsmSCF:
-		case CapV3_gsmSCF_gprsSSF:
-			return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
-		}
-		
-		return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
-	}
+    @Override
+    public ServingCheckData isServingService(CAPApplicationContext dialogApplicationContext) {
+        switch (dialogApplicationContext) {
+            case CapV3_gprsSSF_gsmSCF:
+            case CapV3_gsmSCF_gprsSSF:
+                return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
+        }
 
-	@Override
-	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, CAPDialog capDialog, Long invokeId, Long linkedId,
-			Invoke linkedInvoke) throws CAPParsingComponentException {
-		// TODO Auto-generated method stub
-		
-	}
+        return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
+    }
+
+    @Override
+    public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, CAPDialog capDialog,
+            Long invokeId, Long linkedId, Invoke linkedInvoke) throws CAPParsingComponentException {
+        // TODO Auto-generated method stub
+
+    }
 
 }

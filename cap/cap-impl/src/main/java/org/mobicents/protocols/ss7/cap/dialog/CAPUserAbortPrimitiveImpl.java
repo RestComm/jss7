@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -35,115 +35,112 @@ import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  *
  */
 public class CAPUserAbortPrimitiveImpl implements CAPAsnPrimitive {
 
-	public static final long[] CAP_AbortReason_OId = { 0, 4, 0, 0, 1, 1, 2, 2 };
-	
-	private CAPUserAbortReason reason;
-	
-	public CAPUserAbortPrimitiveImpl() {
-	}
-	
-	public CAPUserAbortPrimitiveImpl(CAPUserAbortReason reason) {
-		this.reason = reason;
-	}
-	
-	public CAPUserAbortReason getCAPUserAbortReason() {
-		return this.reason;
-	}
-	
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.ENUMERATED;
-	}
+    public static final long[] CAP_AbortReason_OId = { 0, 4, 0, 0, 1, 1, 2, 2 };
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    private CAPUserAbortReason reason;
 
-	@Override
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    public CAPUserAbortPrimitiveImpl() {
+    }
 
-	
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    public CAPUserAbortPrimitiveImpl(CAPUserAbortReason reason) {
+        this.reason = reason;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding CAPUserAbortPrimitive: " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding CAPUserAbortPrimitive: " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public CAPUserAbortReason getCAPUserAbortReason() {
+        return this.reason;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.ENUMERATED;
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding CAPUserAbortPrimitive: " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding CAPUserAbortPrimitive: " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
+    @Override
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		int code = (int) ais.readIntegerData(length);
-		
-		this.reason = CAPUserAbortReason.getInstance(code);
-		if (this.reason == null)
-			this.reason = CAPUserAbortReason.no_reason_given;
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding CAPUserAbortPrimitive: " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding CAPUserAbortPrimitive: " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		if (ais.available() > 0)
-			throw new AsnException("Too much source data");
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding CAPUserAbortPrimitive: " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding CAPUserAbortPrimitive: " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.ENUMERATED);
-	}
+    private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding CAPUserAbortPrimitive: " + e.getMessage(), e);
-		}
-	}
-	
-	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+        int code = (int) ais.readIntegerData(length);
 
-		if (this.reason == null)
-			throw new CAPException("reason field must not be empty");
+        this.reason = CAPUserAbortReason.getInstance(code);
+        if (this.reason == null)
+            this.reason = CAPUserAbortReason.no_reason_given;
 
-		try {
-			aos.writeIntegerData(this.reason.getCode());
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding CAPUserAbortPrimitive: " + e.getMessage(), e);
-		}
-	}
+        if (ais.available() > 0)
+            throw new AsnException("Too much source data");
+    }
+
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+
+        this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.ENUMERATED);
+    }
+
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+
+        try {
+            asnOs.writeTag(tagClass, true, tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding CAPUserAbortPrimitive: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void encodeData(AsnOutputStream aos) throws CAPException {
+
+        if (this.reason == null)
+            throw new CAPException("reason field must not be empty");
+
+        try {
+            aos.writeIntegerData(this.reason.getCode());
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding CAPUserAbortPrimitive: " + e.getMessage(), e);
+        }
+    }
 }
-

@@ -23,19 +23,16 @@
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 /**
- * 
-
-PositioningDataInformation ::= OCTET STRING (SIZE (2..10))
-	-- Refers to the Positioning Data defined in 3GPP TS 49.031.
-	-- This is composed of 2 or more octets with an internal structure according to
-	-- 3GPP TS 49.031. 
-
- * 
+ *
+ PositioningDataInformation ::= OCTET STRING (SIZE (2..10)) -- Refers to the Positioning Data defined in 3GPP TS 49.031. --
+ * This is composed of 2 or more octets with an internal structure according to -- 3GPP TS 49.031.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface PositioningDataInformation {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

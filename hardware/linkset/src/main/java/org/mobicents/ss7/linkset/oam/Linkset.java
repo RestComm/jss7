@@ -31,7 +31,7 @@ import org.mobicents.protocols.ss7.scheduler.Scheduler;
 
 /**
  * Instance of this class represents the logical group of links between two SP
- * 
+ *
  * @author amit bhayani
  */
 public abstract class Linkset implements XMLSerializable {
@@ -63,9 +63,9 @@ public abstract class Linkset implements XMLSerializable {
     // Hold Links here. Link name as key and actual Link as Object
     protected FastMap<String, Link> links = new FastMap<String, Link>();
     protected FastMap<String, Link> loadedLinks = new FastMap<String, Link>();
-    
+
     protected Scheduler scheduler;
-    
+
     public Linkset() {
         this.initialize();
     }
@@ -84,22 +84,22 @@ public abstract class Linkset implements XMLSerializable {
 
     public void setScheduler(Scheduler scheduler) {
         this.scheduler = scheduler;
-        
+
         FastMap.Entry<String, Link> e = this.links.head();
         FastMap.Entry<String, Link> end = this.links.tail();
         for (; (e = e.getNext()) != end;) {
-        	Link link = e.getValue();
-        	link.setScheduler(scheduler);
+            Link link = e.getValue();
+            link.setScheduler(scheduler);
         }
-        
+
         e = this.loadedLinks.head();
         end = this.loadedLinks.tail();
         for (; (e = e.getNext()) != end;) {
-        	Link link = e.getValue();
-        	link.setScheduler(scheduler);
+            Link link = e.getValue();
+            link.setScheduler(scheduler);
         }
     }
-    
+
     /**
      * Initialize this linkset after creating a new instance
      */
@@ -107,14 +107,14 @@ public abstract class Linkset implements XMLSerializable {
 
     /**
      * Configure this linkset
-     * 
+     *
      * @throws Exception
      */
     protected abstract void configure() throws Exception;
 
     /**
      * Get handle to underlying stream
-     * 
+     *
      * @return
      */
     public LinksetStream getLinksetStream() {
@@ -123,7 +123,7 @@ public abstract class Linkset implements XMLSerializable {
 
     /**
      * Get adjacent point code
-     * 
+     *
      * @return
      */
     public int getApc() {
@@ -132,7 +132,7 @@ public abstract class Linkset implements XMLSerializable {
 
     /**
      * Set adjacent point code
-     * 
+     *
      * @param dpc
      */
     public void setApc(int dpc) {
@@ -141,7 +141,7 @@ public abstract class Linkset implements XMLSerializable {
 
     /**
      * Get originating point code
-     * 
+     *
      * @return
      */
     public int getOpc() {
@@ -150,7 +150,7 @@ public abstract class Linkset implements XMLSerializable {
 
     /**
      * Set originating point code
-     * 
+     *
      * @param opc
      */
     public void setOpc(int opc) {
@@ -159,7 +159,7 @@ public abstract class Linkset implements XMLSerializable {
 
     /**
      * Get network-indicator
-     * 
+     *
      * @return
      */
     public int getNi() {
@@ -168,7 +168,7 @@ public abstract class Linkset implements XMLSerializable {
 
     /**
      * Set network-indicator
-     * 
+     *
      * @param ni
      */
     public void setNi(int ni) {
@@ -177,7 +177,7 @@ public abstract class Linkset implements XMLSerializable {
 
     /**
      * Get linkset name
-     * 
+     *
      * @return
      */
     public String getName() {
@@ -186,7 +186,7 @@ public abstract class Linkset implements XMLSerializable {
 
     /**
      * Get linkset state
-     * 
+     *
      * @return
      */
     public int getState() {
@@ -195,7 +195,7 @@ public abstract class Linkset implements XMLSerializable {
 
     /**
      * Set linkset state
-     * 
+     *
      * @param state
      */
     public void setState(int state) {
@@ -204,7 +204,7 @@ public abstract class Linkset implements XMLSerializable {
 
     /**
      * Get linkset Mode
-     * 
+     *
      * @return
      */
     public int getMode() {
@@ -213,7 +213,7 @@ public abstract class Linkset implements XMLSerializable {
 
     /**
      * Get the map of link name vs {@link Link}
-     * 
+     *
      * @return
      */
     public FastMap<String, Link> getLinks() {
@@ -222,7 +222,7 @@ public abstract class Linkset implements XMLSerializable {
 
     /**
      * Set links
-     * 
+     *
      * @param links
      */
     public void setLinks(FastMap<String, Link> links) {
@@ -230,9 +230,8 @@ public abstract class Linkset implements XMLSerializable {
     }
 
     /**
-     * Get the link corresponding to passed linkName. If no link corresponding
-     * to this linkname is present null is returned
-     * 
+     * Get the link corresponding to passed linkName. If no link corresponding to this linkname is present null is returned
+     *
      * @param linkName
      * @return
      */
@@ -251,7 +250,7 @@ public abstract class Linkset implements XMLSerializable {
 
     /**
      * Delete existing {@link Link}
-     * 
+     *
      * @param linkName
      * @throws Exception
      */
@@ -259,34 +258,33 @@ public abstract class Linkset implements XMLSerializable {
 
     /**
      * Activate this linkset
-     * 
+     *
      * @throws Exception
      */
     public abstract void activate() throws Exception;
 
     /**
      * Deactivate this linkset
-     * 
+     *
      * @throws Exception
      */
     public abstract void deactivate() throws Exception;
 
     /**
      * Activate link
-     * 
+     *
      * @param linkName
      * @throws Exception
      */
     public abstract void activateLink(String linkName) throws Exception;
 
-    public void activateLinks()
-    {
-    	this.links.putAll(this.loadedLinks);    	
+    public void activateLinks() {
+        this.links.putAll(this.loadedLinks);
     }
-    
+
     /**
      * deactivate link
-     * 
+     *
      * @param linkName
      * @throws Exception
      */
@@ -295,17 +293,13 @@ public abstract class Linkset implements XMLSerializable {
     /**
      * XML Serialization/Deserialization
      */
-    protected static final XMLFormat<Linkset> LINKSET_XML = new XMLFormat<Linkset>(
-            Linkset.class) {
+    protected static final XMLFormat<Linkset> LINKSET_XML = new XMLFormat<Linkset>(Linkset.class) {
 
         @Override
-        public void read(javolution.xml.XMLFormat.InputElement xml,
-                Linkset linkSet) throws XMLStreamException {
+        public void read(javolution.xml.XMLFormat.InputElement xml, Linkset linkSet) throws XMLStreamException {
             linkSet.linksetName = xml.getAttribute(LINKSET_NAME).toString();
-            linkSet.state = xml.getAttribute(LINKSET_STATE,
-                    LinksetState.UNAVAILABLE);
-            linkSet.mode = xml.getAttribute(LINKSET_MODE,
-                    LinksetMode.UNCONFIGURED);
+            linkSet.state = xml.getAttribute(LINKSET_STATE, LinksetState.UNAVAILABLE);
+            linkSet.mode = xml.getAttribute(LINKSET_MODE, LinksetMode.UNCONFIGURED);
             linkSet.opc = xml.getAttribute(LINKSET_OPC, -1);
             linkSet.apc = xml.getAttribute(LINKSET_APC, -1);
             linkSet.ni = xml.getAttribute(LINKSET_NI, 2);
@@ -320,9 +314,7 @@ public abstract class Linkset implements XMLSerializable {
         }
 
         @Override
-        public void write(Linkset linkSet,
-                javolution.xml.XMLFormat.OutputElement xml)
-                throws XMLStreamException {
+        public void write(Linkset linkSet, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
             xml.setAttribute(LINKSET_NAME, linkSet.linksetName);
             xml.setAttribute(LINKSET_STATE, LinksetState.UNAVAILABLE);
             xml.setAttribute(LINKSET_MODE, linkSet.mode);
@@ -331,25 +323,20 @@ public abstract class Linkset implements XMLSerializable {
             xml.setAttribute(LINKSET_NI, linkSet.ni);
             xml.setAttribute(LINKS, linkSet.links.size());
 
-            for (FastMap.Entry<String, Link> e = linkSet.getLinks().head(), end = linkSet
-                    .getLinks().tail(); (e = e.getNext()) != end;) {
+            for (FastMap.Entry<String, Link> e = linkSet.getLinks().head(), end = linkSet.getLinks().tail(); (e = e.getNext()) != end;) {
                 Link value = e.getValue();
-                xml.add(value,LINK);
+                xml.add(value, LINK);
             }
 
         }
     };
 
     /**
-     * Add the details of this linkset in passed {@link StringBuffer}. This is
-     * for printing the linkset state.
-     * 
-     * @param sb
-     *            Add the information in this buffer
-     * @param leftPad
-     *            number of spaces from left side
-     * @param descPad
-     *            number of spaces between each word
+     * Add the details of this linkset in passed {@link StringBuffer}. This is for printing the linkset state.
+     *
+     * @param sb Add the information in this buffer
+     * @param leftPad number of spaces from left side
+     * @param descPad number of spaces between each word
      */
     public abstract void print(StringBuffer sb, int leftPad, int descPad);
 

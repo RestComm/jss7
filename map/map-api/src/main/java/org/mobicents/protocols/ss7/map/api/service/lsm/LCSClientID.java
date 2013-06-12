@@ -28,32 +28,26 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APN;
 
 /**
- * LCS-ClientID ::= SEQUENCE {
- *    lcsClientType [0] LCSClientType,
- *    lcsClientExternalID [1] LCSClientExternalID OPTIONAL,
- *    lcsClientDialedByMS [2] AddressString OPTIONAL,
- *    lcsClientInternalID [3] LCSClientInternalID OPTIONAL,
- *    lcsClientName [4] LCSClientName OPTIONAL,
- *    ...,
- *    lcsAPN [5] APN OPTIONAL,
- *    lcsRequestorID [6] LCSRequestorID OPTIONAL }
- *    
+ * LCS-ClientID ::= SEQUENCE { lcsClientType [0] LCSClientType, lcsClientExternalID [1] LCSClientExternalID OPTIONAL,
+ * lcsClientDialedByMS [2] AddressString OPTIONAL, lcsClientInternalID [3] LCSClientInternalID OPTIONAL, lcsClientName [4]
+ * LCSClientName OPTIONAL, ..., lcsAPN [5] APN OPTIONAL, lcsRequestorID [6] LCSRequestorID OPTIONAL }
+ *
  * @author amit bhayani
  *
  */
 public interface LCSClientID extends Serializable {
-	public LCSClientType getLCSClientType();
-	
-	public LCSClientExternalID getLCSClientExternalID();
-	
-	public AddressString getLCSClientDialedByMS();
-	
-	public LCSClientInternalID getLCSClientInternalID();
-	
-	public LCSClientName getLCSClientName();
+    LCSClientType getLCSClientType();
 
-	public APN getLCSAPN();
+    LCSClientExternalID getLCSClientExternalID();
 
-	public LCSRequestorID getLCSRequestorID();
+    AddressString getLCSClientDialedByMS();
+
+    LCSClientInternalID getLCSClientInternalID();
+
+    LCSClientName getLCSClientName();
+
+    APN getLCSAPN();
+
+    LCSRequestorID getLCSRequestorID();
 
 }

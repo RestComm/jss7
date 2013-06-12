@@ -23,107 +23,84 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 /**
- * 
-
-ODB-GeneralData ::= BIT STRING {
-	allOG-CallsBarred  (0),
-	internationalOGCallsBarred  (1),
-	internationalOGCallsNotToHPLMN-CountryBarred  (2),
-	interzonalOGCallsBarred (6),
-	interzonalOGCallsNotToHPLMN-CountryBarred (7),
-	interzonalOGCallsAndInternationalOGCallsNotToHPLMN-CountryBarred (8),
-	premiumRateInformationOGCallsBarred  (3),
-	premiumRateEntertainementOGCallsBarred  (4),
-	ss-AccessBarred  (5),
-	allECT-Barred (9),
-	chargeableECT-Barred (10),
-	internationalECT-Barred (11),
-	interzonalECT-Barred (12),
-	doublyChargeableECT-Barred (13),
-	multipleECT-Barred (14),
-	allPacketOrientedServicesBarred (15),
-	roamerAccessToHPLMN-AP-Barred  (16),
-	roamerAccessToVPLMN-AP-Barred  (17),
-	roamingOutsidePLMNOG-CallsBarred  (18),
-	allIC-CallsBarred  (19),
-	roamingOutsidePLMNIC-CallsBarred  (20),
-	roamingOutsidePLMNICountryIC-CallsBarred  (21),
-	roamingOutsidePLMN-Barred  (22),
-	roamingOutsidePLMN-CountryBarred  (23),
-	registrationAllCF-Barred  (24),
-	registrationCFNotToHPLMN-Barred  (25),
-	registrationInterzonalCF-Barred  (26),
-	registrationInterzonalCFNotToHPLMN-Barred  (27),
-	registrationInternationalCF-Barred  (28)} (SIZE (15..32))
-	-- exception handling: reception of unknown bit assignments in the
-	-- ODB-GeneralData type shall be treated like unsupported ODB-GeneralData
-	-- When the ODB-GeneralData type is removed from the HLR for a given subscriber, 
-	-- in NoteSubscriberDataModified operation sent toward the gsmSCF 
-	-- all bits shall be set to O.
-
- * 
- * 
+ *
+ ODB-GeneralData ::= BIT STRING { allOG-CallsBarred (0), internationalOGCallsBarred (1),
+ * internationalOGCallsNotToHPLMN-CountryBarred (2), interzonalOGCallsBarred (6), interzonalOGCallsNotToHPLMN-CountryBarred (7),
+ * interzonalOGCallsAndInternationalOGCallsNotToHPLMN-CountryBarred (8), premiumRateInformationOGCallsBarred (3),
+ * premiumRateEntertainementOGCallsBarred (4), ss-AccessBarred (5), allECT-Barred (9), chargeableECT-Barred (10),
+ * internationalECT-Barred (11), interzonalECT-Barred (12), doublyChargeableECT-Barred (13), multipleECT-Barred (14),
+ * allPacketOrientedServicesBarred (15), roamerAccessToHPLMN-AP-Barred (16), roamerAccessToVPLMN-AP-Barred (17),
+ * roamingOutsidePLMNOG-CallsBarred (18), allIC-CallsBarred (19), roamingOutsidePLMNIC-CallsBarred (20),
+ * roamingOutsidePLMNICountryIC-CallsBarred (21), roamingOutsidePLMN-Barred (22), roamingOutsidePLMN-CountryBarred (23),
+ * registrationAllCF-Barred (24), registrationCFNotToHPLMN-Barred (25), registrationInterzonalCF-Barred (26),
+ * registrationInterzonalCFNotToHPLMN-Barred (27), registrationInternationalCF-Barred (28)} (SIZE (15..32)) -- exception
+ * handling: reception of unknown bit assignments in the -- ODB-GeneralData type shall be treated like unsupported
+ * ODB-GeneralData -- When the ODB-GeneralData type is removed from the HLR for a given subscriber, -- in
+ * NoteSubscriberDataModified operation sent toward the gsmSCF -- all bits shall be set to O.
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ODBGeneralData {
 
-	public boolean getAllOGCallsBarred();
+    boolean getAllOGCallsBarred();
 
-	public boolean getInternationalOGCallsBarred();
+    boolean getInternationalOGCallsBarred();
 
-	public boolean getInternationalOGCallsNotToHPLMNCountryBarred();
+    boolean getInternationalOGCallsNotToHPLMNCountryBarred();
 
-	public boolean getInterzonalOGCallsBarred();
+    boolean getInterzonalOGCallsBarred();
 
-	public boolean getInterzonalOGCallsNotToHPLMNCountryBarred();
+    boolean getInterzonalOGCallsNotToHPLMNCountryBarred();
 
-	public boolean getInterzonalOGCallsAndInternationalOGCallsNotToHPLMNCountryBarred();
+    boolean getInterzonalOGCallsAndInternationalOGCallsNotToHPLMNCountryBarred();
 
-	public boolean getPremiumRateInformationOGCallsBarred();
+    boolean getPremiumRateInformationOGCallsBarred();
 
-	public boolean getPremiumRateEntertainementOGCallsBarred();
+    boolean getPremiumRateEntertainementOGCallsBarred();
 
-	public boolean getSsAccessBarred();
+    boolean getSsAccessBarred();
 
-	public boolean getAllECTBarred();
+    boolean getAllECTBarred();
 
-	public boolean getChargeableECTBarred();
+    boolean getChargeableECTBarred();
 
-	public boolean getInternationalECTBarred();
+    boolean getInternationalECTBarred();
 
-	public boolean getInterzonalECTBarred();
+    boolean getInterzonalECTBarred();
 
-	public boolean getDoublyChargeableECTBarred();
+    boolean getDoublyChargeableECTBarred();
 
-	public boolean getMultipleECTBarred();
+    boolean getMultipleECTBarred();
 
-	public boolean getAllPacketOrientedServicesBarred();
+    boolean getAllPacketOrientedServicesBarred();
 
-	public boolean getRoamerAccessToHPLMNAPBarred();
+    boolean getRoamerAccessToHPLMNAPBarred();
 
-	public boolean getRoamerAccessToVPLMNAPBarred();
+    boolean getRoamerAccessToVPLMNAPBarred();
 
-	public boolean getRoamingOutsidePLMNOGCallsBarred();
+    boolean getRoamingOutsidePLMNOGCallsBarred();
 
-	public boolean getAllICCallsBarred();
+    boolean getAllICCallsBarred();
 
-	public boolean getRoamingOutsidePLMNICCallsBarred();
+    boolean getRoamingOutsidePLMNICCallsBarred();
 
-	public boolean getRoamingOutsidePLMNICountryICCallsBarred();
+    boolean getRoamingOutsidePLMNICountryICCallsBarred();
 
-	public boolean getRoamingOutsidePLMNBarred();
+    boolean getRoamingOutsidePLMNBarred();
 
-	public boolean getRoamingOutsidePLMNCountryBarred();
+    boolean getRoamingOutsidePLMNCountryBarred();
 
-	public boolean getRegistrationAllCFBarred();
+    boolean getRegistrationAllCFBarred();
 
-	public boolean getRegistrationCFNotToHPLMNBarred();
+    boolean getRegistrationCFNotToHPLMNBarred();
 
-	public boolean getRegistrationInterzonalCFBarred();
+    boolean getRegistrationInterzonalCFBarred();
 
-	public boolean getRegistrationInterzonalCFNotToHPLMNBarred();
+    boolean getRegistrationInterzonalCFNotToHPLMNBarred();
 
-	public boolean getRegistrationInternationalCFBarred();
+    boolean getRegistrationInternationalCFBarred();
 
 }

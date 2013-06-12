@@ -23,75 +23,64 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
 import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CSGSubscriptionData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4CSIs;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 
-/**	
- * 
-
-AnyTimeSubscriptionInterrogationRes ::= SEQUENCE {
-	callForwardingData	[1] CallForwardingData	OPTIONAL,
-	callBarringData	[2] CallBarringData	OPTIONAL,
-	odb-Info		[3] ODB-Info	OPTIONAL,
-	camel-SubscriptionInfo	[4] CAMEL-SubscriptionInfo	OPTIONAL,
-	supportedVLR-CAMEL-Phases	[5] SupportedCamelPhases	OPTIONAL,
-	supportedSGSN-CAMEL-Phases	[6] SupportedCamelPhases	OPTIONAL,
-	extensionContainer	[7] ExtensionContainer	OPTIONAL,
-	... ,
-	offeredCamel4CSIsInVLR	[8] OfferedCamel4CSIs	OPTIONAL,
-	offeredCamel4CSIsInSGSN	[9] OfferedCamel4CSIs	OPTIONAL,
-	msisdn-BS-List	[10] MSISDN-BS-List	OPTIONAL,
-	csg-SubscriptionDataList	[11] CSG-SubscriptionDataList	OPTIONAL, 
-	cw-Data		[12]	CallWaitingData	OPTIONAL,
-	ch-Data		[13]	CallHoldData	OPTIONAL,
-	clip-Data 	[14] ClipData	OPTIONAL,
-	clir-Data		[15]	ClirData	OPTIONAL,
-	ect-data		[16] EctData	OPTIONAL }
-
-MSISDN-BS-List ::= SEQUENCE SIZE (1..50) OF MSISDN-BS
-
-CSG-SubscriptionDataList ::= SEQUENCE SIZE (1..50) OF CSG-SubscriptionData
-
-
- * 
+/**
+ *
+ AnyTimeSubscriptionInterrogationRes ::= SEQUENCE { callForwardingData [1] CallForwardingData OPTIONAL, callBarringData [2]
+ * CallBarringData OPTIONAL, odb-Info [3] ODB-Info OPTIONAL, camel-SubscriptionInfo [4] CAMEL-SubscriptionInfo OPTIONAL,
+ * supportedVLR-CAMEL-Phases [5] SupportedCamelPhases OPTIONAL, supportedSGSN-CAMEL-Phases [6] SupportedCamelPhases OPTIONAL,
+ * extensionContainer [7] ExtensionContainer OPTIONAL, ... , offeredCamel4CSIsInVLR [8] OfferedCamel4CSIs OPTIONAL,
+ * offeredCamel4CSIsInSGSN [9] OfferedCamel4CSIs OPTIONAL, msisdn-BS-List [10] MSISDN-BS-List OPTIONAL, csg-SubscriptionDataList
+ * [11] CSG-SubscriptionDataList OPTIONAL, cw-Data [12] CallWaitingData OPTIONAL, ch-Data [13] CallHoldData OPTIONAL, clip-Data
+ * [14] ClipData OPTIONAL, clir-Data [15] ClirData OPTIONAL, ect-data [16] EctData OPTIONAL }
+ *
+ * MSISDN-BS-List ::= SEQUENCE SIZE (1..50) OF MSISDN-BS
+ *
+ * CSG-SubscriptionDataList ::= SEQUENCE SIZE (1..50) OF CSG-SubscriptionData
+ *
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface AnyTimeSubscriptionInterrogationResponse extends MobilityMessage {
 
-	public CallForwardingData getCallForwardingData();
+    CallForwardingData getCallForwardingData();
 
-	public CallBarringData getCallBarringData();
+    CallBarringData getCallBarringData();
 
-	public ODBInfo getOdbInfo();
+    ODBInfo getOdbInfo();
 
-	public CAMELSubscriptionInfo getCamelSubscriptionInfo();
+    CAMELSubscriptionInfo getCamelSubscriptionInfo();
 
-	public SupportedCamelPhases getsupportedVlrCamelPhases();
+    SupportedCamelPhases getsupportedVlrCamelPhases();
 
-	public SupportedCamelPhases getsupportedSgsnCamelPhases();
+    SupportedCamelPhases getsupportedSgsnCamelPhases();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public OfferedCamel4CSIs getOfferedCamel4CSIsInVlr();
+    OfferedCamel4CSIs getOfferedCamel4CSIsInVlr();
 
-	public OfferedCamel4CSIs getOfferedCamel4CSIsInSgsn();
+    OfferedCamel4CSIs getOfferedCamel4CSIsInSgsn();
 
-	public ArrayList<MSISDNBS> getMsisdnBsList();
+    ArrayList<MSISDNBS> getMsisdnBsList();
 
-	public ArrayList<CSGSubscriptionData> getCsgSubscriptionDataList();
+    ArrayList<CSGSubscriptionData> getCsgSubscriptionDataList();
 
-	public CallWaitingData getCwData();
+    CallWaitingData getCwData();
 
-	public CallHoldData getChData();
+    CallHoldData getChData();
 
-	public ClipData getClipData();
+    ClipData getClipData();
 
-	public ClirData getClirData();
+    ClirData getClirData();
 
-	public EctData getImsi();
+    EctData getImsi();
 
 }

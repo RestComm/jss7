@@ -23,22 +23,19 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 /**
- * 
-
-LSAInformationWithdraw ::= CHOICE {
-	allLSAData	NULL,
-	lsaIdentityList	LSAIdentityList }
-
-LSAIdentityList ::= SEQUENCE SIZE (1..20) OF LSAIdentity
-
- * 
+ *
+ LSAInformationWithdraw ::= CHOICE { allLSAData NULL, lsaIdentityList LSAIdentityList }
+ *
+ * LSAIdentityList ::= SEQUENCE SIZE (1..20) OF LSAIdentity
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface LSAInformationWithdraw {
 
-	public boolean getAllLSAData();
+    boolean getAllLSAData();
 
-	public LSAIdentity getLSAIdentityList();
+    LSAIdentity getLSAIdentityList();
 
 }

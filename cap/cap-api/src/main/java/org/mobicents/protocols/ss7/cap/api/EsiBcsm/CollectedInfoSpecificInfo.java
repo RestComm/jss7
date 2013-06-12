@@ -25,19 +25,15 @@ package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 
 /**
-*
-
-collectedInfoSpecificInfo [2] SEQUENCE {
-calledPartyNumber [0] CalledPartyNumber OPTIONAL,
-...
-}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ collectedInfoSpecificInfo [2] SEQUENCE { calledPartyNumber [0] CalledPartyNumber OPTIONAL, ... }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface CollectedInfoSpecificInfo {
 
-	public CalledPartyNumberCap getCalledPartyNumber();
+    CalledPartyNumberCap getCalledPartyNumber();
 
 }

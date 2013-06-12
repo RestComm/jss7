@@ -26,25 +26,20 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 
 /**
- * 
-
-MOLR-Class ::= SEQUENCE {
-	ss-Code		SS-Code,
-	ss-Status		Ext-SS-Status,
-	extensionContainer	[0] ExtensionContainer	OPTIONAL,
-	...}
-
- * 
- * 
+ *
+ MOLR-Class ::= SEQUENCE { ss-Code SS-Code, ss-Status Ext-SS-Status, extensionContainer [0] ExtensionContainer OPTIONAL, ...}
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MOLRClass {
 
-	public SSCode getSsCode();
+    SSCode getSsCode();
 
-	public ExtSSStatus getSsStatus();
+    ExtSSStatus getSsStatus();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

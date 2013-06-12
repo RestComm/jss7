@@ -23,14 +23,12 @@
 /**
  * Start time:11:25:13 2009-03-31<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
- * 
+ *
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
-
-import java.io.IOException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.EventInformation;
@@ -38,68 +36,68 @@ import org.mobicents.protocols.ss7.isup.message.parameter.EventInformation;
 /**
  * Start time:11:25:13 2009-03-31<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 public class EventInformationImpl extends AbstractISUPParameter implements EventInformation {
 
-	private final static int _TURN_ON = 1;
-	private final static int _TURN_OFF = 0;
+    private static final int _TURN_ON = 1;
+    private static final int _TURN_OFF = 0;
 
-	private int eventIndicator;
-	private boolean eventPresentationRestrictedIndicator;
+    private int eventIndicator;
+    private boolean eventPresentationRestrictedIndicator;
 
-	public EventInformationImpl(byte[] b) throws ParameterException {
-		super();
-		decode(b);
-	}
+    public EventInformationImpl(byte[] b) throws ParameterException {
+        super();
+        decode(b);
+    }
 
-	public EventInformationImpl() {
-		super();
-		
-	}
+    public EventInformationImpl() {
+        super();
 
-	public EventInformationImpl(int eventIndicator) {
-		super();
-		this.eventIndicator = eventIndicator;
-	}
+    }
 
-	public int decode(byte[] b) throws ParameterException {
-		if (b == null || b.length != 1) {
-			throw new ParameterException("byte[] must not be null or have different size than 1");
-		}
+    public EventInformationImpl(int eventIndicator) {
+        super();
+        this.eventIndicator = eventIndicator;
+    }
 
-		this.eventIndicator = b[0] & 0x7F;
-		this.eventPresentationRestrictedIndicator = ((b[0] >> 7) & 0x01) == _TURN_ON;
+    public int decode(byte[] b) throws ParameterException {
+        if (b == null || b.length != 1) {
+            throw new ParameterException("byte[] must not be null or have different size than 1");
+        }
 
-		return 1;
-	}
+        this.eventIndicator = b[0] & 0x7F;
+        this.eventPresentationRestrictedIndicator = ((b[0] >> 7) & 0x01) == _TURN_ON;
 
-	public byte[] encode() throws ParameterException {
-		byte[] b = new byte[] { (byte) (this.eventIndicator & 0x7F) };
+        return 1;
+    }
 
-		b[0] |= (byte) ((this.eventPresentationRestrictedIndicator ? _TURN_ON : _TURN_OFF) << 7);
-		return b;
-	}
+    public byte[] encode() throws ParameterException {
+        byte[] b = new byte[] { (byte) (this.eventIndicator & 0x7F) };
 
-	public int getEventIndicator() {
-		return eventIndicator;
-	}
+        b[0] |= (byte) ((this.eventPresentationRestrictedIndicator ? _TURN_ON : _TURN_OFF) << 7);
+        return b;
+    }
 
-	public void setEventIndicator(int eventIndicator) {
-		this.eventIndicator = eventIndicator;
-	}
+    public int getEventIndicator() {
+        return eventIndicator;
+    }
 
-	public boolean isEventPresentationRestrictedIndicator() {
-		return eventPresentationRestrictedIndicator;
-	}
+    public void setEventIndicator(int eventIndicator) {
+        this.eventIndicator = eventIndicator;
+    }
 
-	public void setEventPresentationRestrictedIndicator(boolean eventPresentationRestrictedIndicator) {
-		this.eventPresentationRestrictedIndicator = eventPresentationRestrictedIndicator;
-	}
+    public boolean isEventPresentationRestrictedIndicator() {
+        return eventPresentationRestrictedIndicator;
+    }
 
-	public int getCode() {
+    public void setEventPresentationRestrictedIndicator(boolean eventPresentationRestrictedIndicator) {
+        this.eventPresentationRestrictedIndicator = eventPresentationRestrictedIndicator;
+    }
 
-		return _PARAMETER_CODE;
-	}
+    public int getCode() {
+
+        return _PARAMETER_CODE;
+    }
 }

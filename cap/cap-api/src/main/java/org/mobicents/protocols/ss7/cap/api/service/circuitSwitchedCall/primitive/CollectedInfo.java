@@ -23,20 +23,16 @@
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
-*
-
-CollectedInfo ::= CHOICE { 
- collectedDigits      [0] CollectedDigits 
- } 
-
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ CollectedInfo ::= CHOICE { collectedDigits [0] CollectedDigits }
+ *
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface CollectedInfo {
 
-	public CollectedDigits getCollectedDigits();
+    CollectedDigits getCollectedDigits();
 
 }
-

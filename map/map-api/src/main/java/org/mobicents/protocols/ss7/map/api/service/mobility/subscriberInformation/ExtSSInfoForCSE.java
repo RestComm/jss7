@@ -22,22 +22,19 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
-/**	
- * 
-
-Ext-SS-InfoFor-CSE ::= CHOICE {
-	forwardingInfoFor-CSE	[0] Ext-ForwardingInfoFor-CSE,
-	callBarringInfoFor-CSE	[1] Ext-CallBarringInfoFor-CSE
-	}
-
- * 
+/**
+ *
+ Ext-SS-InfoFor-CSE ::= CHOICE { forwardingInfoFor-CSE [0] Ext-ForwardingInfoFor-CSE, callBarringInfoFor-CSE [1]
+ * Ext-CallBarringInfoFor-CSE }
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface ExtSSInfoForCSE {
 
-	public ExtForwardingInfoForCSE getForwardingInfoForCSE();
+    ExtForwardingInfoForCSE getForwardingInfoForCSE();
 
-	public ExtCallBarringInfoForCSE getCallBarringInfoForCSE();
+    ExtCallBarringInfoForCSE getCallBarringInfoForCSE();
 
 }

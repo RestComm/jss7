@@ -29,10 +29,10 @@ import java.util.Collection;
  *
  */
 public interface Console {
-	
-	void stop();
-	
-	void addCompleter(CommandLineCompleter completer);
+
+    void stop();
+
+    void addCompleter(CommandLineCompleter completer);
 
     boolean isUseHistory();
 
@@ -53,6 +53,5 @@ public interface Console {
     String readLine(String prompt);
 
     String readLine(String prompt, Character mask);
-    
-   
+
 }

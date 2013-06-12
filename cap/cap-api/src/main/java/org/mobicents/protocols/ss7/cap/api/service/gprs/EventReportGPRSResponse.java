@@ -23,14 +23,13 @@
 package org.mobicents.protocols.ss7.cap.api.service.gprs;
 
 /**
-*
-
-RETURN RESULT TRUE
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ RETURN RESULT TRUE
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface EventReportGPRSResponse extends GprsMessage {
 
 }

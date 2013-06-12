@@ -43,133 +43,131 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
 /**
  * This class must be the super class of all CAP services
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public abstract class CAPServiceBaseImpl implements CAPServiceBase {
-	
-	protected Boolean _isActivated = false;
-	protected List<CAPServiceListener> serviceListeners = new CopyOnWriteArrayList<CAPServiceListener>();
-	protected CAPProviderImpl capProviderImpl = null;
 
+    protected Boolean _isActivated = false;
+    protected List<CAPServiceListener> serviceListeners = new CopyOnWriteArrayList<CAPServiceListener>();
+    protected CAPProviderImpl capProviderImpl = null;
 
-	protected CAPServiceBaseImpl(CAPProviderImpl capProviderImpl) {
-		this.capProviderImpl = capProviderImpl;
-	}
-	
-	
-	@Override
-	public CAPProvider getCAPProvider() {
-		return this.capProviderImpl;
-	}
+    protected CAPServiceBaseImpl(CAPProviderImpl capProviderImpl) {
+        this.capProviderImpl = capProviderImpl;
+    }
 
-	/**
-	 * Creation a CAP Dialog implementation for the specific service
-	 * 
-	 * @param appCntx
-	 * @param tcapDialog
-	 * @return
-	 */
-	protected abstract CAPDialogImpl createNewDialogIncoming(CAPApplicationContext appCntx, Dialog tcapDialog);
+    @Override
+    public CAPProvider getCAPProvider() {
+        return this.capProviderImpl;
+    }
 
-	/**
-	 * Creating new outgoing TCAP Dialog. Used when creating a new outgoing CAP
-	 * Dialog
-	 * 
-	 * @param origAddress
-	 * @param destAddress
-	 * @return
-	 * @throws CAPException
-	 */
-	protected Dialog createNewTCAPDialog(SccpAddress origAddress, SccpAddress destAddress) throws CAPException {
-		try {
-			return this.capProviderImpl.getTCAPProvider().getNewDialog(origAddress, destAddress);
-		} catch (TCAPException e) {
-			throw new CAPException(e.getMessage(), e);
-		}
-	}
+    /**
+     * Creation a CAP Dialog implementation for the specific service
+     *
+     * @param appCntx
+     * @param tcapDialog
+     * @return
+     */
+    protected abstract CAPDialogImpl createNewDialogIncoming(CAPApplicationContext appCntx, Dialog tcapDialog);
 
-	public abstract void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, CAPDialog capDialog, Long invokeId, Long linkedId,
-			Invoke linkedInvoke) throws CAPParsingComponentException;
+    /**
+     * Creating new outgoing TCAP Dialog. Used when creating a new outgoing CAP Dialog
+     *
+     * @param origAddress
+     * @param destAddress
+     * @return
+     * @throws CAPException
+     */
+    protected Dialog createNewTCAPDialog(SccpAddress origAddress, SccpAddress destAddress) throws CAPException {
+        try {
+            return this.capProviderImpl.getTCAPProvider().getNewDialog(origAddress, destAddress);
+        } catch (TCAPException e) {
+            throw new CAPException(e.getMessage(), e);
+        }
+    }
 
-	/**
-	 * Returns a list of linked operations for operCode operation
-	 * 
-	 * @param operCode
-	 * @return
-	 */
-	public long[] getLinkedOperationList(long operCode) {
-		return null;
-	}
-	
-	/**
-	 * Adding CAP Dialog into CAPProviderImpl.dialogs Used when creating a new
-	 * outgoing CAP Dialog
-	 * 
-	 * @param dialog
-	 */
-	protected void putCAPDialogIntoCollection(CAPDialogImpl dialog) {
-		this.capProviderImpl.addDialog((CAPDialogImpl) dialog);
-	}
+    public abstract void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, CAPDialog capDialog,
+            Long invokeId, Long linkedId, Invoke linkedInvoke) throws CAPParsingComponentException;
 
-	protected void addCAPServiceListener(CAPServiceListener capServiceListener) {
-		this.serviceListeners.add(capServiceListener);
-	}
+    /**
+     * Returns a list of linked operations for operCode operation
+     *
+     * @param operCode
+     * @return
+     */
+    public long[] getLinkedOperationList(long operCode) {
+        return null;
+    }
 
-	protected void removeCAPServiceListener(CAPServiceListener capServiceListener) {
-		this.serviceListeners.remove(capServiceListener);
-	}
+    /**
+     * Adding CAP Dialog into CAPProviderImpl.dialogs Used when creating a new outgoing CAP Dialog
+     *
+     * @param dialog
+     */
+    protected void putCAPDialogIntoCollection(CAPDialogImpl dialog) {
+        this.capProviderImpl.addDialog((CAPDialogImpl) dialog);
+    }
 
-	/**
-	 * This method is invoked when CAPProviderImpl.onInvokeTimeOut() is invoked.
-	 * An InvokeTimeOut may be a normal situation for the component class 2, 3,
-	 * or 4. In this case checkInvokeTimeOut() should return true and deliver to
-	 * the CAP-user correct indication
-	 * 
-	 * @param dialog
-	 * @param invoke
-	 * @return
-	 */
-	public boolean checkInvokeTimeOut(CAPDialog dialog, Invoke invoke) {
-		return false;
-	}
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean isActivated() {
-		return this._isActivated;
-	}
-	/**
-	 * {@inheritDoc}
-	 */
-	public void acivate() {
-		this._isActivated = true;
-	}
-	/**
-	 * {@inheritDoc}
-	 */
-	public void deactivate() {
-		this._isActivated = false;
+    protected void addCAPServiceListener(CAPServiceListener capServiceListener) {
+        this.serviceListeners.add(capServiceListener);
+    }
 
-		// TODO: abort all active dialogs ?
-	}
+    protected void removeCAPServiceListener(CAPServiceListener capServiceListener) {
+        this.serviceListeners.remove(capServiceListener);
+    }
 
-	protected void deliverErrorComponent(CAPDialog capDialog, Long invokeId, CAPErrorMessage capErrorMessage) {
-		for (CAPServiceListener serLis : this.serviceListeners) {
-			serLis.onErrorComponent(capDialog, invokeId, capErrorMessage);
-		}
-	}
+    /**
+     * This method is invoked when CAPProviderImpl.onInvokeTimeOut() is invoked. An InvokeTimeOut may be a normal situation for
+     * the component class 2, 3, or 4. In this case checkInvokeTimeOut() should return true and deliver to the CAP-user correct
+     * indication
+     *
+     * @param dialog
+     * @param invoke
+     * @return
+     */
+    public boolean checkInvokeTimeOut(CAPDialog dialog, Invoke invoke) {
+        return false;
+    }
 
-	protected void deliverRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
-		for (CAPServiceListener serLis : this.serviceListeners) {
-			serLis.onRejectComponent(capDialog, invokeId, problem, isLocalOriginated);
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isActivated() {
+        return this._isActivated;
+    }
 
-	protected void deliverInvokeTimeout(CAPDialog capDialog, Invoke invoke) {
-		for (CAPServiceListener serLis : this.serviceListeners) {
-			serLis.onInvokeTimeout(capDialog, invoke.getInvokeId());
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void acivate() {
+        this._isActivated = true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void deactivate() {
+        this._isActivated = false;
+
+        // TODO: abort all active dialogs ?
+    }
+
+    protected void deliverErrorComponent(CAPDialog capDialog, Long invokeId, CAPErrorMessage capErrorMessage) {
+        for (CAPServiceListener serLis : this.serviceListeners) {
+            serLis.onErrorComponent(capDialog, invokeId, capErrorMessage);
+        }
+    }
+
+    protected void deliverRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem, boolean isLocalOriginated) {
+        for (CAPServiceListener serLis : this.serviceListeners) {
+            serLis.onRejectComponent(capDialog, invokeId, problem, isLocalOriginated);
+        }
+    }
+
+    protected void deliverInvokeTimeout(CAPDialog capDialog, Invoke invoke) {
+        for (CAPServiceListener serLis : this.serviceListeners) {
+            serLis.onInvokeTimeout(capDialog, invoke.getInvokeId());
+        }
+    }
 }

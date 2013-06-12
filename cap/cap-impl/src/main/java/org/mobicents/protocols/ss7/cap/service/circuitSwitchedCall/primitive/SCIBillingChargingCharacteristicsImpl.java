@@ -38,220 +38,224 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class SCIBillingChargingCharacteristicsImpl implements SCIBillingChargingCharacteristics, CAPAsnPrimitive {
 
-	public static final int _ID_aOCBeforeAnswer = 0;
-	public static final int _ID_aOCAfterAnswer = 1;
-	public static final int _ID_aOC_extension = 2;
+    public static final int _ID_aOCBeforeAnswer = 0;
+    public static final int _ID_aOCAfterAnswer = 1;
+    public static final int _ID_aOC_extension = 2;
 
-	public static final String _PrimitiveName = "SCIBillingChargingCharacteristics";
-	
-	private AOCBeforeAnswer aocBeforeAnswer;
-	private AOCSubsequent aocSubsequent;
-	private CAMELSCIBillingChargingCharacteristicsAlt aocExtension;
+    public static final String _PrimitiveName = "SCIBillingChargingCharacteristics";
 
-	public SCIBillingChargingCharacteristicsImpl() {
-	}
+    private AOCBeforeAnswer aocBeforeAnswer;
+    private AOCSubsequent aocSubsequent;
+    private CAMELSCIBillingChargingCharacteristicsAlt aocExtension;
 
-	public SCIBillingChargingCharacteristicsImpl(AOCBeforeAnswer aocBeforeAnswer) {
-		this.aocBeforeAnswer = aocBeforeAnswer;
-	}
+    public SCIBillingChargingCharacteristicsImpl() {
+    }
 
-	public SCIBillingChargingCharacteristicsImpl(AOCSubsequent aocSubsequent) {
-		this.aocSubsequent = aocSubsequent;
-	}
+    public SCIBillingChargingCharacteristicsImpl(AOCBeforeAnswer aocBeforeAnswer) {
+        this.aocBeforeAnswer = aocBeforeAnswer;
+    }
 
-	public SCIBillingChargingCharacteristicsImpl(CAMELSCIBillingChargingCharacteristicsAlt aocExtension) {
-		this.aocExtension = aocExtension;
-	}
-	
-	@Override
-	public AOCBeforeAnswer getAOCBeforeAnswer() {
-		return aocBeforeAnswer;
-	}
+    public SCIBillingChargingCharacteristicsImpl(AOCSubsequent aocSubsequent) {
+        this.aocSubsequent = aocSubsequent;
+    }
 
-	@Override
-	public AOCSubsequent getAOCSubsequent() {
-		return aocSubsequent;
-	}
+    public SCIBillingChargingCharacteristicsImpl(CAMELSCIBillingChargingCharacteristicsAlt aocExtension) {
+        this.aocExtension = aocExtension;
+    }
 
-	@Override
-	public CAMELSCIBillingChargingCharacteristicsAlt getAOCExtension() {
-		return aocExtension;
-	}
+    @Override
+    public AOCBeforeAnswer getAOCBeforeAnswer() {
+        return aocBeforeAnswer;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.STRING_OCTET;
-	}
+    @Override
+    public AOCSubsequent getAOCSubsequent() {
+        return aocSubsequent;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public CAMELSCIBillingChargingCharacteristicsAlt getAOCExtension() {
+        return aocExtension;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.STRING_OCTET;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		this.aocBeforeAnswer = null;
-		this.aocSubsequent = null;
-		this.aocExtension = null;
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		byte[] buf = ansIS.readOctetStringData(length);
-		if (buf.length < 2 || buf.length > 255)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": data length must be from 2 to 255, found: " + buf.length,
-					CAPParsingComponentExceptionReason.MistypedParameter);
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		AsnInputStream ais = new AsnInputStream(buf);
+        this.aocBeforeAnswer = null;
+        this.aocSubsequent = null;
+        this.aocExtension = null;
 
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        byte[] buf = ansIS.readOctetStringData(length);
+        if (buf.length < 2 || buf.length > 255)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": data length must be from 2 to 255, found: " + buf.length,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
-			int tag = ais.readTag();
+        AsnInputStream ais = new AsnInputStream(buf);
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_aOCBeforeAnswer:
-					this.aocBeforeAnswer = new AOCBeforeAnswerImpl();
-					((AOCBeforeAnswerImpl) this.aocBeforeAnswer).decodeAll(ais);
-					break;
-				case _ID_aOCAfterAnswer:
-					this.aocSubsequent = new AOCSubsequentImpl();
-					((AOCSubsequentImpl) this.aocSubsequent).decodeAll(ais);
-					break;
-				case _ID_aOC_extension:
-					this.aocExtension = new CAMELSCIBillingChargingCharacteristicsAltImpl();
-					((CAMELSCIBillingChargingCharacteristicsAltImpl) this.aocExtension).decodeAll(ais);
-					break;
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+            int tag = ais.readTag();
 
-		int cnt = 0;
-		if (this.aocBeforeAnswer != null)
-			cnt++;
-		if (this.aocSubsequent != null)
-			cnt++;
-		if (this.aocExtension != null)
-			cnt++;
-		if (cnt != 1)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": only one choice must be present, found choices: " + cnt,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_aOCBeforeAnswer:
+                        this.aocBeforeAnswer = new AOCBeforeAnswerImpl();
+                        ((AOCBeforeAnswerImpl) this.aocBeforeAnswer).decodeAll(ais);
+                        break;
+                    case _ID_aOCAfterAnswer:
+                        this.aocSubsequent = new AOCSubsequentImpl();
+                        ((AOCSubsequentImpl) this.aocSubsequent).decodeAll(ais);
+                        break;
+                    case _ID_aOC_extension:
+                        this.aocExtension = new CAMELSCIBillingChargingCharacteristicsAltImpl();
+                        ((CAMELSCIBillingChargingCharacteristicsAltImpl) this.aocExtension).decodeAll(ais);
+                        break;
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        int cnt = 0;
+        if (this.aocBeforeAnswer != null)
+            cnt++;
+        if (this.aocSubsequent != null)
+            cnt++;
+        if (this.aocExtension != null)
+            cnt++;
+        if (cnt != 1)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": only one choice must be present, found choices: " + cnt,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		int cnt = 0;
-		if (this.aocBeforeAnswer != null)
-			cnt++;
-		if (this.aocSubsequent != null)
-			cnt++;
-		if (this.aocExtension != null)
-			cnt++;
-		if (cnt != 1)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice must be present, found choices: " + cnt);
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		AsnOutputStream aos = new AsnOutputStream();
-		if (this.aocBeforeAnswer != null)
-			((AOCBeforeAnswerImpl) this.aocBeforeAnswer).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_aOCBeforeAnswer);
-		if (this.aocSubsequent != null)
-			((AOCSubsequentImpl) this.aocSubsequent).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_aOCAfterAnswer);
-		if (this.aocExtension != null)
-			((CAMELSCIBillingChargingCharacteristicsAltImpl) this.aocExtension).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_aOC_extension);
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		byte[] buf = aos.toByteArray();
-		if (buf.length < 2 || buf.length > 255)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": data length must be from 2 to 255, encoded: " + buf.length);
+        int cnt = 0;
+        if (this.aocBeforeAnswer != null)
+            cnt++;
+        if (this.aocSubsequent != null)
+            cnt++;
+        if (this.aocExtension != null)
+            cnt++;
+        if (cnt != 1)
+            throw new CAPException("Error while encoding " + _PrimitiveName
+                    + ": only one choice must be present, found choices: " + cnt);
 
-		asnOs.writeOctetStringData(buf);
-	}
+        AsnOutputStream aos = new AsnOutputStream();
+        if (this.aocBeforeAnswer != null)
+            ((AOCBeforeAnswerImpl) this.aocBeforeAnswer).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_aOCBeforeAnswer);
+        if (this.aocSubsequent != null)
+            ((AOCSubsequentImpl) this.aocSubsequent).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_aOCAfterAnswer);
+        if (this.aocExtension != null)
+            ((CAMELSCIBillingChargingCharacteristicsAltImpl) this.aocExtension).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+                    _ID_aOC_extension);
 
-	@Override
-	public String toString() {
+        byte[] buf = aos.toByteArray();
+        if (buf.length < 2 || buf.length > 255)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": data length must be from 2 to 255, encoded: "
+                    + buf.length);
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        asnOs.writeOctetStringData(buf);
+    }
 
-		if (this.aocBeforeAnswer != null) {
-			sb.append("aocBeforeAnswer=");
-			sb.append(aocBeforeAnswer.toString());
-		}
-		if (this.aocSubsequent != null) {
-			sb.append(" aocSubsequent=");
-			sb.append(aocSubsequent.toString());
-		}
-		if (this.aocExtension != null) {
-			sb.append("aocExtension=");
-			sb.append(aocExtension.toString());
-		}
+    @Override
+    public String toString() {
 
-		sb.append("]");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		return sb.toString();
-	}
+        if (this.aocBeforeAnswer != null) {
+            sb.append("aocBeforeAnswer=");
+            sb.append(aocBeforeAnswer.toString());
+        }
+        if (this.aocSubsequent != null) {
+            sb.append(" aocSubsequent=");
+            sb.append(aocSubsequent.toString());
+        }
+        if (this.aocExtension != null) {
+            sb.append("aocExtension=");
+            sb.append(aocExtension.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

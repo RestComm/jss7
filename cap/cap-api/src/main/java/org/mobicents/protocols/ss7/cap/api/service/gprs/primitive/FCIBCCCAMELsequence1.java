@@ -25,25 +25,20 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
 
 /**
-*
-
-fCIBCCCAMELsequence1 [0] SEQUENCE {
-freeFormatData [0] OCTET STRING (SIZE(1 .. 160)),
-pDPID [1] PDPID OPTIONAL,
-appendFreeFormatData [2] AppendFreeFormatData DEFAULT overwrite,
-...
-}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ fCIBCCCAMELsequence1 [0] SEQUENCE { freeFormatData [0] OCTET STRING (SIZE(1 .. 160)), pDPID [1] PDPID OPTIONAL,
+ * appendFreeFormatData [2] AppendFreeFormatData DEFAULT overwrite, ... }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface FCIBCCCAMELsequence1 {
 
-	public byte[] getFreeFormatData();
+    byte[] getFreeFormatData();
 
-	public PDPID getPDPID();
+    PDPID getPDPID();
 
-	public AppendFreeFormatData getAppendFreeFormatData();
+    AppendFreeFormatData getAppendFreeFormatData();
 
 }

@@ -26,72 +26,68 @@ import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface TestUssdServerManMBean {
 
-	public String getMsisdnAddress();
+    String getMsisdnAddress();
 
-	public void setMsisdnAddress(String val);
+    void setMsisdnAddress(String val);
 
-	public AddressNatureType getMsisdnAddressNature();
+    AddressNatureType getMsisdnAddressNature();
 
-	public String getMsisdnAddressNature_Value();
+    String getMsisdnAddressNature_Value();
 
-	public void setMsisdnAddressNature(AddressNatureType val);
+    void setMsisdnAddressNature(AddressNatureType val);
 
-	public NumberingPlanMapType getMsisdnNumberingPlan();
+    NumberingPlanMapType getMsisdnNumberingPlan();
 
-	public String getMsisdnNumberingPlan_Value();
+    String getMsisdnNumberingPlan_Value();
 
-	public void setMsisdnNumberingPlan(NumberingPlanMapType val);
+    void setMsisdnNumberingPlan(NumberingPlanMapType val);
 
-	public int getDataCodingScheme();
+    int getDataCodingScheme();
 
-	public void setDataCodingScheme(int val);
+    void setDataCodingScheme(int val);
 
-	public int getAlertingPattern();
+    int getAlertingPattern();
 
-	public void setAlertingPattern(int val);
+    void setAlertingPattern(int val);
 
-	
-	public ProcessSsRequestAction getProcessSsRequestAction();
+    ProcessSsRequestAction getProcessSsRequestAction();
 
-	public String getProcessSsRequestAction_Value();
+    String getProcessSsRequestAction_Value();
 
-	public void setProcessSsRequestAction(ProcessSsRequestAction val);
+    void setProcessSsRequestAction(ProcessSsRequestAction val);
 
-	public String getAutoResponseString();
+    String getAutoResponseString();
 
-	public void setAutoResponseString(String val);
+    void setAutoResponseString(String val);
 
-	public String getAutoUnstructured_SS_RequestString();
+    String getAutoUnstructured_SS_RequestString();
 
-	public void setAutoUnstructured_SS_RequestString(String val);
+    void setAutoUnstructured_SS_RequestString(String val);
 
-	public boolean isOneNotificationFor100Dialogs();
+    boolean isOneNotificationFor100Dialogs();
 
-	public void setOneNotificationFor100Dialogs(boolean val);
+    void setOneNotificationFor100Dialogs(boolean val);
 
+    String getCurrentRequestDef();
 
-	public String getCurrentRequestDef();
+    String performProcessUnstructuredResponse(String msg);
 
+    String performUnstructuredRequest(String msg);
 
-	public String performProcessUnstructuredResponse(String msg);
+    String performUnstructuredNotify(String msg);
 
-	public String performUnstructuredRequest(String msg);
+    String closeCurrentDialog();
 
-	public String performUnstructuredNotify(String msg);
+    void putMsisdnAddressNature(String val);
 
-	public String closeCurrentDialog();
+    void putMsisdnNumberingPlan(String val);
 
-	public void putMsisdnAddressNature(String val);
-
-	public void putMsisdnNumberingPlan(String val);
-
-	public void putProcessSsRequestAction(String val);
+    void putProcessSsRequestAction(String val);
 
 }
-

@@ -42,269 +42,269 @@ import org.mobicents.protocols.ss7.cap.primitives.ReceivingSideIDImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class TimeDurationChargingResultImpl implements TimeDurationChargingResult, CAPAsnPrimitive {
 
-	public static final int _ID_partyToCharge = 0;
-	public static final int _ID_timeInformation = 1;
-	public static final int _ID_legActive = 2;
-	public static final int _ID_callLegReleasedAtTcpExpiry = 3;
-	public static final int _ID_extensions = 4;
-	public static final int _ID_aChChargingAddress = 5;
-	
-	public static final String _PrimitiveName = "TimeDurationChargingResult";
+    public static final int _ID_partyToCharge = 0;
+    public static final int _ID_timeInformation = 1;
+    public static final int _ID_legActive = 2;
+    public static final int _ID_callLegReleasedAtTcpExpiry = 3;
+    public static final int _ID_extensions = 4;
+    public static final int _ID_aChChargingAddress = 5;
 
-	private ReceivingSideID partyToCharge;
-	private TimeInformation timeInformation;
-	private boolean legActive;
-	private boolean callLegReleasedAtTcpExpiry;
-	private CAPExtensions extensions;
-	private AChChargingAddress aChChargingAddress;
+    public static final String _PrimitiveName = "TimeDurationChargingResult";
 
-	
-	public TimeDurationChargingResultImpl(){
-	}
-	
-	public TimeDurationChargingResultImpl(ReceivingSideID partyToCharge, TimeInformation timeInformation, boolean legActive,
-			boolean callLegReleasedAtTcpExpiry, CAPExtensions extensions, AChChargingAddress aChChargingAddress) {
-		this.partyToCharge = partyToCharge;
-		this.timeInformation = timeInformation;
-		this.legActive = legActive;
-		this.callLegReleasedAtTcpExpiry = callLegReleasedAtTcpExpiry;
-		this.extensions = extensions;
-		this.aChChargingAddress = aChChargingAddress;
-	}
-	
-	@Override
-	public ReceivingSideID getPartyToCharge() {
-		return partyToCharge;
-	}
+    private ReceivingSideID partyToCharge;
+    private TimeInformation timeInformation;
+    private boolean legActive;
+    private boolean callLegReleasedAtTcpExpiry;
+    private CAPExtensions extensions;
+    private AChChargingAddress aChChargingAddress;
 
-	@Override
-	public TimeInformation getTimeInformation() {
-		return timeInformation;
-	}
+    public TimeDurationChargingResultImpl() {
+    }
 
-	@Override
-	public boolean getLegActive() {
-		return legActive;
-	}
+    public TimeDurationChargingResultImpl(ReceivingSideID partyToCharge, TimeInformation timeInformation, boolean legActive,
+            boolean callLegReleasedAtTcpExpiry, CAPExtensions extensions, AChChargingAddress aChChargingAddress) {
+        this.partyToCharge = partyToCharge;
+        this.timeInformation = timeInformation;
+        this.legActive = legActive;
+        this.callLegReleasedAtTcpExpiry = callLegReleasedAtTcpExpiry;
+        this.extensions = extensions;
+        this.aChChargingAddress = aChChargingAddress;
+    }
 
-	@Override
-	public boolean getCallLegReleasedAtTcpExpiry() {
-		return callLegReleasedAtTcpExpiry;
-	}
+    @Override
+    public ReceivingSideID getPartyToCharge() {
+        return partyToCharge;
+    }
 
-	@Override
-	public CAPExtensions getExtensions() {
-		return extensions;
-	}
+    @Override
+    public TimeInformation getTimeInformation() {
+        return timeInformation;
+    }
 
-	@Override
-	public AChChargingAddress getAChChargingAddress() {
-		return aChChargingAddress;
-	}
-	
-	
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public boolean getLegActive() {
+        return legActive;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public boolean getCallLegReleasedAtTcpExpiry() {
+        return callLegReleasedAtTcpExpiry;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public CAPExtensions getExtensions() {
+        return extensions;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public AChChargingAddress getAChChargingAddress() {
+        return aChChargingAddress;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		this.partyToCharge = null;
-		this.timeInformation = null;
-		this.legActive = true;
-		this.callLegReleasedAtTcpExpiry = false;
-		this.extensions = null;
-		this.aChChargingAddress = null; // TODO: DEFAULT legID:receivingSideID:leg1
-		
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-			int tag = ais.readTag();
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_partyToCharge:
-					AsnInputStream ais2 = ais.readSequenceStream();
-					ais2.readTag();
-					this.partyToCharge = new ReceivingSideIDImpl();
-					((ReceivingSideIDImpl)this.partyToCharge).decodeAll(ais2);
-					break;
-				case _ID_timeInformation:
-					ais2 = ais.readSequenceStream();
-					ais2.readTag();
-					this.timeInformation = new TimeInformationImpl();
-					((TimeInformationImpl)this.timeInformation).decodeAll(ais2);
-					break;
-				case _ID_legActive:
-					this.legActive = ais.readBoolean();
-					break;
-				case _ID_callLegReleasedAtTcpExpiry:
-					ais.readNull();
-					this.callLegReleasedAtTcpExpiry = true;
-					break;
-				case _ID_extensions:
-					this.extensions = new CAPExtensionsImpl();
-					((CAPExtensionsImpl) this.extensions).decodeAll(ais);
-					break;
-				case _ID_aChChargingAddress:
-					ais.advanceElement(); // TODO: implement it
-					break;
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException,
+            IOException, AsnException {
 
-		if (this.partyToCharge == null || this.timeInformation == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": partyToCharge and timeInformation are mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+        this.partyToCharge = null;
+        this.timeInformation = null;
+        this.legActive = true;
+        this.callLegReleasedAtTcpExpiry = false;
+        this.extensions = null;
+        this.aChChargingAddress = null; // TODO: DEFAULT legID:receivingSideID:leg1
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+            int tag = ais.readTag();
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_partyToCharge:
+                        AsnInputStream ais2 = ais.readSequenceStream();
+                        ais2.readTag();
+                        this.partyToCharge = new ReceivingSideIDImpl();
+                        ((ReceivingSideIDImpl) this.partyToCharge).decodeAll(ais2);
+                        break;
+                    case _ID_timeInformation:
+                        ais2 = ais.readSequenceStream();
+                        ais2.readTag();
+                        this.timeInformation = new TimeInformationImpl();
+                        ((TimeInformationImpl) this.timeInformation).decodeAll(ais2);
+                        break;
+                    case _ID_legActive:
+                        this.legActive = ais.readBoolean();
+                        break;
+                    case _ID_callLegReleasedAtTcpExpiry:
+                        ais.readNull();
+                        this.callLegReleasedAtTcpExpiry = true;
+                        break;
+                    case _ID_extensions:
+                        this.extensions = new CAPExtensionsImpl();
+                        ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
+                        break;
+                    case _ID_aChChargingAddress:
+                        ais.advanceElement(); // TODO: implement it
+                        break;
 
-	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-		if (this.partyToCharge == null || this.timeInformation == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": partyToCharge and timeInformation must not be null");
+        if (this.partyToCharge == null || this.timeInformation == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": partyToCharge and timeInformation are mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-		try {
-			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_partyToCharge);
-			int pos = aos.StartContentDefiniteLength();
-			((ReceivingSideIDImpl) this.partyToCharge).encodeAll(aos);
-			aos.FinalizeContent(pos);
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-			aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_timeInformation);
-			pos = aos.StartContentDefiniteLength();
-			((TimeInformationImpl) this.timeInformation).encodeAll(aos);
-			aos.FinalizeContent(pos);
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-			if (this.legActive == false)
-				aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _ID_legActive, this.legActive);
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-			if (this.callLegReleasedAtTcpExpiry)
-				aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callLegReleasedAtTcpExpiry);
+    @Override
+    public void encodeData(AsnOutputStream aos) throws CAPException {
 
-			if (this.extensions != null)
-				((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
+        if (this.partyToCharge == null || this.timeInformation == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName
+                    + ": partyToCharge and timeInformation must not be null");
 
-			if (this.aChChargingAddress != null) {
-				// TODO: implement it
-			}
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_partyToCharge);
+            int pos = aos.StartContentDefiniteLength();
+            ((ReceivingSideIDImpl) this.partyToCharge).encodeAll(aos);
+            aos.FinalizeContent(pos);
 
-	@Override
-	public String toString() {
+            aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_timeInformation);
+            pos = aos.StartContentDefiniteLength();
+            ((TimeInformationImpl) this.timeInformation).encodeAll(aos);
+            aos.FinalizeContent(pos);
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+            if (this.legActive == false)
+                aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _ID_legActive, this.legActive);
 
-		if (this.partyToCharge != null) {
-			sb.append("partyToCharge=");
-			sb.append(partyToCharge.toString());
-		}
-		if (this.timeInformation != null) {
-			sb.append(", timeInformation=");
-			sb.append(timeInformation.toString());
-		}
-		if (this.legActive) {
-			sb.append(", legActive");
-		}
-		if (this.callLegReleasedAtTcpExpiry) {
-			sb.append(", callLegReleasedAtTcpExpiry");
-		}
-		if (this.extensions != null) {
-			sb.append(", extensions=");
-			sb.append(extensions.toString());
-		}
-		if (this.aChChargingAddress != null) {
-			sb.append(", aChChargingAddress=");
-			sb.append(aChChargingAddress.toString());
-		}
+            if (this.callLegReleasedAtTcpExpiry)
+                aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_callLegReleasedAtTcpExpiry);
 
-		sb.append("]");
+            if (this.extensions != null)
+                ((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
 
-		return sb.toString();
-	}
+            if (this.aChChargingAddress != null) {
+                // TODO: implement it
+            }
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.partyToCharge != null) {
+            sb.append("partyToCharge=");
+            sb.append(partyToCharge.toString());
+        }
+        if (this.timeInformation != null) {
+            sb.append(", timeInformation=");
+            sb.append(timeInformation.toString());
+        }
+        if (this.legActive) {
+            sb.append(", legActive");
+        }
+        if (this.callLegReleasedAtTcpExpiry) {
+            sb.append(", callLegReleasedAtTcpExpiry");
+        }
+        if (this.extensions != null) {
+            sb.append(", extensions=");
+            sb.append(extensions.toString());
+        }
+        if (this.aChChargingAddress != null) {
+            sb.append(", aChChargingAddress=");
+            sb.append(aChChargingAddress.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

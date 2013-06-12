@@ -25,35 +25,26 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
-*
-EPC-AV ::= SEQUENCE {
-	rand			RAND,
-	xres			XRES,
-	autn			AUTN,
-	kasme		KASME,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
-*
-* RAND ::= OCTET STRING (SIZE (16))
-* XRES ::= OCTET STRING (SIZE (4..16))
-* AUTN ::= OCTET STRING (SIZE (16))
-* KASME ::= OCTET STRING (SIZE (32))
-*
-* @author sergey vetyutnev
-* 
-*/
+ *
+ EPC-AV ::= SEQUENCE { rand RAND, xres XRES, autn AUTN, kasme KASME, extensionContainer ExtensionContainer OPTIONAL, ...}
+ *
+ *
+ * RAND ::= OCTET STRING (SIZE (16)) XRES ::= OCTET STRING (SIZE (4..16)) AUTN ::= OCTET STRING (SIZE (16)) KASME ::= OCTET
+ * STRING (SIZE (32))
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface EpcAv {
 
-	public byte[] getRand();
+    byte[] getRand();
 
-	public byte[] getXres();
+    byte[] getXres();
 
-	public byte[] getAutn();
+    byte[] getAutn();
 
-	public byte[] getKasme();
+    byte[] getKasme();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }
-

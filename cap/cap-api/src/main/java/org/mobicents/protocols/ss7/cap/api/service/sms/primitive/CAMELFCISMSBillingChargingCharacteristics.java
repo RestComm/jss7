@@ -23,22 +23,17 @@
 package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
 
 /**
-*
-
-CAMEL-FCISMSBillingChargingCharacteristics {PARAMETERS-BOUND : bound} ::= CHOICE{ 
- fCIBCCCAMELsequence1    [0] SEQUENCE { 
-  freeFormatData      [0] OCTET STRING (SIZE( 
-   bound.&minFCIBillingChargingDataLength .. bound.&maxFCIBillingChargingDataLength)), 
-  appendFreeFormatData    [1] AppendFreeFormatData DEFAULT overwrite 
-  } 
- } 
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ CAMEL-FCISMSBillingChargingCharacteristics {PARAMETERS-BOUND : bound} ::= CHOICE{ fCIBCCCAMELsequence1 [0] SEQUENCE {
+ * freeFormatData [0] OCTET STRING (SIZE( bound.&minFCIBillingChargingDataLength .. bound.&maxFCIBillingChargingDataLength)),
+ * appendFreeFormatData [1] AppendFreeFormatData DEFAULT overwrite } }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface CAMELFCISMSBillingChargingCharacteristics {
 
-	public FCIBCCCAMELsequence1 getFCIBCCCAMELsequence1();
+    FCIBCCCAMELsequence1 getFCIBCCCAMELsequence1();
 
 }

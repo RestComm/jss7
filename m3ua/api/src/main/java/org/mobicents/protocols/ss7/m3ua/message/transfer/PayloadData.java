@@ -33,20 +33,20 @@ import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
  * @author kulikov
  */
 public interface PayloadData extends M3UAMessage {
-    public NetworkAppearance getNetworkAppearance();
+    NetworkAppearance getNetworkAppearance();
 
-    public void setNetworkAppearance(NetworkAppearance p);
+    void setNetworkAppearance(NetworkAppearance p);
 
-    public RoutingContext getRoutingContext();
+    RoutingContext getRoutingContext();
 
-    public void setRoutingContext(RoutingContext p);
+    void setRoutingContext(RoutingContext p);
 
-    public ProtocolData getData();
+    ProtocolData getData();
 
-    public void setData(ProtocolData p);
-    
-    public CorrelationId getCorrelationId();
-    
-    public void setCorrelationId(CorrelationId corrId);
+    void setData(ProtocolData p);
+
+    CorrelationId getCorrelationId();
+
+    void setCorrelationId(CorrelationId corrId);
 
 }

@@ -23,24 +23,20 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-PGW-EventList ::= BIT STRING {
-	pdn-connectionCreation (0),
-	pdn-connectionTermination (1),
-	bearerActivationModificationDeletion (2)} (SIZE (3..8))
--- Other bits than listed above shall be discarded.
-
- * 
+ *
+ PGW-EventList ::= BIT STRING { pdn-connectionCreation (0), pdn-connectionTermination (1),
+ * bearerActivationModificationDeletion (2)} (SIZE (3..8)) -- Other bits than listed above shall be discarded.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface PGWEventList {
 
-	public boolean getPdnConnectionCreation();
+    boolean getPdnConnectionCreation();
 
-	public boolean getPdnConnectionTermination();
+    boolean getPdnConnectionTermination();
 
-	public boolean getBearerActivationModificationDeletion();
+    boolean getBearerActivationModificationDeletion();
 
 }

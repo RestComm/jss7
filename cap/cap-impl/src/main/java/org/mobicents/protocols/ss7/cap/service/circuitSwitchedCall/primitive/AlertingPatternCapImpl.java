@@ -37,145 +37,145 @@ import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class AlertingPatternCapImpl implements AlertingPatternCap, CAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "AlertingPatternCap";
+    public static final String _PrimitiveName = "AlertingPatternCap";
 
-	private byte[] data;
+    private byte[] data;
 
-	public AlertingPatternCapImpl() {
-	}
+    public AlertingPatternCapImpl() {
+    }
 
-	public AlertingPatternCapImpl(byte[] data) {
-		this.data = data;
-	}
+    public AlertingPatternCapImpl(byte[] data) {
+        this.data = data;
+    }
 
-	public AlertingPatternCapImpl(AlertingPattern alertingPattern) {
+    public AlertingPatternCapImpl(AlertingPattern alertingPattern) {
 
-		if (alertingPattern == null)
-			return;
+        if (alertingPattern == null)
+            return;
 
-		byte[] buf = alertingPattern.getData();
-		if (buf == null || buf.length != 1)
-			return;
-		
-		this.data = new byte[3];
-		this.data[2] = buf[0];
-	}
-	
-	@Override
-	public byte[] getData() {
-		return this.data;
-	}
+        byte[] buf = alertingPattern.getData();
+        if (buf == null || buf.length != 1)
+            return;
 
-	@Override
-	public AlertingPattern getAlertingPattern() {
+        this.data = new byte[3];
+        this.data[2] = buf[0];
+    }
 
-		if (this.data != null && this.data.length == 3)
-			return new AlertingPatternImpl(new byte[] { this.data[2] });
-		else
-			return null;
-	}
+    @Override
+    public byte[] getData() {
+        return this.data;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.STRING_OCTET;
-	}
+    @Override
+    public AlertingPattern getAlertingPattern() {
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+        if (this.data != null && this.data.length == 3)
+            return new AlertingPatternImpl(new byte[] { this.data[2] });
+        else
+            return null;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.STRING_OCTET;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		this.data = ansIS.readOctetStringData(length);
-		if (this.data.length < 3 || this.data.length > 3)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": data must be from 3 to 3 bytes length, found: "
-					+ this.data.length, CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        this.data = ansIS.readOctetStringData(length);
+        if (this.data.length < 3 || this.data.length > 3)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": data must be from 3 to 3 bytes length, found: " + this.data.length,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		if (this.data == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": data field must not be null");
-		if (this.data.length != 3)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": data field length must be equal 3");
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		asnOs.writeOctetStringData(data);
-	}
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-	@Override
-	public String toString() {
+        if (this.data == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": data field must not be null");
+        if (this.data.length != 3)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": data field length must be equal 3");
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		AlertingPattern ap = this.getAlertingPattern();
-		if (ap != null) {
-			sb.append("AlertingPattern=");
-			sb.append(ap.toString());
-		}
-		sb.append("]");
+        asnOs.writeOctetStringData(data);
+    }
 
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+        AlertingPattern ap = this.getAlertingPattern();
+        if (ap != null) {
+            sb.append("AlertingPattern=");
+            sb.append(ap.toString());
+        }
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

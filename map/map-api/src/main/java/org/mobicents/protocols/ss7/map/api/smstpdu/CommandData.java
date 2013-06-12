@@ -25,18 +25,18 @@ package org.mobicents.protocols.ss7.map.api.smstpdu;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CommandData {
 
-	public byte[] getEncodedData();
+    byte[] getEncodedData();
 
-	public String getDecodedMessage();
+    String getDecodedMessage();
 
-	public void encode() throws MAPException;
+    void encode() throws MAPException;
 
-	public void decode() throws MAPException;
+    void decode() throws MAPException;
 
 }

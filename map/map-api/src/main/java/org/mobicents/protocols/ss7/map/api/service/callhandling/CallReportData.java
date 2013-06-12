@@ -25,24 +25,20 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-CallReportData ::= SEQUENCE{
-	monitoringMode	[0]	MonitoringMode	OPTIONAL,
-	callOutcome	[1]	CallOutcome	OPTIONAL,
-	extensionContainer	[2]	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ CallReportData ::= SEQUENCE{ monitoringMode [0] MonitoringMode OPTIONAL, callOutcome [1] CallOutcome OPTIONAL,
+ * extensionContainer [2] ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CallReportData {
 
-	public MonitoringMode getMonitoringMode();
+    MonitoringMode getMonitoringMode();
 
-	public CallOutcome getCallOutcome();
+    CallOutcome getCallOutcome();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

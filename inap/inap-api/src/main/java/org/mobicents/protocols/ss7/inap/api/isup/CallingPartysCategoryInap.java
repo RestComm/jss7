@@ -26,23 +26,22 @@ import org.mobicents.protocols.ss7.inap.api.INAPException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
 
 /**
-*
-ISUP CallingPartyCategory wrapper
-
-CallingPartysCategory::= OCTET STRING (SIZE (1))
---  Indicates the type of calling party (e.g. operator, payphone, ordinary subscriber). Refer to
---  ETS 300 356-1 [7] for encoding.
-
-
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ISUP CallingPartyCategory wrapper
+ *
+ * CallingPartysCategory::= OCTET STRING (SIZE (1)) -- Indicates the type of calling party (e.g. operator, payphone, ordinary
+ * subscriber). Refer to -- ETS 300 356-1 [7] for encoding.
+ *
+ *
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface CallingPartysCategoryInap {
 
-	public byte[] getData();
+    byte[] getData();
 
-	public CallingPartyCategory getCallingPartyCategory() throws INAPException;
+    CallingPartyCategory getCallingPartyCategory() throws INAPException;
 
 }

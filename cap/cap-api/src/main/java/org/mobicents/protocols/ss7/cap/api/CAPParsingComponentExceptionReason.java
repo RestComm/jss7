@@ -23,10 +23,10 @@
 package org.mobicents.protocols.ss7.cap.api;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public enum CAPParsingComponentExceptionReason {
-	UnrecognizedOperation, MistypedParameter;
+    UnrecognizedOperation, MistypedParameter;
 }

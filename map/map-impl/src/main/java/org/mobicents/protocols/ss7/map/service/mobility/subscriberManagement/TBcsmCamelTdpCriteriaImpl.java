@@ -38,236 +38,239 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class TBcsmCamelTdpCriteriaImpl  extends SequenceBase implements TBcsmCamelTdpCriteria {
+public class TBcsmCamelTdpCriteriaImpl extends SequenceBase implements TBcsmCamelTdpCriteria {
 
-	private static final int _TAG_basicServiceCriteria = 0;
-	private static final int _TAG_tCauseValueCriteria = 1;
-	
-	private TBcsmTriggerDetectionPoint tBcsmTriggerDetectionPoint;
-	private ArrayList<ExtBasicServiceCode> basicServiceCriteria;
-	private ArrayList<CauseValue> tCauseValueCriteria;
-	
-	public TBcsmCamelTdpCriteriaImpl() {
-		super("TBcsmCamelTdpCriteria");
-	}
-	
-	public TBcsmCamelTdpCriteriaImpl(
-			TBcsmTriggerDetectionPoint tBcsmTriggerDetectionPoint,
-			ArrayList<ExtBasicServiceCode> basicServiceCriteria,
-			ArrayList<CauseValue> tCauseValueCriteria) {
-		super("TBcsmCamelTdpCriteria");
-		this.tBcsmTriggerDetectionPoint = tBcsmTriggerDetectionPoint;
-		this.basicServiceCriteria = basicServiceCriteria;
-		this.tCauseValueCriteria = tCauseValueCriteria;
-	}
+    private static final int _TAG_basicServiceCriteria = 0;
+    private static final int _TAG_tCauseValueCriteria = 1;
 
-	@Override
-	public TBcsmTriggerDetectionPoint getTBcsmTriggerDetectionPoint() {
-		return this.tBcsmTriggerDetectionPoint;
-	}
+    private TBcsmTriggerDetectionPoint tBcsmTriggerDetectionPoint;
+    private ArrayList<ExtBasicServiceCode> basicServiceCriteria;
+    private ArrayList<CauseValue> tCauseValueCriteria;
 
-	@Override
-	public ArrayList<ExtBasicServiceCode> getBasicServiceCriteria() {
-		return this.basicServiceCriteria;
-	}
+    public TBcsmCamelTdpCriteriaImpl() {
+        super("TBcsmCamelTdpCriteria");
+    }
 
-	@Override
-	public ArrayList<CauseValue> getTCauseValueCriteria() {
-		return this.tCauseValueCriteria;
-	}
+    public TBcsmCamelTdpCriteriaImpl(TBcsmTriggerDetectionPoint tBcsmTriggerDetectionPoint,
+            ArrayList<ExtBasicServiceCode> basicServiceCriteria, ArrayList<CauseValue> tCauseValueCriteria) {
+        super("TBcsmCamelTdpCriteria");
+        this.tBcsmTriggerDetectionPoint = tBcsmTriggerDetectionPoint;
+        this.basicServiceCriteria = basicServiceCriteria;
+        this.tCauseValueCriteria = tCauseValueCriteria;
+    }
 
-	@Override
-	protected void _decode(AsnInputStream asnIS, int length)
-			throws MAPParsingComponentException, IOException, AsnException {
-		this.tBcsmTriggerDetectionPoint = null;
-		this.basicServiceCriteria = null;
-		this.tCauseValueCriteria = null;
+    @Override
+    public TBcsmTriggerDetectionPoint getTBcsmTriggerDetectionPoint() {
+        return this.tBcsmTriggerDetectionPoint;
+    }
 
-		AsnInputStream ais = asnIS.readSequenceStreamData(length);
+    @Override
+    public ArrayList<ExtBasicServiceCode> getBasicServiceCriteria() {
+        return this.basicServiceCriteria;
+    }
 
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    @Override
+    public ArrayList<CauseValue> getTCauseValueCriteria() {
+        return this.tCauseValueCriteria;
+    }
 
-			int tag = ais.readTag();
-			
-			switch (ais.getTagClass()) {
-			case Tag.CLASS_UNIVERSAL:
-				switch (tag) {
-				case Tag.ENUMERATED:
-					if (!ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".tBcsmTriggerDetectionPoint:  not primitive",
-								MAPParsingComponentExceptionReason.MistypedParameter);
-					
-					int code = (int) ais.readInteger();
-					this.tBcsmTriggerDetectionPoint = TBcsmTriggerDetectionPoint.getInstance(code);
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-				break;
-				
-			case Tag.CLASS_CONTEXT_SPECIFIC:
-				switch (tag) {
-				case _TAG_basicServiceCriteria:
-					ExtBasicServiceCode extBasicServiceCode = null;
-					if (ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ".basicServiceCriteria: is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-					AsnInputStream ais2 = ais.readSequenceStream();
-					this.basicServiceCriteria = new ArrayList<ExtBasicServiceCode>();
-					while (true) {
-						if (ais2.available() == 0)
-							break;
+    @Override
+    protected void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+        this.tBcsmTriggerDetectionPoint = null;
+        this.basicServiceCriteria = null;
+        this.tCauseValueCriteria = null;
 
-						int tag2 = ais2.readTag();
-						extBasicServiceCode = new ExtBasicServiceCodeImpl();
-						((ExtBasicServiceCodeImpl) extBasicServiceCode).decodeAll(ais2);
-						this.basicServiceCriteria.add(extBasicServiceCode);
-					}
+        AsnInputStream ais = asnIS.readSequenceStreamData(length);
 
-					if (this.basicServiceCriteria.size() < 1 || this.basicServiceCriteria.size() > 5) {
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter basicServiceCriteria size must be from 1 to 5, found: "
-								+ this.basicServiceCriteria.size(), MAPParsingComponentExceptionReason.MistypedParameter);
-					}
-					break;
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-				case _TAG_tCauseValueCriteria:
-					CauseValue causeValue = null;
-					if (ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ".tCauseValueCriteria: is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-					AsnInputStream ais3 = ais.readSequenceStream();
-					this.tCauseValueCriteria = new ArrayList<CauseValue>();
-					while (true) {
-						if (ais3.available() == 0)
-							break;
+            int tag = ais.readTag();
 
-						int tag2 = ais3.readTag();
-						if (tag2 != Tag.STRING_OCTET || ais3.getTagClass() != Tag.CLASS_UNIVERSAL || !ais3.isTagPrimitive())
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ ": causeValue tag or tagClass or is primitive ", MAPParsingComponentExceptionReason.MistypedParameter);
+            switch (ais.getTagClass()) {
+                case Tag.CLASS_UNIVERSAL:
+                    switch (tag) {
+                        case Tag.ENUMERATED:
+                            if (!ais.isTagPrimitive())
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ".tBcsmTriggerDetectionPoint:  not primitive",
+                                        MAPParsingComponentExceptionReason.MistypedParameter);
 
-						causeValue = new CauseValueImpl();
-						((CauseValueImpl) causeValue).decodeAll(ais3);
-						this.tCauseValueCriteria.add(causeValue);
-					}
+                            int code = (int) ais.readInteger();
+                            this.tBcsmTriggerDetectionPoint = TBcsmTriggerDetectionPoint.getInstance(code);
+                            break;
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+                    break;
 
-					if (this.tCauseValueCriteria.size() < 1 || this.tCauseValueCriteria.size() > 5) {
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter tCauseValueCriteria size must be from 1 to 5, found: "
-								+ this.tCauseValueCriteria.size(), MAPParsingComponentExceptionReason.MistypedParameter);
-					}
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-				break;
-			
-			default:
-				ais.advanceElement();
-				break;
-			}
+                case Tag.CLASS_CONTEXT_SPECIFIC:
+                    switch (tag) {
+                        case _TAG_basicServiceCriteria:
+                            ExtBasicServiceCode extBasicServiceCode = null;
+                            if (ais.isTagPrimitive())
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ".basicServiceCriteria: is not primitive",
+                                        MAPParsingComponentExceptionReason.MistypedParameter);
+                            AsnInputStream ais2 = ais.readSequenceStream();
+                            this.basicServiceCriteria = new ArrayList<ExtBasicServiceCode>();
+                            while (true) {
+                                if (ais2.available() == 0)
+                                    break;
 
-		}
-		
-		if (this.tBcsmTriggerDetectionPoint == null)
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament tBcsmTriggerDetectionPoint is mandatory but does not found",
-					MAPParsingComponentExceptionReason.MistypedParameter);
+                                int tag2 = ais2.readTag();
+                                extBasicServiceCode = new ExtBasicServiceCodeImpl();
+                                ((ExtBasicServiceCodeImpl) extBasicServiceCode).decodeAll(ais2);
+                                this.basicServiceCriteria.add(extBasicServiceCode);
+                            }
 
+                            if (this.basicServiceCriteria.size() < 1 || this.basicServiceCriteria.size() > 5) {
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ": Parameter basicServiceCriteria size must be from 1 to 5, found: "
+                                        + this.basicServiceCriteria.size(),
+                                        MAPParsingComponentExceptionReason.MistypedParameter);
+                            }
+                            break;
 
-	}
-	
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		if (this.tBcsmTriggerDetectionPoint == null)
-			throw new MAPException("Error while encoding " + _PrimitiveName + ": tBcsmTriggerDetectionPoint required.");
+                        case _TAG_tCauseValueCriteria:
+                            CauseValue causeValue = null;
+                            if (ais.isTagPrimitive())
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ".tCauseValueCriteria: is not primitive",
+                                        MAPParsingComponentExceptionReason.MistypedParameter);
+                            AsnInputStream ais3 = ais.readSequenceStream();
+                            this.tCauseValueCriteria = new ArrayList<CauseValue>();
+                            while (true) {
+                                if (ais3.available() == 0)
+                                    break;
 
-		if (this.basicServiceCriteria != null && (this.basicServiceCriteria.size() < 1 || this.basicServiceCriteria.size() > 5)) {
-			throw new MAPException("Error while encoding " + _PrimitiveName + ": Parameter basicServiceCriteria size must be from 1 to 5, found: "
-					+ this.basicServiceCriteria.size());
-		}
-		
-		if (this.tCauseValueCriteria != null && (this.tCauseValueCriteria.size() < 1 || this.tCauseValueCriteria.size() > 5)) {
-			throw new MAPException("Error while encoding " + _PrimitiveName + ": Parameter tCauseValueCriteria size must be from 1 to 5, found: "
-					+ this.tCauseValueCriteria.size());
-		}
+                                int tag2 = ais3.readTag();
+                                if (tag2 != Tag.STRING_OCTET || ais3.getTagClass() != Tag.CLASS_UNIVERSAL
+                                        || !ais3.isTagPrimitive())
+                                    throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                            + ": causeValue tag or tagClass or is primitive ",
+                                            MAPParsingComponentExceptionReason.MistypedParameter);
 
-		try {
-			asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.tBcsmTriggerDetectionPoint.getCode());
+                                causeValue = new CauseValueImpl();
+                                ((CauseValueImpl) causeValue).decodeAll(ais3);
+                                this.tCauseValueCriteria.add(causeValue);
+                            }
 
-			if (this.basicServiceCriteria != null){
-				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_basicServiceCriteria);
-				int pos = asnOs.StartContentDefiniteLength();
-				for (ExtBasicServiceCode extBasicServiceCode: this.basicServiceCriteria) {
-					((ExtBasicServiceCodeImpl) extBasicServiceCode).encodeAll(asnOs);
-				}
-				asnOs.FinalizeContent(pos);
-			}
+                            if (this.tCauseValueCriteria.size() < 1 || this.tCauseValueCriteria.size() > 5) {
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ": Parameter tCauseValueCriteria size must be from 1 to 5, found: "
+                                        + this.tCauseValueCriteria.size(), MAPParsingComponentExceptionReason.MistypedParameter);
+                            }
+                            break;
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+                    break;
 
-			if (this.tCauseValueCriteria != null){
-				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_tCauseValueCriteria);
-				int pos = asnOs.StartContentDefiniteLength();
-				for (CauseValue causeValue: this.tCauseValueCriteria) {
-					((CauseValueImpl) causeValue).encodeAll(asnOs);
-				}
-				asnOs.FinalizeContent(pos);
-			}
-		
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (IOException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+                default:
+                    ais.advanceElement();
+                    break;
+            }
 
+        }
 
-		if (this.tBcsmTriggerDetectionPoint != null) {
-			sb.append("tBcsmTriggerDetectionPoint=");
-			sb.append(this.tBcsmTriggerDetectionPoint.toString());
-			sb.append(", ");
-		}
-		
-		if (this.basicServiceCriteria != null) {
-			sb.append("basicServiceCriteria=[");
-			boolean firstItem = true;
-			for (ExtBasicServiceCode be : this.basicServiceCriteria) {
-				if (firstItem)
-					firstItem = false;
-				else
-					sb.append(", ");
-				sb.append(be.toString());
-			}
-			sb.append("], ");
-		}
+        if (this.tBcsmTriggerDetectionPoint == null)
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": Parament tBcsmTriggerDetectionPoint is mandatory but does not found",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (this.tCauseValueCriteria != null) {
-			sb.append("tCauseValueCriteria=[");
-			boolean firstItem = true;
-			for (CauseValue be : this.tCauseValueCriteria) {
-				if (firstItem)
-					firstItem = false;
-				else
-					sb.append(", ");
-				sb.append(be.toString());
-			}
-			sb.append("] ");
-		}
+    }
 
-		sb.append("]");
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
+        if (this.tBcsmTriggerDetectionPoint == null)
+            throw new MAPException("Error while encoding " + _PrimitiveName + ": tBcsmTriggerDetectionPoint required.");
 
-		return sb.toString();
-	}
+        if (this.basicServiceCriteria != null && (this.basicServiceCriteria.size() < 1 || this.basicServiceCriteria.size() > 5)) {
+            throw new MAPException("Error while encoding " + _PrimitiveName
+                    + ": Parameter basicServiceCriteria size must be from 1 to 5, found: " + this.basicServiceCriteria.size());
+        }
 
+        if (this.tCauseValueCriteria != null && (this.tCauseValueCriteria.size() < 1 || this.tCauseValueCriteria.size() > 5)) {
+            throw new MAPException("Error while encoding " + _PrimitiveName
+                    + ": Parameter tCauseValueCriteria size must be from 1 to 5, found: " + this.tCauseValueCriteria.size());
+        }
+
+        try {
+            asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.tBcsmTriggerDetectionPoint.getCode());
+
+            if (this.basicServiceCriteria != null) {
+                asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_basicServiceCriteria);
+                int pos = asnOs.StartContentDefiniteLength();
+                for (ExtBasicServiceCode extBasicServiceCode : this.basicServiceCriteria) {
+                    ((ExtBasicServiceCodeImpl) extBasicServiceCode).encodeAll(asnOs);
+                }
+                asnOs.FinalizeContent(pos);
+            }
+
+            if (this.tCauseValueCriteria != null) {
+                asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_tCauseValueCriteria);
+                int pos = asnOs.StartContentDefiniteLength();
+                for (CauseValue causeValue : this.tCauseValueCriteria) {
+                    ((CauseValueImpl) causeValue).encodeAll(asnOs);
+                }
+                asnOs.FinalizeContent(pos);
+            }
+
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.tBcsmTriggerDetectionPoint != null) {
+            sb.append("tBcsmTriggerDetectionPoint=");
+            sb.append(this.tBcsmTriggerDetectionPoint.toString());
+            sb.append(", ");
+        }
+
+        if (this.basicServiceCriteria != null) {
+            sb.append("basicServiceCriteria=[");
+            boolean firstItem = true;
+            for (ExtBasicServiceCode be : this.basicServiceCriteria) {
+                if (firstItem)
+                    firstItem = false;
+                else
+                    sb.append(", ");
+                sb.append(be.toString());
+            }
+            sb.append("], ");
+        }
+
+        if (this.tCauseValueCriteria != null) {
+            sb.append("tCauseValueCriteria=[");
+            boolean firstItem = true;
+            for (CauseValue be : this.tCauseValueCriteria) {
+                if (firstItem)
+                    firstItem = false;
+                else
+                    sb.append(", ");
+                sb.append(be.toString());
+            }
+            sb.append("] ");
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

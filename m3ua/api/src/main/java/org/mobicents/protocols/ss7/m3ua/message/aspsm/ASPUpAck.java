@@ -27,19 +27,19 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ASPIdentifier;
 import org.mobicents.protocols.ss7.m3ua.parameter.InfoString;
 
 /**
- * The ASP UP Ack message is used to acknowledge an ASP Up message received from
- * a remote M3UA peer. Both ASP Identifier and INFO String are optional
- * 
+ * The ASP UP Ack message is used to acknowledge an ASP Up message received from a remote M3UA peer. Both ASP Identifier and
+ * INFO String are optional
+ *
  * @author amit bhayani
- * 
+ *
  */
 public interface ASPUpAck extends M3UAMessage {
 
-    public ASPIdentifier getASPIdentifier();
+    ASPIdentifier getASPIdentifier();
 
-    public void setASPIdentifier(ASPIdentifier aspId);
+    void setASPIdentifier(ASPIdentifier aspId);
 
-    public InfoString getInfoString();
+    InfoString getInfoString();
 
-    public void setInfoString(InfoString str);
+    void setInfoString(InfoString str);
 }

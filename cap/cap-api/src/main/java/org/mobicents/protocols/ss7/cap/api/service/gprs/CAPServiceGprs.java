@@ -28,16 +28,17 @@ import org.mobicents.protocols.ss7.cap.api.CAPServiceBase;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPServiceGprs extends CAPServiceBase {
 
-	public CAPDialogGprs createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress) throws CAPException;
+    CAPDialogGprs createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress)
+            throws CAPException;
 
-	public void addCAPServiceListener(CAPServiceGprsListener capServiceListener);
+    void addCAPServiceListener(CAPServiceGprsListener capServiceListener);
 
-	public void removeCAPServiceListener(CAPServiceGprsListener capServiceListener);
+    void removeCAPServiceListener(CAPServiceGprsListener capServiceListener);
 
 }

@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -25,37 +25,29 @@ package org.mobicents.protocols.ss7.map.api.errors;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
-*
-
-busySubscriber  ERROR ::= {
-	PARAMETER
-		BusySubscriberParam
-		-- optional
-	CODE	local:45 }
-
-BusySubscriberParam ::= SEQUENCE {
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	ccbs-Possible	[0] NULL		OPTIONAL,
-	ccbs-Busy		[1] NULL		OPTIONAL}
-
-  
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ busySubscriber ERROR ::= { PARAMETER BusySubscriberParam -- optional CODE local:45 }
+ *
+ * BusySubscriberParam ::= SEQUENCE { extensionContainer ExtensionContainer OPTIONAL, ..., ccbs-Possible [0] NULL OPTIONAL,
+ * ccbs-Busy [1] NULL OPTIONAL}
+ *
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface MAPErrorMessageBusySubscriber extends MAPErrorMessage {
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public boolean getCcbsPossible();
+    boolean getCcbsPossible();
 
-	public boolean getCcbsBusy();
+    boolean getCcbsBusy();
 
-	public void setExtensionContainer(MAPExtensionContainer val);
+    void setExtensionContainer(MAPExtensionContainer val);
 
-	public void setCcbsPossible(boolean val);
+    void setCcbsPossible(boolean val);
 
-	public void setCcbsBusy(boolean val);
+    void setCcbsBusy(boolean val);
 
 }

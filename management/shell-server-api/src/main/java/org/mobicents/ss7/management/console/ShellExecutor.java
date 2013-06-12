@@ -23,16 +23,16 @@
 package org.mobicents.ss7.management.console;
 
 /**
- * Listener interface for receiving options specific to linkset. The class that
- * is interested in processing command implements this interface.
- * 
+ * Listener interface for receiving options specific to linkset. The class that is interested in processing command implements
+ * this interface.
+ *
  * @author amit bhayani
- * 
+ *
  */
 public interface ShellExecutor {
 
-	public boolean handles(String command);
-	
-    public String execute(String[] options);
+    boolean handles(String command);
+
+    String execute(String[] options);
 
 }

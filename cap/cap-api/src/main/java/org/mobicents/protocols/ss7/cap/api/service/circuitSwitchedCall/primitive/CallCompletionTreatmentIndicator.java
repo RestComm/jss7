@@ -23,40 +23,37 @@
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
-*
-callCompletionTreatmentIndicator [2] OCTET STRING (SIZE(1)) OPTIONAL,
--- acceptCallCompletionServiceRequest 'xxxx xx01'B,
--- rejectCallCompletionServiceRequest 'xxxx xx10'B
--- if absent from Connect or ContinueWithArgument,
--- then CAMEL service does not affect call completion treatment
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ callCompletionTreatmentIndicator [2] OCTET STRING (SIZE(1)) OPTIONAL, -- acceptCallCompletionServiceRequest 'xxxx xx01'B, --
+ * rejectCallCompletionServiceRequest 'xxxx xx10'B -- if absent from Connect or ContinueWithArgument, -- then CAMEL service does
+ * not affect call completion treatment
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public enum CallCompletionTreatmentIndicator {
-	
-	acceptCallCompletionServiceRequest(1),
-	rejectCallCompletionServiceRequest(2);
 
-	private int code;
+    acceptCallCompletionServiceRequest(1), rejectCallCompletionServiceRequest(2);
 
-	private CallCompletionTreatmentIndicator(int code) {
-		this.code = code;
-	}
+    private int code;
 
-	public static CallCompletionTreatmentIndicator getInstance(int code) {
-		switch (code & 0x03) {
-		case 1:
-			return CallCompletionTreatmentIndicator.acceptCallCompletionServiceRequest;
-		case 2:
-			return CallCompletionTreatmentIndicator.rejectCallCompletionServiceRequest;
-		default:
-			return null;
-		}
-	}
+    private CallCompletionTreatmentIndicator(int code) {
+        this.code = code;
+    }
 
-	public int getCode() {
-		return this.code;
-	}
+    public static CallCompletionTreatmentIndicator getInstance(int code) {
+        switch (code & 0x03) {
+            case 1:
+                return CallCompletionTreatmentIndicator.acceptCallCompletionServiceRequest;
+            case 2:
+                return CallCompletionTreatmentIndicator.rejectCallCompletionServiceRequest;
+            default:
+                return null;
+        }
+    }
+
+    public int getCode() {
+        return this.code;
+    }
 
 }

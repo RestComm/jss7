@@ -23,17 +23,15 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-ReportingTrigger ::= OCTET STRING (SIZE (1))
-	-- Octet is coded as described in 3GPP TS 32.422.
-
- * 
+ *
+ ReportingTrigger ::= OCTET STRING (SIZE (1)) -- Octet is coded as described in 3GPP TS 32.422.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ReportingTrigger {
 
-	public int getData();
+    int getData();
 
 }

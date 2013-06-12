@@ -31,93 +31,93 @@ import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 import org.mobicents.ss7.congestion.CongestionListener;
 
 /**
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class MAPStackImpl implements MAPStack, CongestionListener {
 
-	protected TCAPStack tcapStack = null;
+    protected TCAPStack tcapStack = null;
 
-	protected MAPProviderImpl mapProvider = null;
+    protected MAPProviderImpl mapProvider = null;
 
-	private State state = State.IDLE;
+    private State state = State.IDLE;
 
-	public MAPStackImpl(SccpProvider sccpPprovider, int ssn) {
-		this.tcapStack = new TCAPStackImpl(sccpPprovider, ssn);
-		TCAPProvider tcapProvider = tcapStack.getProvider();
-		mapProvider = new MAPProviderImpl(tcapProvider);
+    public MAPStackImpl(SccpProvider sccpPprovider, int ssn) {
+        this.tcapStack = new TCAPStackImpl(sccpPprovider, ssn);
+        TCAPProvider tcapProvider = tcapStack.getProvider();
+        mapProvider = new MAPProviderImpl(tcapProvider);
 
-		this.state = State.CONFIGURED;
-	}
+        this.state = State.CONFIGURED;
+    }
 
-	public MAPStackImpl(TCAPProvider tcapProvider) {
+    public MAPStackImpl(TCAPProvider tcapProvider) {
 
-		mapProvider = new MAPProviderImpl(tcapProvider);
-		this.state = State.CONFIGURED;
-	}
+        mapProvider = new MAPProviderImpl(tcapProvider);
+        this.state = State.CONFIGURED;
+    }
 
-	public MAPProvider getMAPProvider() {
-		return this.mapProvider;
-	}
+    public MAPProvider getMAPProvider() {
+        return this.mapProvider;
+    }
 
-	public void start() throws IllegalStateException {
-		if (state != State.CONFIGURED) {
-			throw new IllegalStateException("Stack has not been configured or is already running!");
-		}
-		if (tcapStack != null) {
-			// this is null in junits!
-			this.tcapStack.start();
-		}
-		this.mapProvider.start();
+    public void start() throws IllegalStateException {
+        if (state != State.CONFIGURED) {
+            throw new IllegalStateException("Stack has not been configured or is already running!");
+        }
+        if (tcapStack != null) {
+            // this is null in junits!
+            this.tcapStack.start();
+        }
+        this.mapProvider.start();
 
-		this.state = State.RUNNING;
+        this.state = State.RUNNING;
 
-	}
+    }
 
-	public void stop() {
-		if (state != State.RUNNING) {
-			throw new IllegalStateException("Stack is not running!");
-		}
-		this.mapProvider.stop();
-		if (tcapStack != null) {
-			this.tcapStack.stop();
-		}
+    public void stop() {
+        if (state != State.RUNNING) {
+            throw new IllegalStateException("Stack is not running!");
+        }
+        this.mapProvider.stop();
+        if (tcapStack != null) {
+            this.tcapStack.stop();
+        }
 
-		this.state = State.CONFIGURED;
-	}
+        this.state = State.CONFIGURED;
+    }
 
-	// // ///////////////
-	// // CONF METHOD //
-	// // ///////////////
-	// /**
-	// * @throws ConfigurationException
-	// *
-	// */
-	// public void configure(Properties props) throws ConfigurationException {
-	// if (state != State.IDLE) {
-	// throw new
-	// IllegalStateException("Stack already been configured or is already running!");
-	// }
-	// tcapStack.configure(props);
-	// TCAPProvider tcapProvider = tcapStack.getProvider();
-	// mapProvider = new MAPProviderImpl(tcapProvider);
-	// this.state = State.CONFIGURED;
-	// }
+    // // ///////////////
+    // // CONF METHOD //
+    // // ///////////////
+    // /**
+    // * @throws ConfigurationException
+    // *
+    // */
+    // public void configure(Properties props) throws ConfigurationException {
+    // if (state != State.IDLE) {
+    // throw new
+    // IllegalStateException("Stack already been configured or is already running!");
+    // }
+    // tcapStack.configure(props);
+    // TCAPProvider tcapProvider = tcapStack.getProvider();
+    // mapProvider = new MAPProviderImpl(tcapProvider);
+    // this.state = State.CONFIGURED;
+    // }
 
-	private enum State {
-		IDLE, CONFIGURED, RUNNING;
-	}
+    private enum State {
+        IDLE, CONFIGURED, RUNNING;
+    }
 
-	public TCAPStack getTCAPStack() {
-		return this.tcapStack;
-	}
+    public TCAPStack getTCAPStack() {
+        return this.tcapStack;
+    }
 
-	public void onCongestionStart(String congName) {
-		this.mapProvider.onCongestionStart(congName);
-	}
+    public void onCongestionStart(String congName) {
+        this.mapProvider.onCongestionStart(congName);
+    }
 
-	public void onCongestionFinish(String congName) {
-		this.mapProvider.onCongestionFinish(congName);
-	}
+    public void onCongestionFinish(String congName) {
+        this.mapProvider.onCongestionFinish(congName);
+    }
 }

@@ -36,144 +36,144 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class CCBSIndicatorsImpl extends SequenceBase implements CCBSIndicators{
-	
-	private static final int _TAG_ccbsPossible = 0;
-	private static final int _TAG_keepCCBSCallIndicator = 1;
-	private static final int _TAG_mapExtensionContainer = 2;
-	
-	private boolean ccbsPossible;
-	private boolean keepCCBSCallIndicator;
-	private MAPExtensionContainer mapExtensionContainer;
+public class CCBSIndicatorsImpl extends SequenceBase implements CCBSIndicators {
 
-	public CCBSIndicatorsImpl() {
-		super("CCBSIndicators");
-	}
+    private static final int _TAG_ccbsPossible = 0;
+    private static final int _TAG_keepCCBSCallIndicator = 1;
+    private static final int _TAG_mapExtensionContainer = 2;
 
-	public CCBSIndicatorsImpl(boolean ccbsPossible,
-			boolean keepCCBSCallIndicator,
-			MAPExtensionContainer mapExtensionContainer) {
-		super("CCBSIndicators");
-		this.ccbsPossible = ccbsPossible;
-		this.keepCCBSCallIndicator = keepCCBSCallIndicator;
-		this.mapExtensionContainer = mapExtensionContainer;
-	}
-	
-	@Override
-	public boolean getCCBSPossible() {
-		return this.ccbsPossible;
-	}
+    private boolean ccbsPossible;
+    private boolean keepCCBSCallIndicator;
+    private MAPExtensionContainer mapExtensionContainer;
 
-	@Override
-	public boolean getKeepCCBSCallIndicator() {
-		return this.keepCCBSCallIndicator;
-	}
+    public CCBSIndicatorsImpl() {
+        super("CCBSIndicators");
+    }
 
-	@Override
-	public MAPExtensionContainer getMAPExtensionContainer() {
-		return this.mapExtensionContainer;
-	}
+    public CCBSIndicatorsImpl(boolean ccbsPossible, boolean keepCCBSCallIndicator, MAPExtensionContainer mapExtensionContainer) {
+        super("CCBSIndicators");
+        this.ccbsPossible = ccbsPossible;
+        this.keepCCBSCallIndicator = keepCCBSCallIndicator;
+        this.mapExtensionContainer = mapExtensionContainer;
+    }
 
-	@Override
-	protected void _decode(AsnInputStream asnIS, int length)
-			throws MAPParsingComponentException, IOException, AsnException {
+    @Override
+    public boolean getCCBSPossible() {
+        return this.ccbsPossible;
+    }
 
-		this.ccbsPossible = false;
-		this.keepCCBSCallIndicator = false;
-		this.mapExtensionContainer = null; 
+    @Override
+    public boolean getKeepCCBSCallIndicator() {
+        return this.keepCCBSCallIndicator;
+    }
 
-		AsnInputStream ais = asnIS.readSequenceStreamData(length);
+    @Override
+    public MAPExtensionContainer getMAPExtensionContainer() {
+        return this.mapExtensionContainer;
+    }
 
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    @Override
+    protected void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-			int tag = ais.readTag();
+        this.ccbsPossible = false;
+        this.keepCCBSCallIndicator = false;
+        this.mapExtensionContainer = null;
 
-			switch(ais.getTagClass()) {
-			case Tag.CLASS_CONTEXT_SPECIFIC: {
-				switch(tag) {
-				case _TAG_ccbsPossible:
-					if (!ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ".ccbsPossible: Parameter is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-					ais.readNull();
-					this.ccbsPossible = true;
-					break;
-				case _TAG_keepCCBSCallIndicator:
-					if (!ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ".keepCCBSCallIndicator: Parameter is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-					ais.readNull();
-					this.keepCCBSCallIndicator = true;
-					break;
-				case _TAG_mapExtensionContainer:
-					if (ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ".mapExtensionContainer: Parameter mapExtensionContainer is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-					this.mapExtensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl) this.mapExtensionContainer).decodeAll(ais);
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-			}
-				break;
-			default:
-				ais.advanceElement();
-				break;
-			}
-		}
-	}
-	
+        AsnInputStream ais = asnIS.readSequenceStreamData(length);
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-		try {
-			if (this.ccbsPossible)
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ccbsPossible);
-			
-			if (this.keepCCBSCallIndicator)
-				asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_keepCCBSCallIndicator);
+            int tag = ais.readTag();
 
-			if (this.mapExtensionContainer != null)
-				((MAPExtensionContainerImpl) this.mapExtensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_mapExtensionContainer);
+            switch (ais.getTagClass()) {
+                case Tag.CLASS_CONTEXT_SPECIFIC: {
+                    switch (tag) {
+                        case _TAG_ccbsPossible:
+                            if (!ais.isTagPrimitive())
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ".ccbsPossible: Parameter is not primitive",
+                                        MAPParsingComponentExceptionReason.MistypedParameter);
+                            ais.readNull();
+                            this.ccbsPossible = true;
+                            break;
+                        case _TAG_keepCCBSCallIndicator:
+                            if (!ais.isTagPrimitive())
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ".keepCCBSCallIndicator: Parameter is not primitive",
+                                        MAPParsingComponentExceptionReason.MistypedParameter);
+                            ais.readNull();
+                            this.keepCCBSCallIndicator = true;
+                            break;
+                        case _TAG_mapExtensionContainer:
+                            if (ais.isTagPrimitive())
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ".mapExtensionContainer: Parameter mapExtensionContainer is primitive",
+                                        MAPParsingComponentExceptionReason.MistypedParameter);
+                            this.mapExtensionContainer = new MAPExtensionContainerImpl();
+                            ((MAPExtensionContainerImpl) this.mapExtensionContainer).decodeAll(ais);
+                            break;
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+                }
+                    break;
+                default:
+                    ais.advanceElement();
+                    break;
+            }
+        }
+    }
 
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+        try {
+            if (this.ccbsPossible)
+                asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ccbsPossible);
 
-		if (this.ccbsPossible) {
-			sb.append("ccbsPossible, ");
-		}
+            if (this.keepCCBSCallIndicator)
+                asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_keepCCBSCallIndicator);
 
-		if (this.keepCCBSCallIndicator) {
-			sb.append("keepCCBSCallIndicator, ");
-		}
+            if (this.mapExtensionContainer != null)
+                ((MAPExtensionContainerImpl) this.mapExtensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _TAG_mapExtensionContainer);
 
-		if (this.mapExtensionContainer != null) {
-			sb.append("mapExtensionContainer=");
-			sb.append(this.mapExtensionContainer.toString());
-			sb.append(" ");
-		}
+        } catch (IOException e) {
+            throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		sb.append("]");
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
 
-		return sb.toString();
-	}
+        if (this.ccbsPossible) {
+            sb.append("ccbsPossible, ");
+        }
+
+        if (this.keepCCBSCallIndicator) {
+            sb.append("keepCCBSCallIndicator, ");
+        }
+
+        if (this.mapExtensionContainer != null) {
+            sb.append("mapExtensionContainer=");
+            sb.append(this.mapExtensionContainer.toString());
+            sb.append(" ");
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

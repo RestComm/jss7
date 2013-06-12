@@ -23,19 +23,17 @@
 package org.mobicents.protocols.ss7.m3ua.parameter;
 
 /**
- * The Unavailability Cause and MTP3-User Identity fields, associated with the
- * Affected PC in the Affected Point Code parameter
- * 
+ * The Unavailability Cause and MTP3-User Identity fields, associated with the Affected PC in the Affected Point Code parameter
+ *
  * @author amit bhayani
- * 
+ *
  */
 public interface UserCause extends Parameter {
 
     /**
      * <p>
-     * The Unavailability Cause parameter provides the reason for the
-     * unavailability of the MTP3-User. The valid values for the Unavailability
-     * Cause parameter are
+     * The Unavailability Cause parameter provides the reason for the unavailability of the MTP3-User. The valid values for the
+     * Unavailability Cause parameter are
      * </p>
      * <p>
      * <ul>
@@ -44,16 +42,15 @@ public interface UserCause extends Parameter {
      * <li>2 Inaccessible Remote User</li>
      * </ul>
      * </p>
-     * 
+     *
      * @return
      */
-    public int getCause();
+    int getCause();
 
     /**
      * <p>
-     * The MTP3-User Identity describes the specific MTP3-User that is
-     * unavailable (e.g., ISUP, SCCP, etc.). Some of the valid values for the
-     * MTP3-User Identity are
+     * The MTP3-User Identity describes the specific MTP3-User that is unavailable (e.g., ISUP, SCCP, etc.). Some of the valid
+     * values for the MTP3-User Identity are
      * </p>
      * <p>
      * <ul>
@@ -71,9 +68,9 @@ public interface UserCause extends Parameter {
      * <li>15 Reserved</li>
      * </ul>
      * </p>
-     * 
+     *
      * @return
      */
-    public int getUser();
+    int getUser();
 
 }

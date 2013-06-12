@@ -26,35 +26,27 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 
-/**	
- * 
-
-MAP V1:
-TraceSubscriberActivity ::= OPERATION--Timer s
-ARGUMENT
-	traceSubscriberActivityArg	TraceSubscriberActivityArg
-
-TraceSubscriberActivityArg ::= SEQUENCE {
-	imsi				[0] IMSI	OPTIONAL,
-	traceReference		[1] TraceReference,
-	traceType			[2] TraceType,
-	omc-Id				[3] AddressString	OPTIONAL,
-	callReference		[4] CallReference	OPTIONAL}
-
- * 
+/**
+ *
+ MAP V1: TraceSubscriberActivity ::= OPERATION--Timer s ARGUMENT traceSubscriberActivityArg TraceSubscriberActivityArg
+ *
+ * TraceSubscriberActivityArg ::= SEQUENCE { imsi [0] IMSI OPTIONAL, traceReference [1] TraceReference, traceType [2] TraceType,
+ * omc-Id [3] AddressString OPTIONAL, callReference [4] CallReference OPTIONAL}
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface TraceSubscriberActivityRequest extends OamMessage {
 
-	public IMSI getImsi();
+    IMSI getImsi();
 
-	public TraceReference getTraceReference();
+    TraceReference getTraceReference();
 
-	public TraceType getTraceType();
+    TraceType getTraceType();
 
-	public AddressString getOmcId();
+    AddressString getOmcId();
 
-	public CallReference getCallReference();
+    CallReference getCallReference();
 
 }

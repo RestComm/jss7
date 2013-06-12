@@ -29,16 +29,15 @@ import javolution.xml.stream.XMLStreamException;
 import org.mobicents.protocols.ss7.scheduler.Scheduler;
 
 /**
- * The instance of this class represents the signaling link over which SS7
- * signaling takes place. A link is in {@link LinkState#UNAVAILABLE UNAVAILABLE}
- * state and mode is {@link LinkMode#UNCONFIGURED UNCONFIGURED} by default.
- * 
+ * The instance of this class represents the signaling link over which SS7 signaling takes place. A link is in
+ * {@link LinkState#UNAVAILABLE UNAVAILABLE} state and mode is {@link LinkMode#UNCONFIGURED UNCONFIGURED} by default.
+ *
  * @author amit bhayani
- * 
+ *
  */
 public abstract class Link implements XMLSerializable {
-    
-    //Name of link can be max 10 characters
+
+    // Name of link can be max 10 characters
     protected static final int NAME_SIZE = 10;
 
     protected String linkName = null;
@@ -59,7 +58,7 @@ public abstract class Link implements XMLSerializable {
     protected static final boolean FALSE = false;
 
     protected Scheduler scheduler;
-    
+
     public Link() {
     }
 
@@ -74,17 +73,17 @@ public abstract class Link implements XMLSerializable {
     public void setScheduler(Scheduler scheduler) {
         this.scheduler = scheduler;
     }
-    
+
     /**
      * Configure this link.
-     * 
+     *
      * @throws Exception
      */
     protected abstract void configure() throws Exception;
 
     /**
      * Get link name
-     * 
+     *
      * @return
      */
     public String getName() {
@@ -93,7 +92,7 @@ public abstract class Link implements XMLSerializable {
 
     /**
      * Get link state
-     * 
+     *
      * @return
      */
     public int getState() {
@@ -102,7 +101,7 @@ public abstract class Link implements XMLSerializable {
 
     /**
      * Set link state
-     * 
+     *
      * @param state
      */
     public void setState(int state) {
@@ -111,7 +110,7 @@ public abstract class Link implements XMLSerializable {
 
     /**
      * Get link mode
-     * 
+     *
      * @return
      */
     public int getMode() {
@@ -120,7 +119,7 @@ public abstract class Link implements XMLSerializable {
 
     /**
      * Set link mode
-     * 
+     *
      * @param mode
      */
     public void setMode(int mode) {
@@ -129,7 +128,7 @@ public abstract class Link implements XMLSerializable {
 
     /**
      * Get the {@link Linkset} that this link belongs to
-     * 
+     *
      * @return
      */
     public Linkset getLinkSet() {
@@ -138,7 +137,7 @@ public abstract class Link implements XMLSerializable {
 
     /**
      * Set the {@link Linkset}
-     * 
+     *
      * @param linkSet
      */
     public void setLinkSet(Linkset linkSet) {
@@ -150,15 +149,13 @@ public abstract class Link implements XMLSerializable {
      */
 
     /**
-     * Deactivate this link. If its not {@link LinkState#AVAILABLE AVAILABLE},
-     * exception is thrown.
+     * Deactivate this link. If its not {@link LinkState#AVAILABLE AVAILABLE}, exception is thrown.
      */
     public abstract void deactivate() throws Exception;
 
     /**
-     * Activate this link. If its already {@link LinkState#AVAILABLE AVAILABLE}
-     * exception is thrown
-     * 
+     * Activate this link. If its already {@link LinkState#AVAILABLE AVAILABLE} exception is thrown
+     *
      * @throws Exception
      */
     public abstract void activate() throws Exception;
@@ -166,20 +163,17 @@ public abstract class Link implements XMLSerializable {
     /**
      * Serialization code
      */
-    protected static final XMLFormat<Link> LINK_XML = new XMLFormat<Link>(
-            Link.class) {
+    protected static final XMLFormat<Link> LINK_XML = new XMLFormat<Link>(Link.class) {
 
         @Override
-        public void read(javolution.xml.XMLFormat.InputElement xml, Link link)
-                throws XMLStreamException {
+        public void read(javolution.xml.XMLFormat.InputElement xml, Link link) throws XMLStreamException {
             link.linkName = xml.getAttribute(LINK_NAME).toString();
             link.state = xml.getAttribute(LINK_STATE, LinkState.UNAVAILABLE);
             link.mode = xml.getAttribute(LINK_MODE, LinkMode.UNCONFIGURED);
         }
 
         @Override
-        public void write(Link link, javolution.xml.XMLFormat.OutputElement xml)
-                throws XMLStreamException {
+        public void write(Link link, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
             xml.setAttribute(LINK_NAME, link.linkName);
             xml.setAttribute(LINK_STATE, link.state);
             xml.setAttribute(LINK_MODE, link.mode);
@@ -188,15 +182,11 @@ public abstract class Link implements XMLSerializable {
     };
 
     /**
-     * Add the details of this link in passed {@link StringBuffer}. This is for
-     * printing the link state.
-     * 
-     * @param sb
-     *            Add the information in this buffer
-     * @param leftPad
-     *            number of spaces from left side
-     * @param descPad
-     *            number of spaces between each word
+     * Add the details of this link in passed {@link StringBuffer}. This is for printing the link state.
+     *
+     * @param sb Add the information in this buffer
+     * @param leftPad number of spaces from left side
+     * @param descPad number of spaces between each word
      */
     public abstract void print(StringBuffer sb, int leftPad, int descPad);
 

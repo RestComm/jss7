@@ -25,23 +25,19 @@ package org.mobicents.protocols.ss7.cap.api.gap;
 import org.mobicents.protocols.ss7.cap.api.isup.Digits;
 
 /**
-*
- calledAddressAndService    [29] SEQUENCE { 
-  calledAddressValue     [0] Digits {bound}, 
-  serviceKey       [1] ServiceKey, 
-  ... 
-  }, 
-
-ServiceKey::= Integer4
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ calledAddressAndService [29] SEQUENCE { calledAddressValue [0] Digits {bound}, serviceKey [1] ServiceKey, ... },
+ *
+ * ServiceKey::= Integer4
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface CalledAddressAndService {
 
-	public Digits getCalledAddressValue();
+    Digits getCalledAddressValue();
 
-	public int getServiceKey();
+    int getServiceKey();
 
 }

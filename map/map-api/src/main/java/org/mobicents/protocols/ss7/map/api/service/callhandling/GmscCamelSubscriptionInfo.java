@@ -32,37 +32,31 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TCSI;
 
 /**
- * 
-
-GmscCamelSubscriptionInfo ::= SEQUENCE {
-	t-CSI		[0] T-CSI	OPTIONAL,
-	o-CSI		[1] O-CSI	OPTIONAL,
-	extensionContainer	[2] ExtensionContainer	OPTIONAL,
-	...,
-	o-BcsmCamelTDP-CriteriaList	[3] O-BcsmCamelTDPCriteriaList	OPTIONAL,
-	t-BCSM-CAMEL-TDP-CriteriaList	[4]	T-BCSM-CAMEL-TDP-CriteriaList	OPTIONAL,
-	d-csi		[5]	D-CSI	OPTIONAL}
-
-O-BcsmCamelTDPCriteriaList ::= SEQUENCE SIZE (1..10) OF O-BcsmCamelTDP-Criteria 
-
-T-BCSM-CAMEL-TDP-CriteriaList ::= SEQUENCE SIZE (1..10) OF T-BCSM-CAMEL-TDP-Criteria 
-
- * 
+ *
+ GmscCamelSubscriptionInfo ::= SEQUENCE { t-CSI [0] T-CSI OPTIONAL, o-CSI [1] O-CSI OPTIONAL, extensionContainer [2]
+ * ExtensionContainer OPTIONAL, ..., o-BcsmCamelTDP-CriteriaList [3] O-BcsmCamelTDPCriteriaList OPTIONAL,
+ * t-BCSM-CAMEL-TDP-CriteriaList [4] T-BCSM-CAMEL-TDP-CriteriaList OPTIONAL, d-csi [5] D-CSI OPTIONAL}
+ *
+ * O-BcsmCamelTDPCriteriaList ::= SEQUENCE SIZE (1..10) OF O-BcsmCamelTDP-Criteria
+ *
+ * T-BCSM-CAMEL-TDP-CriteriaList ::= SEQUENCE SIZE (1..10) OF T-BCSM-CAMEL-TDP-Criteria
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface GmscCamelSubscriptionInfo {
 
-	public TCSI getTCsi();
+    TCSI getTCsi();
 
-	public OCSI getOCsi();
+    OCSI getOCsi();
 
-	public MAPExtensionContainer getMAPExtensionContainer();
+    MAPExtensionContainer getMAPExtensionContainer();
 
-	public ArrayList<OBcsmCamelTdpCriteria> getOBcsmCamelTdpCriteriaList();
+    ArrayList<OBcsmCamelTdpCriteria> getOBcsmCamelTdpCriteriaList();
 
-	public ArrayList<TBcsmCamelTdpCriteria> getTBcsmCamelTdpCriteriaList();
+    ArrayList<TBcsmCamelTdpCriteria> getTBcsmCamelTdpCriteriaList();
 
-	public DCSI getDCsi();
+    DCSI getDCsi();
 
 }

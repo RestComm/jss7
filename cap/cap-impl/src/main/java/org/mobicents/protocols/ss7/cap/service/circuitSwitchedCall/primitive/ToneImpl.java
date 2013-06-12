@@ -35,171 +35,169 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class ToneImpl implements Tone, CAPAsnPrimitive {
 
-	public static final int _ID_toneID = 0;
-	public static final int _ID_duration = 1;
+    public static final int _ID_toneID = 0;
+    public static final int _ID_duration = 1;
 
-	public static final String _PrimitiveName = "Tone";
+    public static final String _PrimitiveName = "Tone";
 
-	private int toneID;
-	private Integer duration;
+    private int toneID;
+    private Integer duration;
 
-	
-	public ToneImpl() {
-	}
-	
-	public ToneImpl(int toneID, Integer duration) {
-		this.toneID = toneID;
-		this.duration = duration;
-	}
-	
-	@Override
-	public int getToneID() {
-		return toneID;
-	}
+    public ToneImpl() {
+    }
 
-	@Override
-	public Integer getDuration() {
-		return duration;
-	}
+    public ToneImpl(int toneID, Integer duration) {
+        this.toneID = toneID;
+        this.duration = duration;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public int getToneID() {
+        return toneID;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public Integer getDuration() {
+        return duration;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		this.toneID = 0;
-		this.duration = null;
-		boolean toneIDRecieved = false;
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-			int tag = ais.readTag();
+        this.toneID = 0;
+        this.duration = null;
+        boolean toneIDRecieved = false;
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_toneID:
-					this.toneID = (int) ais.readInteger();
-					toneIDRecieved = true;
-					break;
-				case _ID_duration:
-					this.duration = (int) ais.readInteger();
-					break;
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+            int tag = ais.readTag();
 
-		if (toneIDRecieved == false)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": toneID is mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_toneID:
+                        this.toneID = (int) ais.readInteger();
+                        toneIDRecieved = true;
+                        break;
+                    case _ID_duration:
+                        this.duration = (int) ais.readInteger();
+                        break;
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-		
-	}
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        if (toneIDRecieved == false)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": toneID is mandatory but not found", CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 
-	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+    }
 
-		try {
-			aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_toneID, this.toneID);
-			if (this.duration != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_duration, this.duration);
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public void encodeData(AsnOutputStream aos) throws CAPException {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        try {
+            aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_toneID, this.toneID);
+            if (this.duration != null)
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_duration, this.duration);
 
-		sb.append("toneID=");
-		sb.append(this.toneID);
-		if (this.duration != null) {
-			sb.append(", duration=");
-			sb.append(this.duration);
-		}
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		sb.append("]");
+    @Override
+    public String toString() {
 
-		return sb.toString();
-	}
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        sb.append("toneID=");
+        sb.append(this.toneID);
+        if (this.duration != null) {
+            sb.append(", duration=");
+            sb.append(this.duration);
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

@@ -52,113 +52,112 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-
 /*
- * 
+ *
  * @author cristian veliscu
- * 
+ *
  */
 public class ExtendedRoutingInfoTest {
     Logger logger = Logger.getLogger(ExtendedRoutingInfoTest.class);
-    
-	private byte[] getData1() {
-		return new byte[] { 4, 7, -111, -105, 114, 99, 80, 24, -7 };
-	}
 
-	private byte[] getData2() {
-		return new byte[] { -88, 64, 48, 7, -123, 5, -111, 17, 17, 33, 34, -96,
-				12, -96, 10, 48, 8, 48, 6, 10, 1, 12, 2, 1, 5, -95, 39, -96,
-				32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3,
-				42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95,
-				3, 31, 32, 33 };
-	}
+    private byte[] getData1() {
+        return new byte[] { 4, 7, -111, -105, 114, 99, 80, 24, -7 };
+    }
 
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
+    private byte[] getData2() {
+        return new byte[] { -88, 64, 48, 7, -123, 5, -111, 17, 17, 33, 34, -96, 12, -96, 10, 48, 8, 48, 6, 10, 1, 12, 2, 1, 5,
+                -95, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5,
+                21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
+    }
 
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
 
-	@BeforeTest
-	public void setUp() {
-	}
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
-	@AfterTest
-	public void tearDown() {
-	}
-	
-	@Test(groups = { "functional.decode", "service.callhandling" })
-	public void testDecode() throws Exception {
-		// 4 = 00|0|00100, 7 = length
-		//Option 1
-		AsnInputStream asn = new AsnInputStream(this.getData1());
-		int tag = asn.readTag();
-		
-		ExtendedRoutingInfoImpl extRouteInfo = new ExtendedRoutingInfoImpl();
-		extRouteInfo.decodeAll(asn);
-		
-		RoutingInfo routeInfo = extRouteInfo.getRoutingInfo();
-		ISDNAddressString isdnAdd = routeInfo.getRoamingNumber(); 
-	    
-		assertNotNull(isdnAdd);
-		assertEquals(isdnAdd.getAddressNature(),AddressNature.international_number);
-		assertEquals(isdnAdd.getNumberingPlan(),NumberingPlan.ISDN);
-		assertEquals(isdnAdd.getAddress(),"79273605819");	
+    @BeforeTest
+    public void setUp() {
+    }
 
-		//Option 2
-		asn = new AsnInputStream(this.getData2());
-		tag = asn.readTag();
+    @AfterTest
+    public void tearDown() {
+    }
 
-		extRouteInfo = new ExtendedRoutingInfoImpl();
-		extRouteInfo.decodeAll(asn);
+    @Test(groups = { "functional.decode", "service.callhandling" })
+    public void testDecode() throws Exception {
+        // 4 = 00|0|00100, 7 = length
+        // Option 1
+        AsnInputStream asn = new AsnInputStream(this.getData1());
+        int tag = asn.readTag();
 
-		ForwardingData fd = extRouteInfo.getCamelRoutingInfo().getForwardingData();
-		assertTrue(fd.getForwardedToNumber().getAddress().equals("11111222"));
-		assertNull(fd.getForwardedToSubaddress());
-		GmscCamelSubscriptionInfo gcs = extRouteInfo.getCamelRoutingInfo().getGmscCamelSubscriptionInfo();
-		assertEquals(gcs.getTCsi().getTBcsmCamelTDPDataList().get(0).getTBcsmTriggerDetectionPoint(),
-				TBcsmTriggerDetectionPoint.termAttemptAuthorized);
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extRouteInfo.getCamelRoutingInfo().getExtensionContainer()));
-	}
-	
-	@Test(groups = { "functional.encode", "service.callhandling" })
-	public void testEncode() throws Exception {
-		// 4 = 00|0|00100, 7 = length
-		// Option 1
-		ISDNAddressString isdnAdd = new ISDNAddressStringImpl(AddressNature.international_number, 
-									NumberingPlan.ISDN, "79273605819");
-		RoutingInfoImpl routeInfo = new RoutingInfoImpl(isdnAdd);
-		ExtendedRoutingInfoImpl extRouteInfo = new ExtendedRoutingInfoImpl(routeInfo);
+        ExtendedRoutingInfoImpl extRouteInfo = new ExtendedRoutingInfoImpl();
+        extRouteInfo.decodeAll(asn);
 
-		AsnOutputStream asnOS = new AsnOutputStream();
-	    extRouteInfo.encodeAll(asnOS);
+        RoutingInfo routeInfo = extRouteInfo.getRoutingInfo();
+        ISDNAddressString isdnAdd = routeInfo.getRoamingNumber();
 
-	    byte[] encodedData = asnOS.toByteArray();
-		assertTrue(Arrays.equals(this.getData1(), encodedData));
+        assertNotNull(isdnAdd);
+        assertEquals(isdnAdd.getAddressNature(), AddressNature.international_number);
+        assertEquals(isdnAdd.getNumberingPlan(), NumberingPlan.ISDN);
+        assertEquals(isdnAdd.getAddress(), "79273605819");
 
+        // Option 2
+        asn = new AsnInputStream(this.getData2());
+        tag = asn.readTag();
 
-		// Option 2
-		ISDNAddressString forwardedToNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "11111222");
-		ForwardingData forwardingData = new ForwardingDataImpl(forwardedToNumber, null, null, null, null);
-		ArrayList<TBcsmCamelTDPData> lst = new ArrayList<TBcsmCamelTDPData>();
-		TBcsmCamelTDPData tb = new TBcsmCamelTDPDataImpl(TBcsmTriggerDetectionPoint.termAttemptAuthorized, 5, null, null, null);
-		lst.add(tb);
-		TCSI tCsi = new TCSIImpl(lst, null, null, false, false);
-		GmscCamelSubscriptionInfo gmscCamelSubscriptionInfo = new GmscCamelSubscriptionInfoImpl(tCsi, null, null, null, null, null);
-		CamelRoutingInfoImpl camelRoutingInfo = new CamelRoutingInfoImpl(forwardingData, gmscCamelSubscriptionInfo, MAPExtensionContainerTest.GetTestExtensionContainer());
+        extRouteInfo = new ExtendedRoutingInfoImpl();
+        extRouteInfo.decodeAll(asn);
 
-		extRouteInfo = new ExtendedRoutingInfoImpl(camelRoutingInfo);
-		asnOS = new AsnOutputStream();
-		extRouteInfo.encodeAll(asnOS);
+        ForwardingData fd = extRouteInfo.getCamelRoutingInfo().getForwardingData();
+        assertTrue(fd.getForwardedToNumber().getAddress().equals("11111222"));
+        assertNull(fd.getForwardedToSubaddress());
+        GmscCamelSubscriptionInfo gcs = extRouteInfo.getCamelRoutingInfo().getGmscCamelSubscriptionInfo();
+        assertEquals(gcs.getTCsi().getTBcsmCamelTDPDataList().get(0).getTBcsmTriggerDetectionPoint(),
+                TBcsmTriggerDetectionPoint.termAttemptAuthorized);
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extRouteInfo.getCamelRoutingInfo()
+                .getExtensionContainer()));
+    }
 
-		assertTrue(Arrays.equals(this.getData2(), asnOS.toByteArray()));
-	}
-	
-	@Test(groups = { "functional.serialize", "service.callhandling" })
-	public void testSerialization() throws Exception {
-		
-	}
+    @Test(groups = { "functional.encode", "service.callhandling" })
+    public void testEncode() throws Exception {
+        // 4 = 00|0|00100, 7 = length
+        // Option 1
+        ISDNAddressString isdnAdd = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN,
+                "79273605819");
+        RoutingInfoImpl routeInfo = new RoutingInfoImpl(isdnAdd);
+        ExtendedRoutingInfoImpl extRouteInfo = new ExtendedRoutingInfoImpl(routeInfo);
+
+        AsnOutputStream asnOS = new AsnOutputStream();
+        extRouteInfo.encodeAll(asnOS);
+
+        byte[] encodedData = asnOS.toByteArray();
+        assertTrue(Arrays.equals(this.getData1(), encodedData));
+
+        // Option 2
+        ISDNAddressString forwardedToNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN,
+                "11111222");
+        ForwardingData forwardingData = new ForwardingDataImpl(forwardedToNumber, null, null, null, null);
+        ArrayList<TBcsmCamelTDPData> lst = new ArrayList<TBcsmCamelTDPData>();
+        TBcsmCamelTDPData tb = new TBcsmCamelTDPDataImpl(TBcsmTriggerDetectionPoint.termAttemptAuthorized, 5, null, null, null);
+        lst.add(tb);
+        TCSI tCsi = new TCSIImpl(lst, null, null, false, false);
+        GmscCamelSubscriptionInfo gmscCamelSubscriptionInfo = new GmscCamelSubscriptionInfoImpl(tCsi, null, null, null, null,
+                null);
+        CamelRoutingInfoImpl camelRoutingInfo = new CamelRoutingInfoImpl(forwardingData, gmscCamelSubscriptionInfo,
+                MAPExtensionContainerTest.GetTestExtensionContainer());
+
+        extRouteInfo = new ExtendedRoutingInfoImpl(camelRoutingInfo);
+        asnOS = new AsnOutputStream();
+        extRouteInfo.encodeAll(asnOS);
+
+        assertTrue(Arrays.equals(this.getData2(), asnOS.toByteArray()));
+    }
+
+    @Test(groups = { "functional.serialize", "service.callhandling" })
+    public void testSerialization() throws Exception {
+
+    }
 }
-

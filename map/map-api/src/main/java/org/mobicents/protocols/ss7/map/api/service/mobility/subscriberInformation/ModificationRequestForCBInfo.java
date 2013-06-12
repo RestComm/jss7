@@ -29,38 +29,32 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.Password;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 
 /**
- * 
-
-ModificationRequestFor-CB-Info ::= SEQUENCE {
-	ss-Code		[0]	SS-Code,
-	basicService	[1]	Ext-BasicServiceCode	OPTIONAL,
-	ss-Status		[2]	Ext-SS-Status	OPTIONAL,
-	password		[3]	Password	OPTIONAL,
-	wrongPasswordAttemptsCounter	[4]	WrongPasswordAttemptsCounter	OPTIONAL,
-	modifyNotificationToCSE	[5]	ModificationInstruction	OPTIONAL,
-	extensionContainer	[6]	ExtensionContainer	OPTIONAL,
-	...}
-	
-WrongPasswordAttemptsCounter ::= INTEGER (0..4)
-
- * 
+ *
+ ModificationRequestFor-CB-Info ::= SEQUENCE { ss-Code [0] SS-Code, basicService [1] Ext-BasicServiceCode OPTIONAL, ss-Status
+ * [2] Ext-SS-Status OPTIONAL, password [3] Password OPTIONAL, wrongPasswordAttemptsCounter [4] WrongPasswordAttemptsCounter
+ * OPTIONAL, modifyNotificationToCSE [5] ModificationInstruction OPTIONAL, extensionContainer [6] ExtensionContainer OPTIONAL,
+ * ...}
+ *
+ * WrongPasswordAttemptsCounter ::= INTEGER (0..4)
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ModificationRequestForCBInfo {
 
-	public SSCode getSsCode();
+    SSCode getSsCode();
 
-	public ExtBasicServiceCode getBasicService();
+    ExtBasicServiceCode getBasicService();
 
-	public ExtSSStatus getSsStatus();
+    ExtSSStatus getSsStatus();
 
-	public Password getPassword();
+    Password getPassword();
 
-	public Integer getWrongPasswordAttemptsCounter();
+    Integer getWrongPasswordAttemptsCounter();
 
-	public ModificationInstruction getModifyNotificationToCSE();
+    ModificationInstruction getModifyNotificationToCSE();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

@@ -26,27 +26,23 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CSGId;
 
 /**
-*
-UserCSGInformation ::= SEQUENCE {
-	csg-Id	 	[0] CSG-Id,
-	extensionContainer	[1] ExtensionContainer		OPTIONAL,
-	...,
-	accessMode	[2] OCTET STRING (SIZE(1))		OPTIONAL,
-	cmi			[3] OCTET STRING (SIZE(1))		OPTIONAL }
--- The encoding of the accessMode and cmi parameters are as defined in 3GPP TS 29.060 [105].
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ UserCSGInformation ::= SEQUENCE { csg-Id [0] CSG-Id, extensionContainer [1] ExtensionContainer OPTIONAL, ..., accessMode [2]
+ * OCTET STRING (SIZE(1)) OPTIONAL, cmi [3] OCTET STRING (SIZE(1)) OPTIONAL } -- The encoding of the accessMode and cmi
+ * parameters are as defined in 3GPP TS 29.060 [105].
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface UserCSGInformation {
 
-	public CSGId getCSGId();
+    CSGId getCSGId();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public Integer getAccessMode();
+    Integer getAccessMode();
 
-	public Integer getCmi();
+    Integer getCmi();
 
 }

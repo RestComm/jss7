@@ -41,95 +41,69 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSClassmark2;
 
 /**
-*
-
-initialDPSMS {PARAMETERS-BOUND : bound} OPERATION ::= {
-ARGUMENT InitialDPSMSArg {bound}
-RETURN RESULT FALSE
-ERRORS {missingCustomerRecord |
-missingParameter |
-parameterOutOfRange |
-systemFailure |
-taskRefused |
-unexpectedComponentSequence |
-unexpectedDataValue |
-unexpectedParameter}
-CODE opcode-initialDPSMS}
--- Direction: gsmSSF or gprsSSF -> gsmSCF, Timer: Tidpsms
--- This operation is used after a TDP to indicate request for service.
-
-InitialDPSMSArg {PARAMETERS-BOUND : bound} ::= SEQUENCE {
-serviceKey [0] ServiceKey,
-destinationSubscriberNumber [1] CalledPartyBCDNumber {bound} OPTIONAL,
-callingPartyNumber [2] SMS-AddressString OPTIONAL,
-eventTypeSMS [3] EventTypeSMS OPTIONAL,
-iMSI [4] IMSI OPTIONAL,
-locationInformationMSC [5] LocationInformation OPTIONAL,
-locationInformationGPRS [6] LocationInformationGPRS OPTIONAL,
-sMSCAddress [7] ISDN-AddressString OPTIONAL,
-timeAndTimezone [8] TimeAndTimezone {bound} OPTIONAL,
-tPShortMessageSpecificInfo [9] TPShortMessageSpecificInfo OPTIONAL,
-tPProtocolIdentifier [10] TPProtocolIdentifier OPTIONAL,
-tPDataCodingScheme [11] TPDataCodingScheme OPTIONAL,
-tPValidityPeriod [12] TPValidityPeriod OPTIONAL,
-extensions [13] Extensions {bound} OPTIONAL,
-...,
-smsReferenceNumber [14] CallReferenceNumber OPTIONAL,
-mscAddress [15] ISDN-AddressString OPTIONAL,
-sgsn-Number [16] ISDN-AddressString OPTIONAL,
-ms-Classmark2 [17] MS-Classmark2 OPTIONAL,
-gPRSMSClass [18] GPRSMSClass OPTIONAL,
-iMEI [19] IMEI OPTIONAL, calledPartyNumber [20] ISDN-AddressString OPTIONAL
-}
-
-ServiceKey ::= Integer4
-
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ initialDPSMS {PARAMETERS-BOUND : bound} OPERATION ::= { ARGUMENT InitialDPSMSArg {bound} RETURN RESULT FALSE ERRORS
+ * {missingCustomerRecord | missingParameter | parameterOutOfRange | systemFailure | taskRefused | unexpectedComponentSequence |
+ * unexpectedDataValue | unexpectedParameter} CODE opcode-initialDPSMS} -- Direction: gsmSSF or gprsSSF -> gsmSCF, Timer:
+ * Tidpsms -- This operation is used after a TDP to indicate request for service.
+ *
+ * InitialDPSMSArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { serviceKey [0] ServiceKey, destinationSubscriberNumber [1]
+ * CalledPartyBCDNumber {bound} OPTIONAL, callingPartyNumber [2] SMS-AddressString OPTIONAL, eventTypeSMS [3] EventTypeSMS
+ * OPTIONAL, iMSI [4] IMSI OPTIONAL, locationInformationMSC [5] LocationInformation OPTIONAL, locationInformationGPRS [6]
+ * LocationInformationGPRS OPTIONAL, sMSCAddress [7] ISDN-AddressString OPTIONAL, timeAndTimezone [8] TimeAndTimezone {bound}
+ * OPTIONAL, tPShortMessageSpecificInfo [9] TPShortMessageSpecificInfo OPTIONAL, tPProtocolIdentifier [10] TPProtocolIdentifier
+ * OPTIONAL, tPDataCodingScheme [11] TPDataCodingScheme OPTIONAL, tPValidityPeriod [12] TPValidityPeriod OPTIONAL, extensions
+ * [13] Extensions {bound} OPTIONAL, ..., smsReferenceNumber [14] CallReferenceNumber OPTIONAL, mscAddress [15]
+ * ISDN-AddressString OPTIONAL, sgsn-Number [16] ISDN-AddressString OPTIONAL, ms-Classmark2 [17] MS-Classmark2 OPTIONAL,
+ * gPRSMSClass [18] GPRSMSClass OPTIONAL, iMEI [19] IMEI OPTIONAL, calledPartyNumber [20] ISDN-AddressString OPTIONAL }
+ *
+ * ServiceKey ::= Integer4
+ *
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface InitialDPSMSRequest extends SmsMessage {
 
-	public int getServiceKey();
+    int getServiceKey();
 
-	public CalledPartyBCDNumber getDestinationSubscriberNumber();
+    CalledPartyBCDNumber getDestinationSubscriberNumber();
 
-	public SMSAddressString getCallingPartyNumber();
+    SMSAddressString getCallingPartyNumber();
 
-	public EventTypeSMS getEventTypeSMS();
+    EventTypeSMS getEventTypeSMS();
 
-	public IMSI getImsi();
+    IMSI getImsi();
 
-	public LocationInformation getLocationInformationMSC();
+    LocationInformation getLocationInformationMSC();
 
-	public LocationInformationGPRS getLocationInformationGPRS();
+    LocationInformationGPRS getLocationInformationGPRS();
 
-	public ISDNAddressString getSMSCAddress();
+    ISDNAddressString getSMSCAddress();
 
-	public TimeAndTimezone getTimeAndTimezone();
+    TimeAndTimezone getTimeAndTimezone();
 
-	public TPShortMessageSpecificInfo getTPShortMessageSpecificInfo();
+    TPShortMessageSpecificInfo getTPShortMessageSpecificInfo();
 
-	public TPProtocolIdentifier getTPProtocolIdentifier();
+    TPProtocolIdentifier getTPProtocolIdentifier();
 
-	public TPDataCodingScheme getTPDataCodingScheme();
+    TPDataCodingScheme getTPDataCodingScheme();
 
-	public TPValidityPeriod getTPValidityPeriod();
+    TPValidityPeriod getTPValidityPeriod();
 
-	public CAPExtensions getExtensions();
+    CAPExtensions getExtensions();
 
-	public CallReferenceNumber getSmsReferenceNumber();
+    CallReferenceNumber getSmsReferenceNumber();
 
-	public ISDNAddressString getMscAddress();
+    ISDNAddressString getMscAddress();
 
-	public ISDNAddressString getSgsnNumber();
+    ISDNAddressString getSgsnNumber();
 
-	public MSClassmark2 getMSClassmark2();
+    MSClassmark2 getMSClassmark2();
 
-	public GPRSMSClass getGPRSMSClass();
+    GPRSMSClass getGPRSMSClass();
 
-	public IMEI getImei();
+    IMEI getImei();
 
 }
-

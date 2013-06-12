@@ -23,17 +23,15 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
 /**
- * 
-
-RequestedServingNode ::= BIT STRING {
-	mmeAndSgsn  (0)} (SIZE (1..8))
-
- * 
+ *
+ RequestedServingNode ::= BIT STRING { mmeAndSgsn (0)} (SIZE (1..8))
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface RequestedServingNode {
 
-	public boolean getMmeAndSgsn();
+    boolean getMmeAndSgsn();
 
 }

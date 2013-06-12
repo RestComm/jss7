@@ -35,222 +35,222 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class IPSSPCapabilitiesImpl implements IPSSPCapabilities, CAPAsnPrimitive {
-	
-	public static int _Mask_IPRoutingAddress = 0x01;
-	public static int _Mask_VoiceBack = 0x02;
-	public static int _Mask_VoiceInformation_SpeechRecognition = 0x04;
-	public static int _Mask_VoiceInformation_VoiceRecognition = 0x08;
-	public static int _Mask_GenerationOfVoiceAnnouncementsFromTextSupported = 0x10;
 
-	public static final String _PrimitiveName = "IPSSPCapabilities";
+    public static int _Mask_IPRoutingAddress = 0x01;
+    public static int _Mask_VoiceBack = 0x02;
+    public static int _Mask_VoiceInformation_SpeechRecognition = 0x04;
+    public static int _Mask_VoiceInformation_VoiceRecognition = 0x08;
+    public static int _Mask_GenerationOfVoiceAnnouncementsFromTextSupported = 0x10;
 
-	private byte[] data;
+    public static final String _PrimitiveName = "IPSSPCapabilities";
 
-	
-	public IPSSPCapabilitiesImpl() {
-	}
-	
-	public IPSSPCapabilitiesImpl(byte[] data) {
-		this.data = data;
-	}
-	
-	public IPSSPCapabilitiesImpl(boolean IPRoutingAddressSupported, boolean VoiceBackSupported, boolean VoiceInformationSupportedViaSpeechRecognition,
-			boolean VoiceInformationSupportedViaVoiceRecognition, boolean GenerationOfVoiceAnnouncementsFromTextSupported, byte[] extraData) {
-		int firstByte = (IPRoutingAddressSupported ? _Mask_IPRoutingAddress : 0) | (VoiceBackSupported ? _Mask_VoiceBack : 0)
-				| (VoiceInformationSupportedViaSpeechRecognition ? _Mask_VoiceInformation_SpeechRecognition : 0)
-				| (VoiceInformationSupportedViaVoiceRecognition ? _Mask_VoiceInformation_VoiceRecognition : 0)
-				| (GenerationOfVoiceAnnouncementsFromTextSupported ? _Mask_GenerationOfVoiceAnnouncementsFromTextSupported : 0);
-		int extraCnt = 0;
-		if (extraData != null)
-			extraCnt = extraData.length;
-		if (extraCnt > 3)
-			extraCnt = 3;
+    private byte[] data;
 
-		this.data = new byte[1 + extraCnt];
-		this.data[0] = (byte) firstByte;
-		if (extraCnt > 0)
-			System.arraycopy(extraData, 0, this.data, 1, extraCnt);
-	}
-	
-	@Override
-	public byte[] getData() {
-		return this.data;
-	}
+    public IPSSPCapabilitiesImpl() {
+    }
 
-	@Override
-	public boolean getIPRoutingAddressSupported() {
+    public IPSSPCapabilitiesImpl(byte[] data) {
+        this.data = data;
+    }
 
-		if (this.data == null || this.data.length == 0)
-			return false;
+    public IPSSPCapabilitiesImpl(boolean IPRoutingAddressSupported, boolean VoiceBackSupported,
+            boolean VoiceInformationSupportedViaSpeechRecognition, boolean VoiceInformationSupportedViaVoiceRecognition,
+            boolean GenerationOfVoiceAnnouncementsFromTextSupported, byte[] extraData) {
+        int firstByte = (IPRoutingAddressSupported ? _Mask_IPRoutingAddress : 0) | (VoiceBackSupported ? _Mask_VoiceBack : 0)
+                | (VoiceInformationSupportedViaSpeechRecognition ? _Mask_VoiceInformation_SpeechRecognition : 0)
+                | (VoiceInformationSupportedViaVoiceRecognition ? _Mask_VoiceInformation_VoiceRecognition : 0)
+                | (GenerationOfVoiceAnnouncementsFromTextSupported ? _Mask_GenerationOfVoiceAnnouncementsFromTextSupported : 0);
+        int extraCnt = 0;
+        if (extraData != null)
+            extraCnt = extraData.length;
+        if (extraCnt > 3)
+            extraCnt = 3;
 
-		return (((int) this.data[0]) & _Mask_IPRoutingAddress) != 0;
-	}
+        this.data = new byte[1 + extraCnt];
+        this.data[0] = (byte) firstByte;
+        if (extraCnt > 0)
+            System.arraycopy(extraData, 0, this.data, 1, extraCnt);
+    }
 
-	@Override
-	public boolean getVoiceBackSupported() {
+    @Override
+    public byte[] getData() {
+        return this.data;
+    }
 
-		if (this.data == null || this.data.length == 0)
-			return false;
+    @Override
+    public boolean getIPRoutingAddressSupported() {
 
-		return (((int) this.data[0]) & _Mask_VoiceBack) != 0;
-	}
+        if (this.data == null || this.data.length == 0)
+            return false;
 
-	@Override
-	public boolean getVoiceInformationSupportedViaSpeechRecognition() {
+        return (((int) this.data[0]) & _Mask_IPRoutingAddress) != 0;
+    }
 
-		if (this.data == null || this.data.length == 0)
-			return false;
+    @Override
+    public boolean getVoiceBackSupported() {
 
-		return (((int) this.data[0]) & _Mask_VoiceInformation_SpeechRecognition) != 0;
-	}
+        if (this.data == null || this.data.length == 0)
+            return false;
 
-	@Override
-	public boolean getVoiceInformationSupportedViaVoiceRecognition() {
+        return (((int) this.data[0]) & _Mask_VoiceBack) != 0;
+    }
 
-		if (this.data == null || this.data.length == 0)
-			return false;
+    @Override
+    public boolean getVoiceInformationSupportedViaSpeechRecognition() {
 
-		return (((int) this.data[0]) & _Mask_VoiceInformation_VoiceRecognition) != 0;
-	}
+        if (this.data == null || this.data.length == 0)
+            return false;
 
-	@Override
-	public boolean getGenerationOfVoiceAnnouncementsFromTextSupported() {
+        return (((int) this.data[0]) & _Mask_VoiceInformation_SpeechRecognition) != 0;
+    }
 
-		if (this.data == null || this.data.length == 0)
-			return false;
+    @Override
+    public boolean getVoiceInformationSupportedViaVoiceRecognition() {
 
-		return (((int) this.data[0]) & _Mask_GenerationOfVoiceAnnouncementsFromTextSupported) != 0;
-	}
+        if (this.data == null || this.data.length == 0)
+            return false;
 
-	@Override
-	public byte[] getExtraData() {
+        return (((int) this.data[0]) & _Mask_VoiceInformation_VoiceRecognition) != 0;
+    }
 
-		if (this.data == null || this.data.length < 2)
-			return null;
+    @Override
+    public boolean getGenerationOfVoiceAnnouncementsFromTextSupported() {
 
-		int extraCount = this.data.length;
-		if (extraCount > 3)
-			extraCount = 3;
-		byte[] res = new byte[extraCount];
-		System.arraycopy(this.data, 1, res, 0, extraCount);
-		return res;
-	}
+        if (this.data == null || this.data.length == 0)
+            return false;
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.STRING_OCTET;
-	}
+        return (((int) this.data[0]) & _Mask_GenerationOfVoiceAnnouncementsFromTextSupported) != 0;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public byte[] getExtraData() {
 
-	@Override
-	public boolean getIsPrimitive() {
-		return true;
-	}
+        if (this.data == null || this.data.length < 2)
+            return null;
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+        int extraCount = this.data.length;
+        if (extraCount > 3)
+            extraCount = 3;
+        byte[] res = new byte[extraCount];
+        System.arraycopy(this.data, 1, res, 0, extraCount);
+        return res;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.STRING_OCTET;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
-		
-		this.data = ansIS.readOctetStringData(length);
-		if (this.data.length < 1 || this.data.length > 4)
-			throw new CAPParsingComponentException("Error decoding " + _PrimitiveName + ": length must be from 1 to 4, real length = " + length,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		if (this.data == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": data field must not be null");
-		if (this.data.length < 1 || this.data.length > 4)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": data field length must be from 1 to 4");
+        this.data = ansIS.readOctetStringData(length);
+        if (this.data.length < 1 || this.data.length > 4)
+            throw new CAPParsingComponentException("Error decoding " + _PrimitiveName
+                    + ": length must be from 1 to 4, real length = " + length,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-		asnOs.writeOctetStringData(data);
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		if (data != null) {
-			if (this.getIPRoutingAddressSupported())
-				sb.append("IPRoutingAddressSupported, ");
-			if (this.getVoiceBackSupported())
-				sb.append("VoiceBackSupported, ");
-			if (this.getVoiceInformationSupportedViaSpeechRecognition())
-				sb.append("VoiceInformationSupportedViaSpeechRecognition, ");
-			if (this.getVoiceInformationSupportedViaVoiceRecognition())
-				sb.append("VoiceInformationSupportedViaVoiceRecognition, ");
-			if (this.getGenerationOfVoiceAnnouncementsFromTextSupported())
-				sb.append("GenerationOfVoiceAnnouncementsFromTextSupported, ");
-			byte[] eArr = this.getExtraData();
-			if (eArr != null) {
-				sb.append("ExtraData=");
-				for (int i1 = 0; i1 < eArr.length; i1++) {
-					sb.append(eArr[i1]);
-					sb.append(", ");
-				}
-			}
-		}
-		sb.append("]");
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		return sb.toString();
-	}
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+
+        if (this.data == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": data field must not be null");
+        if (this.data.length < 1 || this.data.length > 4)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": data field length must be from 1 to 4");
+
+        asnOs.writeOctetStringData(data);
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+        if (data != null) {
+            if (this.getIPRoutingAddressSupported())
+                sb.append("IPRoutingAddressSupported, ");
+            if (this.getVoiceBackSupported())
+                sb.append("VoiceBackSupported, ");
+            if (this.getVoiceInformationSupportedViaSpeechRecognition())
+                sb.append("VoiceInformationSupportedViaSpeechRecognition, ");
+            if (this.getVoiceInformationSupportedViaVoiceRecognition())
+                sb.append("VoiceInformationSupportedViaVoiceRecognition, ");
+            if (this.getGenerationOfVoiceAnnouncementsFromTextSupported())
+                sb.append("GenerationOfVoiceAnnouncementsFromTextSupported, ");
+            byte[] eArr = this.getExtraData();
+            if (eArr != null) {
+                sb.append("ExtraData=");
+                for (int i1 = 0; i1 < eArr.length; i1++) {
+                    sb.append(eArr[i1]);
+                    sb.append(", ");
+                }
+            }
+        }
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

@@ -25,18 +25,15 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-ReleaseResourcesRes ::= SEQUENCE{
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ ReleaseResourcesRes ::= SEQUENCE{ extensionContainer ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ReleaseResourcesResponse {
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

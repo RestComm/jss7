@@ -39,252 +39,252 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class TAnswerSpecificInfoImpl implements TAnswerSpecificInfo, CAPAsnPrimitive {
 
-	public static final int _ID_destinationAddress = 50;
-	public static final int _ID_orCall = 51;
-	public static final int _ID_forwardedCall = 52;
-	public static final int _ID_chargeIndicator = 53;
-	public static final int _ID_extbasicServiceCode = 54;
-	public static final int _ID_extbasicServiceCode2 = 55;
+    public static final int _ID_destinationAddress = 50;
+    public static final int _ID_orCall = 51;
+    public static final int _ID_forwardedCall = 52;
+    public static final int _ID_chargeIndicator = 53;
+    public static final int _ID_extbasicServiceCode = 54;
+    public static final int _ID_extbasicServiceCode2 = 55;
 
-	public static final String _PrimitiveName = "TAnswerSpecificInfo";
+    public static final String _PrimitiveName = "TAnswerSpecificInfo";
 
-	private CalledPartyNumberCap destinationAddress;
-	private boolean orCall;
-	private boolean forwardedCall;
-	private ChargeIndicator chargeIndicator;
-	private ExtBasicServiceCode extBasicServiceCode;
-	private ExtBasicServiceCode extBasicServiceCode2;
+    private CalledPartyNumberCap destinationAddress;
+    private boolean orCall;
+    private boolean forwardedCall;
+    private ChargeIndicator chargeIndicator;
+    private ExtBasicServiceCode extBasicServiceCode;
+    private ExtBasicServiceCode extBasicServiceCode2;
 
-	public TAnswerSpecificInfoImpl() {
-	}
+    public TAnswerSpecificInfoImpl() {
+    }
 
-	public TAnswerSpecificInfoImpl(CalledPartyNumberCap destinationAddress, boolean orCall, boolean forwardedCall, ChargeIndicator chargeIndicator,
-			ExtBasicServiceCode extBasicServiceCode, ExtBasicServiceCode extBasicServiceCode2) {
-		this.destinationAddress = destinationAddress;
-		this.orCall = orCall;
-		this.forwardedCall = forwardedCall;
-		this.chargeIndicator = chargeIndicator;
-		this.extBasicServiceCode = extBasicServiceCode;
-		this.extBasicServiceCode2 = extBasicServiceCode2;
-	}
+    public TAnswerSpecificInfoImpl(CalledPartyNumberCap destinationAddress, boolean orCall, boolean forwardedCall,
+            ChargeIndicator chargeIndicator, ExtBasicServiceCode extBasicServiceCode, ExtBasicServiceCode extBasicServiceCode2) {
+        this.destinationAddress = destinationAddress;
+        this.orCall = orCall;
+        this.forwardedCall = forwardedCall;
+        this.chargeIndicator = chargeIndicator;
+        this.extBasicServiceCode = extBasicServiceCode;
+        this.extBasicServiceCode2 = extBasicServiceCode2;
+    }
 
-	@Override
-	public CalledPartyNumberCap getDestinationAddress() {
-		return destinationAddress;
-	}
+    @Override
+    public CalledPartyNumberCap getDestinationAddress() {
+        return destinationAddress;
+    }
 
-	@Override
-	public boolean getOrCall() {
-		return orCall;
-	}
+    @Override
+    public boolean getOrCall() {
+        return orCall;
+    }
 
-	@Override
-	public boolean getForwardedCall() {
-		return forwardedCall;
-	}
+    @Override
+    public boolean getForwardedCall() {
+        return forwardedCall;
+    }
 
-	@Override
-	public ChargeIndicator getChargeIndicator() {
-		return chargeIndicator;
-	}
+    @Override
+    public ChargeIndicator getChargeIndicator() {
+        return chargeIndicator;
+    }
 
-	@Override
-	public ExtBasicServiceCode getExtBasicServiceCode() {
-		return extBasicServiceCode;
-	}
+    @Override
+    public ExtBasicServiceCode getExtBasicServiceCode() {
+        return extBasicServiceCode;
+    }
 
-	@Override
-	public ExtBasicServiceCode getExtBasicServiceCode2() {
-		return extBasicServiceCode2;
-	}
+    @Override
+    public ExtBasicServiceCode getExtBasicServiceCode2() {
+        return extBasicServiceCode2;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException,
+            IOException, AsnException {
 
-		this.destinationAddress = null;
-		this.orCall = false;
-		this.forwardedCall = false;
-		this.chargeIndicator = null;
-		this.extBasicServiceCode = null;
-		this.extBasicServiceCode2 = null;
+        this.destinationAddress = null;
+        this.orCall = false;
+        this.forwardedCall = false;
+        this.chargeIndicator = null;
+        this.extBasicServiceCode = null;
+        this.extBasicServiceCode2 = null;
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-			int tag = ais.readTag();
+            int tag = ais.readTag();
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_destinationAddress:
-					ais.advanceElement();
-					// TODO: implement it
-					break;
-				case _ID_orCall:
-					ais.advanceElement();
-					// TODO: implement it
-					break;
-				case _ID_forwardedCall:
-					ais.advanceElement();
-					// TODO: implement it
-					break;
-				case _ID_chargeIndicator:
-					ais.advanceElement();
-					// TODO: implement it
-					break;
-				case _ID_extbasicServiceCode:
-					ais.advanceElement();
-					// TODO: implement it
-					break;
-				case _ID_extbasicServiceCode2:
-					ais.advanceElement();
-					// TODO: implement it
-					break;
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_destinationAddress:
+                        ais.advanceElement();
+                        // TODO: implement it
+                        break;
+                    case _ID_orCall:
+                        ais.advanceElement();
+                        // TODO: implement it
+                        break;
+                    case _ID_forwardedCall:
+                        ais.advanceElement();
+                        // TODO: implement it
+                        break;
+                    case _ID_chargeIndicator:
+                        ais.advanceElement();
+                        // TODO: implement it
+                        break;
+                    case _ID_extbasicServiceCode:
+                        ais.advanceElement();
+                        // TODO: implement it
+                        break;
+                    case _ID_extbasicServiceCode2:
+                        ais.advanceElement();
+                        // TODO: implement it
+                        break;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
-	}
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		try {
-			asnOs.writeTag(tagClass, false, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            asnOs.writeTag(tagClass, false, tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		if (this.destinationAddress != null) {
-			// TODO: implement it
-		}
-		if (this.orCall) {
-			// TODO: implement it
-		}
-		if (this.forwardedCall) {
-			// TODO: implement it
-		}
-		if (this.chargeIndicator != null) {
-			// TODO: implement it
-		}
-		if (this.extBasicServiceCode != null) {
-			// TODO: implement it
-		}
-		if (this.extBasicServiceCode2 != null) {
-			// TODO: implement it
-		}
-	}
+        if (this.destinationAddress != null) {
+            // TODO: implement it
+        }
+        if (this.orCall) {
+            // TODO: implement it
+        }
+        if (this.forwardedCall) {
+            // TODO: implement it
+        }
+        if (this.chargeIndicator != null) {
+            // TODO: implement it
+        }
+        if (this.extBasicServiceCode != null) {
+            // TODO: implement it
+        }
+        if (this.extBasicServiceCode2 != null) {
+            // TODO: implement it
+        }
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		
-		if (this.destinationAddress != null) {
-			sb.append("destinationAddress= [");
-			sb.append(destinationAddress.toString());
-			sb.append("]");
-		}
-		if (this.orCall) {
-			sb.append(", orCall");
-		}
-		if (this.forwardedCall) {
-			sb.append(", forwardedCall");
-		}
-		if (this.chargeIndicator != null) {
-			sb.append(", chargeIndicator= [");
-			sb.append(chargeIndicator.toString());
-			sb.append("]");
-		}
-		if (this.extBasicServiceCode != null) {
-			sb.append(", extBasicServiceCode= [");
-			sb.append(extBasicServiceCode.toString());
-			sb.append("]");
-		}
-		if (this.extBasicServiceCode2 != null) {
-			sb.append(", extBasicServiceCode2= [");
-			sb.append(extBasicServiceCode2.toString());
-			sb.append("]");
-		}
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		sb.append("]");
+        if (this.destinationAddress != null) {
+            sb.append("destinationAddress= [");
+            sb.append(destinationAddress.toString());
+            sb.append("]");
+        }
+        if (this.orCall) {
+            sb.append(", orCall");
+        }
+        if (this.forwardedCall) {
+            sb.append(", forwardedCall");
+        }
+        if (this.chargeIndicator != null) {
+            sb.append(", chargeIndicator= [");
+            sb.append(chargeIndicator.toString());
+            sb.append("]");
+        }
+        if (this.extBasicServiceCode != null) {
+            sb.append(", extBasicServiceCode= [");
+            sb.append(extBasicServiceCode.toString());
+            sb.append("]");
+        }
+        if (this.extBasicServiceCode2 != null) {
+            sb.append(", extBasicServiceCode2= [");
+            sb.append(extBasicServiceCode2.toString());
+            sb.append("]");
+        }
 
-		return sb.toString();
-	}
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

@@ -22,156 +22,155 @@
 
 package org.mobicents.protocols.ss7.tools.simulatorgui;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-
-import org.mobicents.protocols.ss7.tools.simulator.level1.DialogicManMBean;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+
+import org.mobicents.protocols.ss7.tools.simulator.level1.DialogicManMBean;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class DialogicForm extends JDialog {
 
-	private DialogicManMBean dialogic;
+    private DialogicManMBean dialogic;
 
-	private static final long serialVersionUID = -3683159465393950167L;
-	private JTextField tbSourceModuleId;
-	private JTextField tbDestinationModuleId;
+    private static final long serialVersionUID = -3683159465393950167L;
+    private JTextField tbSourceModuleId;
+    private JTextField tbDestinationModuleId;
 
+    public DialogicForm(JFrame owner) {
+        super(owner, true);
 
-	public DialogicForm(JFrame owner) {
-		super(owner, true);
-		
-		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setResizable(false);
-		setBounds(100, 100, 534, 290);
-		setTitle("Dialogic settings");
-		
-		JPanel panel = new JPanel();
-		getContentPane().add(panel, BorderLayout.CENTER);
-		panel.setLayout(null);
-		
-		JLabel lblSourceModuleId = new JLabel("Source module Id");
-		lblSourceModuleId.setBounds(10, 17, 207, 14);
-		panel.add(lblSourceModuleId);
-		
-		tbSourceModuleId = new JTextField();
-		tbSourceModuleId.setColumns(10);
-		tbSourceModuleId.setBounds(242, 14, 129, 20);
-		panel.add(tbSourceModuleId);
-		
-		JButton button = new JButton("Load default values for side A");
-		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				loadDataA();
-			}
-		});
-		button.setBounds(10, 186, 254, 23);
-		panel.add(button);
-		
-		JButton button_1 = new JButton("Reload");
-		button_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				reloadData();
-			}
-		});
-		button_1.setBounds(10, 220, 144, 23);
-		panel.add(button_1);
-		
-		JButton button_2 = new JButton("Save");
-		button_2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (saveData()) {
-					getJFrame().dispose();
-				}
-			}
-		});
-		button_2.setBounds(274, 220, 117, 23);
-		panel.add(button_2);
-		
-		JButton button_3 = new JButton("Cancel");
-		button_3.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				getJFrame().dispose();
-			}
-		});
-		button_3.setBounds(401, 220, 117, 23);
-		panel.add(button_3);
-		
-		JButton button_4 = new JButton("Load default values for side B");
-		button_4.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				loadDataB();
-			}
-		});
-		button_4.setBounds(274, 186, 244, 23);
-		panel.add(button_4);
-		
-		JLabel lblDestinationModuleId = new JLabel("Destination module Id");
-		lblDestinationModuleId.setBounds(10, 45, 207, 14);
-		panel.add(lblDestinationModuleId);
-		
-		tbDestinationModuleId = new JTextField();
-		tbDestinationModuleId.setColumns(10);
-		tbDestinationModuleId.setBounds(242, 42, 129, 20);
-		panel.add(tbDestinationModuleId);
-	}
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setResizable(false);
+        setBounds(100, 100, 534, 290);
+        setTitle("Dialogic settings");
 
-	public void setData(DialogicManMBean dialogic) {
-		this.dialogic = dialogic;
+        JPanel panel = new JPanel();
+        getContentPane().add(panel, BorderLayout.CENTER);
+        panel.setLayout(null);
 
-		this.reloadData();
-	}
+        JLabel lblSourceModuleId = new JLabel("Source module Id");
+        lblSourceModuleId.setBounds(10, 17, 207, 14);
+        panel.add(lblSourceModuleId);
 
-	private JDialog getJFrame() {
-		return this;
-	}
+        tbSourceModuleId = new JTextField();
+        tbSourceModuleId.setColumns(10);
+        tbSourceModuleId.setBounds(242, 14, 129, 20);
+        panel.add(tbSourceModuleId);
 
-	private void reloadData() {
-		tbSourceModuleId.setText(((Integer)this.dialogic.getSourceModuleId()).toString());
-		tbDestinationModuleId.setText(((Integer)this.dialogic.getDestinationModuleId()).toString());
-	}
+        JButton button = new JButton("Load default values for side A");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                loadDataA();
+            }
+        });
+        button.setBounds(10, 186, 254, 23);
+        panel.add(button);
 
-	private void loadDataA() {
-		tbSourceModuleId.setText("61");
-		tbDestinationModuleId.setText("34");
-	}
+        JButton button_1 = new JButton("Reload");
+        button_1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                reloadData();
+            }
+        });
+        button_1.setBounds(10, 220, 144, 23);
+        panel.add(button_1);
 
-	private void loadDataB() {
-		loadDataA();
-	}
+        JButton button_2 = new JButton("Save");
+        button_2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (saveData()) {
+                    getJFrame().dispose();
+                }
+            }
+        });
+        button_2.setBounds(274, 220, 117, 23);
+        panel.add(button_2);
 
-	private boolean saveData() {
+        JButton button_3 = new JButton("Cancel");
+        button_3.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                getJFrame().dispose();
+            }
+        });
+        button_3.setBounds(401, 220, 117, 23);
+        panel.add(button_3);
 
-		int sourceModuleId = 0;
-		int destinationModuleId = 0;
-		try {
-			sourceModuleId = Integer.parseInt(tbSourceModuleId.getText());
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "Exception when parsing SourceModuleId value: " + e.toString());
-			return false;
-		}
-		try {
-			destinationModuleId = Integer.parseInt(tbDestinationModuleId.getText());
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "Exception when parsing DestinationModuleId value: " + e.toString());
-			return false;
-		}
+        JButton button_4 = new JButton("Load default values for side B");
+        button_4.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                loadDataB();
+            }
+        });
+        button_4.setBounds(274, 186, 244, 23);
+        panel.add(button_4);
 
-		this.dialogic.setSourceModuleId(sourceModuleId);
-		this.dialogic.setDestinationModuleId(destinationModuleId);
-		
-		return true;
-	}
+        JLabel lblDestinationModuleId = new JLabel("Destination module Id");
+        lblDestinationModuleId.setBounds(10, 45, 207, 14);
+        panel.add(lblDestinationModuleId);
+
+        tbDestinationModuleId = new JTextField();
+        tbDestinationModuleId.setColumns(10);
+        tbDestinationModuleId.setBounds(242, 42, 129, 20);
+        panel.add(tbDestinationModuleId);
+    }
+
+    public void setData(DialogicManMBean dialogic) {
+        this.dialogic = dialogic;
+
+        this.reloadData();
+    }
+
+    private JDialog getJFrame() {
+        return this;
+    }
+
+    private void reloadData() {
+        tbSourceModuleId.setText(((Integer) this.dialogic.getSourceModuleId()).toString());
+        tbDestinationModuleId.setText(((Integer) this.dialogic.getDestinationModuleId()).toString());
+    }
+
+    private void loadDataA() {
+        tbSourceModuleId.setText("61");
+        tbDestinationModuleId.setText("34");
+    }
+
+    private void loadDataB() {
+        loadDataA();
+    }
+
+    private boolean saveData() {
+
+        int sourceModuleId = 0;
+        int destinationModuleId = 0;
+        try {
+            sourceModuleId = Integer.parseInt(tbSourceModuleId.getText());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Exception when parsing SourceModuleId value: " + e.toString());
+            return false;
+        }
+        try {
+            destinationModuleId = Integer.parseInt(tbDestinationModuleId.getText());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Exception when parsing DestinationModuleId value: " + e.toString());
+            return false;
+        }
+
+        this.dialogic.setSourceModuleId(sourceModuleId);
+        this.dialogic.setDestinationModuleId(destinationModuleId);
+
+        return true;
+    }
 }
-

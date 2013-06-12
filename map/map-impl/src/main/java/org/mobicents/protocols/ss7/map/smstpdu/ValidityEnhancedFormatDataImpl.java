@@ -25,44 +25,44 @@ package org.mobicents.protocols.ss7.map.smstpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.ValidityEnhancedFormatData;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class ValidityEnhancedFormatDataImpl implements ValidityEnhancedFormatData {
-	
-	public byte[] data;
-	
-	public ValidityEnhancedFormatDataImpl(byte[] data) {
-		this.data = data;
-	}
 
-	public byte[] getData() {
-		return this.data;
-	}
+    public byte[] data;
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
+    public ValidityEnhancedFormatDataImpl(byte[] data) {
+        this.data = data;
+    }
 
-		sb.append("ValidityEnhancedFormatData [");
+    public byte[] getData() {
+        return this.data;
+    }
 
-		sb.append(printDataArr(data));
-		sb.append("]");
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
 
-		return sb.toString();
-	}
+        sb.append("ValidityEnhancedFormatData [");
 
-	private String printDataArr(byte[] arr) {
-		if (arr == null)
-			return null;
+        sb.append(printDataArr(data));
+        sb.append("]");
 
-		StringBuilder sb = new StringBuilder();
-		for (int b : arr) {
-			sb.append(b);
-			sb.append(", ");
-		}
+        return sb.toString();
+    }
 
-		return sb.toString();
-	}
+    private String printDataArr(byte[] arr) {
+        if (arr == null)
+            return null;
+
+        StringBuilder sb = new StringBuilder();
+        for (int b : arr) {
+            sb.append(b);
+            sb.append(", ");
+        }
+
+        return sb.toString();
+    }
 }

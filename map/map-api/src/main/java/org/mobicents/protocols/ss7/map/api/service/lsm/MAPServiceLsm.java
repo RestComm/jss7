@@ -33,12 +33,12 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  *
  */
 public interface MAPServiceLsm extends MAPServiceBase {
-	
-	public MAPDialogLsm	 createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress,
-			AddressString origReference, SccpAddress destAddress, AddressString destReference) throws MAPException;
-	
-	public void addMAPServiceListener(MAPServiceLsmListener mapServiceListener);
 
-	public void removeMAPServiceListener(MAPServiceLsmListener mapServiceListener);
+    MAPDialogLsm createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference,
+            SccpAddress destAddress, AddressString destReference) throws MAPException;
+
+    void addMAPServiceListener(MAPServiceLsmListener mapServiceListener);
+
+    void removeMAPServiceListener(MAPServiceLsmListener mapServiceListener);
 
 }

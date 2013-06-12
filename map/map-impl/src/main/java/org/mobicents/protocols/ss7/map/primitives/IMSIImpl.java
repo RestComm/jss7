@@ -25,21 +25,21 @@ package org.mobicents.protocols.ss7.map.primitives;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class IMSIImpl extends TbcdString implements IMSI {
 
-	public IMSIImpl() {
-		super(3, 8, "IMSI");
-	}
+    public IMSIImpl() {
+        super(3, 8, "IMSI");
+    }
 
-	public IMSIImpl(String data) {
-		super(3, 8, "IMSI", data);
-	}
+    public IMSIImpl(String data) {
+        super(3, 8, "IMSI", data);
+    }
 
-	public String getData() {
-		return this.data;
-	}
+    public String getData() {
+        return this.data;
+    }
 }

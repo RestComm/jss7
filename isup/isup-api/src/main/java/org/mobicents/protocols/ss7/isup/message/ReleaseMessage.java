@@ -23,11 +23,10 @@
 /**
  * Start time:10:06:29 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 package org.mobicents.protocols.ss7.isup.message;
-
 
 import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.AutomaticCongestionLevel;
@@ -54,21 +53,19 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="FONT-WEIGHT: bold; WIDTH: 328px; COLOR: teal; HEIGHT: 28px; TEXT-ALIGN: center" align="center" colSpan="3">
  * <TABLE id="Table35" style="WIDTH: 575px; HEIGHT: 49px" cellSpacing="1" cellPadding="1" width="575" border="0">
  * <TR>
- * 
+ *
  * <TD style="FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: teal; HEIGHT: 28px; TEXT-ALIGN: center" colSpan="3">
  * REL (Release Message)</TD>
  * </TR>
  * <TR>
  * <TD style="FONT-SIZE: 9pt; COLOR: navy" colSpan="3">
  * <P>
- * A Release Message (REL) is sent in either direction indicating that the
- * circuit is being released due to the <B>cause indicator</B> specified. An REL
- * is sent when either the calling or called party "hangs up" the call (cause =
- * 16). An REL is also sent in the backward direction if the called party line
- * is busy (cause = 17).
+ * A Release Message (REL) is sent in either direction indicating that the circuit is being released due to the <B>cause
+ * indicator</B> specified. An REL is sent when either the calling or called party "hangs up" the call (cause = 16). An REL is
+ * also sent in the backward direction if the called party line is busy (cause = 17).
  * </P>
  * </TD>
- * 
+ *
  * </TR>
  * </TABLE>
  * </TD>
@@ -78,7 +75,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * Parameter</TD>
  * <TD style="FONT-WEIGHT: bold; WIDTH: 145px; HEIGHT: 30px">Type</TD>
  * <TD style="FONT-WEIGHT: bold; HEIGHT: 30px">Length (octet)</TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Message type</TD>
@@ -86,7 +83,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD>1</TD>
  * </TR>
  * <TR>
- * 
+ *
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Cause Indicators</TD>
  * <TD style="WIDTH: 145px">V</TD>
  * <TD>3-?</TD>
@@ -94,7 +91,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Redirection Information</TD>
  * <TD style="WIDTH: 145px">O</TD>
- * 
+ *
  * <TD>3-4</TD>
  * </TR>
  * <TR>
@@ -102,7 +99,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="WIDTH: 145px; HEIGHT: 20px">O</TD>
  * <TD style="HEIGHT: 20px">5-12</TD>
  * </TR>
- * 
+ *
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">User to User Indicators</TD>
  * <TD style="WIDTH: 145px">O</TD>
@@ -110,7 +107,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">User to User Information</TD>
- * 
+ *
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>3-131</TD>
  * </TR>
@@ -118,7 +115,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Access Transport</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>3-?</TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Access Delivery Information</TD>
@@ -126,16 +123,15 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD>3</TD>
  * </TR>
  * <TR>
- * 
- * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Parameter Compatibility
- * Information</TD>
+ *
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Parameter Compatibility Information</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>4-?</TD>
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Network Specific Facility</TD>
  * <TD style="WIDTH: 145px">O</TD>
- * 
+ *
  * <TD>4-?</TD>
  * </TR>
  * <TR>
@@ -143,7 +139,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>4</TD>
  * </TR>
- * 
+ *
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Automatic Congestion Level</TD>
  * <TD style="WIDTH: 145px">O</TD>
@@ -151,7 +147,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Redirection Number Restriction</TD>
- * 
+ *
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>3</TD>
  * </TR>
@@ -159,80 +155,81 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">End of Optional Parameters</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>1</TD>
- * 
+ *
  * </TR>
  * </TABLE>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 public interface ReleaseMessage extends ISUPMessage {
-	
-	/**
-	 * Release Message, Q.763 reference table 33 <br> {@link ReleaseMessage}
-	 */
-	public static final int MESSAGE_CODE = 0x0C;
-	
-	public CauseIndicators getCauseIndicators();
 
-	public void setCauseIndicators(CauseIndicators v);
+    /**
+     * Release Message, Q.763 reference table 33 <br>
+     * {@link ReleaseMessage}
+     */
+    int MESSAGE_CODE = 0x0C;
 
-	public RedirectionInformation getRedirectionInformation();
+    CauseIndicators getCauseIndicators();
 
-	public void setRedirectionInformation(RedirectionInformation v);
+    void setCauseIndicators(CauseIndicators v);
 
-	public RedirectionNumber getRedirectionNumber();
+    RedirectionInformation getRedirectionInformation();
 
-	public void setRedirectionNumber(RedirectionNumber v);
+    void setRedirectionInformation(RedirectionInformation v);
 
-	public AccessTransport getAccessTransport();
+    RedirectionNumber getRedirectionNumber();
 
-	public void setAccessTransport(AccessTransport v);
+    void setRedirectionNumber(RedirectionNumber v);
 
-	public SignalingPointCode getSignalingPointCode();
+    AccessTransport getAccessTransport();
 
-	public void setSignalingPointCode(SignalingPointCode v);
+    void setAccessTransport(AccessTransport v);
 
-	public UserToUserInformation getU2UInformation();
+    SignalingPointCode getSignalingPointCode();
 
-	public void setU2UInformation(UserToUserInformation v);
+    void setSignalingPointCode(SignalingPointCode v);
 
-	public AutomaticCongestionLevel getAutomaticCongestionLevel();
+    UserToUserInformation getU2UInformation();
 
-	public void setAutomaticCongestionLevel(AutomaticCongestionLevel v);
+    void setU2UInformation(UserToUserInformation v);
 
-	public NetworkSpecificFacility getNetworkSpecificFacility();
+    AutomaticCongestionLevel getAutomaticCongestionLevel();
 
-	public void setNetworkSpecificFacility(NetworkSpecificFacility v);
+    void setAutomaticCongestionLevel(AutomaticCongestionLevel v);
 
-	public AccessDeliveryInformation getAccessDeliveryInformation();
+    NetworkSpecificFacility getNetworkSpecificFacility();
 
-	public void setAccessDeliveryInformation(AccessDeliveryInformation v);
+    void setNetworkSpecificFacility(NetworkSpecificFacility v);
 
-	public ParameterCompatibilityInformation getParameterCompatibilityInformation();
+    AccessDeliveryInformation getAccessDeliveryInformation();
 
-	public void setParameterCompatibilityInformation(ParameterCompatibilityInformation v);
+    void setAccessDeliveryInformation(AccessDeliveryInformation v);
 
-	public UserToUserIndicators getU2UIndicators();
+    ParameterCompatibilityInformation getParameterCompatibilityInformation();
 
-	public void setU2UIndicators(UserToUserIndicators v);
+    void setParameterCompatibilityInformation(ParameterCompatibilityInformation v);
 
-	public DisplayInformation getDisplayInformation();
+    UserToUserIndicators getU2UIndicators();
 
-	public void setDisplayInformation(DisplayInformation v);
+    void setU2UIndicators(UserToUserIndicators v);
 
-	public RemoteOperations getRemoteOperations();
+    DisplayInformation getDisplayInformation();
 
-	public void setRemoteOperations(RemoteOperations v);
+    void setDisplayInformation(DisplayInformation v);
 
-	public HTRInformation getHTRInformation();
+    RemoteOperations getRemoteOperations();
 
-	public void setHTRInformation(HTRInformation v);
+    void setRemoteOperations(RemoteOperations v);
 
-	public RedirectCounter getRedirectCounter();
+    HTRInformation getHTRInformation();
 
-	public void setRedirectCounter(RedirectCounter v);
+    void setHTRInformation(HTRInformation v);
 
-	public RedirectBackwardInformation getRedirectBackwardInformation();
+    RedirectCounter getRedirectCounter();
 
-	public void setRedirectBackwardInformation(RedirectBackwardInformation v);
+    void setRedirectCounter(RedirectCounter v);
+
+    RedirectBackwardInformation getRedirectBackwardInformation();
+
+    void setRedirectBackwardInformation(RedirectBackwardInformation v);
 }

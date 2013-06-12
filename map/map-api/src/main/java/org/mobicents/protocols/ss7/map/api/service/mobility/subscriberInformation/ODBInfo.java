@@ -25,26 +25,22 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ODBData;
 
-/**	
- * 
-
-ODB-Info ::= SEQUENCE {
-	odb-Data		ODB-Data,
-	notificationToCSE	NULL			OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
-
- * 
+/**
+ *
+ ODB-Info ::= SEQUENCE { odb-Data ODB-Data, notificationToCSE NULL OPTIONAL, extensionContainer ExtensionContainer OPTIONAL,
+ * ...}
+ *
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface ODBInfo {
 
-	public ODBData getOdbData();
+    ODBData getOdbData();
 
-	public boolean getNotificationToCSE();
+    boolean getNotificationToCSE();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

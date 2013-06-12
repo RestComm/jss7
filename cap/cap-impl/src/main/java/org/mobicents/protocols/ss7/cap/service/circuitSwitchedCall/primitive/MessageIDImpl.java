@@ -38,261 +38,261 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class MessageIDImpl implements MessageID, CAPAsnPrimitive {
 
-	public static final int _ID_elementaryMessageID = 0;
-	public static final int _ID_text = 1;
-	public static final int _ID_elementaryMessageIDs = 29;
-	public static final int _ID_variableMessage = 30;
+    public static final int _ID_elementaryMessageID = 0;
+    public static final int _ID_text = 1;
+    public static final int _ID_elementaryMessageIDs = 29;
+    public static final int _ID_variableMessage = 30;
 
-	public static final String _PrimitiveName = "MessageID";
+    public static final String _PrimitiveName = "MessageID";
 
-	private Integer elementaryMessageID;
-	private MessageIDText text;
-	private ArrayList<Integer> elementaryMessageIDs;
-	private VariableMessage variableMessage;
+    private Integer elementaryMessageID;
+    private MessageIDText text;
+    private ArrayList<Integer> elementaryMessageIDs;
+    private VariableMessage variableMessage;
 
-	
-	public MessageIDImpl() {
-	}
+    public MessageIDImpl() {
+    }
 
-	public MessageIDImpl(Integer elementaryMessageID) {
-		this.elementaryMessageID = elementaryMessageID;
-	}
+    public MessageIDImpl(Integer elementaryMessageID) {
+        this.elementaryMessageID = elementaryMessageID;
+    }
 
-	public MessageIDImpl(MessageIDText text) {
-		this.text = text;
-	}
+    public MessageIDImpl(MessageIDText text) {
+        this.text = text;
+    }
 
-	public MessageIDImpl(ArrayList<Integer> elementaryMessageIDs) {
-		this.elementaryMessageIDs = elementaryMessageIDs;
-	}
+    public MessageIDImpl(ArrayList<Integer> elementaryMessageIDs) {
+        this.elementaryMessageIDs = elementaryMessageIDs;
+    }
 
-	public MessageIDImpl(VariableMessage variableMessage) {
-		this.variableMessage = variableMessage;
-	}
-	
-	@Override
-	public Integer getElementaryMessageID() {
-		return elementaryMessageID;
-	}
+    public MessageIDImpl(VariableMessage variableMessage) {
+        this.variableMessage = variableMessage;
+    }
 
-	@Override
-	public MessageIDText getText() {
-		return text;
-	}
+    @Override
+    public Integer getElementaryMessageID() {
+        return elementaryMessageID;
+    }
 
-	@Override
-	public ArrayList<Integer> getElementaryMessageIDs() {
-		return elementaryMessageIDs;
-	}
+    @Override
+    public MessageIDText getText() {
+        return text;
+    }
 
-	@Override
-	public VariableMessage getVariableMessage() {
-		return variableMessage;
-	}
+    @Override
+    public ArrayList<Integer> getElementaryMessageIDs() {
+        return elementaryMessageIDs;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
+    @Override
+    public VariableMessage getVariableMessage() {
+        return variableMessage;
+    }
 
-		if (this.elementaryMessageID != null) {
-			return _ID_elementaryMessageID;
-		} else if (this.text != null) {
-			return _ID_text;
-		} else if (this.elementaryMessageIDs != null) {
-			return _ID_elementaryMessageIDs;
-		} else if (this.variableMessage != null) {
-			return _ID_variableMessage;
-		} else {
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": no of choices has been definite");
-		}
-	}
+    @Override
+    public int getTag() throws CAPException {
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
-	}
+        if (this.elementaryMessageID != null) {
+            return _ID_elementaryMessageID;
+        } else if (this.text != null) {
+            return _ID_text;
+        } else if (this.elementaryMessageIDs != null) {
+            return _ID_elementaryMessageIDs;
+        } else if (this.variableMessage != null) {
+            return _ID_variableMessage;
+        } else {
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": no of choices has been definite");
+        }
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		if (this.elementaryMessageID != null)
-			return true;
-		else
-			return false;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_CONTEXT_SPECIFIC;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public boolean getIsPrimitive() {
+        if (this.elementaryMessageID != null)
+            return true;
+        else
+            return false;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		this.elementaryMessageID = null;
-		this.text = null;
-		this.elementaryMessageIDs = null;
-		this.variableMessage = null;
+    private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tagClass",
-					CAPParsingComponentExceptionReason.MistypedParameter);
+        this.elementaryMessageID = null;
+        this.text = null;
+        this.elementaryMessageIDs = null;
+        this.variableMessage = null;
 
-		switch (ais.getTag()) {
-		case _ID_elementaryMessageID:
-			this.elementaryMessageID = (int) ais.readIntegerData(length);
-			break;
-		case _ID_text:
-			this.text = new MessageIDTextImpl();
-			((MessageIDTextImpl) this.text).decodeData(ais, length);
-			break;
-		case _ID_elementaryMessageIDs:
-			this.elementaryMessageIDs = new ArrayList<Integer>();
+        if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tagClass",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
-			AsnInputStream ais2 = ais.readSequenceStreamData(length);
-			while (true) {
-				if (ais2.available() == 0)
-					break;
+        switch (ais.getTag()) {
+            case _ID_elementaryMessageID:
+                this.elementaryMessageID = (int) ais.readIntegerData(length);
+                break;
+            case _ID_text:
+                this.text = new MessageIDTextImpl();
+                ((MessageIDTextImpl) this.text).decodeData(ais, length);
+                break;
+            case _ID_elementaryMessageIDs:
+                this.elementaryMessageIDs = new ArrayList<Integer>();
 
-				int tag2 = ais2.readTag();
-				if (ais2.getTagClass() != Tag.CLASS_UNIVERSAL || tag2 != Tag.INTEGER || !ais2.isTagPrimitive())
-					throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-							+ ": bad tagClass or tag or is not primitive when decoding an elementaryMessageIDs SEQUENCE",
-							CAPParsingComponentExceptionReason.MistypedParameter);
+                AsnInputStream ais2 = ais.readSequenceStreamData(length);
+                while (true) {
+                    if (ais2.available() == 0)
+                        break;
 
-				Integer val = (int) ais2.readInteger();
-				this.elementaryMessageIDs.add(val);
-			}
-			break;
-		case _ID_variableMessage:
-			this.variableMessage = new VariableMessageImpl();
-			((VariableMessageImpl) this.variableMessage).decodeData(ais, length);
-			break;
-		default:
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: " + ais.getTag(),
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+                    int tag2 = ais2.readTag();
+                    if (ais2.getTagClass() != Tag.CLASS_UNIVERSAL || tag2 != Tag.INTEGER || !ais2.isTagPrimitive())
+                        throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ": bad tagClass or tag or is not primitive when decoding an elementaryMessageIDs SEQUENCE",
+                                CAPParsingComponentExceptionReason.MistypedParameter);
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+                    Integer val = (int) ais2.readInteger();
+                    this.elementaryMessageIDs.add(val);
+                }
+                break;
+            case _ID_variableMessage:
+                this.variableMessage = new VariableMessageImpl();
+                ((VariableMessageImpl) this.variableMessage).decodeData(ais, length);
+                break;
+            default:
+                throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: " + ais.getTag(),
+                        CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		int choiceCnt = 0;
-		if (this.elementaryMessageID != null)
-			choiceCnt++;
-		if (this.text != null)
-			choiceCnt++;
-		if (this.elementaryMessageIDs != null)
-			choiceCnt++;
-		if (this.variableMessage != null)
-			choiceCnt++;
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		if (choiceCnt != 1)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice must be definite, found: " + choiceCnt);
+        int choiceCnt = 0;
+        if (this.elementaryMessageID != null)
+            choiceCnt++;
+        if (this.text != null)
+            choiceCnt++;
+        if (this.elementaryMessageIDs != null)
+            choiceCnt++;
+        if (this.variableMessage != null)
+            choiceCnt++;
 
-		try {
-			if (this.elementaryMessageID != null)
-				asnOs.writeIntegerData(this.elementaryMessageID);
-			if (this.text != null)
-				((MessageIDTextImpl) this.text).encodeData(asnOs);
-			if (this.elementaryMessageIDs != null) {
-				if (this.elementaryMessageIDs.size() < 1 || this.elementaryMessageIDs.size() > 16)
-					throw new CAPException("Error while encoding " + _PrimitiveName + ": elementaryMessageIDs count must be from 1 to 16, found: "
-							+ this.elementaryMessageIDs.size());
+        if (choiceCnt != 1)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice must be definite, found: "
+                    + choiceCnt);
 
-				for (Integer val : this.elementaryMessageIDs) {
-					if (val == null)
-						throw new CAPException("Error while encoding " + _PrimitiveName + ": the elementaryMessageIDs array has null values");
-					asnOs.writeInteger(val);
-				}
-			}
-			if (this.variableMessage != null)
-				((VariableMessageImpl) this.variableMessage).encodeData(asnOs);
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            if (this.elementaryMessageID != null)
+                asnOs.writeIntegerData(this.elementaryMessageID);
+            if (this.text != null)
+                ((MessageIDTextImpl) this.text).encodeData(asnOs);
+            if (this.elementaryMessageIDs != null) {
+                if (this.elementaryMessageIDs.size() < 1 || this.elementaryMessageIDs.size() > 16)
+                    throw new CAPException("Error while encoding " + _PrimitiveName
+                            + ": elementaryMessageIDs count must be from 1 to 16, found: " + this.elementaryMessageIDs.size());
 
-	@Override
-	public String toString() {
+                for (Integer val : this.elementaryMessageIDs) {
+                    if (val == null)
+                        throw new CAPException("Error while encoding " + _PrimitiveName
+                                + ": the elementaryMessageIDs array has null values");
+                    asnOs.writeInteger(val);
+                }
+            }
+            if (this.variableMessage != null)
+                ((VariableMessageImpl) this.variableMessage).encodeData(asnOs);
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		
-		if (this.elementaryMessageID != null) {
-			sb.append("elementaryMessageID=");
-			sb.append(elementaryMessageID);
-		}
-		if (this.text != null) {
-			sb.append(" text=");
-			sb.append(text.toString());
-		}
-		if (this.elementaryMessageIDs != null) {
-			sb.append(" elementaryMessageIDs=[");
-			for (Integer val : this.elementaryMessageIDs) {
-				if (val != null) {
-					sb.append(val);
-					sb.append(", ");
-				}
-			}
-			sb.append("]");
-		}
-		if (this.variableMessage != null) {
-			sb.append(" variableMessage=");
-			sb.append(variableMessage.toString());
-		}
+    @Override
+    public String toString() {
 
-		sb.append("]");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		return sb.toString();
-	}
+        if (this.elementaryMessageID != null) {
+            sb.append("elementaryMessageID=");
+            sb.append(elementaryMessageID);
+        }
+        if (this.text != null) {
+            sb.append(" text=");
+            sb.append(text.toString());
+        }
+        if (this.elementaryMessageIDs != null) {
+            sb.append(" elementaryMessageIDs=[");
+            for (Integer val : this.elementaryMessageIDs) {
+                if (val != null) {
+                    sb.append(val);
+                    sb.append(", ");
+                }
+            }
+            sb.append("]");
+        }
+        if (this.variableMessage != null) {
+            sb.append(" variableMessage=");
+            sb.append(variableMessage.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

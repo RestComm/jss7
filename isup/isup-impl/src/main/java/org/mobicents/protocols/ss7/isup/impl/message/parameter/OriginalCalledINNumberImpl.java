@@ -23,10 +23,10 @@
 /**
  * Start time:18:36:26 2009-04-05<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
- * 
+ *
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
@@ -38,33 +38,34 @@ import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledINNumber
 /**
  * Start time:18:36:26 2009-04-05<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 public class OriginalCalledINNumberImpl extends CalledNumberImpl implements OriginalCalledINNumber {
 
-	public OriginalCalledINNumberImpl(byte[] representation) throws ParameterException {
-		super(representation);
-		
-	}
+    public OriginalCalledINNumberImpl(byte[] representation) throws ParameterException {
+        super(representation);
 
-	public OriginalCalledINNumberImpl(ByteArrayInputStream bis) throws ParameterException {
-		super(bis);
-		
-	}
+    }
 
-	public OriginalCalledINNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator) {
-		super(natureOfAddresIndicator, address, numberingPlanIndicator, addressRepresentationREstrictedIndicator);
-		
-	}
+    public OriginalCalledINNumberImpl(ByteArrayInputStream bis) throws ParameterException {
+        super(bis);
 
-	public OriginalCalledINNumberImpl() {
-		super();
-		
-	}
+    }
 
-	public int getCode() {
+    public OriginalCalledINNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator,
+            int addressRepresentationREstrictedIndicator) {
+        super(natureOfAddresIndicator, address, numberingPlanIndicator, addressRepresentationREstrictedIndicator);
 
-		return _PARAMETER_CODE;
-	}
+    }
+
+    public OriginalCalledINNumberImpl() {
+        super();
+
+    }
+
+    public int getCode() {
+
+        return _PARAMETER_CODE;
+    }
 }

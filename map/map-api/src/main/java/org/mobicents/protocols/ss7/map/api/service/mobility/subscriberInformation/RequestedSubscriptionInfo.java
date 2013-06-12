@@ -25,61 +25,48 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSForBSCode;
 
-/**	
- * 
-
-RequestedSubscriptionInfo ::= SEQUENCE {
-	requestedSS-Info	[1] SS-ForBS-Code	OPTIONAL,
-	odb			[2] NULL		OPTIONAL,
-	requestedCAMEL-SubscriptionInfo	[3] RequestedCAMEL-SubscriptionInfo		OPTIONAL,
-	supportedVLR-CAMEL-Phases	[4] NULL		OPTIONAL,
-	supportedSGSN-CAMEL-Phases	[5] NULL		OPTIONAL,
-	extensionContainer	[6] ExtensionContainer	OPTIONAL,
-	...,
-	additionalRequestedCAMEL-SubscriptionInfo
-				[7] AdditionalRequestedCAMEL-SubscriptionInfo
-							OPTIONAL,
-	msisdn-BS-List	[8] NULL		OPTIONAL,
-	csg-SubscriptionDataRequested	[9] NULL		OPTIONAL,
-	cw-Info		[10]	NULL		OPTIONAL,
-	clip-Info		[11] NULL		OPTIONAL,
-	clir-Info		[12] NULL		OPTIONAL,
-	hold-Info		[13] NULL		OPTIONAL,
-	ect-Info		[14] NULL		OPTIONAL }
-
-
- * 
+/**
+ *
+ RequestedSubscriptionInfo ::= SEQUENCE { requestedSS-Info [1] SS-ForBS-Code OPTIONAL, odb [2] NULL OPTIONAL,
+ * requestedCAMEL-SubscriptionInfo [3] RequestedCAMEL-SubscriptionInfo OPTIONAL, supportedVLR-CAMEL-Phases [4] NULL OPTIONAL,
+ * supportedSGSN-CAMEL-Phases [5] NULL OPTIONAL, extensionContainer [6] ExtensionContainer OPTIONAL, ...,
+ * additionalRequestedCAMEL-SubscriptionInfo [7] AdditionalRequestedCAMEL-SubscriptionInfo OPTIONAL, msisdn-BS-List [8] NULL
+ * OPTIONAL, csg-SubscriptionDataRequested [9] NULL OPTIONAL, cw-Info [10] NULL OPTIONAL, clip-Info [11] NULL OPTIONAL,
+ * clir-Info [12] NULL OPTIONAL, hold-Info [13] NULL OPTIONAL, ect-Info [14] NULL OPTIONAL }
+ *
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface RequestedSubscriptionInfo {
 
-	public SSForBSCode getRequestedSSInfo();
+    SSForBSCode getRequestedSSInfo();
 
-	public boolean getOdb();
+    boolean getOdb();
 
-	public RequestedCAMELSubscriptionInfo getRequestedCAMELSubscriptionInfo();
+    RequestedCAMELSubscriptionInfo getRequestedCAMELSubscriptionInfo();
 
-	public boolean getSupportedVlrCamelPhases();
+    boolean getSupportedVlrCamelPhases();
 
-	public boolean getSupportedSgsnCamelPhases();
+    boolean getSupportedSgsnCamelPhases();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public AdditionalRequestedCAMELSubscriptionInfo getAdditionalRequestedCamelSubscriptionInfo();
+    AdditionalRequestedCAMELSubscriptionInfo getAdditionalRequestedCamelSubscriptionInfo();
 
-	public boolean getMsisdnBsList();
+    boolean getMsisdnBsList();
 
-	public boolean getCsgSubscriptionDataRequested();
+    boolean getCsgSubscriptionDataRequested();
 
-	public boolean getCwInfo();
+    boolean getCwInfo();
 
-	public boolean getClipInfo();
+    boolean getClipInfo();
 
-	public boolean getClirInfo();
+    boolean getClirInfo();
 
-	public boolean getHoldInfo();
+    boolean getHoldInfo();
 
-	public boolean getEctInfo();
+    boolean getEctInfo();
 
 }

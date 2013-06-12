@@ -22,13 +22,14 @@
 
 package org.mobicents.ss7.management.transceiver;
 
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import org.testng.*;
-import org.testng.annotations.*;
-import static org.testng.Assert.*;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 public class MessageTest {
     private MessageFactory messageFactory = new MessageFactory();
@@ -54,7 +55,6 @@ public class MessageTest {
         buffer.flip();
 
         Message msg1 = messageFactory.createMessage(buffer);
-
 
         assertEquals(msg.toString(), msg1.toString());
     }

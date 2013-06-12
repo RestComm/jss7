@@ -23,18 +23,17 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 /**
- * 
-
-APN-OI-Replacement ::=  OCTET STRING (SIZE (9..100))
-	-- Octets are coded as APN Operator Identifier according to TS 3GPP TS 23.003 [17] 
-
- * 
- * 
+ *
+ APN-OI-Replacement ::= OCTET STRING (SIZE (9..100)) -- Octets are coded as APN Operator Identifier according to TS 3GPP TS
+ * 23.003 [17]
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface APNOIReplacement {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

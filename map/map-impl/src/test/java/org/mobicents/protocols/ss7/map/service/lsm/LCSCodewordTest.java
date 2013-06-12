@@ -51,76 +51,76 @@ import org.testng.annotations.Test;
  *
  */
 public class LCSCodewordTest {
-	MAPParameterFactory MAPParameterFactory = new MAPParameterFactoryImpl();
+    MAPParameterFactory MAPParameterFactory = new MAPParameterFactoryImpl();
 
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
 
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
-	@BeforeTest
-	public void setUp() {
-	}
+    @BeforeTest
+    public void setUp() {
+    }
 
-	@AfterTest
-	public void tearDown() {
-	}
+    @AfterTest
+    public void tearDown() {
+    }
 
-	@Test(groups = { "functional.decode","service.lsm"})
-	public void testDecode() throws Exception {
-		byte[] data = new byte[] { 0x30, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x81, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72,
-				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
+    @Test(groups = { "functional.decode", "service.lsm" })
+    public void testDecode() throws Exception {
+        byte[] data = new byte[] { 0x30, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x81, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c,
+                (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
 
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
 
-		LCSCodewordImpl lcsCodeword = new LCSCodewordImpl();
-		lcsCodeword.decodeAll(asn);
+        LCSCodewordImpl lcsCodeword = new LCSCodewordImpl();
+        lcsCodeword.decodeAll(asn);
 
-		assertEquals( lcsCodeword.getDataCodingScheme().getCode(),0x0f);
-		assertNotNull(lcsCodeword.getLCSCodewordString());
-		assertTrue(lcsCodeword.getLCSCodewordString().getString(null).equals("ndmgapp2ndmgapp2"));
+        assertEquals(lcsCodeword.getDataCodingScheme().getCode(), 0x0f);
+        assertNotNull(lcsCodeword.getLCSCodewordString());
+        assertTrue(lcsCodeword.getLCSCodewordString().getString(null).equals("ndmgapp2ndmgapp2"));
 
-	}
+    }
 
-	@Test(groups = { "functional.encode","service.lsm"})
-	public void testEncode() throws Exception {
-		byte[] data = new byte[] { 0x30, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x81, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72,
-				(byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
+    @Test(groups = { "functional.encode", "service.lsm" })
+    public void testEncode() throws Exception {
+        byte[] data = new byte[] { 0x30, 0x13, (byte) 0x80, 0x01, 0x0f, (byte) 0x81, 0x0e, 0x6e, 0x72, (byte) 0xfb, 0x1c,
+                (byte) 0x86, (byte) 0xc3, 0x65, 0x6e, 0x72, (byte) 0xfb, 0x1c, (byte) 0x86, (byte) 0xc3, 0x65 };
 
-		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
-		LCSCodewordImpl lcsCodeword = new LCSCodewordImpl(new CBSDataCodingSchemeImpl(0x0f), nameString);
-		AsnOutputStream asnOS = new AsnOutputStream();
-		lcsCodeword.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
-		
-		byte[] encodedData = asnOS.toByteArray();
+        USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
+        LCSCodewordImpl lcsCodeword = new LCSCodewordImpl(new CBSDataCodingSchemeImpl(0x0f), nameString);
+        AsnOutputStream asnOS = new AsnOutputStream();
+        lcsCodeword.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
 
-		assertTrue( Arrays.equals(data,encodedData));
-	}
-	
-	@Test(groups = { "functional.serialize", "service.lsm" })
-	public void testSerialization() throws Exception {
-		USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
-		LCSCodewordImpl original = new LCSCodewordImpl(new CBSDataCodingSchemeImpl(0x0f), nameString);
+        byte[] encodedData = asnOS.toByteArray();
 
-		// serialize
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(out);
-		oos.writeObject(original);
-		oos.close();
+        assertTrue(Arrays.equals(data, encodedData));
+    }
 
-		// deserialize
-		byte[] pickled = out.toByteArray();
-		InputStream in = new ByteArrayInputStream(pickled);
-		ObjectInputStream ois = new ObjectInputStream(in);
-		Object o = ois.readObject();
-		LCSCodewordImpl copy = (LCSCodewordImpl) o;
-		
-		//test result
-		assertEquals(copy.getDataCodingScheme().getCode(), original.getDataCodingScheme().getCode());
-		assertEquals(copy.getLCSCodewordString(), original.getLCSCodewordString());
-	}
+    @Test(groups = { "functional.serialize", "service.lsm" })
+    public void testSerialization() throws Exception {
+        USSDString nameString = MAPParameterFactory.createUSSDString("ndmgapp2ndmgapp2");
+        LCSCodewordImpl original = new LCSCodewordImpl(new CBSDataCodingSchemeImpl(0x0f), nameString);
+
+        // serialize
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(out);
+        oos.writeObject(original);
+        oos.close();
+
+        // deserialize
+        byte[] pickled = out.toByteArray();
+        InputStream in = new ByteArrayInputStream(pickled);
+        ObjectInputStream ois = new ObjectInputStream(in);
+        Object o = ois.readObject();
+        LCSCodewordImpl copy = (LCSCodewordImpl) o;
+
+        // test result
+        assertEquals(copy.getDataCodingScheme().getCode(), original.getDataCodingScheme().getCode());
+        assertEquals(copy.getLCSCodewordString(), original.getLCSCodewordString());
+    }
 }

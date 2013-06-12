@@ -22,10 +22,10 @@
 
 package org.mobicents.protocols.ss7.map.functional;
 
-import org.mobicents.protocols.ss7.map.api.MAPServiceBase;
-import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderAbortReason;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
+import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPServiceBase;
+import org.mobicents.protocols.ss7.map.api.dialog.MAPProviderAbortReason;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
@@ -33,54 +33,53 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 
-
 /**
- * 
+ *
  * @author amit bhayani
  * @author sergey vetyutnev
- * 
+ *
  */
 public class MAPProviderImplWrapper extends MAPProviderImpl {
 
-	private int testMode = 0;
+    private int testMode = 0;
 
-	private final MAPServiceSupplementary mapServiceSupplementaryTest = new MAPServiceSupplementaryImplWrapper(this);
+    private final MAPServiceSupplementary mapServiceSupplementaryTest = new MAPServiceSupplementaryImplWrapper(this);
 
-	public MAPProviderImplWrapper(TCAPProvider tcapProvider) {
-		super(tcapProvider);
-		
-		for(MAPServiceBase serv : this.mapServices) {
-			if( serv instanceof MAPServiceSupplementary ) {
-				this.mapServices.remove(serv);
-				break;
-			}
-		}
-		
-		this.mapServices.add(this.mapServiceSupplementaryTest);
-	}
+    public MAPProviderImplWrapper(TCAPProvider tcapProvider) {
+        super(tcapProvider);
 
-	public MAPServiceSupplementary getMAPServiceSupplementary() {
-		return this.mapServiceSupplementaryTest;
-	}
+        for (MAPServiceBase serv : this.mapServices) {
+            if (serv instanceof MAPServiceSupplementary) {
+                this.mapServices.remove(serv);
+                break;
+            }
+        }
 
-	public void setTestMode(int testMode) {
-		this.testMode = testMode;
-	}
+        this.mapServices.add(this.mapServiceSupplementaryTest);
+    }
 
-	public void onTCBegin(TCBeginIndication tcBeginIndication) {
-		ApplicationContextName acn = tcBeginIndication.getApplicationContextName();
-		Component[] comps = tcBeginIndication.getComponents();
+    public MAPServiceSupplementary getMAPServiceSupplementary() {
+        return this.mapServiceSupplementaryTest;
+    }
 
-		if (this.testMode == 1) {
-			try {
-				this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.invalidPDU,
-						MAPExtensionContainerTest.GetTestExtensionContainer(), false);
-			} catch (MAPException e) {
-				loger.error("Error while firing TC-U-ABORT. ", e);
-			}
-			return;
-		}
+    public void setTestMode(int testMode) {
+        this.testMode = testMode;
+    }
 
-		super.onTCBegin(tcBeginIndication);
-	}
+    public void onTCBegin(TCBeginIndication tcBeginIndication) {
+        ApplicationContextName acn = tcBeginIndication.getApplicationContextName();
+        Component[] comps = tcBeginIndication.getComponents();
+
+        if (this.testMode == 1) {
+            try {
+                this.fireTCAbortProvider(tcBeginIndication.getDialog(), MAPProviderAbortReason.invalidPDU,
+                        MAPExtensionContainerTest.GetTestExtensionContainer(), false);
+            } catch (MAPException e) {
+                loger.error("Error while firing TC-U-ABORT. ", e);
+            }
+            return;
+        }
+
+        super.onTCBegin(tcBeginIndication);
+    }
 }

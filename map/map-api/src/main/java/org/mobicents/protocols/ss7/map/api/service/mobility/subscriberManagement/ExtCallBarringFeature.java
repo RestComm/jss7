@@ -25,25 +25,21 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-Ext-CallBarringFeature ::= SEQUENCE {
-	basicService	Ext-BasicServiceCode	OPTIONAL,
-	ss-Status		[4] Ext-SS-Status,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
- * 
+ *
+ Ext-CallBarringFeature ::= SEQUENCE { basicService Ext-BasicServiceCode OPTIONAL, ss-Status [4] Ext-SS-Status,
+ * extensionContainer ExtensionContainer OPTIONAL, ...}
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ExtCallBarringFeature {
 
-	public ExtBasicServiceCode getBasicService();
+    ExtBasicServiceCode getBasicService();
 
-	public ExtSSStatus getSsStatus();
+    ExtSSStatus getSsStatus();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

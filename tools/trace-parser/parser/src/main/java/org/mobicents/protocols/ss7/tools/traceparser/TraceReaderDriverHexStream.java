@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -31,77 +31,76 @@ import java.io.InputStreamReader;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class TraceReaderDriverHexStream extends TraceReaderDriverBase implements TraceReaderDriver {
 
-	public TraceReaderDriverHexStream(ProcessControl processControl, String fileName) {
-		super(processControl, fileName);
-	}
+    public TraceReaderDriverHexStream(ProcessControl processControl, String fileName) {
+        super(processControl, fileName);
+    }
 
-	@Override
-	public void startTraceFile() throws TraceReaderException {
-		
-		if (this.listeners.size() == 0)
-			throw new TraceReaderException("TraceReaderListener list is empty");
-		
-		this.isStarted = true;
+    @Override
+    public void startTraceFile() throws TraceReaderException {
 
-		FileInputStream fis = null;
-		DataInputStream in = null;
+        if (this.listeners.size() == 0)
+            throw new TraceReaderException("TraceReaderListener list is empty");
 
-		try {
-			if( this.processControl.checkNeedInterrupt() )
-				return;
+        this.isStarted = true;
 
-			fis = new FileInputStream(fileName);
-			in = new DataInputStream(fis);
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        FileInputStream fis = null;
+        DataInputStream in = null;
 
-			String strLine;
-			while ((strLine = br.readLine()) != null) {
-				if (strLine.length() > 0) {
-					if ((strLine.length() % 2) != 0)
-						throw new TraceReaderException("Odd characters count in a string");
-					byte[] buf = this.hexToBytes(strLine);
+        try {
+            if (this.processControl.checkNeedInterrupt())
+                return;
 
-					byte[] bufMsg = new byte[buf.length + 8];
-					System.arraycopy(buf, 0, bufMsg, 8, buf.length);
-					bufMsg[0] = 0;
-					bufMsg[1] = 0;
-					bufMsg[2] = 63;
-					bufMsg[3] = 3;
-					bufMsg[4] = 0;
-					bufMsg[5] = 0;
-					bufMsg[6] = 0;
-					bufMsg[7] = 0;
+            fis = new FileInputStream(fileName);
+            in = new DataInputStream(fis);
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
-					for( TraceReaderListener ls : this.listeners ) {
-						ls.ss7Message(bufMsg);
-					}
-				}
-			}
+            String strLine;
+            while ((strLine = br.readLine()) != null) {
+                if (strLine.length() > 0) {
+                    if ((strLine.length() % 2) != 0)
+                        throw new TraceReaderException("Odd characters count in a string");
+                    byte[] buf = this.hexToBytes(strLine);
 
-		} catch (Throwable e) {
-			this.loger.error("General exception: " + e.getMessage());
-			e.printStackTrace();
-			throw new TraceReaderException("General exception: " + e.getMessage(), e);
-		} finally {
-			try {
-				fis.close();
-				in.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+                    byte[] bufMsg = new byte[buf.length + 8];
+                    System.arraycopy(buf, 0, bufMsg, 8, buf.length);
+                    bufMsg[0] = 0;
+                    bufMsg[1] = 0;
+                    bufMsg[2] = 63;
+                    bufMsg[3] = 3;
+                    bufMsg[4] = 0;
+                    bufMsg[5] = 0;
+                    bufMsg[6] = 0;
+                    bufMsg[7] = 0;
 
-	public byte[] hexToBytes(String hexString) {
-		HexBinaryAdapter adapter = new HexBinaryAdapter();
-		byte[] bytes = adapter.unmarshal(hexString);
-		return bytes;
-	}
+                    for (TraceReaderListener ls : this.listeners) {
+                        ls.ss7Message(bufMsg);
+                    }
+                }
+            }
+
+        } catch (Throwable e) {
+            this.loger.error("General exception: " + e.getMessage());
+            e.printStackTrace();
+            throw new TraceReaderException("General exception: " + e.getMessage(), e);
+        } finally {
+            try {
+                fis.close();
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public byte[] hexToBytes(String hexString) {
+        HexBinaryAdapter adapter = new HexBinaryAdapter();
+        byte[] bytes = adapter.unmarshal(hexString);
+        return bytes;
+    }
 }
-

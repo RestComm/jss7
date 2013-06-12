@@ -32,20 +32,20 @@ import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
  */
 public class LSAIdentityImpl extends OctetStringBase implements LSAIdentity {
 
-	public LSAIdentityImpl() {
-		super(3, 3, "LSAIdentity");
-	}
+    public LSAIdentityImpl() {
+        super(3, 3, "LSAIdentity");
+    }
 
-	public LSAIdentityImpl(byte[] data) {
-		super(3, 3, "LSAIdentity", data);
-	}
+    public LSAIdentityImpl(byte[] data) {
+        super(3, 3, "LSAIdentity", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}
+    public byte[] getData() {
+        return data;
+    }
 
-	@Override
-	public boolean isPlmnSignificantLSA() {
-		 return ((this.data[2] & 0x01) ==0x01); 
-	}	
+    @Override
+    public boolean isPlmnSignificantLSA() {
+        return ((this.data[2] & 0x01) == 0x01);
+    }
 }

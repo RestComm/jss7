@@ -40,94 +40,67 @@ import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 
 /**
-*
-
-connect {PARAMETERS-BOUND : bound} OPERATION ::= {
-ARGUMENT ConnectArg {bound}
-RETURN RESULT FALSE
-ERRORS {missingParameter |
-parameterOutOfRange |
-systemFailure |
-taskRefused |
-unexpectedComponentSequence |
-unexpectedDataValue |
-unexpectedParameter |
-unknownLegID}
-CODE opcode-connect}
--- Direction: gsmSCF-> gsmSSF, Timer: Tcon
--- This operation is used to request the gsmSSF to perform the call processing actions
--- to route or forward a call to a specified destination.
-
-ConnectArg {PARAMETERS-BOUND : bound} ::= SEQUENCE {
-destinationRoutingAddress [0] DestinationRoutingAddress {bound},
-alertingPattern [1] AlertingPattern OPTIONAL,
-originalCalledPartyID [6] OriginalCalledPartyID {bound} OPTIONAL,
-extensions [10] Extensions {bound} OPTIONAL,
-carrier [11] Carrier {bound} OPTIONAL,
-callingPartysCategory [28] CallingPartysCategory OPTIONAL,
-redirectingPartyID [29] RedirectingPartyID {bound} OPTIONAL,
-redirectionInformation [30] RedirectionInformation OPTIONAL,
-genericNumbers [14] GenericNumbers {bound} OPTIONAL,
-serviceInteractionIndicatorsTwo [15] ServiceInteractionIndicatorsTwo OPTIONAL,
-chargeNumber [19] ChargeNumber {bound} OPTIONAL,
-legToBeConnected [21] LegID OPTIONAL,
-cug-Interlock [31] CUG-Interlock OPTIONAL,
-cug-OutgoingAccess [32] NULL OPTIONAL,
-suppressionOfAnnouncement [55] SuppressionOfAnnouncement OPTIONAL,
-oCSIApplicable [56] OCSIApplicable OPTIONAL,
-naOliInfo [57] NAOliInfo OPTIONAL,
-bor-InterrogationRequested [58] NULL OPTIONAL,
-...
-}
--- na-Info is included at the discretion of the gsmSCF operator.
-
-SuppressionOfAnnouncement ::= NULL
-
-OCSIApplicable ::= NULL 
---  Indicates that the Originating CAMEL Subscription Information, if present, shall be 
---  applied on the outgoing call leg created with a Connect operation. For the use of this 
---  parameter see 3GPP TS 23.078 [7].
- 
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ connect {PARAMETERS-BOUND : bound} OPERATION ::= { ARGUMENT ConnectArg {bound} RETURN RESULT FALSE ERRORS {missingParameter |
+ * parameterOutOfRange | systemFailure | taskRefused | unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter |
+ * unknownLegID} CODE opcode-connect} -- Direction: gsmSCF-> gsmSSF, Timer: Tcon -- This operation is used to request the gsmSSF
+ * to perform the call processing actions -- to route or forward a call to a specified destination.
+ *
+ * ConnectArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { destinationRoutingAddress [0] DestinationRoutingAddress {bound},
+ * alertingPattern [1] AlertingPattern OPTIONAL, originalCalledPartyID [6] OriginalCalledPartyID {bound} OPTIONAL, extensions
+ * [10] Extensions {bound} OPTIONAL, carrier [11] Carrier {bound} OPTIONAL, callingPartysCategory [28] CallingPartysCategory
+ * OPTIONAL, redirectingPartyID [29] RedirectingPartyID {bound} OPTIONAL, redirectionInformation [30] RedirectionInformation
+ * OPTIONAL, genericNumbers [14] GenericNumbers {bound} OPTIONAL, serviceInteractionIndicatorsTwo [15]
+ * ServiceInteractionIndicatorsTwo OPTIONAL, chargeNumber [19] ChargeNumber {bound} OPTIONAL, legToBeConnected [21] LegID
+ * OPTIONAL, cug-Interlock [31] CUG-Interlock OPTIONAL, cug-OutgoingAccess [32] NULL OPTIONAL, suppressionOfAnnouncement [55]
+ * SuppressionOfAnnouncement OPTIONAL, oCSIApplicable [56] OCSIApplicable OPTIONAL, naOliInfo [57] NAOliInfo OPTIONAL,
+ * bor-InterrogationRequested [58] NULL OPTIONAL, ... } -- na-Info is included at the discretion of the gsmSCF operator.
+ *
+ * SuppressionOfAnnouncement ::= NULL
+ *
+ * OCSIApplicable ::= NULL -- Indicates that the Originating CAMEL Subscription Information, if present, shall be -- applied on
+ * the outgoing call leg created with a Connect operation. For the use of this -- parameter see 3GPP TS 23.078 [7].
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ConnectRequest extends CircuitSwitchedCallMessage {
 
-	public DestinationRoutingAddress getDestinationRoutingAddress();
+    DestinationRoutingAddress getDestinationRoutingAddress();
 
-	public AlertingPatternCap getAlertingPattern();
+    AlertingPatternCap getAlertingPattern();
 
-	public OriginalCalledNumberCap getOriginalCalledPartyID();
+    OriginalCalledNumberCap getOriginalCalledPartyID();
 
-	public CAPExtensions getExtensions();
+    CAPExtensions getExtensions();
 
-	public Carrier getCarrier();
+    Carrier getCarrier();
 
-	public CallingPartysCategoryInap getCallingPartysCategory();
+    CallingPartysCategoryInap getCallingPartysCategory();
 
-	public RedirectingPartyIDCap getRedirectingPartyID();
+    RedirectingPartyIDCap getRedirectingPartyID();
 
-	public RedirectionInformationInap getRedirectionInformation();
+    RedirectionInformationInap getRedirectionInformation();
 
-	public ArrayList<GenericNumberCap> getGenericNumbers();
+    ArrayList<GenericNumberCap> getGenericNumbers();
 
-	public ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo();
+    ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo();
 
-	public LocationNumberCap getChargeNumber();
+    LocationNumberCap getChargeNumber();
 
-	public LegID getLegToBeConnected();
+    LegID getLegToBeConnected();
 
-	public CUGInterlock getCUGInterlock();
+    CUGInterlock getCUGInterlock();
 
-	public boolean getCugOutgoingAccess();
+    boolean getCugOutgoingAccess();
 
-	public boolean getSuppressionOfAnnouncement();
+    boolean getSuppressionOfAnnouncement();
 
-	public boolean getOCSIApplicable();
+    boolean getOCSIApplicable();
 
-	public NAOliInfo getNAOliInfo();
+    NAOliInfo getNAOliInfo();
 
-	public boolean getBorInterrogationRequested();
+    boolean getBorInterrogationRequested();
 
 }

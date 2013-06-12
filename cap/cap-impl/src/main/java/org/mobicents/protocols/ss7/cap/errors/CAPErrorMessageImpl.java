@@ -32,74 +32,70 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
  * Base class of CAP ReturnError messages
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public abstract class CAPErrorMessageImpl implements CAPErrorMessage, CAPAsnPrimitive {
-	
-	protected Long errorCode;
-	
-	
-	protected CAPErrorMessageImpl(Long errorCode) {
-		this.errorCode = errorCode;
-	}
-	
-	@Override
-	public Long getErrorCode() {
-		return errorCode;
-	}
 
-	
-	@Override
-	public boolean isEmParameterless() {
-		return false;
-	}
+    protected Long errorCode;
 
-	@Override
-	public boolean isEmCancelFailed() {
-		return false;
-	}
+    protected CAPErrorMessageImpl(Long errorCode) {
+        this.errorCode = errorCode;
+    }
 
-	@Override
-	public boolean isEmRequestedInfoError() {
-		return false;
-	}
+    @Override
+    public Long getErrorCode() {
+        return errorCode;
+    }
 
-	@Override
-	public boolean isEmSystemFailure() {
-		return false;
-	}
+    @Override
+    public boolean isEmParameterless() {
+        return false;
+    }
 
-	@Override
-	public boolean isEmTaskRefused() {
-		return false;
-	}
+    @Override
+    public boolean isEmCancelFailed() {
+        return false;
+    }
 
-	
-	@Override
-	public CAPErrorMessageParameterless getEmParameterless() {
-		return null;
-	}
+    @Override
+    public boolean isEmRequestedInfoError() {
+        return false;
+    }
 
-	@Override
-	public CAPErrorMessageCancelFailed getEmCancelFailed() {
-		return null;
-	}
+    @Override
+    public boolean isEmSystemFailure() {
+        return false;
+    }
 
-	@Override
-	public CAPErrorMessageRequestedInfoError getEmRequestedInfoError() {
-		return null;
-	}
+    @Override
+    public boolean isEmTaskRefused() {
+        return false;
+    }
 
-	@Override
-	public CAPErrorMessageSystemFailure getEmSystemFailure() {
-		return null;
-	}
+    @Override
+    public CAPErrorMessageParameterless getEmParameterless() {
+        return null;
+    }
 
-	@Override
-	public CAPErrorMessageTaskRefused getEmTaskRefused() {
-		return null;
-	}
+    @Override
+    public CAPErrorMessageCancelFailed getEmCancelFailed() {
+        return null;
+    }
+
+    @Override
+    public CAPErrorMessageRequestedInfoError getEmRequestedInfoError() {
+        return null;
+    }
+
+    @Override
+    public CAPErrorMessageSystemFailure getEmSystemFailure() {
+        return null;
+    }
+
+    @Override
+    public CAPErrorMessageTaskRefused getEmTaskRefused() {
+        return null;
+    }
 }
-

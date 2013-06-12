@@ -26,35 +26,31 @@ import java.nio.channels.SelectionKey;
 
 /**
  * <p>
- * A token representing the registration of a {@link ShellSelectableChannel}
- * with a {@link ChannelSelector}.
+ * A token representing the registration of a {@link ShellSelectableChannel} with a {@link ChannelSelector}.
  * </p>
  * <p>
- * A selection key is created each time a channel is registered with a selector.
- * A key remains valid until it is <i>cancelled</i> by invoking its
- * {@link #cancel cancel} method, by closing its channel, or by closing its
- * selector.
+ * A selection key is created each time a channel is registered with a selector. A key remains valid until it is
+ * <i>cancelled</i> by invoking its {@link #cancel cancel} method, by closing its channel, or by closing its selector.
  * </p>
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class ChannelSelectionKey {
     private ShellSelectableChannel shellSelectableChannel = null;
     private SelectionKey key = null;
 
-    protected ChannelSelectionKey(
-            ShellSelectableChannel shellSelectableChannel, SelectionKey k) {
+    protected ChannelSelectionKey(ShellSelectableChannel shellSelectableChannel, SelectionKey k) {
         this.shellSelectableChannel = shellSelectableChannel;
         this.key = k;
     }
 
     /**
      * <p>
-     * Returns the channel for which this key was created. This method will
-     * continue to return the channel even after the key is canceled.
+     * Returns the channel for which this key was created. This method will continue to return the channel even after the key is
+     * canceled.
      * </p>
-     * 
+     *
      * @return This key's channel
      */
     public ShellSelectableChannel channel() {
@@ -62,9 +58,8 @@ public class ChannelSelectionKey {
     }
 
     /**
-     * Tests whether this key's channel is ready to accept a new socket
-     * connection.
-     * 
+     * Tests whether this key's channel is ready to accept a new socket connection.
+     *
      * @return
      */
     public boolean isAcceptable() {
@@ -73,7 +68,7 @@ public class ChannelSelectionKey {
 
     /**
      * Tests whether this key's channel is ready for reading.
-     * 
+     *
      * @return
      */
     public boolean isReadable() {
@@ -82,7 +77,7 @@ public class ChannelSelectionKey {
 
     /**
      * Tests whether this key's channel is ready for writing.
-     * 
+     *
      * @return
      */
     public boolean isWritable() {
@@ -91,12 +86,11 @@ public class ChannelSelectionKey {
 
     /**
      * <p>
-     * Requests that the registration of this key's channel with its selector be
-     * canceled. Upon return the key will be invalid
+     * Requests that the registration of this key's channel with its selector be canceled. Upon return the key will be invalid
      * </p>
      * <p>
-     * If this key has already been canceled then invoking this method has no
-     * effect. Once canceled, a key remains forever invalid.
+     * If this key has already been canceled then invoking this method has no effect. Once canceled, a key remains forever
+     * invalid.
      * </p>
      */
     public void cancel() {

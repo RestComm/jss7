@@ -23,18 +23,16 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-BMSC-EventList ::= BIT STRING {
-	mbmsMulticastServiceActivation (0)} (SIZE (1..8))
--- Other bits than listed above shall be discarded.
-
- * 
+ *
+ BMSC-EventList ::= BIT STRING { mbmsMulticastServiceActivation (0)} (SIZE (1..8)) -- Other bits than listed above shall be
+ * discarded.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface BMSCEventList {
 
-	public boolean getMbmsMulticastServiceActivation();
+    boolean getMbmsMulticastServiceActivation();
 
 }

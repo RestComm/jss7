@@ -22,65 +22,68 @@
 
 package org.mobicents.protocols.ss7.inap.primitives;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class LegIDTest {
-	
-	private byte[] getData1() {
-		return new byte[] { (byte) 128, 1, 2 };
-	}
-	
-	private byte[] getData2() {
-		return new byte[] { (byte) 129, 1, 1 };
-	}
 
-	@Test(groups = { "functional.decode","primitives"})
-	public void testDecode() throws Exception {
+    private byte[] getData1() {
+        return new byte[] { (byte) 128, 1, 2 };
+    }
 
-		byte[] data = this.getData1();
-		AsnInputStream ais = new AsnInputStream(data);
-		LegIDImpl legId = new LegIDImpl();
-		int tag = ais.readTag();
-		legId.decodeAll(ais);
-		assertNotNull(legId.getSendingSideID());
-		assertNull(legId.getReceivingSideID());
-		assertEquals(legId.getSendingSideID(), LegType.leg2);
+    private byte[] getData2() {
+        return new byte[] { (byte) 129, 1, 1 };
+    }
 
-		data = this.getData2();
-		ais = new AsnInputStream(data);
-		legId = new LegIDImpl();
-		tag = ais.readTag();
-		legId.decodeAll(ais);
-		assertNull(legId.getSendingSideID());
-		assertNotNull(legId.getReceivingSideID());
-		assertEquals(legId.getReceivingSideID(), LegType.leg1);
-		
-	}
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
 
-	@Test(groups = { "functional.encode","primitives"})
-	public void testEncode() throws Exception {
+        byte[] data = this.getData1();
+        AsnInputStream ais = new AsnInputStream(data);
+        LegIDImpl legId = new LegIDImpl();
+        int tag = ais.readTag();
+        legId.decodeAll(ais);
+        assertNotNull(legId.getSendingSideID());
+        assertNull(legId.getReceivingSideID());
+        assertEquals(legId.getSendingSideID(), LegType.leg2);
 
-		LegIDImpl legId = new LegIDImpl(true, LegType.leg2);
-		AsnOutputStream aos = new AsnOutputStream();
-		legId.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+        data = this.getData2();
+        ais = new AsnInputStream(data);
+        legId = new LegIDImpl();
+        tag = ais.readTag();
+        legId.decodeAll(ais);
+        assertNull(legId.getSendingSideID());
+        assertNotNull(legId.getReceivingSideID());
+        assertEquals(legId.getReceivingSideID(), LegType.leg1);
 
-		legId = new LegIDImpl(false, LegType.leg1);
-		aos.reset();
-		legId.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
-		
-	}
+    }
+
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
+
+        LegIDImpl legId = new LegIDImpl(true, LegType.leg2);
+        AsnOutputStream aos = new AsnOutputStream();
+        legId.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+
+        legId = new LegIDImpl(false, LegType.leg1);
+        aos.reset();
+        legId.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
+
+    }
 }

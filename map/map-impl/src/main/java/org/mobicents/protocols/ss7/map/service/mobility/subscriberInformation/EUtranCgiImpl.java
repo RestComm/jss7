@@ -32,15 +32,15 @@ import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
  */
 public class EUtranCgiImpl extends OctetStringBase implements EUtranCgi {
 
-	public EUtranCgiImpl() {
-		super(7, 7, "EUtranCgi");
-	}
+    public EUtranCgiImpl() {
+        super(7, 7, "EUtranCgi");
+    }
 
-	public EUtranCgiImpl(byte[] data) {
-		super(7, 7, "EUtranCgi", data);
-	}
+    public EUtranCgiImpl(byte[] data) {
+        super(7, 7, "EUtranCgi", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 }

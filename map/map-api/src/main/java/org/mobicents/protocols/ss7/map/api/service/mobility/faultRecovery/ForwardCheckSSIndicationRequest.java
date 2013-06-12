@@ -25,16 +25,14 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.faultRecovery;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
- * 
- 
-MAP V1-2-3:
-
-forwardCheckSS-Indication  OPERATION ::= {			--Timer s
-	CODE	local:38 }
-
- * 
+ *
+ MAP V1-2-3:
+ *
+ * forwardCheckSS-Indication OPERATION ::= { --Timer s CODE local:38 }
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ForwardCheckSSIndicationRequest extends MobilityMessage {
 

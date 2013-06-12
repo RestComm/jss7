@@ -26,25 +26,23 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
 
 /**
-*
-*
-ISUP CallingPartyNumber wrapper
-
-CallingPartyNumber {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE( 
- bound.&minCallingPartyNumberLength .. bound.&maxCallingPartyNumberLength)) 
--- Indicates the Calling Party Number. Refer to ETSI EN 300 356-1 [23] for encoding. 
-
-minCallingPartyNumberLength ::= 2
-maxCallingPartyNumberLength ::= 10
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ *
+ ISUP CallingPartyNumber wrapper
+ *
+ * CallingPartyNumber {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE( bound.&minCallingPartyNumberLength ..
+ * bound.&maxCallingPartyNumberLength)) -- Indicates the Calling Party Number. Refer to ETSI EN 300 356-1 [23] for encoding.
+ *
+ * minCallingPartyNumberLength ::= 2 maxCallingPartyNumberLength ::= 10
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface CallingPartyNumberCap {
 
-	public byte[] getData();
+    byte[] getData();
 
-	public CallingPartyNumber getCallingPartyNumber() throws CAPException;
+    CallingPartyNumber getCallingPartyNumber() throws CAPException;
 
 }

@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -26,59 +26,61 @@ import java.util.Map;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
- * 
+ *
  * @author Amit Bhayani
  *
  */
 public interface Router {
 
-	public void addRoutingAddress(int id, SccpAddress routingAddress) throws Exception;
+    void addRoutingAddress(int id, SccpAddress routingAddress) throws Exception;
 
-	public void removeRoutingAddress(int id) throws Exception;
+    void removeRoutingAddress(int id) throws Exception;
 
-	public void modifyRoutingAddress(int routingAddressId, SccpAddress routingAddress) throws Exception;
+    void modifyRoutingAddress(int routingAddressId, SccpAddress routingAddress) throws Exception;
 
-	public Map<Integer, SccpAddress> getRoutingAddresses();
-	
-	public SccpAddress getRoutingAddress(int id);
+    Map<Integer, SccpAddress> getRoutingAddresses();
 
-	public void addMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni) throws Exception;
+    SccpAddress getRoutingAddress(int id);
 
-	public void modifyMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni) throws Exception;
+    void addMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni) throws Exception;
 
-	public void removeMtp3ServiceAccessPoint(int id) throws Exception;
+    void modifyMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni) throws Exception;
 
-	public Mtp3ServiceAccessPoint getMtp3ServiceAccessPoint(int id);
+    void removeMtp3ServiceAccessPoint(int id) throws Exception;
 
-	public Map<Integer, Mtp3ServiceAccessPoint> getMtp3ServiceAccessPoints();
+    Mtp3ServiceAccessPoint getMtp3ServiceAccessPoint(int id);
 
-	public void addMtp3Destination(int sapId, int destId, int firstDpc, int lastDpc, int firstSls, int lastSls,
-			int slsMask) throws Exception;
+    Map<Integer, Mtp3ServiceAccessPoint> getMtp3ServiceAccessPoints();
 
-	public void modifyMtp3Destination(int sapId, int destId, int firstDpc, int lastDpc, int firstSls, int lastSls,
-			int slsMask) throws Exception;
+    void addMtp3Destination(int sapId, int destId, int firstDpc, int lastDpc, int firstSls, int lastSls, int slsMask)
+            throws Exception;
 
-	public void removeMtp3Destination(int sapId, int destId) throws Exception;
+    void modifyMtp3Destination(int sapId, int destId, int firstDpc, int lastDpc, int firstSls, int lastSls, int slsMask)
+            throws Exception;
 
-	public void addLongMessageRule(int id, int firstSpc, int lastSpc, LongMessageRuleType ruleType) throws Exception;
+    void removeMtp3Destination(int sapId, int destId) throws Exception;
 
-	public void modifyLongMessageRule(int id, int firstSpc, int lastSpc, LongMessageRuleType ruleType) throws Exception;
+    void addLongMessageRule(int id, int firstSpc, int lastSpc, LongMessageRuleType ruleType) throws Exception;
 
-	public void removeLongMessageRule(int id) throws Exception;
+    void modifyLongMessageRule(int id, int firstSpc, int lastSpc, LongMessageRuleType ruleType) throws Exception;
 
-	public LongMessageRule getLongMessageRule(int id);
+    void removeLongMessageRule(int id) throws Exception;
 
-	public Map<Integer, LongMessageRule> getLongMessageRules();
+    LongMessageRule getLongMessageRule(int id);
 
-	public void addRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern, String mask,
-			int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId) throws Exception;
+    Map<Integer, LongMessageRule> getLongMessageRules();
 
-	public void modifyRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern, String mask,
-			int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId) throws Exception;
-	
-	public Rule getRule(int id);
+    void addRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType,
+            SccpAddress pattern, String mask, int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId)
+            throws Exception;
 
-	public void removeRule(int id) throws Exception;
+    void modifyRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType,
+            SccpAddress pattern, String mask, int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId)
+            throws Exception;
 
-	public Map<Integer, Rule> getRules();
+    Rule getRule(int id);
+
+    void removeRule(int id) throws Exception;
+
+    Map<Integer, Rule> getRules();
 }

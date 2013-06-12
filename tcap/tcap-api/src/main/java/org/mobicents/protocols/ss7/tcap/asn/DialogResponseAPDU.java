@@ -21,10 +21,9 @@
  */
 
 /**
- * 
+ *
  */
 package org.mobicents.protocols.ss7.tcap.asn;
-
 
 /**
  * @author baranowb
@@ -32,20 +31,24 @@ package org.mobicents.protocols.ss7.tcap.asn;
  */
 public interface DialogResponseAPDU extends DialogAPDU {
 
-	public ProtocolVersion getProtocolVersion();
+    ProtocolVersion getProtocolVersion();
 
-	//mandatory
-	public ApplicationContextName getApplicationContextName();
-	public void setApplicationContextName(ApplicationContextName acn);
-	public Result getResult();
-	public void setResult(Result acn);
-	public ResultSourceDiagnostic getResultSourceDiagnostic();
-	public void setResultSourceDiagnostic(ResultSourceDiagnostic acn);
-	
-	
-	
-	//opt
-	public UserInformation getUserInformation();
-	public void setUserInformation(UserInformation ui);
-	
+    // mandatory
+    ApplicationContextName getApplicationContextName();
+
+    void setApplicationContextName(ApplicationContextName acn);
+
+    Result getResult();
+
+    void setResult(Result acn);
+
+    ResultSourceDiagnostic getResultSourceDiagnostic();
+
+    void setResultSourceDiagnostic(ResultSourceDiagnostic acn);
+
+    // opt
+    UserInformation getUserInformation();
+
+    void setUserInformation(UserInformation ui);
+
 }

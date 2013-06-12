@@ -28,45 +28,31 @@ import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
-/**	
- * 
-
-MAP V3:
-
-provideSubscriberInfo  OPERATION ::= {				--Timer m
-	ARGUMENT
-		ProvideSubscriberInfoArg
-	RESULT
-		ProvideSubscriberInfoRes
-	ERRORS {
-		dataMissing |
-		unexpectedDataValue}
-	CODE	local:70 }
-
-ProvideSubscriberInfoArg ::= SEQUENCE {
-	imsi		[0] IMSI,
-	lmsi		[1] LMSI	OPTIONAL,
-	requestedInfo	[2] RequestedInfo,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	...,
-	callPriority	[4]	EMLPP-Priority	OPTIONAL
-	}
-
-
- * 
+/**
+ *
+ MAP V3:
+ *
+ * provideSubscriberInfo OPERATION ::= { --Timer m ARGUMENT ProvideSubscriberInfoArg RESULT ProvideSubscriberInfoRes ERRORS {
+ * dataMissing | unexpectedDataValue} CODE local:70 }
+ *
+ * ProvideSubscriberInfoArg ::= SEQUENCE { imsi [0] IMSI, lmsi [1] LMSI OPTIONAL, requestedInfo [2] RequestedInfo,
+ * extensionContainer [3] ExtensionContainer OPTIONAL, ..., callPriority [4] EMLPP-Priority OPTIONAL }
+ *
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface ProvideSubscriberInfoRequest extends MobilityMessage {
 
-	public IMSI getImsi();
+    IMSI getImsi();
 
-	public LMSI getLmsi();
+    LMSI getLmsi();
 
-	public RequestedInfo getRequestedInfo();
+    RequestedInfo getRequestedInfo();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public EMLPPPriority getCallPriority();
+    EMLPPPriority getCallPriority();
 
 }

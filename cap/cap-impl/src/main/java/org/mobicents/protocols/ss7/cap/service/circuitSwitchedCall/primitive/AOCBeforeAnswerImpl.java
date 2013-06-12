@@ -37,169 +37,168 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
-*
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class AOCBeforeAnswerImpl implements AOCBeforeAnswer, CAPAsnPrimitive {
 
-	public static final int _ID_cAI_GSM0224 = 0;
-	public static final int _ID_aOCSubsequent = 1;
+    public static final int _ID_cAI_GSM0224 = 0;
+    public static final int _ID_aOCSubsequent = 1;
 
-	public static final String _PrimitiveName = "AOCBeforeAnswer";
+    public static final String _PrimitiveName = "AOCBeforeAnswer";
 
-	private CAI_GSM0224 aocInitial;
-	private AOCSubsequent aocSubsequent;
-	
-	public AOCBeforeAnswerImpl() {
-	}
-	
-	public AOCBeforeAnswerImpl(CAI_GSM0224 aocInitial, AOCSubsequent aocSubsequent) {
-		this.aocInitial = aocInitial;
-		this.aocSubsequent = aocSubsequent;
-	}
+    private CAI_GSM0224 aocInitial;
+    private AOCSubsequent aocSubsequent;
 
-	@Override
-	public CAI_GSM0224 getAOCInitial() {
-		return aocInitial;
-	}
+    public AOCBeforeAnswerImpl() {
+    }
 
-	@Override
-	public AOCSubsequent getAOCSubsequent() {
-		return aocSubsequent;
-	}
+    public AOCBeforeAnswerImpl(CAI_GSM0224 aocInitial, AOCSubsequent aocSubsequent) {
+        this.aocInitial = aocInitial;
+        this.aocSubsequent = aocSubsequent;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public CAI_GSM0224 getAOCInitial() {
+        return aocInitial;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public AOCSubsequent getAOCSubsequent() {
+        return aocSubsequent;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		this.aocInitial = null;
-		this.aocSubsequent = null;
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-			int tag = ais.readTag();
+        this.aocInitial = null;
+        this.aocSubsequent = null;
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_cAI_GSM0224:
-					this.aocInitial = new CAI_GSM0224Impl();
-					((CAI_GSM0224Impl) this.aocInitial).decodeAll(ais);
-					break;
-				case _ID_aOCSubsequent:
-					this.aocSubsequent = new AOCSubsequentImpl();
-					((AOCSubsequentImpl) this.aocSubsequent).decodeAll(ais);
-					break;
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+            int tag = ais.readTag();
 
-		if (this.aocInitial == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": aocInitial is mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_cAI_GSM0224:
+                        this.aocInitial = new CAI_GSM0224Impl();
+                        ((CAI_GSM0224Impl) this.aocInitial).decodeAll(ais);
+                        break;
+                    case _ID_aOCSubsequent:
+                        this.aocSubsequent = new AOCSubsequentImpl();
+                        ((AOCSubsequentImpl) this.aocSubsequent).decodeAll(ais);
+                        break;
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        if (this.aocInitial == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": aocInitial is mandatory but not found", CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		if (this.aocInitial == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": aocInitial must not be null");
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		((CAI_GSM0224Impl) this.aocInitial).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_cAI_GSM0224);
+    @Override
+    public void encodeData(AsnOutputStream aos) throws CAPException {
 
-		if (this.aocSubsequent != null)
-			((AOCSubsequentImpl) this.aocSubsequent).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_aOCSubsequent);
-	}
+        if (this.aocInitial == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": aocInitial must not be null");
 
-	@Override
-	public String toString() {
+        ((CAI_GSM0224Impl) this.aocInitial).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_cAI_GSM0224);
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        if (this.aocSubsequent != null)
+            ((AOCSubsequentImpl) this.aocSubsequent).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_aOCSubsequent);
+    }
 
-		if (this.aocInitial != null) {
-			sb.append("aocInitial=");
-			sb.append(aocInitial.toString());
-		}
-		if (this.aocSubsequent != null) {
-			sb.append(", aocSubsequent=");
-			sb.append(aocSubsequent.toString());
-		}
+    @Override
+    public String toString() {
 
-		sb.append("]");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		return sb.toString();
-	}
+        if (this.aocInitial != null) {
+            sb.append("aocInitial=");
+            sb.append(aocInitial.toString());
+        }
+        if (this.aocSubsequent != null) {
+            sb.append(", aocSubsequent=");
+            sb.append(aocSubsequent.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

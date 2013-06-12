@@ -26,22 +26,22 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.A
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class AgeIndicatorImpl extends OctetStringBase implements AgeIndicator {
 
-	public AgeIndicatorImpl() {
-		super(1, 6, "AgeIndicator");
-	}
+    public AgeIndicatorImpl() {
+        super(1, 6, "AgeIndicator");
+    }
 
-	public AgeIndicatorImpl(byte[] data) {
-		super(1, 6, "AgeIndicator", data);
-	}
+    public AgeIndicatorImpl(byte[] data) {
+        super(1, 6, "AgeIndicator", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}
+    public byte[] getData() {
+        return data;
+    }
 
 }

@@ -26,21 +26,18 @@ import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-FailureReportRes ::= SEQUENCE {
-	ggsn-Address		[0] GSN-Address	OPTIONAL,
-	extensionContainer		[1] ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ FailureReportRes ::= SEQUENCE { ggsn-Address [0] GSN-Address OPTIONAL, extensionContainer [1] ExtensionContainer OPTIONAL,
+ * ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface FailureReportResponse extends PdpContextActivationMessage {
 
-	public GSNAddress getGgsnAddress();
+    GSNAddress getGgsnAddress();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

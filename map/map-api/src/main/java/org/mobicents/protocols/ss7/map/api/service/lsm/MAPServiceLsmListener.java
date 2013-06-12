@@ -26,19 +26,20 @@ import org.mobicents.protocols.ss7.map.api.MAPServiceListener;
 
 /**
  * @author amit bhayani
- * 
+ *
  */
 public interface MAPServiceLsmListener extends MAPServiceListener {
 
-	public void onProvideSubscriberLocationRequest(ProvideSubscriberLocationRequest provideSubscriberLocationRequestIndication);
+    void onProvideSubscriberLocationRequest(ProvideSubscriberLocationRequest provideSubscriberLocationRequestIndication);
 
-	public void onProvideSubscriberLocationResponse(ProvideSubscriberLocationResponse provideSubscriberLocationResponseIndication);
+    void onProvideSubscriberLocationResponse(
+            ProvideSubscriberLocationResponse provideSubscriberLocationResponseIndication);
 
-	public void onSubscriberLocationReportRequest(SubscriberLocationReportRequest subscriberLocationReportRequestIndication);
+    void onSubscriberLocationReportRequest(SubscriberLocationReportRequest subscriberLocationReportRequestIndication);
 
-	public void onSubscriberLocationReportResponse(SubscriberLocationReportResponse subscriberLocationReportResponseIndication);
-	
-	public void onSendRoutingInfoForLCSRequest(SendRoutingInfoForLCSRequest sendRoutingInforForLCSRequestIndication);
+    void onSubscriberLocationReportResponse(SubscriberLocationReportResponse subscriberLocationReportResponseIndication);
 
-	public void onSendRoutingInfoForLCSResponse(SendRoutingInfoForLCSResponse sendRoutingInforForLCSResponseIndication);
+    void onSendRoutingInfoForLCSRequest(SendRoutingInfoForLCSRequest sendRoutingInforForLCSRequestIndication);
+
+    void onSendRoutingInfoForLCSResponse(SendRoutingInfoForLCSResponse sendRoutingInforForLCSResponseIndication);
 }

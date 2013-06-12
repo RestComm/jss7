@@ -33,37 +33,36 @@ import org.mobicents.protocols.asn.Tag;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class VariablePartDateTest {
 
-	public byte[] getData1() {
-		return new byte[] { (byte) 131, 4, 2, 33, 48, 18 };
-	}
+    public byte[] getData1() {
+        return new byte[] { (byte) 131, 4, 2, 33, 48, 18 };
+    }
 
-	@Test(groups = { "functional.decode","circuitSwitchedCall.primitive"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData1();
-		AsnInputStream ais = new AsnInputStream(data);
-		VariablePartDateImpl elem = new VariablePartDateImpl();
-		int tag = ais.readTag();
-		assertEquals(tag, 3);
-		elem.decodeAll(ais);
-		assertEquals(elem.getYear(), 2012);
-		assertEquals(elem.getMonth(), 3);
-		assertEquals(elem.getDay(), 21);
-	}
+        byte[] data = this.getData1();
+        AsnInputStream ais = new AsnInputStream(data);
+        VariablePartDateImpl elem = new VariablePartDateImpl();
+        int tag = ais.readTag();
+        assertEquals(tag, 3);
+        elem.decodeAll(ais);
+        assertEquals(elem.getYear(), 2012);
+        assertEquals(elem.getMonth(), 3);
+        assertEquals(elem.getDay(), 21);
+    }
 
-	@Test(groups = { "functional.encode","circuitSwitchedCall.primitive"})
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
+    public void testEncode() throws Exception {
 
-		VariablePartDateImpl elem = new VariablePartDateImpl(2012, 3, 21);
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 3);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
-	}
+        VariablePartDateImpl elem = new VariablePartDateImpl(2012, 3, 21);
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 3);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+    }
 }
-

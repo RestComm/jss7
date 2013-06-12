@@ -22,80 +22,77 @@
 
 package org.mobicents.protocols.ss7.tcap.asn;
 
-import java.util.BitSet;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.BitSetStrictLength;
 import org.mobicents.protocols.asn.Tag;
 
 /**
- * 
+ *
  * @author baranowb
  * @author amit bhayani
- * 
+ *
  */
 public interface DialogPortion extends Encodable {
 
-	// Dialog portion is actually type of EXTERNAL, this sucks....
-	public static final int _TAG_CLASS = Tag.CLASS_APPLICATION;
-	public static final boolean _TAG_PC_PRIMITIVE = false;
-	public static final int _TAG = 0x0B;
+    // Dialog portion is actually type of EXTERNAL, this sucks....
+    int _TAG_CLASS = Tag.CLASS_APPLICATION;
+    boolean _TAG_PC_PRIMITIVE = false;
+    int _TAG = 0x0B;
 
-	/**
-	 * @return the dialogAPDU
-	 */
-	public DialogAPDU getDialogAPDU();
+    /**
+     * @return the dialogAPDU
+     */
+    DialogAPDU getDialogAPDU();
 
-	/**
-	 * @param dialogAPDU
-	 *            the dialogAPDU to set
-	 */
-	public void setDialogAPDU(DialogAPDU dialogAPDU);
+    /**
+     * @param dialogAPDU the dialogAPDU to set
+     */
+    void setDialogAPDU(DialogAPDU dialogAPDU);
 
-	public void setUnidirectional(boolean flag);
+    void setUnidirectional(boolean flag);
 
-	public boolean isUnidirectional();
+    boolean isUnidirectional();
 
-	// From External
+    // From External
 
-	public boolean isOid();
+    boolean isOid();
 
-	public void setOid(boolean oid);
+    void setOid(boolean oid);
 
-	public long[] getOidValue();
+    long[] getOidValue();
 
-	public void setOidValue(long[] oidValue);
+    void setOidValue(long[] oidValue);
 
-	public boolean isInteger();
+    boolean isInteger();
 
-	public void setInteger(boolean integer);
+    void setInteger(boolean integer);
 
-	public long getIndirectReference();
+    long getIndirectReference();
 
-	public void setIndirectReference(long indirectReference);
+    void setIndirectReference(long indirectReference);
 
-	public boolean isObjDescriptor();
+    boolean isObjDescriptor();
 
-	public void setObjDescriptor(boolean objDescriptor);
+    void setObjDescriptor(boolean objDescriptor);
 
-	public boolean isAsn();
+    boolean isAsn();
 
-	public void setAsn(boolean asn);
+    void setAsn(boolean asn);
 
-	public byte[] getEncodeType() throws AsnException;
+    byte[] getEncodeType() throws AsnException;
 
-	public void setEncodeType(byte[] data);
+    void setEncodeType(byte[] data);
 
-	public boolean isOctet();
+    boolean isOctet();
 
-	public void setOctet(boolean octet);
+    void setOctet(boolean octet);
 
-	public boolean isArbitrary();
+    boolean isArbitrary();
 
-	public void setArbitrary(boolean arbitrary);
+    void setArbitrary(boolean arbitrary);
 
-	public BitSetStrictLength getEncodeBitStringType() throws AsnException;
+    BitSetStrictLength getEncodeBitStringType() throws AsnException;
 
-	public void setEncodeBitStringType(BitSetStrictLength data);
+    void setEncodeBitStringType(BitSetStrictLength data);
 
 }

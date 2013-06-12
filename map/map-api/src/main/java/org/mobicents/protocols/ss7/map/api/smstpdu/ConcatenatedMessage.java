@@ -23,14 +23,14 @@
 package org.mobicents.protocols.ss7.map.api.smstpdu;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ConcatenatedMessage {
 
-	public String getText();
+    String getText();
 
-	public UserDataHeaderElement[] getExtraUserDataHeader();
+    UserDataHeaderElement[] getExtraUserDataHeader();
 
 }

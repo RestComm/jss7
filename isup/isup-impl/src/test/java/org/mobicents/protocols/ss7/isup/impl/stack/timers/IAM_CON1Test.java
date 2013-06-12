@@ -22,19 +22,6 @@
 
 package org.mobicents.protocols.ss7.isup.impl.stack.timers;
 
-import java.util.Properties;
-
-import org.mobicents.protocols.ss7.isup.ISUPTimeoutEvent;
-import org.mobicents.protocols.ss7.isup.message.AddressCompleteMessage;
-import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
-import org.mobicents.protocols.ss7.isup.message.InitialAddressMessage;
-import org.mobicents.protocols.ss7.isup.message.parameter.BackwardCallIndicators;
-import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
-import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
-import org.mobicents.protocols.ss7.isup.message.parameter.ForwardCallIndicators;
-import org.mobicents.protocols.ss7.isup.message.parameter.NatureOfConnectionIndicators;
-import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumRequirement;
 import org.testng.annotations.Test;
 
 /**
@@ -42,10 +29,9 @@ import org.testng.annotations.Test;
  *
  */
 public class IAM_CON1Test extends IAM_CONTest {
-	@Test(groups = { "functional.timer","timer.timeout.timeout"})
-	public void testWithTimeout() throws Exception
-	{
-		super.testWithTimeout();
-	}
-	
+    @Test(groups = { "functional.timer", "timer.timeout.timeout" })
+    public void testWithTimeout() throws Exception {
+        super.testWithTimeout();
+    }
+
 }

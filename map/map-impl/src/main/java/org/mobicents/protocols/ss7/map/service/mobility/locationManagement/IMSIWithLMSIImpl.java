@@ -38,105 +38,106 @@ import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 
-
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public class IMSIWithLMSIImpl extends SequenceBase implements IMSIWithLMSI {
-	
-	private IMSI imsi;
-	private LMSI lmsi;
 
-	public IMSIWithLMSIImpl() {
-		super("IMSIWithLMSI");
-	}
+    private IMSI imsi;
+    private LMSI lmsi;
 
-	public IMSIWithLMSIImpl(IMSI imsi, LMSI lmsi) {
-		super("IMSIWithLMSI");
-		this.imsi = imsi;
-		this.lmsi = lmsi;
-	}
+    public IMSIWithLMSIImpl() {
+        super("IMSIWithLMSI");
+    }
 
-	protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+    public IMSIWithLMSIImpl(IMSI imsi, LMSI lmsi) {
+        super("IMSIWithLMSI");
+        this.imsi = imsi;
+        this.lmsi = lmsi;
+    }
 
-		this.imsi = null;
-		this.lmsi = null;
-		
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+    protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		int num = 0;
-		while (true) {
-			if (ais.available() == 0)
-				break;
-			
-			int tag = ais.readTag();
-			
-			switch (num) {
-			case 0:
-				if (tag != Tag.STRING_OCTET && ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter imsi has bad tag class or is not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.imsi = new IMSIImpl();
-				((IMSIImpl) this.imsi).decodeAll(ais);
-				break;
-			case 1:
-				if (tag != Tag.STRING_OCTET && ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter lmsi has bad tag class or is not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.lmsi = new LMSIImpl();
-				((LMSIImpl) this.lmsi).decodeAll(ais);
-				break;
-			default:
-				ais.advanceElement();
-				break;
-			}
-			num++;
-		}
-	}
+        this.imsi = null;
+        this.lmsi = null;
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
-		if (this.imsi == null || this.lmsi == null ) {
-			throw new MAPException("Error while decoding "+_PrimitiveName +" : lmsi or lmsi is null");
-		}
+        int num = 0;
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-		((IMSIImpl) this.imsi).encodeAll(asnOs);
-		((LMSIImpl) this.lmsi).encodeAll(asnOs);
-	}
+            int tag = ais.readTag();
 
-	@Override
-	public IMSI getImsi() {
-		return this.imsi;
-	}
+            switch (num) {
+                case 0:
+                    if (tag != Tag.STRING_OCTET && ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
+                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ": Parameter imsi has bad tag class or is not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.imsi = new IMSIImpl();
+                    ((IMSIImpl) this.imsi).decodeAll(ais);
+                    break;
+                case 1:
+                    if (tag != Tag.STRING_OCTET && ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
+                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ": Parameter lmsi has bad tag class or is not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.lmsi = new LMSIImpl();
+                    ((LMSIImpl) this.lmsi).decodeAll(ais);
+                    break;
+                default:
+                    ais.advanceElement();
+                    break;
+            }
+            num++;
+        }
+    }
 
-	@Override
-	public LMSI getLmsi() {
-		return this.lmsi;
-	}
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        if (this.imsi == null || this.lmsi == null) {
+            throw new MAPException("Error while decoding " + _PrimitiveName + " : lmsi or lmsi is null");
+        }
 
-		if (this.imsi!= null) {
-			sb.append("imsi=");
-			sb.append(imsi.toString());
-			sb.append(", ");
-		}
+        ((IMSIImpl) this.imsi).encodeAll(asnOs);
+        ((LMSIImpl) this.lmsi).encodeAll(asnOs);
+    }
 
-		if (this.lmsi != null) {
-			sb.append("lmsi=");
-			sb.append(lmsi.toString());
-			sb.append(", ");
-		}
+    @Override
+    public IMSI getImsi() {
+        return this.imsi;
+    }
 
-		sb.append("]");
+    @Override
+    public LMSI getLmsi() {
+        return this.lmsi;
+    }
 
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.imsi != null) {
+            sb.append("imsi=");
+            sb.append(imsi.toString());
+            sb.append(", ");
+        }
+
+        if (this.lmsi != null) {
+            sb.append("lmsi=");
+            sb.append(lmsi.toString());
+            sb.append(", ");
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

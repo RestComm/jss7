@@ -35,54 +35,54 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 
 /**
- * 
+ *
  * @author amit bhayani
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CAPProviderImplWrapper extends CAPProviderImpl {
 
-	private int testMode = 0;
+    private int testMode = 0;
 
-//	private final MAPServiceSupplementary mapServiceSupplementaryTest = new MAPServiceSupplementaryImplWrapper(this);
+    // private final MAPServiceSupplementary mapServiceSupplementaryTest = new MAPServiceSupplementaryImplWrapper(this);
 
-	public CAPProviderImplWrapper(TCAPProvider tcapProvider) {
-		super(tcapProvider);
-		
-		for(CAPServiceBase serv : this.capServices) {
-			if( serv instanceof MAPServiceSupplementary ) {
-				this.capServices.remove(serv);
-				break;
-			}
-		}
-		
-//		this.capServices.add(this.mapServiceSupplementaryTest);
-	}
+    public CAPProviderImplWrapper(TCAPProvider tcapProvider) {
+        super(tcapProvider);
 
-//	public MAPServiceSupplementary getMAPServiceSupplementary() {
-//		return this.mapServiceSupplementaryTest;
-//	}
+        for (CAPServiceBase serv : this.capServices) {
+            if (serv instanceof MAPServiceSupplementary) {
+                this.capServices.remove(serv);
+                break;
+            }
+        }
 
-	public void setTestMode(int testMode) {
-		this.testMode = testMode;
-	}
+        // this.capServices.add(this.mapServiceSupplementaryTest);
+    }
 
-	public TCBeginRequest encodeTCBegin(Dialog tcapDialog, ApplicationContextName acn, CAPGprsReferenceNumber gprsReferenceNumber) throws CAPException {
-		return super.encodeTCBegin(tcapDialog, acn, gprsReferenceNumber);
-	}
-	
-	public void onTCBegin(TCBeginIndication tcBeginIndication) {
-		if (this.testMode == 1) {
-			try {
-				byte[] data = tcBeginIndication.getUserInformation().getEncodeType();
-				data[0] = 0;
-			} catch (AsnException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+    // public MAPServiceSupplementary getMAPServiceSupplementary() {
+    // return this.mapServiceSupplementaryTest;
+    // }
 
-		super.onTCBegin(tcBeginIndication);
-	}
+    public void setTestMode(int testMode) {
+        this.testMode = testMode;
+    }
+
+    public TCBeginRequest encodeTCBegin(Dialog tcapDialog, ApplicationContextName acn,
+            CAPGprsReferenceNumber gprsReferenceNumber) throws CAPException {
+        return super.encodeTCBegin(tcapDialog, acn, gprsReferenceNumber);
+    }
+
+    public void onTCBegin(TCBeginIndication tcBeginIndication) {
+        if (this.testMode == 1) {
+            try {
+                byte[] data = tcBeginIndication.getUserInformation().getEncodeType();
+                data[0] = 0;
+            } catch (AsnException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        super.onTCBegin(tcBeginIndication);
+    }
 }
-

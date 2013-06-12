@@ -36,151 +36,106 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.oam.TracePropagationList;
 
 /**
- * 
-
-MAP V2-3:
-
-MAP V3:
-prepareHandover  OPERATION ::= {				--Timer m
-	ARGUMENT
-		PrepareHO-Arg
-	RESULT
-		PrepareHO-Res
-	ERRORS {
-		systemFailure |
-		dataMissing |
-		unexpectedDataValue |
-		noHandoverNumberAvailable |
-		targetCellOutsideGroupCallArea }
-	CODE	local:68 }
-
-MAP V2:
-PrepareHandover ::= OPERATION --Timer m
-ARGUMENT
-	prepareHO-Arg PrepareHO-Arg
-RESULT
-	prepareHO-Res PrepareHO-Res
-ERRORS {
-	SystemFailure,
-	DataMissing,
-	UnexpectedDataValue,
-	NoHandoverNumberAvailable}
-
-MAP V3:
-PrepareHO-Arg ::= [3] SEQUENCE {
-	targetCellId	[0] GlobalCellId	OPTIONAL,
-	ho-NumberNotRequired	NULL			OPTIONAL, 
-	targetRNCId	[1] RNCId		OPTIONAL,
-	an-APDU		[2] AccessNetworkSignalInfo	OPTIONAL,
-	multipleBearerRequested	[3] NULL		OPTIONAL,
-	imsi			[4] IMSI		OPTIONAL,
-	integrityProtectionInfo	[5] IntegrityProtectionInformation		OPTIONAL,
-	encryptionInfo	[6] EncryptionInformation		OPTIONAL,
-	radioResourceInformation	[7] RadioResourceInformation	OPTIONAL,
-	allowedGSM-Algorithms	[9]	AllowedGSM-Algorithms	OPTIONAL,
-	allowedUMTS-Algorithms	[10]	AllowedUMTS-Algorithms	OPTIONAL,
-	radioResourceList	[11] RadioResourceList	OPTIONAL,
-	extensionContainer	[8] ExtensionContainer	OPTIONAL,
-	... ,
-	rab-Id		[12] RAB-Id	OPTIONAL,
-	bssmap-ServiceHandover	[13]	BSSMAP-ServiceHandover	OPTIONAL,
-	ranap-ServiceHandover	[14]	RANAP-ServiceHandover	OPTIONAL, 
-	bssmap-ServiceHandoverList	[15]	BSSMAP-ServiceHandoverList	OPTIONAL,
-	asciCallReference	[20]	ASCI-CallReference	OPTIONAL,
-	geran-classmark	[16] GERAN-Classmark	OPTIONAL,
-	iuCurrentlyUsedCodec	[17] Codec	OPTIONAL,
-	iuSupportedCodecsList	[18] SupportedCodecsList	OPTIONAL,
-	rab-ConfigurationIndicator	[19] NULL		OPTIONAL,
-	uesbi-Iu		[21]	UESBI-Iu	OPTIONAL,
-	imeisv		[22]	IMEI		OPTIONAL,
-	alternativeChannelType	[23]	RadioResourceInformation	OPTIONAL,
-	tracePropagationList	[25]	TracePropagationList	OPTIONAL,
-	aoipSupportedCodecsListAnchor	[26] AoIPCodecsList	OPTIONAL,
-	regionalSubscriptionData	[27] ZoneCodeList	OPTIONAL,
-	globalCallReference	[28]	LCLS-GlobalCallReference	OPTIONAL,
-	lcls-Negotiation	[29]	LCLS-Negotiation	OPTIONAL	 }
-
-MAP V2:
-PrepareHO-Arg ::= SEQUENCE {
-	targetCellId 			GlobalCellId OPTIONAL,
-	ho-NumberNotRequired 	NULL OPTIONAL,
-	bss-APDU 				ExternalSignalInfo OPTIONAL,
-	...}
-
-RadioResourceList ::= SEQUENCE SIZE (1.. 7) OF RadioResource
-
-RAB-Id ::= INTEGER (1..255)
-
-BSSMAP-ServiceHandoverList ::= SEQUENCE SIZE (1.. 7) OF BSSMAP-ServiceHandoverInfo
-
-ZoneCodeList ::= SEQUENCE SIZE (1..10) OF ZoneCode
-
-
- * 
+ *
+ MAP V2-3:
+ *
+ * MAP V3: prepareHandover OPERATION ::= { --Timer m ARGUMENT PrepareHO-Arg RESULT PrepareHO-Res ERRORS { systemFailure |
+ * dataMissing | unexpectedDataValue | noHandoverNumberAvailable | targetCellOutsideGroupCallArea } CODE local:68 }
+ *
+ * MAP V2: PrepareHandover ::= OPERATION --Timer m ARGUMENT prepareHO-Arg PrepareHO-Arg RESULT prepareHO-Res PrepareHO-Res
+ * ERRORS { SystemFailure, DataMissing, UnexpectedDataValue, NoHandoverNumberAvailable}
+ *
+ * MAP V3: PrepareHO-Arg ::= [3] SEQUENCE { targetCellId [0] GlobalCellId OPTIONAL, ho-NumberNotRequired NULL OPTIONAL,
+ * targetRNCId [1] RNCId OPTIONAL, an-APDU [2] AccessNetworkSignalInfo OPTIONAL, multipleBearerRequested [3] NULL OPTIONAL, imsi
+ * [4] IMSI OPTIONAL, integrityProtectionInfo [5] IntegrityProtectionInformation OPTIONAL, encryptionInfo [6]
+ * EncryptionInformation OPTIONAL, radioResourceInformation [7] RadioResourceInformation OPTIONAL, allowedGSM-Algorithms [9]
+ * AllowedGSM-Algorithms OPTIONAL, allowedUMTS-Algorithms [10] AllowedUMTS-Algorithms OPTIONAL, radioResourceList [11]
+ * RadioResourceList OPTIONAL, extensionContainer [8] ExtensionContainer OPTIONAL, ... , rab-Id [12] RAB-Id OPTIONAL,
+ * bssmap-ServiceHandover [13] BSSMAP-ServiceHandover OPTIONAL, ranap-ServiceHandover [14] RANAP-ServiceHandover OPTIONAL,
+ * bssmap-ServiceHandoverList [15] BSSMAP-ServiceHandoverList OPTIONAL, asciCallReference [20] ASCI-CallReference OPTIONAL,
+ * geran-classmark [16] GERAN-Classmark OPTIONAL, iuCurrentlyUsedCodec [17] Codec OPTIONAL, iuSupportedCodecsList [18]
+ * SupportedCodecsList OPTIONAL, rab-ConfigurationIndicator [19] NULL OPTIONAL, uesbi-Iu [21] UESBI-Iu OPTIONAL, imeisv [22]
+ * IMEI OPTIONAL, alternativeChannelType [23] RadioResourceInformation OPTIONAL, tracePropagationList [25] TracePropagationList
+ * OPTIONAL, aoipSupportedCodecsListAnchor [26] AoIPCodecsList OPTIONAL, regionalSubscriptionData [27] ZoneCodeList OPTIONAL,
+ * globalCallReference [28] LCLS-GlobalCallReference OPTIONAL, lcls-Negotiation [29] LCLS-Negotiation OPTIONAL }
+ *
+ * MAP V2: PrepareHO-Arg ::= SEQUENCE { targetCellId GlobalCellId OPTIONAL, ho-NumberNotRequired NULL OPTIONAL, bss-APDU
+ * ExternalSignalInfo OPTIONAL, ...}
+ *
+ * RadioResourceList ::= SEQUENCE SIZE (1.. 7) OF RadioResource
+ *
+ * RAB-Id ::= INTEGER (1..255)
+ *
+ * BSSMAP-ServiceHandoverList ::= SEQUENCE SIZE (1.. 7) OF BSSMAP-ServiceHandoverInfo
+ *
+ * ZoneCodeList ::= SEQUENCE SIZE (1..10) OF ZoneCode
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface PrepareHandoverRequest extends MobilityMessage {
 
-	public GlobalCellId getTargetCellId();
+    GlobalCellId getTargetCellId();
 
-	public boolean getHoNumberNotRequired();
+    boolean getHoNumberNotRequired();
 
-	public RNCId getTargetRNCId();
+    RNCId getTargetRNCId();
 
-	public AccessNetworkSignalInfo geTanAPDU();
+    AccessNetworkSignalInfo geTanAPDU();
 
-	public boolean getMultipleBearerRequested();
+    boolean getMultipleBearerRequested();
 
-	public IMSI getImsi();
+    IMSI getImsi();
 
-	public IntegrityProtectionInformation getIntegrityProtectionInfo();
+    IntegrityProtectionInformation getIntegrityProtectionInfo();
 
-	public EncryptionInformation getEncryptionInfo();
+    EncryptionInformation getEncryptionInfo();
 
-	public RadioResourceInformation getRadioResourceInformation();
+    RadioResourceInformation getRadioResourceInformation();
 
-	public AllowedGSMAlgorithms getAllowedGSMAlgorithms();
+    AllowedGSMAlgorithms getAllowedGSMAlgorithms();
 
-	public AllowedUMTSAlgorithms getAllowedUMTSAlgorithms();
+    AllowedUMTSAlgorithms getAllowedUMTSAlgorithms();
 
-	public ArrayList<RadioResource> getRadioResourceList();
+    ArrayList<RadioResource> getRadioResourceList();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public Integer getRABId();
+    Integer getRABId();
 
-	public BSSMAPServiceHandover getBSSMAPServiceHandover();
+    BSSMAPServiceHandover getBSSMAPServiceHandover();
 
-	public RANAPServiceHandover getRANAPServiceHandover();
+    RANAPServiceHandover getRANAPServiceHandover();
 
-	public ArrayList<BSSMAPServiceHandoverInfo> getBSSMAPServiceHandoverList();
+    ArrayList<BSSMAPServiceHandoverInfo> getBSSMAPServiceHandoverList();
 
-	public ASCICallReference getASCICallReference();
+    ASCICallReference getASCICallReference();
 
-	public GERANClassmark getGERANClassmark();
+    GERANClassmark getGERANClassmark();
 
-	public Codec getIuCurrentlyUsedCodec();
+    Codec getIuCurrentlyUsedCodec();
 
-	public SupportedCodecsList getIuSupportedCodecsList();
+    SupportedCodecsList getIuSupportedCodecsList();
 
-	public boolean getRabConfigurationIndicator();
+    boolean getRabConfigurationIndicator();
 
-	public UESBIIu getUESBIIu();
+    UESBIIu getUESBIIu();
 
-	public RadioResourceInformation getAlternativeChannelType();
+    RadioResourceInformation getAlternativeChannelType();
 
-	public TracePropagationList getTracePropagationList();
+    TracePropagationList getTracePropagationList();
 
-	public AoIPCodecsList getAoipSupportedCodecsListAnchor();
+    AoIPCodecsList getAoipSupportedCodecsListAnchor();
 
-	public ArrayList<ZoneCode> getRegionalSubscriptionData();
+    ArrayList<ZoneCode> getRegionalSubscriptionData();
 
-	public LCLSGlobalCallReference getGlobalCallReference();
+    LCLSGlobalCallReference getGlobalCallReference();
 
-	public LCLSNegotiation getLCLSNegotiation();
+    LCLSNegotiation getLCLSNegotiation();
 
-	// this parameter is for MAP V2 only
-	public ExternalSignalInfo getBssAPDU();
-	
+    // this parameter is for MAP V2 only
+    ExternalSignalInfo getBssAPDU();
+
 }

@@ -28,38 +28,23 @@ import org.mobicents.protocols.ss7.cap.api.EsiSms.TSmsDeliverySpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiSms.TSmsFailureSpecificInfo;
 
 /**
-*
-
-EventSpecificInformationSMS ::= CHOICE {
-o-smsFailureSpecificInfo [0] SEQUENCE {
-failureCause [0] MO-SMSCause OPTIONAL,
-...
-},
-o-smsSubmissionSpecificInfo [1] SEQUENCE {
--- no specific info defined
-...
-},
-t-smsFailureSpecificInfo [2] SEQUENCE {
-failureCause [0] MT-SMSCause OPTIONAL,
-...
-},
-t-smsDeliverySpecificInfo [3] SEQUENCE {
--- no specific info defined
-...
-} }
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ EventSpecificInformationSMS ::= CHOICE { o-smsFailureSpecificInfo [0] SEQUENCE { failureCause [0] MO-SMSCause OPTIONAL, ...
+ * }, o-smsSubmissionSpecificInfo [1] SEQUENCE { -- no specific info defined ... }, t-smsFailureSpecificInfo [2] SEQUENCE {
+ * failureCause [0] MT-SMSCause OPTIONAL, ... }, t-smsDeliverySpecificInfo [3] SEQUENCE { -- no specific info defined ... } }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface EventSpecificInformationSMS {
 
-	public OSmsFailureSpecificInfo getOSmsFailureSpecificInfo();
+    OSmsFailureSpecificInfo getOSmsFailureSpecificInfo();
 
-	public OSmsSubmissionSpecificInfo getOSmsSubmissionSpecificInfo();
+    OSmsSubmissionSpecificInfo getOSmsSubmissionSpecificInfo();
 
-	public TSmsFailureSpecificInfo getTSmsFailureSpecificInfo();
+    TSmsFailureSpecificInfo getTSmsFailureSpecificInfo();
 
-	public TSmsDeliverySpecificInfo getTSmsDeliverySpecificInfo();
+    TSmsDeliverySpecificInfo getTSmsDeliverySpecificInfo();
 
 }

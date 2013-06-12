@@ -23,32 +23,28 @@
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
-*
-
- date        [3] OCTET STRING (SIZE(4)), -- YYYYMMDD, BCD coded 
-
---  Date is BCD encoded. The year digit indicating millenium occupies bits 0-3 of the first octet, 
---  and the year digit indicating century occupies bits 4-7 of the first octet. The year digit 
---  indicating decade occupies bits 0-3 of the second octet, whilst the digit indicating the year 
---  within the decade occupies bits 4-7 of the second octet. 
---  The most significant month digit occupies bits 0-3 of the third octet, and the least 
---  significant month digit occupies bits 4-7 of the third octet. The most significant day digit 
---  occupies bits 0-3 of the fourth octet, and the least significant day digit occupies bits 4-7 
---  of the fourth octet. 
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ date [3] OCTET STRING (SIZE(4)), -- YYYYMMDD, BCD coded
+ *
+ * -- Date is BCD encoded. The year digit indicating millenium occupies bits 0-3 of the first octet, -- and the year digit
+ * indicating century occupies bits 4-7 of the first octet. The year digit -- indicating decade occupies bits 0-3 of the second
+ * octet, whilst the digit indicating the year -- within the decade occupies bits 4-7 of the second octet. -- The most
+ * significant month digit occupies bits 0-3 of the third octet, and the least -- significant month digit occupies bits 4-7 of
+ * the third octet. The most significant day digit -- occupies bits 0-3 of the fourth octet, and the least significant day digit
+ * occupies bits 4-7 -- of the fourth octet.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface VariablePartDate {
 
-	public byte[] getData();
+    byte[] getData();
 
-	public int getYear();
+    int getYear();
 
-	public int getMonth();
+    int getMonth();
 
-	public int getDay();
+    int getDay();
 
 }
-

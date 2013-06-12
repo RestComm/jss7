@@ -26,17 +26,17 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Media server internal clock.
- * 
+ *
  * @author kulikov
  */
 public interface Clock {
-    
+
     /**
      * Gets the current time.
-     * 
+     *
      * @return current time expressed in nanoseconds.
      */
-    public long getTime();
+    long getTime();
 
     /**
      * Gets the current time.
@@ -44,12 +44,12 @@ public interface Clock {
      * @param timeUnit the time measurement units.
      * @return the value in specified units.
      */
-    public long getTime(TimeUnit timeUnit);
+    long getTime(TimeUnit timeUnit);
 
     /**
      * Gets the time measurement units.
      *
      * @return the time measurement units.
      */
-    public TimeUnit getTimeUnit();
+    TimeUnit getTimeUnit();
 }

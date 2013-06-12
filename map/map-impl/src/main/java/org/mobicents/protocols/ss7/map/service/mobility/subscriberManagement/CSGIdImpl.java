@@ -33,15 +33,15 @@ import org.mobicents.protocols.ss7.map.primitives.BitStringBase;
  */
 public class CSGIdImpl extends BitStringBase implements CSGId {
 
-	public CSGIdImpl() {
-		super(27, 27, 27, "CSGId");
-	}
+    public CSGIdImpl() {
+        super(27, 27, 27, "CSGId");
+    }
 
-	public CSGIdImpl(BitSetStrictLength data) {
-		super(27, 27, 27, "CSGId", data);
-	}
+    public CSGIdImpl(BitSetStrictLength data) {
+        super(27, 27, 27, "CSGId", data);
+    }
 
-	public BitSetStrictLength getData() {
-		return bitString;
-	}	
+    public BitSetStrictLength getData() {
+        return bitString;
+    }
 }

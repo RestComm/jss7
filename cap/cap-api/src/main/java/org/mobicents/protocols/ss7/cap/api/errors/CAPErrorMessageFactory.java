@@ -24,29 +24,29 @@ package org.mobicents.protocols.ss7.cap.api.errors;
 
 /**
  * The factory of CAP ReturnError messages
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPErrorMessageFactory {
 
-	/**
-	 * Generate the empty message depends of the error code (for incoming
-	 * messages)
-	 * 
-	 * @param errorCode
-	 * @return
-	 */
-	public CAPErrorMessage createMessageFromErrorCode(Long errorCode);
+    /**
+     * Generate the empty message depends of the error code (for incoming messages)
+     *
+     * @param errorCode
+     * @return
+     */
+    CAPErrorMessage createMessageFromErrorCode(Long errorCode);
 
-	public CAPErrorMessageParameterless createCAPErrorMessageParameterless(Long errorCode);
+    CAPErrorMessageParameterless createCAPErrorMessageParameterless(Long errorCode);
 
-	public CAPErrorMessageCancelFailed createCAPErrorMessageCancelFailed(CancelProblem cancelProblem);
+    CAPErrorMessageCancelFailed createCAPErrorMessageCancelFailed(CancelProblem cancelProblem);
 
-	public CAPErrorMessageRequestedInfoError createCAPErrorMessageRequestedInfoError(RequestedInfoErrorParameter requestedInfoErrorParameter);
+    CAPErrorMessageRequestedInfoError createCAPErrorMessageRequestedInfoError(
+            RequestedInfoErrorParameter requestedInfoErrorParameter);
 
-	public CAPErrorMessageSystemFailure createCAPErrorMessageSystemFailure(UnavailableNetworkResource unavailableNetworkResource);
+    CAPErrorMessageSystemFailure createCAPErrorMessageSystemFailure(UnavailableNetworkResource unavailableNetworkResource);
 
-	public CAPErrorMessageTaskRefused createCAPErrorMessageTaskRefused(TaskRefusedParameter taskRefusedParameter);
+    CAPErrorMessageTaskRefused createCAPErrorMessageTaskRefused(TaskRefusedParameter taskRefusedParameter);
 
 }

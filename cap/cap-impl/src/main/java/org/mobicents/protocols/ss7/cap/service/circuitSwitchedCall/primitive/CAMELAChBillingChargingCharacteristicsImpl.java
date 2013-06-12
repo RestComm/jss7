@@ -39,320 +39,322 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBillingChargingCharacteristics, CAPAsnPrimitive {
 
-	public static final int _ID_timeDurationCharging = 0;
+    public static final int _ID_timeDurationCharging = 0;
 
-	public static final int _ID_maxCallPeriodDuration = 0;
-	public static final int _ID_releaseIfdurationExceeded = 1;
-	public static final int _ID_tariffSwitchInterval = 2;
-	public static final int _ID_audibleIndicator = 3;
-	public static final int _ID_extensions = 4;
-	public static final int _ID_extensions_In_ReleaseIfDurationExceeded = 10;
+    public static final int _ID_maxCallPeriodDuration = 0;
+    public static final int _ID_releaseIfdurationExceeded = 1;
+    public static final int _ID_tariffSwitchInterval = 2;
+    public static final int _ID_audibleIndicator = 3;
+    public static final int _ID_extensions = 4;
+    public static final int _ID_extensions_In_ReleaseIfDurationExceeded = 10;
 
-	public static final String _PrimitiveName = "CAMELAChBillingChargingCharacteristics";
+    public static final String _PrimitiveName = "CAMELAChBillingChargingCharacteristics";
 
-	private byte[] data;
-	private long maxCallPeriodDuration;
-	private boolean releaseIfdurationExceeded;
-	private Long tariffSwitchInterval;
-	private AudibleIndicator audibleIndicator;
-	private CAPExtensions extensions;
+    private byte[] data;
+    private long maxCallPeriodDuration;
+    private boolean releaseIfdurationExceeded;
+    private Long tariffSwitchInterval;
+    private AudibleIndicator audibleIndicator;
+    private CAPExtensions extensions;
 
-	private boolean isCAPVersion3orLater;
+    private boolean isCAPVersion3orLater;
 
-	
-	public CAMELAChBillingChargingCharacteristicsImpl() {
-	}
-	
-	public CAMELAChBillingChargingCharacteristicsImpl(byte[] data) {
-		this.data = data;
-	}
+    public CAMELAChBillingChargingCharacteristicsImpl() {
+    }
 
-	public CAMELAChBillingChargingCharacteristicsImpl(long maxCallPeriodDuration, boolean releaseIfdurationExceeded, Long tariffSwitchInterval,
-			AudibleIndicator audibleIndicator, CAPExtensions extensions, boolean isCAPVersion3orLater) {
-		this.maxCallPeriodDuration = maxCallPeriodDuration;
-		this.releaseIfdurationExceeded = releaseIfdurationExceeded;
-		this.tariffSwitchInterval = tariffSwitchInterval;
-		this.audibleIndicator = audibleIndicator;
-		this.extensions = extensions;
-		this.isCAPVersion3orLater = isCAPVersion3orLater;
-	}
+    public CAMELAChBillingChargingCharacteristicsImpl(byte[] data) {
+        this.data = data;
+    }
 
-	
-	@Override
-	public byte[] getData() {
-		return data;
-	}
+    public CAMELAChBillingChargingCharacteristicsImpl(long maxCallPeriodDuration, boolean releaseIfdurationExceeded,
+            Long tariffSwitchInterval, AudibleIndicator audibleIndicator, CAPExtensions extensions, boolean isCAPVersion3orLater) {
+        this.maxCallPeriodDuration = maxCallPeriodDuration;
+        this.releaseIfdurationExceeded = releaseIfdurationExceeded;
+        this.tariffSwitchInterval = tariffSwitchInterval;
+        this.audibleIndicator = audibleIndicator;
+        this.extensions = extensions;
+        this.isCAPVersion3orLater = isCAPVersion3orLater;
+    }
 
-	@Override
-	public long getMaxCallPeriodDuration() {
-		return maxCallPeriodDuration;
-	}
+    @Override
+    public byte[] getData() {
+        return data;
+    }
 
-	@Override
-	public boolean getReleaseIfdurationExceeded() {
-		return releaseIfdurationExceeded;
-	}
+    @Override
+    public long getMaxCallPeriodDuration() {
+        return maxCallPeriodDuration;
+    }
 
-	@Override
-	public Long getTariffSwitchInterval() {
-		return tariffSwitchInterval;
-	}
+    @Override
+    public boolean getReleaseIfdurationExceeded() {
+        return releaseIfdurationExceeded;
+    }
 
-	@Override
-	public AudibleIndicator getAudibleIndicator() {
-		return audibleIndicator;
-	}
+    @Override
+    public Long getTariffSwitchInterval() {
+        return tariffSwitchInterval;
+    }
 
-	@Override
-	public CAPExtensions getExtensions() {
-		return extensions;
-	}
-	
-	
-	
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.STRING_OCTET;
-	}
+    @Override
+    public AudibleIndicator getAudibleIndicator() {
+        return audibleIndicator;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public CAPExtensions getExtensions() {
+        return extensions;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.STRING_OCTET;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		this.data = null;
-		this.maxCallPeriodDuration = -1;
-		this.releaseIfdurationExceeded = false;
-		this.tariffSwitchInterval = null;
-		this.audibleIndicator = null; // TODO: DEFAULT tone: FALSE
-		this.extensions = null;
-		
-		this.data = ansIS.readOctetStringData(length);
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		AsnInputStream aiss = new AsnInputStream(this.data);
-		int tag = aiss.readTag();
-		if (tag != _ID_timeDurationCharging || aiss.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || aiss.isTagPrimitive())
-			throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
-					+ ": CAMEL-AChBillingChargingCharacteristics choice has bad tag oe tagClass or is primitive, tag=" + tag + ", tagClass="
-					+ aiss.getTagClass(), CAPParsingComponentExceptionReason.MistypedParameter);
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException,
+            IOException, AsnException {
 
-		AsnInputStream ais = aiss.readSequenceStream();
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        this.data = null;
+        this.maxCallPeriodDuration = -1;
+        this.releaseIfdurationExceeded = false;
+        this.tariffSwitchInterval = null;
+        this.audibleIndicator = null; // TODO: DEFAULT tone: FALSE
+        this.extensions = null;
 
-			tag = ais.readTag();
+        this.data = ansIS.readOctetStringData(length);
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_maxCallPeriodDuration:
-					this.maxCallPeriodDuration = ais.readInteger();
-					break;
-				case _ID_releaseIfdurationExceeded:
-					int ln = ais.readLength();
-					if (ln == 1) { // IMPLICIT - IN CAP V3 and later
+        AsnInputStream aiss = new AsnInputStream(this.data);
+        int tag = aiss.readTag();
+        if (tag != _ID_timeDurationCharging || aiss.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || aiss.isTagPrimitive())
+            throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
+                    + ": CAMEL-AChBillingChargingCharacteristics choice has bad tag oe tagClass or is primitive, tag=" + tag
+                    + ", tagClass=" + aiss.getTagClass(), CAPParsingComponentExceptionReason.MistypedParameter);
 
-						this.releaseIfdurationExceeded = ais.readBooleanData(ln);
-					} else { // EXPLICIT - from trace - IN CAP V2
+        AsnInputStream ais = aiss.readSequenceStream();
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-						AsnInputStream ais2 = ais.readSequenceStreamData(ln);
-						int num = 0;
-						while (true) {
-							if (ais2.available() == 0)
-								break;
+            tag = ais.readTag();
 
-							int tag2 = ais2.readTag();
-							boolean parsed = false;
-							if (num == 0) {
-								if (tag2 == Tag.BOOLEAN && ais2.getTagClass() == Tag.CLASS_UNIVERSAL) {
-									this.releaseIfdurationExceeded = ais2.readBoolean();
-									parsed = true;
-								}
-							}
-							if (ais2.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC && tag2 == _ID_extensions_In_ReleaseIfDurationExceeded) {
-								this.extensions = new CAPExtensionsImpl();
-								((CAPExtensionsImpl) this.extensions).decodeAll(ais2);
-								parsed = true;
-							}
-							if (!parsed)
-								ais2.advanceElement();
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_maxCallPeriodDuration:
+                        this.maxCallPeriodDuration = ais.readInteger();
+                        break;
+                    case _ID_releaseIfdurationExceeded:
+                        int ln = ais.readLength();
+                        if (ln == 1) { // IMPLICIT - IN CAP V3 and later
 
-							num++;
-						}
-					}
-					break;
-				case _ID_tariffSwitchInterval:
-					this.tariffSwitchInterval = ais.readInteger();
-					break;
-				case _ID_audibleIndicator:
-					ais.advanceElement(); // TODO: implement it
-					break;
-				case _ID_extensions:
-					this.extensions = new CAPExtensionsImpl();
-					((CAPExtensionsImpl) this.extensions).decodeAll(ais);
-					break;
+                            this.releaseIfdurationExceeded = ais.readBooleanData(ln);
+                        } else { // EXPLICIT - from trace - IN CAP V2
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+                            AsnInputStream ais2 = ais.readSequenceStreamData(ln);
+                            int num = 0;
+                            while (true) {
+                                if (ais2.available() == 0)
+                                    break;
 
-		if (this.maxCallPeriodDuration == -1)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": maxCallPeriodDuration is mandatory but not found",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+                                int tag2 = ais2.readTag();
+                                boolean parsed = false;
+                                if (num == 0) {
+                                    if (tag2 == Tag.BOOLEAN && ais2.getTagClass() == Tag.CLASS_UNIVERSAL) {
+                                        this.releaseIfdurationExceeded = ais2.readBoolean();
+                                        parsed = true;
+                                    }
+                                }
+                                if (ais2.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC
+                                        && tag2 == _ID_extensions_In_ReleaseIfDurationExceeded) {
+                                    this.extensions = new CAPExtensionsImpl();
+                                    ((CAPExtensionsImpl) this.extensions).decodeAll(ais2);
+                                    parsed = true;
+                                }
+                                if (!parsed)
+                                    ais2.advanceElement();
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+                                num++;
+                            }
+                        }
+                        break;
+                    case _ID_tariffSwitchInterval:
+                        this.tariffSwitchInterval = ais.readInteger();
+                        break;
+                    case _ID_audibleIndicator:
+                        ais.advanceElement(); // TODO: implement it
+                        break;
+                    case _ID_extensions:
+                        this.extensions = new CAPExtensionsImpl();
+                        ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
+                        break;
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		
-		if (this.data == null) {
-			// encoding internal octet string
-			if (this.maxCallPeriodDuration < 1 || this.maxCallPeriodDuration > 864000)
-				throw new CAPException("Error while encoding " + _PrimitiveName + ": maxCallPeriodDuration must be from 1 to 864000");
-			if (this.tariffSwitchInterval != null && (this.tariffSwitchInterval < 1 || this.tariffSwitchInterval > 86400))
-				throw new CAPException("Error while encoding " + _PrimitiveName + ": tariffSwitchInterval must be from 1 to 86400");
+        if (this.maxCallPeriodDuration == -1)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": maxCallPeriodDuration is mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-			try {
-				AsnOutputStream aos = new AsnOutputStream();
-				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_timeDurationCharging);
-				int pos = aos.StartContentDefiniteLength();
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_maxCallPeriodDuration, this.maxCallPeriodDuration);
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-				if (this.isCAPVersion3orLater) {
-					if (this.releaseIfdurationExceeded)
-						aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _ID_releaseIfdurationExceeded, true);
-				} else {
-					if (this.releaseIfdurationExceeded || this.extensions != null) {
-						aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_releaseIfdurationExceeded);
-						int pos2 = aos.StartContentDefiniteLength();
-						aos.writeBoolean(true);
-						if (this.extensions != null) {
-							((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions_In_ReleaseIfDurationExceeded);
-						}
-						aos.FinalizeContent(pos2);
-					}
-				}
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-				if (this.tariffSwitchInterval != null)
-					aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_tariffSwitchInterval, this.tariffSwitchInterval);
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-				if (this.audibleIndicator != null) {
-					// TODO: implement it
-				}
+        if (this.data == null) {
+            // encoding internal octet string
+            if (this.maxCallPeriodDuration < 1 || this.maxCallPeriodDuration > 864000)
+                throw new CAPException("Error while encoding " + _PrimitiveName
+                        + ": maxCallPeriodDuration must be from 1 to 864000");
+            if (this.tariffSwitchInterval != null && (this.tariffSwitchInterval < 1 || this.tariffSwitchInterval > 86400))
+                throw new CAPException("Error while encoding " + _PrimitiveName
+                        + ": tariffSwitchInterval must be from 1 to 86400");
 
-				if (this.extensions != null && this.isCAPVersion3orLater)
-					((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
-				
-				aos.FinalizeContent(pos);
-				this.data = aos.toByteArray();
-			} catch (IOException e) {
-				throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-			} catch (AsnException e) {
-				throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-			}
-		}
+            try {
+                AsnOutputStream aos = new AsnOutputStream();
+                aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_timeDurationCharging);
+                int pos = aos.StartContentDefiniteLength();
 
-		asnOs.writeOctetStringData(data);
-	}
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_maxCallPeriodDuration, this.maxCallPeriodDuration);
 
-	@Override
-	public String toString() {
+                if (this.isCAPVersion3orLater) {
+                    if (this.releaseIfdurationExceeded)
+                        aos.writeBoolean(Tag.CLASS_CONTEXT_SPECIFIC, _ID_releaseIfdurationExceeded, true);
+                } else {
+                    if (this.releaseIfdurationExceeded || this.extensions != null) {
+                        aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_releaseIfdurationExceeded);
+                        int pos2 = aos.StartContentDefiniteLength();
+                        aos.writeBoolean(true);
+                        if (this.extensions != null) {
+                            ((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+                                    _ID_extensions_In_ReleaseIfDurationExceeded);
+                        }
+                        aos.FinalizeContent(pos2);
+                    }
+                }
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [timeDurationCharging [");
+                if (this.tariffSwitchInterval != null)
+                    aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_tariffSwitchInterval, this.tariffSwitchInterval);
 
-		sb.append("maxCallPeriodDuration=");
-		sb.append(this.maxCallPeriodDuration);
-		if (this.releaseIfdurationExceeded) {
-			sb.append(", releaseIfdurationExceeded");
-		}
-		if (this.tariffSwitchInterval != null) {
-			sb.append(", tariffSwitchInterval=");
-			sb.append(tariffSwitchInterval);
-		}
-		if (this.audibleIndicator != null) {
-			sb.append(", audibleIndicator=");
-			sb.append(audibleIndicator.toString());
-		}
-		if (this.extensions != null) {
-			sb.append(", extensions=");
-			sb.append(extensions.toString());
-		}
+                if (this.audibleIndicator != null) {
+                    // TODO: implement it
+                }
 
-		sb.append("]]");
+                if (this.extensions != null && this.isCAPVersion3orLater)
+                    ((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
 
-		return sb.toString();
-	}
+                aos.FinalizeContent(pos);
+                this.data = aos.toByteArray();
+            } catch (IOException e) {
+                throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            } catch (AsnException e) {
+                throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+            }
+        }
+
+        asnOs.writeOctetStringData(data);
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [timeDurationCharging [");
+
+        sb.append("maxCallPeriodDuration=");
+        sb.append(this.maxCallPeriodDuration);
+        if (this.releaseIfdurationExceeded) {
+            sb.append(", releaseIfdurationExceeded");
+        }
+        if (this.tariffSwitchInterval != null) {
+            sb.append(", tariffSwitchInterval=");
+            sb.append(tariffSwitchInterval);
+        }
+        if (this.audibleIndicator != null) {
+            sb.append(", audibleIndicator=");
+            sb.append(audibleIndicator.toString());
+        }
+        if (this.extensions != null) {
+            sb.append(", extensions=");
+            sb.append(extensions.toString());
+        }
+
+        sb.append("]]");
+
+        return sb.toString();
+    }
 }

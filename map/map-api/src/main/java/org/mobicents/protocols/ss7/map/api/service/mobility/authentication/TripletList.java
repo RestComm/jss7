@@ -25,16 +25,15 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 import java.util.ArrayList;
 
 /**
-*
-TripletList ::= SEQUENCE SIZE (1..5) OF
-				AuthenticationTriplet
-
-*
-* @author sergey vetyutnev
-* 
-*/
+ *
+ TripletList ::= SEQUENCE SIZE (1..5) OF AuthenticationTriplet
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface TripletList {
 
-	public ArrayList<AuthenticationTriplet> getAuthenticationTriplets();
+    ArrayList<AuthenticationTriplet> getAuthenticationTriplets();
 
 }

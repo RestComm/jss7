@@ -25,46 +25,36 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdFixedLength;
 import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 
-
 /**
-*
-ChangeOfPositionControlInfo {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE
-(1..bound.&numOfChangeOfPositionControlInfo) OF ChangeOfLocation {bound}
-
-ChangeOfLocation {PARAMETERS-BOUND : bound} ::= CHOICE {
-cellGlobalId [0] CellGlobalIdOrServiceAreaIdFixedLength,
-serviceAreaId [1] CellGlobalIdOrServiceAreaIdFixedLength,
-locationAreaId [2] LAIFixedLength,
-inter-SystemHandOver [3] NULL,
-inter-PLMNHandOver [4] NULL,
-inter-MSCHandOver [5] NULL,
-changeOfLocationAlt [6] ChangeOfLocationAlt {bound}
-}
--- The cellGlobalId shall contain a Cell Global Identification.
--- The serviceAreaId shall contain a Service Area Identification.
-
-ChangeOfLocationAlt {PARAMETERS-BOUND : bound} ::= SEQUENCE {
-...
-}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ChangeOfPositionControlInfo {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE (1..bound.&numOfChangeOfPositionControlInfo) OF
+ * ChangeOfLocation {bound}
+ *
+ * ChangeOfLocation {PARAMETERS-BOUND : bound} ::= CHOICE { cellGlobalId [0] CellGlobalIdOrServiceAreaIdFixedLength,
+ * serviceAreaId [1] CellGlobalIdOrServiceAreaIdFixedLength, locationAreaId [2] LAIFixedLength, inter-SystemHandOver [3] NULL,
+ * inter-PLMNHandOver [4] NULL, inter-MSCHandOver [5] NULL, changeOfLocationAlt [6] ChangeOfLocationAlt {bound} } -- The
+ * cellGlobalId shall contain a Cell Global Identification. -- The serviceAreaId shall contain a Service Area Identification.
+ *
+ * ChangeOfLocationAlt {PARAMETERS-BOUND : bound} ::= SEQUENCE { ... }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ChangeOfLocation {
 
-	public CellGlobalIdOrServiceAreaIdFixedLength getCellGlobalId();
+    CellGlobalIdOrServiceAreaIdFixedLength getCellGlobalId();
 
-	public CellGlobalIdOrServiceAreaIdFixedLength getServiceAreaId();
+    CellGlobalIdOrServiceAreaIdFixedLength getServiceAreaId();
 
-	public LAIFixedLength getLocationAreaId();
+    LAIFixedLength getLocationAreaId();
 
-	public boolean isInterSystemHandOver();
+    boolean isInterSystemHandOver();
 
-	public boolean isInterPLMNHandOver();
+    boolean isInterPLMNHandOver();
 
-	public boolean isInterMSCHandOver();
+    boolean isInterMSCHandOver();
 
-	public ChangeOfLocationAlt getChangeOfLocationAlt();
+    ChangeOfLocationAlt getChangeOfLocationAlt();
 
 }

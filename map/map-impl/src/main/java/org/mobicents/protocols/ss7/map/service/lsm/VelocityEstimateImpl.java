@@ -28,174 +28,176 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.VelocityType;
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
-*
-* @author sergey vetyutnev
-* 
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class VelocityEstimateImpl extends OctetStringBase implements VelocityEstimate {
 
-	public VelocityEstimateImpl() {
-		super(4, 7, "VelocityEstimate");
-	}
+    public VelocityEstimateImpl() {
+        super(4, 7, "VelocityEstimate");
+    }
 
-	public VelocityEstimateImpl(byte[] data) {
-		super(4, 7, "VelocityEstimate", data);
-	}
+    public VelocityEstimateImpl(byte[] data) {
+        super(4, 7, "VelocityEstimate", data);
+    }
 
-	public VelocityEstimateImpl(VelocityType velocityType, int horizontalSpeed, int bearing, int verticalSpeed, int uncertaintyHorizontalSpeed,
-			int uncertaintyVerticalSpeed) throws MAPException {
-		super(4, 7, "VelocityEstimate");
+    public VelocityEstimateImpl(VelocityType velocityType, int horizontalSpeed, int bearing, int verticalSpeed,
+            int uncertaintyHorizontalSpeed, int uncertaintyVerticalSpeed) throws MAPException {
+        super(4, 7, "VelocityEstimate");
 
-		if (velocityType == null) {
-			throw new MAPException("velocityType parameter is null");
-		}
-		switch(velocityType){
-		case HorizontalVelocity:
-			this.initData(4, velocityType, horizontalSpeed, bearing, 0);
-			break;
+        if (velocityType == null) {
+            throw new MAPException("velocityType parameter is null");
+        }
+        switch (velocityType) {
+            case HorizontalVelocity:
+                this.initData(4, velocityType, horizontalSpeed, bearing, 0);
+                break;
 
-		case HorizontalWithVerticalVelocity:
-			this.initData(5, velocityType, horizontalSpeed, bearing, verticalSpeed);
-			if (verticalSpeed < 0)
-				verticalSpeed = -verticalSpeed;
-			this.data[4] = (byte) (verticalSpeed & 0xFF);
-			break;
+            case HorizontalWithVerticalVelocity:
+                this.initData(5, velocityType, horizontalSpeed, bearing, verticalSpeed);
+                if (verticalSpeed < 0)
+                    verticalSpeed = -verticalSpeed;
+                this.data[4] = (byte) (verticalSpeed & 0xFF);
+                break;
 
-		case HorizontalVelocityWithUncertainty:
-			this.initData(5, velocityType, horizontalSpeed, bearing, 0);
-			this.data[4] = (byte) (uncertaintyHorizontalSpeed & 0xFF);
-			break;
+            case HorizontalVelocityWithUncertainty:
+                this.initData(5, velocityType, horizontalSpeed, bearing, 0);
+                this.data[4] = (byte) (uncertaintyHorizontalSpeed & 0xFF);
+                break;
 
-		case HorizontalWithVerticalVelocityAndUncertainty:
-			this.initData(7, velocityType, horizontalSpeed, bearing, verticalSpeed);
-			this.data[4] = (byte) (verticalSpeed & 0xFF);
-			this.data[5] = (byte) (uncertaintyHorizontalSpeed & 0xFF);
-			this.data[6] = (byte) (uncertaintyVerticalSpeed & 0xFF);
-			break;
-		}
-	}
+            case HorizontalWithVerticalVelocityAndUncertainty:
+                this.initData(7, velocityType, horizontalSpeed, bearing, verticalSpeed);
+                this.data[4] = (byte) (verticalSpeed & 0xFF);
+                this.data[5] = (byte) (uncertaintyHorizontalSpeed & 0xFF);
+                this.data[6] = (byte) (uncertaintyVerticalSpeed & 0xFF);
+                break;
+        }
+    }
 
-	private void initData(int len, VelocityType velocityType, int horizontalSpeed, int bearing, int verticalSpeed) {
-		this.data = new byte[len];
+    private void initData(int len, VelocityType velocityType, int horizontalSpeed, int bearing, int verticalSpeed) {
+        this.data = new byte[len];
 
-		this.data[0] = (byte) ((velocityType.getCode() << 4) | (verticalSpeed < 0 ? 0x02 : 0) | (bearing & 0x0100) >> 8);
-		this.data[1] = (byte) (bearing & 0xFF);
-		this.data[2] = (byte) ((horizontalSpeed & 0xFF00) >> 8);
-		this.data[3] = (byte) (horizontalSpeed & 0xFF);
-	}
+        this.data[0] = (byte) ((velocityType.getCode() << 4) | (verticalSpeed < 0 ? 0x02 : 0) | (bearing & 0x0100) >> 8);
+        this.data[1] = (byte) (bearing & 0xFF);
+        this.data[2] = (byte) ((horizontalSpeed & 0xFF00) >> 8);
+        this.data[3] = (byte) (horizontalSpeed & 0xFF);
+    }
 
-	public byte[] getData() {
-		return data;
-	}
+    public byte[] getData() {
+        return data;
+    }
 
-	@Override
-	public VelocityType getVelocityType() {
-		if (this.data == null || this.data.length < 1)
-			return null;
+    @Override
+    public VelocityType getVelocityType() {
+        if (this.data == null || this.data.length < 1)
+            return null;
 
-		return VelocityType.getInstance((this.data[0] & 0xF0) >> 4);
-	}
+        return VelocityType.getInstance((this.data[0] & 0xF0) >> 4);
+    }
 
-	@Override
-	public int getHorizontalSpeed() {
-		if (this.data == null || this.data.length < 4)
-			return 0;
+    @Override
+    public int getHorizontalSpeed() {
+        if (this.data == null || this.data.length < 4)
+            return 0;
 
-		int res = ((data[2] & 0xFF) << 8) + (data[3] & 0xFF);
-		return res;
-	}
+        int res = ((data[2] & 0xFF) << 8) + (data[3] & 0xFF);
+        return res;
+    }
 
-	@Override
-	public int getBearing() {
-		if (this.data == null || this.data.length < 4)
-			return 0;
+    @Override
+    public int getBearing() {
+        if (this.data == null || this.data.length < 4)
+            return 0;
 
-		int res = ((data[0] & 0x01) << 8) + (data[1] & 0xFF);
-		return res;
-	}
+        int res = ((data[0] & 0x01) << 8) + (data[1] & 0xFF);
+        return res;
+    }
 
-	@Override
-	public int getVerticalSpeed() {
-		VelocityType velocityType = this.getVelocityType();
-		if (velocityType == null)
-			return 0;
+    @Override
+    public int getVerticalSpeed() {
+        VelocityType velocityType = this.getVelocityType();
+        if (velocityType == null)
+            return 0;
 
-		switch (velocityType) {
-		case HorizontalWithVerticalVelocity:
-		case HorizontalWithVerticalVelocityAndUncertainty:
-			int res = (data[4] & 0xFF);
-			return res;
-		}
+        switch (velocityType) {
+            case HorizontalWithVerticalVelocity:
+            case HorizontalWithVerticalVelocityAndUncertainty:
+                int res = (data[4] & 0xFF);
+                return res;
+        }
 
-		return 0;
-	}
+        return 0;
+    }
 
-	@Override
-	public int getUncertaintyHorizontalSpeed() {
-		VelocityType velocityType = this.getVelocityType();
-		if (velocityType == null)
-			return 0;
+    @Override
+    public int getUncertaintyHorizontalSpeed() {
+        VelocityType velocityType = this.getVelocityType();
+        if (velocityType == null)
+            return 0;
 
-		switch (velocityType) {
-		case HorizontalVelocityWithUncertainty:
-			int res = (data[4] & 0xFF);
-			return res;
-		case HorizontalWithVerticalVelocityAndUncertainty:
-			res = (data[5] & 0xFF);
-			return res;
-		}
+        switch (velocityType) {
+            case HorizontalVelocityWithUncertainty:
+                int res = (data[4] & 0xFF);
+                return res;
+            case HorizontalWithVerticalVelocityAndUncertainty:
+                res = (data[5] & 0xFF);
+                return res;
+        }
 
-		return 0;
-	}
+        return 0;
+    }
 
-	@Override
-	public int getUncertaintyVerticalSpeed() {
-		VelocityType velocityType = this.getVelocityType();
-		if (velocityType == null)
-			return 0;
+    @Override
+    public int getUncertaintyVerticalSpeed() {
+        VelocityType velocityType = this.getVelocityType();
+        if (velocityType == null)
+            return 0;
 
-		switch (velocityType) {
-		case HorizontalWithVerticalVelocityAndUncertainty:
-			int res = (data[6] & 0xFF);
-			return res;
-		}
+        switch (velocityType) {
+            case HorizontalWithVerticalVelocityAndUncertainty:
+                int res = (data[6] & 0xFF);
+                return res;
+        }
 
-		return 0;
-	}
+        return 0;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		sb.append("VelocityType=");
-		sb.append(this.getVelocityType());
+        sb.append("VelocityType=");
+        sb.append(this.getVelocityType());
 
-		sb.append(", HorizontalSpeed=");
-		sb.append(this.getHorizontalSpeed());
+        sb.append(", HorizontalSpeed=");
+        sb.append(this.getHorizontalSpeed());
 
-		sb.append(", Bearing=");
-		sb.append(this.getBearing());
+        sb.append(", Bearing=");
+        sb.append(this.getBearing());
 
-		VelocityType velocityType = this.getVelocityType();
-		if (velocityType == VelocityType.HorizontalWithVerticalVelocity || velocityType == VelocityType.HorizontalWithVerticalVelocityAndUncertainty) {
-			sb.append(", VerticalSpeed=");
-			sb.append(this.getVerticalSpeed());
-		}
+        VelocityType velocityType = this.getVelocityType();
+        if (velocityType == VelocityType.HorizontalWithVerticalVelocity
+                || velocityType == VelocityType.HorizontalWithVerticalVelocityAndUncertainty) {
+            sb.append(", VerticalSpeed=");
+            sb.append(this.getVerticalSpeed());
+        }
 
-		if (velocityType == VelocityType.HorizontalVelocityWithUncertainty || velocityType == VelocityType.HorizontalWithVerticalVelocityAndUncertainty) {
-			sb.append(", UncertaintyHorizontalSpeed=");
-			sb.append(this.getUncertaintyHorizontalSpeed());
-		}
+        if (velocityType == VelocityType.HorizontalVelocityWithUncertainty
+                || velocityType == VelocityType.HorizontalWithVerticalVelocityAndUncertainty) {
+            sb.append(", UncertaintyHorizontalSpeed=");
+            sb.append(this.getUncertaintyHorizontalSpeed());
+        }
 
-		if (velocityType == VelocityType.HorizontalWithVerticalVelocityAndUncertainty) {
-			sb.append(", UncertaintyVerticalSpeed=");
-			sb.append(this.getUncertaintyVerticalSpeed());
-		}
+        if (velocityType == VelocityType.HorizontalWithVerticalVelocityAndUncertainty) {
+            sb.append(", UncertaintyVerticalSpeed=");
+            sb.append(this.getUncertaintyVerticalSpeed());
+        }
 
-		sb.append("]");
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 }

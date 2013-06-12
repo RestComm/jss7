@@ -39,234 +39,235 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class MAPErrorMessageRoamingNotAllowedImpl extends MAPErrorMessageImpl implements MAPErrorMessageRoamingNotAllowed {
 
-	public static final int _tag_additionalRoamingNotAllowedCause = 0;
+    public static final int _tag_additionalRoamingNotAllowedCause = 0;
 
-	private RoamingNotAllowedCause roamingNotAllowedCause;
-	private MAPExtensionContainer extensionContainer;
-	private AdditionalRoamingNotAllowedCause additionalRoamingNotAllowedCause;
+    private RoamingNotAllowedCause roamingNotAllowedCause;
+    private MAPExtensionContainer extensionContainer;
+    private AdditionalRoamingNotAllowedCause additionalRoamingNotAllowedCause;
 
-	protected String _PrimitiveName = "MAPErrorMessageRoamingNotAllowed";
+    protected String _PrimitiveName = "MAPErrorMessageRoamingNotAllowed";
 
-	public MAPErrorMessageRoamingNotAllowedImpl(RoamingNotAllowedCause roamingNotAllowedCause, MAPExtensionContainer extensionContainer,
-			AdditionalRoamingNotAllowedCause additionalRoamingNotAllowedCause) {
-		super((long) MAPErrorCode.roamingNotAllowed);
+    public MAPErrorMessageRoamingNotAllowedImpl(RoamingNotAllowedCause roamingNotAllowedCause,
+            MAPExtensionContainer extensionContainer, AdditionalRoamingNotAllowedCause additionalRoamingNotAllowedCause) {
+        super((long) MAPErrorCode.roamingNotAllowed);
 
-		this.roamingNotAllowedCause = roamingNotAllowedCause;
-		this.extensionContainer = extensionContainer;
-		this.additionalRoamingNotAllowedCause = additionalRoamingNotAllowedCause;
-	}
+        this.roamingNotAllowedCause = roamingNotAllowedCause;
+        this.extensionContainer = extensionContainer;
+        this.additionalRoamingNotAllowedCause = additionalRoamingNotAllowedCause;
+    }
 
-	public MAPErrorMessageRoamingNotAllowedImpl() {
-		super((long) MAPErrorCode.roamingNotAllowed);
-	}
+    public MAPErrorMessageRoamingNotAllowedImpl() {
+        super((long) MAPErrorCode.roamingNotAllowed);
+    }
 
-	public boolean isEmRoamingNotAllowed() {
-		return true;
-	}
+    public boolean isEmRoamingNotAllowed() {
+        return true;
+    }
 
-	public MAPErrorMessageRoamingNotAllowed getEmRoamingNotAllowed() {
-		return this;
-	}
+    public MAPErrorMessageRoamingNotAllowed getEmRoamingNotAllowed() {
+        return this;
+    }
 
-	@Override
-	public RoamingNotAllowedCause getRoamingNotAllowedCause() {
-		return roamingNotAllowedCause;
-	}
+    @Override
+    public RoamingNotAllowedCause getRoamingNotAllowedCause() {
+        return roamingNotAllowedCause;
+    }
 
-	@Override
-	public MAPExtensionContainer getExtensionContainer() {
-		return extensionContainer;
-	}
+    @Override
+    public MAPExtensionContainer getExtensionContainer() {
+        return extensionContainer;
+    }
 
-	@Override
-	public AdditionalRoamingNotAllowedCause getAdditionalRoamingNotAllowedCause() {
-		return additionalRoamingNotAllowedCause;
-	}
+    @Override
+    public AdditionalRoamingNotAllowedCause getAdditionalRoamingNotAllowedCause() {
+        return additionalRoamingNotAllowedCause;
+    }
 
-	@Override
-	public void setRoamingNotAllowedCause(RoamingNotAllowedCause val) {
-		roamingNotAllowedCause = val;
-	}
+    @Override
+    public void setRoamingNotAllowedCause(RoamingNotAllowedCause val) {
+        roamingNotAllowedCause = val;
+    }
 
-	@Override
-	public void setExtensionContainer(MAPExtensionContainer val) {
-		extensionContainer = val;
-	}
+    @Override
+    public void setExtensionContainer(MAPExtensionContainer val) {
+        extensionContainer = val;
+    }
 
-	@Override
-	public void setAdditionalRoamingNotAllowedCause(AdditionalRoamingNotAllowedCause val) {
-		additionalRoamingNotAllowedCause = val;
-	}
+    @Override
+    public void setAdditionalRoamingNotAllowedCause(AdditionalRoamingNotAllowedCause val) {
+        additionalRoamingNotAllowedCause = val;
+    }
 
-	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
-	}
+    public int getTag() throws MAPException {
+        return Tag.SEQUENCE;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream localAis, int length) throws MAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream localAis, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		this.roamingNotAllowedCause = null;
-		this.extensionContainer = null;
-		this.additionalRoamingNotAllowedCause = null;
+        this.roamingNotAllowedCause = null;
+        this.extensionContainer = null;
+        this.additionalRoamingNotAllowedCause = null;
 
-		if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.SEQUENCE || localAis.isTagPrimitive())
-			throw new MAPParsingComponentException(
-					"Error decoding " + _PrimitiveName + ": bad tag class or tag or parameter is primitive",
-					MAPParsingComponentExceptionReason.MistypedParameter);
+        if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.SEQUENCE || localAis.isTagPrimitive())
+            throw new MAPParsingComponentException("Error decoding " + _PrimitiveName
+                    + ": bad tag class or tag or parameter is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
 
-		AsnInputStream ais = localAis.readSequenceStreamData(length);
+        AsnInputStream ais = localAis.readSequenceStreamData(length);
 
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-			int tag = ais.readTag();
+            int tag = ais.readTag();
 
-			switch (ais.getTagClass()) {
-			case Tag.CLASS_UNIVERSAL:
-				switch (tag) {
-				case Tag.ENUMERATED:
-					int i1 = (int) ais.readInteger();
-					this.roamingNotAllowedCause = RoamingNotAllowedCause.getInstance(i1);
-					break;
-				case Tag.SEQUENCE:
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
-					break;
+            switch (ais.getTagClass()) {
+                case Tag.CLASS_UNIVERSAL:
+                    switch (tag) {
+                        case Tag.ENUMERATED:
+                            int i1 = (int) ais.readInteger();
+                            this.roamingNotAllowedCause = RoamingNotAllowedCause.getInstance(i1);
+                            break;
+                        case Tag.SEQUENCE:
+                            this.extensionContainer = new MAPExtensionContainerImpl();
+                            ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                            break;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-				break;
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+                    break;
 
-			case Tag.CLASS_CONTEXT_SPECIFIC:
-				switch (tag) {
-				case _tag_additionalRoamingNotAllowedCause:
-					int i1 = (int) ais.readInteger();
-					this.additionalRoamingNotAllowedCause = AdditionalRoamingNotAllowedCause.getInstance(i1);
-					break;
+                case Tag.CLASS_CONTEXT_SPECIFIC:
+                    switch (tag) {
+                        case _tag_additionalRoamingNotAllowedCause:
+                            int i1 = (int) ais.readInteger();
+                            this.additionalRoamingNotAllowedCause = AdditionalRoamingNotAllowedCause.getInstance(i1);
+                            break;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-				break;
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+                    break;
 
-			default:
-				ais.advanceElement();
-				break;
-			}
-		}
+                default:
+                    ais.advanceElement();
+                    break;
+            }
+        }
 
-		if (this.roamingNotAllowedCause == null) {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-					+ ": Parameter roamingNotAllowedCause is mandatory but has not found.", MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        if (this.roamingNotAllowedCause == null) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": Parameter roamingNotAllowedCause is mandatory but has not found.",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		if (this.roamingNotAllowedCause == null) {
-			throw new MAPException("Parameter roamingNotAllowedCause must not be null");
-		}
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		try {
-			asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.roamingNotAllowedCause.getCode());
-			if (this.extensionContainer != null)
-				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
-			if (this.additionalRoamingNotAllowedCause != null)
-				asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _tag_additionalRoamingNotAllowedCause, this.additionalRoamingNotAllowedCause.getCode());
+        if (this.roamingNotAllowedCause == null) {
+            throw new MAPException("Parameter roamingNotAllowedCause must not be null");
+        }
 
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.roamingNotAllowedCause.getCode());
+            if (this.extensionContainer != null)
+                ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
+            if (this.additionalRoamingNotAllowedCause != null)
+                asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _tag_additionalRoamingNotAllowedCause,
+                        this.additionalRoamingNotAllowedCause.getCode());
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        } catch (IOException e) {
+            throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		if (this.roamingNotAllowedCause != null) {
-			sb.append("roamingNotAllowedCause = ");
-			sb.append(roamingNotAllowedCause);
-		}
-		if (this.extensionContainer != null)
-			sb.append(", extensionContainer=" + this.extensionContainer.toString());
-		if (this.additionalRoamingNotAllowedCause != null) {
-			sb.append(", additionalRoamingNotAllowedCause = ");
-			sb.append(additionalRoamingNotAllowedCause);
-		}
-		sb.append("]");
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
 
-		return sb.toString();
-	}
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.roamingNotAllowedCause != null) {
+            sb.append("roamingNotAllowedCause = ");
+            sb.append(roamingNotAllowedCause);
+        }
+        if (this.extensionContainer != null)
+            sb.append(", extensionContainer=" + this.extensionContainer.toString());
+        if (this.additionalRoamingNotAllowedCause != null) {
+            sb.append(", additionalRoamingNotAllowedCause = ");
+            sb.append(additionalRoamingNotAllowedCause);
+        }
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

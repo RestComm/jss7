@@ -23,35 +23,21 @@
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 /**
- * 
-
-MAP V2:
-
-interrogateSS  OPERATION ::= {				--Timer m
-	ARGUMENT
-		SS-ForBS-Code
-	RESULT
-		InterrogateSS-Res
-	ERRORS {
-		systemFailure |
-		dataMissing |
-		unexpectedDataValue |
-		bearerServiceNotProvisioned |
-		teleserviceNotProvisioned |
-		callBarred |
-		illegalSS-Operation |
-		ss-NotAvailable}
-	CODE	local:14 }
-
-ARGUMENT
-		SS-ForBS-Code
-
- * 
+ *
+ MAP V2:
+ *
+ * interrogateSS OPERATION ::= { --Timer m ARGUMENT SS-ForBS-Code RESULT InterrogateSS-Res ERRORS { systemFailure | dataMissing
+ * | unexpectedDataValue | bearerServiceNotProvisioned | teleserviceNotProvisioned | callBarred | illegalSS-Operation |
+ * ss-NotAvailable} CODE local:14 }
+ *
+ * ARGUMENT SS-ForBS-Code
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface InterrogateSSRequest extends SupplementaryMessage {
 
-	public SSForBSCode getSsForBSCode();
+    SSForBSCode getSsForBSCode();
 
 }

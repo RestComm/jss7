@@ -34,49 +34,48 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Kc;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public class GSMSecurityContextDataTest {
-	
-	public byte[] getData() {
-		return new byte[] {48, 13, 4, 8, 4, 4, 1, 2, 3, 4, 4, 4, 4, 1, 4};
-	};
-	
-	public byte[] getDataKc() {
-		return new byte[] { 4, 4, 1, 2, 3, 4, 4, 4 };
-	};
-	
-	
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testDecode() throws Exception {
-		byte[] data = this.getData();
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
 
-		GSMSecurityContextDataImpl prim = new GSMSecurityContextDataImpl();
-		prim.decodeAll(asn);
+    public byte[] getData() {
+        return new byte[] { 48, 13, 4, 8, 4, 4, 1, 2, 3, 4, 4, 4, 4, 1, 4 };
+    };
 
-		assertEquals(tag, Tag.SEQUENCE);
-		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
-		
-		assertTrue(Arrays.equals(prim.getKc().getData(), getDataKc()));
-		assertEquals(prim.getCksn().getData(), 4);
-	}
-	
-	@Test(groups = { "functional.encode", "primitives" })
-	public void testEncode() throws Exception {
+    public byte[] getDataKc() {
+        return new byte[] { 4, 4, 1, 2, 3, 4, 4, 4 };
+    };
 
-		Kc kc = new KcImpl(getDataKc());
-		Cksn cksn = new CksnImpl(4);
-		
-		GSMSecurityContextDataImpl prim = new GSMSecurityContextDataImpl(kc, cksn);
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
+        byte[] data = this.getData();
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
 
-		AsnOutputStream asn = new AsnOutputStream();
-		prim.encodeAll(asn);
+        GSMSecurityContextDataImpl prim = new GSMSecurityContextDataImpl();
+        prim.decodeAll(asn);
 
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
-		
-	}
+        assertEquals(tag, Tag.SEQUENCE);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+
+        assertTrue(Arrays.equals(prim.getKc().getData(), getDataKc()));
+        assertEquals(prim.getCksn().getData(), 4);
+    }
+
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
+
+        Kc kc = new KcImpl(getDataKc());
+        Cksn cksn = new CksnImpl(4);
+
+        GSMSecurityContextDataImpl prim = new GSMSecurityContextDataImpl(kc, cksn);
+
+        AsnOutputStream asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+
+    }
 }

@@ -38,317 +38,303 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSInfo;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
-import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CUGInfoImpl;
-import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.EMLPPInfoImpl;
-import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtCallBarInfoImpl;
-import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtForwInfoImpl;
-import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtSSDataImpl;
 
 /**
  * @author daniel bichara
  * @author sergey vetyutnev
- * 
+ *
  */
 public class ExtSSInfoImpl implements ExtSSInfo, MAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "ExtSSInfo";
+    public static final String _PrimitiveName = "ExtSSInfo";
 
-	protected static final int _TAG_forwardingInfo = 0;
-	protected static final int _TAG_callBarringInfo = 1;
-	protected static final int _TAG_cugInfo = 2;
-	protected static final int _TAG_ssData = 3;
-	protected static final int _TAG_emlppInfo = 4;
+    protected static final int _TAG_forwardingInfo = 0;
+    protected static final int _TAG_callBarringInfo = 1;
+    protected static final int _TAG_cugInfo = 2;
+    protected static final int _TAG_ssData = 3;
+    protected static final int _TAG_emlppInfo = 4;
 
-	private ExtForwInfo forwardingInfo = null;
-	private ExtCallBarInfo callBarringInfo = null;
-	private CUGInfo cugInfo = null;
-	private ExtSSData ssData = null;
-	private EMLPPInfo emlppInfo = null;
+    private ExtForwInfo forwardingInfo = null;
+    private ExtCallBarInfo callBarringInfo = null;
+    private CUGInfo cugInfo = null;
+    private ExtSSData ssData = null;
+    private EMLPPInfo emlppInfo = null;
 
-	public ExtSSInfoImpl() {
-		
-	}
+    public ExtSSInfoImpl() {
 
-	public ExtSSInfoImpl(ExtForwInfo forwardingInfo) {
+    }
 
-		this.forwardingInfo = forwardingInfo;
-	}
+    public ExtSSInfoImpl(ExtForwInfo forwardingInfo) {
 
-	public ExtSSInfoImpl(ExtCallBarInfo callBarringInfo) {
+        this.forwardingInfo = forwardingInfo;
+    }
 
-		this.callBarringInfo = callBarringInfo;
-	}
+    public ExtSSInfoImpl(ExtCallBarInfo callBarringInfo) {
 
-	public ExtSSInfoImpl(CUGInfo cugInfo) {
+        this.callBarringInfo = callBarringInfo;
+    }
 
-		this.cugInfo = cugInfo;
-	}
+    public ExtSSInfoImpl(CUGInfo cugInfo) {
 
-	public ExtSSInfoImpl(ExtSSData ssData) {
+        this.cugInfo = cugInfo;
+    }
 
-		this.ssData = ssData;
-	}
+    public ExtSSInfoImpl(ExtSSData ssData) {
 
-	public ExtSSInfoImpl(EMLPPInfo emlppInfo) {
+        this.ssData = ssData;
+    }
 
-		this.emlppInfo = emlppInfo;
-	}
+    public ExtSSInfoImpl(EMLPPInfo emlppInfo) {
 
-	public ExtForwInfo getForwardingInfo() {
-		return this.forwardingInfo;
-	}
+        this.emlppInfo = emlppInfo;
+    }
 
-	public ExtCallBarInfo getCallBarringInfo() {
-		return this.callBarringInfo;
-	}
+    public ExtForwInfo getForwardingInfo() {
+        return this.forwardingInfo;
+    }
 
-	public CUGInfo getCugInfo() {
-		return this.cugInfo;
-	}
+    public ExtCallBarInfo getCallBarringInfo() {
+        return this.callBarringInfo;
+    }
 
-	public ExtSSData getSsData() {
-		return this.ssData;
-	}
+    public CUGInfo getCugInfo() {
+        return this.cugInfo;
+    }
 
-	public EMLPPInfo getEmlppInfo() {
-		return this.emlppInfo;
-	}
+    public ExtSSData getSsData() {
+        return this.ssData;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
-	 */
-	public int getTag() throws MAPException {
-		if (forwardingInfo != null) {
-			return _TAG_forwardingInfo;
-		} else if (callBarringInfo != null) {
-			return _TAG_callBarringInfo;
-		} else if (cugInfo != null) {
-			return _TAG_cugInfo;
-		} else if (ssData != null) {
-			return _TAG_ssData;
-		} else if (emlppInfo != null) {
-			return _TAG_emlppInfo;
-		} else {
-			throw new MAPException("No of choices are supplied");
-		}
-	}
+    public EMLPPInfo getEmlppInfo() {
+        return this.emlppInfo;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
-	 */
-	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTag()
+     */
+    public int getTag() throws MAPException {
+        if (forwardingInfo != null) {
+            return _TAG_forwardingInfo;
+        } else if (callBarringInfo != null) {
+            return _TAG_callBarringInfo;
+        } else if (cugInfo != null) {
+            return _TAG_cugInfo;
+        } else if (ssData != null) {
+            return _TAG_ssData;
+        } else if (emlppInfo != null) {
+            return _TAG_emlppInfo;
+        } else {
+            throw new MAPException("No of choices are supplied");
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive
-	 * ()
-	 */
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
+     */
+    public int getTagClass() {
+        return Tag.CLASS_CONTEXT_SPECIFIC;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(
-	 * org.mobicents.protocols.asn.AsnInputStream)
-	 */
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive ()
+     */
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData
-	 * (org.mobicents.protocols.asn.AsnInputStream, int)
-	 */
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll( org.mobicents.protocols.asn.AsnInputStream)
+     */
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
-		this.forwardingInfo = null;
-		this.callBarringInfo = null;
-		this.cugInfo = null;
-		this.ssData = null;
-		this.emlppInfo = null;
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData (org.mobicents.protocols.asn.AsnInputStream,
+     * int)
+     */
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive())
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag class or is primitive: TagClass=" + ais.getTagClass(),
-					MAPParsingComponentExceptionReason.MistypedParameter);
+    private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
+        this.forwardingInfo = null;
+        this.callBarringInfo = null;
+        this.cugInfo = null;
+        this.ssData = null;
+        this.emlppInfo = null;
 
-		switch(ais.getTag()) {
-		case _TAG_forwardingInfo:
-			this.forwardingInfo = new ExtForwInfoImpl();
-			((ExtForwInfoImpl) this.forwardingInfo).decodeData(ais, length);
-			break;
-		case _TAG_callBarringInfo:
-			this.callBarringInfo = new ExtCallBarInfoImpl();
-			((ExtCallBarInfoImpl) this.callBarringInfo).decodeData(ais, length);
-			break;
-		case _TAG_cugInfo:
-			this.cugInfo = new CUGInfoImpl();
-			((CUGInfoImpl) this.cugInfo).decodeData(ais, length);
-			break;
-		case _TAG_ssData:
-			this.ssData = new ExtSSDataImpl();
-			((ExtSSDataImpl) this.ssData).decodeData(ais, length);
-			break;
-		case _TAG_emlppInfo:
-			this.emlppInfo = new EMLPPInfoImpl();
-			((EMLPPInfoImpl) this.emlppInfo).decodeData(ais, length);
-			break;
+        if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || ais.isTagPrimitive())
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": bad tag class or is primitive: TagClass=" + ais.getTagClass(),
+                    MAPParsingComponentExceptionReason.MistypedParameter);
 
-		default:
-			throw new MAPParsingComponentException("Error while " + _PrimitiveName + ": bad tag: " + ais.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        switch (ais.getTag()) {
+            case _TAG_forwardingInfo:
+                this.forwardingInfo = new ExtForwInfoImpl();
+                ((ExtForwInfoImpl) this.forwardingInfo).decodeData(ais, length);
+                break;
+            case _TAG_callBarringInfo:
+                this.callBarringInfo = new ExtCallBarInfoImpl();
+                ((ExtCallBarInfoImpl) this.callBarringInfo).decodeData(ais, length);
+                break;
+            case _TAG_cugInfo:
+                this.cugInfo = new CUGInfoImpl();
+                ((CUGInfoImpl) this.cugInfo).decodeData(ais, length);
+                break;
+            case _TAG_ssData:
+                this.ssData = new ExtSSDataImpl();
+                ((ExtSSDataImpl) this.ssData).decodeData(ais, length);
+                break;
+            case _TAG_emlppInfo:
+                this.emlppInfo = new EMLPPInfoImpl();
+                ((EMLPPInfoImpl) this.emlppInfo).decodeData(ais, length);
+                break;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
-	 * org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+            default:
+                throw new MAPParsingComponentException("Error while " + _PrimitiveName + ": bad tag: " + ais.getTag(),
+                        MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
-	 * org.mobicents.protocols.asn.AsnOutputStream, int, int)
-	 */
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll( org.mobicents.protocols.asn.AsnOutputStream)
+     */
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData
-	 * (org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll( org.mobicents.protocols.asn.AsnOutputStream,
+     * int, int)
+     */
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		int cnt = 0;
-		if (this.forwardingInfo != null)
-			cnt++;
-		if (this.callBarringInfo != null)
-			cnt++;
-		if (this.cugInfo != null)
-			cnt++;
-		if (this.ssData != null)
-			cnt++;
-		if (this.emlppInfo != null)
-			cnt++;
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData (org.mobicents.protocols.asn.AsnOutputStream)
+     */
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		if (cnt != 1)
-			throw new MAPException("Error while encoding " + _PrimitiveName + ": one and only one choice is required.");
+        int cnt = 0;
+        if (this.forwardingInfo != null)
+            cnt++;
+        if (this.callBarringInfo != null)
+            cnt++;
+        if (this.cugInfo != null)
+            cnt++;
+        if (this.ssData != null)
+            cnt++;
+        if (this.emlppInfo != null)
+            cnt++;
 
-		if (this.forwardingInfo != null) {
-			((ExtForwInfoImpl) this.forwardingInfo).encodeData(asnOs);
-			return;
-		}
-			
-		if (this.callBarringInfo != null) {
-			((ExtCallBarInfoImpl) this.callBarringInfo).encodeData(asnOs);
-			return;
-		}
+        if (cnt != 1)
+            throw new MAPException("Error while encoding " + _PrimitiveName + ": one and only one choice is required.");
 
-		if (this.cugInfo != null) {
-			((CUGInfoImpl) this.cugInfo).encodeData(asnOs);
-			return;
-		}
+        if (this.forwardingInfo != null) {
+            ((ExtForwInfoImpl) this.forwardingInfo).encodeData(asnOs);
+            return;
+        }
 
-		if (this.ssData != null) {
-			((ExtSSDataImpl) this.ssData).encodeData(asnOs);
-			return;
-		}
+        if (this.callBarringInfo != null) {
+            ((ExtCallBarInfoImpl) this.callBarringInfo).encodeData(asnOs);
+            return;
+        }
 
-		if (this.emlppInfo != null) {
-			((EMLPPInfoImpl) this.emlppInfo).encodeData(asnOs);
-			return;
-		}
-	}
+        if (this.cugInfo != null) {
+            ((CUGInfoImpl) this.cugInfo).encodeData(asnOs);
+            return;
+        }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+        if (this.ssData != null) {
+            ((ExtSSDataImpl) this.ssData).encodeData(asnOs);
+            return;
+        }
 
-		if (this.forwardingInfo != null) {
-			sb.append("forwardingInfo=");
-			sb.append(this.forwardingInfo.toString());
-			sb.append(", ");
-		}
+        if (this.emlppInfo != null) {
+            ((EMLPPInfoImpl) this.emlppInfo).encodeData(asnOs);
+            return;
+        }
+    }
 
-		if (this.callBarringInfo != null) {
-			sb.append("callBarringInfo=");
-			sb.append(this.callBarringInfo.toString());
-			sb.append(", ");
-		}
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
 
-		if (this.cugInfo != null) {
-			sb.append("cugInfo=");
-			sb.append(this.cugInfo.toString());
-			sb.append(", ");
-		}
+        if (this.forwardingInfo != null) {
+            sb.append("forwardingInfo=");
+            sb.append(this.forwardingInfo.toString());
+            sb.append(", ");
+        }
 
-		if (this.ssData != null) {
-			sb.append("ssData=");
-			sb.append(this.ssData.toString());
-			sb.append(", ");
-		}
+        if (this.callBarringInfo != null) {
+            sb.append("callBarringInfo=");
+            sb.append(this.callBarringInfo.toString());
+            sb.append(", ");
+        }
 
-		if (this.emlppInfo != null) {
-			sb.append("emlppInfo=");
-			sb.append(this.emlppInfo.toString());
-		}
+        if (this.cugInfo != null) {
+            sb.append("cugInfo=");
+            sb.append(this.cugInfo.toString());
+            sb.append(", ");
+        }
 
-		sb.append("]");
+        if (this.ssData != null) {
+            sb.append("ssData=");
+            sb.append(this.ssData.toString());
+            sb.append(", ");
+        }
 
-		return sb.toString();
-	}
+        if (this.emlppInfo != null) {
+            sb.append("emlppInfo=");
+            sb.append(this.emlppInfo.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

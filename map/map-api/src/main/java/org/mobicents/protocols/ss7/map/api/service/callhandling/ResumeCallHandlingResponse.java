@@ -25,18 +25,15 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-ResumeCallHandlingRes ::= SEQUENCE {
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ ResumeCallHandlingRes ::= SEQUENCE { extensionContainer ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ResumeCallHandlingResponse extends CallHandlingMessage {
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

@@ -52,152 +52,149 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.supplementary.SSCodeImpl;
 import org.testng.annotations.Test;
 
-
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public class ExtForwInfoTest {
-	
-	public byte[] getData() {
-		return new byte[] { 48, 117, 4, 1, 0, 48, 71, 48, 69, -126, 1, 22,
-				-124, 1, 3, -123, 4, -111, 34, 34, -8, -120, 2, 2, 5, -122, 1,
-				-92, -121, 1, 2, -87, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11,
-				12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5,
-				21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -118, 4, -111, 34,
-				34, -9, -96, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13,
-				14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22,
-				23, 24, 25, 26, -95, 3, 31, 32, 33 };
-	};
-	
-	public byte[] getData2() {
-		return new byte[] { (byte) 160, 24, 4, 1, 43, 48, 19, 48, 17, (byte) 131, 1, 16, (byte) 132, 1, 15, (byte) 133, 6, (byte) 145, (byte) 136, 120, 119,
-				(byte) 153, (byte) 249, (byte) 134, 1, 0 };
-	};
 
-	private byte[] getISDNSubaddressStringData() {
-		return new byte[] { 2, 5 };
-	}
+    public byte[] getData() {
+        return new byte[] { 48, 117, 4, 1, 0, 48, 71, 48, 69, -126, 1, 22, -124, 1, 3, -123, 4, -111, 34, 34, -8, -120, 2, 2,
+                5, -122, 1, -92, -121, 1, 2, -87, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3,
+                6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -118, 4, -111, 34, 34, -9, -96, 39, -96,
+                32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24,
+                25, 26, -95, 3, 31, 32, 33 };
+    };
 
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testDecode() throws Exception {
-		byte[] data = this.getData();
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
-		assertEquals(tag, Tag.SEQUENCE);
-		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+    public byte[] getData2() {
+        return new byte[] { (byte) 160, 24, 4, 1, 43, 48, 19, 48, 17, (byte) 131, 1, 16, (byte) 132, 1, 15, (byte) 133, 6,
+                (byte) 145, (byte) 136, 120, 119, (byte) 153, (byte) 249, (byte) 134, 1, 0 };
+    };
 
-		ExtForwInfoImpl prim = new ExtForwInfoImpl();
-		prim.decodeAll(asn);
-		
-		MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
-		assertEquals(prim.getSsCode().getSupplementaryCodeValue(), SupplementaryCodeValue.allServices);
-	
-		ArrayList<ExtForwFeature> forwardingFeatureList = prim.getForwardingFeatureList();;
-		assertNotNull(forwardingFeatureList);
-		assertTrue(forwardingFeatureList.size() == 1);
-		ExtForwFeature extForwFeature = forwardingFeatureList.get(0);
-		assertNotNull(extForwFeature);
-	
-		assertEquals(extForwFeature.getBasicService().getExtBearerService().getBearerServiceCodeValue(), BearerServiceCodeValue.Asynchronous9_6kbps);
-		assertNull(extForwFeature.getBasicService().getExtTeleservice());
-		assertNotNull(extForwFeature.getSsStatus());
-		assertTrue(extForwFeature.getSsStatus().getBitA());
-		assertTrue(!extForwFeature.getSsStatus().getBitP());
-		assertTrue(!extForwFeature.getSsStatus().getBitQ());
-		assertTrue(extForwFeature.getSsStatus().getBitR());
-		
-		ISDNAddressString forwardedToNumber = extForwFeature.getForwardedToNumber();
-		assertNotNull(forwardedToNumber);
-		assertTrue(forwardedToNumber.getAddress().equals("22228"));
-		assertEquals(forwardedToNumber.getAddressNature(), AddressNature.international_number);
-		assertEquals(forwardedToNumber.getNumberingPlan(), NumberingPlan.ISDN);
-		
-		assertTrue(Arrays.equals(extForwFeature.getForwardedToSubaddress().getData(), 
-				this.getISDNSubaddressStringData()));
-		assertTrue(extForwFeature.getForwardingOptions().getNotificationToCallingParty());
-		assertTrue(extForwFeature.getForwardingOptions().getNotificationToForwardingParty());
-		assertTrue(!extForwFeature.getForwardingOptions().getRedirectingPresentation());
-		assertTrue(extForwFeature.getForwardingOptions().getExtForwOptionsForwardingReason().getCode()
-				== ExtForwOptionsForwardingReason.msBusy.getCode());
-		assertNotNull(extForwFeature.getNoReplyConditionTime());
-		assertTrue(extForwFeature.getNoReplyConditionTime().equals(new Integer(2)));
-		FTNAddressString longForwardedToNumber = extForwFeature.getLongForwardedToNumber();
-		assertNotNull(longForwardedToNumber);
-		assertTrue(longForwardedToNumber.getAddress().equals("22227"));
-		assertEquals(longForwardedToNumber.getAddressNature(), AddressNature.international_number);
-		assertEquals(longForwardedToNumber.getNumberingPlan(), NumberingPlan.ISDN);
-		assertNotNull(extensionContainer);
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+    private byte[] getISDNSubaddressStringData() {
+        return new byte[] { 2, 5 };
+    }
 
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
+        byte[] data = this.getData();
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
+        assertEquals(tag, Tag.SEQUENCE);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 
-		data = this.getData2();
-		asn = new AsnInputStream(data);
-		tag = asn.readTag();
-		assertEquals(tag, 0);
-		assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
+        ExtForwInfoImpl prim = new ExtForwInfoImpl();
+        prim.decodeAll(asn);
 
-		prim = new ExtForwInfoImpl();
-		prim.decodeAll(asn);
-		
-		extensionContainer = prim.getExtensionContainer();
-		assertEquals(prim.getSsCode().getData(), 43);
+        MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
+        assertEquals(prim.getSsCode().getSupplementaryCodeValue(), SupplementaryCodeValue.allServices);
 
-		forwardingFeatureList = prim.getForwardingFeatureList();;
-		assertNotNull(forwardingFeatureList);
-		assertTrue(forwardingFeatureList.size() == 1);
-		extForwFeature = forwardingFeatureList.get(0);
-		assertNotNull(extForwFeature);
+        ArrayList<ExtForwFeature> forwardingFeatureList = prim.getForwardingFeatureList();
+        ;
+        assertNotNull(forwardingFeatureList);
+        assertTrue(forwardingFeatureList.size() == 1);
+        ExtForwFeature extForwFeature = forwardingFeatureList.get(0);
+        assertNotNull(extForwFeature);
 
-		assertEquals(extForwFeature.getBasicService().getExtTeleservice().getTeleserviceCodeValue(), TeleserviceCodeValue.allSpeechTransmissionServices);
-		assertNull(extForwFeature.getBasicService().getExtBearerService());
+        assertEquals(extForwFeature.getBasicService().getExtBearerService().getBearerServiceCodeValue(),
+                BearerServiceCodeValue.Asynchronous9_6kbps);
+        assertNull(extForwFeature.getBasicService().getExtTeleservice());
+        assertNotNull(extForwFeature.getSsStatus());
+        assertTrue(extForwFeature.getSsStatus().getBitA());
+        assertTrue(!extForwFeature.getSsStatus().getBitP());
+        assertTrue(!extForwFeature.getSsStatus().getBitQ());
+        assertTrue(extForwFeature.getSsStatus().getBitR());
 
-		assertNull(extensionContainer);
-	}
-	
-	@Test(groups = { "functional.encode", "primitives" })
-	public void testEncode() throws Exception {
+        ISDNAddressString forwardedToNumber = extForwFeature.getForwardedToNumber();
+        assertNotNull(forwardedToNumber);
+        assertTrue(forwardedToNumber.getAddress().equals("22228"));
+        assertEquals(forwardedToNumber.getAddressNature(), AddressNature.international_number);
+        assertEquals(forwardedToNumber.getNumberingPlan(), NumberingPlan.ISDN);
 
-		ExtBearerServiceCodeImpl b = new ExtBearerServiceCodeImpl(BearerServiceCodeValue.Asynchronous9_6kbps);
-		ExtBasicServiceCodeImpl basicService = new ExtBasicServiceCodeImpl(b);
-		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
-		ExtSSStatusImpl ssStatus =  new ExtSSStatusImpl(false, false, true, true);
-		ISDNAddressString forwardedToNumber = new ISDNAddressStringImpl(
-				AddressNature.international_number, NumberingPlan.ISDN, "22228");
-		ISDNSubaddressString forwardedToSubaddress = new ISDNSubaddressStringImpl(this.getISDNSubaddressStringData());
-		ExtForwOptions forwardingOptions = new ExtForwOptionsImpl(true,
-				false, true, ExtForwOptionsForwardingReason.msBusy);
-		Integer noReplyConditionTime = new Integer(2);
-		FTNAddressString longForwardedToNumber = new FTNAddressStringImpl(AddressNature.international_number,
-				NumberingPlan.ISDN, "22227");
-		
-		ExtForwFeatureImpl extForwFeature = new ExtForwFeatureImpl(basicService, ssStatus,
-				forwardedToNumber, forwardedToSubaddress, forwardingOptions, 
-				noReplyConditionTime, extensionContainer, longForwardedToNumber);
-		
-		SSCode ssCode = new SSCodeImpl(SupplementaryCodeValue.allServices);
-		ArrayList<ExtForwFeature> forwardingFeatureList = new ArrayList<ExtForwFeature>();
-		forwardingFeatureList.add(extForwFeature);
-		ExtForwInfoImpl prim = new ExtForwInfoImpl(ssCode, forwardingFeatureList, extensionContainer);
-		AsnOutputStream asn = new AsnOutputStream();
-		prim.encodeAll(asn);
+        assertTrue(Arrays.equals(extForwFeature.getForwardedToSubaddress().getData(), this.getISDNSubaddressStringData()));
+        assertTrue(extForwFeature.getForwardingOptions().getNotificationToCallingParty());
+        assertTrue(extForwFeature.getForwardingOptions().getNotificationToForwardingParty());
+        assertTrue(!extForwFeature.getForwardingOptions().getRedirectingPresentation());
+        assertTrue(extForwFeature.getForwardingOptions().getExtForwOptionsForwardingReason().getCode() == ExtForwOptionsForwardingReason.msBusy
+                .getCode());
+        assertNotNull(extForwFeature.getNoReplyConditionTime());
+        assertTrue(extForwFeature.getNoReplyConditionTime().equals(new Integer(2)));
+        FTNAddressString longForwardedToNumber = extForwFeature.getLongForwardedToNumber();
+        assertNotNull(longForwardedToNumber);
+        assertTrue(longForwardedToNumber.getAddress().equals("22227"));
+        assertEquals(longForwardedToNumber.getAddressNature(), AddressNature.international_number);
+        assertEquals(longForwardedToNumber.getNumberingPlan(), NumberingPlan.ISDN);
+        assertNotNull(extensionContainer);
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
 
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+        data = this.getData2();
+        asn = new AsnInputStream(data);
+        tag = asn.readTag();
+        assertEquals(tag, 0);
+        assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
 
+        prim = new ExtForwInfoImpl();
+        prim.decodeAll(asn);
 
-		basicService = new ExtBasicServiceCodeImpl(new ExtTeleserviceCodeImpl(TeleserviceCodeValue.allSpeechTransmissionServices));
-		ssStatus =  new ExtSSStatusImpl(true, true, true, true);
-		forwardedToNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "888777999");
-		forwardingOptions = new ExtForwOptionsImpl(false, false, false, ExtForwOptionsForwardingReason.msNotReachable);
-		extForwFeature = new ExtForwFeatureImpl(basicService, ssStatus, forwardedToNumber, null, forwardingOptions, null, null, null);
-		ssCode = new SSCodeImpl(43);
-		forwardingFeatureList = new ArrayList<ExtForwFeature>();
-		forwardingFeatureList.add(extForwFeature);
-		prim = new ExtForwInfoImpl(ssCode, forwardingFeatureList, null);
-		asn = new AsnOutputStream();
-		prim.encodeAll(asn, Tag.CLASS_CONTEXT_SPECIFIC, 0);
+        extensionContainer = prim.getExtensionContainer();
+        assertEquals(prim.getSsCode().getData(), 43);
 
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
-	}
+        forwardingFeatureList = prim.getForwardingFeatureList();
+        ;
+        assertNotNull(forwardingFeatureList);
+        assertTrue(forwardingFeatureList.size() == 1);
+        extForwFeature = forwardingFeatureList.get(0);
+        assertNotNull(extForwFeature);
+
+        assertEquals(extForwFeature.getBasicService().getExtTeleservice().getTeleserviceCodeValue(),
+                TeleserviceCodeValue.allSpeechTransmissionServices);
+        assertNull(extForwFeature.getBasicService().getExtBearerService());
+
+        assertNull(extensionContainer);
+    }
+
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
+
+        ExtBearerServiceCodeImpl b = new ExtBearerServiceCodeImpl(BearerServiceCodeValue.Asynchronous9_6kbps);
+        ExtBasicServiceCodeImpl basicService = new ExtBasicServiceCodeImpl(b);
+        MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
+        ExtSSStatusImpl ssStatus = new ExtSSStatusImpl(false, false, true, true);
+        ISDNAddressString forwardedToNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN,
+                "22228");
+        ISDNSubaddressString forwardedToSubaddress = new ISDNSubaddressStringImpl(this.getISDNSubaddressStringData());
+        ExtForwOptions forwardingOptions = new ExtForwOptionsImpl(true, false, true, ExtForwOptionsForwardingReason.msBusy);
+        Integer noReplyConditionTime = new Integer(2);
+        FTNAddressString longForwardedToNumber = new FTNAddressStringImpl(AddressNature.international_number,
+                NumberingPlan.ISDN, "22227");
+
+        ExtForwFeatureImpl extForwFeature = new ExtForwFeatureImpl(basicService, ssStatus, forwardedToNumber,
+                forwardedToSubaddress, forwardingOptions, noReplyConditionTime, extensionContainer, longForwardedToNumber);
+
+        SSCode ssCode = new SSCodeImpl(SupplementaryCodeValue.allServices);
+        ArrayList<ExtForwFeature> forwardingFeatureList = new ArrayList<ExtForwFeature>();
+        forwardingFeatureList.add(extForwFeature);
+        ExtForwInfoImpl prim = new ExtForwInfoImpl(ssCode, forwardingFeatureList, extensionContainer);
+        AsnOutputStream asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+
+        basicService = new ExtBasicServiceCodeImpl(new ExtTeleserviceCodeImpl(
+                TeleserviceCodeValue.allSpeechTransmissionServices));
+        ssStatus = new ExtSSStatusImpl(true, true, true, true);
+        forwardedToNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "888777999");
+        forwardingOptions = new ExtForwOptionsImpl(false, false, false, ExtForwOptionsForwardingReason.msNotReachable);
+        extForwFeature = new ExtForwFeatureImpl(basicService, ssStatus, forwardedToNumber, null, forwardingOptions, null, null,
+                null);
+        ssCode = new SSCodeImpl(43);
+        forwardingFeatureList = new ArrayList<ExtForwFeature>();
+        forwardingFeatureList.add(extForwFeature);
+        prim = new ExtForwInfoImpl(ssCode, forwardingFeatureList, null);
+        asn = new AsnOutputStream();
+        prim.encodeAll(asn, Tag.CLASS_CONTEXT_SPECIFIC, 0);
+
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
+    }
 }

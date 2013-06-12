@@ -23,22 +23,18 @@
 package org.mobicents.protocols.ss7.map.api.primitives;
 
 /**
- * 
-
-NAEA-PreferredCI ::= SEQUENCE {
-	naea-PreferredCIC	[0] NAEA-CIC,
-	extensionContainer	[1] ExtensionContainer	OPTIONAL,
-	...}
-
- * 
- * 
+ *
+ NAEA-PreferredCI ::= SEQUENCE { naea-PreferredCIC [0] NAEA-CIC, extensionContainer [1] ExtensionContainer OPTIONAL, ...}
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface NAEAPreferredCI {
 
-	public NAEACIC getNaeaPreferredCIC();
+    NAEACIC getNaeaPreferredCIC();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

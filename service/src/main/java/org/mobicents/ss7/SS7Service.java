@@ -35,114 +35,113 @@ import org.jboss.system.ServiceMBeanSupport;
  */
 public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 
-	private final String serviceName;
-	private Object stack;
+    private final String serviceName;
+    private Object stack;
 
-	private String jndiName;
+    private String jndiName;
 
-	private Logger logger = Logger.getLogger(SS7Service.class);
+    private Logger logger = Logger.getLogger(SS7Service.class);
 
-	private static final String rLogo = " ]]]]]]]]] ";
-	private static final String lLogo = " [[[[[[[[[ ";
-	
-	public SS7Service(String serviceName){
-		this.serviceName = serviceName;
-	}
+    private static final String rLogo = " ]]]]]]]]] ";
+    private static final String lLogo = " [[[[[[[[[ ";
 
-	@Override
-	public void startService() throws Exception {
-		// starting
-		rebind(stack);
-		logger.info(generateMessageWithLogo("service started"));
-	}
+    public SS7Service(String serviceName) {
+        this.serviceName = serviceName;
+    }
 
-	private String generateMessageWithLogo(String message) {
-		return lLogo + getSS7Name() + " " + getSS7Version() + " " + this.serviceName+" "+ message + rLogo;
-	}
+    @Override
+    public void startService() throws Exception {
+        // starting
+        rebind(stack);
+        logger.info(generateMessageWithLogo("service started"));
+    }
 
-	public String getSS7Name() {
-		String name = Version.instance.getProperty("name");
-		if (name != null) {
-			return name;
-		} else {
-			return "Mobicents jSS7 Service";
-		}
-	}
+    private String generateMessageWithLogo(String message) {
+        return lLogo + getSS7Name() + " " + getSS7Version() + " " + this.serviceName + " " + message + rLogo;
+    }
 
-	public String getSS7Vendor() {
-		String vendor = Version.instance.getProperty("vendor");
-		if (vendor != null) {
-			return vendor;
-		} else {
-			return "TeleStax Inc";
-		}
-	}
+    public String getSS7Name() {
+        String name = Version.instance.getProperty("name");
+        if (name != null) {
+            return name;
+        } else {
+            return "Mobicents jSS7 Service";
+        }
+    }
 
-	public String getSS7Version() {
-		String version = Version.instance.getProperty("version");
-		if (version != null) {
-			return version;
-		} else {
-			return "2.0";
-		}
-	}
+    public String getSS7Vendor() {
+        String vendor = Version.instance.getProperty("vendor");
+        if (vendor != null) {
+            return vendor;
+        } else {
+            return "TeleStax Inc";
+        }
+    }
 
-	public void setJndiName(String jndiName) {
-		this.jndiName = jndiName;
-	}
+    public String getSS7Version() {
+        String version = Version.instance.getProperty("version");
+        if (version != null) {
+            return version;
+        } else {
+            return "2.0";
+        }
+    }
 
-	public String getJndiName() {
-		return jndiName;
-	}
+    public void setJndiName(String jndiName) {
+        this.jndiName = jndiName;
+    }
 
-	public Object getStack() {
-		return stack;
-	}
+    public String getJndiName() {
+        return jndiName;
+    }
 
-	public void setStack(Object stack) {
-		this.stack = stack;
-	}
+    public Object getStack() {
+        return stack;
+    }
 
-	@Override
-	public void stopService() {
-		try {
-			unbind(jndiName);
-		} catch (Exception e) {
+    public void setStack(Object stack) {
+        this.stack = stack;
+    }
 
-		}
+    @Override
+    public void stopService() {
+        try {
+            unbind(jndiName);
+        } catch (Exception e) {
 
-		logger.info(generateMessageWithLogo("service stopped"));
-	}
+        }
 
-	/**
-	 * Binds trunk object to the JNDI under the jndiName.
-	 */
-	private void rebind(Object stack) throws NamingException {
-		Context ctx = new InitialContext();
-		String tokens[] = jndiName.split("/");
+        logger.info(generateMessageWithLogo("service stopped"));
+    }
 
-		for (int i = 0; i < tokens.length - 1; i++) {
-			if (tokens[i].trim().length() > 0) {
-				try {
-					ctx = (Context) ctx.lookup(tokens[i]);
-				} catch (NamingException e) {
-					ctx = ctx.createSubcontext(tokens[i]);
-				}
-			}
-		}
+    /**
+     * Binds trunk object to the JNDI under the jndiName.
+     */
+    private void rebind(Object stack) throws NamingException {
+        Context ctx = new InitialContext();
+        String[] tokens = jndiName.split("/");
 
-		ctx.bind(tokens[tokens.length - 1], stack);
-	}
+        for (int i = 0; i < tokens.length - 1; i++) {
+            if (tokens[i].trim().length() > 0) {
+                try {
+                    ctx = (Context) ctx.lookup(tokens[i]);
+                } catch (NamingException e) {
+                    ctx = ctx.createSubcontext(tokens[i]);
+                }
+            }
+        }
 
-	/**
-	 * Unbounds object under specified name.
-	 * 
-	 * @param jndiName
-	 *            the JNDI name of the object to be unbound.
-	 */
-	private void unbind(String jndiName) throws NamingException {
-		InitialContext initialContext = new InitialContext();
-		initialContext.unbind(jndiName);
-	}
+        ctx.bind(tokens[tokens.length - 1], stack);
+    }
+
+    /**
+     * Unbounds object under specified name.
+     *
+     * @param jndiName the JNDI name of the object to be unbound.
+     */
+    private void unbind(String jndiName) throws NamingException {
+        InitialContext initialContext = new InitialContext();
+        initialContext.unbind(jndiName);
+    }
 
 }

@@ -23,33 +23,29 @@
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
 import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-MT-ForwardSM-VGCS-Res ::= SEQUENCE {
-	sm-RP-UI		[0] SignalInfo	OPTIONAL,
-	dispatcherList	[1] DispatcherList	OPTIONAL,
-	ongoingCall	NULL			OPTIONAL,
-	extensionContainer	[2] ExtensionContainer	OPTIONAL,
-	...}
-
-DispatcherList ::= SEQUENCE SIZE (1..5) OF ISDN-AddressString
-
- * 
+ *
+ MT-ForwardSM-VGCS-Res ::= SEQUENCE { sm-RP-UI [0] SignalInfo OPTIONAL, dispatcherList [1] DispatcherList OPTIONAL,
+ * ongoingCall NULL OPTIONAL, extensionContainer [2] ExtensionContainer OPTIONAL, ...}
+ *
+ * DispatcherList ::= SEQUENCE SIZE (1..5) OF ISDN-AddressString
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MtForwardSMVgscResponse extends SmsMessage {
 
-	public SmsSignalInfo getSM_RP_UI();
+    SmsSignalInfo getSM_RP_UI();
 
-	public ArrayList<ISDNAddressString> getDispatcherList();
+    ArrayList<ISDNAddressString> getDispatcherList();
 
-	public boolean getOngoingCall();
+    boolean getOngoingCall();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

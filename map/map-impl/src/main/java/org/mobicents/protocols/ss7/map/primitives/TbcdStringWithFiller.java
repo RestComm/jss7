@@ -28,41 +28,41 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class TbcdStringWithFiller extends TbcdString{
-	
-	protected static int DIGIT_MASK = 0xFF;
+public class TbcdStringWithFiller extends TbcdString {
 
-	public TbcdStringWithFiller(int minLength, int maxLength, String _PrimitiveName) {
-		super(minLength,maxLength,_PrimitiveName);
-	}
+    protected static int DIGIT_MASK = 0xFF;
 
-	public TbcdStringWithFiller(int minLength, int maxLength, String _PrimitiveName, String data) {
-		super(minLength,maxLength,_PrimitiveName,data);
-	}
-	
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		
-		if (this.data == null)
-			throw new MAPException("Error while encoding the " + _PrimitiveName + ": data is not defined");
+    public TbcdStringWithFiller(int minLength, int maxLength, String _PrimitiveName) {
+        super(minLength, maxLength, _PrimitiveName);
+    }
 
-		encodeString(asnOs, this.data);
-		this.encodeFiller(asnOs);
-	}
-	
-	public void encodeFiller(OutputStream asnOs) throws MAPException {
+    public TbcdStringWithFiller(int minLength, int maxLength, String _PrimitiveName, String data) {
+        super(minLength, maxLength, _PrimitiveName, data);
+    }
 
-		for(int i = data.length() + 1;i<this.maxLength*2;i = i + 2){
-			try {
-				asnOs.write(DIGIT_MASK);
-			} catch (IOException e) {
-				throw new MAPException("Error when encoding TbcdString: " + e.getMessage(), e);
-			}
-		}
-		
-	}
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
+
+        if (this.data == null)
+            throw new MAPException("Error while encoding the " + _PrimitiveName + ": data is not defined");
+
+        encodeString(asnOs, this.data);
+        this.encodeFiller(asnOs);
+    }
+
+    public void encodeFiller(OutputStream asnOs) throws MAPException {
+
+        for (int i = data.length() + 1; i < this.maxLength * 2; i = i + 2) {
+            try {
+                asnOs.write(DIGIT_MASK);
+            } catch (IOException e) {
+                throw new MAPException("Error when encoding TbcdString: " + e.getMessage(), e);
+            }
+        }
+
+    }
 
 }

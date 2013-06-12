@@ -33,36 +33,35 @@ import org.mobicents.protocols.asn.Tag;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CallSegmentToCancelTest {
 
-	public byte[] getData1() {
-		return new byte[] { 48, 6, (byte) 128, 1, 3, (byte) 129, 1, 5 };
-	}
+    public byte[] getData1() {
+        return new byte[] { 48, 6, (byte) 128, 1, 3, (byte) 129, 1, 5 };
+    }
 
-	@Test(groups = { "functional.decode","circuitSwitchedCall.primitive"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData1();
-		AsnInputStream ais = new AsnInputStream(data);
-		CallSegmentToCancelImpl elem = new CallSegmentToCancelImpl();
-		int tag = ais.readTag();
-		assertEquals(tag, Tag.SEQUENCE);
-		elem.decodeAll(ais);
-		assertEquals((int)elem.getInvokeID(), 3);
-		assertEquals((int)elem.getCallSegmentID(), 5);
-	}
+        byte[] data = this.getData1();
+        AsnInputStream ais = new AsnInputStream(data);
+        CallSegmentToCancelImpl elem = new CallSegmentToCancelImpl();
+        int tag = ais.readTag();
+        assertEquals(tag, Tag.SEQUENCE);
+        elem.decodeAll(ais);
+        assertEquals((int) elem.getInvokeID(), 3);
+        assertEquals((int) elem.getCallSegmentID(), 5);
+    }
 
-	@Test(groups = { "functional.encode","circuitSwitchedCall.primitive"})
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
+    public void testEncode() throws Exception {
 
-		CallSegmentToCancelImpl elem = new CallSegmentToCancelImpl(3, 5);
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
-	}
+        CallSegmentToCancelImpl elem = new CallSegmentToCancelImpl(3, 5);
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+    }
 }
-

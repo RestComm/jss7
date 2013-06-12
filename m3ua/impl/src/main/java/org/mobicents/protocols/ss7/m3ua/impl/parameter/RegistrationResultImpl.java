@@ -55,17 +55,17 @@ public class RegistrationResultImpl extends ParameterImpl implements Registratio
             pos += len;
             // parameters.put(tag, factory.createParameter(tag, value));
             switch (tag) {
-            case ParameterImpl.Local_Routing_Key_Identifier:
-                this.localRKId = new LocalRKIdentifierImpl(value);
-                break;
+                case ParameterImpl.Local_Routing_Key_Identifier:
+                    this.localRKId = new LocalRKIdentifierImpl(value);
+                    break;
 
-            case ParameterImpl.Routing_Context:
-                this.rc = new RoutingContextImpl(value);
-                break;
+                case ParameterImpl.Routing_Context:
+                    this.rc = new RoutingContextImpl(value);
+                    break;
 
-            case ParameterImpl.Registration_Status:
-                this.status = new RegistrationStatusImpl(value);
-                break;
+                case ParameterImpl.Registration_Status:
+                    this.status = new RegistrationStatusImpl(value);
+                    break;
 
             }
 

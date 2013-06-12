@@ -23,27 +23,20 @@
 package org.mobicents.protocols.ss7.map.api.errors;
 
 /**
-*
-
-pw-RegistrationFailure  ERROR ::= {
-	PARAMETER
-		PW-RegistrationFailureCause
-	CODE	local:37 }
-
-PW-RegistrationFailureCause ::= ENUMERATED {
-	undetermined  (0),
-	invalidFormat  (1),
-	newPasswordsMismatch  (2)}
-
-  
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ pw-RegistrationFailure ERROR ::= { PARAMETER PW-RegistrationFailureCause CODE local:37 }
+ *
+ * PW-RegistrationFailureCause ::= ENUMERATED { undetermined (0), invalidFormat (1), newPasswordsMismatch (2)}
+ *
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface MAPErrorMessagePwRegistrationFailure extends MAPErrorMessage {
 
-	public PWRegistrationFailureCause getPWRegistrationFailureCause();
+    PWRegistrationFailureCause getPWRegistrationFailureCause();
 
-	public void setPWRegistrationFailureCause(PWRegistrationFailureCause val);
+    void setPWRegistrationFailureCause(PWRegistrationFailureCause val);
 
 }

@@ -23,18 +23,16 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
 /**
- * 
-
-ChosenSpeechVersion ::= OCTET STRING (SIZE (1))
-	-- Octets are coded according the Speech Version (chosen) information element in 3GPP TS
-	-- 48.008 
-
- * 
+ *
+ ChosenSpeechVersion ::= OCTET STRING (SIZE (1)) -- Octets are coded according the Speech Version (chosen) information element
+ * in 3GPP TS -- 48.008
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ChosenSpeechVersion {
 
-	public int getData();
+    int getData();
 
 }

@@ -23,17 +23,13 @@
 package org.mobicents.protocols.ss7.cap.api.EsiSms;
 
 /**
-*
-
-t-smsDeliverySpecificInfo [3] SEQUENCE {
--- no specific info defined
-...
-}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ t-smsDeliverySpecificInfo [3] SEQUENCE { -- no specific info defined ... }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface TSmsDeliverySpecificInfo {
 
 }

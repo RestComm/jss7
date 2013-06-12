@@ -33,49 +33,49 @@ import org.mobicents.protocols.asn.Tag;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  *
  */
 public class GSNAddressTest {
 
-	private byte[] getEncodedData() {
-		return new byte[] { 4, 5, 1, 1, 1, 1, 1 };
-	}
+    private byte[] getEncodedData() {
+        return new byte[] { 4, 5, 1, 1, 1, 1, 1 };
+    }
 
-	private byte[] getData() {
-		return new byte[] { 1, 1, 1, 1, 1 };
-	}
+    private byte[] getData() {
+        return new byte[] { 1, 1, 1, 1, 1 };
+    }
 
-	@Test(groups = { "functional.decode","primitives"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
 
-		byte[] rawData = getEncodedData();
+        byte[] rawData = getEncodedData();
 
-		AsnInputStream asn = new AsnInputStream(rawData);
+        AsnInputStream asn = new AsnInputStream(rawData);
 
-		int tag = asn.readTag();
-		GSNAddressImpl pi = new GSNAddressImpl();
-		pi.decodeAll(asn);
+        int tag = asn.readTag();
+        GSNAddressImpl pi = new GSNAddressImpl();
+        pi.decodeAll(asn);
 
-		assertEquals( tag,Tag.STRING_OCTET);
-		assertEquals( asn.getTagClass(),Tag.CLASS_UNIVERSAL);
-		
-		assertTrue(Arrays.equals(getData(), pi.getData()));
-	}
+        assertEquals(tag, Tag.STRING_OCTET);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 
-	@Test(groups = { "functional.encode","primitives"})
-	public void testEncode() throws Exception {
+        assertTrue(Arrays.equals(getData(), pi.getData()));
+    }
 
-		GSNAddressImpl pi = new GSNAddressImpl(getData());
-		AsnOutputStream asnOS = new AsnOutputStream();
-		
-		pi.encodeAll(asnOS);
-		
-		byte[] encodedData = asnOS.toByteArray();
-		byte[] rawData = getEncodedData();		
-		assertTrue( Arrays.equals(rawData,encodedData));
-		
-	}
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
+
+        GSNAddressImpl pi = new GSNAddressImpl(getData());
+        AsnOutputStream asnOS = new AsnOutputStream();
+
+        pi.encodeAll(asnOS);
+
+        byte[] encodedData = asnOS.toByteArray();
+        byte[] rawData = getEncodedData();
+        assertTrue(Arrays.equals(rawData, encodedData));
+
+    }
 
 }

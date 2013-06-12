@@ -25,12 +25,12 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs;
 import org.mobicents.protocols.ss7.cap.api.CAPMessage;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface GprsMessage extends CAPMessage {
 
-	public CAPDialogGprs getCAPDialog();
+    CAPDialogGprs getCAPDialog();
 
 }

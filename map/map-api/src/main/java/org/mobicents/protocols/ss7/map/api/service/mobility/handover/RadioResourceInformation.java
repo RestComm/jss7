@@ -23,17 +23,16 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
 /**
- * 
-
-RadioResourceInformation ::= OCTET STRING (SIZE (3..13))
-	-- Octets are coded according the Channel Type information element in 3GPP TS 48.008
-
- * 
+ *
+ RadioResourceInformation ::= OCTET STRING (SIZE (3..13)) -- Octets are coded according the Channel Type information element
+ * in 3GPP TS 48.008
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface RadioResourceInformation {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

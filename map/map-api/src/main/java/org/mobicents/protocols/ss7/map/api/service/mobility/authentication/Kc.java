@@ -22,14 +22,13 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
 /**
- * 
-
-Kc ::= OCTET STRING (SIZE (8))
-
- * 
+ *
+ Kc ::= OCTET STRING (SIZE (8))
+ *
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public interface Kc {
-	public byte[] getData();	
+    byte[] getData();
 }

@@ -25,22 +25,18 @@ package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
 import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
 
 /**
-*
-
-fCIBCCCAMELsequence1    [0] SEQUENCE { 
-  freeFormatData      [0] OCTET STRING (SIZE(1 .. 160)), 
-  appendFreeFormatData    [1] AppendFreeFormatData DEFAULT overwrite 
-  } 
- }
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ fCIBCCCAMELsequence1 [0] SEQUENCE { freeFormatData [0] OCTET STRING (SIZE(1 .. 160)), appendFreeFormatData [1]
+ * AppendFreeFormatData DEFAULT overwrite } }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface FCIBCCCAMELsequence1 {
 
-	public byte[] getData();
+    byte[] getData();
 
-	public AppendFreeFormatData getAppendFreeFormatData();
+    AppendFreeFormatData getAppendFreeFormatData();
 
 }

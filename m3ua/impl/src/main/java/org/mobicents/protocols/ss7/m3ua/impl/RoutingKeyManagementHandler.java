@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -28,35 +28,32 @@ import org.mobicents.protocols.ss7.m3ua.message.rkm.RegistrationRequest;
 import org.mobicents.protocols.ss7.m3ua.message.rkm.RegistrationResponse;
 
 /**
- * 
+ *
  * @author amit bhayani
  *
  */
 public class RoutingKeyManagementHandler extends MessageHandler {
-	private static final Logger logger = Logger.getLogger(RoutingKeyManagementHandler.class);
+    private static final Logger logger = Logger.getLogger(RoutingKeyManagementHandler.class);
 
-	public RoutingKeyManagementHandler(AspFactoryImpl aspFactoryImpl) {
-		super(aspFactoryImpl);
-	}
+    public RoutingKeyManagementHandler(AspFactoryImpl aspFactoryImpl) {
+        super(aspFactoryImpl);
+    }
 
-	public void handleRegistrationRequest(RegistrationRequest registrationRequest) {
-		logger.error(String.format("Received REGREQ=%s. Handling of RKM message is not supported", registrationRequest));
+    public void handleRegistrationRequest(RegistrationRequest registrationRequest) {
+        logger.error(String.format("Received REGREQ=%s. Handling of RKM message is not supported", registrationRequest));
 
-	}
+    }
 
-	public void handleRegistrationResponse(RegistrationResponse registrationResponse) {
-		logger.error(String
-				.format("Received REGRES=%s. Handling of RKM message is not supported", registrationResponse));
-	}
+    public void handleRegistrationResponse(RegistrationResponse registrationResponse) {
+        logger.error(String.format("Received REGRES=%s. Handling of RKM message is not supported", registrationResponse));
+    }
 
-	public void handleDeregistrationRequest(DeregistrationRequest deregistrationRequest) {
-		logger.error(String.format("Received DEREGREQ=%s. Handling of RKM message is not supported",
-				deregistrationRequest));
-	}
+    public void handleDeregistrationRequest(DeregistrationRequest deregistrationRequest) {
+        logger.error(String.format("Received DEREGREQ=%s. Handling of RKM message is not supported", deregistrationRequest));
+    }
 
-	public void handleDeregistrationResponse(DeregistrationResponse deregistrationResponse) {
-		logger.error(String.format("Received DEREGRES=%s. Handling of RKM message is not supported",
-				deregistrationResponse));
-	}
+    public void handleDeregistrationResponse(DeregistrationResponse deregistrationResponse) {
+        logger.error(String.format("Received DEREGRES=%s. Handling of RKM message is not supported", deregistrationResponse));
+    }
 
 }

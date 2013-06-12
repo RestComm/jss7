@@ -30,34 +30,33 @@ import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 
 /**
- * The Error message is used to notify a peer of an error event associated with
- * an incoming message. For example, the message type might be unexpected given
- * the current state, or a parameter value might be invalid. Error messages MUST
- * NOT be generated in response to other Error messages.
- * 
+ * The Error message is used to notify a peer of an error event associated with an incoming message. For example, the message
+ * type might be unexpected given the current state, or a parameter value might be invalid. Error messages MUST NOT be generated
+ * in response to other Error messages.
+ *
  * @author amit bhayani
- * 
+ *
  */
 public interface Error extends M3UAMessage {
 
-    public ErrorCode getErrorCode();
+    ErrorCode getErrorCode();
 
-    public void setErrorCode(ErrorCode code);
+    void setErrorCode(ErrorCode code);
 
-    public RoutingContext getRoutingContext();
+    RoutingContext getRoutingContext();
 
-    public void setRoutingContext(RoutingContext rc);
+    void setRoutingContext(RoutingContext rc);
 
-    public NetworkAppearance getNetworkAppearance();
+    NetworkAppearance getNetworkAppearance();
 
-    public void setNetworkAppearance(NetworkAppearance netApp);
+    void setNetworkAppearance(NetworkAppearance netApp);
 
-    public AffectedPointCode getAffectedPointCode();
+    AffectedPointCode getAffectedPointCode();
 
-    public void setAffectedPointCode(AffectedPointCode affPc);
+    void setAffectedPointCode(AffectedPointCode affPc);
 
-    public DiagnosticInfo getDiagnosticInfo();
+    DiagnosticInfo getDiagnosticInfo();
 
-    public void setDiagnosticInfo(DiagnosticInfo diagInfo);
+    void setDiagnosticInfo(DiagnosticInfo diagInfo);
 
 }

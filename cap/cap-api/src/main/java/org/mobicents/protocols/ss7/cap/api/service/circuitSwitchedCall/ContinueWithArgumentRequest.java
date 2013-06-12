@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall;
 
 import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.cap.api.isup.GenericNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
@@ -35,78 +36,56 @@ import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 
 /**
-*
-continueWithArgument {PARAMETERS-BOUND : bound} OPERATION ::= { 
- ARGUMENT  ContinueWithArgumentArg {bound} 
- RETURN RESULT FALSE 
- ERRORS   {missingParameter | 
-     parameterOutOfRange | 
-     unexpectedComponentSequence | 
-     unexpectedDataValue | 
-     unexpectedParameter | 
-     unknownLegID | 
-     unknownCSID} 
- CODE   opcode-continueWithArgument} 
--- Direction: gsmSCF -> gsmSSF, Timer: T  
-cwa 
--- This operation is used to request the gsmSSF to proceed with call processing at the 
--- DP at which it previously suspended call processing to await gsmSCF instructions 
--- (i.e. proceed to the next point in call in the BCSM). The gsmSSF continues call 
--- processing with the modified call setup information as received from the gsmSCF. 
- 
-ContinueWithArgumentArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
- alertingPattern      [1] AlertingPattern       OPTIONAL, 
- extensions       [6] Extensions {bound}      OPTIONAL, 
- serviceInteractionIndicatorsTwo  [7] ServiceInteractionIndicatorsTwo   OPTIONAL, 
- callingPartysCategory    [12] CallingPartysCategory     OPTIONAL, 
- genericNumbers      [16] GenericNumbers {bound}     OPTIONAL, 
- cug-Interlock      [17] CUG-Interlock       OPTIONAL, 
- cug-OutgoingAccess     [18] NULL         OPTIONAL, 
- chargeNumber      [50] ChargeNumber {bound}     OPTIONAL, 
- carrier        [52] Carrier {bound}      OPTIONAL, 
- suppressionOfAnnouncement   [55] SuppressionOfAnnouncement    OPTIONAL, 
- naOliInfo       [56] NAOliInfo        OPTIONAL, 
- bor-InterrogationRequested   [57] NULL         OPTIONAL, 
- suppress-O-CSI      [58] NULL         OPTIONAL, 
- continueWithArgumentArgExtension [59] ContinueWithArgumentArgExtension {bound} OPTIONAL, 
- ... 
- } 
- 
-SuppressionOfAnnouncement ::= NULL
- 
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ continueWithArgument {PARAMETERS-BOUND : bound} OPERATION ::= { ARGUMENT ContinueWithArgumentArg {bound} RETURN RESULT FALSE
+ * ERRORS {missingParameter | parameterOutOfRange | unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter |
+ * unknownLegID | unknownCSID} CODE opcode-continueWithArgument} -- Direction: gsmSCF -> gsmSSF, Timer: T cwa -- This operation
+ * is used to request the gsmSSF to proceed with call processing at the -- DP at which it previously suspended call processing
+ * to await gsmSCF instructions -- (i.e. proceed to the next point in call in the BCSM). The gsmSSF continues call -- processing
+ * with the modified call setup information as received from the gsmSCF.
+ *
+ * ContinueWithArgumentArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { alertingPattern [1] AlertingPattern OPTIONAL, extensions
+ * [6] Extensions {bound} OPTIONAL, serviceInteractionIndicatorsTwo [7] ServiceInteractionIndicatorsTwo OPTIONAL,
+ * callingPartysCategory [12] CallingPartysCategory OPTIONAL, genericNumbers [16] GenericNumbers {bound} OPTIONAL, cug-Interlock
+ * [17] CUG-Interlock OPTIONAL, cug-OutgoingAccess [18] NULL OPTIONAL, chargeNumber [50] ChargeNumber {bound} OPTIONAL, carrier
+ * [52] Carrier {bound} OPTIONAL, suppressionOfAnnouncement [55] SuppressionOfAnnouncement OPTIONAL, naOliInfo [56] NAOliInfo
+ * OPTIONAL, bor-InterrogationRequested [57] NULL OPTIONAL, suppress-O-CSI [58] NULL OPTIONAL, continueWithArgumentArgExtension
+ * [59] ContinueWithArgumentArgExtension {bound} OPTIONAL, ... }
+ *
+ * SuppressionOfAnnouncement ::= NULL
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ContinueWithArgumentRequest extends CircuitSwitchedCallMessage {
 
-	public AlertingPattern getAlertingPattern();
+    AlertingPattern getAlertingPattern();
 
-	public CAPExtensions getExtensions();
+    CAPExtensions getExtensions();
 
-	public ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo();
+    ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo();
 
-	public CallingPartysCategoryInap getCallingPartysCategory();
+    CallingPartysCategoryInap getCallingPartysCategory();
 
-	public ArrayList<GenericNumberCap> getGenericNumbers();
+    ArrayList<GenericNumberCap> getGenericNumbers();
 
-	public CUGInterlock getCugInterlock();
+    CUGInterlock getCugInterlock();
 
-	public boolean getCugOutgoingAccess();
+    boolean getCugOutgoingAccess();
 
-	public LocationNumberCap getChargeNumber();
+    LocationNumberCap getChargeNumber();
 
-	public Carrier getCarrier();
+    Carrier getCarrier();
 
-	public boolean getSuppressionOfAnnouncement();
+    boolean getSuppressionOfAnnouncement();
 
-	public NAOliInfo getNaOliInfo();
+    NAOliInfo getNaOliInfo();
 
-	public boolean getBorInterrogationRequested();
+    boolean getBorInterrogationRequested();
 
-	public boolean getSuppressOCsi();
+    boolean getSuppressOCsi();
 
-	public ContinueWithArgumentArgExtension getContinueWithArgumentArgExtension();
+    ContinueWithArgumentArgExtension getContinueWithArgumentArgExtension();
 
 }
-

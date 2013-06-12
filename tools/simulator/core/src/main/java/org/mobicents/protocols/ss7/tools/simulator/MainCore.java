@@ -21,7 +21,7 @@
  */
 
 package org.mobicents.protocols.ss7.tools.simulator;
- 
+
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.rmi.registry.LocateRegistry;
@@ -66,236 +66,239 @@ import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerStan
 import com.sun.jdmk.comm.HtmlAdaptorServer;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  * @author amit bhayani
  */
 public class MainCore {
 
-	public static TesterHost mainGui(String appName) throws Exception {
-		TesterHost host = new TesterHost(appName);
+    public static TesterHost mainGui(String appName) throws Exception {
+        TesterHost host = new TesterHost(appName);
 
-		return host;
-	}
+        return host;
+    }
 
-	public static void main(String[] args) throws Exception {
-		
-		// ........................
-		// SMSC: Hypersonic database
+    public static void main(String[] args) throws Exception {
 
-		// HTTP case:
-		// MX4J - free http JMX adapter
+        // ........................
+        // SMSC: Hypersonic database
 
-		// SUN: jmxtools.jar
-		// <dependency>
-		// 		<groupId>com.sun.jdmk</groupId>
-		// 		<artifactId>jmxtools</artifactId>
-		// 		<version>1.2.1</version>
-		// 		<scope>provided</scope>
-		// </dependency>		
+        // HTTP case:
+        // MX4J - free http JMX adapter
 
-		// RMI case:
-		// rmiregistry 9999
-		// service:jmx:rmi:///jndi/rmi://localhost:9999/server
+        // SUN: jmxtools.jar
+        // <dependency>
+        // <groupId>com.sun.jdmk</groupId>
+        // <artifactId>jmxtools</artifactId>
+        // <version>1.2.1</version>
+        // <scope>provided</scope>
+        // </dependency>
 
-		
-		// JCONSOLE case:
-		// java -Dcom.sun.management.jmxremote Main
-		// JMX repository:
-		// rmiregistry 9999
-		// VISTA:
-		// Out-of-the-box it is not possible to connect to a local Java process from the JConsole using Windows Vista. 
-		// The local process box just remains empty... The cause is Vista's security model. 
-		// In default case every Java process creates a file in the folder: C:\Users\[LOGIN_NAME]\AppData\Local\Temp\hsperfdata_[LOGIN_NAME], 
-		// in my case e.g.: C:\Users\adam\AppData\Local\Temp\hsperfdata_adam. The name of the file is the PID. 
-		// For some strange reasons this directory is write-protected - it is not possible to create neither files nor folders 
-		// in the hsperfdata_[LOGIN_NAME] directory. It is even not possible to change the write access, 
-		// even not as an administrator (you can understand now, how secure Vista really is :-)). 
-		// However if you delete this directory, and create a new one with the same name - then it works perfectly....
+        // RMI case:
+        // rmiregistry 9999
+        // service:jmx:rmi:///jndi/rmi://localhost:9999/server
 
-		// Custom Notification: http://marxsoftware.blogspot.com/2008/02/publishing-user-objects-in-jmx.html
-		// ........................
+        // JCONSOLE case:
+        // java -Dcom.sun.management.jmxremote Main
+        // JMX repository:
+        // rmiregistry 9999
+        // VISTA:
+        // Out-of-the-box it is not possible to connect to a local Java process from the JConsole using Windows Vista.
+        // The local process box just remains empty... The cause is Vista's security model.
+        // In default case every Java process creates a file in the folder:
+        // C:\Users\[LOGIN_NAME]\AppData\Local\Temp\hsperfdata_[LOGIN_NAME],
+        // in my case e.g.: C:\Users\adam\AppData\Local\Temp\hsperfdata_adam. The name of the file is the PID.
+        // For some strange reasons this directory is write-protected - it is not possible to create neither files nor folders
+        // in the hsperfdata_[LOGIN_NAME] directory. It is even not possible to change the write access,
+        // even not as an administrator (you can understand now, how secure Vista really is :-)).
+        // However if you delete this directory, and create a new one with the same name - then it works perfectly....
 
+        // Custom Notification: http://marxsoftware.blogspot.com/2008/02/publishing-user-objects-in-jmx.html
+        // ........................
 
-		
-		// parsing arguments, possible values:
-		// name=a1 http=8000 rmi=9999
-		int httpPort = -1;
-		int rmiPort = -1;
-		String appName = "main";
-		if (args != null && args.length > 0) {
-			for (String s : args) {
-				if (s.length() > 5 && s.substring(0, 5).toLowerCase().equals("name=")) {
-					appName = s.substring(5, s.length());
-				}
-				if (s.length() > 4 && s.substring(0, 4).toLowerCase().equals("rmi=")) {
-					try {
-						int porta = Integer.parseInt(s.substring(4, s.length()));
-						if (porta > 0 && porta < 65000)
-							rmiPort = porta;
-						else
-							System.out.println("Bad value of field \"rmi\"");
-					} catch (Exception e) {
-						System.out.println("Exception when parsing parameter \"rmi\"");
-					}
-				}
-				if (s.length() > 5 && s.substring(0, 5).toLowerCase().equals("http=")) {
-					try {
-						int porta = Integer.parseInt(s.substring(5, s.length()));
-						if (porta > 0 && porta < 65000)
-							httpPort = porta;
-						else
-							System.out.println("Bad value of field \"http\"");
-					} catch (Exception e) {
-						System.out.println("Exception when parsing parameter \"http\"");
-					}
-				}
-			}
-		}
+        // parsing arguments, possible values:
+        // name=a1 http=8000 rmi=9999
+        int httpPort = -1;
+        int rmiPort = -1;
+        String appName = "main";
+        if (args != null && args.length > 0) {
+            for (String s : args) {
+                if (s.length() > 5 && s.substring(0, 5).toLowerCase().equals("name=")) {
+                    appName = s.substring(5, s.length());
+                }
+                if (s.length() > 4 && s.substring(0, 4).toLowerCase().equals("rmi=")) {
+                    try {
+                        int porta = Integer.parseInt(s.substring(4, s.length()));
+                        if (porta > 0 && porta < 65000)
+                            rmiPort = porta;
+                        else
+                            System.out.println("Bad value of field \"rmi\"");
+                    } catch (Exception e) {
+                        System.out.println("Exception when parsing parameter \"rmi\"");
+                    }
+                }
+                if (s.length() > 5 && s.substring(0, 5).toLowerCase().equals("http=")) {
+                    try {
+                        int porta = Integer.parseInt(s.substring(5, s.length()));
+                        if (porta > 0 && porta < 65000)
+                            httpPort = porta;
+                        else
+                            System.out.println("Bad value of field \"http\"");
+                    } catch (Exception e) {
+                        System.out.println("Exception when parsing parameter \"http\"");
+                    }
+                }
+            }
+        }
 
-		MainCore main = new MainCore();
-		main.start(appName, httpPort, rmiPort);
+        MainCore main = new MainCore();
+        main.start(appName, httpPort, rmiPort);
 
-	}
-	
-	public void start(String appName, int httpPort, int rmiPort) throws MalformedObjectNameException, MBeanRegistrationException, InstanceNotFoundException,
-			IOException {
-		System.out.println("Application has been loaded...");
+    }
 
-		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-		System.out.println("PlatformMBeanServer has been loaded...");
+    public void start(String appName, int httpPort, int rmiPort) throws MalformedObjectNameException,
+            MBeanRegistrationException, InstanceNotFoundException, IOException {
+        System.out.println("Application has been loaded...");
 
-		// names initializing
-		ObjectName adapterName = new ObjectName("SS7_Simulator_" + appName + ":name=htmladapter,port=" + httpPort);
-		ObjectName nameTesterHost = new ObjectName("SS7_Simulator_" + appName + ":type=TesterHost");
-		ObjectName nameM3uaMan = new ObjectName("SS7_Simulator_" + appName + ":type=M3uaMan");
-		ObjectName nameDialogicMan = new ObjectName("SS7_Simulator_" + appName + ":type=DialogicMan");
-		ObjectName nameSccpMan = new ObjectName("SS7_Simulator_" + appName + ":type=SccpMan");
-		ObjectName nameMapMan = new ObjectName("SS7_Simulator_" + appName + ":type=MapMan");
-		ObjectName nameCapMan = new ObjectName("SS7_Simulator_" + appName + ":type=CapMan");
-		ObjectName nameUssdClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestUssdClientMan");
-		ObjectName nameUssdServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestUssdServerMan");
-		ObjectName nameSmsClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestSmsClientMan");
-		ObjectName nameSmsServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestSmsServerMan");
-		ObjectName nameTestCapSsfMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestCapSsfMan");
-		ObjectName nameTestCapScfMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestCapScfMan");
+        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        System.out.println("PlatformMBeanServer has been loaded...");
 
-		// HtmlAdaptorServer
-		HtmlAdaptorServer adapter = null;
-		if (httpPort > 0) {
-			adapter = new HtmlAdaptorServer();
-			System.out.println("HtmlAdaptorServer has been created...");
-		} 
+        // names initializing
+        ObjectName adapterName = new ObjectName("SS7_Simulator_" + appName + ":name=htmladapter,port=" + httpPort);
+        ObjectName nameTesterHost = new ObjectName("SS7_Simulator_" + appName + ":type=TesterHost");
+        ObjectName nameM3uaMan = new ObjectName("SS7_Simulator_" + appName + ":type=M3uaMan");
+        ObjectName nameDialogicMan = new ObjectName("SS7_Simulator_" + appName + ":type=DialogicMan");
+        ObjectName nameSccpMan = new ObjectName("SS7_Simulator_" + appName + ":type=SccpMan");
+        ObjectName nameMapMan = new ObjectName("SS7_Simulator_" + appName + ":type=MapMan");
+        ObjectName nameCapMan = new ObjectName("SS7_Simulator_" + appName + ":type=CapMan");
+        ObjectName nameUssdClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestUssdClientMan");
+        ObjectName nameUssdServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestUssdServerMan");
+        ObjectName nameSmsClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestSmsClientMan");
+        ObjectName nameSmsServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestSmsServerMan");
+        ObjectName nameTestCapSsfMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestCapSsfMan");
+        ObjectName nameTestCapScfMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestCapScfMan");
 
-		// Tester host initializing
-		TesterHost host = new TesterHost(appName);
+        // HtmlAdaptorServer
+        HtmlAdaptorServer adapter = null;
+        if (httpPort > 0) {
+            adapter = new HtmlAdaptorServer();
+            System.out.println("HtmlAdaptorServer has been created...");
+        }
 
-		JMXConnectorServer cs = null;
-		Registry reg = null;
-		try {
-			// registering managed beans
-			Object mbean = new TesterHostStandardMBean(host, TesterHostMBean.class, host);
-			mbs.registerMBean(mbean, nameTesterHost);
+        // Tester host initializing
+        TesterHost host = new TesterHost(appName);
 
-			M3uaManStandardMBean m3uaMBean = new M3uaManStandardMBean(host.getM3uaMan(), M3uaManMBean.class);
-			mbs.registerMBean(m3uaMBean, nameM3uaMan);
+        JMXConnectorServer cs = null;
+        Registry reg = null;
+        try {
+            // registering managed beans
+            Object mbean = new TesterHostStandardMBean(host, TesterHostMBean.class, host);
+            mbs.registerMBean(mbean, nameTesterHost);
 
-			DialogicManStandardMBean dialogicMBean = new DialogicManStandardMBean(host.getDialogicMan(), DialogicManMBean.class);
-			mbs.registerMBean(dialogicMBean, nameDialogicMan);
+            M3uaManStandardMBean m3uaMBean = new M3uaManStandardMBean(host.getM3uaMan(), M3uaManMBean.class);
+            mbs.registerMBean(m3uaMBean, nameM3uaMan);
 
-			SccpManStandardMBean sccpMBean = new SccpManStandardMBean(host.getSccpMan(), SccpManMBean.class);
-			mbs.registerMBean(sccpMBean, nameSccpMan);
+            DialogicManStandardMBean dialogicMBean = new DialogicManStandardMBean(host.getDialogicMan(), DialogicManMBean.class);
+            mbs.registerMBean(dialogicMBean, nameDialogicMan);
 
-			MapManStandardMBean mapMBean = new MapManStandardMBean(host.getMapMan(), MapManMBean.class);
-			mbs.registerMBean(mapMBean, nameMapMan);
+            SccpManStandardMBean sccpMBean = new SccpManStandardMBean(host.getSccpMan(), SccpManMBean.class);
+            mbs.registerMBean(sccpMBean, nameSccpMan);
 
-			CapManStandardMBean capMBean = new CapManStandardMBean(host.getCapMan(), CapManMBean.class);
-			mbs.registerMBean(capMBean, nameCapMan);
+            MapManStandardMBean mapMBean = new MapManStandardMBean(host.getMapMan(), MapManMBean.class);
+            mbs.registerMBean(mapMBean, nameMapMan);
 
-			TestUssdClientStandardManMBean ussdClientManMBean = new TestUssdClientStandardManMBean(host.getTestUssdClientMan(), TestUssdClientManMBean.class);
-			mbs.registerMBean(ussdClientManMBean, nameUssdClientManMan);
+            CapManStandardMBean capMBean = new CapManStandardMBean(host.getCapMan(), CapManMBean.class);
+            mbs.registerMBean(capMBean, nameCapMan);
 
-			TestUssdServerStandardManMBean ussdServerManMBean = new TestUssdServerStandardManMBean(host.getTestUssdServerMan(), TestUssdServerManMBean.class);
-			mbs.registerMBean(ussdServerManMBean, nameUssdServerManMan);
+            TestUssdClientStandardManMBean ussdClientManMBean = new TestUssdClientStandardManMBean(host.getTestUssdClientMan(),
+                    TestUssdClientManMBean.class);
+            mbs.registerMBean(ussdClientManMBean, nameUssdClientManMan);
 
-			TestSmsClientStandardManMBean smsClientManMBean = new TestSmsClientStandardManMBean(host.getTestSmsClientMan(), TestSmsClientManMBean.class);
-			mbs.registerMBean(smsClientManMBean, nameSmsClientManMan);
+            TestUssdServerStandardManMBean ussdServerManMBean = new TestUssdServerStandardManMBean(host.getTestUssdServerMan(),
+                    TestUssdServerManMBean.class);
+            mbs.registerMBean(ussdServerManMBean, nameUssdServerManMan);
 
-			TestSmsServerStandardManMBean smsServerManMBean = new TestSmsServerStandardManMBean(host.getTestSmsServerMan(), TestSmsServerManMBean.class);
-			mbs.registerMBean(smsServerManMBean, nameSmsServerManMan);
+            TestSmsClientStandardManMBean smsClientManMBean = new TestSmsClientStandardManMBean(host.getTestSmsClientMan(),
+                    TestSmsClientManMBean.class);
+            mbs.registerMBean(smsClientManMBean, nameSmsClientManMan);
 
-			TestCapSsfStandardManMBean capSsfManMBean = new TestCapSsfStandardManMBean(host.getTestCapSsfMan(), TestCapSsfManMBean.class);
-			mbs.registerMBean(capSsfManMBean, nameTestCapSsfMan);
+            TestSmsServerStandardManMBean smsServerManMBean = new TestSmsServerStandardManMBean(host.getTestSmsServerMan(),
+                    TestSmsServerManMBean.class);
+            mbs.registerMBean(smsServerManMBean, nameSmsServerManMan);
 
-			TestCapScfStandardManMBean capScfManMBean = new TestCapScfStandardManMBean(host.getTestCapScfMan(), TestCapScfManMBean.class);
-			mbs.registerMBean(capScfManMBean, nameTestCapScfMan);
+            TestCapSsfStandardManMBean capSsfManMBean = new TestCapSsfStandardManMBean(host.getTestCapSsfMan(),
+                    TestCapSsfManMBean.class);
+            mbs.registerMBean(capSsfManMBean, nameTestCapSsfMan);
 
-			System.out.println("All beans have been loaded...");
+            TestCapScfStandardManMBean capScfManMBean = new TestCapScfStandardManMBean(host.getTestCapScfMan(),
+                    TestCapScfManMBean.class);
+            mbs.registerMBean(capScfManMBean, nameTestCapScfMan);
 
-			// starting rmi connector
-			if (rmiPort > 0) {
-				System.out.println("RMI connector initializing...");
-				reg = LocateRegistry.createRegistry(rmiPort);
-				JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:" + rmiPort + "/server");
-				cs = JMXConnectorServerFactory.newJMXConnectorServer(url, null, mbs);
-				cs.start();
-				System.out.println("RMI connector has been started...");
-			}
+            System.out.println("All beans have been loaded...");
 
-			// starting html connector
-			if (httpPort > 0) {
-				System.out.println("Html connector initializing...");
-				adapter.setPort(httpPort);
-				mbs.registerMBean(adapter, adapterName);
-				adapter.start();
-				System.out.println("Html connector has been started...");
-			}
+            // starting rmi connector
+            if (rmiPort > 0) {
+                System.out.println("RMI connector initializing...");
+                reg = LocateRegistry.createRegistry(rmiPort);
+                JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:" + rmiPort + "/server");
+                cs = JMXConnectorServerFactory.newJMXConnectorServer(url, null, mbs);
+                cs.start();
+                System.out.println("RMI connector has been started...");
+            }
 
-		} catch (Exception ee) {
-			System.out.println("Exception when initializing the managed beans or started connectors:");
-			ee.printStackTrace();
-		}
+            // starting html connector
+            if (httpPort > 0) {
+                System.out.println("Html connector initializing...");
+                adapter.setPort(httpPort);
+                mbs.registerMBean(adapter, adapterName);
+                adapter.start();
+                System.out.println("Html connector has been started...");
+            }
 
-		System.out.println("Waiting for commands...");
+        } catch (Exception ee) {
+            System.out.println("Exception when initializing the managed beans or started connectors:");
+            ee.printStackTrace();
+        }
 
-		while (true) {
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			if (host.isNeedQuit())
-				break;
+        System.out.println("Waiting for commands...");
 
-			host.checkStore();
-			host.execute();
-		}
-		System.out.println("Terminating...");
+        while (true) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (host.isNeedQuit())
+                break;
 
-		if (httpPort > 0) {
-			adapter.stop();
-			mbs.unregisterMBean(adapterName);
-		}
-		if (rmiPort > 0) {
-			cs.stop();
-		}
+            host.checkStore();
+            host.execute();
+        }
+        System.out.println("Terminating...");
 
-		mbs.unregisterMBean(nameTesterHost);
-		mbs.unregisterMBean(nameM3uaMan);
-		mbs.unregisterMBean(nameDialogicMan);
-		mbs.unregisterMBean(nameSccpMan);
-		mbs.unregisterMBean(nameMapMan);
-		mbs.unregisterMBean(nameCapMan);
-		mbs.unregisterMBean(nameUssdClientManMan);
-		mbs.unregisterMBean(nameUssdServerManMan);
-		mbs.unregisterMBean(nameSmsClientManMan);
-		mbs.unregisterMBean(nameSmsServerManMan);
-		mbs.unregisterMBean(nameTestCapSsfMan);
-		mbs.unregisterMBean(nameTestCapScfMan);
+        if (httpPort > 0) {
+            adapter.stop();
+            mbs.unregisterMBean(adapterName);
+        }
+        if (rmiPort > 0) {
+            cs.stop();
+        }
 
-//		Registry.unbind(key);
-		UnicastRemoteObject.unexportObject(reg,true);  
+        mbs.unregisterMBean(nameTesterHost);
+        mbs.unregisterMBean(nameM3uaMan);
+        mbs.unregisterMBean(nameDialogicMan);
+        mbs.unregisterMBean(nameSccpMan);
+        mbs.unregisterMBean(nameMapMan);
+        mbs.unregisterMBean(nameCapMan);
+        mbs.unregisterMBean(nameUssdClientManMan);
+        mbs.unregisterMBean(nameUssdServerManMan);
+        mbs.unregisterMBean(nameSmsClientManMan);
+        mbs.unregisterMBean(nameSmsServerManMan);
+        mbs.unregisterMBean(nameTestCapSsfMan);
+        mbs.unregisterMBean(nameTestCapScfMan);
 
-	}
+        // Registry.unbind(key);
+        UnicastRemoteObject.unexportObject(reg, true);
+
+    }
 }
-

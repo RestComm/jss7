@@ -38,154 +38,152 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 /**
  * The MAP ReturnError message with the single parameter - ExtensionContainer
  *
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class MAPErrorMessageExtensionContainerImpl extends MAPErrorMessageImpl implements MAPErrorMessageExtensionContainer {
 
-	private MAPExtensionContainer extensionContainer; 
+    private MAPExtensionContainer extensionContainer;
 
-	
-	protected MAPErrorMessageExtensionContainerImpl(Long errorCode) {
-		super(errorCode);
-	}
-	
-	public MAPErrorMessageExtensionContainerImpl(Long errorCode, MAPExtensionContainer extensionContainer) {
-		super(errorCode);
-		
-		this.extensionContainer = extensionContainer;
-	}
+    protected MAPErrorMessageExtensionContainerImpl(Long errorCode) {
+        super(errorCode);
+    }
 
-	
-	public MAPExtensionContainer getExtensionContainer() {
-		return this.extensionContainer;
-	}
+    public MAPErrorMessageExtensionContainerImpl(Long errorCode, MAPExtensionContainer extensionContainer) {
+        super(errorCode);
 
-	public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
-		this.extensionContainer = extensionContainer;
-	}
-	
-	public boolean isEmExtensionContainer() {
-		return true;
-	}
+        this.extensionContainer = extensionContainer;
+    }
 
-	public MAPErrorMessageExtensionContainer getEmExtensionContainer() {
-		return this;
-	}
+    public MAPExtensionContainer getExtensionContainer() {
+        return this.extensionContainer;
+    }
 
+    public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
+        this.extensionContainer = extensionContainer;
+    }
 
-	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
-	}
+    public boolean isEmExtensionContainer() {
+        return true;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public MAPErrorMessageExtensionContainer getEmExtensionContainer() {
+        return this;
+    }
 
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    public int getTag() throws MAPException {
+        return Tag.SEQUENCE;
+    }
 
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageExtensionContainer: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageExtensionContainer: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageExtensionContainer: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageExtensionContainer: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageExtensionContainer: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageExtensionContainer: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		
-		this.extensionContainer = null;
-		
-		if (ansIS.getTagClass() != Tag.CLASS_UNIVERSAL || ansIS.getTag() != Tag.SEQUENCE || ansIS.isTagPrimitive())
-			throw new MAPParsingComponentException("Error decoding MAPErrorMessageExtensionContainer: bad tag class or tag or parameter is primitive",
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
-			int tag = ais.readTag();
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding MAPErrorMessageExtensionContainer: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessageExtensionContainer: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-			switch (ais.getTagClass()) {
-			case Tag.CLASS_UNIVERSAL:
-				switch (tag) {
-				case Tag.SEQUENCE:
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
-					break;
+    private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-				break;
+        this.extensionContainer = null;
 
-			default:
-				ais.advanceElement();
-				break;
-			}
-		}
-	}
+        if (ansIS.getTagClass() != Tag.CLASS_UNIVERSAL || ansIS.getTag() != Tag.SEQUENCE || ansIS.isTagPrimitive())
+            throw new MAPParsingComponentException(
+                    "Error decoding MAPErrorMessageExtensionContainer: bad tag class or tag or parameter is primitive",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
-	}
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, false, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MAPErrorMessageExtensionContainer: " + e.getMessage(), e);
-		}
-	}
+            int tag = ais.readTag();
 
-	public void encodeData(AsnOutputStream aos) throws MAPException {
-		
-		if (this.extensionContainer == null)
-			return;
+            switch (ais.getTagClass()) {
+                case Tag.CLASS_UNIVERSAL:
+                    switch (tag) {
+                        case Tag.SEQUENCE:
+                            this.extensionContainer = new MAPExtensionContainerImpl();
+                            ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                            break;
 
-		((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(aos);
-	}
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+                    break;
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append("MAPErrorMessageExtensionContainer [");
-		sb.append("ErrorCode=" + this.errorCode);
-		if (this.extensionContainer != null)
-			sb.append(", extensionContainer=" + this.extensionContainer.toString());
-		sb.append("]");
-		
-		return sb.toString();
-	}
+                default:
+                    ais.advanceElement();
+                    break;
+            }
+        }
+    }
+
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+
+        this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+    }
+
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+
+        try {
+            asnOs.writeTag(tagClass, false, tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding MAPErrorMessageExtensionContainer: " + e.getMessage(), e);
+        }
+    }
+
+    public void encodeData(AsnOutputStream aos) throws MAPException {
+
+        if (this.extensionContainer == null)
+            return;
+
+        ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(aos);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("MAPErrorMessageExtensionContainer [");
+        sb.append("ErrorCode=" + this.errorCode);
+        if (this.extensionContainer != null)
+            sb.append(", extensionContainer=" + this.extensionContainer.toString());
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

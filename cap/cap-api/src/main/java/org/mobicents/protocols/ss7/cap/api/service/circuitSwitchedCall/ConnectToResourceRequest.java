@@ -27,56 +27,34 @@ import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
 
 /**
-*
-
-connectToResource {PARAMETERS-BOUND : bound} OPERATION ::= { 
- ARGUMENT  ConnectToResourceArg {bound} 
- RETURN RESULT FALSE 
- ERRORS   {missingParameter | 
-     systemFailure | 
-     taskRefused | 
-     unexpectedComponentSequence | 
-     unexpectedDataValue | 
-     unexpectedParameter | 
-     unknownCSID} 
- CODE   opcode-connectToResource} 
--- Direction: gsmSCF -> gsmSSF, Timer: T  
-ctr 
--- This operation is used to connect a call segment from the gsmSSF to the 
--- gsmSRF. 
- 
-ConnectToResourceArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
- resourceAddress CHOICE { 
-  ipRoutingAddress     [0] IPRoutingAddress {bound}, 
-  none        [3] NULL 
-  }, 
- extensions       [4] Extensions {bound}      OPTIONAL, 
- serviceInteractionIndicatorsTwo  [7] ServiceInteractionIndicatorsTwo   OPTIONAL, 
- callSegmentID      [50] CallSegmentID {bound}     OPTIONAL, 
- ... 
- } 
-
-IPRoutingAddress {PARAMETERS-BOUND : bound} ::= CalledPartyNumber {bound} 
--- Indicates the routeing address for the IP.
-
-CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..bound.&numOfCSs)
-numOfCSs ::= 127
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ connectToResource {PARAMETERS-BOUND : bound} OPERATION ::= { ARGUMENT ConnectToResourceArg {bound} RETURN RESULT FALSE ERRORS
+ * {missingParameter | systemFailure | taskRefused | unexpectedComponentSequence | unexpectedDataValue | unexpectedParameter |
+ * unknownCSID} CODE opcode-connectToResource} -- Direction: gsmSCF -> gsmSSF, Timer: T ctr -- This operation is used to connect
+ * a call segment from the gsmSSF to the -- gsmSRF.
+ *
+ * ConnectToResourceArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { resourceAddress CHOICE { ipRoutingAddress [0] IPRoutingAddress
+ * {bound}, none [3] NULL }, extensions [4] Extensions {bound} OPTIONAL, serviceInteractionIndicatorsTwo [7]
+ * ServiceInteractionIndicatorsTwo OPTIONAL, callSegmentID [50] CallSegmentID {bound} OPTIONAL, ... }
+ *
+ * IPRoutingAddress {PARAMETERS-BOUND : bound} ::= CalledPartyNumber {bound} -- Indicates the routeing address for the IP.
+ *
+ * CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..bound.&numOfCSs) numOfCSs ::= 127
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ConnectToResourceRequest extends CircuitSwitchedCallMessage {
 
-	public CalledPartyNumberCap getResourceAddress_IPRoutingAddress();
+    CalledPartyNumberCap getResourceAddress_IPRoutingAddress();
 
-	public boolean getResourceAddress_Null();
+    boolean getResourceAddress_Null();
 
-	public CAPExtensions getExtensions();
+    CAPExtensions getExtensions();
 
-	public ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo();
+    ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo();
 
-	public Integer getCallSegmentID();
+    Integer getCallSegmentID();
 
 }
-

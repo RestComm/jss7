@@ -63,539 +63,545 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implements ConnectRequest {
 
-	public static final int _ID_destinationRoutingAddress = 0;
-	public static final int _ID_alertingPattern = 1;
-	public static final int _ID_originalCalledPartyID = 6;
-	public static final int _ID_extensions = 10;
-	public static final int _ID_carrier = 11;
-	public static final int _ID_callingPartysCategory = 28;
-	public static final int _ID_redirectingPartyID = 29;
-	public static final int _ID_redirectionInformation = 30;
-	public static final int _ID_genericNumbers = 14;
-	public static final int _ID_serviceInteractionIndicatorsTwo = 15;
-	public static final int _ID_chargeNumber = 19;
-	public static final int _ID_legToBeConnected = 21;
-	public static final int _ID_cug_Interlock = 31;
-	public static final int _ID_cug_OutgoingAccess = 32;
-	public static final int _ID_suppressionOfAnnouncement = 55;
-	public static final int _ID_oCSIApplicable = 56;
-	public static final int _ID_naOliInfo = 57;
-	public static final int _ID_bor_InterrogationRequested = 58;
+    public static final int _ID_destinationRoutingAddress = 0;
+    public static final int _ID_alertingPattern = 1;
+    public static final int _ID_originalCalledPartyID = 6;
+    public static final int _ID_extensions = 10;
+    public static final int _ID_carrier = 11;
+    public static final int _ID_callingPartysCategory = 28;
+    public static final int _ID_redirectingPartyID = 29;
+    public static final int _ID_redirectionInformation = 30;
+    public static final int _ID_genericNumbers = 14;
+    public static final int _ID_serviceInteractionIndicatorsTwo = 15;
+    public static final int _ID_chargeNumber = 19;
+    public static final int _ID_legToBeConnected = 21;
+    public static final int _ID_cug_Interlock = 31;
+    public static final int _ID_cug_OutgoingAccess = 32;
+    public static final int _ID_suppressionOfAnnouncement = 55;
+    public static final int _ID_oCSIApplicable = 56;
+    public static final int _ID_naOliInfo = 57;
+    public static final int _ID_bor_InterrogationRequested = 58;
 
-	public static final String _PrimitiveName = "ConnectRequestIndication";
-	
-	private DestinationRoutingAddress destinationRoutingAddress;
-	private AlertingPatternCap alertingPattern;
-	private OriginalCalledNumberCap originalCalledPartyID;
-	private CAPExtensions extensions;
-	private Carrier carrier;
-	private CallingPartysCategoryInap callingPartysCategory;
-	private RedirectingPartyIDCap redirectingPartyID;
-	private RedirectionInformationInap redirectionInformation;
-	private ArrayList<GenericNumberCap> genericNumbers;
-	private ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo;
-	private LocationNumberCap chargeNumber;
-	private LegID legToBeConnected;
-	private CUGInterlock cugInterlock;
-	private boolean cugOutgoingAccess;
-	private boolean suppressionOfAnnouncement;
-	private boolean ocsIApplicable;
-	private NAOliInfo naoliInfo;
-	private boolean borInterrogationRequested;
+    public static final String _PrimitiveName = "ConnectRequestIndication";
 
-	
-	public ConnectRequestImpl() {
-	}
-	
-	public ConnectRequestImpl(DestinationRoutingAddress destinationRoutingAddress, AlertingPatternCap alertingPattern,
-			OriginalCalledNumberCap originalCalledPartyID, CAPExtensions extensions, Carrier carrier, CallingPartysCategoryInap callingPartysCategory,
-			RedirectingPartyIDCap redirectingPartyID, RedirectionInformationInap redirectionInformation, ArrayList<GenericNumberCap> genericNumbers,
-			ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, LocationNumberCap chargeNumber, LegID legToBeConnected, CUGInterlock cugInterlock,
-			boolean cugOutgoingAccess, boolean suppressionOfAnnouncement, boolean ocsIApplicable, NAOliInfo naoliInfo, boolean borInterrogationRequested) {
-		this.destinationRoutingAddress = destinationRoutingAddress;
-		this.alertingPattern = alertingPattern;
-		this.originalCalledPartyID = originalCalledPartyID;
-		this.extensions = extensions;
-		this.carrier = carrier;
-		this.callingPartysCategory = callingPartysCategory;
-		this.redirectingPartyID = redirectingPartyID;
-		this.redirectionInformation = redirectionInformation;
-		this.genericNumbers = genericNumbers;
-		this.serviceInteractionIndicatorsTwo = serviceInteractionIndicatorsTwo;
-		this.chargeNumber = chargeNumber;
-		this.legToBeConnected = legToBeConnected;
-		this.cugInterlock = cugInterlock;
-		this.cugOutgoingAccess = cugOutgoingAccess;
-		this.suppressionOfAnnouncement = suppressionOfAnnouncement;
-		this.ocsIApplicable = ocsIApplicable;
-		this.naoliInfo = naoliInfo;
-		this.borInterrogationRequested = borInterrogationRequested;
-	}
+    private DestinationRoutingAddress destinationRoutingAddress;
+    private AlertingPatternCap alertingPattern;
+    private OriginalCalledNumberCap originalCalledPartyID;
+    private CAPExtensions extensions;
+    private Carrier carrier;
+    private CallingPartysCategoryInap callingPartysCategory;
+    private RedirectingPartyIDCap redirectingPartyID;
+    private RedirectionInformationInap redirectionInformation;
+    private ArrayList<GenericNumberCap> genericNumbers;
+    private ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo;
+    private LocationNumberCap chargeNumber;
+    private LegID legToBeConnected;
+    private CUGInterlock cugInterlock;
+    private boolean cugOutgoingAccess;
+    private boolean suppressionOfAnnouncement;
+    private boolean ocsIApplicable;
+    private NAOliInfo naoliInfo;
+    private boolean borInterrogationRequested;
 
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.connect_Request;
-	}
+    public ConnectRequestImpl() {
+    }
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.connect;
-	}
+    public ConnectRequestImpl(DestinationRoutingAddress destinationRoutingAddress, AlertingPatternCap alertingPattern,
+            OriginalCalledNumberCap originalCalledPartyID, CAPExtensions extensions, Carrier carrier,
+            CallingPartysCategoryInap callingPartysCategory, RedirectingPartyIDCap redirectingPartyID,
+            RedirectionInformationInap redirectionInformation, ArrayList<GenericNumberCap> genericNumbers,
+            ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, LocationNumberCap chargeNumber,
+            LegID legToBeConnected, CUGInterlock cugInterlock, boolean cugOutgoingAccess, boolean suppressionOfAnnouncement,
+            boolean ocsIApplicable, NAOliInfo naoliInfo, boolean borInterrogationRequested) {
+        this.destinationRoutingAddress = destinationRoutingAddress;
+        this.alertingPattern = alertingPattern;
+        this.originalCalledPartyID = originalCalledPartyID;
+        this.extensions = extensions;
+        this.carrier = carrier;
+        this.callingPartysCategory = callingPartysCategory;
+        this.redirectingPartyID = redirectingPartyID;
+        this.redirectionInformation = redirectionInformation;
+        this.genericNumbers = genericNumbers;
+        this.serviceInteractionIndicatorsTwo = serviceInteractionIndicatorsTwo;
+        this.chargeNumber = chargeNumber;
+        this.legToBeConnected = legToBeConnected;
+        this.cugInterlock = cugInterlock;
+        this.cugOutgoingAccess = cugOutgoingAccess;
+        this.suppressionOfAnnouncement = suppressionOfAnnouncement;
+        this.ocsIApplicable = ocsIApplicable;
+        this.naoliInfo = naoliInfo;
+        this.borInterrogationRequested = borInterrogationRequested;
+    }
 
-	@Override
-	public DestinationRoutingAddress getDestinationRoutingAddress() {
-		return destinationRoutingAddress;
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.connect_Request;
+    }
 
-	@Override
-	public AlertingPatternCap getAlertingPattern() {
-		return alertingPattern;
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.connect;
+    }
 
-	@Override
-	public OriginalCalledNumberCap getOriginalCalledPartyID() {
-		return originalCalledPartyID;
-	}
+    @Override
+    public DestinationRoutingAddress getDestinationRoutingAddress() {
+        return destinationRoutingAddress;
+    }
 
-	@Override
-	public CAPExtensions getExtensions() {
-		return extensions;
-	}
+    @Override
+    public AlertingPatternCap getAlertingPattern() {
+        return alertingPattern;
+    }
 
-	@Override
-	public Carrier getCarrier() {
-		return carrier;
-	}
+    @Override
+    public OriginalCalledNumberCap getOriginalCalledPartyID() {
+        return originalCalledPartyID;
+    }
 
-	@Override
-	public CallingPartysCategoryInap getCallingPartysCategory() {
-		return callingPartysCategory;
-	}
+    @Override
+    public CAPExtensions getExtensions() {
+        return extensions;
+    }
 
-	@Override
-	public RedirectingPartyIDCap getRedirectingPartyID() {
-		return redirectingPartyID;
-	}
+    @Override
+    public Carrier getCarrier() {
+        return carrier;
+    }
 
-	@Override
-	public RedirectionInformationInap getRedirectionInformation() {
-		return redirectionInformation;
-	}
+    @Override
+    public CallingPartysCategoryInap getCallingPartysCategory() {
+        return callingPartysCategory;
+    }
 
-	@Override
-	public ArrayList<GenericNumberCap> getGenericNumbers() {
-		return genericNumbers;
-	}
+    @Override
+    public RedirectingPartyIDCap getRedirectingPartyID() {
+        return redirectingPartyID;
+    }
 
-	@Override
-	public ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo() {
-		return serviceInteractionIndicatorsTwo;
-	}
+    @Override
+    public RedirectionInformationInap getRedirectionInformation() {
+        return redirectionInformation;
+    }
 
-	@Override
-	public LocationNumberCap getChargeNumber() {
-		return chargeNumber;
-	}
+    @Override
+    public ArrayList<GenericNumberCap> getGenericNumbers() {
+        return genericNumbers;
+    }
 
-	@Override
-	public LegID getLegToBeConnected() {
-		return legToBeConnected;
-	}
+    @Override
+    public ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo() {
+        return serviceInteractionIndicatorsTwo;
+    }
 
-	@Override
-	public CUGInterlock getCUGInterlock() {
-		return cugInterlock;
-	}
+    @Override
+    public LocationNumberCap getChargeNumber() {
+        return chargeNumber;
+    }
 
-	@Override
-	public boolean getCugOutgoingAccess() {
-		return cugOutgoingAccess;
-	}
+    @Override
+    public LegID getLegToBeConnected() {
+        return legToBeConnected;
+    }
 
-	@Override
-	public boolean getSuppressionOfAnnouncement() {
-		return suppressionOfAnnouncement;
-	}
+    @Override
+    public CUGInterlock getCUGInterlock() {
+        return cugInterlock;
+    }
 
-	@Override
-	public boolean getOCSIApplicable() {
-		return ocsIApplicable;
-	}
+    @Override
+    public boolean getCugOutgoingAccess() {
+        return cugOutgoingAccess;
+    }
 
-	@Override
-	public NAOliInfo getNAOliInfo() {
-		return naoliInfo;
-	}
+    @Override
+    public boolean getSuppressionOfAnnouncement() {
+        return suppressionOfAnnouncement;
+    }
 
-	@Override
-	public boolean getBorInterrogationRequested() {
-		return borInterrogationRequested;
-	}
-	
-	
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public boolean getOCSIApplicable() {
+        return ocsIApplicable;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public NAOliInfo getNAOliInfo() {
+        return naoliInfo;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public boolean getBorInterrogationRequested() {
+        return borInterrogationRequested;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (INAPParsingComponentException e) {
-			throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (INAPParsingComponentException e) {
-			throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, INAPParsingComponentException,
-			IOException, AsnException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (INAPParsingComponentException e) {
+            throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		this.destinationRoutingAddress = null;
-		this.alertingPattern = null;
-		this.originalCalledPartyID = null;
-		this.extensions = null;
-		this.carrier = null;
-		this.callingPartysCategory = null;
-		this.redirectingPartyID = null;
-		this.redirectionInformation = null;
-		this.genericNumbers = null;
-		this.serviceInteractionIndicatorsTwo = null;
-		this.chargeNumber = null;
-		this.legToBeConnected = null;
-		this.cugInterlock = null;
-		this.cugOutgoingAccess = false;
-		this.suppressionOfAnnouncement = false;
-		this.ocsIApplicable = false;
-		this.naoliInfo = null;
-		this.borInterrogationRequested = false;
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (INAPParsingComponentException e) {
+            throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-			int tag = ais.readTag();
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException,
+            INAPParsingComponentException, IOException, AsnException {
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_destinationRoutingAddress:
-					this.destinationRoutingAddress = new DestinationRoutingAddressImpl();
-					((DestinationRoutingAddressImpl) this.destinationRoutingAddress).decodeAll(ais);
-					break;
-				case _ID_alertingPattern:
-					this.alertingPattern = new AlertingPatternCapImpl();
-					((AlertingPatternCapImpl) this.alertingPattern).decodeAll(ais);
-					break;
-				case _ID_originalCalledPartyID:
-					this.originalCalledPartyID = new OriginalCalledNumberCapImpl();
-					((OriginalCalledNumberCapImpl) this.originalCalledPartyID).decodeAll(ais);
-					break;
-				case _ID_extensions:
-					this.extensions = new CAPExtensionsImpl();
-					((CAPExtensionsImpl) this.extensions).decodeAll(ais);
-					break;
-				case _ID_carrier:
-					ais.advanceElement(); // TODO: implement it
-					break;
-				case _ID_callingPartysCategory:
-					this.callingPartysCategory = new CallingPartysCategoryInapImpl();
-					((CallingPartysCategoryInapImpl) this.callingPartysCategory).decodeAll(ais);
-					break;
-				case _ID_redirectingPartyID:
-					this.redirectingPartyID = new RedirectingPartyIDCapImpl();
-					((RedirectingPartyIDCapImpl) this.redirectingPartyID).decodeAll(ais);
-					break;
-				case _ID_redirectionInformation:
-					this.redirectionInformation = new RedirectionInformationInapImpl();
-					((RedirectionInformationInapImpl) this.redirectionInformation).decodeAll(ais);
-					break;
-				case _ID_genericNumbers:
-					this.genericNumbers = new ArrayList<GenericNumberCap>();
-					AsnInputStream ais2 = ais.readSequenceStream();
-					while (true) {
-						if (ais2.available() == 0)
-							break;
+        this.destinationRoutingAddress = null;
+        this.alertingPattern = null;
+        this.originalCalledPartyID = null;
+        this.extensions = null;
+        this.carrier = null;
+        this.callingPartysCategory = null;
+        this.redirectingPartyID = null;
+        this.redirectionInformation = null;
+        this.genericNumbers = null;
+        this.serviceInteractionIndicatorsTwo = null;
+        this.chargeNumber = null;
+        this.legToBeConnected = null;
+        this.cugInterlock = null;
+        this.cugOutgoingAccess = false;
+        this.suppressionOfAnnouncement = false;
+        this.ocsIApplicable = false;
+        this.naoliInfo = null;
+        this.borInterrogationRequested = false;
 
-						int tag2 = ais2.readTag();
-						if (ais2.getTagClass() != Tag.CLASS_UNIVERSAL || tag2 != Tag.STRING_OCTET)
-							throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
-									+ " genericNumbers parameter SET must consist of OCTET_STRING elements",
-									CAPParsingComponentExceptionReason.MistypedParameter);
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-						GenericNumberCapImpl elem = new GenericNumberCapImpl();
-						elem.decodeAll(ais2);
-						this.genericNumbers.add(elem);
-					}
-					break;
-				case _ID_serviceInteractionIndicatorsTwo:
-					ais.advanceElement(); // TODO: implement it
-					break;
-				case _ID_chargeNumber:
-					ais.advanceElement(); // TODO: implement it
-					break;
-				case _ID_legToBeConnected:
-					ais.advanceElement(); // TODO: implement it
-					break;
-				case _ID_cug_Interlock:
-					ais.advanceElement(); // TODO: implement it
-					break;
-				case _ID_cug_OutgoingAccess:
-					ais.advanceElement(); // TODO: implement it
-					break;
-				case _ID_suppressionOfAnnouncement:
-					ais.readNull();
-					this.suppressionOfAnnouncement = true;
-					break;
-				case _ID_oCSIApplicable:
-					ais.readNull();
-					this.ocsIApplicable = true;
-					break;
-				case _ID_naOliInfo:
-					this.naoliInfo = new NAOliInfoImpl();
-					((NAOliInfoImpl) this.naoliInfo).decodeAll(ais);
-					break;
-				case _ID_bor_InterrogationRequested:
-					ais.advanceElement(); // TODO: implement it
-					break;
+            int tag = ais.readTag();
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_destinationRoutingAddress:
+                        this.destinationRoutingAddress = new DestinationRoutingAddressImpl();
+                        ((DestinationRoutingAddressImpl) this.destinationRoutingAddress).decodeAll(ais);
+                        break;
+                    case _ID_alertingPattern:
+                        this.alertingPattern = new AlertingPatternCapImpl();
+                        ((AlertingPatternCapImpl) this.alertingPattern).decodeAll(ais);
+                        break;
+                    case _ID_originalCalledPartyID:
+                        this.originalCalledPartyID = new OriginalCalledNumberCapImpl();
+                        ((OriginalCalledNumberCapImpl) this.originalCalledPartyID).decodeAll(ais);
+                        break;
+                    case _ID_extensions:
+                        this.extensions = new CAPExtensionsImpl();
+                        ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
+                        break;
+                    case _ID_carrier:
+                        ais.advanceElement(); // TODO: implement it
+                        break;
+                    case _ID_callingPartysCategory:
+                        this.callingPartysCategory = new CallingPartysCategoryInapImpl();
+                        ((CallingPartysCategoryInapImpl) this.callingPartysCategory).decodeAll(ais);
+                        break;
+                    case _ID_redirectingPartyID:
+                        this.redirectingPartyID = new RedirectingPartyIDCapImpl();
+                        ((RedirectingPartyIDCapImpl) this.redirectingPartyID).decodeAll(ais);
+                        break;
+                    case _ID_redirectionInformation:
+                        this.redirectionInformation = new RedirectionInformationInapImpl();
+                        ((RedirectionInformationInapImpl) this.redirectionInformation).decodeAll(ais);
+                        break;
+                    case _ID_genericNumbers:
+                        this.genericNumbers = new ArrayList<GenericNumberCap>();
+                        AsnInputStream ais2 = ais.readSequenceStream();
+                        while (true) {
+                            if (ais2.available() == 0)
+                                break;
 
-		if (this.destinationRoutingAddress == null)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": destinationRoutingAddress is mandatory but not found ",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+                            int tag2 = ais2.readTag();
+                            if (ais2.getTagClass() != Tag.CLASS_UNIVERSAL || tag2 != Tag.STRING_OCTET)
+                                throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
+                                        + " genericNumbers parameter SET must consist of OCTET_STRING elements",
+                                        CAPParsingComponentExceptionReason.MistypedParameter);
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+                            GenericNumberCapImpl elem = new GenericNumberCapImpl();
+                            elem.decodeAll(ais2);
+                            this.genericNumbers.add(elem);
+                        }
+                        break;
+                    case _ID_serviceInteractionIndicatorsTwo:
+                        ais.advanceElement(); // TODO: implement it
+                        break;
+                    case _ID_chargeNumber:
+                        ais.advanceElement(); // TODO: implement it
+                        break;
+                    case _ID_legToBeConnected:
+                        ais.advanceElement(); // TODO: implement it
+                        break;
+                    case _ID_cug_Interlock:
+                        ais.advanceElement(); // TODO: implement it
+                        break;
+                    case _ID_cug_OutgoingAccess:
+                        ais.advanceElement(); // TODO: implement it
+                        break;
+                    case _ID_suppressionOfAnnouncement:
+                        ais.readNull();
+                        this.suppressionOfAnnouncement = true;
+                        break;
+                    case _ID_oCSIApplicable:
+                        ais.readNull();
+                        this.ocsIApplicable = true;
+                        break;
+                    case _ID_naOliInfo:
+                        this.naoliInfo = new NAOliInfoImpl();
+                        ((NAOliInfoImpl) this.naoliInfo).decodeAll(ais);
+                        break;
+                    case _ID_bor_InterrogationRequested:
+                        ais.advanceElement(); // TODO: implement it
+                        break;
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        if (this.destinationRoutingAddress == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": destinationRoutingAddress is mandatory but not found ",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-		if (this.destinationRoutingAddress == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": destinationRoutingAddress must not be null");
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		try {
-			((DestinationRoutingAddressImpl) this.destinationRoutingAddress).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_destinationRoutingAddress);
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-			if (this.alertingPattern != null)
-				((AlertingPatternCapImpl) this.alertingPattern).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_alertingPattern);
-			if (this.originalCalledPartyID != null)
-				((OriginalCalledNumberCapImpl) this.originalCalledPartyID).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_originalCalledPartyID);
-			if (this.extensions != null)
-				((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
-			if (this.carrier != null) {
-				// TODO: implement it - _ID_carrier
-			}
-			if (this.callingPartysCategory != null)
-				((CallingPartysCategoryInapImpl) this.callingPartysCategory).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_callingPartysCategory);
-			if (this.redirectingPartyID != null)
-				((RedirectingPartyIDCapImpl) this.redirectingPartyID).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_redirectingPartyID);
-			if (this.redirectionInformation != null)
-				((RedirectionInformationInapImpl) this.redirectionInformation).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_redirectionInformation);
+    @Override
+    public void encodeData(AsnOutputStream aos) throws CAPException {
 
-			if (this.genericNumbers != null) {
-				if (this.genericNumbers.size() < 1 || this.genericNumbers.size() > 5)
-					throw new CAPException("Error while encoding " + _PrimitiveName + ": genericNumbers size must be from 1 to 5");
+        if (this.destinationRoutingAddress == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": destinationRoutingAddress must not be null");
 
-				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_genericNumbers);
-				int pos = aos.StartContentDefiniteLength();
-				for (GenericNumberCap gnc : this.genericNumbers) {
-					GenericNumberCapImpl gncc = (GenericNumberCapImpl) gnc;
-					gncc.encodeAll(aos);
-				}
-				aos.FinalizeContent(pos);
-			}
-			if (this.serviceInteractionIndicatorsTwo != null) {
-				// TODO: implement it - _ID_serviceInteractionIndicatorsTwo
-			}
-			if (this.chargeNumber != null) {
-				// TODO: implement it - _ID_chargeNumber
-			}
-			if (this.legToBeConnected != null) {
-				// TODO: implement it - _ID_legToBeConnected
-			}
-			if (this.cugInterlock != null) {
-				// TODO: implement it - _ID_cug_Interlock
-			}
-			if (this.cugOutgoingAccess) {
-				// TODO: implement it - _ID_cug_OutgoingAccess
-			}
-			if (this.suppressionOfAnnouncement)
-				aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_suppressionOfAnnouncement);
-			if (this.ocsIApplicable)
-				aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_oCSIApplicable);
-			if (this.naoliInfo != null)
-				((NAOliInfoImpl) this.naoliInfo).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_naOliInfo);
-			if (this.borInterrogationRequested) {
-				// TODO: implement it - _ID_bor_InterrogationRequested
-			}
+        try {
+            ((DestinationRoutingAddressImpl) this.destinationRoutingAddress).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+                    _ID_destinationRoutingAddress);
 
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (INAPException e) {
-			throw new CAPException("INAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+            if (this.alertingPattern != null)
+                ((AlertingPatternCapImpl) this.alertingPattern).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_alertingPattern);
+            if (this.originalCalledPartyID != null)
+                ((OriginalCalledNumberCapImpl) this.originalCalledPartyID).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_originalCalledPartyID);
+            if (this.extensions != null)
+                ((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
+            if (this.carrier != null) {
+                // TODO: implement it - _ID_carrier
+            }
+            if (this.callingPartysCategory != null)
+                ((CallingPartysCategoryInapImpl) this.callingPartysCategory).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_callingPartysCategory);
+            if (this.redirectingPartyID != null)
+                ((RedirectingPartyIDCapImpl) this.redirectingPartyID).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_redirectingPartyID);
+            if (this.redirectionInformation != null)
+                ((RedirectionInformationInapImpl) this.redirectionInformation).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _ID_redirectionInformation);
 
-	@Override
-	public String toString() {
+            if (this.genericNumbers != null) {
+                if (this.genericNumbers.size() < 1 || this.genericNumbers.size() > 5)
+                    throw new CAPException("Error while encoding " + _PrimitiveName
+                            + ": genericNumbers size must be from 1 to 5");
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+                aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_genericNumbers);
+                int pos = aos.StartContentDefiniteLength();
+                for (GenericNumberCap gnc : this.genericNumbers) {
+                    GenericNumberCapImpl gncc = (GenericNumberCapImpl) gnc;
+                    gncc.encodeAll(aos);
+                }
+                aos.FinalizeContent(pos);
+            }
+            if (this.serviceInteractionIndicatorsTwo != null) {
+                // TODO: implement it - _ID_serviceInteractionIndicatorsTwo
+            }
+            if (this.chargeNumber != null) {
+                // TODO: implement it - _ID_chargeNumber
+            }
+            if (this.legToBeConnected != null) {
+                // TODO: implement it - _ID_legToBeConnected
+            }
+            if (this.cugInterlock != null) {
+                // TODO: implement it - _ID_cug_Interlock
+            }
+            if (this.cugOutgoingAccess) {
+                // TODO: implement it - _ID_cug_OutgoingAccess
+            }
+            if (this.suppressionOfAnnouncement)
+                aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_suppressionOfAnnouncement);
+            if (this.ocsIApplicable)
+                aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_oCSIApplicable);
+            if (this.naoliInfo != null)
+                ((NAOliInfoImpl) this.naoliInfo).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_naOliInfo);
+            if (this.borInterrogationRequested) {
+                // TODO: implement it - _ID_bor_InterrogationRequested
+            }
 
-		if (this.destinationRoutingAddress != null) {
-			sb.append("destinationRoutingAddress=");
-			sb.append(destinationRoutingAddress.toString());
-		}
-		if (this.alertingPattern != null) {
-			sb.append(", alertingPattern=");
-			sb.append(alertingPattern.toString());
-		}
-		if (this.originalCalledPartyID != null) {
-			sb.append(", originalCalledPartyID=");
-			sb.append(originalCalledPartyID.toString());
-		}
-		if (this.extensions != null) {
-			sb.append(", extensions=");
-			sb.append(extensions.toString());
-		}
-		if (this.carrier != null) {
-			sb.append(", carrier=");
-			sb.append(carrier.toString());
-		}
-		if (this.callingPartysCategory != null) {
-			sb.append(", callingPartysCategory=");
-			sb.append(callingPartysCategory.toString());
-		}
-		if (this.redirectingPartyID != null) {
-			sb.append(", redirectingPartyID=");
-			sb.append(redirectingPartyID.toString());
-		}
-		if (this.redirectionInformation != null) {
-			sb.append(", redirectionInformation=");
-			sb.append(redirectionInformation.toString());
-		}
-		if (this.genericNumbers != null) {
-			sb.append(", genericNumbers=[");
-			boolean isFirst = true;
-			for (GenericNumberCap gnc : this.genericNumbers) {
-				if (isFirst)
-					isFirst = false;
-				else
-					sb.append(", ");
-				sb.append(gnc.toString());
-			}
-			sb.append("]");
-		}
-		if (this.serviceInteractionIndicatorsTwo != null) {
-			sb.append(", serviceInteractionIndicatorsTwo=");
-			sb.append(serviceInteractionIndicatorsTwo.toString());
-		}
-		if (this.chargeNumber != null) {
-			sb.append(", chargeNumber=");
-			sb.append(chargeNumber.toString());
-		}
-		if (this.legToBeConnected != null) {
-			sb.append(", legToBeConnected=");
-			sb.append(legToBeConnected.toString());
-		}
-		if (this.cugInterlock != null) {
-			sb.append(", cugInterlock=");
-			sb.append(cugInterlock.toString());
-		}
-		if (this.cugOutgoingAccess) {
-			sb.append(", cugOutgoingAccess");
-		}
-		if (suppressionOfAnnouncement) {
-			sb.append(", suppressionOfAnnouncement");
-		}
-		if (ocsIApplicable) {
-			sb.append(", ocsIApplicable");
-		}
-		if (this.naoliInfo != null) {
-			sb.append(", naoliInfo=");
-			sb.append(naoliInfo.toString());
-		}
-		if (this.borInterrogationRequested) {
-			sb.append(", borInterrogationRequested");
-		}
-		
-		sb.append("]");
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (INAPException e) {
+            throw new CAPException("INAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.destinationRoutingAddress != null) {
+            sb.append("destinationRoutingAddress=");
+            sb.append(destinationRoutingAddress.toString());
+        }
+        if (this.alertingPattern != null) {
+            sb.append(", alertingPattern=");
+            sb.append(alertingPattern.toString());
+        }
+        if (this.originalCalledPartyID != null) {
+            sb.append(", originalCalledPartyID=");
+            sb.append(originalCalledPartyID.toString());
+        }
+        if (this.extensions != null) {
+            sb.append(", extensions=");
+            sb.append(extensions.toString());
+        }
+        if (this.carrier != null) {
+            sb.append(", carrier=");
+            sb.append(carrier.toString());
+        }
+        if (this.callingPartysCategory != null) {
+            sb.append(", callingPartysCategory=");
+            sb.append(callingPartysCategory.toString());
+        }
+        if (this.redirectingPartyID != null) {
+            sb.append(", redirectingPartyID=");
+            sb.append(redirectingPartyID.toString());
+        }
+        if (this.redirectionInformation != null) {
+            sb.append(", redirectionInformation=");
+            sb.append(redirectionInformation.toString());
+        }
+        if (this.genericNumbers != null) {
+            sb.append(", genericNumbers=[");
+            boolean isFirst = true;
+            for (GenericNumberCap gnc : this.genericNumbers) {
+                if (isFirst)
+                    isFirst = false;
+                else
+                    sb.append(", ");
+                sb.append(gnc.toString());
+            }
+            sb.append("]");
+        }
+        if (this.serviceInteractionIndicatorsTwo != null) {
+            sb.append(", serviceInteractionIndicatorsTwo=");
+            sb.append(serviceInteractionIndicatorsTwo.toString());
+        }
+        if (this.chargeNumber != null) {
+            sb.append(", chargeNumber=");
+            sb.append(chargeNumber.toString());
+        }
+        if (this.legToBeConnected != null) {
+            sb.append(", legToBeConnected=");
+            sb.append(legToBeConnected.toString());
+        }
+        if (this.cugInterlock != null) {
+            sb.append(", cugInterlock=");
+            sb.append(cugInterlock.toString());
+        }
+        if (this.cugOutgoingAccess) {
+            sb.append(", cugOutgoingAccess");
+        }
+        if (suppressionOfAnnouncement) {
+            sb.append(", suppressionOfAnnouncement");
+        }
+        if (ocsIApplicable) {
+            sb.append(", ocsIApplicable");
+        }
+        if (this.naoliInfo != null) {
+            sb.append(", naoliInfo=");
+            sb.append(naoliInfo.toString());
+        }
+        if (this.borInterrogationRequested) {
+            sb.append(", borInterrogationRequested");
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

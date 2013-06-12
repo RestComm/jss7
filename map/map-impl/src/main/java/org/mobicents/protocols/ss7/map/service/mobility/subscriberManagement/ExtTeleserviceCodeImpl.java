@@ -27,58 +27,58 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
-public class ExtTeleserviceCodeImpl extends OctetStringBase implements ExtTeleserviceCode  {
+public class ExtTeleserviceCodeImpl extends OctetStringBase implements ExtTeleserviceCode {
 
-	public ExtTeleserviceCodeImpl() {
-		super(1, 5, "ExtTeleserviceCode");
-	}
+    public ExtTeleserviceCodeImpl() {
+        super(1, 5, "ExtTeleserviceCode");
+    }
 
-	public ExtTeleserviceCodeImpl(byte[] data) {
-		super(1, 5, "ExtTeleserviceCode", data);
-	}
+    public ExtTeleserviceCodeImpl(byte[] data) {
+        super(1, 5, "ExtTeleserviceCode", data);
+    }
 
-	public ExtTeleserviceCodeImpl(TeleserviceCodeValue value) {
-		super(1, 5, "TeleserviceCode");
+    public ExtTeleserviceCodeImpl(TeleserviceCodeValue value) {
+        super(1, 5, "TeleserviceCode");
 
-		if (value != null)
-			this.data = new byte[] { (byte) (value.getCode()) };
-	}
+        if (value != null)
+            this.data = new byte[] { (byte) (value.getCode()) };
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 
-	public TeleserviceCodeValue getTeleserviceCodeValue() {
-		if (data == null || data.length < 1)
-			return null;
-		else
-			return TeleserviceCodeValue.getInstance(this.data[0]);
-	}
+    public TeleserviceCodeValue getTeleserviceCodeValue() {
+        if (data == null || data.length < 1)
+            return null;
+        else
+            return TeleserviceCodeValue.getInstance(this.data[0]);
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(this._PrimitiveName);
-		sb.append(" [");
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this._PrimitiveName);
+        sb.append(" [");
 
-		sb.append("Value=");
-		sb.append(this.getTeleserviceCodeValue());
+        sb.append("Value=");
+        sb.append(this.getTeleserviceCodeValue());
 
-		sb.append(", Data=[");
-		if (data != null) {
-			for (int i1 : data) {
-				sb.append(i1);
-				sb.append(", ");
-			}
-		}
-		sb.append("]");
+        sb.append(", Data=[");
+        if (data != null) {
+            for (int i1 : data) {
+                sb.append(i1);
+                sb.append(", ");
+            }
+        }
+        sb.append("]");
 
-		sb.append("]");
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 }

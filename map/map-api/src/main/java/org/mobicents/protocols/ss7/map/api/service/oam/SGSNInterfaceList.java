@@ -23,48 +23,36 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-SGSN-InterfaceList ::= BIT STRING {
-	gb (0),
-	iu (1),
-	gn (2),
-	map-gr (3),
-	map-gd (4),
-	map-gf (5),
-	gs (6),
-	ge (7),
-	s3 (8),
-	s4 (9),
-	s6d (10)} (SIZE (8..16))
--- Other bits than listed above shall be discarded.
-
- * 
+ *
+ SGSN-InterfaceList ::= BIT STRING { gb (0), iu (1), gn (2), map-gr (3), map-gd (4), map-gf (5), gs (6), ge (7), s3 (8), s4
+ * (9), s6d (10)} (SIZE (8..16)) -- Other bits than listed above shall be discarded.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SGSNInterfaceList {
 
-	public boolean getGb();
+    boolean getGb();
 
-	public boolean getIu();
+    boolean getIu();
 
-	public boolean getGn();
+    boolean getGn();
 
-	public boolean getMapGr();
+    boolean getMapGr();
 
-	public boolean getMapGd();
+    boolean getMapGd();
 
-	public boolean getMapGf();
+    boolean getMapGf();
 
-	public boolean getGs();
+    boolean getGs();
 
-	public boolean getGe();
+    boolean getGe();
 
-	public boolean getS3();
+    boolean getS3();
 
-	public boolean getS4();
+    boolean getS4();
 
-	public boolean getS6d();
+    boolean getS6d();
 
 }

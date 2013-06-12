@@ -26,9 +26,9 @@ import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.mobicents.protocols.ss7.mtp.Mtp2;
 import org.mobicents.protocols.ss7.mtp.Mtp2Listener;
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.mobicents.ss7.hardware.dahdi.Channel;
 import org.mobicents.ss7.linkset.oam.FormatterHelp;
 import org.mobicents.ss7.linkset.oam.Link;
@@ -37,11 +37,10 @@ import org.mobicents.ss7.linkset.oam.LinkOAMMessages;
 import org.mobicents.ss7.linkset.oam.LinkState;
 
 /**
- * Instance of this class represents SS7 link for <tt>dahdi</tt> based SS7
- * Cards
- * 
+ * Instance of this class represents SS7 link for <tt>dahdi</tt> based SS7 Cards
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class DahdiLink extends Link implements Mtp2Listener {
 
@@ -62,14 +61,14 @@ public class DahdiLink extends Link implements Mtp2Listener {
     private Channel channel = null;
     private Mtp2 mtp2 = null;
 
-    public DahdiLink() {    	
+    public DahdiLink() {
     }
 
     public DahdiLink(String linkName, int span, int channelID, int code) {
         super(linkName);
         this.span = span;
         this.channelID = channelID;
-        this.code = code;        
+        this.code = code;
     }
 
     @Override
@@ -78,12 +77,12 @@ public class DahdiLink extends Link implements Mtp2Listener {
         if (this.mode == LinkMode.CONFIGURED) {
             if (this.channel == null) {
                 channel = new Channel();
-                mtp2 = new Mtp2(this.linkName.toString() + "-" + this.code,
-                        this.channel,scheduler); // TODO : Optimize the String usage
+                mtp2 = new Mtp2(this.linkName.toString() + "-" + this.code, this.channel, scheduler); // TODO : Optimize the
+                                                                                                      // String usage
             }
-            
+
             this.mtp2.setMtp2Listener(this);
-            
+
             channel.setChannelID(this.channelID);
             channel.setCode(this.code);
             channel.setIOBufferSize(this.ioBufferSize);
@@ -93,13 +92,12 @@ public class DahdiLink extends Link implements Mtp2Listener {
     }
 
     @Override
-    public void setScheduler(Scheduler scheduler)
-    {
-    	this.scheduler=scheduler;
-    	if(this.mtp2!=null)
-    		this.mtp2.setScheduler(scheduler);    	
+    public void setScheduler(Scheduler scheduler) {
+        this.scheduler = scheduler;
+        if (this.mtp2 != null)
+            this.mtp2.setScheduler(scheduler);
     }
-    
+
     public int getSpan() {
         return span;
     }
@@ -168,27 +166,25 @@ public class DahdiLink extends Link implements Mtp2Listener {
     /**
      * Mtp2Listener methods
      */
-    public void linkFailed(){
+    public void linkFailed() {
         this.state = LinkState.FAILED;
     }
-    
-    public void linkInService(){
+
+    public void linkInService() {
         this.state = LinkState.UNAVAILABLE;
     }
-    
-    public void linkUp(){
+
+    public void linkUp() {
         this.state = LinkState.AVAILABLE;
     }
-    
+
     /**
      * Serialize / Deserialize
      */
-    protected static final XMLFormat<DahdiLink> DAHDI_LINK_XML = new XMLFormat<DahdiLink>(
-            DahdiLink.class) {
+    protected static final XMLFormat<DahdiLink> DAHDI_LINK_XML = new XMLFormat<DahdiLink>(DahdiLink.class) {
 
         @Override
-        public void read(javolution.xml.XMLFormat.InputElement xml,
-                DahdiLink link) throws XMLStreamException {
+        public void read(javolution.xml.XMLFormat.InputElement xml, DahdiLink link) throws XMLStreamException {
 
             LINK_XML.read(xml, link);
 
@@ -205,9 +201,7 @@ public class DahdiLink extends Link implements Mtp2Listener {
         }
 
         @Override
-        public void write(DahdiLink link,
-                javolution.xml.XMLFormat.OutputElement xml)
-                throws XMLStreamException {
+        public void write(DahdiLink link, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
 
             LINK_XML.write(link, xml);
 
@@ -219,7 +213,7 @@ public class DahdiLink extends Link implements Mtp2Listener {
     };
 
     /**
-     * 
+     *
      */
     protected Mtp2 getMtp2() {
         return this.mtp2;
@@ -234,8 +228,7 @@ public class DahdiLink extends Link implements Mtp2Listener {
 
         // check if length is less than Link.NAME_SIZE, add padding
         if (this.linkName.length() < Link.NAME_SIZE) {
-            FormatterHelp
-                    .createPad(sb, Link.NAME_SIZE - this.linkName.length());
+            FormatterHelp.createPad(sb, Link.NAME_SIZE - this.linkName.length());
         }
 
         // add desc padding
@@ -253,8 +246,7 @@ public class DahdiLink extends Link implements Mtp2Listener {
         FormatterHelp.createPad(sb, descPad);
 
         // add channel-id
-        sb.append(LINK_CHANNEL_ID).append(FormatterHelp.EQUAL_SIGN).append(
-                this.channelID);
+        sb.append(LINK_CHANNEL_ID).append(FormatterHelp.EQUAL_SIGN).append(this.channelID);
 
         // channel can be max 2 digits. check if its one digit add one extra
         // space
@@ -279,7 +271,6 @@ public class DahdiLink extends Link implements Mtp2Listener {
         }
 
         // add state
-        sb.append(LINK_STATE).append(FormatterHelp.EQUAL_SIGN).append(
-                FormatterHelp.getLinkState(this.state));
+        sb.append(LINK_STATE).append(FormatterHelp.EQUAL_SIGN).append(FormatterHelp.getLinkState(this.state));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -23,28 +23,28 @@
 package org.mobicents.protocols.ss7.sccp;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
  *
  */
 public interface SccpManagementEventListener {
 
-	public void onServiceStarted();
+    void onServiceStarted();
 
-	public void onServiceStopped();
+    void onServiceStopped();
 
-	public void onRemoveAllResources();
+    void onRemoveAllResources();
 
-	public void onRemoteSubSystemUp(RemoteSubSystem rss);
+    void onRemoteSubSystemUp(RemoteSubSystem rss);
 
-	public void onRemoteSubSystemDown(RemoteSubSystem rss);
+    void onRemoteSubSystemDown(RemoteSubSystem rss);
 
-	public void onRemoteSpcUp(RemoteSignalingPointCode remoteSpc);
+    void onRemoteSpcUp(RemoteSignalingPointCode remoteSpc);
 
-	public void onRemoteSpcDown(RemoteSignalingPointCode remoteSpc);
+    void onRemoteSpcDown(RemoteSignalingPointCode remoteSpc);
 
-	public void onRemoteSccpUp(RemoteSignalingPointCode remoteSpc);
+    void onRemoteSccpUp(RemoteSignalingPointCode remoteSpc);
 
-	public void onRemoteSccpDown(RemoteSignalingPointCode remoteSpc);
+    void onRemoteSccpDown(RemoteSignalingPointCode remoteSpc);
 
 }

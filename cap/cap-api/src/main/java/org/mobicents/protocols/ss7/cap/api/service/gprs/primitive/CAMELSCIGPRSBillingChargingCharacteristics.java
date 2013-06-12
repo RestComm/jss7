@@ -23,25 +23,19 @@
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
 /**
-*
-
-
-CAMEL-SCIGPRSBillingChargingCharacteristics ::= SEQUENCE {
-aOCGPRS [0] AOCGPRS,
-pDPID [1] PDPID OPTIONAL,
-...
-}
-
-
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ CAMEL-SCIGPRSBillingChargingCharacteristics ::= SEQUENCE { aOCGPRS [0] AOCGPRS, pDPID [1] PDPID OPTIONAL, ... }
+ *
+ *
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface CAMELSCIGPRSBillingChargingCharacteristics {
 
-	public AOCGPRS getAOCGPRS();
+    AOCGPRS getAOCGPRS();
 
-	public PDPID getPDPID();
+    PDPID getPDPID();
 
 }

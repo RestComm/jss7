@@ -27,39 +27,32 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  *
- * LocationInformationEPS ::= SEQUENCE {
- *		e-utranCellGlobalIdentity	[0] E-UTRAN-CGI		OPTIONAL,
- *		trackingAreaIdentity		[1] TA-Id		OPTIONAL,
- *		extensionContainer			[2] ExtensionContainer		OPTIONAL,
- *		geographicalInformation		[3] GeographicalInformation		OPTIONAL,
- *		geodeticInformation			[4] GeodeticInformation		OPTIONAL,
- *		currentLocationRetrieved	[5] NULL	OPTIONAL,
- *		ageOfLocationInformation	[6] AgeOfLocationInformation	OPTIONAL,
- *		...,
- *		mme-Name					[7] DiameterIdentity		OPTIONAL }
- *			-- currentLocationRetrieved shall be present if the location information
- *			-- was retrieved after successful paging.
+ * LocationInformationEPS ::= SEQUENCE { e-utranCellGlobalIdentity [0] E-UTRAN-CGI OPTIONAL, trackingAreaIdentity [1] TA-Id
+ * OPTIONAL, extensionContainer [2] ExtensionContainer OPTIONAL, geographicalInformation [3] GeographicalInformation OPTIONAL,
+ * geodeticInformation [4] GeodeticInformation OPTIONAL, currentLocationRetrieved [5] NULL OPTIONAL, ageOfLocationInformation
+ * [6] AgeOfLocationInformation OPTIONAL, ..., mme-Name [7] DiameterIdentity OPTIONAL } -- currentLocationRetrieved shall be
+ * present if the location information -- was retrieved after successful paging.
  *
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface LocationInformationEPS {
 
-	public EUtranCgi getEUtranCellGlobalIdentity();
+    EUtranCgi getEUtranCellGlobalIdentity();
 
-	public TAId getTrackingAreaIdentity();
+    TAId getTrackingAreaIdentity();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public GeographicalInformation getGeographicalInformation();
+    GeographicalInformation getGeographicalInformation();
 
-	public GeodeticInformation getGeodeticInformation();
+    GeodeticInformation getGeodeticInformation();
 
-	public boolean getCurrentLocationRetrieved();
+    boolean getCurrentLocationRetrieved();
 
-	public Integer getAgeOfLocationInformation();
+    Integer getAgeOfLocationInformation();
 
-	public DiameterIdentity getMmeName();
+    DiameterIdentity getMmeName();
 
 }

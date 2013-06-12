@@ -25,18 +25,15 @@ package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 
 /**
-*
-routeSelectFailureSpecificInfo [2] SEQUENCE {
-failureCause [0] Cause {bound} OPTIONAL,
-...
-},
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ routeSelectFailureSpecificInfo [2] SEQUENCE { failureCause [0] Cause {bound} OPTIONAL, ... },
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface RouteSelectFailureSpecificInfo {
 
-	public CauseCap getFailureCause();
+    CauseCap getFailureCause();
 
 }

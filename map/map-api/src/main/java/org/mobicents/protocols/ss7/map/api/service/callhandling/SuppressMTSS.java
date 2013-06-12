@@ -23,15 +23,14 @@
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
 /**
- * SuppressMTSS ::= BIT STRING {
- * suppressCUG (0),
- * suppressCCBS (1) } (SIZE (2..16))
- * -- Other bits than listed above shall be discarded
- * 
+ * SuppressMTSS ::= BIT STRING { suppressCUG (0), suppressCCBS (1) } (SIZE (2..16)) -- Other bits than listed above shall be
+ * discarded
+ *
  * @author cristian veliscu
- * 
+ *
  */
 public interface SuppressMTSS {
-	public boolean getSuppressCUG();
-	public boolean getSuppressCCBS();
+    boolean getSuppressCUG();
+
+    boolean getSuppressCCBS();
 }

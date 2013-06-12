@@ -26,50 +26,41 @@ import org.mobicents.protocols.ss7.cap.api.dialog.ServingCheckData;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPServiceBase {
-	public CAPProvider getCAPProvider();
+    CAPProvider getCAPProvider();
 
-	/**
-	 * Creates a new Dialog.
-	 * 
-	 * @param applicationCntx
-	 *            This parameter identifies the type of application context
-	 *            being established. If the dialogue is accepted the received
-	 *            application context name shall be echoed. In case of refusal
-	 *            of dialogue this parameter shall indicate the highest version
-	 *            supported.
-	 * 
-	 * @param destAddress
-	 *            A valid SCCP address identifying the destination peer entity.
-	 *            As an implementation option, this parameter may also, in the
-	 *            indication, be implicitly associated with the service access
-	 *            point at which the primitive is issued.
-	 * 
-	 * @param origAddress
-	 *            A valid SCCP address identifying the requestor of a CAP
-	 *            dialogue. As an implementation option, this parameter may
-	 *            also, in the request, be implicitly associated with the
-	 *            service access point at which the primitive is issued.
-	 * 
-	 * @return
-	 */
-	public CAPDialog createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress) throws CAPException;
+    /**
+     * Creates a new Dialog.
+     *
+     * @param applicationCntx This parameter identifies the type of application context being established. If the dialogue is
+     *        accepted the received application context name shall be echoed. In case of refusal of dialogue this parameter
+     *        shall indicate the highest version supported.
+     *
+     * @param destAddress A valid SCCP address identifying the destination peer entity. As an implementation option, this
+     *        parameter may also, in the indication, be implicitly associated with the service access point at which the
+     *        primitive is issued.
+     *
+     * @param origAddress A valid SCCP address identifying the requestor of a CAP dialogue. As an implementation option, this
+     *        parameter may also, in the request, be implicitly associated with the service access point at which the primitive
+     *        is issued.
+     *
+     * @return
+     */
+    CAPDialog createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress)
+            throws CAPException;
 
-	/**
-	 * Returns true if the service can perform dialogs with given
-	 * ApplicationContext
-	 */
-	public ServingCheckData isServingService(CAPApplicationContext dialogApplicationContext);
+    /**
+     * Returns true if the service can perform dialogs with given ApplicationContext
+     */
+    ServingCheckData isServingService(CAPApplicationContext dialogApplicationContext);
 
+    boolean isActivated();
 
-	public boolean isActivated();
+    void acivate();
 
-	public void acivate();
-
-	public void deactivate();
+    void deactivate();
 }
-

@@ -25,21 +25,18 @@ package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 
 /**
-*
-tNoAnswerSpecificInfo [9] SEQUENCE {
-callForwarded [50] NULL OPTIONAL,
-forwardingDestinationNumber [52] CalledPartyNumber {bound} OPTIONAL,
-...
-},
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ tNoAnswerSpecificInfo [9] SEQUENCE { callForwarded [50] NULL OPTIONAL, forwardingDestinationNumber [52] CalledPartyNumber
+ * {bound} OPTIONAL, ... },
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface TNoAnswerSpecificInfo {
 
-	public boolean getCallForwarded();
+    boolean getCallForwarded();
 
-	public CalledPartyNumberCap getForwardingDestinationNumber();
+    CalledPartyNumberCap getForwardingDestinationNumber();
 
 }

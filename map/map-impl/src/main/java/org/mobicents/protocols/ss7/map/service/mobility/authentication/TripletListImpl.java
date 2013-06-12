@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.map.service.mobility.authentication;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -36,148 +37,146 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.Tripl
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class TripletListImpl implements TripletList, MAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "TripletList";
+    public static final String _PrimitiveName = "TripletList";
 
-	private ArrayList<AuthenticationTriplet> authenticationTriplets;
+    private ArrayList<AuthenticationTriplet> authenticationTriplets;
 
+    public TripletListImpl() {
+    }
 
-	public TripletListImpl() {
-	}	                         
+    public TripletListImpl(ArrayList<AuthenticationTriplet> authenticationTriplets) {
+        this.authenticationTriplets = authenticationTriplets;
+    }
 
-	public TripletListImpl(ArrayList<AuthenticationTriplet> authenticationTriplets) {
-		this.authenticationTriplets = authenticationTriplets;
-	}
+    public ArrayList<AuthenticationTriplet> getAuthenticationTriplets() {
+        return authenticationTriplets;
+    }
 
+    public int getTag() throws MAPException {
+        return Tag.SEQUENCE;
+    }
 
-	public ArrayList<AuthenticationTriplet> getAuthenticationTriplets() {
-		return authenticationTriplets;
-	}
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
-	}
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+    private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        this.authenticationTriplets = new ArrayList<AuthenticationTriplet>();
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+            int tag = ais.readTag();
+            if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
 
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+                switch (tag) {
+                    case Tag.SEQUENCE:
+                        // authenticationTriplet
+                        if (ais.isTagPrimitive())
+                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ": Parameter AuthenticationTriplet is primitive",
+                                    MAPParsingComponentExceptionReason.MistypedParameter);
+                        AuthenticationTripletImpl at = new AuthenticationTripletImpl();
+                        at.decodeAll(ais);
+                        this.authenticationTriplets.add(at);
+                        break;
+                }
+            } else {
 
-		this.authenticationTriplets = new ArrayList<AuthenticationTriplet>();
+                ais.advanceElement();
+            }
+        }
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        if (this.authenticationTriplets.size() < 1 || this.authenticationTriplets.size() > 5) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": authenticationTriplets must be from 1 to 5, found:" + this.authenticationTriplets.size(),
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-			int tag = ais.readTag();
-			if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-				switch (tag) {
-				case Tag.SEQUENCE:
-					// authenticationTriplet
-					if (ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ": Parameter AuthenticationTriplet is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-					AuthenticationTripletImpl at = new AuthenticationTripletImpl();
-					at.decodeAll(ais);
-					this.authenticationTriplets.add(at);
-					break;
-				}
-			} else {
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-				ais.advanceElement();
-			}
-		}
-		
-		if (this.authenticationTriplets.size() < 1 || this.authenticationTriplets.size() > 5) {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": authenticationTriplets must be from 1 to 5, found:"
-					+ this.authenticationTriplets.size(), MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        if (this.authenticationTriplets == null || this.authenticationTriplets.size() < 1
+                || this.authenticationTriplets.size() > 5) {
+            throw new MAPException("AuthenticationTriplets list must contains from 1 to 5 elemets");
+        }
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        for (AuthenticationTriplet at : this.authenticationTriplets) {
+            ((AuthenticationTripletImpl) at).encodeAll(asnOs);
+        }
+    }
 
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("TripletList [");
 
-		if (this.authenticationTriplets == null || this.authenticationTriplets.size() < 1 || this.authenticationTriplets.size() > 5) {
-			throw new MAPException("AuthenticationTriplets list must contains from 1 to 5 elemets");
-		}
+        if (this.authenticationTriplets != null) {
+            for (AuthenticationTriplet at : this.authenticationTriplets) {
+                if (at != null) {
+                    sb.append(at.toString());
+                    sb.append(", ");
+                }
+            }
+        }
 
-		for (AuthenticationTriplet at : this.authenticationTriplets) {
-			((AuthenticationTripletImpl) at).encodeAll(asnOs);
-		}
-	}
+        sb.append("]");
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("TripletList [");
-
-		if (this.authenticationTriplets != null) {
-			for (AuthenticationTriplet at : this.authenticationTriplets) {
-				if (at != null) {
-					sb.append(at.toString());
-					sb.append(", ");
-				}
-			}
-		}
-
-		sb.append("]");
-
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 }
-

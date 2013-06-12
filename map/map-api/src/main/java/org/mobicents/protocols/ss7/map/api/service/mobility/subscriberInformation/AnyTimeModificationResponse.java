@@ -26,47 +26,37 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
-/**	
- * 
-
-AnyTimeModificationRes ::= SEQUENCE {
-	ss-InfoFor-CSE	[0]	Ext-SS-InfoFor-CSE	OPTIONAL,
-	camel-SubscriptionInfo	[1]	CAMEL-SubscriptionInfo	OPTIONAL,
-	extensionContainer	[2]	ExtensionContainer	OPTIONAL,
-	...,
-	odb-Info		[3]	ODB-Info	OPTIONAL,
-	cw-Data		[4]	CallWaitingData	OPTIONAL,
-	ch-Data		[5]	CallHoldData	OPTIONAL,
-	clip-Data 	[6] ClipData	OPTIONAL,
-	clir-Data		[7]	ClirData	OPTIONAL,
-	ect-data		[8] EctData	OPTIONAL,
-	serviceCentreAddress	[9] AddressString	OPTIONAL
- }
-
- * 
+/**
+ *
+ AnyTimeModificationRes ::= SEQUENCE { ss-InfoFor-CSE [0] Ext-SS-InfoFor-CSE OPTIONAL, camel-SubscriptionInfo [1]
+ * CAMEL-SubscriptionInfo OPTIONAL, extensionContainer [2] ExtensionContainer OPTIONAL, ..., odb-Info [3] ODB-Info OPTIONAL,
+ * cw-Data [4] CallWaitingData OPTIONAL, ch-Data [5] CallHoldData OPTIONAL, clip-Data [6] ClipData OPTIONAL, clir-Data [7]
+ * ClirData OPTIONAL, ect-data [8] EctData OPTIONAL, serviceCentreAddress [9] AddressString OPTIONAL }
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface AnyTimeModificationResponse extends MobilityMessage {
 
-	public ExtSSInfoForCSE getSsInfoForCSE();
+    ExtSSInfoForCSE getSsInfoForCSE();
 
-	public CAMELSubscriptionInfo getCamelSubscriptionInfo();
+    CAMELSubscriptionInfo getCamelSubscriptionInfo();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public ODBInfo getOdbInfo();
+    ODBInfo getOdbInfo();
 
-	public CallWaitingData getCwData();
+    CallWaitingData getCwData();
 
-	public CallHoldData getChData();
+    CallHoldData getChData();
 
-	public ClipData getClipData();
+    ClipData getClipData();
 
-	public ClirData getClirData();
+    ClirData getClirData();
 
-	public EctData getEctData();
+    EctData getEctData();
 
-	public AddressString getServiceCentreAddress();
+    AddressString getServiceCentreAddress();
 
 }

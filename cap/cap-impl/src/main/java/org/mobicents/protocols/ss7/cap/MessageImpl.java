@@ -24,31 +24,30 @@ package org.mobicents.protocols.ss7.cap;
 
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPMessage;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 
 /**
- * 
+ *
  * @author amit bhayani
  * @author sergey vetyutnev
- * 
+ *
  */
 public abstract class MessageImpl implements CAPMessage {
-	private long invokeId;
-	private CAPDialog capDialog;
+    private long invokeId;
+    private CAPDialog capDialog;
 
-	public long getInvokeId() {
-		return this.invokeId;
-	}
+    public long getInvokeId() {
+        return this.invokeId;
+    }
 
-	public CAPDialog getCAPDialog() {
-		return this.capDialog;
-	}
+    public CAPDialog getCAPDialog() {
+        return this.capDialog;
+    }
 
-	public void setInvokeId(long invokeId) {
-		this.invokeId = invokeId;
-	}
+    public void setInvokeId(long invokeId) {
+        this.invokeId = invokeId;
+    }
 
-	public void setCAPDialog(CAPDialog capDialog) {
-		this.capDialog = capDialog;
-	}
+    public void setCAPDialog(CAPDialog capDialog) {
+        this.capDialog = capDialog;
+    }
 }

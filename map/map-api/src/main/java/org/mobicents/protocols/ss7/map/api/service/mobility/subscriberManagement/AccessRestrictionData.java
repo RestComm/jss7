@@ -23,37 +23,29 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 /**
- * 
-
-AccessRestrictionData ::= BIT STRING {
-	utranNotAllowed (0),
-	geranNotAllowed (1),
-	ganNotAllowed   (2),
-	i-hspa-evolutionNotAllowed (3),
-	e-utranNotAllowed (4),
-	ho-toNon3GPP-AccessNotAllowed (5) } (SIZE (2..8))
-	-- exception handling: 
-	-- access restriction data related to an access type not supported by a node
-	-- shall be ignored
-	-- bits 6 to 7 shall be ignored if received and not understood
-
- * 
- * 
+ *
+ AccessRestrictionData ::= BIT STRING { utranNotAllowed (0), geranNotAllowed (1), ganNotAllowed (2),
+ * i-hspa-evolutionNotAllowed (3), e-utranNotAllowed (4), ho-toNon3GPP-AccessNotAllowed (5) } (SIZE (2..8)) -- exception
+ * handling: -- access restriction data related to an access type not supported by a node -- shall be ignored -- bits 6 to 7
+ * shall be ignored if received and not understood
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface AccessRestrictionData {
 
-	public boolean getUtranNotAllowed();
+    boolean getUtranNotAllowed();
 
-	public boolean getGeranNotAllowed();
+    boolean getGeranNotAllowed();
 
-	public boolean getGanNotAllowed();
+    boolean getGanNotAllowed();
 
-	public boolean getIHspaEvolutionNotAllowed();
+    boolean getIHspaEvolutionNotAllowed();
 
-	public boolean getEUtranNotAllowed();
+    boolean getEUtranNotAllowed();
 
-	public boolean getHoToNon3GPPAccessNotAllowed();
+    boolean getHoToNon3GPPAccessNotAllowed();
 
 }

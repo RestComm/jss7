@@ -25,30 +25,24 @@ package org.mobicents.protocols.ss7.map.api.errors;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
-*
-* unauthorizedLCSClient  ERROR ::= {
-* 	PARAMETER
-* 		UnauthorizedLCSClient-Param
-* 		-- optional
-* 	CODE	local:53 }
-* 
-*  UnauthorizedLCSClient-Param ::= SEQUENCE {
-*  	unauthorizedLCSClient-Diagnostic	[0] UnauthorizedLCSClient-Diagnostic	OPTIONAL,
-*  	extensionContainer	[1] ExtensionContainer			OPTIONAL,
-*  	... }
-*  
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ * unauthorizedLCSClient ERROR ::= { PARAMETER UnauthorizedLCSClient-Param -- optional CODE local:53 }
+ *
+ * UnauthorizedLCSClient-Param ::= SEQUENCE { unauthorizedLCSClient-Diagnostic [0] UnauthorizedLCSClient-Diagnostic OPTIONAL,
+ * extensionContainer [1] ExtensionContainer OPTIONAL, ... }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface MAPErrorMessageUnauthorizedLCSClient extends MAPErrorMessage {
-	
-	public UnauthorizedLCSClientDiagnostic getUnauthorizedLCSClientDiagnostic();
 
-	public MAPExtensionContainer getExtensionContainer();
+    UnauthorizedLCSClientDiagnostic getUnauthorizedLCSClientDiagnostic();
 
-	public void setUnauthorizedLCSClientDiagnostic(UnauthorizedLCSClientDiagnostic unauthorizedLCSClientDiagnostic);
+    MAPExtensionContainer getExtensionContainer();
 
-	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
+    void setUnauthorizedLCSClientDiagnostic(UnauthorizedLCSClientDiagnostic unauthorizedLCSClientDiagnostic);
+
+    void setExtensionContainer(MAPExtensionContainer extensionContainer);
 
 }

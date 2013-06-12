@@ -23,39 +23,35 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
 import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtCallBarringFeature;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.Password;
 
-/**	
- * 
-
-CallBarringData ::= SEQUENCE {
-	callBarringFeatureList	Ext-CallBarFeatureList,
-	password		Password		OPTIONAL,
-	wrongPasswordAttemptsCounter	WrongPasswordAttemptsCounter	OPTIONAL,
-	notificationToCSE	NULL			OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
-Ext-CallBarFeatureList ::= SEQUENCE SIZE (1..32) OF Ext-CallBarringFeature
-
-WrongPasswordAttemptsCounter ::= INTEGER (0..4)
-
- * 
+/**
+ *
+ CallBarringData ::= SEQUENCE { callBarringFeatureList Ext-CallBarFeatureList, password Password OPTIONAL,
+ * wrongPasswordAttemptsCounter WrongPasswordAttemptsCounter OPTIONAL, notificationToCSE NULL OPTIONAL, extensionContainer
+ * ExtensionContainer OPTIONAL, ...}
+ *
+ * Ext-CallBarFeatureList ::= SEQUENCE SIZE (1..32) OF Ext-CallBarringFeature
+ *
+ * WrongPasswordAttemptsCounter ::= INTEGER (0..4)
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface CallBarringData {
 
-	public ArrayList<ExtCallBarringFeature> getCallBarringFeatureList();
+    ArrayList<ExtCallBarringFeature> getCallBarringFeatureList();
 
-	public Password getPassword();
+    Password getPassword();
 
-	public Integer getWrongPasswordAttemptsCounter();
+    Integer getWrongPasswordAttemptsCounter();
 
-	public boolean getNotificationToCSE();
+    boolean getNotificationToCSE();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

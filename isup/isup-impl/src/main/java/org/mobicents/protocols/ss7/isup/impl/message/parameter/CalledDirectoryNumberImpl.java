@@ -23,10 +23,10 @@
 /**
  * Start time:16:42:16 2009-04-05<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
- * 
+ *
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
@@ -39,101 +39,97 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CalledDirectoryNumber;
 /**
  * Start time:16:42:16 2009-04-05<br>
  * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
+ *
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class CalledDirectoryNumberImpl extends AbstractNAINumber implements CalledDirectoryNumber{
+public class CalledDirectoryNumberImpl extends AbstractNAINumber implements CalledDirectoryNumber {
 
-	
+    protected int numberingPlanIndicator;
 
-	
+    protected int internalNetworkNumberIndicator;
 
-	protected int numberingPlanIndicator;
+    /**
+     * @param representation
+     */
+    public CalledDirectoryNumberImpl(byte[] representation) throws ParameterException {
+        super(representation);
 
-	protected int internalNetworkNumberIndicator;
+        getNumberingPlanIndicator();
+    }
 
-	/**
-	 * @param representation
-	 */
-	public CalledDirectoryNumberImpl(byte[] representation) throws ParameterException {
-		super(representation);
-		
-		getNumberingPlanIndicator();
-	}
+    /**
+     *
+     * @param bis
+     */
+    public CalledDirectoryNumberImpl(ByteArrayInputStream bis) throws ParameterException {
+        super(bis);
 
-	/**
-	 * 
-	 * @param bis
-	 */
-	public CalledDirectoryNumberImpl(ByteArrayInputStream bis) throws ParameterException {
-		super(bis);
-		
-	}
-	public CalledDirectoryNumberImpl() {
-		super();
-		
-	}
-	public CalledDirectoryNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int internalNetworkNumberIndicator) {
-		super(natureOfAddresIndicator, address);
-		this.numberingPlanIndicator = numberingPlanIndicator;
-		this.internalNetworkNumberIndicator = internalNetworkNumberIndicator;
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io.
-	 * ByteArrayInputStream)
-	 */
-	
-	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
-		if (bis.available() == 0) {
-			throw new IllegalArgumentException("No more data to read.");
-		}
-		int b = bis.read() & 0xff;
+    public CalledDirectoryNumberImpl() {
+        super();
 
-		this.internalNetworkNumberIndicator = (b & 0x80) >> 7;
-		this.numberingPlanIndicator = (b >> 4) & 0x07;
+    }
 
-		return 1;
-	}
+    public CalledDirectoryNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator,
+            int internalNetworkNumberIndicator) {
+        super(natureOfAddresIndicator, address);
+        this.numberingPlanIndicator = numberingPlanIndicator;
+        this.internalNetworkNumberIndicator = internalNetworkNumberIndicator;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io.
-	 * ByteArrayOutputStream)
-	 */
-	
-	public int encodeBody(ByteArrayOutputStream bos) {
-		int c = (this.numberingPlanIndicator & 0x07) << 4;
-		c |= (this.internalNetworkNumberIndicator << 7);
-		bos.write(c);
-		return 1;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io. ByteArrayInputStream)
+     */
 
-	public int getNumberingPlanIndicator() {
+    public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
+        if (bis.available() == 0) {
+            throw new IllegalArgumentException("No more data to read.");
+        }
+        int b = bis.read() & 0xff;
 
-		return this.numberingPlanIndicator;
-	}
+        this.internalNetworkNumberIndicator = (b & 0x80) >> 7;
+        this.numberingPlanIndicator = (b >> 4) & 0x07;
 
-	public void setNumberingPlanIndicator(int numberingPlanIndicator) {
+        return 1;
+    }
 
-		this.numberingPlanIndicator = numberingPlanIndicator;
+    /*
+     * (non-Javadoc)
+     *
+     * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io. ByteArrayOutputStream)
+     */
 
-	}
+    public int encodeBody(ByteArrayOutputStream bos) {
+        int c = (this.numberingPlanIndicator & 0x07) << 4;
+        c |= (this.internalNetworkNumberIndicator << 7);
+        bos.write(c);
+        return 1;
+    }
 
-	public int getInternalNetworkNumberIndicator() {
-		return internalNetworkNumberIndicator;
-	}
+    public int getNumberingPlanIndicator() {
 
-	public void setInternalNetworkNumberIndicator(int internalNetworkNumberIndicator) {
-		this.internalNetworkNumberIndicator = internalNetworkNumberIndicator;
-	}
+        return this.numberingPlanIndicator;
+    }
 
-	public int getCode() {
+    public void setNumberingPlanIndicator(int numberingPlanIndicator) {
 
-		return _PARAMETER_CODE;
-	}
+        this.numberingPlanIndicator = numberingPlanIndicator;
+
+    }
+
+    public int getInternalNetworkNumberIndicator() {
+        return internalNetworkNumberIndicator;
+    }
+
+    public void setInternalNetworkNumberIndicator(int internalNetworkNumberIndicator) {
+        this.internalNetworkNumberIndicator = internalNetworkNumberIndicator;
+    }
+
+    public int getCode() {
+
+        return _PARAMETER_CODE;
+    }
 }

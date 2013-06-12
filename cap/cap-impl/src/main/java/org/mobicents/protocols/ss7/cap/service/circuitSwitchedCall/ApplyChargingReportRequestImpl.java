@@ -38,153 +38,152 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.TimeDurationChargingResultImpl;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class ApplyChargingReportRequestImpl extends CircuitSwitchedCallMessageImpl implements ApplyChargingReportRequest {
 
-	public static final int _ID_timeDurationChargingResult = 0;
+    public static final int _ID_timeDurationChargingResult = 0;
 
-	public static final int _ID_partyToCharge = 0;
+    public static final int _ID_partyToCharge = 0;
 
-	public static final String _PrimitiveName = "ApplyChargingReportRequestIndication";
+    public static final String _PrimitiveName = "ApplyChargingReportRequestIndication";
 
-	private TimeDurationChargingResult timeDurationChargingResult;
-	
-	
-	public ApplyChargingReportRequestImpl() {
-	}
+    private TimeDurationChargingResult timeDurationChargingResult;
 
-	public ApplyChargingReportRequestImpl(TimeDurationChargingResult timeDurationChargingResult) {
-		this.timeDurationChargingResult = timeDurationChargingResult;
-	}
+    public ApplyChargingReportRequestImpl() {
+    }
 
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.applyChargingReport_Request;
-	}
+    public ApplyChargingReportRequestImpl(TimeDurationChargingResult timeDurationChargingResult) {
+        this.timeDurationChargingResult = timeDurationChargingResult;
+    }
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.applyChargingReport;
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.applyChargingReport_Request;
+    }
 
-	@Override
-	public TimeDurationChargingResult getTimeDurationChargingResult() {
-		return timeDurationChargingResult;
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.applyChargingReport;
+    }
 
-	
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.STRING_OCTET;
-	}
+    @Override
+    public TimeDurationChargingResult getTimeDurationChargingResult() {
+        return timeDurationChargingResult;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.STRING_OCTET;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		this.timeDurationChargingResult = null;
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		byte[] buf = ansIS.readOctetStringData(length);
-		AsnInputStream aiss = new AsnInputStream(buf);
+        this.timeDurationChargingResult = null;
 
-		int tag = aiss.readTag();
+        byte[] buf = ansIS.readOctetStringData(length);
+        AsnInputStream aiss = new AsnInputStream(buf);
 
-		if (tag != _ID_timeDurationChargingResult || aiss.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || aiss.isTagPrimitive())
-			throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
-					+ ": bad tag or tagClass or is primitive of the choice timeDurationChargingResult", CAPParsingComponentExceptionReason.MistypedParameter);
+        int tag = aiss.readTag();
 
-		this.timeDurationChargingResult = new TimeDurationChargingResultImpl();
-		((TimeDurationChargingResultImpl) this.timeDurationChargingResult).decodeAll(aiss);
-	}
+        if (tag != _ID_timeDurationChargingResult || aiss.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || aiss.isTagPrimitive())
+            throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
+                    + ": bad tag or tagClass or is primitive of the choice timeDurationChargingResult",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        this.timeDurationChargingResult = new TimeDurationChargingResultImpl();
+        ((TimeDurationChargingResultImpl) this.timeDurationChargingResult).decodeAll(aiss);
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		if (this.timeDurationChargingResult == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": timeDurationChargingResult must not be null");
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-		try {
-			asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_timeDurationChargingResult);
-			int pos = asnOs.StartContentDefiniteLength();
-			((TimeDurationChargingResultImpl) this.timeDurationChargingResult).encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        if (this.timeDurationChargingResult == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": timeDurationChargingResult must not be null");
 
-	@Override
-	public String toString() {
+        try {
+            asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_timeDurationChargingResult);
+            int pos = asnOs.StartContentDefiniteLength();
+            ((TimeDurationChargingResultImpl) this.timeDurationChargingResult).encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+    @Override
+    public String toString() {
 
-		if (this.timeDurationChargingResult != null) {
-			sb.append("timeDurationChargingResult=");
-			sb.append(timeDurationChargingResult.toString());
-		}
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		sb.append("]");
+        if (this.timeDurationChargingResult != null) {
+            sb.append("timeDurationChargingResult=");
+            sb.append(timeDurationChargingResult.toString());
+        }
 
-		return sb.toString();
-	}
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

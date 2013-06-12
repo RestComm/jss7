@@ -23,39 +23,34 @@
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 /**
- * 
-
-RAN-Technology ::= ENUMERATED {
-	gsm			(0),
-	umts		(1),
-	...}
-
- * 
+ *
+ RAN-Technology ::= ENUMERATED { gsm (0), umts (1), ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public enum RANTechnology {
-	gsm(0), 
-	umts(1);
+    gsm(0), umts(1);
 
-	private int code;
+    private int code;
 
-	private RANTechnology(int code) {
-		this.code = code;
-	}
+    private RANTechnology(int code) {
+        this.code = code;
+    }
 
-	public int getCode() {
-		return this.code;
-	}
+    public int getCode() {
+        return this.code;
+    }
 
-	public static RANTechnology getInstance(int code) {
-		switch (code) {
-		case 0:
-			return RANTechnology.gsm;
-		case 1:
-			return RANTechnology.umts;
-		default:
-			return null;
-		}
-	}
+    public static RANTechnology getInstance(int code) {
+        switch (code) {
+            case 0:
+                return RANTechnology.gsm;
+            case 1:
+                return RANTechnology.umts;
+            default:
+                return null;
+        }
+    }
 }

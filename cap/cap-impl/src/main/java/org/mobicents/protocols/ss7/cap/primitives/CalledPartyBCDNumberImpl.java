@@ -31,6 +31,7 @@ import java.nio.charset.CharacterCodingException;
 
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -45,226 +46,224 @@ import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 import org.mobicents.protocols.ss7.map.primitives.TbcdString;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CalledPartyBCDNumberImpl extends OctetStringBase implements CalledPartyBCDNumber {
 
-	private static final String NAI = "nai";
-	private static final String NPI = "npi";
-	private static final String NUMBER = "number";
+    private static final String NAI = "nai";
+    private static final String NPI = "npi";
+    private static final String NUMBER = "number";
 
-	protected static final int NO_EXTENSION_MASK = 0x80;
-	protected static final int NATURE_OF_ADD_IND_MASK = 0x70;
-	protected static final int NUMBERING_PLAN_IND_MASK = 0x0F;
+    protected static final int NO_EXTENSION_MASK = 0x80;
+    protected static final int NATURE_OF_ADD_IND_MASK = 0x70;
+    protected static final int NUMBERING_PLAN_IND_MASK = 0x0F;
 
-	public CalledPartyBCDNumberImpl() {
-		super(1, 41, "CalledPartyBCDNumber");
-	}
+    public CalledPartyBCDNumberImpl() {
+        super(1, 41, "CalledPartyBCDNumber");
+    }
 
-	public CalledPartyBCDNumberImpl(byte[] data) {
-		super(1, 41, "CalledPartyBCDNumber", data);
-	}
+    public CalledPartyBCDNumberImpl(byte[] data) {
+        super(1, 41, "CalledPartyBCDNumber", data);
+    }
 
-	public CalledPartyBCDNumberImpl(AddressNature addressNature, NumberingPlan numberingPlan, String address, boolean isExtension) throws CAPException {
-		super(1, 41, "CalledPartyBCDNumber");
+    public CalledPartyBCDNumberImpl(AddressNature addressNature, NumberingPlan numberingPlan, String address,
+            boolean isExtension) throws CAPException {
+        super(1, 41, "CalledPartyBCDNumber");
 
-		this.setParameters(addressNature, numberingPlan, address, isExtension);
-	}
+        this.setParameters(addressNature, numberingPlan, address, isExtension);
+    }
 
-	protected void setParameters(AddressNature addressNature, NumberingPlan numberingPlan, String address, boolean isExtension) throws CAPException {
+    protected void setParameters(AddressNature addressNature, NumberingPlan numberingPlan, String address, boolean isExtension)
+            throws CAPException {
 
-		if (addressNature == null || numberingPlan == null || address == null)
-			throw new CAPException("Error when encoding " + _PrimitiveName + ": addressNature, numberingPlan or address is empty");
+        if (addressNature == null || numberingPlan == null || address == null)
+            throw new CAPException("Error when encoding " + _PrimitiveName
+                    + ": addressNature, numberingPlan or address is empty");
 
-		this._testLengthEncode(address);
+        this._testLengthEncode(address);
 
-		ByteArrayOutputStream stm = new ByteArrayOutputStream();
+        ByteArrayOutputStream stm = new ByteArrayOutputStream();
 
-		int nature = 0;
-		if (isExtension)
-			nature = 0x80;
-		else
-			nature = 0;
-		nature = nature | (addressNature.getIndicator() << 4);
-		nature = nature | (numberingPlan.getIndicator());
-		stm.write(nature);
+        int nature = 0;
+        if (isExtension)
+            nature = 0x80;
+        else
+            nature = 0;
+        nature = nature | (addressNature.getIndicator() << 4);
+        nature = nature | (numberingPlan.getIndicator());
+        stm.write(nature);
 
-		if (numberingPlan == NumberingPlan.spare_5) {
-			// -- In the context of the DestinationSubscriberNumber field in ConnectSMSArg or  
-			// -- InitialDPSMSArg, a CalledPartyBCDNumber may also contain an alphanumeric  
-			// -- character string. In this case, type-of-number '101'B is used, in accordance  
-			// -- with 3GPP TS 23.040 [6]. The address is coded in accordance with the  
-			// -- GSM 7-bit default alphabet definition and the SMS packing rules  
-			// -- as specified in 3GPP TS 23.038 [15] in this case.
+        if (numberingPlan == NumberingPlan.spare_5) {
+            // -- In the context of the DestinationSubscriberNumber field in ConnectSMSArg or
+            // -- InitialDPSMSArg, a CalledPartyBCDNumber may also contain an alphanumeric
+            // -- character string. In this case, type-of-number '101'B is used, in accordance
+            // -- with 3GPP TS 23.040 [6]. The address is coded in accordance with the
+            // -- GSM 7-bit default alphabet definition and the SMS packing rules
+            // -- as specified in 3GPP TS 23.038 [15] in this case.
 
-			GSMCharset cs = new GSMCharset(GSMCharset.GSM_CANONICAL_NAME, new String[] {});
-			GSMCharsetEncoder encoder = (GSMCharsetEncoder) cs.newEncoder();
-			ByteBuffer bb;
-			try {
-				bb = encoder.encode(CharBuffer.wrap(address));
-				int dataLength = bb.limit();
-				byte[] data = new byte[dataLength];
-				bb.get(data);
-				stm.write(data);
-			} catch (CharacterCodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else {
-			try {
-				TbcdString.encodeString(stm, address);
-			} catch (MAPException e) {
-				throw new CAPException(e);
-			}
-		}
+            GSMCharset cs = new GSMCharset(GSMCharset.GSM_CANONICAL_NAME, new String[] {});
+            GSMCharsetEncoder encoder = (GSMCharsetEncoder) cs.newEncoder();
+            ByteBuffer bb;
+            try {
+                bb = encoder.encode(CharBuffer.wrap(address));
+                int dataLength = bb.limit();
+                byte[] data = new byte[dataLength];
+                bb.get(data);
+                stm.write(data);
+            } catch (CharacterCodingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                TbcdString.encodeString(stm, address);
+            } catch (MAPException e) {
+                throw new CAPException(e);
+            }
+        }
 
-		this.data = stm.toByteArray();
- 	}
-	
-	
-	public byte[] getData() {
-		return data;
-	}	
+        this.data = stm.toByteArray();
+    }
 
-	public AddressNature getAddressNature() {
+    public byte[] getData() {
+        return data;
+    }
 
-		if (this.data == null || this.data.length == 0)
-			return null;
+    public AddressNature getAddressNature() {
 
-		int nature = this.data[0];
-		int natureOfAddInd = ((nature & NATURE_OF_ADD_IND_MASK) >> 4);
-		return AddressNature.getInstance(natureOfAddInd);
-	}
+        if (this.data == null || this.data.length == 0)
+            return null;
 
-	public NumberingPlan getNumberingPlan() {
+        int nature = this.data[0];
+        int natureOfAddInd = ((nature & NATURE_OF_ADD_IND_MASK) >> 4);
+        return AddressNature.getInstance(natureOfAddInd);
+    }
 
-		if (this.data == null || this.data.length == 0)
-			return null;
+    public NumberingPlan getNumberingPlan() {
 
-		int nature = this.data[0];
-		int numbPlanInd = (nature & NUMBERING_PLAN_IND_MASK);
-		return NumberingPlan.getInstance(numbPlanInd);
-	}
+        if (this.data == null || this.data.length == 0)
+            return null;
 
-	public boolean isExtension() {
+        int nature = this.data[0];
+        int numbPlanInd = (nature & NUMBERING_PLAN_IND_MASK);
+        return NumberingPlan.getInstance(numbPlanInd);
+    }
 
-		if (this.data == null || this.data.length == 0)
-			return false;
+    public boolean isExtension() {
 
-		int nature = this.data[0];
-		if ((nature & NO_EXTENSION_MASK) == 0x80)
-			return true;
-		else
-			return false;
-	}
+        if (this.data == null || this.data.length == 0)
+            return false;
 
-	public String getAddress() {
+        int nature = this.data[0];
+        if ((nature & NO_EXTENSION_MASK) == 0x80)
+            return true;
+        else
+            return false;
+    }
 
-		if (this.data == null || this.data.length == 0)
-			return null;
+    public String getAddress() {
 
-		try {
-			ByteArrayInputStream stm = new ByteArrayInputStream(this.data);
-			stm.read();
-			if (this.getNumberingPlan() == NumberingPlan.spare_5) {
-				// -- In the context of the DestinationSubscriberNumber field in ConnectSMSArg or  
-				// -- InitialDPSMSArg, a CalledPartyBCDNumber may also contain an alphanumeric  
-				// -- character string. In this case, type-of-number '101'B is used, in accordance  
-				// -- with 3GPP TS 23.040 [6]. The address is coded in accordance with the  
-				// -- GSM 7-bit default alphabet definition and the SMS packing rules  
-				// -- as specified in 3GPP TS 23.038 [15] in this case.
+        if (this.data == null || this.data.length == 0)
+            return null;
 
-				if (data.length == 1)
-					return "";
+        try {
+            ByteArrayInputStream stm = new ByteArrayInputStream(this.data);
+            stm.read();
+            if (this.getNumberingPlan() == NumberingPlan.spare_5) {
+                // -- In the context of the DestinationSubscriberNumber field in ConnectSMSArg or
+                // -- InitialDPSMSArg, a CalledPartyBCDNumber may also contain an alphanumeric
+                // -- character string. In this case, type-of-number '101'B is used, in accordance
+                // -- with 3GPP TS 23.040 [6]. The address is coded in accordance with the
+                // -- GSM 7-bit default alphabet definition and the SMS packing rules
+                // -- as specified in 3GPP TS 23.038 [15] in this case.
 
-				int addressLength = this.data.length - 1;
-				ByteBuffer bb = ByteBuffer.wrap(this.data, 1, addressLength);
-				GSMCharset cs = new GSMCharset(GSMCharset.GSM_CANONICAL_NAME, new String[] {});
-				GSMCharsetDecoder decoder = (GSMCharsetDecoder) cs.newDecoder();
-				int totalSeptetCount = addressLength + (addressLength / 8);
-				GSMCharsetDecodingData encodingData = new GSMCharsetDecodingData(totalSeptetCount, 0);
-				decoder.setGSMCharsetDecodingData(encodingData);
+                if (data.length == 1)
+                    return "";
 
-				CharBuffer bf = decoder.decode(bb);
-				return bf.toString();
-			} else {
+                int addressLength = this.data.length - 1;
+                ByteBuffer bb = ByteBuffer.wrap(this.data, 1, addressLength);
+                GSMCharset cs = new GSMCharset(GSMCharset.GSM_CANONICAL_NAME, new String[] {});
+                GSMCharsetDecoder decoder = (GSMCharsetDecoder) cs.newDecoder();
+                int totalSeptetCount = addressLength + (addressLength / 8);
+                GSMCharsetDecodingData encodingData = new GSMCharsetDecodingData(totalSeptetCount, 0);
+                decoder.setGSMCharsetDecodingData(encodingData);
 
-				String address = TbcdString.decodeString(stm, this.data.length - 1);
-				return address;
-			}
-		} catch (MAPParsingComponentException e) {
-			return null;
-		} catch (IOException e) {
-			return null;
-		}
-	}
+                CharBuffer bf = decoder.decode(bb);
+                return bf.toString();
+            } else {
 
+                String address = TbcdString.decodeString(stm, this.data.length - 1);
+                return address;
+            }
+        } catch (MAPParsingComponentException e) {
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
 
-	
-	
-	protected void _testLengthEncode(String address) throws CAPException {
+    protected void _testLengthEncode(String address) throws CAPException {
 
-		if (address.length() > 38)
-			throw new CAPException("Error when encoding AddressString: address length must not exceed 38 digits");
-	}
+        if (address.length() > 38)
+            throw new CAPException("Error when encoding AddressString: address length must not exceed 38 digits");
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		if (this.getAddressNature() != null) {
-			sb.append("addressNature=");
-			sb.append(this.getAddressNature());
-		}
-		if (this.getNumberingPlan() != null) {
-			sb.append(", numberingPlan=");
-			sb.append(this.getNumberingPlan());
-		}
-		if (this.getAddress() != null) {
-			sb.append(", address=");
-			sb.append(this.getAddress());
-		}
-		if (this.isExtension()) {
-			sb.append(", extension");
-		}
-		sb.append("]");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+        if (this.getAddressNature() != null) {
+            sb.append("addressNature=");
+            sb.append(this.getAddressNature());
+        }
+        if (this.getNumberingPlan() != null) {
+            sb.append(", numberingPlan=");
+            sb.append(this.getNumberingPlan());
+        }
+        if (this.getAddress() != null) {
+            sb.append(", address=");
+            sb.append(this.getAddress());
+        }
+        if (this.isExtension()) {
+            sb.append(", extension");
+        }
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	/**
-	 * XML Serialization/Deserialization
-	 */
-	protected static final XMLFormat<CalledPartyBCDNumberImpl> ADDRESS_STRING_XML = new XMLFormat<CalledPartyBCDNumberImpl>(
-			CalledPartyBCDNumberImpl.class) {
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<CalledPartyBCDNumberImpl> ADDRESS_STRING_XML = new XMLFormat<CalledPartyBCDNumberImpl>(
+            CalledPartyBCDNumberImpl.class) {
 
-		@Override
-		public void read(javolution.xml.XMLFormat.InputElement xml, CalledPartyBCDNumberImpl addressStringImpl)
-				throws XMLStreamException {
-			try {
-				addressStringImpl.setParameters(AddressNature.getInstance(xml.getAttribute(NAI, 0)), NumberingPlan.getInstance(xml.getAttribute(NPI, 0)),
-						xml.getAttribute(NUMBER, ""), false);
-			} catch (CAPException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, CalledPartyBCDNumberImpl addressStringImpl)
+                throws XMLStreamException {
+            try {
+                addressStringImpl.setParameters(AddressNature.getInstance(xml.getAttribute(NAI, 0)),
+                        NumberingPlan.getInstance(xml.getAttribute(NPI, 0)), xml.getAttribute(NUMBER, ""), false);
+            } catch (CAPException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
 
-		@Override
-		public void write(CalledPartyBCDNumberImpl addressStringImpl, javolution.xml.XMLFormat.OutputElement xml)
-				throws XMLStreamException {
+        @Override
+        public void write(CalledPartyBCDNumberImpl addressStringImpl, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
 
-			xml.setAttribute(NAI, addressStringImpl.getAddressNature().getIndicator());
-			xml.setAttribute(NPI, addressStringImpl.getNumberingPlan().getIndicator());
-			xml.setAttribute(NUMBER, addressStringImpl.getAddress());
-		}
-	};
+            xml.setAttribute(NAI, addressStringImpl.getAddressNature().getIndicator());
+            xml.setAttribute(NPI, addressStringImpl.getNumberingPlan().getIndicator());
+            xml.setAttribute(NUMBER, addressStringImpl.getAddress());
+        }
+    };
 }
-

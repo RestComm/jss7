@@ -28,43 +28,27 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-MAP V3-4:
-
-sendRoutingInfoForGprs  OPERATION ::= {				--Timer m
-	ARGUMENT
-		SendRoutingInfoForGprsArg
-	RESULT
-		SendRoutingInfoForGprsRes
-	ERRORS {
-		absentSubscriber |
-		systemFailure |
-		dataMissing |
-		unexpectedDataValue |
-		unknownSubscriber |
-		callBarred }
-	CODE	local:24 }
-
-SendRoutingInfoForGprsArg ::= SEQUENCE {
-	imsi				[0] IMSI,
-	ggsn-Address		[1] GSN-Address	OPTIONAL, 
-	ggsn-Number		[2]	ISDN-AddressString,
-	extensionContainer		[3] ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ MAP V3-4:
+ *
+ * sendRoutingInfoForGprs OPERATION ::= { --Timer m ARGUMENT SendRoutingInfoForGprsArg RESULT SendRoutingInfoForGprsRes ERRORS {
+ * absentSubscriber | systemFailure | dataMissing | unexpectedDataValue | unknownSubscriber | callBarred } CODE local:24 }
+ *
+ * SendRoutingInfoForGprsArg ::= SEQUENCE { imsi [0] IMSI, ggsn-Address [1] GSN-Address OPTIONAL, ggsn-Number [2]
+ * ISDN-AddressString, extensionContainer [3] ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SendRoutingInfoForGprsRequest extends PdpContextActivationMessage {
 
-	public IMSI getImsi();
+    IMSI getImsi();
 
-	public GSNAddress getGgsnAddress();
+    GSNAddress getGgsnAddress();
 
-	public ISDNAddressString getGgsnNumber();
+    ISDNAddressString getGgsnNumber();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

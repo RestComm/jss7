@@ -23,34 +23,30 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
 import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtForwFeature;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 
-/**	
- * 
-
-Ext-ForwardingInfoFor-CSE ::= SEQUENCE {
-	ss-Code		[0]	SS-Code,
-	forwardingFeatureList	[1]	Ext-ForwFeatureList,
-	notificationToCSE	[2]	NULL		OPTIONAL,
-	extensionContainer	[3]	ExtensionContainer	OPTIONAL,
-	...}
-
-Ext-ForwFeatureList ::= SEQUENCE SIZE (1..32) OF Ext-ForwFeature
-
- * 
+/**
+ *
+ Ext-ForwardingInfoFor-CSE ::= SEQUENCE { ss-Code [0] SS-Code, forwardingFeatureList [1] Ext-ForwFeatureList,
+ * notificationToCSE [2] NULL OPTIONAL, extensionContainer [3] ExtensionContainer OPTIONAL, ...}
+ *
+ * Ext-ForwFeatureList ::= SEQUENCE SIZE (1..32) OF Ext-ForwFeature
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface ExtForwardingInfoForCSE {
 
-	public SSCode getSsCode();
+    SSCode getSsCode();
 
-	public ArrayList<ExtForwFeature> getForwardingFeatureList();
+    ArrayList<ExtForwFeature> getForwardingFeatureList();
 
-	public boolean getNotificationToCSE();
+    boolean getNotificationToCSE();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

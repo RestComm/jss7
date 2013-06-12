@@ -30,103 +30,103 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.smstpdu.CommandData;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CommandDataImpl implements CommandData {
 
-	private byte[] encodedData;
-	private String decodedMessage;
-	
-	private boolean isDecoded;
-	private boolean isEncoded;
+    private byte[] encodedData;
+    private String decodedMessage;
 
-	public CommandDataImpl(byte[] data) {
-		this.encodedData = data;
+    private boolean isDecoded;
+    private boolean isEncoded;
 
-		this.isEncoded = true;
-	}
+    public CommandDataImpl(byte[] data) {
+        this.encodedData = data;
 
-	public CommandDataImpl(String decodedMessage) {
-		this.decodedMessage = decodedMessage;
+        this.isEncoded = true;
+    }
 
-		this.isDecoded = true;
-	}
+    public CommandDataImpl(String decodedMessage) {
+        this.decodedMessage = decodedMessage;
 
-	public byte[] getEncodedData() {
-		return this.encodedData;
-	}
+        this.isDecoded = true;
+    }
 
-	public String getDecodedMessage() {
-		return decodedMessage;
-	}
+    public byte[] getEncodedData() {
+        return this.encodedData;
+    }
 
-	public void encode() throws MAPException {
+    public String getDecodedMessage() {
+        return decodedMessage;
+    }
 
-		if (this.isEncoded)
-			return;
-		this.isEncoded = true;
+    public void encode() throws MAPException {
 
-		this.encodedData = null;
+        if (this.isEncoded)
+            return;
+        this.isEncoded = true;
 
-		if (this.decodedMessage == null)
-			this.decodedMessage = "";
-		
-		// TODO: what is an encoding algorithm ?
-		Charset chs = Charset.forName("US-ASCII");
-		ByteBuffer bb = chs.encode(this.decodedMessage);
-		this.encodedData = new byte[bb.limit()];
-		bb.get(this.encodedData);
-	}
+        this.encodedData = null;
 
-	public void decode() throws MAPException {
+        if (this.decodedMessage == null)
+            this.decodedMessage = "";
 
-		if (this.isDecoded)
-			return;
-		this.isDecoded = true;
+        // TODO: what is an encoding algorithm ?
+        Charset chs = Charset.forName("US-ASCII");
+        ByteBuffer bb = chs.encode(this.decodedMessage);
+        this.encodedData = new byte[bb.limit()];
+        bb.get(this.encodedData);
+    }
 
-		this.decodedMessage = null;
+    public void decode() throws MAPException {
 
-		if (this.encodedData == null)
-			throw new MAPException("Error decoding a text from Sms CommandData: encodedData field is null");
+        if (this.isDecoded)
+            return;
+        this.isDecoded = true;
 
-		// TODO: what is an encoding algorithm ?
-		Charset chs = Charset.forName("US-ASCII");
-		byte[] buf = this.encodedData;
-		ByteBuffer bb = ByteBuffer.wrap(buf);
-		CharBuffer bf = chs.decode(bb);
-		this.decodedMessage = bf.toString();
-	}
+        this.decodedMessage = null;
 
-	private String printDataArr(byte[] arr) {
-		if (arr == null)
-			return "null";
-		
-		StringBuilder sb = new StringBuilder();
-		for (int b : arr) {
-			sb.append(b);
-			sb.append(", ");
-		}
+        if (this.encodedData == null)
+            throw new MAPException("Error decoding a text from Sms CommandData: encodedData field is null");
 
-		return sb.toString();
-	}
+        // TODO: what is an encoding algorithm ?
+        Charset chs = Charset.forName("US-ASCII");
+        byte[] buf = this.encodedData;
+        ByteBuffer bb = ByteBuffer.wrap(buf);
+        CharBuffer bf = chs.decode(bb);
+        this.decodedMessage = bf.toString();
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
+    private String printDataArr(byte[] arr) {
+        if (arr == null)
+            return "null";
 
-		sb.append("TP-Command-Data [");
-		if (this.decodedMessage == null) {
-			if (this.encodedData != null)
-				sb.append(printDataArr(this.encodedData));
-		} else {
-			sb.append("Msg:[");
-			sb.append(this.decodedMessage);
-			sb.append("]");
-		}
-		sb.append("]");
+        StringBuilder sb = new StringBuilder();
+        for (int b : arr) {
+            sb.append(b);
+            sb.append(", ");
+        }
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("TP-Command-Data [");
+        if (this.decodedMessage == null) {
+            if (this.encodedData != null)
+                sb.append(printDataArr(this.encodedData));
+        } else {
+            sb.append("Msg:[");
+            sb.append(this.decodedMessage);
+            sb.append("]");
+        }
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

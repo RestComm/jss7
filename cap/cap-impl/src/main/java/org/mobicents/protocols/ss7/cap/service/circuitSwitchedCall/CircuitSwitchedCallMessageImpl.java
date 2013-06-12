@@ -28,14 +28,14 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CircuitSw
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public abstract class CircuitSwitchedCallMessageImpl extends MessageImpl implements CircuitSwitchedCallMessage, CAPAsnPrimitive {
 
-	public CAPDialogCircuitSwitchedCall getCAPDialog() {
-		return (CAPDialogCircuitSwitchedCall)super.getCAPDialog();
-	}
+    public CAPDialogCircuitSwitchedCall getCAPDialog() {
+        return (CAPDialogCircuitSwitchedCall) super.getCAPDialog();
+    }
 
 }

@@ -38,213 +38,213 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CallSegmentToCancelImpl;
 
 /**
-*
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class CancelRequestImpl extends CircuitSwitchedCallMessageImpl implements CancelRequest {
 
-	public static final int _ID_invokeID = 0;
-	public static final int _ID_allRequests = 1;
-	public static final int _ID_callSegmentToCancel = 2;
+    public static final int _ID_invokeID = 0;
+    public static final int _ID_allRequests = 1;
+    public static final int _ID_callSegmentToCancel = 2;
 
-	public static final String _PrimitiveName = "CancelRequest";
+    public static final String _PrimitiveName = "CancelRequest";
 
-	private Integer invokeID;
-	private boolean allRequests;
-	private CallSegmentToCancel callSegmentToCancel;
-	
-	public CancelRequestImpl() {
-	}
+    private Integer invokeID;
+    private boolean allRequests;
+    private CallSegmentToCancel callSegmentToCancel;
 
-	public CancelRequestImpl(Integer invokeID) {
-		this.invokeID = invokeID;
-	}
+    public CancelRequestImpl() {
+    }
 
-	public CancelRequestImpl(boolean allRequests) {
-		this.allRequests = allRequests;
-	}
+    public CancelRequestImpl(Integer invokeID) {
+        this.invokeID = invokeID;
+    }
 
-	public CancelRequestImpl(CallSegmentToCancel callSegmentToCancel) {
-		this.callSegmentToCancel = callSegmentToCancel;
-	}
+    public CancelRequestImpl(boolean allRequests) {
+        this.allRequests = allRequests;
+    }
 
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.cancel_Request;
-	}
+    public CancelRequestImpl(CallSegmentToCancel callSegmentToCancel) {
+        this.callSegmentToCancel = callSegmentToCancel;
+    }
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.cancelCode;
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.cancel_Request;
+    }
 
-	@Override
-	public Integer getInvokeID() {
-		return invokeID;
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.cancelCode;
+    }
 
-	@Override
-	public boolean getAllRequests() {
-		return allRequests;
-	}
+    @Override
+    public Integer getInvokeID() {
+        return invokeID;
+    }
 
-	@Override
-	public CallSegmentToCancel getCallSegmentToCancel() {
-		return callSegmentToCancel;
-	}
+    @Override
+    public boolean getAllRequests() {
+        return allRequests;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
+    @Override
+    public CallSegmentToCancel getCallSegmentToCancel() {
+        return callSegmentToCancel;
+    }
 
-		if (this.invokeID != null) {
-			return _ID_invokeID;
-		} else if (this.allRequests) {
-			return _ID_allRequests;
-		} else if (this.callSegmentToCancel != null) {
-			return _ID_callSegmentToCancel;
-		} else {
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": no of choices has been definite");
-		}
-	}
+    @Override
+    public int getTag() throws CAPException {
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
-	}
+        if (this.invokeID != null) {
+            return _ID_invokeID;
+        } else if (this.allRequests) {
+            return _ID_allRequests;
+        } else if (this.callSegmentToCancel != null) {
+            return _ID_callSegmentToCancel;
+        } else {
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": no of choices has been definite");
+        }
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		if (this.callSegmentToCancel != null)
-			return false;
-		else
-			return true;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_CONTEXT_SPECIFIC;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public boolean getIsPrimitive() {
+        if (this.callSegmentToCancel != null)
+            return false;
+        else
+            return true;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		this.invokeID = null;
-		this.allRequests = false;
-		this.callSegmentToCancel = null;
+    private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tagClass",
-					CAPParsingComponentExceptionReason.MistypedParameter);
+        this.invokeID = null;
+        this.allRequests = false;
+        this.callSegmentToCancel = null;
 
-		switch (ais.getTag()) {
-		case _ID_invokeID:
-			this.invokeID = (int) ais.readIntegerData(length);
-			break;
-		case _ID_allRequests:
-			ais.readNullData(length);
-			this.allRequests = true;
-			break;
-		case _ID_callSegmentToCancel:
-			this.callSegmentToCancel = new CallSegmentToCancelImpl();
-			((CallSegmentToCancelImpl) this.callSegmentToCancel).decodeData(ais, length);
-			break;
-		default:
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: " + ais.getTag(),
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tagClass",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        switch (ais.getTag()) {
+            case _ID_invokeID:
+                this.invokeID = (int) ais.readIntegerData(length);
+                break;
+            case _ID_allRequests:
+                ais.readNullData(length);
+                this.allRequests = true;
+                break;
+            case _ID_callSegmentToCancel:
+                this.callSegmentToCancel = new CallSegmentToCancelImpl();
+                ((CallSegmentToCancelImpl) this.callSegmentToCancel).decodeData(ais, length);
+                break;
+            default:
+                throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad tag: " + ais.getTag(),
+                        CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		int choiceCnt = 0;
-		if (this.invokeID != null)
-			choiceCnt++;
-		if (this.allRequests)
-			choiceCnt++;
-		if (this.callSegmentToCancel != null)
-			choiceCnt++;
-		
-		if (choiceCnt != 1)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice must be definite, found: " + choiceCnt);
+    @Override
+    public void encodeData(AsnOutputStream aos) throws CAPException {
 
-		try {
-			if (this.invokeID != null)
-				aos.writeIntegerData(this.invokeID);
-			if (this.allRequests)
-				aos.writeNullData();
-			if (this.callSegmentToCancel != null)
-				((CallSegmentToCancelImpl) this.callSegmentToCancel).encodeData(aos);
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        int choiceCnt = 0;
+        if (this.invokeID != null)
+            choiceCnt++;
+        if (this.allRequests)
+            choiceCnt++;
+        if (this.callSegmentToCancel != null)
+            choiceCnt++;
 
-	@Override
-	public String toString() {
+        if (choiceCnt != 1)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": only one choice must be definite, found: "
+                    + choiceCnt);
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        try {
+            if (this.invokeID != null)
+                aos.writeIntegerData(this.invokeID);
+            if (this.allRequests)
+                aos.writeNullData();
+            if (this.callSegmentToCancel != null)
+                ((CallSegmentToCancelImpl) this.callSegmentToCancel).encodeData(aos);
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		if (this.invokeID != null) {
-			sb.append("invokeID=");
-			sb.append(invokeID);
-		}
-		if (this.allRequests) {
-			sb.append(" allRequests");
-		}
-		if (this.callSegmentToCancel != null) {
-			sb.append(" callSegmentToCancel=");
-			sb.append(callSegmentToCancel.toString());
-		}
+    @Override
+    public String toString() {
 
-		sb.append("]");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		return sb.toString();
-	}
+        if (this.invokeID != null) {
+            sb.append("invokeID=");
+            sb.append(invokeID);
+        }
+        if (this.allRequests) {
+            sb.append(" allRequests");
+        }
+        if (this.callSegmentToCancel != null) {
+            sb.append(" callSegmentToCancel=");
+            sb.append(callSegmentToCancel.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

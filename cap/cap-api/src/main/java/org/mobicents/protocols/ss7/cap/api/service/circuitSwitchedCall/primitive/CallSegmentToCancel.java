@@ -23,25 +23,20 @@
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
-*
-
-CallSegmentToCancel {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
- invokeID       [0] InvokeID        OPTIONAL, 
- callSegmentID      [1] CallSegmentID {bound}     OPTIONAL, 
- ... 
- } 
-
- CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..bound.&numOfCSs)
- numOfCSs ::= 127
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ CallSegmentToCancel {PARAMETERS-BOUND : bound} ::= SEQUENCE { invokeID [0] InvokeID OPTIONAL, callSegmentID [1] CallSegmentID
+ * {bound} OPTIONAL, ... }
+ *
+ * CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..bound.&numOfCSs) numOfCSs ::= 127
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface CallSegmentToCancel {
 
-	public Integer getInvokeID();
+    Integer getInvokeID();
 
-	public Integer getCallSegmentID();
+    Integer getCallSegmentID();
 
 }

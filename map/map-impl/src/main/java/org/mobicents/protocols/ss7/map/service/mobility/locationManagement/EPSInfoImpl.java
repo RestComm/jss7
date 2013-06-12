@@ -37,184 +37,179 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.P
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class EPSInfoImpl  implements EPSInfo, MAPAsnPrimitive {
-	
-	public static final int _TAG_pndGwUpdate = 0;
-	public static final int _TAG_isrInformation = 1;
+public class EPSInfoImpl implements EPSInfo, MAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "EPSInfo";
-	
-	private PDNGWUpdate pndGwUpdate;
-	private ISRInformation isrInformation;
-	
-	public EPSInfoImpl() {
-		super();
-	}
+    public static final int _TAG_pndGwUpdate = 0;
+    public static final int _TAG_isrInformation = 1;
 
-	public EPSInfoImpl(PDNGWUpdate pndGwUpdate) {
-		super();
-		this.pndGwUpdate = pndGwUpdate;
-		this.isrInformation = null;
-	}
-	
-	public EPSInfoImpl(ISRInformation isrInformation) {
-		super();
-		this.pndGwUpdate = null;
-		this.isrInformation = isrInformation;
-	}
+    public static final String _PrimitiveName = "EPSInfo";
 
-	@Override
-	public PDNGWUpdate getPndGwUpdate() {
-		return this.pndGwUpdate;
-	}
+    private PDNGWUpdate pndGwUpdate;
+    private ISRInformation isrInformation;
 
-	@Override
-	public ISRInformation getIsrInformation() {
-		return this.isrInformation;
-	}
+    public EPSInfoImpl() {
+        super();
+    }
 
-	@Override
-	public int getTag() throws MAPException {
-		if (this.pndGwUpdate != null)
-			return _TAG_pndGwUpdate;
-		else
-			return _TAG_isrInformation;
-	}
+    public EPSInfoImpl(PDNGWUpdate pndGwUpdate) {
+        super();
+        this.pndGwUpdate = pndGwUpdate;
+        this.isrInformation = null;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
-	}
+    public EPSInfoImpl(ISRInformation isrInformation) {
+        super();
+        this.pndGwUpdate = null;
+        this.isrInformation = isrInformation;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		if (this.pndGwUpdate != null)
-			return false;
-		else
-			return true;
-	}
+    @Override
+    public PDNGWUpdate getPndGwUpdate() {
+        return this.pndGwUpdate;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS)
-			throws MAPParsingComponentException {
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public ISRInformation getIsrInformation() {
+        return this.isrInformation;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length)
-			throws MAPParsingComponentException {
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-	
-	private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
-		
-		this.pndGwUpdate = null;
-		this.isrInformation = null;
+    @Override
+    public int getTag() throws MAPException {
+        if (this.pndGwUpdate != null)
+            return _TAG_pndGwUpdate;
+        else
+            return _TAG_isrInformation;
+    }
 
-		int tag = ais.getTag();
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_CONTEXT_SPECIFIC;
+    }
 
-		if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC )
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Primitive has bad tag class",
-					MAPParsingComponentExceptionReason.MistypedParameter);
+    @Override
+    public boolean getIsPrimitive() {
+        if (this.pndGwUpdate != null)
+            return false;
+        else
+            return true;
+    }
 
-		switch (tag) {
-		case _TAG_pndGwUpdate:
-			if (ais.isTagPrimitive())
-				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter is primitive",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			this.pndGwUpdate = new PDNGWUpdateImpl();
-			((PDNGWUpdateImpl) this.pndGwUpdate).decodeData(ais, length);
-			break;
-		case _TAG_isrInformation:
-			if (!ais.isTagPrimitive())
-				throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter is not primitive",
-						MAPParsingComponentExceptionReason.MistypedParameter);
-			this.isrInformation = new ISRInformationImpl();
-			((ISRInformationImpl) this.isrInformation).decodeData(ais, length);
-			break;
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		default:
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
+    private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        this.pndGwUpdate = null;
+        this.isrInformation = null;
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag)
-			throws MAPException {
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        int tag = ais.getTag();
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		
-		if (this.pndGwUpdate == null && this.isrInformation == null)
-			throw new MAPException("Error while encoding " + _PrimitiveName + ": all choices must not be null");
-		if (this.pndGwUpdate != null && this.isrInformation != null)
-			throw new MAPException("Error while encoding " + _PrimitiveName + ": all choices must not be not null");
+        if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC)
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Primitive has bad tag class",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (this.pndGwUpdate != null) {
-			((PDNGWUpdateImpl)this.pndGwUpdate).encodeData(asnOs);
-		} else {
-			((ISRInformationImpl)this.isrInformation).encodeData(asnOs);
-		}
-	
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		
-		if (this.pndGwUpdate != null) {
-			sb.append("pndGwUpdate=");
-			sb.append(this.pndGwUpdate.toString());
-		}
-		
-		if (this.isrInformation != null) {
-			sb.append("isrInformation=");
-			sb.append(this.isrInformation.toString());
-		}
+        switch (tag) {
+            case _TAG_pndGwUpdate:
+                if (ais.isTagPrimitive())
+                    throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                            + ": Parameter is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+                this.pndGwUpdate = new PDNGWUpdateImpl();
+                ((PDNGWUpdateImpl) this.pndGwUpdate).decodeData(ais, length);
+                break;
+            case _TAG_isrInformation:
+                if (!ais.isTagPrimitive())
+                    throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                            + ": Parameter is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+                this.isrInformation = new ISRInformationImpl();
+                ((ISRInformationImpl) this.isrInformation).decodeData(ais, length);
+                break;
 
-		sb.append("]");
+            default:
+                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
+                        MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		return sb.toString();
-	}
-	
-	
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
+
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
+
+        if (this.pndGwUpdate == null && this.isrInformation == null)
+            throw new MAPException("Error while encoding " + _PrimitiveName + ": all choices must not be null");
+        if (this.pndGwUpdate != null && this.isrInformation != null)
+            throw new MAPException("Error while encoding " + _PrimitiveName + ": all choices must not be not null");
+
+        if (this.pndGwUpdate != null) {
+            ((PDNGWUpdateImpl) this.pndGwUpdate).encodeData(asnOs);
+        } else {
+            ((ISRInformationImpl) this.isrInformation).encodeData(asnOs);
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.pndGwUpdate != null) {
+            sb.append("pndGwUpdate=");
+            sb.append(this.pndGwUpdate.toString());
+        }
+
+        if (this.isrInformation != null) {
+            sb.append("isrInformation=");
+            sb.append(this.isrInformation.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 }

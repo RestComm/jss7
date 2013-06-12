@@ -26,10 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusCause;
-import org.mobicents.protocols.ss7.sccp.impl.SccpManagement;
-import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
-import org.mobicents.protocols.ss7.sccp.impl.SccpRoutingControl;
-import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.mgmt.Mtp3PrimitiveMessage;
 import org.mobicents.protocols.ss7.sccp.impl.mgmt.SccpMgmtMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
@@ -40,121 +36,122 @@ import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
  *
  */
 public class SccpManagementProxy extends SccpManagement {
-	
-	private int seq = 0; //seq, to mark messages, so we get them correctly
-	//separate lists, thats better
-	private List<SccpMgmtMessage> mgmtMessages = new ArrayList<SccpMgmtMessage>();
-	private List<Mtp3PrimitiveMessage> mtp3Messages = new ArrayList<Mtp3PrimitiveMessage>();
-	private boolean encounteredError = false;
-	/**
-	 * @param sccpProviderImpl
-	 * @param sccpStackImpl
-	 */
-	public SccpManagementProxy(String name, SccpProviderImpl sccpProviderImpl, SccpStackImpl sccpStackImpl) {
-		super(name, sccpProviderImpl, sccpStackImpl);
-		// TODO Auto-generated constructor stub
-	}
-	
-	// =----------------= some getters
 
-	public int getSeq() {
-		return seq;
-	}
+    private int seq = 0; // seq, to mark messages, so we get them correctly
+    // separate lists, thats better
+    private List<SccpMgmtMessage> mgmtMessages = new ArrayList<SccpMgmtMessage>();
+    private List<Mtp3PrimitiveMessage> mtp3Messages = new ArrayList<Mtp3PrimitiveMessage>();
+    private boolean encounteredError = false;
 
-	public boolean isEncounteredError() {
-		return encounteredError;
-	}
+    /**
+     * @param sccpProviderImpl
+     * @param sccpStackImpl
+     */
+    public SccpManagementProxy(String name, SccpProviderImpl sccpProviderImpl, SccpStackImpl sccpStackImpl) {
+        super(name, sccpProviderImpl, sccpStackImpl);
+        // TODO Auto-generated constructor stub
+    }
 
-	public List<SccpMgmtMessage> getMgmtMessages() {
-		return mgmtMessages;
-	}
+    // =----------------= some getters
 
-	public List<Mtp3PrimitiveMessage> getMtp3Messages() {
-		return mtp3Messages;
-	}
+    public int getSeq() {
+        return seq;
+    }
 
-	// =----------------= deletage to intercept.
-	
-	public SccpRoutingControl getSccpRoutingControl() {
-		
-		return super.getSccpRoutingControl();
-	}
+    public boolean isEncounteredError() {
+        return encounteredError;
+    }
 
-	public void setSccpRoutingControl(SccpRoutingControl sccpRoutingControl) {
-		
-		super.setSccpRoutingControl(sccpRoutingControl);
-	}
+    public List<SccpMgmtMessage> getMgmtMessages() {
+        return mgmtMessages;
+    }
 
-	@Override
-	public void onManagementMessage(SccpDataMessage message) {
-		byte[] data = message.getData();
-		int messgType = data[0];
-		int affectedSsn = data[1];
-		int affectedPc = (data[2] & 0x00FF) | (data[3] & 0x00FF << 8);
-		int subsystemMultiplicity = data[3];
-		SccpMgmtMessage mgmtMessage = new SccpMgmtMessage(seq++,messgType,affectedSsn,affectedPc,subsystemMultiplicity);
-		mgmtMessages.add(mgmtMessage);
+    public List<Mtp3PrimitiveMessage> getMtp3Messages() {
+        return mtp3Messages;
+    }
 
-		super.onManagementMessage(message);
-	}
+    // =----------------= deletage to intercept.
 
-	@Override
-	protected void recdMsgForProhibitedSsn(SccpMessage msg, int ssn) {
-		
-		super.recdMsgForProhibitedSsn(msg, ssn);
-	}
+    public SccpRoutingControl getSccpRoutingControl() {
 
-	public void start() {
-		
-		super.start();
-	}
+        return super.getSccpRoutingControl();
+    }
 
-	public void stop() {
-		
-		super.stop();
-	}
+    public void setSccpRoutingControl(SccpRoutingControl sccpRoutingControl) {
 
-	@Override
-	protected void handleMtp3Pause(int affectedPc) {
-		super.handleMtp3Pause(affectedPc);
-		
-		Mtp3PrimitiveMessage prim = new Mtp3PrimitiveMessage(seq++,MTP3_PAUSE,affectedPc);
-		mtp3Messages.add(prim);
-	}
+        super.setSccpRoutingControl(sccpRoutingControl);
+    }
 
-	@Override
-	protected void handleMtp3Resume(int affectedPc) {
-		super.handleMtp3Resume(affectedPc);
-		
-		Mtp3PrimitiveMessage prim = new Mtp3PrimitiveMessage(seq++,MTP3_RESUME,affectedPc);
-		mtp3Messages.add(prim);
-	}
+    @Override
+    public void onManagementMessage(SccpDataMessage message) {
+        byte[] data = message.getData();
+        int messgType = data[0];
+        int affectedSsn = data[1];
+        int affectedPc = (data[2] & 0x00FF) | (data[3] & 0x00FF << 8);
+        int subsystemMultiplicity = data[3];
+        SccpMgmtMessage mgmtMessage = new SccpMgmtMessage(seq++, messgType, affectedSsn, affectedPc, subsystemMultiplicity);
+        mgmtMessages.add(mgmtMessage);
 
-	@Override
-	protected void handleMtp3Status(Mtp3StatusCause cause, int affectedPc, int congStatus) {
-		super.handleMtp3Status(cause, affectedPc, congStatus);
+        super.onManagementMessage(message);
+    }
 
-		int status = 0;
-		int unavailabiltyCause = 0;
-		switch(cause){
-		case SignallingNetworkCongested:
-			status = 2;
-			break;
-		case UserPartUnavailability_Unknown:
-			unavailabiltyCause = 0;
-			status = 1;
-			break;
-		case UserPartUnavailability_UnequippedRemoteUser:
-			unavailabiltyCause = 1;
-			status = 1;
-			break;
-		case UserPartUnavailability_InaccessibleRemoteUser:
-			unavailabiltyCause = 2;
-			status = 1;
-			break;
-		}
-		Mtp3PrimitiveMessage prim = new Mtp3PrimitiveMessage(seq++,MTP3_STATUS,affectedPc,status,congStatus,unavailabiltyCause);
-		mtp3Messages.add(prim);
-	}
+    @Override
+    protected void recdMsgForProhibitedSsn(SccpMessage msg, int ssn) {
+
+        super.recdMsgForProhibitedSsn(msg, ssn);
+    }
+
+    public void start() {
+
+        super.start();
+    }
+
+    public void stop() {
+
+        super.stop();
+    }
+
+    @Override
+    protected void handleMtp3Pause(int affectedPc) {
+        super.handleMtp3Pause(affectedPc);
+
+        Mtp3PrimitiveMessage prim = new Mtp3PrimitiveMessage(seq++, MTP3_PAUSE, affectedPc);
+        mtp3Messages.add(prim);
+    }
+
+    @Override
+    protected void handleMtp3Resume(int affectedPc) {
+        super.handleMtp3Resume(affectedPc);
+
+        Mtp3PrimitiveMessage prim = new Mtp3PrimitiveMessage(seq++, MTP3_RESUME, affectedPc);
+        mtp3Messages.add(prim);
+    }
+
+    @Override
+    protected void handleMtp3Status(Mtp3StatusCause cause, int affectedPc, int congStatus) {
+        super.handleMtp3Status(cause, affectedPc, congStatus);
+
+        int status = 0;
+        int unavailabiltyCause = 0;
+        switch (cause) {
+            case SignallingNetworkCongested:
+                status = 2;
+                break;
+            case UserPartUnavailability_Unknown:
+                unavailabiltyCause = 0;
+                status = 1;
+                break;
+            case UserPartUnavailability_UnequippedRemoteUser:
+                unavailabiltyCause = 1;
+                status = 1;
+                break;
+            case UserPartUnavailability_InaccessibleRemoteUser:
+                unavailabiltyCause = 2;
+                status = 1;
+                break;
+        }
+        Mtp3PrimitiveMessage prim = new Mtp3PrimitiveMessage(seq++, MTP3_STATUS, affectedPc, status, congStatus,
+                unavailabiltyCause);
+        mtp3Messages.add(prim);
+    }
 }
-

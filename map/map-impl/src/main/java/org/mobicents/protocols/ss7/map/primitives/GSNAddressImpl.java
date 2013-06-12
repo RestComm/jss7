@@ -24,24 +24,22 @@ package org.mobicents.protocols.ss7.map.primitives;
 
 import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
 
-
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class GSNAddressImpl extends OctetStringBase implements GSNAddress {
 
-	public GSNAddressImpl() {
-		super(5, 17, "GSNAddress");
-	}
+    public GSNAddressImpl() {
+        super(5, 17, "GSNAddress");
+    }
 
-	public GSNAddressImpl(byte[] data) {
-		super(5, 17, "GSNAddress", data);
-	}
+    public GSNAddressImpl(byte[] data) {
+        super(5, 17, "GSNAddress", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 }
-

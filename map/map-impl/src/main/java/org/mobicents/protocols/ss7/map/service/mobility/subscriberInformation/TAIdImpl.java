@@ -32,16 +32,16 @@ import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
  */
 public class TAIdImpl extends OctetStringBase implements TAId {
 
-	public TAIdImpl() {
-		super(5, 5, "TAId");
-	}
+    public TAIdImpl() {
+        super(5, 5, "TAId");
+    }
 
-	public TAIdImpl(byte[] data) {
-		super(5, 5, "TAId", data);
-	}
+    public TAIdImpl(byte[] data) {
+        super(5, 5, "TAId", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 
 }

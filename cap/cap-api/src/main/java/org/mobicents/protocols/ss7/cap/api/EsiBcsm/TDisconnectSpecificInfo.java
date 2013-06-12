@@ -25,18 +25,15 @@ package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 
 /**
-*
-tDisconnectSpecificInfo [12] SEQUENCE {
-releaseCause [0] Cause {bound} OPTIONAL,
-...
-},
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ tDisconnectSpecificInfo [12] SEQUENCE { releaseCause [0] Cause {bound} OPTIONAL, ... },
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface TDisconnectSpecificInfo {
 
-	public CauseCap getReleaseCause();
+    CauseCap getReleaseCause();
 
 }

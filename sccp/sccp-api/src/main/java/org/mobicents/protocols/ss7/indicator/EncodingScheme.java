@@ -27,9 +27,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * The Encoding Scheme (ES) tells the receiving node how to translate the digits
- * from binary code
- * 
+ * The Encoding Scheme (ES) tells the receiving node how to translate the digits from binary code
+ *
  * @author kulikov
  */
 public enum EncodingScheme {
@@ -47,14 +46,14 @@ public enum EncodingScheme {
 
     public static EncodingScheme valueOf(int v) {
         switch (v) {
-        case 0:
-            return UNKNOWN;
-        case 1:
-            return BCD_ODD;
-        case 2:
-            return BCD_EVEN;
-        default:
-            return null;
+            case 0:
+                return UNKNOWN;
+            case 1:
+                return BCD_ODD;
+            case 2:
+                return BCD_EVEN;
+            default:
+                return null;
         }
     }
 
@@ -64,8 +63,7 @@ public enum EncodingScheme {
 
         while (in.available() > 0) {
             b = in.read() & 0xff;
-            digits += Integer.toHexString(b & 0x0f)
-                    + Integer.toHexString((b & 0xf0) >> 4);
+            digits += Integer.toHexString(b & 0x0f) + Integer.toHexString((b & 0xf0) >> 4);
         }
 
         if (value == 1) {
@@ -75,8 +73,7 @@ public enum EncodingScheme {
         return digits;
     }
 
-    public void encodeDigits(String digits, OutputStream out)
-            throws IOException {
+    public void encodeDigits(String digits, OutputStream out) throws IOException {
         boolean odd = digits.length() % 2 != 0;
         int b = 0;
 

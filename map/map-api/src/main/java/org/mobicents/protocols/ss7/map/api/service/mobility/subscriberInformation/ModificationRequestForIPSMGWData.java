@@ -25,21 +25,18 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-ModificationRequestFor-IP-SM-GW-Data ::= SEQUENCE {
-	modifyRegistrationStatus	[0]	ModificationInstruction	OPTIONAL,
-	extensionContainer	[1]	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ ModificationRequestFor-IP-SM-GW-Data ::= SEQUENCE { modifyRegistrationStatus [0] ModificationInstruction OPTIONAL,
+ * extensionContainer [1] ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ModificationRequestForIPSMGWData {
 
-	public ModificationInstruction getModifyRegistrationStatus();
+    ModificationInstruction getModifyRegistrationStatus();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

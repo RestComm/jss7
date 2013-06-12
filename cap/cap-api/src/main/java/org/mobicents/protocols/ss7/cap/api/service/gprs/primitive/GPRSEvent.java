@@ -25,22 +25,18 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
 
 /**
-*
-
-GPRSEvent ::= SEQUENCE {
-gPRSEventType [0] GPRSEventType,
-monitorMode [1] MonitorMode
-}
--- Indicates the GPRS event information for monitoring.
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ GPRSEvent ::= SEQUENCE { gPRSEventType [0] GPRSEventType, monitorMode [1] MonitorMode } -- Indicates the GPRS event
+ * information for monitoring.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface GPRSEvent {
 
-	public GPRSEventType getGPRSEventType();
+    GPRSEventType getGPRSEventType();
 
-	public MonitorMode getMonitorMode();
+    MonitorMode getMonitorMode();
 
 }

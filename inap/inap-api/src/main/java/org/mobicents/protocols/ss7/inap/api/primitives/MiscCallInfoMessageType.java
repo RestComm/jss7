@@ -23,35 +23,34 @@
 package org.mobicents.protocols.ss7.inap.api.primitives;
 
 /**
-*
-  messageType   [0]  ENUMERATED {request(0), notification(1)},
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ messageType [0] ENUMERATED {request(0), notification(1)},
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public enum MiscCallInfoMessageType {
-	request(0), 
-	notification(1);
+    request(0), notification(1);
 
-	private int code;
+    private int code;
 
-	private MiscCallInfoMessageType(int code) {
-		this.code = code;
-	}
+    private MiscCallInfoMessageType(int code) {
+        this.code = code;
+    }
 
-	public static MiscCallInfoMessageType getInstance(int code) {
-		switch (code) {
-		case 0:
-			return MiscCallInfoMessageType.request;
-		case 1:
-			return MiscCallInfoMessageType.notification;
-		}
+    public static MiscCallInfoMessageType getInstance(int code) {
+        switch (code) {
+            case 0:
+                return MiscCallInfoMessageType.request;
+            case 1:
+                return MiscCallInfoMessageType.notification;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public int getCode() {
-		return code;
-	}
+    public int getCode() {
+        return code;
+    }
 }

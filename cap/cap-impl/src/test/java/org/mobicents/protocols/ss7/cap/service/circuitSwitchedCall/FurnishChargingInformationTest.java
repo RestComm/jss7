@@ -37,43 +37,42 @@ import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class FurnishChargingInformationTest {
 
-	public byte[] getData1() {
-		return new byte[] { 4, 16, (byte) 160, 14, (byte) 128, 4, 4, 5, 6, 7, (byte) 161, 3, (byte) 128, 1, 2, (byte) 130, 1, 1 };
-	}
+    public byte[] getData1() {
+        return new byte[] { 4, 16, (byte) 160, 14, (byte) 128, 4, 4, 5, 6, 7, (byte) 161, 3, (byte) 128, 1, 2, (byte) 130, 1, 1 };
+    }
 
-	public byte[] getDataFFD() {
-		return new byte[] { 4, 5, 6, 7 };
-	}
+    public byte[] getDataFFD() {
+        return new byte[] { 4, 5, 6, 7 };
+    }
 
-	@Test(groups = { "functional.decode","circuitSwitchedCall"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "circuitSwitchedCall" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData1();
-		AsnInputStream ais = new AsnInputStream(data);
-		FurnishChargingInformationRequestImpl elem = new FurnishChargingInformationRequestImpl();
-		int tag = ais.readTag();
-		assertEquals(tag, Tag.STRING_OCTET);
-		elem.decodeAll(ais);
-		assertTrue(Arrays.equals(elem.getFCIBCCCAMELsequence1().getFreeFormatData(), this.getDataFFD()));
-		assertEquals(elem.getFCIBCCCAMELsequence1().getPartyToCharge().getSendingSideID(), LegType.leg2);
-		assertEquals(elem.getFCIBCCCAMELsequence1().getAppendFreeFormatData(), AppendFreeFormatData.append);
-	}
+        byte[] data = this.getData1();
+        AsnInputStream ais = new AsnInputStream(data);
+        FurnishChargingInformationRequestImpl elem = new FurnishChargingInformationRequestImpl();
+        int tag = ais.readTag();
+        assertEquals(tag, Tag.STRING_OCTET);
+        elem.decodeAll(ais);
+        assertTrue(Arrays.equals(elem.getFCIBCCCAMELsequence1().getFreeFormatData(), this.getDataFFD()));
+        assertEquals(elem.getFCIBCCCAMELsequence1().getPartyToCharge().getSendingSideID(), LegType.leg2);
+        assertEquals(elem.getFCIBCCCAMELsequence1().getAppendFreeFormatData(), AppendFreeFormatData.append);
+    }
 
-	@Test(groups = { "functional.encode","circuitSwitchedCall"})
-	public void testEncode() throws Exception {
-		
-		SendingSideIDImpl partyToCharge = new SendingSideIDImpl(LegType.leg2);
-		FCIBCCCAMELsequence1Impl fci = new FCIBCCCAMELsequence1Impl(getDataFFD(), partyToCharge, AppendFreeFormatData.append);
-		FurnishChargingInformationRequestImpl elem = new FurnishChargingInformationRequestImpl(fci);
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
-	}
+    @Test(groups = { "functional.encode", "circuitSwitchedCall" })
+    public void testEncode() throws Exception {
+
+        SendingSideIDImpl partyToCharge = new SendingSideIDImpl(LegType.leg2);
+        FCIBCCCAMELsequence1Impl fci = new FCIBCCCAMELsequence1Impl(getDataFFD(), partyToCharge, AppendFreeFormatData.append);
+        FurnishChargingInformationRequestImpl elem = new FurnishChargingInformationRequestImpl(fci);
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+    }
 }
-

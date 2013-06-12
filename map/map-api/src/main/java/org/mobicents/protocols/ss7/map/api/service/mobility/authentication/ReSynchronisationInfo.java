@@ -23,23 +23,19 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
 /**
-*
-* Re-synchronisationInfo ::= SEQUENCE {
-*	rand			RAND,
-*	auts			AUTS,
-*	...}
-*
-* RAND ::= OCTET STRING (SIZE (16))
-* AUTS ::= OCTET STRING (SIZE (14))
-
-*
-* @author sergey vetyutnev
-* 
-*/
+ *
+ * Re-synchronisationInfo ::= SEQUENCE { rand RAND, auts AUTS, ...}
+ *
+ * RAND ::= OCTET STRING (SIZE (16)) AUTS ::= OCTET STRING (SIZE (14))
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ReSynchronisationInfo {
 
-	public byte[] getRand();
+    byte[] getRand();
 
-	public byte[] getAuts();
+    byte[] getAuts();
 
 }

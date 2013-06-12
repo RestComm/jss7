@@ -28,14 +28,14 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.SmsMessage;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public abstract class SmsMessageImpl extends MessageImpl implements SmsMessage, CAPAsnPrimitive {
 
-	public CAPDialogSms getCAPDialog() {
-		return (CAPDialogSms)super.getCAPDialog();
-	}
+    public CAPDialogSms getCAPDialog() {
+        return (CAPDialogSms) super.getCAPDialog();
+    }
 
 }

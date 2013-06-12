@@ -23,14 +23,12 @@
 /**
  * Start time:13:44:22 2009-03-31<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
- * 
+ *
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
-
-import java.io.IOException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNotificationIndicator;
@@ -38,71 +36,72 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericNotificationInd
 /**
  * Start time:13:44:22 2009-03-31<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 public class GenericNotificationIndicatorImpl extends AbstractISUPParameter implements GenericNotificationIndicator {
 
-	private int[] notificationIndicator;
+    private int[] notificationIndicator;
 
-	public GenericNotificationIndicatorImpl(byte[] b) throws ParameterException {
-		super();
-		decode(b);
-	}
+    public GenericNotificationIndicatorImpl(byte[] b) throws ParameterException {
+        super();
+        decode(b);
+    }
 
-	public GenericNotificationIndicatorImpl() {
-		super();
-		
-	}
+    public GenericNotificationIndicatorImpl() {
+        super();
 
-	public GenericNotificationIndicatorImpl(int[] notificationIndicator) {
-		super();
-		this.setNotificationIndicator(notificationIndicator);
-	}
+    }
 
-	public int decode(byte[] b) throws ParameterException {
-		if (b == null || b.length < 2) {
-			throw new ParameterException("byte[] must  not be null and length must be 1 or greater");
-		}
+    public GenericNotificationIndicatorImpl(int[] notificationIndicator) {
+        super();
+        this.setNotificationIndicator(notificationIndicator);
+    }
 
-		this.notificationIndicator = new int[b.length];
+    public int decode(byte[] b) throws ParameterException {
+        if (b == null || b.length < 2) {
+            throw new ParameterException("byte[] must  not be null and length must be 1 or greater");
+        }
 
-		for (int i = 0; i < b.length; i++) {
-			int extFlag = (b[i] >> 7) & 0x01;
-			if (extFlag == 0x01 && (b.length - 1 > i)) {
-				throw new ParameterException("Extenstion flag idnicates end of data, however byte[] has more octets. Index: " + i);
-			}
-			this.notificationIndicator[i] = b[i] & 0x7F;
-		}
-		return this.notificationIndicator.length;
-	}
+        this.notificationIndicator = new int[b.length];
 
-	public byte[] encode() throws ParameterException {
-		byte[] b = new byte[this.notificationIndicator.length];
+        for (int i = 0; i < b.length; i++) {
+            int extFlag = (b[i] >> 7) & 0x01;
+            if (extFlag == 0x01 && (b.length - 1 > i)) {
+                throw new ParameterException("Extenstion flag idnicates end of data, however byte[] has more octets. Index: "
+                        + i);
+            }
+            this.notificationIndicator[i] = b[i] & 0x7F;
+        }
+        return this.notificationIndicator.length;
+    }
 
-		for (int index = 0; index < b.length; index++) {
-			b[index] = (byte) (this.notificationIndicator[index] & 0x7F);
-		}
+    public byte[] encode() throws ParameterException {
+        byte[] b = new byte[this.notificationIndicator.length];
 
-		// sets extension bit to show that we dont have more octets
-		b[b.length - 1] |= 1 << 7;
+        for (int index = 0; index < b.length; index++) {
+            b[index] = (byte) (this.notificationIndicator[index] & 0x7F);
+        }
 
-		return b;
-	}
+        // sets extension bit to show that we dont have more octets
+        b[b.length - 1] |= 1 << 7;
 
-	public int[] getNotificationIndicator() {
-		return notificationIndicator;
-	}
+        return b;
+    }
 
-	public void setNotificationIndicator(int[] notificationIndicator) {
-		if (notificationIndicator == null) {
-			throw new IllegalArgumentException("Notification indicator must not be null");
-		}
-		this.notificationIndicator = notificationIndicator;
-	}
+    public int[] getNotificationIndicator() {
+        return notificationIndicator;
+    }
 
-	public int getCode() {
+    public void setNotificationIndicator(int[] notificationIndicator) {
+        if (notificationIndicator == null) {
+            throw new IllegalArgumentException("Notification indicator must not be null");
+        }
+        this.notificationIndicator = notificationIndicator;
+    }
 
-		return _PARAMETER_CODE;
-	}
+    public int getCode() {
+
+        return _PARAMETER_CODE;
+    }
 }

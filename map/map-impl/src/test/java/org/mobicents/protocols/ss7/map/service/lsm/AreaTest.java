@@ -22,7 +22,9 @@
 
 package org.mobicents.protocols.ss7.map.service.lsm;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -46,94 +48,93 @@ import org.testng.annotations.Test;
 
 /**
  * @author amit bhayani
- * @author  sergey vetyutnev
+ * @author sergey vetyutnev
  *
  */
 public class AreaTest {
-	
-	MAPParameterFactory MAPParameterFactory = new MAPParameterFactoryImpl();
 
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
+    MAPParameterFactory MAPParameterFactory = new MAPParameterFactoryImpl();
 
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
 
-	@BeforeTest
-	public void setUp() {
-	}
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
-	@AfterTest
-	public void tearDown() {
-	}
+    @BeforeTest
+    public void setUp() {
+    }
 
-	public byte[] getEncodedData() {
-		return new byte[] { 48, 8, -128, 1, 1, -127, 3, 9, 112, 113 };
-	}
+    @AfterTest
+    public void tearDown() {
+    }
 
-	@Test(groups = { "functional.decode","service.lsm"})
-	public void testDecode() throws Exception {
-		byte[] data = getEncodedData();
-		
-		
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
-		assertEquals(tag, Tag.SEQUENCE);
-		
-		Area area = new AreaImpl();
-		((AreaImpl)area).decodeAll(asn);
-		
-		assertNotNull(area.getAreaType());
-		assertEquals( area.getAreaType(),AreaType.plmnId);
-		
-		assertNotNull(area.getAreaIdentification());
-		assertEquals(area.getAreaIdentification().getMCC(), 900);
-		assertEquals(area.getAreaIdentification().getMNC(), 177);
-		
-	}
+    public byte[] getEncodedData() {
+        return new byte[] { 48, 8, -128, 1, 1, -127, 3, 9, 112, 113 };
+    }
 
-	@Test(groups = { "functional.encode","service.lsm"})
-	public void testEncode() throws Exception {
-		
-		byte[] data = getEncodedData();
+    @Test(groups = { "functional.decode", "service.lsm" })
+    public void testDecode() throws Exception {
+        byte[] data = getEncodedData();
 
-		AreaIdentificationImpl ai = new AreaIdentificationImpl(AreaType.plmnId, 900, 177, 0, 0);
-		Area area = new AreaImpl(AreaType.plmnId, ai);
-		
-		AsnOutputStream asnOS = new AsnOutputStream();
-		((AreaImpl)area).encodeAll(asnOS);
-		
-		byte[] encodedData = asnOS.toByteArray();
-		
-		assertTrue(Arrays.equals(data, encodedData));
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
+        assertEquals(tag, Tag.SEQUENCE);
 
-	}
-	
-	@Test(groups = { "functional.serialize", "service.lsm" })
-	public void testSerialization() throws Exception {
-		AreaIdentificationImpl ai = new AreaIdentificationImpl(AreaType.plmnId, 900, 177, 0, 0);
-		Area original = new AreaImpl(AreaType.utranCellId, ai);
-		
-		// serialize
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(out);
-		oos.writeObject(original);
-		oos.close();
+        Area area = new AreaImpl();
+        ((AreaImpl) area).decodeAll(asn);
 
-		// deserialize
-		byte[] pickled = out.toByteArray();
-		InputStream in = new ByteArrayInputStream(pickled);
-		ObjectInputStream ois = new ObjectInputStream(in);
-		Object o = ois.readObject();
-		AreaImpl copy = (AreaImpl) o;
-		
-		//test result
-		assertEquals(copy.getAreaType(), original.getAreaType());
-		assertEquals(copy.getAreaIdentification().getMCC(), original.getAreaIdentification().getMCC());
-		assertEquals(copy.getAreaIdentification().getMNC(), original.getAreaIdentification().getMNC());
-		
-	}
+        assertNotNull(area.getAreaType());
+        assertEquals(area.getAreaType(), AreaType.plmnId);
+
+        assertNotNull(area.getAreaIdentification());
+        assertEquals(area.getAreaIdentification().getMCC(), 900);
+        assertEquals(area.getAreaIdentification().getMNC(), 177);
+
+    }
+
+    @Test(groups = { "functional.encode", "service.lsm" })
+    public void testEncode() throws Exception {
+
+        byte[] data = getEncodedData();
+
+        AreaIdentificationImpl ai = new AreaIdentificationImpl(AreaType.plmnId, 900, 177, 0, 0);
+        Area area = new AreaImpl(AreaType.plmnId, ai);
+
+        AsnOutputStream asnOS = new AsnOutputStream();
+        ((AreaImpl) area).encodeAll(asnOS);
+
+        byte[] encodedData = asnOS.toByteArray();
+
+        assertTrue(Arrays.equals(data, encodedData));
+
+    }
+
+    @Test(groups = { "functional.serialize", "service.lsm" })
+    public void testSerialization() throws Exception {
+        AreaIdentificationImpl ai = new AreaIdentificationImpl(AreaType.plmnId, 900, 177, 0, 0);
+        Area original = new AreaImpl(AreaType.utranCellId, ai);
+
+        // serialize
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(out);
+        oos.writeObject(original);
+        oos.close();
+
+        // deserialize
+        byte[] pickled = out.toByteArray();
+        InputStream in = new ByteArrayInputStream(pickled);
+        ObjectInputStream ois = new ObjectInputStream(in);
+        Object o = ois.readObject();
+        AreaImpl copy = (AreaImpl) o;
+
+        // test result
+        assertEquals(copy.getAreaType(), original.getAreaType());
+        assertEquals(copy.getAreaIdentification().getMCC(), original.getAreaIdentification().getMCC());
+        assertEquals(copy.getAreaIdentification().getMNC(), original.getAreaIdentification().getMNC());
+
+    }
 
 }

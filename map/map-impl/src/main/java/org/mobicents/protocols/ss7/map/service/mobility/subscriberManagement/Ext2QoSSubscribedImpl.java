@@ -26,21 +26,21 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class Ext2QoSSubscribedImpl extends OctetStringBase implements Ext2QoSSubscribed {
 
-	public Ext2QoSSubscribedImpl() {
-		super(1, 3, "Ext2QoSSubscribed");
-	}
+    public Ext2QoSSubscribedImpl() {
+        super(1, 3, "Ext2QoSSubscribed");
+    }
 
-	public Ext2QoSSubscribedImpl(byte[] data) {
-		super(1, 3, "Ext2QoSSubscribed", data);
-	}
+    public Ext2QoSSubscribedImpl(byte[] data) {
+        super(1, 3, "Ext2QoSSubscribed", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 }

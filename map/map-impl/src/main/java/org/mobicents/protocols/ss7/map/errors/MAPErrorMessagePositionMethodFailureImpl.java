@@ -38,186 +38,187 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
-* 
-* @author sergey vetyutnev
-* 
-*/
-public class MAPErrorMessagePositionMethodFailureImpl extends MAPErrorMessageImpl implements MAPErrorMessagePositionMethodFailure {
+ *
+ * @author sergey vetyutnev
+ *
+ */
+public class MAPErrorMessagePositionMethodFailureImpl extends MAPErrorMessageImpl implements
+        MAPErrorMessagePositionMethodFailure {
 
-	public static final int PositionMethodFailureDiagnostic_TAG = 0;
-	public static final int ExtensionContainer_TAG = 1;
+    public static final int PositionMethodFailureDiagnostic_TAG = 0;
+    public static final int ExtensionContainer_TAG = 1;
 
-	private PositionMethodFailureDiagnostic positionMethodFailureDiagnostic;
-	private MAPExtensionContainer extensionContainer;	
-	
-	
-	public MAPErrorMessagePositionMethodFailureImpl(PositionMethodFailureDiagnostic positionMethodFailureDiagnostic, MAPExtensionContainer extensionContainer) {
-		super((long) MAPErrorCode.positionMethodFailure);
+    private PositionMethodFailureDiagnostic positionMethodFailureDiagnostic;
+    private MAPExtensionContainer extensionContainer;
 
-		this.positionMethodFailureDiagnostic = positionMethodFailureDiagnostic;
-		this.extensionContainer = extensionContainer;
-	}
-	
-	protected MAPErrorMessagePositionMethodFailureImpl() {
-		super((long) MAPErrorCode.positionMethodFailure);
-	}
-	
+    public MAPErrorMessagePositionMethodFailureImpl(PositionMethodFailureDiagnostic positionMethodFailureDiagnostic,
+            MAPExtensionContainer extensionContainer) {
+        super((long) MAPErrorCode.positionMethodFailure);
 
-	public boolean isEmPositionMethodFailure() {
-		return true;
-	}
+        this.positionMethodFailureDiagnostic = positionMethodFailureDiagnostic;
+        this.extensionContainer = extensionContainer;
+    }
 
-	public MAPErrorMessagePositionMethodFailure getEmPositionMethodFailure() {
-		return this;
-	}
+    protected MAPErrorMessagePositionMethodFailureImpl() {
+        super((long) MAPErrorCode.positionMethodFailure);
+    }
 
-	public PositionMethodFailureDiagnostic getPositionMethodFailureDiagnostic() {
-		return this.positionMethodFailureDiagnostic;
-	}
+    public boolean isEmPositionMethodFailure() {
+        return true;
+    }
 
-	public MAPExtensionContainer getExtensionContainer() {
-		return this.extensionContainer;
-	}
+    public MAPErrorMessagePositionMethodFailure getEmPositionMethodFailure() {
+        return this;
+    }
 
-	public void setPositionMethodFailureDiagnostic(PositionMethodFailureDiagnostic positionMethodFailureDiagnostic) {
-		this.positionMethodFailureDiagnostic = positionMethodFailureDiagnostic;
-	}
+    public PositionMethodFailureDiagnostic getPositionMethodFailureDiagnostic() {
+        return this.positionMethodFailureDiagnostic;
+    }
 
-	public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
-		this.extensionContainer = extensionContainer;
-	}
-	
-	
-	public int getTag() throws MAPException {
-		return Tag.SEQUENCE;
-	}
+    public MAPExtensionContainer getExtensionContainer() {
+        return this.extensionContainer;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public void setPositionMethodFailureDiagnostic(PositionMethodFailureDiagnostic positionMethodFailureDiagnostic) {
+        this.positionMethodFailureDiagnostic = positionMethodFailureDiagnostic;
+    }
 
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    public void setExtensionContainer(MAPExtensionContainer extensionContainer) {
+        this.extensionContainer = extensionContainer;
+    }
 
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+    public int getTag() throws MAPException {
+        return Tag.SEQUENCE;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MAPErrorMessagePositionMethodFailure: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessagePositionMethodFailure: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding MAPErrorMessagePositionMethodFailure: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessagePositionMethodFailure: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-	private void _decode(AsnInputStream localAis, int length) throws MAPParsingComponentException, IOException, AsnException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding MAPErrorMessagePositionMethodFailure: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessagePositionMethodFailure: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		this.extensionContainer = null;
-		this.positionMethodFailureDiagnostic = null;
-		
-		if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.SEQUENCE || localAis.isTagPrimitive())
-			throw new MAPParsingComponentException(
-					"Error decoding MAPErrorMessagePositionMethodFailure: bad tag class or tag or parameter is primitive",
-					MAPParsingComponentExceptionReason.MistypedParameter);
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
-		AsnInputStream ais = localAis.readSequenceStreamData(length);
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding MAPErrorMessagePositionMethodFailure: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new MAPParsingComponentException("AsnException when decoding MAPErrorMessagePositionMethodFailure: "
+                    + e.getMessage(), e, MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    private void _decode(AsnInputStream localAis, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-			int tag = ais.readTag();
+        this.extensionContainer = null;
+        this.positionMethodFailureDiagnostic = null;
 
-			switch (ais.getTagClass()) {
-			case Tag.CLASS_CONTEXT_SPECIFIC:
-				switch (tag) {
-				case PositionMethodFailureDiagnostic_TAG:
-					int code = (int) ais.readInteger();
-					this.positionMethodFailureDiagnostic = PositionMethodFailureDiagnostic.getInstance(code);
-					break;
-					
-				case ExtensionContainer_TAG:
-					this.extensionContainer = new MAPExtensionContainerImpl();
-					((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
-					break;
+        if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.SEQUENCE || localAis.isTagPrimitive())
+            throw new MAPParsingComponentException(
+                    "Error decoding MAPErrorMessagePositionMethodFailure: bad tag class or tag or parameter is primitive",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-				break;
+        AsnInputStream ais = localAis.readSequenceStreamData(length);
 
-			default:
-				ais.advanceElement();
-				break;
-			}
-		}
-	}
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+            int tag = ais.readTag();
 
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
-	}
+            switch (ais.getTagClass()) {
+                case Tag.CLASS_CONTEXT_SPECIFIC:
+                    switch (tag) {
+                        case PositionMethodFailureDiagnostic_TAG:
+                            int code = (int) ais.readInteger();
+                            this.positionMethodFailureDiagnostic = PositionMethodFailureDiagnostic.getInstance(code);
+                            break;
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, false, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MAPErrorMessagePositionMethodFailure: " + e.getMessage(), e);
-		}
-	}
+                        case ExtensionContainer_TAG:
+                            this.extensionContainer = new MAPExtensionContainerImpl();
+                            ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                            break;
 
-	public void encodeData(AsnOutputStream aos) throws MAPException {
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+                    break;
 
-		if (this.positionMethodFailureDiagnostic == null && this.extensionContainer == null)
-			return;
+                default:
+                    ais.advanceElement();
+                    break;
+            }
+        }
+    }
 
-		try {
-			if (this.positionMethodFailureDiagnostic != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, PositionMethodFailureDiagnostic_TAG, this.positionMethodFailureDiagnostic.getCode());
-			if (this.extensionContainer != null)
-				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, ExtensionContainer_TAG);
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding MAPErrorMessagePositionMethodFailure: " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding MAPErrorMessagePositionMethodFailure: " + e.getMessage(), e);
-		}
-	}
+        this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.SEQUENCE);
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append("MAPErrorMessagePositionMethodFailure [");
-		if (this.positionMethodFailureDiagnostic != null)
-			sb.append("positionMethodFailureDiagnostic=" + this.positionMethodFailureDiagnostic.toString());
-		if (this.extensionContainer != null)
-			sb.append(", extensionContainer=" + this.extensionContainer.toString());
-		sb.append("]");
-		
-		return sb.toString();
-	}
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+
+        try {
+            asnOs.writeTag(tagClass, false, tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding MAPErrorMessagePositionMethodFailure: " + e.getMessage(), e);
+        }
+    }
+
+    public void encodeData(AsnOutputStream aos) throws MAPException {
+
+        if (this.positionMethodFailureDiagnostic == null && this.extensionContainer == null)
+            return;
+
+        try {
+            if (this.positionMethodFailureDiagnostic != null)
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, PositionMethodFailureDiagnostic_TAG,
+                        this.positionMethodFailureDiagnostic.getCode());
+            if (this.extensionContainer != null)
+                ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+                        ExtensionContainer_TAG);
+
+        } catch (IOException e) {
+            throw new MAPException("IOException when encoding MAPErrorMessagePositionMethodFailure: " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding MAPErrorMessagePositionMethodFailure: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("MAPErrorMessagePositionMethodFailure [");
+        if (this.positionMethodFailureDiagnostic != null)
+            sb.append("positionMethodFailureDiagnostic=" + this.positionMethodFailureDiagnostic.toString());
+        if (this.extensionContainer != null)
+            sb.append(", extensionContainer=" + this.extensionContainer.toString());
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

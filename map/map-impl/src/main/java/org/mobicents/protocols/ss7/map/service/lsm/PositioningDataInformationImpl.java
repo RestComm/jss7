@@ -26,22 +26,22 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.PositioningDataInformatio
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
-*
-* @author sergey vetyutnev
-* 
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class PositioningDataInformationImpl extends OctetStringBase implements PositioningDataInformation {
 
-	public PositioningDataInformationImpl() {
-		super(2, 10, "PositioningDataInformation");
-	}
+    public PositioningDataInformationImpl() {
+        super(2, 10, "PositioningDataInformation");
+    }
 
-	public PositioningDataInformationImpl(byte[] data) {
-		super(2, 10, "PositioningDataInformation", data);
-	}
+    public PositioningDataInformationImpl(byte[] data) {
+        super(2, 10, "PositioningDataInformation", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 
 }

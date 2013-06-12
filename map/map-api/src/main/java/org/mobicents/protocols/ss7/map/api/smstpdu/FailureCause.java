@@ -23,12 +23,12 @@
 package org.mobicents.protocols.ss7.map.api.smstpdu;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface FailureCause {
 
-	public int getCode();
+    int getCode();
 
 }

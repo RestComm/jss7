@@ -23,10 +23,10 @@
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public enum LongMessageRuleType {
-	LudtEnabled, LudtEnabled_WithSegmentationField, XudtEnabled, LongMessagesForbidden;
+    LudtEnabled, LudtEnabled_WithSegmentationField, XudtEnabled, LongMessagesForbidden;
 }

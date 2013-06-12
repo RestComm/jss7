@@ -27,25 +27,20 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 
 /**
-*
-
-InitiateCallAttemptRes {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
- supportedCamelPhases    [0] SupportedCamelPhases     OPTIONAL, 
- offeredCamel4Functionalities  [1] OfferedCamel4Functionalities   OPTIONAL, 
- extensions       [2] Extensions {bound}      OPTIONAL, 
- ... 
- } 
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ InitiateCallAttemptRes {PARAMETERS-BOUND : bound} ::= SEQUENCE { supportedCamelPhases [0] SupportedCamelPhases OPTIONAL,
+ * offeredCamel4Functionalities [1] OfferedCamel4Functionalities OPTIONAL, extensions [2] Extensions {bound} OPTIONAL, ... }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface InitiateCallAttemptResponse extends CircuitSwitchedCallMessage {
 
-	public SupportedCamelPhases getSupportedCamelPhases();
+    SupportedCamelPhases getSupportedCamelPhases();
 
-	public OfferedCamel4Functionalities getOfferedCamel4Functionalities();
+    OfferedCamel4Functionalities getOfferedCamel4Functionalities();
 
-	public CAPExtensions getExtensions();
+    CAPExtensions getExtensions();
 
 }

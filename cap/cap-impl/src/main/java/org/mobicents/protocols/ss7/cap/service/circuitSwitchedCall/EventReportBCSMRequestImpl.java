@@ -47,269 +47,266 @@ import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 import org.mobicents.protocols.ss7.inap.primitives.MiscCallInfoImpl;
 
 /**
-*
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class EventReportBCSMRequestImpl extends CircuitSwitchedCallMessageImpl implements EventReportBCSMRequest {
 
-	public static final int _ID_eventTypeBCSM = 0;
-	public static final int _ID_eventSpecificInformationBCSM = 2;
-	public static final int _ID_legID = 3;
-	public static final int _ID_miscCallInfo = 4;
-	public static final int _ID_extensions = 5;
+    public static final int _ID_eventTypeBCSM = 0;
+    public static final int _ID_eventSpecificInformationBCSM = 2;
+    public static final int _ID_legID = 3;
+    public static final int _ID_miscCallInfo = 4;
+    public static final int _ID_extensions = 5;
 
-	public static final String _PrimitiveName = "EventReportBCSMRequest";
-	
-	private EventTypeBCSM eventTypeBCSM;
-	private EventSpecificInformationBCSM eventSpecificInformationBCSM;
-	private ReceivingSideID legID;
-	private MiscCallInfo miscCallInfo;
-	private CAPExtensions extensions;
+    public static final String _PrimitiveName = "EventReportBCSMRequest";
 
-	
-	public EventReportBCSMRequestImpl() {
-	}
-	
-	public EventReportBCSMRequestImpl(EventTypeBCSM eventTypeBCSM, EventSpecificInformationBCSM eventSpecificInformationBCSM, ReceivingSideID legID,
-			MiscCallInfo miscCallInfo, CAPExtensions extensions) {
-		this.eventTypeBCSM = eventTypeBCSM;
-		this.eventSpecificInformationBCSM = eventSpecificInformationBCSM;
-		this.legID = legID;
-		this.miscCallInfo = miscCallInfo;
-		this.extensions = extensions;
-	}
+    private EventTypeBCSM eventTypeBCSM;
+    private EventSpecificInformationBCSM eventSpecificInformationBCSM;
+    private ReceivingSideID legID;
+    private MiscCallInfo miscCallInfo;
+    private CAPExtensions extensions;
 
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.eventReportBCSM_Request;
-	}
+    public EventReportBCSMRequestImpl() {
+    }
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.eventReportBCSM;
-	}
+    public EventReportBCSMRequestImpl(EventTypeBCSM eventTypeBCSM, EventSpecificInformationBCSM eventSpecificInformationBCSM,
+            ReceivingSideID legID, MiscCallInfo miscCallInfo, CAPExtensions extensions) {
+        this.eventTypeBCSM = eventTypeBCSM;
+        this.eventSpecificInformationBCSM = eventSpecificInformationBCSM;
+        this.legID = legID;
+        this.miscCallInfo = miscCallInfo;
+        this.extensions = extensions;
+    }
 
-	@Override
-	public EventTypeBCSM getEventTypeBCSM() {
-		return eventTypeBCSM;
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.eventReportBCSM_Request;
+    }
 
-	@Override
-	public EventSpecificInformationBCSM getEventSpecificInformationBCSM() {
-		return eventSpecificInformationBCSM;
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.eventReportBCSM;
+    }
 
-	@Override
-	public ReceivingSideID getLegID() {
-		return legID;
-	}
+    @Override
+    public EventTypeBCSM getEventTypeBCSM() {
+        return eventTypeBCSM;
+    }
 
-	@Override
-	public MiscCallInfo getMiscCallInfo() {
-		return miscCallInfo;
-	}
+    @Override
+    public EventSpecificInformationBCSM getEventSpecificInformationBCSM() {
+        return eventSpecificInformationBCSM;
+    }
 
-	@Override
-	public CAPExtensions getExtensions() {
-		return extensions;
-	}
+    @Override
+    public ReceivingSideID getLegID() {
+        return legID;
+    }
 
-	
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public MiscCallInfo getMiscCallInfo() {
+        return miscCallInfo;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public CAPExtensions getExtensions() {
+        return extensions;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (INAPParsingComponentException e) {
-			throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (INAPParsingComponentException e) {
-			throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (INAPParsingComponentException e) {
+            throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException, INAPParsingComponentException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		this.eventTypeBCSM = null;
-		this.eventSpecificInformationBCSM = null;
-		this.legID = null;
-		this.miscCallInfo = null;
-//		this.miscCallInfo = new MiscCallInfoImpl(MiscCallInfoMessageType.request, null);
-		this.extensions = null;
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (INAPParsingComponentException e) {
+            throw new CAPParsingComponentException("INAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		int i1;
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException,
+            INAPParsingComponentException {
 
-			int tag = ais.readTag();
-			
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_eventTypeBCSM:
-					i1 = (int)ais.readInteger();
-					this.eventTypeBCSM = EventTypeBCSM.getInstance(i1);
-					break;
-				case _ID_eventSpecificInformationBCSM:
-					AsnInputStream ais2 = ais.readSequenceStream();
-					ais2.readTag();
-					this.eventSpecificInformationBCSM = new EventSpecificInformationBCSMImpl();
-					((EventSpecificInformationBCSMImpl)this.eventSpecificInformationBCSM).decodeAll(ais2);
-					break;
-				case _ID_legID:
-					ais2 = ais.readSequenceStream();
-					ais2.readTag();
-					this.legID = new ReceivingSideIDImpl();
-					((ReceivingSideIDImpl)this.legID).decodeAll(ais2);
-					break;
-				case _ID_miscCallInfo:
-					this.miscCallInfo = new MiscCallInfoImpl();
-					((MiscCallInfoImpl)this.miscCallInfo).decodeAll(ais);
-					break;
-				case _ID_extensions:
-					this.extensions = new CAPExtensionsImpl();
-					((CAPExtensionsImpl) this.extensions).decodeAll(ais);
-					break;
+        this.eventTypeBCSM = null;
+        this.eventSpecificInformationBCSM = null;
+        this.legID = null;
+        this.miscCallInfo = null;
+        // this.miscCallInfo = new MiscCallInfoImpl(MiscCallInfoMessageType.request, null);
+        this.extensions = null;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        int i1;
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-		if (this.eventTypeBCSM == null)
-			throw new CAPParsingComponentException(
-					"Error while decoding " + _PrimitiveName + ": eventTypeBCSM is mandatory but not found ",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+            int tag = ais.readTag();
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_eventTypeBCSM:
+                        i1 = (int) ais.readInteger();
+                        this.eventTypeBCSM = EventTypeBCSM.getInstance(i1);
+                        break;
+                    case _ID_eventSpecificInformationBCSM:
+                        AsnInputStream ais2 = ais.readSequenceStream();
+                        ais2.readTag();
+                        this.eventSpecificInformationBCSM = new EventSpecificInformationBCSMImpl();
+                        ((EventSpecificInformationBCSMImpl) this.eventSpecificInformationBCSM).decodeAll(ais2);
+                        break;
+                    case _ID_legID:
+                        ais2 = ais.readSequenceStream();
+                        ais2.readTag();
+                        this.legID = new ReceivingSideIDImpl();
+                        ((ReceivingSideIDImpl) this.legID).decodeAll(ais2);
+                        break;
+                    case _ID_miscCallInfo:
+                        this.miscCallInfo = new MiscCallInfoImpl();
+                        ((MiscCallInfoImpl) this.miscCallInfo).decodeAll(ais);
+                        break;
+                    case _ID_extensions:
+                        this.extensions = new CAPExtensionsImpl();
+                        ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
+                        break;
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        if (this.eventTypeBCSM == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": eventTypeBCSM is mandatory but not found ", CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-		if (this.eventTypeBCSM == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": eventTypeBCSM must not be null");
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		try {
-			aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_eventTypeBCSM, this.eventTypeBCSM.getCode());			
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-			if (this.eventSpecificInformationBCSM != null) {
-				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_eventSpecificInformationBCSM);
-				int pos = aos.StartContentDefiniteLength();
-				((EventSpecificInformationBCSMImpl) this.eventSpecificInformationBCSM).encodeAll(aos);
-				aos.FinalizeContent(pos);
-			}
-			if (this.legID != null) {
-				aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_legID);
-				int pos = aos.StartContentDefiniteLength();
-				((ReceivingSideIDImpl) this.legID).encodeAll(aos);
-				aos.FinalizeContent(pos);
-			}
-			if (this.miscCallInfo != null)
-				((MiscCallInfoImpl) this.miscCallInfo).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_miscCallInfo);
-			if (this.extensions != null)
-				((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
-			
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (INAPException e) {
-			throw new CAPException("INAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeData(AsnOutputStream aos) throws CAPException {
 
-	@Override
-	public String toString() {
+        if (this.eventTypeBCSM == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": eventTypeBCSM must not be null");
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        try {
+            aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_eventTypeBCSM, this.eventTypeBCSM.getCode());
 
-		if (this.eventTypeBCSM != null) {
-			sb.append("eventTypeBCSM=");
-			sb.append(eventTypeBCSM.toString());
-		}
-		if (this.eventSpecificInformationBCSM != null) {
-			sb.append(", eventSpecificInformationBCSM=");
-			sb.append(eventSpecificInformationBCSM.toString());
-		}
-		if (this.legID != null) {
-			sb.append(", legID=");
-			sb.append(legID.toString());
-		}
-		if (this.miscCallInfo != null) {
-			sb.append(", miscCallInfo=");
-			sb.append(miscCallInfo.toString());
-		}
-		if (this.extensions != null) {
-			sb.append(", extensions=");
-			sb.append(extensions.toString());
-		}
+            if (this.eventSpecificInformationBCSM != null) {
+                aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_eventSpecificInformationBCSM);
+                int pos = aos.StartContentDefiniteLength();
+                ((EventSpecificInformationBCSMImpl) this.eventSpecificInformationBCSM).encodeAll(aos);
+                aos.FinalizeContent(pos);
+            }
+            if (this.legID != null) {
+                aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_legID);
+                int pos = aos.StartContentDefiniteLength();
+                ((ReceivingSideIDImpl) this.legID).encodeAll(aos);
+                aos.FinalizeContent(pos);
+            }
+            if (this.miscCallInfo != null)
+                ((MiscCallInfoImpl) this.miscCallInfo).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_miscCallInfo);
+            if (this.extensions != null)
+                ((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
 
-		sb.append("]");
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (INAPException e) {
+            throw new CAPException("INAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.eventTypeBCSM != null) {
+            sb.append("eventTypeBCSM=");
+            sb.append(eventTypeBCSM.toString());
+        }
+        if (this.eventSpecificInformationBCSM != null) {
+            sb.append(", eventSpecificInformationBCSM=");
+            sb.append(eventSpecificInformationBCSM.toString());
+        }
+        if (this.legID != null) {
+            sb.append(", legID=");
+            sb.append(legID.toString());
+        }
+        if (this.miscCallInfo != null) {
+            sb.append(", miscCallInfo=");
+            sb.append(miscCallInfo.toString());
+        }
+        if (this.extensions != null) {
+            sb.append(", extensions=");
+            sb.append(extensions.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

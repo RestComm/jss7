@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -27,17 +27,17 @@ import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 
 /**
  * Transition handler that doesn't cause State change
- * 
+ *
  * @author amit bhayani
  */
 public class THNoTrans implements TransitionHandler {
 
-	public THNoTrans() {
-	}
+    public THNoTrans() {
+    }
 
-	@Override
-	public boolean process(FSMState state) {
-		return false;
-	}
+    @Override
+    public boolean process(FSMState state) {
+        return false;
+    }
 
 }

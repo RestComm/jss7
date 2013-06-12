@@ -23,22 +23,17 @@
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
-*
-
-AOCBeforeAnswer ::= SEQUENCE { 
- aOCInitial       [0] CAI-GSM0224, 
- aOCSubsequent      [1] AOCSubsequent       OPTIONAL 
- } 
- 
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ AOCBeforeAnswer ::= SEQUENCE { aOCInitial [0] CAI-GSM0224, aOCSubsequent [1] AOCSubsequent OPTIONAL }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface AOCBeforeAnswer {
 
-	public CAI_GSM0224 getAOCInitial();
+    CAI_GSM0224 getAOCInitial();
 
-	public AOCSubsequent getAOCSubsequent();
+    AOCSubsequent getAOCSubsequent();
 
 }
-

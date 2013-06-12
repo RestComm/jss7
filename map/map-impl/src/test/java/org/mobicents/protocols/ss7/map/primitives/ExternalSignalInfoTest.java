@@ -22,94 +22,83 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
+
 import java.util.Arrays;
+
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
-import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
-import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.ProtocolId;
 import org.mobicents.protocols.ss7.map.api.primitives.SignalInfo;
-import org.mobicents.protocols.ss7.map.api.service.callhandling.ForwardingData;
-import org.mobicents.protocols.ss7.map.api.service.lsm.AdditionalNumber;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingOptions;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingReason;
-import org.mobicents.protocols.ss7.map.primitives.ExternalSignalInfoImpl;
-import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
-import org.mobicents.protocols.ss7.map.service.lsm.AdditionalNumberImpl;
-import org.testng.Assert.*;
-import org.testng.*;
-import org.testng.annotations.*;
-
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 /*
- * 
+ *
  * @author cristian veliscu
- * 
+ *
  */
 public class ExternalSignalInfoTest {
     Logger logger = Logger.getLogger(ExternalSignalInfoTest.class);
-    
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
 
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
 
-	@BeforeTest
-	public void setUp() {
-	}
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
-	@AfterTest
-	public void tearDown() {
-	}
-	
-	@Test(groups = { "functional.decode", "service.callhandling" })
-	public void testDecode() throws Exception {
-		byte[] data = new byte[] { 48, 9, 10, 1,  2, 4, 4, 10, 20, 30, 40 };
-		byte[] data_ =  new byte[] { 10, 20, 30, 40 };
+    @BeforeTest
+    public void setUp() {
+    }
 
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
+    @AfterTest
+    public void tearDown() {
+    }
 
-		ExternalSignalInfoImpl extSignalInfo = new ExternalSignalInfoImpl();
-		extSignalInfo.decodeAll(asn);
-		
-		ProtocolId protocolId = extSignalInfo.getProtocolId();
-		byte[] signalInfo = extSignalInfo.getSignalInfo().getData();
+    @Test(groups = { "functional.decode", "service.callhandling" })
+    public void testDecode() throws Exception {
+        byte[] data = new byte[] { 48, 9, 10, 1, 2, 4, 4, 10, 20, 30, 40 };
+        byte[] data_ = new byte[] { 10, 20, 30, 40 };
 
-		assertTrue(Arrays.equals(data_, signalInfo));
-		assertNotNull(protocolId);
-		assertTrue(protocolId == ProtocolId.gsm_0806);
-	} 
-	
-	@Test(groups = { "functional.encode", "service.callhandling" })
-	public void testEncode() throws Exception {
-		byte[] data = new byte[] { 48, 9, 10, 1,  2, 4, 4, 10, 20, 30, 40 };
-		byte[] data_ =  new byte[] { 10, 20, 30, 40 };
-		
-		SignalInfo signalInfo = new SignalInfoImpl(data_);
-		ProtocolId protocolId = ProtocolId.gsm_0806;
-		ExternalSignalInfoImpl extSignalInfo = new ExternalSignalInfoImpl(signalInfo, protocolId, null);
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
 
-		AsnOutputStream asnOS = new AsnOutputStream();
-		extSignalInfo.encodeAll(asnOS);
+        ExternalSignalInfoImpl extSignalInfo = new ExternalSignalInfoImpl();
+        extSignalInfo.decodeAll(asn);
 
-	    byte[] encodedData = asnOS.toByteArray();
-		assertTrue(Arrays.equals(data, encodedData));
-	}
-	
-	@Test(groups = { "functional.serialize", "service.callhandling" })
-	public void testSerialization() throws Exception {
-		
-	}
+        ProtocolId protocolId = extSignalInfo.getProtocolId();
+        byte[] signalInfo = extSignalInfo.getSignalInfo().getData();
+
+        assertTrue(Arrays.equals(data_, signalInfo));
+        assertNotNull(protocolId);
+        assertTrue(protocolId == ProtocolId.gsm_0806);
+    }
+
+    @Test(groups = { "functional.encode", "service.callhandling" })
+    public void testEncode() throws Exception {
+        byte[] data = new byte[] { 48, 9, 10, 1, 2, 4, 4, 10, 20, 30, 40 };
+        byte[] data_ = new byte[] { 10, 20, 30, 40 };
+
+        SignalInfo signalInfo = new SignalInfoImpl(data_);
+        ProtocolId protocolId = ProtocolId.gsm_0806;
+        ExternalSignalInfoImpl extSignalInfo = new ExternalSignalInfoImpl(signalInfo, protocolId, null);
+
+        AsnOutputStream asnOS = new AsnOutputStream();
+        extSignalInfo.encodeAll(asnOS);
+
+        byte[] encodedData = asnOS.toByteArray();
+        assertTrue(Arrays.equals(data, encodedData));
+    }
+
+    @Test(groups = { "functional.serialize", "service.callhandling" })
+    public void testSerialization() throws Exception {
+
+    }
 }
-

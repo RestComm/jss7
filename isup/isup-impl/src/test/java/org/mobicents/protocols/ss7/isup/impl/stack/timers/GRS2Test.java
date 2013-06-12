@@ -29,12 +29,11 @@ import org.testng.annotations.Test;
  *
  */
 public class GRS2Test extends GRSTest {
-	//thanks to magic of super class, this is whole test :)
-	
-	@Test(groups = { "functional.timer","timer.timeout.big.answer"})
-	public void testBigTimeoutWithAnswer() throws Exception
-	{
-		super.testBigTimeoutWithAnswer();
-	}
-	
+    // thanks to magic of super class, this is whole test :)
+
+    @Test(groups = { "functional.timer", "timer.timeout.big.answer" })
+    public void testBigTimeoutWithAnswer() throws Exception {
+        super.testBigTimeoutWithAnswer();
+    }
+
 }

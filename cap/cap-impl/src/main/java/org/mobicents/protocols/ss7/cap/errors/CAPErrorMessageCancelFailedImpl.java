@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.cap.errors;
 
 import java.io.IOException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -35,148 +36,145 @@ import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageCancelFailed;
 import org.mobicents.protocols.ss7.cap.api.errors.CancelProblem;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CAPErrorMessageCancelFailedImpl extends CAPErrorMessageImpl implements CAPErrorMessageCancelFailed {
 
-	public static final String _PrimitiveName = "CAPErrorMessageCancelFailed";
+    public static final String _PrimitiveName = "CAPErrorMessageCancelFailed";
 
-	private CancelProblem cancelProblem;
+    private CancelProblem cancelProblem;
 
-	protected CAPErrorMessageCancelFailedImpl(CancelProblem cancelProblem) {
-		super((long) CAPErrorCode.cancelFailed);
+    protected CAPErrorMessageCancelFailedImpl(CancelProblem cancelProblem) {
+        super((long) CAPErrorCode.cancelFailed);
 
-		this.cancelProblem = cancelProblem;
-	}
+        this.cancelProblem = cancelProblem;
+    }
 
-	protected CAPErrorMessageCancelFailedImpl() {
-		super((long) CAPErrorCode.cancelFailed);
-	}
+    protected CAPErrorMessageCancelFailedImpl() {
+        super((long) CAPErrorCode.cancelFailed);
+    }
 
+    @Override
+    public boolean isEmCancelFailed() {
+        return true;
+    }
 
-	@Override
-	public boolean isEmCancelFailed() {
-		return true;
-	}
+    @Override
+    public CAPErrorMessageCancelFailed getEmCancelFailed() {
+        return this;
+    }
 
-	@Override
-	public CAPErrorMessageCancelFailed getEmCancelFailed() {
-		return this;
-	}
-	
+    @Override
+    public CancelProblem getCancelProblem() {
+        return cancelProblem;
+    }
 
-	@Override
-	public CancelProblem getCancelProblem() {
-		return cancelProblem;
-	}
+    public void setCancelProblem(CancelProblem cancelProblem) {
+        this.cancelProblem = cancelProblem;
+    }
 
-	public void setCancelProblem(CancelProblem cancelProblem) {
-		this.cancelProblem = cancelProblem;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.ENUMERATED;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.ENUMERATED;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    private void _decode(AsnInputStream localAis, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-	private void _decode(AsnInputStream localAis, int length) throws CAPParsingComponentException, IOException, AsnException {
+        this.cancelProblem = null;
 
-		this.cancelProblem = null;
+        if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.ENUMERATED || !localAis.isTagPrimitive())
+            throw new CAPParsingComponentException("Error decoding " + _PrimitiveName
+                    + ": bad tag class or tag or parameter is not primitive",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (localAis.getTagClass() != Tag.CLASS_UNIVERSAL || localAis.getTag() != Tag.ENUMERATED || !localAis.isTagPrimitive())
-			throw new CAPParsingComponentException(
-					"Error decoding " + _PrimitiveName + ": bad tag class or tag or parameter is not primitive",
-					CAPParsingComponentExceptionReason.MistypedParameter);
+        int i1 = (int) localAis.readIntegerData(length);
+        this.cancelProblem = CancelProblem.getInstance(i1);
+    }
 
-		int i1 = (int) localAis.readIntegerData(length);
-		this.cancelProblem = CancelProblem.getInstance(i1);
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    public void encodeData(AsnOutputStream aos) throws CAPException {
 
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+        if (this.cancelProblem == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": cancelProblem field must not be null");
 
-		if (this.cancelProblem == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": cancelProblem field must not be null");
+        try {
+            aos.writeIntegerData(this.cancelProblem.getCode());
 
-		try {
-			aos.writeIntegerData(this.cancelProblem.getCode());
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		if (this.cancelProblem != null) {
-			sb.append("cancelProblem=");
-			sb.append(cancelProblem);
-			sb.append(",");
-		}
-		sb.append("]");
-		
-		return sb.toString();
-	}
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+        if (this.cancelProblem != null) {
+            sb.append("cancelProblem=");
+            sb.append(cancelProblem);
+            sb.append(",");
+        }
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

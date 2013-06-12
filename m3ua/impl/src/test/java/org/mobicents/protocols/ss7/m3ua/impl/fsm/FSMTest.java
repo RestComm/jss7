@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -21,7 +21,6 @@
  */
 package org.mobicents.protocols.ss7.m3ua.impl.fsm;
 
-
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -37,297 +36,296 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class FSMTest {
 
-	private M3UAScheduler m3uaScheduler = new M3UAScheduler();
-	private ScheduledExecutorService scheduledExecutorService = null;
-	private volatile boolean timedOut = false;
-	private volatile boolean stateEntered = false;
-	private volatile boolean stateExited = false;
-	private volatile boolean transitionHandlerCalled = false;
-	private volatile int timeOutCount = 0;
+    private M3UAScheduler m3uaScheduler = new M3UAScheduler();
+    private ScheduledExecutorService scheduledExecutorService = null;
+    private volatile boolean timedOut = false;
+    private volatile boolean stateEntered = false;
+    private volatile boolean stateExited = false;
+    private volatile boolean transitionHandlerCalled = false;
+    private volatile int timeOutCount = 0;
 
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
 
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
-	@BeforeMethod
-	public void setUp() throws Exception {
+    @BeforeMethod
+    public void setUp() throws Exception {
 
-		timedOut = false;
-		stateEntered = false;
-		stateExited = false;
-		transitionHandlerCalled = false;
+        timedOut = false;
+        stateEntered = false;
+        stateExited = false;
+        transitionHandlerCalled = false;
 
-		scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-		scheduledExecutorService.scheduleAtFixedRate(m3uaScheduler, 500, 500, TimeUnit.MILLISECONDS);
-	}
+        scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        scheduledExecutorService.scheduleAtFixedRate(m3uaScheduler, 500, 500, TimeUnit.MILLISECONDS);
+    }
 
-	@AfterMethod
-	public void tearDown() throws Exception {
+    @AfterMethod
+    public void tearDown() throws Exception {
 
-	}
+    }
 
-	@Test
-	public void testOnExit() throws Exception {
-		FSM fsm = new FSM("test");
+    @Test
+    public void testOnExit() throws Exception {
+        FSM fsm = new FSM("test");
 
-		fsm.createState("STATE1").setOnExit(new AsState1Exit(fsm));
-		fsm.createState("STATE2");
+        fsm.createState("STATE1").setOnExit(new AsState1Exit(fsm));
+        fsm.createState("STATE2");
 
-		fsm.setStart("STATE1");
-		fsm.setEnd("STATE2");
+        fsm.setStart("STATE1");
+        fsm.setEnd("STATE2");
 
-		fsm.createTransition("GoToSTATE2", "STATE1", "STATE2");
+        fsm.createTransition("GoToSTATE2", "STATE1", "STATE2");
 
-		m3uaScheduler.execute(fsm);
+        m3uaScheduler.execute(fsm);
 
-		fsm.signal("GoToSTATE2");
+        fsm.signal("GoToSTATE2");
 
-		assertTrue(stateExited);
-		assertEquals("STATE2", fsm.getState().getName());
-	}
+        assertTrue(stateExited);
+        assertEquals("STATE2", fsm.getState().getName());
+    }
 
-	@Test
-	public void testTransitionHandler() throws Exception {
-		FSM fsm = new FSM("test");
+    @Test
+    public void testTransitionHandler() throws Exception {
+        FSM fsm = new FSM("test");
 
-		fsm.createState("STATE1");
-		fsm.createState("STATE2");
+        fsm.createState("STATE1");
+        fsm.createState("STATE2");
 
-		fsm.setStart("STATE1");
-		fsm.setEnd("STATE2");
+        fsm.setStart("STATE1");
+        fsm.setEnd("STATE2");
 
-		fsm.createTransition("GoToSTATE2", "STATE1", "STATE2").setHandler(new State1ToState2Transition());
+        fsm.createTransition("GoToSTATE2", "STATE1", "STATE2").setHandler(new State1ToState2Transition());
 
-		m3uaScheduler.execute(fsm);
+        m3uaScheduler.execute(fsm);
 
-		fsm.signal("GoToSTATE2");
+        fsm.signal("GoToSTATE2");
 
-		assertTrue(transitionHandlerCalled);
-		assertEquals("STATE2", fsm.getState().getName());
-	}
+        assertTrue(transitionHandlerCalled);
+        assertEquals("STATE2", fsm.getState().getName());
+    }
 
-	/**
-	 * In this test we set TransitionHandler to cancel the transition and yet
-	 * original timeout is to be respected
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void testNoTransitionHandler() throws Exception {
-		FSM fsm = new FSM("test");
+    /**
+     * In this test we set TransitionHandler to cancel the transition and yet original timeout is to be respected
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testNoTransitionHandler() throws Exception {
+        FSM fsm = new FSM("test");
 
-		fsm.createState("STATE1");
-		fsm.createState("STATE2");
+        fsm.createState("STATE1");
+        fsm.createState("STATE2");
 
-		fsm.setStart("STATE1");
-		fsm.setEnd("STATE2");
+        fsm.setStart("STATE1");
+        fsm.setEnd("STATE2");
 
-		// Transition shouldn't happen
-		fsm.createTransition("GoToSTATE2", "STATE1", "STATE2").setHandler(new State1ToState2NoTransition());
+        // Transition shouldn't happen
+        fsm.createTransition("GoToSTATE2", "STATE1", "STATE2").setHandler(new State1ToState2NoTransition());
 
-		m3uaScheduler.execute(fsm);
+        m3uaScheduler.execute(fsm);
 
-		fsm.signal("GoToSTATE2");
+        fsm.signal("GoToSTATE2");
 
-		assertTrue(transitionHandlerCalled);
-		assertEquals("STATE1", fsm.getState().getName());
-	}
+        assertTrue(transitionHandlerCalled);
+        assertEquals("STATE1", fsm.getState().getName());
+    }
 
-	@Test
-	public void testOnEnter() throws Exception {
-		FSM fsm = new FSM("test");
+    @Test
+    public void testOnEnter() throws Exception {
+        FSM fsm = new FSM("test");
 
-		fsm.createState("STATE1");
-		fsm.createState("STATE2").setOnEnter(new AsState2Enter(fsm));
+        fsm.createState("STATE1");
+        fsm.createState("STATE2").setOnEnter(new AsState2Enter(fsm));
 
-		fsm.setStart("STATE1");
-		fsm.setEnd("STATE2");
+        fsm.setStart("STATE1");
+        fsm.setEnd("STATE2");
 
-		fsm.createTransition("GoToSTATE2", "STATE1", "STATE2");
+        fsm.createTransition("GoToSTATE2", "STATE1", "STATE2");
 
-		m3uaScheduler.execute(fsm);
+        m3uaScheduler.execute(fsm);
 
-		fsm.signal("GoToSTATE2");
+        fsm.signal("GoToSTATE2");
 
-		assertTrue(stateEntered);
-		assertEquals("STATE2", fsm.getState().getName());
-	}
+        assertTrue(stateEntered);
+        assertEquals("STATE2", fsm.getState().getName());
+    }
 
-	@Test
-	public void testTimeout() throws Exception {
-		FSM fsm = new FSM("test");
+    @Test
+    public void testTimeout() throws Exception {
+        FSM fsm = new FSM("test");
 
-		fsm.createState("STATE1");
-		fsm.createState("STATE2").setOnTimeOut(new AsState2Timeout(fsm), 2000);
+        fsm.createState("STATE1");
+        fsm.createState("STATE2").setOnTimeOut(new AsState2Timeout(fsm), 2000);
 
-		fsm.setStart("STATE1");
-		fsm.setEnd("STATE2");
+        fsm.setStart("STATE1");
+        fsm.setEnd("STATE2");
 
-		fsm.createTransition("GoToSTATE2", "STATE1", "STATE2");
+        fsm.createTransition("GoToSTATE2", "STATE1", "STATE2");
 
-		m3uaScheduler.execute(fsm);
+        m3uaScheduler.execute(fsm);
 
-		fsm.signal("GoToSTATE2");
+        fsm.signal("GoToSTATE2");
 
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-		assertTrue(timedOut);
-		assertEquals("STATE2", fsm.getState().getName());
+        assertTrue(timedOut);
+        assertEquals("STATE2", fsm.getState().getName());
 
-	}
+    }
 
-	@Test
-	public void testTimeoutNoTransition() throws Exception {
-		FSM fsm = new FSM("test");
+    @Test
+    public void testTimeoutNoTransition() throws Exception {
+        FSM fsm = new FSM("test");
 
-		fsm.createState("STATE1");
-		fsm.createState("STATE2").setOnTimeOut(new AsState2Timeout(fsm), 2000);
-		fsm.createState("STATE3");
+        fsm.createState("STATE1");
+        fsm.createState("STATE2").setOnTimeOut(new AsState2Timeout(fsm), 2000);
+        fsm.createState("STATE3");
 
-		fsm.setStart("STATE1");
-		fsm.setEnd("STATE2");
+        fsm.setStart("STATE1");
+        fsm.setEnd("STATE2");
 
-		fsm.createTransition("GoToSTATE2", "STATE1", "STATE2");
-		fsm.createTransition("GoToSTATE3", "STATE2", "STATE3").setHandler(new NoTransition());
+        fsm.createTransition("GoToSTATE2", "STATE1", "STATE2");
+        fsm.createTransition("GoToSTATE3", "STATE2", "STATE3").setHandler(new NoTransition());
 
-		m3uaScheduler.execute(fsm);
+        m3uaScheduler.execute(fsm);
 
-		fsm.signal("GoToSTATE2");
-		assertEquals("STATE2", fsm.getState().getName());
-		fsm.signal("GoToSTATE3");
+        fsm.signal("GoToSTATE2");
+        assertEquals("STATE2", fsm.getState().getName());
+        fsm.signal("GoToSTATE3");
 
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-		assertTrue(timedOut);
-		assertEquals("STATE2", fsm.getState().getName());
+        assertTrue(timedOut);
+        assertEquals("STATE2", fsm.getState().getName());
 
-	}
-	
-	@Test
-	public void testTimeoutTransition() throws Exception {
-		FSM fsm = new FSM("test");
+    }
 
-		fsm.createState("STATE1");
-		fsm.createState("STATE2");
-		fsm.createState("STATE3");
+    @Test
+    public void testTimeoutTransition() throws Exception {
+        FSM fsm = new FSM("test");
 
-		fsm.setStart("STATE1");
-		fsm.setEnd("STATE3");
+        fsm.createState("STATE1");
+        fsm.createState("STATE2");
+        fsm.createState("STATE3");
 
-		fsm.createTransition("GoToSTATE2", "STATE1", "STATE2");
-		fsm.createTimeoutTransition("STATE2", "STATE2", 1000l).setHandler(new State2TimeoutTransition());
+        fsm.setStart("STATE1");
+        fsm.setEnd("STATE3");
 
-		m3uaScheduler.execute(fsm);
+        fsm.createTransition("GoToSTATE2", "STATE1", "STATE2");
+        fsm.createTimeoutTransition("STATE2", "STATE2", 1000l).setHandler(new State2TimeoutTransition());
 
-		fsm.signal("GoToSTATE2");
+        m3uaScheduler.execute(fsm);
 
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        fsm.signal("GoToSTATE2");
 
-		assertTrue((2 <= timeOutCount) && (timeOutCount <= 3));
-		assertEquals("STATE2", fsm.getState().getName());
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-	}	
+        assertTrue((2 <= timeOutCount) && (timeOutCount <= 3));
+        assertEquals("STATE2", fsm.getState().getName());
 
-	class AsState1Exit implements FSMStateEventHandler {
+    }
 
-		private FSM fsm;
+    class AsState1Exit implements FSMStateEventHandler {
 
-		public AsState1Exit(FSM fsm) {
-			this.fsm = fsm;
-		}
+        private FSM fsm;
 
-		public void onEvent(FSMState state) {
-			stateExited = true;
-		}
-	}
+        public AsState1Exit(FSM fsm) {
+            this.fsm = fsm;
+        }
 
-	class AsState2Timeout implements FSMStateEventHandler {
+        public void onEvent(FSMState state) {
+            stateExited = true;
+        }
+    }
 
-		private FSM fsm;
+    class AsState2Timeout implements FSMStateEventHandler {
 
-		public AsState2Timeout(FSM fsm) {
-			this.fsm = fsm;
-		}
+        private FSM fsm;
 
-		public void onEvent(FSMState state) {
-			timedOut = true;
-		}
-	}
+        public AsState2Timeout(FSM fsm) {
+            this.fsm = fsm;
+        }
 
-	class AsState2Enter implements FSMStateEventHandler {
+        public void onEvent(FSMState state) {
+            timedOut = true;
+        }
+    }
 
-		private FSM fsm;
+    class AsState2Enter implements FSMStateEventHandler {
 
-		public AsState2Enter(FSM fsm) {
-			this.fsm = fsm;
-		}
+        private FSM fsm;
 
-		public void onEvent(FSMState state) {
-			stateEntered = true;
-		}
-	}
+        public AsState2Enter(FSM fsm) {
+            this.fsm = fsm;
+        }
 
-	class State1ToState2Transition implements TransitionHandler {
+        public void onEvent(FSMState state) {
+            stateEntered = true;
+        }
+    }
 
-		@Override
-		public boolean process(FSMState state) {
-			transitionHandlerCalled = true;
-			return true;
-		}
+    class State1ToState2Transition implements TransitionHandler {
 
-	}
-	
-	class State2TimeoutTransition implements TransitionHandler {
+        @Override
+        public boolean process(FSMState state) {
+            transitionHandlerCalled = true;
+            return true;
+        }
 
-		@Override
-		public boolean process(FSMState state) {
-			timeOutCount++;
-			return true;
-		}
+    }
 
-	}
+    class State2TimeoutTransition implements TransitionHandler {
 
-	class State1ToState2NoTransition implements TransitionHandler {
+        @Override
+        public boolean process(FSMState state) {
+            timeOutCount++;
+            return true;
+        }
 
-		@Override
-		public boolean process(FSMState state) {
-			transitionHandlerCalled = true;
-			return false;
-		}
+    }
 
-	}
+    class State1ToState2NoTransition implements TransitionHandler {
 
-	class NoTransition implements TransitionHandler {
+        @Override
+        public boolean process(FSMState state) {
+            transitionHandlerCalled = true;
+            return false;
+        }
 
-		@Override
-		public boolean process(FSMState state) {
-			return false;
-		}
+    }
 
-	}
+    class NoTransition implements TransitionHandler {
+
+        @Override
+        public boolean process(FSMState state) {
+            return false;
+        }
+
+    }
 }

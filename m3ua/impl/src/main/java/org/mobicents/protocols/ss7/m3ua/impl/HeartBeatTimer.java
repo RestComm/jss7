@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -28,66 +28,66 @@ import org.mobicents.protocols.ss7.m3ua.message.aspsm.Heartbeat;
 
 /**
  * @author Amit Bhayani
- * 
+ *
  */
 public class HeartBeatTimer extends M3UATask {
 
-	private static final Logger logger = Logger.getLogger(HeartBeatTimer.class);
+    private static final Logger logger = Logger.getLogger(HeartBeatTimer.class);
 
-	private static final int HEART_BEAT_ACK_MISSED_ALLOWED = 2;
+    private static final int HEART_BEAT_ACK_MISSED_ALLOWED = 2;
 
-	private static final Heartbeat HEART_BEAT = new HeartbeatImpl();
-	
-	private long lastM3UAMessageTime = 0l;
-	private int heartBeatAckMissed = 0;
+    private static final Heartbeat HEART_BEAT = new HeartbeatImpl();
 
-	private AspFactoryImpl aspFactoryImpl = null;
-	
-	/**
-	 * 
-	 */
-	public HeartBeatTimer(AspFactoryImpl aspFactoryImpl) {
-		this.aspFactoryImpl = aspFactoryImpl;
-	}
+    private long lastM3UAMessageTime = 0L;
+    private int heartBeatAckMissed = 0;
 
-	protected void reset() {
-		this.lastM3UAMessageTime = System.currentTimeMillis();
-		this.heartBeatAckMissed = 0;
-	}
+    private AspFactoryImpl aspFactoryImpl = null;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.m3ua.impl.scheduler.M3UATask#tick(long)
-	 */
-	@Override
-	public void tick(long now) {
-		if (now - this.lastM3UAMessageTime >= this.aspFactoryImpl.m3UAManagementImpl.getHeartbeatTime()) {
-			this.lastM3UAMessageTime = now;
-			this.heartBeatAckMissed++;
-			
-			this.aspFactoryImpl.write(HEART_BEAT);
-		}
+    /**
+     *
+     */
+    public HeartBeatTimer(AspFactoryImpl aspFactoryImpl) {
+        this.aspFactoryImpl = aspFactoryImpl;
+    }
 
-		if (this.heartBeatAckMissed > HEART_BEAT_ACK_MISSED_ALLOWED) {
+    protected void reset() {
+        this.lastM3UAMessageTime = System.currentTimeMillis();
+        this.heartBeatAckMissed = 0;
+    }
 
-			try {
-				this.aspFactoryImpl.transportManagement.stopAssociation(this.aspFactoryImpl.associationName);
-			} catch (Exception e) {
-				logger.warn(String.format("Error while trying to stop underlying Association for AspFactpry=%s",
-						this.aspFactoryImpl.getName()), e);
-			}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.m3ua.impl.scheduler.M3UATask#tick(long)
+     */
+    @Override
+    public void tick(long now) {
+        if (now - this.lastM3UAMessageTime >= this.aspFactoryImpl.m3UAManagementImpl.getHeartbeatTime()) {
+            this.lastM3UAMessageTime = now;
+            this.heartBeatAckMissed++;
 
-			try {
-				this.aspFactoryImpl.transportManagement.startAssociation(this.aspFactoryImpl.associationName);
-			} catch (Exception e) {
-				logger.error(String.format("Error while trying to start underlying Association for AspFactpry=%s",
-						this.aspFactoryImpl.getName()), e);
-			}
+            this.aspFactoryImpl.write(HEART_BEAT);
+        }
 
-			// finally cancel
-			this.cancel();
-		}
-	}
+        if (this.heartBeatAckMissed > HEART_BEAT_ACK_MISSED_ALLOWED) {
+
+            try {
+                this.aspFactoryImpl.transportManagement.stopAssociation(this.aspFactoryImpl.associationName);
+            } catch (Exception e) {
+                logger.warn(String.format("Error while trying to stop underlying Association for AspFactpry=%s",
+                        this.aspFactoryImpl.getName()), e);
+            }
+
+            try {
+                this.aspFactoryImpl.transportManagement.startAssociation(this.aspFactoryImpl.associationName);
+            } catch (Exception e) {
+                logger.error(String.format("Error while trying to start underlying Association for AspFactpry=%s",
+                        this.aspFactoryImpl.getName()), e);
+            }
+
+            // finally cancel
+            this.cancel();
+        }
+    }
 
 }

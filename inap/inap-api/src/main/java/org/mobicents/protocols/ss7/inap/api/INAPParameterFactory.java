@@ -35,22 +35,29 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation
 import org.mobicents.protocols.ss7.isup.message.parameter.UserTeleserviceInformation;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface INAPParameterFactory {
 
-	public CallingPartysCategoryInap createCallingPartysCategoryInap(byte[] data);
-	public CallingPartysCategoryInap createCallingPartysCategoryInap(CallingPartyCategory callingPartyCategory) throws INAPException;
+    CallingPartysCategoryInap createCallingPartysCategoryInap(byte[] data);
 
-	public HighLayerCompatibilityInap createHighLayerCompatibilityInap(byte[] data);
-	public HighLayerCompatibilityInap createHighLayerCompatibilityInap(UserTeleserviceInformation highLayerCompatibility) throws INAPException;
+    CallingPartysCategoryInap createCallingPartysCategoryInap(CallingPartyCategory callingPartyCategory)
+            throws INAPException;
 
-	public RedirectionInformationInap createRedirectionInformationInap(byte[] data);
-	public RedirectionInformationInap createRedirectionInformationInap(RedirectionInformation redirectionInformation) throws INAPException;
+    HighLayerCompatibilityInap createHighLayerCompatibilityInap(byte[] data);
 
-	public LegID createLegID(boolean isSendingSideID, LegType legID);
-	public MiscCallInfo createMiscCallInfo(MiscCallInfoMessageType messageType, MiscCallInfoDpAssignment dpAssignment);
+    HighLayerCompatibilityInap createHighLayerCompatibilityInap(UserTeleserviceInformation highLayerCompatibility)
+            throws INAPException;
+
+    RedirectionInformationInap createRedirectionInformationInap(byte[] data);
+
+    RedirectionInformationInap createRedirectionInformationInap(RedirectionInformation redirectionInformation)
+            throws INAPException;
+
+    LegID createLegID(boolean isSendingSideID, LegType legID);
+
+    MiscCallInfo createMiscCallInfo(MiscCallInfoMessageType messageType, MiscCallInfoDpAssignment dpAssignment);
 
 }

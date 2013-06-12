@@ -26,21 +26,17 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-PrepareGroupCallRes ::= SEQUENCE {
-	groupCallNumber	ISDN-AddressString,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ PrepareGroupCallRes ::= SEQUENCE { groupCallNumber ISDN-AddressString, extensionContainer ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface PrepareGroupCallResponse extends CallHandlingMessage {
 
-	public ISDNAddressString getGroupCallNumber();
+    ISDNAddressString getGroupCallNumber();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

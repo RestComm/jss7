@@ -25,20 +25,15 @@ package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 
 /**
-*
-
-tServiceChangeSpecificInfo [1] SEQUENCE {
-ext-basicServiceCode [0] Ext-BasicServiceCode OPTIONAL,
-...
-}
-}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ tServiceChangeSpecificInfo [1] SEQUENCE { ext-basicServiceCode [0] Ext-BasicServiceCode OPTIONAL, ... } }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface TServiceChangeSpecificInfo {
 
-	public ExtBasicServiceCode getExtBasicServiceCode();
+    ExtBasicServiceCode getExtBasicServiceCode();
 
 }

@@ -29,29 +29,25 @@ import java.nio.channels.spi.SelectorProvider;
 
 /**
  * <p>
- * Service-provider class for {@link ChannelSelector} and selectable
- * {@link ShellSelectableChannel}
+ * Service-provider class for {@link ChannelSelector} and selectable {@link ShellSelectableChannel}
  * </p>
  * <p>
- * A given invocation of the Java virtual machine maintains a single system-wide
- * default provider instance, which is returned by the {@link #provider()
- * provider} method. The first invocation of that method will locate the default
- * provider as specified below.
+ * A given invocation of the Java virtual machine maintains a single system-wide default provider instance, which is returned by
+ * the {@link #provider() provider} method. The first invocation of that method will locate the default provider as specified
+ * below.
  * </p>
  * <p>
- * The system-wide default provider is used by the static <tt>open</tt>
- * methods of the {@link ShellChannel#open ShellChannel},
- * {@link ShellServerChannel#open ShellServerChannel}, and {@link
- * ChannelSelector#open ChannelSelector} classes.
+ * The system-wide default provider is used by the static <tt>open</tt> methods of the {@link ShellChannel#open ShellChannel},
+ * {@link ShellServerChannel#open ShellServerChannel}, and {@link ChannelSelector#open ChannelSelector} classes.
  * </p>
- * 
+ *
  * <p>
- * A program may make use of system-wide default provider to get instance of
- * {@link MessageFactory} by calling <tt>getMessageFactory</tt>
+ * A program may make use of system-wide default provider to get instance of {@link MessageFactory} by calling
+ * <tt>getMessageFactory</tt>
  * </p>
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class ChannelProvider {
 
@@ -63,9 +59,8 @@ public class ChannelProvider {
     }
 
     /**
-     * Returns the system-wide default selector provider for this invocation of
-     * the Java virtual machine.
-     * 
+     * Returns the system-wide default selector provider for this invocation of the Java virtual machine.
+     *
      * @return Returns the system-wide default selector provider.
      */
     public static ChannelProvider provider() {
@@ -74,7 +69,7 @@ public class ChannelProvider {
 
     /**
      * Opens a shell channel
-     * 
+     *
      * @return The new channel
      * @throws IOException
      */
@@ -84,7 +79,7 @@ public class ChannelProvider {
 
     /**
      * Opens a server channel
-     * 
+     *
      * @return The new channel
      * @throws IOException
      */
@@ -94,7 +89,7 @@ public class ChannelProvider {
 
     /**
      * Opens a channel selector
-     * 
+     *
      * @return New selector
      * @throws IOException
      */
@@ -103,9 +98,8 @@ public class ChannelProvider {
     }
 
     /**
-     * Returns the system-wide default message factory for this invocation of
-     * the Java virtual machine.
-     * 
+     * Returns the system-wide default message factory for this invocation of the Java virtual machine.
+     *
      * @return Returns the system-wide default message factory
      */
     public MessageFactory getMessageFactory() {

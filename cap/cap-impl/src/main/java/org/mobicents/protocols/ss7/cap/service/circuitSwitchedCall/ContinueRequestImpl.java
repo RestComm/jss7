@@ -32,75 +32,75 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequest;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class ContinueRequestImpl extends CircuitSwitchedCallMessageImpl implements ContinueRequest {
 
-	public static final String _PrimitiveName = "ContinueRequest";
+    public static final String _PrimitiveName = "ContinueRequest";
 
-	@Override
-	public CAPMessageType getMessageType() {
-		return CAPMessageType.continue_Request;
-	}
+    @Override
+    public CAPMessageType getMessageType() {
+        return CAPMessageType.continue_Request;
+    }
 
-	@Override
-	public int getOperationCode() {
-		return CAPOperationCode.continueCode;
-	}
+    @Override
+    public int getOperationCode() {
+        return CAPOperationCode.continueCode;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		throw new CAPException("Parameter " + _PrimitiveName + ": does not support encoding");
-	}
+    @Override
+    public int getTag() throws CAPException {
+        throw new CAPException("Parameter " + _PrimitiveName + ": does not support encoding");
+    }
 
-	@Override
-	public int getTagClass() {
-		return 0;
-	}
+    @Override
+    public int getTagClass() {
+        return 0;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
-		throw new CAPParsingComponentException("Parameter " + _PrimitiveName + ": does not support encoding",
-				CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+        throw new CAPParsingComponentException("Parameter " + _PrimitiveName + ": does not support encoding",
+                CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
-		throw new CAPParsingComponentException("Parameter " + _PrimitiveName + ": does not support encoding",
-				CAPParsingComponentExceptionReason.MistypedParameter);
-	}
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+        throw new CAPParsingComponentException("Parameter " + _PrimitiveName + ": does not support encoding",
+                CAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		throw new CAPException("Parameter " + _PrimitiveName + ": does not support encoding");
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        throw new CAPException("Parameter " + _PrimitiveName + ": does not support encoding");
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-		throw new CAPException("Parameter " + _PrimitiveName + ": does not support encoding");
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+        throw new CAPException("Parameter " + _PrimitiveName + ": does not support encoding");
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws CAPException {
-		throw new CAPException("Parameter " + _PrimitiveName + ": does not support encoding");
-	}
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws CAPException {
+        throw new CAPException("Parameter " + _PrimitiveName + ": does not support encoding");
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		
-		sb.append("]");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		return sb.toString();
-	}
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

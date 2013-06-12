@@ -39,256 +39,259 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.IntraCUGOptions;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
-import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
 
 /**
  * @author daniel bichara
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CUGSubscriptionImpl extends SequenceBase implements CUGSubscription {
 
-	private static final int _TAG_extensionContainer = 0;
+    private static final int _TAG_extensionContainer = 0;
 
-	private int cugIndex;
-	private CUGInterlock cugInterlock = null;
-	private IntraCUGOptions intraCugOptions = null;
-	private ArrayList<ExtBasicServiceCode> basicService = null;
-	private MAPExtensionContainer extensionContainer = null;
+    private int cugIndex;
+    private CUGInterlock cugInterlock = null;
+    private IntraCUGOptions intraCugOptions = null;
+    private ArrayList<ExtBasicServiceCode> basicService = null;
+    private MAPExtensionContainer extensionContainer = null;
 
-	public CUGSubscriptionImpl() {
-		super("CUGSubscription");
-	}
+    public CUGSubscriptionImpl() {
+        super("CUGSubscription");
+    }
 
-	/**
-	 * 
-	 */
-	public CUGSubscriptionImpl(int cugIndex, CUGInterlock cugInterlock, IntraCUGOptions intraCugOptions, ArrayList<ExtBasicServiceCode> basicService,
-			MAPExtensionContainer extensionContainer) {
-		super("CUGSubscription");
+    /**
+    *
+    */
+    public CUGSubscriptionImpl(int cugIndex, CUGInterlock cugInterlock, IntraCUGOptions intraCugOptions,
+            ArrayList<ExtBasicServiceCode> basicService, MAPExtensionContainer extensionContainer) {
+        super("CUGSubscription");
 
-		this.cugIndex = cugIndex;
-		this.cugInterlock = cugInterlock;
-		this.intraCugOptions = intraCugOptions;
-		this.basicService = basicService;
-		this.extensionContainer = extensionContainer;
-	}
+        this.cugIndex = cugIndex;
+        this.cugInterlock = cugInterlock;
+        this.intraCugOptions = intraCugOptions;
+        this.basicService = basicService;
+        this.extensionContainer = extensionContainer;
+    }
 
-	public int getCUGIndex() {
-		return (int)this.cugIndex;
-	}
+    public int getCUGIndex() {
+        return (int) this.cugIndex;
+    }
 
-	public CUGInterlock getCugInterlock() {
-		return this.cugInterlock;
-	}
+    public CUGInterlock getCugInterlock() {
+        return this.cugInterlock;
+    }
 
-	public IntraCUGOptions getIntraCugOptions() {
-		return this.intraCugOptions;
-	}
+    public IntraCUGOptions getIntraCugOptions() {
+        return this.intraCugOptions;
+    }
 
-	public ArrayList<ExtBasicServiceCode> getBasicServiceGroupList() {
-		return this.basicService;
-	}
+    public ArrayList<ExtBasicServiceCode> getBasicServiceGroupList() {
+        return this.basicService;
+    }
 
-	public MAPExtensionContainer getExtensionContainer() {
-		return this.extensionContainer;
-	}
+    public MAPExtensionContainer getExtensionContainer() {
+        return this.extensionContainer;
+    }
 
-	protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		this.cugIndex = 0;
-		this.cugInterlock = null;
-		this.intraCugOptions = null;
-		this.basicService = null;
-		this.extensionContainer = null;
+    protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+        this.cugIndex = 0;
+        this.cugInterlock = null;
+        this.intraCugOptions = null;
+        this.basicService = null;
+        this.extensionContainer = null;
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
-		int num = 0;
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        int num = 0;
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-			int tag = ais.readTag();
+            int tag = ais.readTag();
 
-			switch (num) {
-			case 0: // cugIndex
-				if (!ais.isTagPrimitive() || tag != Tag.INTEGER || ais.getTagClass() != Tag.CLASS_UNIVERSAL)
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".cugIndex: bad tag or tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.cugIndex = (int) ais.readInteger();
-				break;
-			
-			case 1: // cugInterlock
-				if (!ais.isTagPrimitive() || tag != Tag.STRING_OCTET || ais.getTagClass() != Tag.CLASS_UNIVERSAL)
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".cugInterlock: bad tag or tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.cugInterlock = new CUGInterlockImpl();
-				((CUGInterlockImpl) this.cugInterlock).decodeAll(ais);
-				break;
-			
-			case 2: // intraCugOptions
-				if (!ais.isTagPrimitive() || tag != Tag.ENUMERATED || ais.getTagClass() != Tag.CLASS_UNIVERSAL)
-					throw new MAPParsingComponentException(
-							"Error while decoding " + _PrimitiveName + ".intraCugOptions: bad tag or tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				int i1 = (int) ais.readInteger();
-				this.intraCugOptions = IntraCUGOptions.getInstance(i1);
-				break;
-			
-			default:
-				switch (ais.getTagClass()) {
-				case Tag.CLASS_CONTEXT_SPECIFIC:
-					switch (tag) {
-					case _TAG_extensionContainer:
-						if (ais.isTagPrimitive())
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						this.extensionContainer = new MAPExtensionContainerImpl();
-						((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
-						break;
-					default:
-						ais.advanceElement();
-						break;
-					}
-					break;
+            switch (num) {
+                case 0: // cugIndex
+                    if (!ais.isTagPrimitive() || tag != Tag.INTEGER || ais.getTagClass() != Tag.CLASS_UNIVERSAL)
+                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ".cugIndex: bad tag or tag class or not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.cugIndex = (int) ais.readInteger();
+                    break;
 
-				case Tag.CLASS_UNIVERSAL:
-					switch (tag) {
-					case Tag.SEQUENCE:
-						if (ais.isTagPrimitive())
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".basicService: Parameter is primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
+                case 1: // cugInterlock
+                    if (!ais.isTagPrimitive() || tag != Tag.STRING_OCTET || ais.getTagClass() != Tag.CLASS_UNIVERSAL)
+                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ".cugInterlock: bad tag or tag class or not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.cugInterlock = new CUGInterlockImpl();
+                    ((CUGInterlockImpl) this.cugInterlock).decodeAll(ais);
+                    break;
 
-						this.basicService = new ArrayList<ExtBasicServiceCode>();
-						AsnInputStream ais2a = ais.readSequenceStream();
-						while (true) {
-							if (ais2a.available() == 0)
-								break;
+                case 2: // intraCugOptions
+                    if (!ais.isTagPrimitive() || tag != Tag.ENUMERATED || ais.getTagClass() != Tag.CLASS_UNIVERSAL)
+                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ".intraCugOptions: bad tag or tag class or not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    int i1 = (int) ais.readInteger();
+                    this.intraCugOptions = IntraCUGOptions.getInstance(i1);
+                    break;
 
-							int tag2a = ais2a.readTag();
+                default:
+                    switch (ais.getTagClass()) {
+                        case Tag.CLASS_CONTEXT_SPECIFIC:
+                            switch (tag) {
+                                case _TAG_extensionContainer:
+                                    if (ais.isTagPrimitive())
+                                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                                + ".extensionContainer: is primitive",
+                                                MAPParsingComponentExceptionReason.MistypedParameter);
+                                    this.extensionContainer = new MAPExtensionContainerImpl();
+                                    ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                                    break;
+                                default:
+                                    ais.advanceElement();
+                                    break;
+                            }
+                            break;
 
-							ExtBasicServiceCode basicServiceItem = new ExtBasicServiceCodeImpl();
-							((ExtBasicServiceCodeImpl) basicServiceItem).decodeAll(ais2a);
-							this.basicService.add(basicServiceItem);
-						}
+                        case Tag.CLASS_UNIVERSAL:
+                            switch (tag) {
+                                case Tag.SEQUENCE:
+                                    if (ais.isTagPrimitive())
+                                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                                + ".basicService: Parameter is primitive",
+                                                MAPParsingComponentExceptionReason.MistypedParameter);
 
-						if (this.basicService.size() < 1 || this.basicService.size() > 32) {
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ ".basicService: basicServiceGroupList must be from 1 to 32 size, found: " + this.basicService.size(),
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						}
-						break;
-					
-					default:
-						ais.advanceElement();
-						break;
-					}
-					break;
-				
-				default:
-					ais.advanceElement();
-					break;
-				}
-			}
-			num++;
-		}
+                                    this.basicService = new ArrayList<ExtBasicServiceCode>();
+                                    AsnInputStream ais2a = ais.readSequenceStream();
+                                    while (true) {
+                                        if (ais2a.available() == 0)
+                                            break;
 
-		if (num < 3) {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-					+ ": cugIndex, cugInterlock and intraCugOptions required, found only mandatory parameters: " + num,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+                                        int tag2a = ais2a.readTag();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData
-	 * (org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+                                        ExtBasicServiceCode basicServiceItem = new ExtBasicServiceCodeImpl();
+                                        ((ExtBasicServiceCodeImpl) basicServiceItem).decodeAll(ais2a);
+                                        this.basicService.add(basicServiceItem);
+                                    }
 
-		if (this.cugInterlock == null)
-			throw new MAPException("Error while encoding " + _PrimitiveName + ": cugInterlock required.");
+                                    if (this.basicService.size() < 1 || this.basicService.size() > 32) {
+                                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                                + ".basicService: basicServiceGroupList must be from 1 to 32 size, found: "
+                                                + this.basicService.size(),
+                                                MAPParsingComponentExceptionReason.MistypedParameter);
+                                    }
+                                    break;
 
-		if (this.intraCugOptions == null)
-			throw new MAPException("Error while encoding " + _PrimitiveName + ": intraCugOptions required.");
+                                default:
+                                    ais.advanceElement();
+                                    break;
+                            }
+                            break;
 
-		try {
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+            }
+            num++;
+        }
 
-			asnOs.writeInteger(this.cugIndex);
+        if (num < 3) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": cugIndex, cugInterlock and intraCugOptions required, found only mandatory parameters: " + num,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-			((CUGInterlockImpl) this.cugInterlock).encodeAll(asnOs);
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData (org.mobicents.protocols.asn.AsnOutputStream)
+     */
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-			asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.intraCugOptions.getCode());
+        if (this.cugInterlock == null)
+            throw new MAPException("Error while encoding " + _PrimitiveName + ": cugInterlock required.");
 
-			if (this.basicService != null) {
-				if (this.basicService.size() < 1 || this.basicService.size() > 32) {
-					throw new MAPException("Error while encoding " + _PrimitiveName + ".basicService: basicServiceGroupList must be from 1 to 32 size, found: "
-							+ this.basicService.size());
-				}
+        if (this.intraCugOptions == null)
+            throw new MAPException("Error while encoding " + _PrimitiveName + ": intraCugOptions required.");
 
-				asnOs.writeTag(Tag.CLASS_UNIVERSAL, false, Tag.SEQUENCE);
-				int pos = asnOs.StartContentDefiniteLength();
-				for (ExtBasicServiceCode be : this.basicService) {
-					ExtBasicServiceCodeImpl bee = (ExtBasicServiceCodeImpl) be;
-					bee.encodeAll(asnOs);
-				}
-				asnOs.FinalizeContent(pos);
-			}
+        try {
 
-			if (this.extensionContainer != null)
-				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_extensionContainer);
-		} catch (IOException e) {
-			throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+            asnOs.writeInteger(this.cugIndex);
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+            ((CUGInterlockImpl) this.cugInterlock).encodeAll(asnOs);
 
-		sb.append("cugIndex=");
-		sb.append(this.cugIndex);
-		sb.append(", ");
+            asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.intraCugOptions.getCode());
 
-		if (this.cugInterlock != null) {
-			sb.append("cugInterlock=");
-			sb.append(this.cugInterlock.toString());
-			sb.append(", ");
-		}
+            if (this.basicService != null) {
+                if (this.basicService.size() < 1 || this.basicService.size() > 32) {
+                    throw new MAPException("Error while encoding " + _PrimitiveName
+                            + ".basicService: basicServiceGroupList must be from 1 to 32 size, found: "
+                            + this.basicService.size());
+                }
 
-		if (this.intraCugOptions != null) {
-			sb.append("intraCugOptions=");
-			sb.append(this.intraCugOptions.toString());
-			sb.append(", ");
-		}
+                asnOs.writeTag(Tag.CLASS_UNIVERSAL, false, Tag.SEQUENCE);
+                int pos = asnOs.StartContentDefiniteLength();
+                for (ExtBasicServiceCode be : this.basicService) {
+                    ExtBasicServiceCodeImpl bee = (ExtBasicServiceCodeImpl) be;
+                    bee.encodeAll(asnOs);
+                }
+                asnOs.FinalizeContent(pos);
+            }
 
-		if (this.basicService != null) {
-			sb.append("basicService=[");
-			boolean firstItem = true;
-			for (ExtBasicServiceCode be : this.basicService) {
-				if (firstItem)
-					firstItem = false;
-				else
-					sb.append(", ");
-				sb.append(be.toString());
-			}
-			sb.append("], ");
-		}
+            if (this.extensionContainer != null)
+                ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _TAG_extensionContainer);
+        } catch (IOException e) {
+            throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		if (this.extensionContainer != null) {
-			sb.append("extensionContainer=");
-			sb.append(this.extensionContainer.toString());
-		}
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
 
-		sb.append("], ");
+        sb.append("cugIndex=");
+        sb.append(this.cugIndex);
+        sb.append(", ");
 
-		return sb.toString();
-	}
+        if (this.cugInterlock != null) {
+            sb.append("cugInterlock=");
+            sb.append(this.cugInterlock.toString());
+            sb.append(", ");
+        }
+
+        if (this.intraCugOptions != null) {
+            sb.append("intraCugOptions=");
+            sb.append(this.intraCugOptions.toString());
+            sb.append(", ");
+        }
+
+        if (this.basicService != null) {
+            sb.append("basicService=[");
+            boolean firstItem = true;
+            for (ExtBasicServiceCode be : this.basicService) {
+                if (firstItem)
+                    firstItem = false;
+                else
+                    sb.append(", ");
+                sb.append(be.toString());
+            }
+            sb.append("], ");
+        }
+
+        if (this.extensionContainer != null) {
+            sb.append("extensionContainer=");
+            sb.append(this.extensionContainer.toString());
+        }
+
+        sb.append("], ");
+
+        return sb.toString();
+    }
 }
-

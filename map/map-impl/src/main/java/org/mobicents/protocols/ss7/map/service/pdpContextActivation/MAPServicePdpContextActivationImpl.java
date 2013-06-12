@@ -45,59 +45,58 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class MAPServicePdpContextActivationImpl extends MAPServiceBaseImpl implements MAPServicePdpContextActivation {
 
-	protected Logger loger = Logger.getLogger(MAPServicePdpContextActivationImpl.class);
+    protected Logger loger = Logger.getLogger(MAPServicePdpContextActivationImpl.class);
 
-	public MAPServicePdpContextActivationImpl(MAPProviderImpl mapProviderImpl) {
-		super(mapProviderImpl);
-	}
-	/*
-	 * Creating a new outgoing MAP PdpContextActivation dialog and adding it to the
-	 * MAPProvider.dialog collection
-	 * 
-	 */
-	public MAPDialogPdpContextActivation createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference, SccpAddress destAddress,
-			AddressString destReference) throws MAPException {
+    public MAPServicePdpContextActivationImpl(MAPProviderImpl mapProviderImpl) {
+        super(mapProviderImpl);
+    }
 
-		// We cannot create a dialog if the service is not activated
-		if (!this.isActivated())
-			throw new MAPException(
-					"Cannot create MAPDialogPdpContextActivation because MAPServicePdpContextActivation is not activated");
+    /*
+     * Creating a new outgoing MAP PdpContextActivation dialog and adding it to the MAPProvider.dialog collection
+     */
+    public MAPDialogPdpContextActivation createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress,
+            AddressString origReference, SccpAddress destAddress, AddressString destReference) throws MAPException {
 
-		Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
-		MAPDialogPdpContextActivationImpl dialog = new MAPDialogPdpContextActivationImpl(appCntx, tcapDialog, this.mapProviderImpl,
-				this, origReference, destReference);
+        // We cannot create a dialog if the service is not activated
+        if (!this.isActivated())
+            throw new MAPException(
+                    "Cannot create MAPDialogPdpContextActivation because MAPServicePdpContextActivation is not activated");
 
-		this.putMAPDialogIntoCollection(dialog);
+        Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress);
+        MAPDialogPdpContextActivationImpl dialog = new MAPDialogPdpContextActivationImpl(appCntx, tcapDialog,
+                this.mapProviderImpl, this, origReference, destReference);
 
-		return dialog;
-	}
-	
-	protected MAPDialogImpl createNewDialogIncoming(MAPApplicationContext appCntx, Dialog tcapDialog) {
-		return new MAPDialogPdpContextActivationImpl(appCntx, tcapDialog, this.mapProviderImpl, this, null, null);
-	}
+        this.putMAPDialogIntoCollection(dialog);
 
-	public void addMAPServiceListener(MAPServicePdpContextActivationListener mapServiceListener) {
-		super.addMAPServiceListener(mapServiceListener);
-	}
+        return dialog;
+    }
 
-	public void removeMAPServiceListener(MAPServicePdpContextActivationListener mapServiceListener) {
-		super.removeMAPServiceListener(mapServiceListener);
-	}
+    protected MAPDialogImpl createNewDialogIncoming(MAPApplicationContext appCntx, Dialog tcapDialog) {
+        return new MAPDialogPdpContextActivationImpl(appCntx, tcapDialog, this.mapProviderImpl, this, null, null);
+    }
 
-	public ServingCheckData isServingService(MAPApplicationContext dialogApplicationContext) {
-		// TODO Implement it
+    public void addMAPServiceListener(MAPServicePdpContextActivationListener mapServiceListener) {
+        super.addMAPServiceListener(mapServiceListener);
+    }
 
-		return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
-	}
+    public void removeMAPServiceListener(MAPServicePdpContextActivationListener mapServiceListener) {
+        super.removeMAPServiceListener(mapServiceListener);
+    }
 
-	public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog, Long invokeId, Long linkedId,
-			Invoke linkedInvoke) throws MAPParsingComponentException {
-		// TODO Implement it
-	}
+    public ServingCheckData isServingService(MAPApplicationContext dialogApplicationContext) {
+        // TODO Implement it
+
+        return new ServingCheckDataImpl(ServingCheckResult.AC_NotServing);
+    }
+
+    public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog,
+            Long invokeId, Long linkedId, Invoke linkedInvoke) throws MAPParsingComponentException {
+        // TODO Implement it
+    }
 }

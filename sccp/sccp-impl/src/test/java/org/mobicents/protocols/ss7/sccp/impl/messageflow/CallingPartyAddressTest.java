@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -22,14 +22,15 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.messageflow;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import org.mobicents.protocols.ss7.Util;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.OriginationType;
 import org.mobicents.protocols.ss7.sccp.RuleType;
-import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImplProxy;
@@ -44,105 +45,111 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CallingPartyAddressTest extends SccpHarness {
 
-	private SccpAddress a1, a2;
+    private SccpAddress a1, a2;
 
-	public CallingPartyAddressTest() {
-	}
+    public CallingPartyAddressTest() {
+    }
 
-	@BeforeClass
-	public void setUpClass() throws Exception {
-		this.sccpStack1Name = "CallingPartyAddressTestStack1";
-		this.sccpStack2Name = "CallingPartyAddressTestStack2";
-	}
+    @BeforeClass
+    public void setUpClass() throws Exception {
+        this.sccpStack1Name = "CallingPartyAddressTestStack1";
+        this.sccpStack2Name = "CallingPartyAddressTestStack2";
+    }
 
-	@AfterClass
-	public void tearDownClass() throws Exception {
-	}
+    @AfterClass
+    public void tearDownClass() throws Exception {
+    }
 
-	protected void createStack1() {
-		sccpStack1 = createStack(sccpStack1Name);
-		sccpProvider1 = sccpStack1.getSccpProvider();
-	}
+    protected void createStack1() {
+        sccpStack1 = createStack(sccpStack1Name);
+        sccpProvider1 = sccpStack1.getSccpProvider();
+    }
 
-	protected void createStack2() {
-		sccpStack2 = createStack(sccpStack2Name);
-		sccpProvider2 = sccpStack2.getSccpProvider();
-	}
-	
-	@Override
+    protected void createStack2() {
+        sccpStack2 = createStack(sccpStack2Name);
+        sccpProvider2 = sccpStack2.getSccpProvider();
+    }
+
+    @Override
     protected SccpStackImpl createStack(String name) {
-	    SccpStackImpl stack = new SccpStackImplProxy(name);
+        SccpStackImpl stack = new SccpStackImplProxy(name);
         final String dir = Util.getTmpTestDir();
-        if(dir!=null){
+        if (dir != null) {
             stack.setPersistDir(dir);
         }
         return stack;
     }
 
     @BeforeMethod
-	public void setUp() throws Exception {
-		super.setUp();
-	}
+    public void setUp() throws Exception {
+        super.setUp();
+    }
 
-	@AfterMethod
-	public void tearDown() {
-		super.tearDown();
-	}
+    @AfterMethod
+    public void tearDown() {
+        super.tearDown();
+    }
 
-	public byte[] getDataSrc() {
-		return new byte[] { 11, 12, 13, 14, 15 };
-	}
+    public byte[] getDataSrc() {
+        return new byte[] { 11, 12, 13, 14, 15 };
+    }
 
-	@Test(groups = { "SccpMessage", "functional.transfer" })
-	public void testTransfer() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.transfer" })
+    public void testTransfer() throws Exception {
 
-		a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), null, 8);
-		a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), null, 8);
+        a1 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack1PC(), null, 8);
+        a2 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), null, 8);
 
-		User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-		User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
 
-		u1.register();
-		u2.register();
+        u1.register();
+        u2.register();
 
-		Thread.sleep(100);
+        Thread.sleep(100);
 
-		// no newCallingPartyAddress
-		SccpAddress primaryAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(), GlobalTitle.getInstance(1, "111111"), 8);
-		sccpStack1.getRouter().addRoutingAddress(1, primaryAddress);
-		SccpAddress newCallingPartyAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "222222"), 8);
-		sccpStack1.getRouter().addRoutingAddress(2, newCallingPartyAddress);
-		SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		sccpStack1.getRouter().addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern, "K", 1, -1, null);
+        // no newCallingPartyAddress
+        SccpAddress primaryAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, getStack2PC(),
+                GlobalTitle.getInstance(1, "111111"), 8);
+        sccpStack1.getRouter().addRoutingAddress(1, primaryAddress);
+        SccpAddress newCallingPartyAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0,
+                GlobalTitle.getInstance(1, "222222"), 8);
+        sccpStack1.getRouter().addRoutingAddress(2, newCallingPartyAddress);
+        SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1,
+                "111111"), 0);
+        sccpStack1.getRouter().addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern, "K",
+                1, -1, null);
 
-		SccpAddress a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, GlobalTitle.getInstance(1, "111111"), 0);
-		SccpDataMessage message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
+        SccpAddress a3 = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0,
+                GlobalTitle.getInstance(1, "111111"), 0);
+        SccpDataMessage message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8,
+                true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
 
-		assertEquals(u1.getMessages().size(), 0);
-		assertEquals(u2.getMessages().size(), 1);
-		SccpDataMessage dMsg = (SccpDataMessage) u2.getMessages().get(0);
-		assertNull(dMsg.getCallingPartyAddress().getGlobalTitle());
+        assertEquals(u1.getMessages().size(), 0);
+        assertEquals(u2.getMessages().size(), 1);
+        SccpDataMessage dMsg = (SccpDataMessage) u2.getMessages().get(0);
+        assertNull(dMsg.getCallingPartyAddress().getGlobalTitle());
 
-		// present newCallingPartyAddress
-		sccpStack1.getRouter().removeRule(1);
-		sccpStack1.getRouter().addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern, "K", 1, -1, 2);
+        // present newCallingPartyAddress
+        sccpStack1.getRouter().removeRule(1);
+        sccpStack1.getRouter().addRule(1, RuleType.Solitary, LoadSharingAlgorithm.Undefined, OriginationType.All, pattern, "K",
+                1, -1, 2);
 
-		message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
-		sccpProvider1.send(message);
-		Thread.sleep(100);
+        message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
+        sccpProvider1.send(message);
+        Thread.sleep(100);
 
-		assertEquals(u1.getMessages().size(), 0);
-		assertEquals(u2.getMessages().size(), 2);
-		dMsg = (SccpDataMessage) u2.getMessages().get(1);
-		assertTrue(dMsg.getCallingPartyAddress().getGlobalTitle().getDigits().equals("222222"));
-	}
+        assertEquals(u1.getMessages().size(), 0);
+        assertEquals(u2.getMessages().size(), 2);
+        dMsg = (SccpDataMessage) u2.getMessages().get(1);
+        assertTrue(dMsg.getCallingPartyAddress().getGlobalTitle().getDigits().equals("222222"));
+    }
 }
-

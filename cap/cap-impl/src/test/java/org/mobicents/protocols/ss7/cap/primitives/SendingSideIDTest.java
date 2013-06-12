@@ -22,7 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.primitives;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -30,36 +31,36 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class SendingSideIDTest {
 
-	public byte[] getData1() {
-		return new byte[] { (byte) 128, 1, 1 };
-	}
+    public byte[] getData1() {
+        return new byte[] { (byte) 128, 1, 1 };
+    }
 
-	@Test(groups = { "functional.decode","primitives"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
 
-		 byte[] data = this.getData1();
-		 AsnInputStream ais = new AsnInputStream(data);
-		 SendingSideIDImpl elem = new SendingSideIDImpl();
-		 int tag = ais.readTag();
-		 elem.decodeAll(ais);
-		 assertEquals(elem.getSendingSideID(), LegType.leg1);
-	}
+        byte[] data = this.getData1();
+        AsnInputStream ais = new AsnInputStream(data);
+        SendingSideIDImpl elem = new SendingSideIDImpl();
+        int tag = ais.readTag();
+        elem.decodeAll(ais);
+        assertEquals(elem.getSendingSideID(), LegType.leg1);
+    }
 
-	@Test(groups = { "functional.encode","primitives"})
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
 
-		SendingSideIDImpl elem = new SendingSideIDImpl(LegType.leg1);
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
-	}
+        SendingSideIDImpl elem = new SendingSideIDImpl(LegType.leg1);
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+    }
 }

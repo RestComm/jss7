@@ -31,114 +31,104 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCodeType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
-import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
 
 /**
  * @author baranowb
  * @author sergey netyutnev
- * 
+ *
  */
 public class ErrorCodeImpl implements ErrorCode {
-	private ErrorCodeType type;
-	private Long localErrorCode;
-	private long[] globalErrorCode;
+    private ErrorCodeType type;
+    private Long localErrorCode;
+    private long[] globalErrorCode;
 
-	
-	
-	public void setErrorCodeType(ErrorCodeType type) {
-		this.type = type;
-	}
-	
-	public void setLocalErrorCode(Long localErrorCode) {
-		this.localErrorCode = localErrorCode;
-		this.globalErrorCode = null;
-		this.type = ErrorCodeType.Local;
-	}
+    public void setErrorCodeType(ErrorCodeType type) {
+        this.type = type;
+    }
 
-	public void setGlobalErrorCode(long[] globalErrorCode) {
-		this.localErrorCode = null;
-		this.globalErrorCode = globalErrorCode;
-		this.type = ErrorCodeType.Global;
-	}
+    public void setLocalErrorCode(Long localErrorCode) {
+        this.localErrorCode = localErrorCode;
+        this.globalErrorCode = null;
+        this.type = ErrorCodeType.Local;
+    }
 
+    public void setGlobalErrorCode(long[] globalErrorCode) {
+        this.localErrorCode = null;
+        this.globalErrorCode = globalErrorCode;
+        this.type = ErrorCodeType.Global;
+    }
 
+    public Long getLocalErrorCode() {
+        return this.localErrorCode;
+    }
 
-	public Long getLocalErrorCode() {
-		return this.localErrorCode;
-	}
-	
-	public long[] getGlobalErrorCode() {
-		return this.globalErrorCode;
-	}
-	
-	public ErrorCodeType getErrorType() {
-		return type;
-	}
+    public long[] getGlobalErrorCode() {
+        return this.globalErrorCode;
+    }
 
-	public String toString() {
-		if (this.localErrorCode != null)
-			return "ErrorCode[errorType=Local, data=" + this.localErrorCode.toString() + "]";
-		else if (this.globalErrorCode != null)
-			return "ErrorCode[errorType=Global, data=" + Arrays.toString(this.globalErrorCode) + "]";
-		else
-			return "ErrorCode[empty]";
-	}
+    public ErrorCodeType getErrorType() {
+        return type;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols
-	 * .asn.AsnInputStream)
-	 */
-	public void decode(AsnInputStream ais) throws ParseException {
+    public String toString() {
+        if (this.localErrorCode != null)
+            return "ErrorCode[errorType=Local, data=" + this.localErrorCode.toString() + "]";
+        else if (this.globalErrorCode != null)
+            return "ErrorCode[errorType=Global, data=" + Arrays.toString(this.globalErrorCode) + "]";
+        else
+            return "ErrorCode[empty]";
+    }
 
-		try {
-			if( this.type == ErrorCodeType.Global ) {
-				this.globalErrorCode = ais.readObjectIdentifier();
-			} else if( this.type == ErrorCodeType.Local ) {
-				this.localErrorCode = ais.readInteger();
-			} else
-			{
-				throw new ParseException(null, GeneralProblemType.MistypedComponent);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "IOException while parsing ErrorCode: " + e.getMessage(), e);
-		} catch (AsnException e) {
-			e.printStackTrace();
-			throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "AsnException while parsing ErrorCode: " + e.getMessage(), e);
-		}
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols .asn.AsnInputStream)
+     */
+    public void decode(AsnInputStream ais) throws ParseException {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols
-	 * .asn.AsnOutputStream)
-	 */
-	public void encode(AsnOutputStream aos) throws EncodeException {
+        try {
+            if (this.type == ErrorCodeType.Global) {
+                this.globalErrorCode = ais.readObjectIdentifier();
+            } else if (this.type == ErrorCodeType.Local) {
+                this.localErrorCode = ais.readInteger();
+            } else {
+                throw new ParseException(null, GeneralProblemType.MistypedComponent);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent, "IOException while parsing ErrorCode: "
+                    + e.getMessage(), e);
+        } catch (AsnException e) {
+            e.printStackTrace();
+            throw new ParseException(null, GeneralProblemType.BadlyStructuredComponent,
+                    "AsnException while parsing ErrorCode: " + e.getMessage(), e);
+        }
+    }
 
-		if (this.localErrorCode == null && this.globalErrorCode == null)
-			throw new EncodeException("Error code: No error code set!");
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols .asn.AsnOutputStream)
+     */
+    public void encode(AsnOutputStream aos) throws EncodeException {
 
-		try {
-			if( this.type == ErrorCodeType.Local ) {
-				aos.writeInteger(this.localErrorCode);
-			} else if( this.type == ErrorCodeType.Global ) {
-				aos.writeObjectIdentifier(this.globalErrorCode);
-			} else
-			{
-				throw new EncodeException();
-			}
+        if (this.localErrorCode == null && this.globalErrorCode == null)
+            throw new EncodeException("Error code: No error code set!");
 
-		} catch (IOException e) {
-			throw new EncodeException(e);
-		} catch (AsnException e) {
-			throw new EncodeException(e);
-		}
-	}
+        try {
+            if (this.type == ErrorCodeType.Local) {
+                aos.writeInteger(this.localErrorCode);
+            } else if (this.type == ErrorCodeType.Global) {
+                aos.writeObjectIdentifier(this.globalErrorCode);
+            } else {
+                throw new EncodeException();
+            }
+
+        } catch (IOException e) {
+            throw new EncodeException(e);
+        } catch (AsnException e) {
+            throw new EncodeException(e);
+        }
+    }
 
 }

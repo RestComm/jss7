@@ -23,93 +23,71 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 
 /**
- * 
-
-SupportedFeatures::= BIT STRING {
-	odb-all-apn (0),
-	odb-HPLMN-APN (1),
-	odb-VPLMN-APN (2),
-	odb-all-og (3),
-	odb-all-international-og (4),
-	odb-all-int-og-not-to-HPLMN-country (5),
-	odb-all-interzonal-og (6),
-	odb-all-interzonal-og-not-to-HPLMN-country (7),
-	odb-all-interzonal-og-and-internat-og-not-to-HPLMN-country (8),
-	regSub (9),
-	trace (10),
-	lcs-all-PrivExcep (11),
-	lcs-universal (12),
-	lcs-CallSessionRelated (13),
-	lcs-CallSessionUnrelated (14),
-	lcs-PLMN-operator (15),
-	lcs-ServiceType (16),
-	lcs-all-MOLR-SS (17),
-	lcs-basicSelfLocation (18),
-	lcs-autonomousSelfLocation (19),
-	lcs-transferToThirdParty (20),
-	sm-mo-pp (21),
-	barring-OutgoingCalls (22),
-	baoc (23),
-	boic (24),
-	boicExHC (25)} (SIZE (26..40))
-
- * 
+ *
+ SupportedFeatures::= BIT STRING { odb-all-apn (0), odb-HPLMN-APN (1), odb-VPLMN-APN (2), odb-all-og (3),
+ * odb-all-international-og (4), odb-all-int-og-not-to-HPLMN-country (5), odb-all-interzonal-og (6),
+ * odb-all-interzonal-og-not-to-HPLMN-country (7), odb-all-interzonal-og-and-internat-og-not-to-HPLMN-country (8), regSub (9),
+ * trace (10), lcs-all-PrivExcep (11), lcs-universal (12), lcs-CallSessionRelated (13), lcs-CallSessionUnrelated (14),
+ * lcs-PLMN-operator (15), lcs-ServiceType (16), lcs-all-MOLR-SS (17), lcs-basicSelfLocation (18), lcs-autonomousSelfLocation
+ * (19), lcs-transferToThirdParty (20), sm-mo-pp (21), barring-OutgoingCalls (22), baoc (23), boic (24), boicExHC (25)} (SIZE
+ * (26..40))
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SupportedFeatures {
 
-	public boolean getOdbAllApn();
+    boolean getOdbAllApn();
 
-	public boolean getOdbHPLMNApn();
+    boolean getOdbHPLMNApn();
 
-	public boolean getOdbVPLMNApn();
+    boolean getOdbVPLMNApn();
 
-	public boolean getOdbAllOg();
+    boolean getOdbAllOg();
 
-	public boolean getOdbAllInternationalOg();
+    boolean getOdbAllInternationalOg();
 
-	public boolean getOdbAllIntOgNotToHPLMNCountry();
+    boolean getOdbAllIntOgNotToHPLMNCountry();
 
-	public boolean getOdbAllInterzonalOg();
+    boolean getOdbAllInterzonalOg();
 
-	public boolean getOdbAllInterzonalOgNotToHPLMNCountry();
+    boolean getOdbAllInterzonalOgNotToHPLMNCountry();
 
-	public boolean getOdbAllInterzonalOgandInternatOgNotToHPLMNCountry();
+    boolean getOdbAllInterzonalOgandInternatOgNotToHPLMNCountry();
 
-	public boolean getRegSub();
+    boolean getRegSub();
 
-	public boolean getTrace();
+    boolean getTrace();
 
-	public boolean getLcsAllPrivExcep();
+    boolean getLcsAllPrivExcep();
 
-	public boolean getLcsUniversal();
+    boolean getLcsUniversal();
 
-	public boolean getLcsCallSessionRelated();
+    boolean getLcsCallSessionRelated();
 
-	public boolean getLcsCallSessionUnrelated();
+    boolean getLcsCallSessionUnrelated();
 
-	public boolean getLcsPLMNOperator();
+    boolean getLcsPLMNOperator();
 
-	public boolean getLcsServiceType();
+    boolean getLcsServiceType();
 
-	public boolean getLcsAllMOLRSS();
+    boolean getLcsAllMOLRSS();
 
-	public boolean getLcsBasicSelfLocation();
+    boolean getLcsBasicSelfLocation();
 
-	public boolean getLcsAutonomousSelfLocation();
+    boolean getLcsAutonomousSelfLocation();
 
-	public boolean getLcsTransferToThirdParty();
+    boolean getLcsTransferToThirdParty();
 
-	public boolean getSmMoPp();
+    boolean getSmMoPp();
 
-	public boolean getBarringOutgoingCalls();
+    boolean getBarringOutgoingCalls();
 
-	public boolean getBaoc();
+    boolean getBaoc();
 
-	public boolean getBoic();
+    boolean getBoic();
 
-	public boolean getBoicExHC();
+    boolean getBoicExHC();
 
 }
-

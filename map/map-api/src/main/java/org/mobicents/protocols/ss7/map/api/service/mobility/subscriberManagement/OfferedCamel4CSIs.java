@@ -23,39 +23,29 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 /**
- * 
- * OfferedCamel4CSIs ::= BIT STRING { 	
- *		o-csi		(0),
- *		d-csi		(1),
- *		vt-csi		(2),
- *		t-csi		(3),
- *		mt-sms-csi	(4),
- *		mg-csi		(5),
- *		psi-enhancements	(6) 
- *	} (SIZE (7..16))
- *	-- A node supporting Camel phase 4 shall mark in the BIT STRING all Camel4 CSIs 
- *	-- it offers.
- *	-- Other values than listed above shall be discarded.
  *
- * 
+ * OfferedCamel4CSIs ::= BIT STRING { o-csi (0), d-csi (1), vt-csi (2), t-csi (3), mt-sms-csi (4), mg-csi (5), psi-enhancements
+ * (6) } (SIZE (7..16)) -- A node supporting Camel phase 4 shall mark in the BIT STRING all Camel4 CSIs -- it offers. -- Other
+ * values than listed above shall be discarded.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface OfferedCamel4CSIs {
 
-	public boolean getOCsi();
+    boolean getOCsi();
 
-	public boolean getDCsi();
+    boolean getDCsi();
 
-	public boolean getVtCsi();
+    boolean getVtCsi();
 
-	public boolean getTCsi();
+    boolean getTCsi();
 
-	public boolean getMtSmsCsi();
+    boolean getMtSmsCsi();
 
-	public boolean getMgCsi();
+    boolean getMgCsi();
 
-	public boolean getPsiEnhancements();
+    boolean getPsiEnhancements();
 
 }
-

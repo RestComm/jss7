@@ -28,16 +28,17 @@ import org.mobicents.protocols.ss7.cap.api.CAPServiceBase;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPServiceCircuitSwitchedCall extends CAPServiceBase {
 
-	public CAPDialogCircuitSwitchedCall createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress) throws CAPException;
+    CAPDialogCircuitSwitchedCall createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress,
+            SccpAddress destAddress) throws CAPException;
 
-	public void addCAPServiceListener(CAPServiceCircuitSwitchedCallListener capServiceListener);
+    void addCAPServiceListener(CAPServiceCircuitSwitchedCallListener capServiceListener);
 
-	public void removeCAPServiceListener(CAPServiceCircuitSwitchedCallListener capServiceListener);
+    void removeCAPServiceListener(CAPServiceCircuitSwitchedCallListener capServiceListener);
 
 }

@@ -26,51 +26,43 @@ import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaI
 import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 
 /**
-*
-MetDPCriteriaList {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE(1..10) OF MetDPCriterion {bound}
-
-MetDPCriterion {PARAMETERS-BOUND : bound} ::= CHOICE {
-enteringCellGlobalId [0] CellGlobalIdOrServiceAreaIdFixedLength,
-leavingCellGlobalId [1] CellGlobalIdOrServiceAreaIdFixedLength,
-enteringServiceAreaId [2] CellGlobalIdOrServiceAreaIdFixedLength,
-leavingServiceAreaId [3] CellGlobalIdOrServiceAreaIdFixedLength,
-enteringLocationAreaId [4] LAIFixedLength,
-leavingLocationAreaId [5] LAIFixedLength,
-inter-SystemHandOverToUMTS [6] NULL,
-inter-SystemHandOverToGSM [7] NULL,
-inter-PLMNHandOver [8] NULL,
-inter-MSCHandOver [9] NULL,
-metDPCriterionAlt [10] MetDPCriterionAlt {bound}
-}
--- The enteringCellGlobalId and leavingCellGlobalId shall contain a Cell Global Identification.
--- The enteringServiceAreaId and leavingServiceAreaId shall contain a Service Area Identification.
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ MetDPCriteriaList {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE(1..10) OF MetDPCriterion {bound}
+ *
+ * MetDPCriterion {PARAMETERS-BOUND : bound} ::= CHOICE { enteringCellGlobalId [0] CellGlobalIdOrServiceAreaIdFixedLength,
+ * leavingCellGlobalId [1] CellGlobalIdOrServiceAreaIdFixedLength, enteringServiceAreaId [2]
+ * CellGlobalIdOrServiceAreaIdFixedLength, leavingServiceAreaId [3] CellGlobalIdOrServiceAreaIdFixedLength,
+ * enteringLocationAreaId [4] LAIFixedLength, leavingLocationAreaId [5] LAIFixedLength, inter-SystemHandOverToUMTS [6] NULL,
+ * inter-SystemHandOverToGSM [7] NULL, inter-PLMNHandOver [8] NULL, inter-MSCHandOver [9] NULL, metDPCriterionAlt [10]
+ * MetDPCriterionAlt {bound} } -- The enteringCellGlobalId and leavingCellGlobalId shall contain a Cell Global Identification.
+ * -- The enteringServiceAreaId and leavingServiceAreaId shall contain a Service Area Identification.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface MetDPCriterion {
 
-	public CellGlobalIdOrServiceAreaIdFixedLength getEnteringCellGlobalId();
+    CellGlobalIdOrServiceAreaIdFixedLength getEnteringCellGlobalId();
 
-	public CellGlobalIdOrServiceAreaIdFixedLength getLeavingCellGlobalId();
+    CellGlobalIdOrServiceAreaIdFixedLength getLeavingCellGlobalId();
 
-	public CellGlobalIdOrServiceAreaIdFixedLength getEnteringServiceAreaId();
+    CellGlobalIdOrServiceAreaIdFixedLength getEnteringServiceAreaId();
 
-	public CellGlobalIdOrServiceAreaIdFixedLength getLeavingServiceAreaId();
+    CellGlobalIdOrServiceAreaIdFixedLength getLeavingServiceAreaId();
 
-	public LAIFixedLength getEnteringLocationAreaId();
+    LAIFixedLength getEnteringLocationAreaId();
 
-	public LAIFixedLength getLeavingLocationAreaId();
+    LAIFixedLength getLeavingLocationAreaId();
 
-	public boolean getInterSystemHandOverToUMTS();
+    boolean getInterSystemHandOverToUMTS();
 
-	public boolean getInterSystemHandOverToGSM();
+    boolean getInterSystemHandOverToGSM();
 
-	public boolean getInterPLMNHandOver();
+    boolean getInterPLMNHandOver();
 
-	public boolean getInterMSCHandOver();
+    boolean getInterMSCHandOver();
 
-	public MetDPCriterionAlt getMetDPCriterionAlt();
+    MetDPCriterionAlt getMetDPCriterionAlt();
 
 }

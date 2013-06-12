@@ -27,98 +27,94 @@ import org.mobicents.protocols.ss7.map.api.dialog.ProcedureCancellationReason;
 import org.mobicents.protocols.ss7.map.api.dialog.ResourceUnavailableReason;
 
 /**
- * MAP-UserAbortChoice ::= CHOICE {
- *   userSpecificReason               [0] NULL,
- *   userResourceLimitation           [1] NULL,
- *   resourceUnavailable              [2] ResourceUnavailableReason,
- *   applicationProcedureCancellation [3] ProcedureCancellationReason}
+ * MAP-UserAbortChoice ::= CHOICE { userSpecificReason [0] NULL, userResourceLimitation [1] NULL, resourceUnavailable [2]
+ * ResourceUnavailableReason, applicationProcedureCancellation [3] ProcedureCancellationReason}
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class MAPUserAbortChoiceImpl implements MAPUserAbortChoice {
-	
-	protected static final int USER_SPECIFIC_REASON_TAG = 0;
-	protected static final int USER_RESOURCE_LIMITATION_TAG = 1;
-	protected static final int RESOURCE_UNAVAILABLE = 2;
-	protected static final int APPLICATION_PROCEDURE_CANCELLATION = 3;
 
-	private ProcedureCancellationReason procedureCancellationReason = null;
-	private boolean isProcedureCancellationReason = false;
+    protected static final int USER_SPECIFIC_REASON_TAG = 0;
+    protected static final int USER_RESOURCE_LIMITATION_TAG = 1;
+    protected static final int RESOURCE_UNAVAILABLE = 2;
+    protected static final int APPLICATION_PROCEDURE_CANCELLATION = 3;
 
-	private ResourceUnavailableReason resourceUnavailableReason = null;
-	private boolean isResourceUnavailableReason = false;
+    private ProcedureCancellationReason procedureCancellationReason = null;
+    private boolean isProcedureCancellationReason = false;
 
-	private boolean isUserResourceLimitation = false;
+    private ResourceUnavailableReason resourceUnavailableReason = null;
+    private boolean isResourceUnavailableReason = false;
 
-	private boolean isUserSpecificReason = false;
+    private boolean isUserResourceLimitation = false;
 
-	public ProcedureCancellationReason getProcedureCancellationReason() {
-		return this.procedureCancellationReason;
-	}
+    private boolean isUserSpecificReason = false;
 
-	public ResourceUnavailableReason getResourceUnavailableReason() {
-		return this.resourceUnavailableReason;
-	}
+    public ProcedureCancellationReason getProcedureCancellationReason() {
+        return this.procedureCancellationReason;
+    }
 
-	public boolean isProcedureCancellationReason() {
-		return this.isProcedureCancellationReason;
-	}
+    public ResourceUnavailableReason getResourceUnavailableReason() {
+        return this.resourceUnavailableReason;
+    }
 
-	public boolean isResourceUnavailableReason() {
-		return this.isResourceUnavailableReason;
-	}
+    public boolean isProcedureCancellationReason() {
+        return this.isProcedureCancellationReason;
+    }
 
-	public boolean isUserResourceLimitation() {
-		return this.isUserResourceLimitation;
-	}
+    public boolean isResourceUnavailableReason() {
+        return this.isResourceUnavailableReason;
+    }
 
-	public boolean isUserSpecificReason() {
-		return this.isUserSpecificReason;
-	}
+    public boolean isUserResourceLimitation() {
+        return this.isUserResourceLimitation;
+    }
 
-	public void setProcedureCancellationReason(
-			ProcedureCancellationReason procCanReasn) {
-		this.procedureCancellationReason = procCanReasn;
-		this.isProcedureCancellationReason = true;
-	}
+    public boolean isUserSpecificReason() {
+        return this.isUserSpecificReason;
+    }
 
-	public void setResourceUnavailableReason(
-			ResourceUnavailableReason resUnaReas) {
-		this.resourceUnavailableReason = resUnaReas;
-		this.isResourceUnavailableReason = true;
-	}
+    public void setProcedureCancellationReason(ProcedureCancellationReason procCanReasn) {
+        this.procedureCancellationReason = procCanReasn;
+        this.isProcedureCancellationReason = true;
+    }
 
-	public void setUserResourceLimitation() {
-		this.isUserResourceLimitation = true;
-	}
+    public void setResourceUnavailableReason(ResourceUnavailableReason resUnaReas) {
+        this.resourceUnavailableReason = resUnaReas;
+        this.isResourceUnavailableReason = true;
+    }
 
-	public void setUserSpecificReason() {
-		this.isUserSpecificReason = true;
-	}
+    public void setUserResourceLimitation() {
+        this.isUserResourceLimitation = true;
+    }
 
-	@Override
-	public String toString() {
-		
-		StringBuilder sb = new StringBuilder(); 
+    public void setUserSpecificReason() {
+        this.isUserSpecificReason = true;
+    }
 
-		sb.append("MAPUserAbortChoice [");
-		if (this.isUserSpecificReason)
-			sb.append(" UserSpecificReason");
-		if (this.isUserResourceLimitation)
-			sb.append(" UserResourceLimitation");
-		if (this.isResourceUnavailableReason) {
-			sb.append(" ResourceUnavailableReason=");
-			if (this.resourceUnavailableReason != null)
-				sb.append(this.resourceUnavailableReason.toString());
-		}
-		if (this.isProcedureCancellationReason) {
-			sb.append(" ProcedureCancellationReason=");
-			if (this.procedureCancellationReason != null)
-				sb.append(this.procedureCancellationReason.toString());
-		}
-		sb.append("]");
-		
-		return sb.toString();
-	}
-	
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("MAPUserAbortChoice [");
+        if (this.isUserSpecificReason)
+            sb.append(" UserSpecificReason");
+        if (this.isUserResourceLimitation)
+            sb.append(" UserResourceLimitation");
+        if (this.isResourceUnavailableReason) {
+            sb.append(" ResourceUnavailableReason=");
+            if (this.resourceUnavailableReason != null)
+                sb.append(this.resourceUnavailableReason.toString());
+        }
+        if (this.isProcedureCancellationReason) {
+            sb.append(" ProcedureCancellationReason=");
+            if (this.procedureCancellationReason != null)
+                sb.append(this.procedureCancellationReason.toString());
+        }
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 }

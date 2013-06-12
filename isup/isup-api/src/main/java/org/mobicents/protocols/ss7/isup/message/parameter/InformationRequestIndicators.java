@@ -23,7 +23,7 @@
 /**
  * Start time:13:17:28 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 package org.mobicents.protocols.ss7.isup.message.parameter;
@@ -31,44 +31,44 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
 /**
  * Start time:13:17:28 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface InformationRequestIndicators extends ISUPParameter {
-	public static final int _PARAMETER_CODE = 0x0E;
+    int _PARAMETER_CODE = 0x0E;
 
-	/**
-	 * Flag that indicates that information is requested
-	 */
-	public static final boolean _INDICATOR_REQUESTED = true;
+    /**
+     * Flag that indicates that information is requested
+     */
+    boolean _INDICATOR_REQUESTED = true;
 
-	/**
-	 * Flag that indicates that information is not requested
-	 */
-	public static final boolean _INDICATOR_NOT_REQUESTED = false;
-	
-	public boolean isCallingPartAddressRequestIndicator();
+    /**
+     * Flag that indicates that information is not requested
+     */
+    boolean _INDICATOR_NOT_REQUESTED = false;
 
-	public void setCallingPartAddressRequestIndicator(boolean callingPartAddressRequestIndicator);
+    boolean isCallingPartAddressRequestIndicator();
 
-	public boolean isHoldingIndicator();
+    void setCallingPartAddressRequestIndicator(boolean callingPartAddressRequestIndicator);
 
-	public void setHoldingIndicator(boolean holdingIndicator);
+    boolean isHoldingIndicator();
 
-	public boolean isCallingpartysCategoryRequestIndicator();
+    void setHoldingIndicator(boolean holdingIndicator);
 
-	public void setCallingpartysCategoryRequestIndicator(boolean callingpartysCategoryRequestIndicator);
+    boolean isCallingpartysCategoryRequestIndicator();
 
-	public boolean isChargeInformationRequestIndicator();
+    void setCallingpartysCategoryRequestIndicator(boolean callingpartysCategoryRequestIndicator);
 
-	public void setChargeInformationRequestIndicator(boolean chargeInformationRequestIndicator);
+    boolean isChargeInformationRequestIndicator();
 
-	public boolean isMaliciousCallIdentificationRequestIndicator();
+    void setChargeInformationRequestIndicator(boolean chargeInformationRequestIndicator);
 
-	public void setMaliciousCallIdentificationRequestIndicator(boolean maliciousCallIdentificationRequestIndicator);
+    boolean isMaliciousCallIdentificationRequestIndicator();
 
-	public int getReserved();
+    void setMaliciousCallIdentificationRequestIndicator(boolean maliciousCallIdentificationRequestIndicator);
 
-	public void setReserved(int reserved);
+    int getReserved();
+
+    void setReserved(int reserved);
 
 }

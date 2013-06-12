@@ -23,27 +23,22 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-RNC-InterfaceList ::= BIT STRING {
-	iu (0),
-	iur (1),
-	iub (2),
-	uu (3)} (SIZE (4..8))
--- Other bits than listed above shall be discarded.
-
- * 
+ *
+ RNC-InterfaceList ::= BIT STRING { iu (0), iur (1), iub (2), uu (3)} (SIZE (4..8)) -- Other bits than listed above shall be
+ * discarded.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface RNCInterfaceList {
 
-	public boolean getIu();
+    boolean getIu();
 
-	public boolean getIur();
+    boolean getIur();
 
-	public boolean getIub();
+    boolean getIub();
 
-	public boolean getUu();
+    boolean getUu();
 
 }

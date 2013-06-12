@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.cap.EsiBcsm;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -30,42 +30,42 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.isup.CauseCapImpl;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class RouteSelectFailureSpecificInfoTest {
 
-	public byte[] getData() {
-		return new byte[] { (byte) 162, 4, (byte) 128, 2, (byte) 132, (byte) 144 };
-	}
+    public byte[] getData() {
+        return new byte[] { (byte) 162, 4, (byte) 128, 2, (byte) 132, (byte) 144 };
+    }
 
-	public byte[] getIntData() {
-		return new byte[] { (byte) 132, (byte) 144 };
-	}
+    public byte[] getIntData() {
+        return new byte[] { (byte) 132, (byte) 144 };
+    }
 
-	@Test(groups = { "functional.decode","EsiBcsm"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "EsiBcsm" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData();
-		AsnInputStream ais = new AsnInputStream(data);
-		RouteSelectFailureSpecificInfoImpl elem = new RouteSelectFailureSpecificInfoImpl();
-		int tag = ais.readTag();
-		elem.decodeAll(ais);
-		assertTrue(Arrays.equals(elem.getFailureCause().getData(), this.getIntData()));
-	}
+        byte[] data = this.getData();
+        AsnInputStream ais = new AsnInputStream(data);
+        RouteSelectFailureSpecificInfoImpl elem = new RouteSelectFailureSpecificInfoImpl();
+        int tag = ais.readTag();
+        elem.decodeAll(ais);
+        assertTrue(Arrays.equals(elem.getFailureCause().getData(), this.getIntData()));
+    }
 
-	@Test(groups = { "functional.encode","EsiBcsm"})
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "EsiBcsm" })
+    public void testEncode() throws Exception {
 
-		CauseCapImpl cause = new CauseCapImpl(this.getIntData());
-		RouteSelectFailureSpecificInfoImpl elem = new RouteSelectFailureSpecificInfoImpl(cause);
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 2);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
-		
-	}
+        CauseCapImpl cause = new CauseCapImpl(this.getIntData());
+        RouteSelectFailureSpecificInfoImpl elem = new RouteSelectFailureSpecificInfoImpl(cause);
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 2);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+
+    }
 }

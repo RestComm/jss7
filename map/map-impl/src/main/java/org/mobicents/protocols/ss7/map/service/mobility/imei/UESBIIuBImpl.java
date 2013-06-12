@@ -27,25 +27,25 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.imei.UESBIIuB;
 import org.mobicents.protocols.ss7.map.primitives.BitStringBase;
 
 /**
- * 
+ *
  * @author normandes
  *
  */
 public class UESBIIuBImpl extends BitStringBase implements UESBIIuB {
 
-	public static final String _PrimitiveName = "UESBIIuB";
-	
-	public UESBIIuBImpl() {
-		super(1, 128, 1, _PrimitiveName);
-	}
-	
-	public UESBIIuBImpl(BitSetStrictLength data) {
-		super(1, 128, data.getStrictLength(), _PrimitiveName, data);
-	}
+    public static final String _PrimitiveName = "UESBIIuB";
 
-	@Override
-	public BitSetStrictLength getData() {
-		return bitString;
-	}
-	
+    public UESBIIuBImpl() {
+        super(1, 128, 1, _PrimitiveName);
+    }
+
+    public UESBIIuBImpl(BitSetStrictLength data) {
+        super(1, 128, data.getStrictLength(), _PrimitiveName, data);
+    }
+
+    @Override
+    public BitSetStrictLength getData() {
+        return bitString;
+    }
+
 }

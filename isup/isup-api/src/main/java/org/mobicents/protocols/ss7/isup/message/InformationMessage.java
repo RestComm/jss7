@@ -40,19 +40,19 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibility
  * <TR>
  * <TD style="FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: teal; HEIGHT: 28px; TEXT-ALIGN: center" colSpan="3">
  * Information Message (INF)</TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="FONT-SIZE: 9pt; COLOR: navy" colSpan="3">
  * <P>
- * INF is sent to convey information in association with a call, which may have
- * been requested in an information request message.
+ * INF is sent to convey information in association with a call, which may have been requested in an information request
+ * message.
  * </P>
  * </TD>
  * </TR>
  * </TABLE>
  * </TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="FONT-WEIGHT: bold; WIDTH: 283px; HEIGHT: 30px; TEXT-ALIGN: center">
@@ -61,14 +61,14 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibility
  * <TD style="FONT-WEIGHT: bold; HEIGHT: 30px">Length (octet)</TD>
  * </TR>
  * <TR>
- * 
+ *
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Message type</TD>
  * <TD style="WIDTH: 145px">F</TD>
  * <TD>1</TD>
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Information&nbsp;Indicators</TD>
- * 
+ *
  * <TD style="WIDTH: 145px">F</TD>
  * <TD>2</TD>
  * </TR>
@@ -76,7 +76,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibility
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Calling Party's Category</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>3</TD>
- * 
+ *
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Calling Party Number</TD>
@@ -84,7 +84,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibility
  * <TD>5-12</TD>
  * </TR>
  * <TR>
- * 
+ *
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Call Reference</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>7</TD>
@@ -92,16 +92,15 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibility
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Connection Request</TD>
  * <TD style="WIDTH: 145px">O</TD>
- * 
+ *
  * <TD>7-9</TD>
  * </TR>
  * <TR>
- * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Parameter Compatibility
- * Information</TD>
+ * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Parameter Compatibility Information</TD>
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>4-?</TD>
  * </TR>
- * 
+ *
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">Network Specific Facility</TD>
  * <TD style="WIDTH: 145px">O</TD>
@@ -109,46 +108,47 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibility
  * </TR>
  * <TR>
  * <TD style="WIDTH: 283px; TEXT-ALIGN: left">End of Optional Parameters</TD>
- * 
+ *
  * <TD style="WIDTH: 145px">O</TD>
  * <TD>1</TD>
  * </TR>
  * </TABLE>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface InformationMessage extends ISUPMessage {
-	/**
-	 * Information Message, Q.763 reference table 30 <br> {@link InformationMessage}
-	 */
-	public static final int MESSAGE_CODE = 0x04;
+    /**
+     * Information Message, Q.763 reference table 30 <br>
+     * {@link InformationMessage}
+     */
+    int MESSAGE_CODE = 0x04;
 
-	public InformationIndicators getInformationIndicators();
+    InformationIndicators getInformationIndicators();
 
-	public void setInformationIndicators(InformationIndicators v);
+    void setInformationIndicators(InformationIndicators v);
 
-	public CallingPartyCategory getCallingPartyCategory();
+    CallingPartyCategory getCallingPartyCategory();
 
-	public void setCallingPartyCategory(CallingPartyCategory v);
+    void setCallingPartyCategory(CallingPartyCategory v);
 
-	public CallingPartyNumber getCallingPartyNumber();
+    CallingPartyNumber getCallingPartyNumber();
 
-	public void setCallingPartyNumber(CallingPartyNumber v);
+    void setCallingPartyNumber(CallingPartyNumber v);
 
-	public CallReference getCallReference();
+    CallReference getCallReference();
 
-	public void setCallReference(CallReference v);
+    void setCallReference(CallReference v);
 
-	public ParameterCompatibilityInformation getParameterCompatibilityInformation();
+    ParameterCompatibilityInformation getParameterCompatibilityInformation();
 
-	public void setParameterCompatibilityInformation(ParameterCompatibilityInformation v);
+    void setParameterCompatibilityInformation(ParameterCompatibilityInformation v);
 
-	public ConnectionRequest getConnectionRequest();
+    ConnectionRequest getConnectionRequest();
 
-	public void setConnectionRequest(ConnectionRequest v);
+    void setConnectionRequest(ConnectionRequest v);
 
-	public NetworkSpecificFacility getNetworkSpecificFacility();
+    NetworkSpecificFacility getNetworkSpecificFacility();
 
-	public void setNetworkSpecificFacility(NetworkSpecificFacility v);
+    void setNetworkSpecificFacility(NetworkSpecificFacility v);
 
 }

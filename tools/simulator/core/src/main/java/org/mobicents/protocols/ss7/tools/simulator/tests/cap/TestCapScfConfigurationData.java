@@ -28,36 +28,36 @@ import javolution.xml.stream.XMLStreamException;
 import org.mobicents.protocols.ss7.tools.simulator.common.CapApplicationContextScf;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class TestCapScfConfigurationData {
 
-	private static final String CAP_APPLICATION_CONTEXT = "capApplicationContext";
+    private static final String CAP_APPLICATION_CONTEXT = "capApplicationContext";
 
-	private CapApplicationContextScf capApplicationContext = new CapApplicationContextScf(CapApplicationContextScf.VAL_CAP_V4_capscf_ssfGeneric);
+    private CapApplicationContextScf capApplicationContext = new CapApplicationContextScf(
+            CapApplicationContextScf.VAL_CAP_V4_capscf_ssfGeneric);
 
-	
-	public CapApplicationContextScf getCapApplicationContext() {
-		return capApplicationContext;
-	}
+    public CapApplicationContextScf getCapApplicationContext() {
+        return capApplicationContext;
+    }
 
-	public void setCapApplicationContext(CapApplicationContextScf capApplicationContext) {
-		this.capApplicationContext = capApplicationContext;
-	}
+    public void setCapApplicationContext(CapApplicationContextScf capApplicationContext) {
+        this.capApplicationContext = capApplicationContext;
+    }
 
-	
-	protected static final XMLFormat<TestCapScfConfigurationData> XML = new XMLFormat<TestCapScfConfigurationData>(TestCapScfConfigurationData.class) {
+    protected static final XMLFormat<TestCapScfConfigurationData> XML = new XMLFormat<TestCapScfConfigurationData>(
+            TestCapScfConfigurationData.class) {
 
-		public void write(TestCapScfConfigurationData srv, OutputElement xml) throws XMLStreamException {
-			xml.add(srv.capApplicationContext.toString(), CAP_APPLICATION_CONTEXT, String.class);
-		}
+        public void write(TestCapScfConfigurationData srv, OutputElement xml) throws XMLStreamException {
+            xml.add(srv.capApplicationContext.toString(), CAP_APPLICATION_CONTEXT, String.class);
+        }
 
-		public void read(InputElement xml, TestCapScfConfigurationData srv) throws XMLStreamException {
-			String cpv = (String) xml.get(CAP_APPLICATION_CONTEXT, String.class);
-			srv.capApplicationContext = CapApplicationContextScf.createInstance(cpv);
-		}
-	};
+        public void read(InputElement xml, TestCapScfConfigurationData srv) throws XMLStreamException {
+            String cpv = (String) xml.get(CAP_APPLICATION_CONTEXT, String.class);
+            srv.capApplicationContext = CapApplicationContextScf.createInstance(cpv);
+        }
+    };
 
 }

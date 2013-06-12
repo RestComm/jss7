@@ -23,10 +23,10 @@
 /**
  * Start time:12:39:34 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
- * 
+ *
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
@@ -43,107 +43,102 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibility
  * Start time:12:39:34 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
  * This is composed param ?
- * 
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
+ *
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class ParameterCompatibilityInformationImpl extends AbstractISUPParameter implements ParameterCompatibilityInformation{
+public class ParameterCompatibilityInformationImpl extends AbstractISUPParameter implements ParameterCompatibilityInformation {
 
-	
-	private List<Byte> parameterCodes = new ArrayList<Byte>();
-	private List<InstructionIndicators> instructionIndicators = new ArrayList<InstructionIndicators>();
+    private List<Byte> parameterCodes = new ArrayList<Byte>();
+    private List<InstructionIndicators> instructionIndicators = new ArrayList<InstructionIndicators>();
 
-	public ParameterCompatibilityInformationImpl(byte[] b) throws ParameterException {
-		super();
-		decode(b);
-	}
+    public ParameterCompatibilityInformationImpl(byte[] b) throws ParameterException {
+        super();
+        decode(b);
+    }
 
-	public ParameterCompatibilityInformationImpl() {
-		super();
-		
-	}
+    public ParameterCompatibilityInformationImpl() {
+        super();
 
-	public int decode(byte[] b) throws ParameterException {
+    }
 
-		if (b == null || b.length < 2) {
-			throw new ParameterException("byte[] must  not be null and length must  greater than 1");
-		}
+    public int decode(byte[] b) throws ParameterException {
 
-		
-		
-		ByteArrayOutputStream bos = null;
-		boolean newParameter = true;
-		byte parameterCode = 0;
+        if (b == null || b.length < 2) {
+            throw new ParameterException("byte[] must  not be null and length must  greater than 1");
+        }
 
-		for (int index = 0; index < b.length; index++) {
-			if (newParameter) {
-				parameterCode = b[index];
-				bos = new ByteArrayOutputStream();
-				newParameter = false;
-				continue;
-			} else {
-				bos.write(b[index]);
+        ByteArrayOutputStream bos = null;
+        boolean newParameter = true;
+        byte parameterCode = 0;
 
-				if (((b[index] >> 7) & 0x01) == 0) {
-					// ext bit is zero, this is last octet
-					
-					if (bos.size() < 3) {
-						this.addInstructions(parameterCode, new InstructionIndicatorsImpl(bos.toByteArray()));
-					} else {
-						this.addInstructions(parameterCode, new InstructionIndicatorsImpl(bos.toByteArray(), true));
-					}
-					newParameter = true;
-				} else {
-				
-					continue;
-				}
-			}
+        for (int index = 0; index < b.length; index++) {
+            if (newParameter) {
+                parameterCode = b[index];
+                bos = new ByteArrayOutputStream();
+                newParameter = false;
+                continue;
+            } else {
+                bos.write(b[index]);
 
-		}
-		
-	
-		return b.length;
-	}
+                if (((b[index] >> 7) & 0x01) == 0) {
+                    // ext bit is zero, this is last octet
 
-	public byte[] encode() throws ParameterException {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		for (int index = 0; index < this.parameterCodes.size(); index++) {
-			bos.write(this.parameterCodes.get(index).byteValue());
-			try {
-				bos.write(((AbstractISUPParameter)this.instructionIndicators.get(index)).encode());
-			} catch (IOException e) {
-				throw new ParameterException(e);
-			}
-		}
-		return bos.toByteArray();
-	}
+                    if (bos.size() < 3) {
+                        this.addInstructions(parameterCode, new InstructionIndicatorsImpl(bos.toByteArray()));
+                    } else {
+                        this.addInstructions(parameterCode, new InstructionIndicatorsImpl(bos.toByteArray(), true));
+                    }
+                    newParameter = true;
+                } else {
 
-	public void addInstructions(Byte parameterCode, InstructionIndicators instructionIndicators) {
-		// FIXME: do we need to check for duplicate?
-		this.parameterCodes.add(parameterCode);
-		this.instructionIndicators.add(instructionIndicators);
-	}
+                    continue;
+                }
+            }
 
-	// FIXME: Crude API
-	public InstructionIndicators getInstructionIndicators(int index) {
-		return this.instructionIndicators.get(index);
-	}
+        }
 
-	public Byte getParameterCode(int index) {
-		return this.parameterCodes.get(index);
-	}
+        return b.length;
+    }
 
-	public int size() {
-		return this.instructionIndicators.size();
-	}
+    public byte[] encode() throws ParameterException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        for (int index = 0; index < this.parameterCodes.size(); index++) {
+            bos.write(this.parameterCodes.get(index).byteValue());
+            try {
+                bos.write(((AbstractISUPParameter) this.instructionIndicators.get(index)).encode());
+            } catch (IOException e) {
+                throw new ParameterException(e);
+            }
+        }
+        return bos.toByteArray();
+    }
 
-	public void remove(int index) {
-		this.instructionIndicators.remove(index);
-		this.parameterCodes.remove(index);
-	}
+    public void addInstructions(Byte parameterCode, InstructionIndicators instructionIndicators) {
+        // FIXME: do we need to check for duplicate?
+        this.parameterCodes.add(parameterCode);
+        this.instructionIndicators.add(instructionIndicators);
+    }
 
-	public int getCode() {
+    // FIXME: Crude API
+    public InstructionIndicators getInstructionIndicators(int index) {
+        return this.instructionIndicators.get(index);
+    }
 
-		return _PARAMETER_CODE;
-	}
+    public Byte getParameterCode(int index) {
+        return this.parameterCodes.get(index);
+    }
+
+    public int size() {
+        return this.instructionIndicators.size();
+    }
+
+    public void remove(int index) {
+        this.instructionIndicators.remove(index);
+        this.parameterCodes.remove(index);
+    }
+
+    public int getCode() {
+
+        return _PARAMETER_CODE;
+    }
 }

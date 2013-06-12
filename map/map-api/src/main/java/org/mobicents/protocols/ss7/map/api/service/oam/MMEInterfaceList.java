@@ -23,30 +23,24 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-MME-InterfaceList ::= BIT STRING {
-	s1-mme (0),
-	s3 (1),
-	s6a (2),
-	s10 (3),
-	s11 (4)} (SIZE (5..8))
--- Other bits than listed above shall be discarded.
-
- * 
+ *
+ MME-InterfaceList ::= BIT STRING { s1-mme (0), s3 (1), s6a (2), s10 (3), s11 (4)} (SIZE (5..8)) -- Other bits than listed
+ * above shall be discarded.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MMEInterfaceList {
 
-	public boolean getS1Mme();
+    boolean getS1Mme();
 
-	public boolean getS3();
+    boolean getS3();
 
-	public boolean getS6a();
+    boolean getS6a();
 
-	public boolean getS10();
+    boolean getS10();
 
-	public boolean getS11();
+    boolean getS11();
 
 }

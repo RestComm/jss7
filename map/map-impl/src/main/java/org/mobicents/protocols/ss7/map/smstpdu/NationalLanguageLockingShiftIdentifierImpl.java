@@ -27,32 +27,33 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.NationalLanguageLockingShiftI
 import org.mobicents.protocols.ss7.map.api.smstpdu.UserDataHeader;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
-public class NationalLanguageLockingShiftIdentifierImpl extends Gsm7NationalLanguageIdentifierImpl implements NationalLanguageLockingShiftIdentifier {
+public class NationalLanguageLockingShiftIdentifierImpl extends Gsm7NationalLanguageIdentifierImpl implements
+        NationalLanguageLockingShiftIdentifier {
 
-	public NationalLanguageLockingShiftIdentifierImpl(NationalLanguageIdentifier nationalLanguageCode) {
-		super(nationalLanguageCode);
-	}
+    public NationalLanguageLockingShiftIdentifierImpl(NationalLanguageIdentifier nationalLanguageCode) {
+        super(nationalLanguageCode);
+    }
 
-	public NationalLanguageLockingShiftIdentifierImpl(byte[] encodedInformationElementData) {
-		super(encodedInformationElementData);
-	}
+    public NationalLanguageLockingShiftIdentifierImpl(byte[] encodedInformationElementData) {
+        super(encodedInformationElementData);
+    }
 
-	public int getEncodedInformationElementIdentifier() {
-		return UserDataHeader._InformationElementIdentifier_NationalLanguageLockingShift;
-	}
+    public int getEncodedInformationElementIdentifier() {
+        return UserDataHeader._InformationElementIdentifier_NationalLanguageLockingShift;
+    }
 
-	@Override
-	public String toString(){
-		StringBuilder sb = new StringBuilder();
-		sb.append("NationalLanguageLockingShiftIdentifier [");
-		sb.append("nationalLanguageCode=");
-		sb.append(this.getNationalLanguageIdentifier());
-		sb.append("]");
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("NationalLanguageLockingShiftIdentifier [");
+        sb.append("nationalLanguageCode=");
+        sb.append(this.getNationalLanguageIdentifier());
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 }

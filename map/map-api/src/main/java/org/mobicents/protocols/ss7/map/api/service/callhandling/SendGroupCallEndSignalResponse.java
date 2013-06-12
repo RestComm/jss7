@@ -25,18 +25,15 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-SendGroupCallEndSignalRes ::= SEQUENCE {
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
+ *
+ SendGroupCallEndSignalRes ::= SEQUENCE { extensionContainer ExtensionContainer OPTIONAL, ...}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SendGroupCallEndSignalResponse extends CallHandlingMessage {
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

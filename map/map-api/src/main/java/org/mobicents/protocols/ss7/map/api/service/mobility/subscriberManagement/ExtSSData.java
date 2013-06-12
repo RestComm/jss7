@@ -29,33 +29,27 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSSubscriptionOption;
 
 /**
- * 
-
-Ext-SS-Data ::= SEQUENCE {
-	ss-Code		SS-Code,
-	ss-Status	[4] Ext-SS-Status,
-	ss-SubscriptionOption	SS-SubscriptionOption	OPTIONAL,
-	basicServiceGroupList	Ext-BasicServiceGroupList	OPTIONAL,
-	extensionContainer	[5] ExtensionContainer	OPTIONAL,
-	...}
-
-Ext-BasicServiceGroupList ::= SEQUENCE SIZE (1..32) OF Ext-BasicServiceCode
-
- * 
- * 
+ *
+ Ext-SS-Data ::= SEQUENCE { ss-Code SS-Code, ss-Status [4] Ext-SS-Status, ss-SubscriptionOption SS-SubscriptionOption
+ * OPTIONAL, basicServiceGroupList Ext-BasicServiceGroupList OPTIONAL, extensionContainer [5] ExtensionContainer OPTIONAL, ...}
+ *
+ * Ext-BasicServiceGroupList ::= SEQUENCE SIZE (1..32) OF Ext-BasicServiceCode
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ExtSSData {
 
-	public SSCode getSsCode();
+    SSCode getSsCode();
 
-	public ExtSSStatus getSsStatus();
+    ExtSSStatus getSsStatus();
 
-	public SSSubscriptionOption getSSSubscriptionOption();
+    SSSubscriptionOption getSSSubscriptionOption();
 
-	public ArrayList<ExtBasicServiceCode> getBasicServiceGroupList();
+    ArrayList<ExtBasicServiceCode> getBasicServiceGroupList();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

@@ -25,26 +25,22 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSStatus;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.CliRestrictionOption;
 
-/**	
- * 
-
-ClirData ::= SEQUENCE {
-	ss-Status		[1] Ext-SS-Status,
-	cliRestrictionOption	[2] CliRestrictionOption	OPTIONAL,
-	notificationToCSE	[3] NULL		OPTIONAL,
-	... }
-
-
- * 
+/**
+ *
+ ClirData ::= SEQUENCE { ss-Status [1] Ext-SS-Status, cliRestrictionOption [2] CliRestrictionOption OPTIONAL,
+ * notificationToCSE [3] NULL OPTIONAL, ... }
+ *
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface ClirData {
 
-	public ExtSSStatus getSsStatus();
+    ExtSSStatus getSsStatus();
 
-	public CliRestrictionOption getCliRestrictionOption();
+    CliRestrictionOption getCliRestrictionOption();
 
-	public boolean getNotificationToCSE();
+    boolean getNotificationToCSE();
 
 }

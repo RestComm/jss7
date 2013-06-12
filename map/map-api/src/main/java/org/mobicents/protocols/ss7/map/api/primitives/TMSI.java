@@ -23,16 +23,15 @@
 package org.mobicents.protocols.ss7.map.api.primitives;
 
 /**
- * 
-
-TMSI ::= OCTET STRING (SIZE (1..4))
-
- * 
+ *
+ TMSI ::= OCTET STRING (SIZE (1..4))
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface TMSI {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

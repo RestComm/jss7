@@ -23,16 +23,13 @@
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
 /**
-*
-oNoAnswerSpecificInfo [4] SEQUENCE {
--- no specific info defined --
-...
-},
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ oNoAnswerSpecificInfo [4] SEQUENCE { -- no specific info defined -- ... },
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ONoAnswerSpecificInfo {
 
 }

@@ -23,25 +23,21 @@
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
 /**
-*
-
-ChargingRollOver ::= CHOICE {
-transferredVolumeRollOver [0] TransferredVolumeRollOver,
-elapsedTimeRollOver [1] ElapsedTimeRollOver
-}
--- transferredVolumeRollOver shall be reported if ApplyChargingReportGPRS reports volume and
--- a roll-over has occurred in one or more volume counters. Otherwise, it shall be absent.
--- elapsedTimeRollOver shall be reported if ApplyChargingReportGPRS reports duration and
--- a roll-over has occurred in one or more duration counters. Otherwise, it shall be absent.
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ChargingRollOver ::= CHOICE { transferredVolumeRollOver [0] TransferredVolumeRollOver, elapsedTimeRollOver [1]
+ * ElapsedTimeRollOver } -- transferredVolumeRollOver shall be reported if ApplyChargingReportGPRS reports volume and -- a
+ * roll-over has occurred in one or more volume counters. Otherwise, it shall be absent. -- elapsedTimeRollOver shall be
+ * reported if ApplyChargingReportGPRS reports duration and -- a roll-over has occurred in one or more duration counters.
+ * Otherwise, it shall be absent.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ChargingRollOver {
 
-	public TransferredVolumeRollOver getTransferredVolumeRollOver();
+    TransferredVolumeRollOver getTransferredVolumeRollOver();
 
-	public ElapsedTimeRollOver getElapsedTimeRollOver();
+    ElapsedTimeRollOver getElapsedTimeRollOver();
 
 }

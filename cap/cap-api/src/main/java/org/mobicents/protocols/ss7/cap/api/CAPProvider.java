@@ -33,71 +33,73 @@ import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPProvider extends Serializable {
 
-	/**
-	 * Add CAP Dialog listener to the Stack
-	 * 
-	 * @param capDialogListener
-	 */
-	public void addCAPDialogListener(CAPDialogListener capDialogListener);
+    /**
+     * Add CAP Dialog listener to the Stack
+     *
+     * @param capDialogListener
+     */
+    void addCAPDialogListener(CAPDialogListener capDialogListener);
 
-	/**
-	 * Remove CAP DIalog Listener from the stack
-	 * 
-	 * @param capDialogListener
-	 */
-	public void removeCAPDialogListener(CAPDialogListener capDialogListener);
+    /**
+     * Remove CAP DIalog Listener from the stack
+     *
+     * @param capDialogListener
+     */
+    void removeCAPDialogListener(CAPDialogListener capDialogListener);
 
-	/**
-	 * Get the {@link CAPParameterFactory}
-	 * 
-	 * @return
-	 */
-	public CAPParameterFactory getCAPParameterFactory();
+    /**
+     * Get the {@link CAPParameterFactory}
+     *
+     * @return
+     */
+    CAPParameterFactory getCAPParameterFactory();
 
-	/**
-	 * Get the {@link MAPParameterFactory}
-	 * 
-	 * @return
-	 */
-	public MAPParameterFactory getMAPParameterFactory();
+    /**
+     * Get the {@link MAPParameterFactory}
+     *
+     * @return
+     */
+    MAPParameterFactory getMAPParameterFactory();
 
-	/**
-	 * Get the {@link ISUPParameterFactory}
-	 * 
-	 * @return
-	 */
-	public ISUPParameterFactory getISUPParameterFactory();
+    /**
+     * Get the {@link ISUPParameterFactory}
+     *
+     * @return
+     */
+    ISUPParameterFactory getISUPParameterFactory();
 
-	/**
-	 * Get the {@link INAPParameterFactory}
-	 * 
-	 * @return
-	 */
-	public INAPParameterFactory getINAPParameterFactory();
+    /**
+     * Get the {@link INAPParameterFactory}
+     *
+     * @return
+     */
+    INAPParameterFactory getINAPParameterFactory();
 
-	/**
-	 * Get the {@link CAPErrorMessageFactory}
-	 * 
-	 * @return
-	 */
-	public CAPErrorMessageFactory getCAPErrorMessageFactory();
-	
-	/**
-	 * Get {@link CAPDialog} corresponding to passed dialogId
-	 * 
-	 * @param dialogId
-	 * @return
-	 */
-	public CAPDialog getCAPDialog(Long dialogId);
+    /**
+     * Get the {@link CAPErrorMessageFactory}
+     *
+     * @return
+     */
+    CAPErrorMessageFactory getCAPErrorMessageFactory();
 
-	public CAPServiceCircuitSwitchedCall getCAPServiceCircuitSwitchedCall();
-	public CAPServiceGprs getCAPServiceGprs();
-	public CAPServiceSms getCAPServiceSms();
-		
+    /**
+     * Get {@link CAPDialog} corresponding to passed dialogId
+     *
+     * @param dialogId
+     * @return
+     */
+    CAPDialog getCAPDialog(Long dialogId);
+
+    CAPServiceCircuitSwitchedCall getCAPServiceCircuitSwitchedCall();
+
+    CAPServiceGprs getCAPServiceGprs();
+
+    CAPServiceSms getCAPServiceSms();
+
 }

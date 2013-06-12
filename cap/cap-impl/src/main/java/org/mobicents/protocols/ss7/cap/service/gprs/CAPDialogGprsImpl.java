@@ -30,14 +30,15 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPDialogGprs;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
 
-	protected CAPDialogGprsImpl(CAPApplicationContext appCntx, Dialog tcapDialog, CAPProviderImpl capProviderImpl, CAPServiceBase capService) {
-		super(appCntx, tcapDialog, capProviderImpl, capService);
-	}
+    protected CAPDialogGprsImpl(CAPApplicationContext appCntx, Dialog tcapDialog, CAPProviderImpl capProviderImpl,
+            CAPServiceBase capService) {
+        super(appCntx, tcapDialog, capProviderImpl, capService);
+    }
 
 }

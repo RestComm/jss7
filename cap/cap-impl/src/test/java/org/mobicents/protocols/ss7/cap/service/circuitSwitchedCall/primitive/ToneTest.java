@@ -33,36 +33,35 @@ import org.mobicents.protocols.asn.Tag;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class ToneTest {
 
-	public byte[] getData1() {
-		return new byte[] { 48, 6, (byte) 128, 1, 10, (byte) 129, 1, 20 };
-	}
+    public byte[] getData1() {
+        return new byte[] { 48, 6, (byte) 128, 1, 10, (byte) 129, 1, 20 };
+    }
 
-	@Test(groups = { "functional.decode","circuitSwitchedCall.primitive"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData1();
-		AsnInputStream ais = new AsnInputStream(data);
-		ToneImpl elem = new ToneImpl();
-		int tag = ais.readTag();
-		assertEquals(tag, Tag.SEQUENCE);
-		elem.decodeAll(ais);
-		assertEquals(elem.getToneID(), 10);
-		assertEquals((int) elem.getDuration(), 20);
-	}
+        byte[] data = this.getData1();
+        AsnInputStream ais = new AsnInputStream(data);
+        ToneImpl elem = new ToneImpl();
+        int tag = ais.readTag();
+        assertEquals(tag, Tag.SEQUENCE);
+        elem.decodeAll(ais);
+        assertEquals(elem.getToneID(), 10);
+        assertEquals((int) elem.getDuration(), 20);
+    }
 
-	@Test(groups = { "functional.encode","circuitSwitchedCall.primitive"})
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
+    public void testEncode() throws Exception {
 
-		ToneImpl elem = new ToneImpl(10, 20);
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
-	}
+        ToneImpl elem = new ToneImpl(10, 20);
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+    }
 }
-

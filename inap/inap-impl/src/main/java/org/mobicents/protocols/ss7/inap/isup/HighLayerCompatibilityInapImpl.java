@@ -37,167 +37,166 @@ import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserTeleserviceInformationImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserTeleserviceInformation;
 
-
 /**
-*
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class HighLayerCompatibilityInapImpl implements HighLayerCompatibilityInap, INAPAsnPrimitive {
 
-	public static final String _PrimitiveName = "HighLayerCompatibilityInap";
+    public static final String _PrimitiveName = "HighLayerCompatibilityInap";
 
-	private byte[] data;
+    private byte[] data;
 
-	public HighLayerCompatibilityInapImpl() {
-	}
+    public HighLayerCompatibilityInapImpl() {
+    }
 
-	public HighLayerCompatibilityInapImpl(byte[] data) {
-		this.data = data;
-	}
+    public HighLayerCompatibilityInapImpl(byte[] data) {
+        this.data = data;
+    }
 
-	public HighLayerCompatibilityInapImpl(UserTeleserviceInformation highLayerCompatibility) throws INAPException {
-		if (highLayerCompatibility == null)
-			throw new INAPException("The callingPartyCategory parameter must not be null");
-		try {
-			this.data = ((UserTeleserviceInformationImpl) highLayerCompatibility).encode();
-		} catch (ParameterException e) {
-			throw new INAPException("ParameterException when encoding highLayerCompatibility: " + e.getMessage(), e);
-		}
-	}
+    public HighLayerCompatibilityInapImpl(UserTeleserviceInformation highLayerCompatibility) throws INAPException {
+        if (highLayerCompatibility == null)
+            throw new INAPException("The callingPartyCategory parameter must not be null");
+        try {
+            this.data = ((UserTeleserviceInformationImpl) highLayerCompatibility).encode();
+        } catch (ParameterException e) {
+            throw new INAPException("ParameterException when encoding highLayerCompatibility: " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public byte[] getData() {
-		return data;
-	}
+    @Override
+    public byte[] getData() {
+        return data;
+    }
 
-	@Override
-	public UserTeleserviceInformation getHighLayerCompatibility() throws INAPException {
-		if (this.data == null)
-			throw new INAPException("The data has not been filled");
+    @Override
+    public UserTeleserviceInformation getHighLayerCompatibility() throws INAPException {
+        if (this.data == null)
+            throw new INAPException("The data has not been filled");
 
-		try {
-			UserTeleserviceInformationImpl cpc = new UserTeleserviceInformationImpl();
-			cpc.decode(this.data);
-			return cpc;
-		} catch (ParameterException e) {
-			throw new INAPException("ParameterException when decoding HighLayerCompatibility: " + e.getMessage(), e);
-		}
-	}
+        try {
+            UserTeleserviceInformationImpl cpc = new UserTeleserviceInformationImpl();
+            cpc.decode(this.data);
+            return cpc;
+        } catch (ParameterException e) {
+            throw new INAPException("ParameterException when decoding HighLayerCompatibility: " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public int getTag() throws INAPException {
-		return Tag.STRING_OCTET;
-	}
+    @Override
+    public int getTag() throws INAPException {
+        return Tag.STRING_OCTET;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws INAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws INAPParsingComponentException {
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new INAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					INAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new INAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					INAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new INAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    INAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new INAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    INAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws INAPParsingComponentException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws INAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new INAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					INAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new INAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					INAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new INAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    INAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new INAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    INAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws INAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ansIS, int length) throws INAPParsingComponentException, IOException, AsnException {
 
-		this.data = ansIS.readOctetStringData(length);
-		if (this.data.length < 2 || this.data.length > 2)
-			throw new INAPParsingComponentException(
-					"Error while decoding " + _PrimitiveName + ": data must be from 2 to 2 bytes length, found: " + this.data.length,
-					INAPParsingComponentExceptionReason.MistypedParameter);
-	}
+        this.data = ansIS.readOctetStringData(length);
+        if (this.data.length < 2 || this.data.length > 2)
+            throw new INAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": data must be from 2 to 2 bytes length, found: " + this.data.length,
+                    INAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws INAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws INAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws INAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws INAPException {
 
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new INAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            asnOs.writeTag(tagClass, true, tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new INAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws INAPException {
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws INAPException {
 
-		if (this.data == null)
-			throw new INAPException("data field must not be null");
-		if (this.data.length < 2 && this.data.length > 2)
-			throw new INAPException("data field length must be from 2 to 2");
+        if (this.data == null)
+            throw new INAPException("data field must not be null");
+        if (this.data.length < 2 && this.data.length > 2)
+            throw new INAPException("data field length must be from 2 to 2");
 
-		asnOs.writeOctetStringData(data);
-	}
+        asnOs.writeOctetStringData(data);
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		if (this.data != null) {
-			sb.append("data=[");
-			sb.append(printDataArr(this.data));
-			sb.append("]");
-			try {
-				UserTeleserviceInformation cpc = this.getHighLayerCompatibility();
-				sb.append(", ");
-				sb.append(cpc.toString());
-			} catch (INAPException e) {
-			}
-		}
+        if (this.data != null) {
+            sb.append("data=[");
+            sb.append(printDataArr(this.data));
+            sb.append("]");
+            try {
+                UserTeleserviceInformation cpc = this.getHighLayerCompatibility();
+                sb.append(", ");
+                sb.append(cpc.toString());
+            } catch (INAPException e) {
+            }
+        }
 
-		sb.append("]");
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	private String printDataArr(byte[] arr) {
-		StringBuilder sb = new StringBuilder();
-		for (int b : arr) {
-			sb.append(b);
-			sb.append(", ");
-		}
+    private String printDataArr(byte[] arr) {
+        StringBuilder sb = new StringBuilder();
+        for (int b : arr) {
+            sb.append(b);
+            sb.append(", ");
+        }
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 }

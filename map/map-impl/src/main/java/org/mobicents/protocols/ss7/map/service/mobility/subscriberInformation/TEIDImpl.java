@@ -26,21 +26,21 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class TEIDImpl extends OctetStringBase implements TEID {
 
-	public TEIDImpl() {
-		super(4, 4, "TEID");
-	}
+    public TEIDImpl() {
+        super(4, 4, "TEID");
+    }
 
-	public TEIDImpl(byte[] data) {
-		super(4, 4, "TEID", data);
-	}
+    public TEIDImpl(byte[] data) {
+        super(4, 4, "TEID", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 }

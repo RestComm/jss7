@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -27,25 +27,25 @@ import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.ss7.m3ua.parameter.ASPIdentifier;
 
 /**
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public interface AspFactory {
 
-	public String getName();
+    String getName();
 
-	public Association getAssociation();
+    Association getAssociation();
 
-	public List<Asp> getAspList();
+    List<Asp> getAspList();
 
-	public boolean getStatus();
+    boolean getStatus();
 
-	public Functionality getFunctionality();
+    Functionality getFunctionality();
 
-	public IPSPType getIpspType();
+    IPSPType getIpspType();
 
-	public ASPIdentifier getAspid();
+    ASPIdentifier getAspid();
 
-	public boolean isHeartBeatEnabled();
+    boolean isHeartBeatEnabled();
 }

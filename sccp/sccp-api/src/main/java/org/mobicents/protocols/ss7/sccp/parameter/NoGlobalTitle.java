@@ -29,50 +29,49 @@ import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 
 /**
  * @author amit bhayani
- * 
+ *
  */
 public class NoGlobalTitle extends GlobalTitle {
 
-	private String digits;
-	
-	public NoGlobalTitle(){
-		
-	}
+    private String digits;
 
-	public NoGlobalTitle(String digits) {
-		this.digits = digits;
-	}
+    public NoGlobalTitle() {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle#getIndicator()
-	 */
-	@Override
-	public GlobalTitleIndicator getIndicator() {
-		return GlobalTitleIndicator.NO_GLOBAL_TITLE_INCLUDED;
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle#getDigits()
-	 */
-	@Override
-	public String getDigits() {
-		return this.digits;
-	}
+    public NoGlobalTitle(String digits) {
+        this.digits = digits;
+    }
 
-	// default XML representation.
-	protected static final XMLFormat<NoGlobalTitle> XML = new XMLFormat<NoGlobalTitle>(NoGlobalTitle.class) {
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle#getIndicator()
+     */
+    @Override
+    public GlobalTitleIndicator getIndicator() {
+        return GlobalTitleIndicator.NO_GLOBAL_TITLE_INCLUDED;
+    }
 
-		public void write(NoGlobalTitle ai, OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(DIGITS, ai.digits);
-		}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle#getDigits()
+     */
+    @Override
+    public String getDigits() {
+        return this.digits;
+    }
 
-		public void read(InputElement xml, NoGlobalTitle ai) throws XMLStreamException {
-			ai.digits = xml.getAttribute(DIGITS).toString();
-		}
-	};
+    // default XML representation.
+    protected static final XMLFormat<NoGlobalTitle> XML = new XMLFormat<NoGlobalTitle>(NoGlobalTitle.class) {
+
+        public void write(NoGlobalTitle ai, OutputElement xml) throws XMLStreamException {
+            xml.setAttribute(DIGITS, ai.digits);
+        }
+
+        public void read(InputElement xml, NoGlobalTitle ai) throws XMLStreamException {
+            ai.digits = xml.getAttribute(DIGITS).toString();
+        }
+    };
 }

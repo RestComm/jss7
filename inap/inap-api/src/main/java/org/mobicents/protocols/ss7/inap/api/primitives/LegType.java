@@ -23,38 +23,34 @@
 package org.mobicents.protocols.ss7.inap.api.primitives;
 
 /**
-*
-LegType ::= OCTET STRING (SIZE(1))
-leg1 LegType ::= '01'H
-leg2 LegType ::= '02'H
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ LegType ::= OCTET STRING (SIZE(1)) leg1 LegType ::= '01'H leg2 LegType ::= '02'H
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public enum LegType {
-	leg1(1),
-	leg2(2);
+    leg1(1), leg2(2);
 
-	private int code;
+    private int code;
 
-	private LegType(int code) {
-		this.code = code;
-	}
+    private LegType(int code) {
+        this.code = code;
+    }
 
-	public static LegType getInstance(int code) {
-		switch (code) {
-		case 1:
-			return LegType.leg1;
-		case 2:
-			return LegType.leg2;
-		}
+    public static LegType getInstance(int code) {
+        switch (code) {
+            case 1:
+                return LegType.leg1;
+            case 2:
+                return LegType.leg2;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public int getCode() {
-		return code;
-	}
+    public int getCode() {
+        return code;
+    }
 }
-

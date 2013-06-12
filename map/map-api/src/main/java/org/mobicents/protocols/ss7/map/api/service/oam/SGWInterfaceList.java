@@ -23,30 +23,24 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-SGW-InterfaceList ::= BIT STRING {
-	s4 (0),
-	s5 (1),
-	s8b (2),
-	s11 (3),
-	gxc (4)} (SIZE (5..8))
--- Other bits than listed above shall be discarded.
-
- * 
+ *
+ SGW-InterfaceList ::= BIT STRING { s4 (0), s5 (1), s8b (2), s11 (3), gxc (4)} (SIZE (5..8)) -- Other bits than listed above
+ * shall be discarded.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SGWInterfaceList {
 
-	public boolean gets4();
+    boolean gets4();
 
-	public boolean gets5();
+    boolean gets5();
 
-	public boolean gets8b();
+    boolean gets8b();
 
-	public boolean gets11();
+    boolean gets11();
 
-	public boolean getgxc();
+    boolean getgxc();
 
 }

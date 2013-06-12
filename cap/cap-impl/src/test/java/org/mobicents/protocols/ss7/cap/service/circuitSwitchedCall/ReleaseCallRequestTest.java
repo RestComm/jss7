@@ -22,48 +22,49 @@
 
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Arrays;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.cap.isup.CauseCapImpl;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class ReleaseCallRequestTest {
 
-	public byte[] getData1() {
-		return new byte[] { 4, 2, (byte) 132, (byte) 144 };
-	}
+    public byte[] getData1() {
+        return new byte[] { 4, 2, (byte) 132, (byte) 144 };
+    }
 
-	public byte[] getDataIntData() {
-		return new byte[] { (byte) 132, (byte) 144 };
-	}
+    public byte[] getDataIntData() {
+        return new byte[] { (byte) 132, (byte) 144 };
+    }
 
-	@Test(groups = { "functional.decode","circuitSwitchedCall"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "circuitSwitchedCall" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData1();
-		AsnInputStream ais = new AsnInputStream(data);
-		ReleaseCallRequestImpl elem = new ReleaseCallRequestImpl();
-		int tag = ais.readTag();
-		elem.decodeAll(ais);
-		assertTrue(Arrays.equals(elem.getCause().getData(), getDataIntData()));
-	}
+        byte[] data = this.getData1();
+        AsnInputStream ais = new AsnInputStream(data);
+        ReleaseCallRequestImpl elem = new ReleaseCallRequestImpl();
+        int tag = ais.readTag();
+        elem.decodeAll(ais);
+        assertTrue(Arrays.equals(elem.getCause().getData(), getDataIntData()));
+    }
 
-	@Test(groups = { "functional.encode","circuitSwitchedCall"})
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "circuitSwitchedCall" })
+    public void testEncode() throws Exception {
 
-		CauseCapImpl cause = new CauseCapImpl(getDataIntData());
-		
-		ReleaseCallRequestImpl elem = new ReleaseCallRequestImpl(cause);
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
-	}
+        CauseCapImpl cause = new CauseCapImpl(getDataIntData());
+
+        ReleaseCallRequestImpl elem = new ReleaseCallRequestImpl(cause);
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+    }
 }
-

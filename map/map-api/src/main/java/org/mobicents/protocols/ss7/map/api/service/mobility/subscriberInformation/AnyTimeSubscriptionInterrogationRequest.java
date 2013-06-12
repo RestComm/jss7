@@ -27,52 +27,34 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
-/**	
- * 
-
-MAP V3:
-
-anyTimeSubscriptionInterrogation  OPERATION ::= {			--Timer m
-	ARGUMENT
-		AnyTimeSubscriptionInterrogationArg
-	RESULT
-		AnyTimeSubscriptionInterrogationRes
-	ERRORS {
-		atsi-NotAllowed |
-		dataMissing |
-		unexpectedDataValue |
-		unknownSubscriber |
-		bearerServiceNotProvisioned |
-		teleserviceNotProvisioned |
-		callBarred |
-		illegalSS-Operation |
-		ss-NotAvailable |
-		informationNotAvailable}
-	CODE	local:62 }
-
-AnyTimeSubscriptionInterrogationArg ::= SEQUENCE {
-	subscriberIdentity	[0] SubscriberIdentity,
-	requestedSubscriptionInfo	[1] RequestedSubscriptionInfo,
-	gsmSCF-Address	[2] ISDN-AddressString,
-	extensionContainer	[3] ExtensionContainer	OPTIONAL,
-	longFTN-Supported	[4]	NULL		OPTIONAL,
-	...}
-
-
- * 
+/**
+ *
+ MAP V3:
+ *
+ * anyTimeSubscriptionInterrogation OPERATION ::= { --Timer m ARGUMENT AnyTimeSubscriptionInterrogationArg RESULT
+ * AnyTimeSubscriptionInterrogationRes ERRORS { atsi-NotAllowed | dataMissing | unexpectedDataValue | unknownSubscriber |
+ * bearerServiceNotProvisioned | teleserviceNotProvisioned | callBarred | illegalSS-Operation | ss-NotAvailable |
+ * informationNotAvailable} CODE local:62 }
+ *
+ * AnyTimeSubscriptionInterrogationArg ::= SEQUENCE { subscriberIdentity [0] SubscriberIdentity, requestedSubscriptionInfo [1]
+ * RequestedSubscriptionInfo, gsmSCF-Address [2] ISDN-AddressString, extensionContainer [3] ExtensionContainer OPTIONAL,
+ * longFTN-Supported [4] NULL OPTIONAL, ...}
+ *
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface AnyTimeSubscriptionInterrogationRequest extends MobilityMessage {
 
-	public SubscriberIdentity getSubscriberIdentity();
+    SubscriberIdentity getSubscriberIdentity();
 
-	public RequestedSubscriptionInfo getRequestedSubscriptionInfo();
+    RequestedSubscriptionInfo getRequestedSubscriptionInfo();
 
-	public ISDNAddressString getGsmScfAddress();
+    ISDNAddressString getGsmScfAddress();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public boolean getLongFTNSupported();
+    boolean getLongFTNSupported();
 
 }

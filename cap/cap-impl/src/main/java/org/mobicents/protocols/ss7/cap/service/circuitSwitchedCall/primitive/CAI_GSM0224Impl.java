@@ -35,258 +35,256 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CAI_GSM0224Impl implements CAI_GSM0224, CAPAsnPrimitive {
 
-	public static final int _ID_e1 = 0;
-	public static final int _ID_e2 = 1;
-	public static final int _ID_e3 = 2;
-	public static final int _ID_e4 = 3;
-	public static final int _ID_e5 = 4;
-	public static final int _ID_e6 = 5;
-	public static final int _ID_e7 = 6;
+    public static final int _ID_e1 = 0;
+    public static final int _ID_e2 = 1;
+    public static final int _ID_e3 = 2;
+    public static final int _ID_e4 = 3;
+    public static final int _ID_e5 = 4;
+    public static final int _ID_e6 = 5;
+    public static final int _ID_e7 = 6;
 
-	public static final String _PrimitiveName = "CAI_GSM0224";
+    public static final String _PrimitiveName = "CAI_GSM0224";
 
-	private Integer e1;
-	private Integer e2;
-	private Integer e3;
-	private Integer e4;
-	private Integer e5;
-	private Integer e6;
-	private Integer e7;
-	
-	
-	public CAI_GSM0224Impl() {
-	}
-	
-	public CAI_GSM0224Impl(Integer e1, Integer e2, Integer e3, Integer e4, Integer e5, Integer e6, Integer e7) {
-		this.e1 = e1;
-		this.e2 = e2;
-		this.e3 = e3;
-		this.e4 = e4;
-		this.e5 = e5;
-		this.e6 = e6;
-		this.e7 = e7;
-	}
+    private Integer e1;
+    private Integer e2;
+    private Integer e3;
+    private Integer e4;
+    private Integer e5;
+    private Integer e6;
+    private Integer e7;
 
-	@Override
-	public Integer getE1() {
-		return e1;
-	}
+    public CAI_GSM0224Impl() {
+    }
 
-	@Override
-	public Integer getE2() {
-		return e2;
-	}
+    public CAI_GSM0224Impl(Integer e1, Integer e2, Integer e3, Integer e4, Integer e5, Integer e6, Integer e7) {
+        this.e1 = e1;
+        this.e2 = e2;
+        this.e3 = e3;
+        this.e4 = e4;
+        this.e5 = e5;
+        this.e6 = e6;
+        this.e7 = e7;
+    }
 
-	@Override
-	public Integer getE3() {
-		return e3;
-	}
+    @Override
+    public Integer getE1() {
+        return e1;
+    }
 
-	@Override
-	public Integer getE4() {
-		return e4;
-	}
+    @Override
+    public Integer getE2() {
+        return e2;
+    }
 
-	@Override
-	public Integer getE5() {
-		return e5;
-	}
+    @Override
+    public Integer getE3() {
+        return e3;
+    }
 
-	@Override
-	public Integer getE6() {
-		return e6;
-	}
+    @Override
+    public Integer getE4() {
+        return e4;
+    }
 
-	@Override
-	public Integer getE7() {
-		return e7;
-	}
+    @Override
+    public Integer getE5() {
+        return e5;
+    }
 
-	@Override
-	public int getTag() throws CAPException {
-		return Tag.SEQUENCE;
-	}
+    @Override
+    public Integer getE6() {
+        return e6;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    @Override
+    public Integer getE7() {
+        return e7;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		return false;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        return Tag.SEQUENCE;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        return false;
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		this.e1 = null;
-		this.e2 = null;
-		this.e3 = null;
-		this.e4 = null;
-		this.e5 = null;
-		this.e6 = null;
-		this.e7 = null;
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-			int tag = ais.readTag();
+        this.e1 = null;
+        this.e2 = null;
+        this.e3 = null;
+        this.e4 = null;
+        this.e5 = null;
+        this.e6 = null;
+        this.e7 = null;
 
-			if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-				switch (tag) {
-				case _ID_e1:
-					this.e1 = (int) ais.readInteger();
-					break;
-				case _ID_e2:
-					this.e2 = (int) ais.readInteger();
-					break;
-				case _ID_e3:
-					this.e3 = (int) ais.readInteger();
-					break;
-				case _ID_e4:
-					this.e4 = (int) ais.readInteger();
-					break;
-				case _ID_e5:
-					this.e5 = (int) ais.readInteger();
-					break;
-				case _ID_e6:
-					this.e6 = (int) ais.readInteger();
-					break;
-				case _ID_e7:
-					this.e7 = (int) ais.readInteger();
-					break;
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-			} else {
-				ais.advanceElement();
-			}
-		}
-	}
+            int tag = ais.readTag();
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-		
-	}
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case _ID_e1:
+                        this.e1 = (int) ais.readInteger();
+                        break;
+                    case _ID_e2:
+                        this.e2 = (int) ais.readInteger();
+                        break;
+                    case _ID_e3:
+                        this.e3 = (int) ais.readInteger();
+                        break;
+                    case _ID_e4:
+                        this.e4 = (int) ais.readInteger();
+                        break;
+                    case _ID_e5:
+                        this.e5 = (int) ais.readInteger();
+                        break;
+                    case _ID_e6:
+                        this.e6 = (int) ais.readInteger();
+                        break;
+                    case _ID_e7:
+                        this.e7 = (int) ais.readInteger();
+                        break;
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
+    }
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
 
-	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+    }
 
-		try {
-			if (this.e1 != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_e1, this.e1);
-			if (this.e2 != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_e2, this.e2);
-			if (this.e3 != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_e3, this.e3);
-			if (this.e4 != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_e4, this.e4);
-			if (this.e5 != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_e5, this.e5);
-			if (this.e6 != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_e6, this.e6);
-			if (this.e7 != null)
-				aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_e7, this.e7);
-			
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-	@Override
-	public String toString() {
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+    @Override
+    public void encodeData(AsnOutputStream aos) throws CAPException {
 
-		if (this.e1 != null) {
-			sb.append("e1=");
-			sb.append(this.e1);
-		}
-		if (this.e2 != null) {
-			sb.append(", e2=");
-			sb.append(this.e2);
-		}
-		if (this.e3 != null) {
-			sb.append(", e3=");
-			sb.append(this.e3);
-		}
-		if (this.e4 != null) {
-			sb.append(", e4=");
-			sb.append(this.e4);
-		}
-		if (this.e5 != null) {
-			sb.append(", e5=");
-			sb.append(this.e5);
-		}
-		if (this.e6 != null) {
-			sb.append(", e6=");
-			sb.append(this.e6);
-		}
-		if (this.e7 != null) {
-			sb.append(", e7=");
-			sb.append(this.e7);
-		}
+        try {
+            if (this.e1 != null)
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_e1, this.e1);
+            if (this.e2 != null)
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_e2, this.e2);
+            if (this.e3 != null)
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_e3, this.e3);
+            if (this.e4 != null)
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_e4, this.e4);
+            if (this.e5 != null)
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_e5, this.e5);
+            if (this.e6 != null)
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_e6, this.e6);
+            if (this.e7 != null)
+                aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_e7, this.e7);
 
-		sb.append("]");
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.e1 != null) {
+            sb.append("e1=");
+            sb.append(this.e1);
+        }
+        if (this.e2 != null) {
+            sb.append(", e2=");
+            sb.append(this.e2);
+        }
+        if (this.e3 != null) {
+            sb.append(", e3=");
+            sb.append(this.e3);
+        }
+        if (this.e4 != null) {
+            sb.append(", e4=");
+            sb.append(this.e4);
+        }
+        if (this.e5 != null) {
+            sb.append(", e5=");
+            sb.append(this.e5);
+        }
+        if (this.e6 != null) {
+            sb.append(", e6=");
+            sb.append(this.e6);
+        }
+        if (this.e7 != null) {
+            sb.append(", e7=");
+            sb.append(this.e7);
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

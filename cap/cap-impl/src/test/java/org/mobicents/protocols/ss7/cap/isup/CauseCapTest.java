@@ -22,7 +22,9 @@
 
 package org.mobicents.protocols.ss7.cap.isup;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -31,51 +33,51 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.CauseIndicatorsImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CauseCapTest {
 
-	public byte[] getData() {
-		return new byte[] { (byte) 128, 2, (byte) 132, (byte) 144 };
-	}
+    public byte[] getData() {
+        return new byte[] { (byte) 128, 2, (byte) 132, (byte) 144 };
+    }
 
-	public byte[] getIntData() {
-		return new byte[] { (byte) 132, (byte) 144 };
-	}
+    public byte[] getIntData() {
+        return new byte[] { (byte) 132, (byte) 144 };
+    }
 
-	@Test(groups = { "functional.decode","isup"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "isup" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData();
-		AsnInputStream ais = new AsnInputStream(data);
-		CauseCapImpl elem = new CauseCapImpl();
-		int tag = ais.readTag();
-		elem.decodeAll(ais);
-		assertTrue(Arrays.equals(elem.getData(), this.getIntData()));
-		CauseIndicators ci = elem.getCauseIndicators();
-		assertEquals(ci.getCodingStandard(), 0);
-		assertEquals(ci.getLocation(), 4);
-		assertEquals(ci.getCauseValue(), 16);
-		assertNull(ci.getDiagnostics());
-	}
+        byte[] data = this.getData();
+        AsnInputStream ais = new AsnInputStream(data);
+        CauseCapImpl elem = new CauseCapImpl();
+        int tag = ais.readTag();
+        elem.decodeAll(ais);
+        assertTrue(Arrays.equals(elem.getData(), this.getIntData()));
+        CauseIndicators ci = elem.getCauseIndicators();
+        assertEquals(ci.getCodingStandard(), 0);
+        assertEquals(ci.getLocation(), 4);
+        assertEquals(ci.getCauseValue(), 16);
+        assertNull(ci.getDiagnostics());
+    }
 
-	@Test(groups = { "functional.encode","isup"})
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "isup" })
+    public void testEncode() throws Exception {
 
-		CauseCapImpl elem = new CauseCapImpl(this.getIntData());
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+        CauseCapImpl elem = new CauseCapImpl(this.getIntData());
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
 
-		CauseIndicators ci = new CauseIndicatorsImpl(0, 4, 16, null);
-		elem = new CauseCapImpl(ci);
-		aos = new AsnOutputStream();
-		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
-	}
+        CauseIndicators ci = new CauseIndicatorsImpl(0, 4, 16, null);
+        elem = new CauseCapImpl(ci);
+        aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+    }
 }

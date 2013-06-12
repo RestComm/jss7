@@ -22,11 +22,10 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.level1;
 
-import javolution.xml.stream.XMLStreamException;
-
 import javolution.text.CharArray;
 import javolution.util.FastList;
 import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
@@ -34,257 +33,256 @@ import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class M3uaConfigurationData {
 
-	protected static final String STORE_PCAP_TRACE = "storePcapTrace";
-	protected static final String IS_SCTP_SERVER = "isSctpServer";
-	protected static final String LOCAL_HOST = "localHost";
-	protected static final String LOCAL_PORT = "localPort";
-	protected static final String REMOTE_HOST = "remoteHost";
-	protected static final String REMOTE_PORT = "remotePort";
-	protected static final String IP_CHANNEL_TYPE = "ipChannelType";
-	protected static final String EXTRA_HOST_ADDRESSES = "extraHostAddresses";
+    protected static final String STORE_PCAP_TRACE = "storePcapTrace";
+    protected static final String IS_SCTP_SERVER = "isSctpServer";
+    protected static final String LOCAL_HOST = "localHost";
+    protected static final String LOCAL_PORT = "localPort";
+    protected static final String REMOTE_HOST = "remoteHost";
+    protected static final String REMOTE_PORT = "remotePort";
+    protected static final String IP_CHANNEL_TYPE = "ipChannelType";
+    protected static final String EXTRA_HOST_ADDRESSES = "extraHostAddresses";
 
-	protected static final String M3UA_FUNCTIONALITY = "m3uaFunctionality";
-	protected static final String M3UA_EXCHANGE_TYPE = "m3uaExchangeType";
-	protected static final String M3UA_IPSPType = "m3uaIPSPType";
-	protected static final String DPC = "dpc";
-	protected static final String OPC = "opc";
-	protected static final String SI = "si";
-	protected static final String ROUTING_CONTEXT = "routingConext";
-	protected static final String NETWORK_APPEARANCE = "networkAppearance";
+    protected static final String M3UA_FUNCTIONALITY = "m3uaFunctionality";
+    protected static final String M3UA_EXCHANGE_TYPE = "m3uaExchangeType";
+    protected static final String M3UA_IPSPType = "m3uaIPSPType";
+    protected static final String DPC = "dpc";
+    protected static final String OPC = "opc";
+    protected static final String SI = "si";
+    protected static final String ROUTING_CONTEXT = "routingConext";
+    protected static final String NETWORK_APPEARANCE = "networkAppearance";
 
-	private boolean storePcapTrace = false;
-	private boolean isSctpServer = false;
-	private String localHost;
-	private int localPort;
-	private String remoteHost;
-	private int remotePort;
-	private IpChannelType ipChannelType = IpChannelType.TCP;
-	private String[] extraHostAddresses = new String[0];
-	private int dpc = 0;
-	private int opc = -1;
-	private int si = -1;
-	private long routingContext = 101;
-	private long networkAppearance = 102;
-	
-	private Functionality m3uaFunctionality = Functionality.IPSP;
-	private ExchangeType m3uaExchangeType = ExchangeType.SE;
-	private IPSPType m3uaIPSPType = IPSPType.CLIENT;
+    private boolean storePcapTrace = false;
+    private boolean isSctpServer = false;
+    private String localHost;
+    private int localPort;
+    private String remoteHost;
+    private int remotePort;
+    private IpChannelType ipChannelType = IpChannelType.TCP;
+    private String[] extraHostAddresses = new String[0];
+    private int dpc = 0;
+    private int opc = -1;
+    private int si = -1;
+    private long routingContext = 101;
+    private long networkAppearance = 102;
 
+    private Functionality m3uaFunctionality = Functionality.IPSP;
+    private ExchangeType m3uaExchangeType = ExchangeType.SE;
+    private IPSPType m3uaIPSPType = IPSPType.CLIENT;
 
-	public boolean getStorePcapTrace() {
-		return storePcapTrace;
-	}
+    public boolean getStorePcapTrace() {
+        return storePcapTrace;
+    }
 
-	public void setStorePcapTrace(boolean val) {
-		storePcapTrace = val;
-	}
+    public void setStorePcapTrace(boolean val) {
+        storePcapTrace = val;
+    }
 
-	public boolean getIsSctpServer() {
-		return isSctpServer;
-	}
+    public boolean getIsSctpServer() {
+        return isSctpServer;
+    }
 
-	public void setIsSctpServer(boolean val) {
-		isSctpServer = val;
-	}
+    public void setIsSctpServer(boolean val) {
+        isSctpServer = val;
+    }
 
-	public String getLocalHost() {
-		return localHost;
-	}
+    public String getLocalHost() {
+        return localHost;
+    }
 
-	public void setLocalHost(String val) {
-		localHost = val;
-	}
+    public void setLocalHost(String val) {
+        localHost = val;
+    }
 
-	public int getLocalPort() {
-		return localPort;
-	}
+    public int getLocalPort() {
+        return localPort;
+    }
 
-	public void setLocalPort(int val) {
-		localPort = val;
-	}
+    public void setLocalPort(int val) {
+        localPort = val;
+    }
 
-	public String getRemoteHost() {
-		return remoteHost;
-	}
+    public String getRemoteHost() {
+        return remoteHost;
+    }
 
-	public void setRemoteHost(String val) {
-		remoteHost = val;
-	}
+    public void setRemoteHost(String val) {
+        remoteHost = val;
+    }
 
-	public int getRemotePort() {
-		return remotePort;
-	}
+    public int getRemotePort() {
+        return remotePort;
+    }
 
-	public void setRemotePort(int val) {
-		remotePort = val;
-	}
+    public void setRemotePort(int val) {
+        remotePort = val;
+    }
 
-	public IpChannelType getIpChannelType() {
-		return ipChannelType;
-	}
+    public IpChannelType getIpChannelType() {
+        return ipChannelType;
+    }
 
-	public void setIpChannelType(IpChannelType val) {
-		ipChannelType = val;
-	}
+    public void setIpChannelType(IpChannelType val) {
+        ipChannelType = val;
+    }
 
-	public String[] getSctpExtraHostAddressesArray() {
-		return extraHostAddresses;
-	}
+    public String[] getSctpExtraHostAddressesArray() {
+        return extraHostAddresses;
+    }
 
-	public void setSctpExtraHostAddressesArray(String[] val) {
-		extraHostAddresses = val;
-	}
+    public void setSctpExtraHostAddressesArray(String[] val) {
+        extraHostAddresses = val;
+    }
 
-	public String getSctpExtraHostAddresses() {
-		if (extraHostAddresses == null) {
-			return null;
-		} else {
-			StringBuilder sb = new StringBuilder();
-			for (String s : extraHostAddresses) {
-				if (sb.length() != 0) {
-					sb.append(" ");
-				}
-				sb.append(s);
-			}
-			return sb.toString();
-		}
-	}
+    public String getSctpExtraHostAddresses() {
+        if (extraHostAddresses == null) {
+            return null;
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (String s : extraHostAddresses) {
+                if (sb.length() != 0) {
+                    sb.append(" ");
+                }
+                sb.append(s);
+            }
+            return sb.toString();
+        }
+    }
 
-	public void setSctpExtraHostAddresses(String val) {
-		if (val == null)
-			return;
+    public void setSctpExtraHostAddresses(String val) {
+        if (val == null)
+            return;
 
-		String[] ss = val.split(" ");
-		FastList<String> fl = new FastList<String>();
-		for (String s : ss) {
-			if (s.length() != 0) {
-				fl.add(s);
-			}
-		}
-		extraHostAddresses = new String[fl.size()];
-		fl.toArray(extraHostAddresses);
-	}
+        String[] ss = val.split(" ");
+        FastList<String> fl = new FastList<String>();
+        for (String s : ss) {
+            if (s.length() != 0) {
+                fl.add(s);
+            }
+        }
+        extraHostAddresses = new String[fl.size()];
+        fl.toArray(extraHostAddresses);
+    }
 
-	public int getDpc() {
-		return dpc;
-	}
+    public int getDpc() {
+        return dpc;
+    }
 
-	public void setDpc(int val) {
-		dpc = val;
-	}
+    public void setDpc(int val) {
+        dpc = val;
+    }
 
-	public int getOpc() {
-		return opc;
-	}
+    public int getOpc() {
+        return opc;
+    }
 
-	public void setOpc(int val) {
-		opc = val;
-	}
+    public void setOpc(int val) {
+        opc = val;
+    }
 
-	public int getSi() {
-		return si;
-	}
+    public int getSi() {
+        return si;
+    }
 
-	public void setSi(int val) {
-		si = val;
-	}
+    public void setSi(int val) {
+        si = val;
+    }
 
-	public long getRoutingContext() {
-		return routingContext;
-	}
+    public long getRoutingContext() {
+        return routingContext;
+    }
 
-	public void setRoutingContext(long val) {
-		routingContext = val;
-	}
+    public void setRoutingContext(long val) {
+        routingContext = val;
+    }
 
-	public long getNetworkAppearance() {
-		return networkAppearance;
-	}
+    public long getNetworkAppearance() {
+        return networkAppearance;
+    }
 
-	public void setNetworkAppearance(long val) {
-		networkAppearance = val;
-	}
+    public void setNetworkAppearance(long val) {
+        networkAppearance = val;
+    }
 
-	public Functionality getM3uaFunctionality() {
-		return m3uaFunctionality;
-	}
+    public Functionality getM3uaFunctionality() {
+        return m3uaFunctionality;
+    }
 
-	public void setM3uaFunctionality(Functionality val) {
-		m3uaFunctionality = val;
-	}
+    public void setM3uaFunctionality(Functionality val) {
+        m3uaFunctionality = val;
+    }
 
-	public ExchangeType getM3uaExchangeType() {
-		return m3uaExchangeType;
-	}
+    public ExchangeType getM3uaExchangeType() {
+        return m3uaExchangeType;
+    }
 
-	public void setM3uaExchangeType(ExchangeType val) {
-		m3uaExchangeType = val;
-	}
+    public void setM3uaExchangeType(ExchangeType val) {
+        m3uaExchangeType = val;
+    }
 
-	public IPSPType getM3uaIPSPType() {
-		return m3uaIPSPType;
-	}
+    public IPSPType getM3uaIPSPType() {
+        return m3uaIPSPType;
+    }
 
-	public void setM3uaIPSPType(IPSPType val) {
-		m3uaIPSPType = val;
-	}
+    public void setM3uaIPSPType(IPSPType val) {
+        m3uaIPSPType = val;
+    }
 
-	protected static final XMLFormat<M3uaConfigurationData> XML = new XMLFormat<M3uaConfigurationData>(M3uaConfigurationData.class) {
+    protected static final XMLFormat<M3uaConfigurationData> XML = new XMLFormat<M3uaConfigurationData>(
+            M3uaConfigurationData.class) {
 
-		public void write(M3uaConfigurationData m3ua, OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(STORE_PCAP_TRACE, m3ua.storePcapTrace);
-			xml.setAttribute(IS_SCTP_SERVER, m3ua.isSctpServer);
-			xml.setAttribute(LOCAL_PORT, m3ua.localPort);
-			xml.setAttribute(REMOTE_PORT, m3ua.remotePort);
-			xml.setAttribute(IP_CHANNEL_TYPE, m3ua.ipChannelType.toString());
-			xml.setAttribute(DPC, m3ua.dpc);
-			xml.setAttribute(OPC, m3ua.opc);
-			xml.setAttribute(SI, m3ua.si);
-			xml.setAttribute(ROUTING_CONTEXT, m3ua.routingContext);
-			xml.setAttribute(NETWORK_APPEARANCE, m3ua.networkAppearance);
-			xml.setAttribute(M3UA_FUNCTIONALITY, m3ua.m3uaFunctionality.toString());
-			xml.setAttribute(M3UA_EXCHANGE_TYPE, m3ua.m3uaExchangeType.toString());
-			xml.setAttribute(M3UA_IPSPType, m3ua.m3uaIPSPType.toString());
+        public void write(M3uaConfigurationData m3ua, OutputElement xml) throws XMLStreamException {
+            xml.setAttribute(STORE_PCAP_TRACE, m3ua.storePcapTrace);
+            xml.setAttribute(IS_SCTP_SERVER, m3ua.isSctpServer);
+            xml.setAttribute(LOCAL_PORT, m3ua.localPort);
+            xml.setAttribute(REMOTE_PORT, m3ua.remotePort);
+            xml.setAttribute(IP_CHANNEL_TYPE, m3ua.ipChannelType.toString());
+            xml.setAttribute(DPC, m3ua.dpc);
+            xml.setAttribute(OPC, m3ua.opc);
+            xml.setAttribute(SI, m3ua.si);
+            xml.setAttribute(ROUTING_CONTEXT, m3ua.routingContext);
+            xml.setAttribute(NETWORK_APPEARANCE, m3ua.networkAppearance);
+            xml.setAttribute(M3UA_FUNCTIONALITY, m3ua.m3uaFunctionality.toString());
+            xml.setAttribute(M3UA_EXCHANGE_TYPE, m3ua.m3uaExchangeType.toString());
+            xml.setAttribute(M3UA_IPSPType, m3ua.m3uaIPSPType.toString());
 
-			xml.add(m3ua.localHost, LOCAL_HOST, String.class);
-			xml.add(m3ua.remoteHost, REMOTE_HOST, String.class);
-			if (m3ua.getSctpExtraHostAddresses() != null && !m3ua.getSctpExtraHostAddresses().equals("")) {
-				xml.add(m3ua.getSctpExtraHostAddresses(), EXTRA_HOST_ADDRESSES, String.class);
-			}
-		}
+            xml.add(m3ua.localHost, LOCAL_HOST, String.class);
+            xml.add(m3ua.remoteHost, REMOTE_HOST, String.class);
+            if (m3ua.getSctpExtraHostAddresses() != null && !m3ua.getSctpExtraHostAddresses().equals("")) {
+                xml.add(m3ua.getSctpExtraHostAddresses(), EXTRA_HOST_ADDRESSES, String.class);
+            }
+        }
 
-		public void read(InputElement xml, M3uaConfigurationData m3ua) throws XMLStreamException {
-			CharArray ca = xml.getAttribute(STORE_PCAP_TRACE);
-			if (ca != null)
-				m3ua.storePcapTrace = ca.toBoolean();
+        public void read(InputElement xml, M3uaConfigurationData m3ua) throws XMLStreamException {
+            CharArray ca = xml.getAttribute(STORE_PCAP_TRACE);
+            if (ca != null)
+                m3ua.storePcapTrace = ca.toBoolean();
 
-			m3ua.isSctpServer = xml.getAttribute(IS_SCTP_SERVER).toBoolean();
-			m3ua.localPort = xml.getAttribute(LOCAL_PORT).toInt();
-			m3ua.remotePort = xml.getAttribute(REMOTE_PORT).toInt();
-			String str = xml.getAttribute(IP_CHANNEL_TYPE).toString();
-			m3ua.ipChannelType = IpChannelType.valueOf(str);
-			m3ua.dpc = xml.getAttribute(DPC).toInt();
-			m3ua.opc = xml.getAttribute(OPC).toInt();
-			m3ua.si = xml.getAttribute(SI).toInt();
-			m3ua.routingContext = xml.getAttribute(ROUTING_CONTEXT).toInt();
-			m3ua.networkAppearance = xml.getAttribute(NETWORK_APPEARANCE).toInt();
-			str = xml.getAttribute(M3UA_FUNCTIONALITY).toString();
-			m3ua.m3uaFunctionality = Functionality.valueOf(str);
-			str = xml.getAttribute(M3UA_EXCHANGE_TYPE).toString();
-			m3ua.m3uaExchangeType = ExchangeType.valueOf(str);
-			str = xml.getAttribute(M3UA_IPSPType).toString();
-			m3ua.m3uaIPSPType = IPSPType.valueOf(str);
+            m3ua.isSctpServer = xml.getAttribute(IS_SCTP_SERVER).toBoolean();
+            m3ua.localPort = xml.getAttribute(LOCAL_PORT).toInt();
+            m3ua.remotePort = xml.getAttribute(REMOTE_PORT).toInt();
+            String str = xml.getAttribute(IP_CHANNEL_TYPE).toString();
+            m3ua.ipChannelType = IpChannelType.valueOf(str);
+            m3ua.dpc = xml.getAttribute(DPC).toInt();
+            m3ua.opc = xml.getAttribute(OPC).toInt();
+            m3ua.si = xml.getAttribute(SI).toInt();
+            m3ua.routingContext = xml.getAttribute(ROUTING_CONTEXT).toInt();
+            m3ua.networkAppearance = xml.getAttribute(NETWORK_APPEARANCE).toInt();
+            str = xml.getAttribute(M3UA_FUNCTIONALITY).toString();
+            m3ua.m3uaFunctionality = Functionality.valueOf(str);
+            str = xml.getAttribute(M3UA_EXCHANGE_TYPE).toString();
+            m3ua.m3uaExchangeType = ExchangeType.valueOf(str);
+            str = xml.getAttribute(M3UA_IPSPType).toString();
+            m3ua.m3uaIPSPType = IPSPType.valueOf(str);
 
-			m3ua.localHost = (String) xml.get(LOCAL_HOST, String.class);
-			m3ua.remoteHost = (String) xml.get(REMOTE_HOST, String.class);
-			m3ua.setSctpExtraHostAddresses((String) xml.get(EXTRA_HOST_ADDRESSES, String.class));
-		}
-	};
+            m3ua.localHost = (String) xml.get(LOCAL_HOST, String.class);
+            m3ua.remoteHost = (String) xml.get(REMOTE_HOST, String.class);
+            m3ua.setSctpExtraHostAddresses((String) xml.get(EXTRA_HOST_ADDRESSES, String.class));
+        }
+    };
 }
-

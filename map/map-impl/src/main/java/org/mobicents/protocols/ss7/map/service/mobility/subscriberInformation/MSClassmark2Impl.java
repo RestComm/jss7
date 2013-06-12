@@ -28,19 +28,19 @@ import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 /**
  * @author amit bhayani
  * @author sergey vetyutnev
- * 
+ *
  */
 public class MSClassmark2Impl extends OctetStringBase implements MSClassmark2 {
 
-	public MSClassmark2Impl() {
-		super(3, 3, "MSClassmark2");
-	}
+    public MSClassmark2Impl() {
+        super(3, 3, "MSClassmark2");
+    }
 
-	public MSClassmark2Impl(byte[] data) {
-		super(3, 3, "MSClassmark2", data);
-	}
+    public MSClassmark2Impl(byte[] data) {
+        super(3, 3, "MSClassmark2", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 }

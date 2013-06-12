@@ -23,10 +23,10 @@
 /**
  * Start time:14:11:03 2009-04-23<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
  *         </a>
- * 
+ *
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
@@ -41,69 +41,74 @@ import org.testng.annotations.Test;
 /**
  * Start time:14:11:03 2009-04-23<br>
  * Project: mobicents-isup-stack<br>
- * 
- * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski
- *         </a>
+ *
+ * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public class LocationNumberTest extends ParameterHarness {
 
-	/**
-	 * @throws IOException
-	 */
-	public LocationNumberTest() throws IOException {
-		super.badBodies.add(new byte[1]);
+    /**
+     * @throws IOException
+     */
+    public LocationNumberTest() throws IOException {
+        super.badBodies.add(new byte[1]);
 
-//		super.goodBodies.add(getBody( false, LocationNumber._NAI_NATIONAL_SN, LocationNumberImpl._INN_ROUTING_ALLOWED, LocationNumberImpl._NPI_ISDN,
-//				LocationNumberImpl._APRI_NOT_AVAILABLE, LocationNumberImpl._SI_NETWORK_PROVIDED, getSixDigits()));
-		super.goodBodies.add(getBody( false, LocationNumber._NAI_NATIONAL_SN, LocationNumberImpl._INN_ROUTING_ALLOWED, LocationNumberImpl._NPI_ISDN,
-				LocationNumberImpl._APRI_ALLOWED, LocationNumberImpl._SI_NETWORK_PROVIDED, getSixDigits()));
+        // super.goodBodies.add(getBody( false, LocationNumber._NAI_NATIONAL_SN, LocationNumberImpl._INN_ROUTING_ALLOWED,
+        // LocationNumberImpl._NPI_ISDN,
+        // LocationNumberImpl._APRI_NOT_AVAILABLE, LocationNumberImpl._SI_NETWORK_PROVIDED, getSixDigits()));
+        super.goodBodies.add(getBody(false, LocationNumber._NAI_NATIONAL_SN, LocationNumberImpl._INN_ROUTING_ALLOWED,
+                LocationNumberImpl._NPI_ISDN, LocationNumberImpl._APRI_ALLOWED, LocationNumberImpl._SI_NETWORK_PROVIDED,
+                getSixDigits()));
 
-	}
+    }
 
-	private byte[] getBody(boolean isODD, int _NAI, int _INN, int _NPI, int _APR, int _SI, byte[] digits) throws IOException {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		// we will use odd number of digits, so we leave zero as MSB
+    private byte[] getBody(boolean isODD, int _NAI, int _INN, int _NPI, int _APR, int _SI, byte[] digits) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        // we will use odd number of digits, so we leave zero as MSB
 
-		int nai = _NAI;
-		if (isODD)
-			nai |= 0x01 << 7;
-		int bit3 = _SI;
-		bit3 |= _APR << 2;
-		bit3 |= _NPI << 4;
-		bit3 |= _INN << 7;
+        int nai = _NAI;
+        if (isODD)
+            nai |= 0x01 << 7;
+        int bit3 = _SI;
+        bit3 |= _APR << 2;
+        bit3 |= _NPI << 4;
+        bit3 |= _INN << 7;
 
+        bos.write(nai);
+        bos.write(bit3);
+        bos.write(digits);
+        return bos.toByteArray();
+    }
 
-		bos.write(nai);
-		bos.write(bit3);
-		bos.write(digits);
-		return bos.toByteArray();
-	}
-	@Test(groups = { "functional.encode","functional.decode","parameter"})
-	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException, ParameterException {
-		LocationNumberImpl bci = new LocationNumberImpl(getBody( false, LocationNumber._NAI_NATIONAL_SN, LocationNumberImpl._INN_ROUTING_ALLOWED, LocationNumberImpl._NPI_ISDN,
-				LocationNumberImpl._APRI_NOT_AVAILABLE, LocationNumberImpl._SI_NETWORK_PROVIDED, getSixDigits()));
+    @Test(groups = { "functional.encode", "functional.decode", "parameter" })
+    public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException, IOException, ParameterException {
+        LocationNumberImpl bci = new LocationNumberImpl(getBody(false, LocationNumber._NAI_NATIONAL_SN,
+                LocationNumberImpl._INN_ROUTING_ALLOWED, LocationNumberImpl._NPI_ISDN, LocationNumberImpl._APRI_NOT_AVAILABLE,
+                LocationNumberImpl._SI_NETWORK_PROVIDED, getSixDigits()));
 
-		String[] methodNames = { "isOddFlag", "getNatureOfAddressIndicator", "getInternalNetworkNumberIndicator", "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator",
-				"getScreeningIndicator", "getAddress" };
-		Object[] expectedValues = { false, LocationNumber._NAI_NATIONAL_SN, LocationNumberImpl._INN_ROUTING_ALLOWED, LocationNumberImpl._NPI_ISDN,
-				LocationNumberImpl._APRI_NOT_AVAILABLE, LocationNumberImpl._SI_NETWORK_PROVIDED, getSixDigitsString() };
-		super.testValues(bci, methodNames, expectedValues);
-	}
+        String[] methodNames = { "isOddFlag", "getNatureOfAddressIndicator", "getInternalNetworkNumberIndicator",
+                "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator", "getScreeningIndicator",
+                "getAddress" };
+        Object[] expectedValues = { false, LocationNumber._NAI_NATIONAL_SN, LocationNumberImpl._INN_ROUTING_ALLOWED,
+                LocationNumberImpl._NPI_ISDN, LocationNumberImpl._APRI_NOT_AVAILABLE, LocationNumberImpl._SI_NETWORK_PROVIDED,
+                getSixDigitsString() };
+        super.testValues(bci, methodNames, expectedValues);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent
-	 * ()
-	 */
-	
-	public AbstractISUPParameter getTestedComponent() {
-//		return new LocationNumberImpl(1,"1",1,1,1,1);
-		return new LocationNumberImpl(LocationNumber._NAI_NATIONAL_SN, getSixDigitsString(), LocationNumberImpl._NPI_ISDN,
-				LocationNumberImpl._INN_ROUTING_ALLOWED, LocationNumberImpl._APRI_ALLOWED, LocationNumberImpl._SI_NETWORK_PROVIDED);
-//		public LocationNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int internalNetworkNumberIndicator, int addressRepresentationREstrictedIndicator,
-//				int screeningIndicator) {
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.isup.messages.parameters.ParameterHarness#getTestedComponent ()
+     */
+
+    public AbstractISUPParameter getTestedComponent() {
+        // return new LocationNumberImpl(1,"1",1,1,1,1);
+        return new LocationNumberImpl(LocationNumber._NAI_NATIONAL_SN, getSixDigitsString(), LocationNumberImpl._NPI_ISDN,
+                LocationNumberImpl._INN_ROUTING_ALLOWED, LocationNumberImpl._APRI_ALLOWED,
+                LocationNumberImpl._SI_NETWORK_PROVIDED);
+        // public LocationNumberImpl(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int
+        // internalNetworkNumberIndicator, int addressRepresentationREstrictedIndicator,
+        // int screeningIndicator) {
+    }
 
 }

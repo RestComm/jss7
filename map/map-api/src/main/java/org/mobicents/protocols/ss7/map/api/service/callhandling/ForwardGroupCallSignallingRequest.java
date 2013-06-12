@@ -29,62 +29,47 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 
 /**
- * 
-
-MAP V3:
-
-forwardGroupCallSignalling  OPERATION ::= {				--Timer s
-	ARGUMENT
-		ForwardGroupCallSignallingArg
-	CODE	local:42 }
-
-ForwardGroupCallSignallingArg ::= SEQUENCE {
-	imsi			IMSI			OPTIONAL,
-	uplinkRequestAck	[0] NULL		OPTIONAL,
-	uplinkReleaseIndication	[1] NULL		OPTIONAL,
-	uplinkRejectCommand	[2] NULL		OPTIONAL,
-	uplinkSeizedCommand	[3] NULL		OPTIONAL,
-	uplinkReleaseCommand	[4] NULL		OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	..., 
-	stateAttributes	[5] StateAttributes	OPTIONAL,
-	talkerPriority	[6] TalkerPriority	OPTIONAL,
-	additionalInfo	[7] AdditionalInfo	OPTIONAL,
-	emergencyModeResetCommandFlag	[8] NULL		OPTIONAL,
-	sm-RP-UI		[9] SignalInfo	OPTIONAL,
-	an-APDU	[10] AccessNetworkSignalInfo	OPTIONAL
- }
-
- * 
+ *
+ MAP V3:
+ *
+ * forwardGroupCallSignalling OPERATION ::= { --Timer s ARGUMENT ForwardGroupCallSignallingArg CODE local:42 }
+ *
+ * ForwardGroupCallSignallingArg ::= SEQUENCE { imsi IMSI OPTIONAL, uplinkRequestAck [0] NULL OPTIONAL, uplinkReleaseIndication
+ * [1] NULL OPTIONAL, uplinkRejectCommand [2] NULL OPTIONAL, uplinkSeizedCommand [3] NULL OPTIONAL, uplinkReleaseCommand [4]
+ * NULL OPTIONAL, extensionContainer ExtensionContainer OPTIONAL, ..., stateAttributes [5] StateAttributes OPTIONAL,
+ * talkerPriority [6] TalkerPriority OPTIONAL, additionalInfo [7] AdditionalInfo OPTIONAL, emergencyModeResetCommandFlag [8]
+ * NULL OPTIONAL, sm-RP-UI [9] SignalInfo OPTIONAL, an-APDU [10] AccessNetworkSignalInfo OPTIONAL }
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ForwardGroupCallSignallingRequest extends CallHandlingMessage {
 
-	public IMSI getImsi();
+    IMSI getImsi();
 
-	public boolean getUplinkRequestAck();
+    boolean getUplinkRequestAck();
 
-	public boolean getUplinkReleaseIndication();
+    boolean getUplinkReleaseIndication();
 
-	public boolean getUplinkRejectCommand();
+    boolean getUplinkRejectCommand();
 
-	public boolean getUplinkSeizedCommand();
+    boolean getUplinkSeizedCommand();
 
-	public boolean getUplinkReleaseCommand();
+    boolean getUplinkReleaseCommand();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public StateAttributes getStateAttributes();
+    StateAttributes getStateAttributes();
 
-	public TalkerPriority getTalkerPriority();
+    TalkerPriority getTalkerPriority();
 
-	public AdditionalInfo getAdditionalInfo();
+    AdditionalInfo getAdditionalInfo();
 
-	public boolean getEmergencyModeResetCommandFlag();
+    boolean getEmergencyModeResetCommandFlag();
 
-	public SmsSignalInfo getSmRpUi();
+    SmsSignalInfo getSmRpUi();
 
-	public AccessNetworkSignalInfo getAnApdu();
+    AccessNetworkSignalInfo getAnApdu();
 
 }

@@ -23,16 +23,15 @@
 package org.mobicents.protocols.ss7.map.api.primitives;
 
 /**
- * 
-GSN-Address ::= OCTET STRING (SIZE (5..17))
-	-- Octets are coded according to TS 3GPP TS 23.003 [17]
-
- * 
+ *
+ GSN-Address ::= OCTET STRING (SIZE (5..17)) -- Octets are coded according to TS 3GPP TS 23.003 [17]
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface GSNAddress {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

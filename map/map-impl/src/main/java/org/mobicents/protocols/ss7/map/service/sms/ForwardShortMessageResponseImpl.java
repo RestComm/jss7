@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -34,60 +34,60 @@ import org.mobicents.protocols.ss7.map.api.service.sms.ForwardShortMessageRespon
 
 public class ForwardShortMessageResponseImpl extends SmsMessageImpl implements ForwardShortMessageResponse {
 
-	public MAPMessageType getMessageType() {
-		return MAPMessageType.forwardSM_Response;
-	}
+    public MAPMessageType getMessageType() {
+        return MAPMessageType.forwardSM_Response;
+    }
 
-	public int getOperationCode() {
-		return MAPOperationCode.mo_forwardSM;
-	}
+    public int getOperationCode() {
+        return MAPOperationCode.mo_forwardSM;
+    }
 
-	public int getTag() throws MAPException {
-		
-		throw new MAPException("ForwardShortMessageResponseIndication has no MAP message primitive");
-	}
+    public int getTag() throws MAPException {
 
-	public int getTagClass() {
+        throw new MAPException("ForwardShortMessageResponseIndication has no MAP message primitive");
+    }
 
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public int getTagClass() {
 
-	public boolean getIsPrimitive() {
-		
-		return false;
-	}
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
-		throw new MAPParsingComponentException("ForwardShortMessageResponseIndication has no MAP message primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-	}
+    public boolean getIsPrimitive() {
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
-		throw new MAPParsingComponentException("ForwardShortMessageResponseIndication has no MAP message primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-	}
+        return false;
+    }
 
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		throw new MAPException("ForwardShortMessageResponseIndication has no MAP message primitive");
-	}
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+        throw new MAPParsingComponentException("ForwardShortMessageResponseIndication has no MAP message primitive",
+                MAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		throw new MAPException("ForwardShortMessageResponseIndication has no MAP message primitive");
-	}
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+        throw new MAPParsingComponentException("ForwardShortMessageResponseIndication has no MAP message primitive",
+                MAPParsingComponentExceptionReason.MistypedParameter);
+    }
 
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		throw new MAPException("ForwardShortMessageResponseIndication has no MAP message primitive");
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("ForwardShortMessageResponse [");
-		if(this.getMAPDialog() != null){
-			sb.append("DialogId=").append(this.getMAPDialog().getLocalDialogId());
-		}
-		sb.append("]");
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
+        throw new MAPException("ForwardShortMessageResponseIndication has no MAP message primitive");
+    }
 
-		return sb.toString();
-	}
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+        throw new MAPException("ForwardShortMessageResponseIndication has no MAP message primitive");
+    }
+
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
+        throw new MAPException("ForwardShortMessageResponseIndication has no MAP message primitive");
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("ForwardShortMessageResponse [");
+        if (this.getMAPDialog() != null) {
+            sb.append("DialogId=").append(this.getMAPDialog().getLocalDialogId());
+        }
+        sb.append("]");
+
+        return sb.toString();
+    }
 }
-

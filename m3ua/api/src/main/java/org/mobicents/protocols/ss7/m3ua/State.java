@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -22,16 +22,16 @@
 package org.mobicents.protocols.ss7.m3ua;
 
 /**
- * 
+ *
  * @author amit bhayani
  *
  */
 public interface State {
 
-	public static final String STATE_DOWN = "DOWN";
-	public static final String STATE_INACTIVE = "INACTIVE";
-	public static final String STATE_ACTIVE = "ACTIVE";
-	public static final String STATE_PENDING = "PENDING";
+    String STATE_DOWN = "DOWN";
+    String STATE_INACTIVE = "INACTIVE";
+    String STATE_ACTIVE = "ACTIVE";
+    String STATE_PENDING = "PENDING";
 
-	public String getName();
+    String getName();
 }

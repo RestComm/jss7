@@ -37,181 +37,182 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class TimeInformationImpl implements TimeInformation, CAPAsnPrimitive {
 
-	public static final int _ID_timeIfNoTariffSwitch = 0;
-	public static final int _ID_timeIfTariffSwitch = 1;
+    public static final int _ID_timeIfNoTariffSwitch = 0;
+    public static final int _ID_timeIfTariffSwitch = 1;
 
-	public static final String _PrimitiveName = "TimeInformation";
+    public static final String _PrimitiveName = "TimeInformation";
 
-	private Integer timeIfNoTariffSwitch;
-	private TimeIfTariffSwitch timeIfTariffSwitch;
-	
+    private Integer timeIfNoTariffSwitch;
+    private TimeIfTariffSwitch timeIfTariffSwitch;
 
-	public TimeInformationImpl() {
-	}
+    public TimeInformationImpl() {
+    }
 
-	public TimeInformationImpl(int timeIfNoTariffSwitch) {
-		this.timeIfNoTariffSwitch = timeIfNoTariffSwitch;
-	}
+    public TimeInformationImpl(int timeIfNoTariffSwitch) {
+        this.timeIfNoTariffSwitch = timeIfNoTariffSwitch;
+    }
 
-	public TimeInformationImpl(TimeIfTariffSwitch timeIfTariffSwitch) {
-		this.timeIfTariffSwitch = timeIfTariffSwitch;
-	}
+    public TimeInformationImpl(TimeIfTariffSwitch timeIfTariffSwitch) {
+        this.timeIfTariffSwitch = timeIfTariffSwitch;
+    }
 
-	@Override
-	public Integer getTimeIfNoTariffSwitch() {
-		return timeIfNoTariffSwitch;
-	}
+    @Override
+    public Integer getTimeIfNoTariffSwitch() {
+        return timeIfNoTariffSwitch;
+    }
 
-	@Override
-	public TimeIfTariffSwitch getTimeIfTariffSwitch() {
-		return timeIfTariffSwitch;
-	}
+    @Override
+    public TimeIfTariffSwitch getTimeIfTariffSwitch() {
+        return timeIfTariffSwitch;
+    }
 
-	
-	@Override
-	public int getTag() throws CAPException {
-		if (timeIfNoTariffSwitch != null)
-			return _ID_timeIfNoTariffSwitch;
-		else
-			return _ID_timeIfTariffSwitch;
-	}
+    @Override
+    public int getTag() throws CAPException {
+        if (timeIfNoTariffSwitch != null)
+            return _ID_timeIfNoTariffSwitch;
+        else
+            return _ID_timeIfTariffSwitch;
+    }
 
-	@Override
-	public int getTagClass() {
-		return Tag.CLASS_CONTEXT_SPECIFIC;
-	}
+    @Override
+    public int getTagClass() {
+        return Tag.CLASS_CONTEXT_SPECIFIC;
+    }
 
-	@Override
-	public boolean getIsPrimitive() {
-		if (timeIfNoTariffSwitch != null)
-			return true;
-		else
-			return false;
-	}
+    @Override
+    public boolean getIsPrimitive() {
+        if (timeIfNoTariffSwitch != null)
+            return true;
+        else
+            return false;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
+    @Override
+    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (AsnException e) {
-			throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		} catch (MAPParsingComponentException e) {
-			throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (AsnException e) {
+            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        } catch (MAPParsingComponentException e) {
+            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
+                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, MAPParsingComponentException, IOException, AsnException {
+    private void _decode(AsnInputStream ais, int length) throws CAPParsingComponentException, MAPParsingComponentException,
+            IOException, AsnException {
 
-		this.timeIfNoTariffSwitch = null;
-		this.timeIfTariffSwitch = null;	
+        this.timeIfNoTariffSwitch = null;
+        this.timeIfTariffSwitch = null;
 
-		int tag = ais.getTag();
+        int tag = ais.getTag();
 
-		if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-			switch (tag) {
-			case _ID_timeIfNoTariffSwitch:
-				this.timeIfNoTariffSwitch = (int) ais.readIntegerData(length);
-				break;
-			case _ID_timeIfTariffSwitch:
-				this.timeIfTariffSwitch = new TimeIfTariffSwitchImpl();
-				((TimeIfTariffSwitchImpl) this.timeIfTariffSwitch).decodeData(ais, length);
-				break;
+        if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+            switch (tag) {
+                case _ID_timeIfNoTariffSwitch:
+                    this.timeIfNoTariffSwitch = (int) ais.readIntegerData(length);
+                    break;
+                case _ID_timeIfTariffSwitch:
+                    this.timeIfTariffSwitch = new TimeIfTariffSwitchImpl();
+                    ((TimeIfTariffSwitchImpl) this.timeIfTariffSwitch).decodeData(ais, length);
+                    break;
 
-			default:
-				throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
-						CAPParsingComponentExceptionReason.MistypedParameter);
-			}
-		} else {
-			throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
-					CAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+                default:
+                    throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
+                            CAPParsingComponentExceptionReason.MistypedParameter);
+            }
+        } else {
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+    @Override
+    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-	@Override
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
+    @Override
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
 
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public void encodeData(AsnOutputStream aos) throws CAPException {
+    @Override
+    public void encodeData(AsnOutputStream aos) throws CAPException {
 
-		if (this.timeIfNoTariffSwitch == null && this.timeIfTariffSwitch == null)
-			throw new CAPException("Error while encoding " + _PrimitiveName + ": both timeIfNoTariffSwitch and this.timeIfTariffSwitch must not be null");
+        if (this.timeIfNoTariffSwitch == null && this.timeIfTariffSwitch == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName
+                    + ": both timeIfNoTariffSwitch and this.timeIfTariffSwitch must not be null");
 
-		try {
-			if (this.timeIfNoTariffSwitch != null) {
-				if (this.timeIfNoTariffSwitch < 0 || this.timeIfNoTariffSwitch > 864000)
-					throw new CAPException("Error while encoding " + _PrimitiveName + ": timeIfNoTariffSwitch must be from 0 to 864000");
-				aos.writeIntegerData(this.timeIfNoTariffSwitch);
-			} else {
-				((TimeIfTariffSwitchImpl) this.timeIfTariffSwitch).encodeData(aos);
-			}
-		} catch (IOException e) {
-			throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            if (this.timeIfNoTariffSwitch != null) {
+                if (this.timeIfNoTariffSwitch < 0 || this.timeIfNoTariffSwitch > 864000)
+                    throw new CAPException("Error while encoding " + _PrimitiveName
+                            + ": timeIfNoTariffSwitch must be from 0 to 864000");
+                aos.writeIntegerData(this.timeIfNoTariffSwitch);
+            } else {
+                ((TimeIfTariffSwitchImpl) this.timeIfTariffSwitch).encodeData(aos);
+            }
+        } catch (IOException e) {
+            throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
 
-		if (this.timeIfNoTariffSwitch != null) {
-			sb.append("timeIfNoTariffSwitch=");
-			sb.append(timeIfNoTariffSwitch);
-		}
-		if (this.timeIfTariffSwitch != null) {
-			sb.append("timeIfTariffSwitch=");
-			sb.append(timeIfTariffSwitch.toString());
-		}
+        if (this.timeIfNoTariffSwitch != null) {
+            sb.append("timeIfNoTariffSwitch=");
+            sb.append(timeIfNoTariffSwitch);
+        }
+        if (this.timeIfTariffSwitch != null) {
+            sb.append("timeIfTariffSwitch=");
+            sb.append(timeIfTariffSwitch.toString());
+        }
 
-		sb.append("]");
+        sb.append("]");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 }

@@ -30,67 +30,59 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MAPAsnPrimitive extends Serializable {
 
-	public int getTag() throws MAPException;
+    int getTag() throws MAPException;
 
-	public int getTagClass();
+    int getTagClass();
 
-	public boolean getIsPrimitive();
+    boolean getIsPrimitive();
 
-	/**
-	 * Decoding the length and the content of the primitive (the tag has already
-	 * read)
-	 * 
-	 * @param ansIS
-	 *            The AsnInputStream that contains the length and the content of
-	 *            the primitive
-	 * @throws MAPParsingComponentException
-	 */
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException;
+    /**
+     * Decoding the length and the content of the primitive (the tag has already read)
+     *
+     * @param ansIS The AsnInputStream that contains the length and the content of the primitive
+     * @throws MAPParsingComponentException
+     */
+    void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException;
 
-	/**
-	 * Decoding the content of the primitive (the tag and the length have
-	 * already read)
-	 * 
-	 * @param ansIS
-	 *            The AsnInputStream that contains the content of the primitive
-	 * @param length
-	 *            The length of the content
-	 * @throws MAPParsingComponentException
-	 */
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException;
+    /**
+     * Decoding the content of the primitive (the tag and the length have already read)
+     *
+     * @param ansIS The AsnInputStream that contains the content of the primitive
+     * @param length The length of the content
+     * @throws MAPParsingComponentException
+     */
+    void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException;
 
-	/**
-	 * Encoding the tag, the length and the content. Tag and tag class are universal
-	 * 
-	 * @param asnOs
-	 * @throws MAPException
-	 */
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException;
+    /**
+     * Encoding the tag, the length and the content. Tag and tag class are universal
+     *
+     * @param asnOs
+     * @throws MAPException
+     */
+    void encodeAll(AsnOutputStream asnOs) throws MAPException;
 
-	/**
-	 * Encoding the tag, the length and the content. Tag and tag class are defined
-	 * 
-	 * @param asnOs
-	 * @param tagClass
-	 * @param tag
-	 * @throws MAPException
-	 */
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException;
+    /**
+     * Encoding the tag, the length and the content. Tag and tag class are defined
+     *
+     * @param asnOs
+     * @param tagClass
+     * @param tag
+     * @throws MAPException
+     */
+    void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException;
 
-	/**
-	 * Encoding the content.
-	 * 
-	 * @param asnOs
-	 * @throws MAPException
-	 */
-	public void encodeData(AsnOutputStream asnOs) throws MAPException;
+    /**
+     * Encoding the content.
+     *
+     * @param asnOs
+     * @throws MAPException
+     */
+    void encodeData(AsnOutputStream asnOs) throws MAPException;
 
 }
-
-

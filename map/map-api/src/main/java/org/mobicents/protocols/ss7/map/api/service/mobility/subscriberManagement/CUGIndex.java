@@ -23,15 +23,14 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
 /**
-*
-CUG-Index ::= INTEGER (0..32767)
-	-- The internal structure is defined in ETS 300 138.
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ CUG-Index ::= INTEGER (0..32767) -- The internal structure is defined in ETS 300 138.
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface CUGIndex {
-	
-	public int getData();
+
+    int getData();
 
 }

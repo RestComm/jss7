@@ -23,18 +23,18 @@
 package org.mobicents.protocols.ss7.map.api.smstpdu;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ParameterIndicator {
 
-	public int getCode();
+    int getCode();
 
-	public boolean getTP_UDLPresence();
+    boolean getTP_UDLPresence();
 
-	public boolean getTP_DCSPresence();
+    boolean getTP_DCSPresence();
 
-	public boolean getTP_PIDPresence();;
+    boolean getTP_PIDPresence();;
 
 }

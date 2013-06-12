@@ -31,9 +31,9 @@ import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.Mtp3Listener;
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.mobicents.protocols.stream.api.SelectorKey;
 import org.mobicents.protocols.stream.api.SelectorProvider;
 import org.mobicents.protocols.stream.api.StreamSelector;
@@ -50,21 +50,18 @@ import org.mobicents.ss7.linkset.oam.LinksetStream;
 
 /**
  * <p>
- * Linkset for <tt>dahdi</tt> based hardware. <tt>dahdi</tt> boards usually
- * have no MTP support and depends on external software to provide MTP2/MTP3
- * support.
+ * Linkset for <tt>dahdi</tt> based hardware. <tt>dahdi</tt> boards usually have no MTP support and depends on external software
+ * to provide MTP2/MTP3 support.
  * </p>
  * <p>
- * DahdiLinkset encapsulates the {@link Mtp3 Mtp3} and {@link Mtp2 Mtp2}
- * protocols.
+ * DahdiLinkset encapsulates the {@link Mtp3 Mtp3} and {@link Mtp2 Mtp2} protocols.
  * </p>
  * <p>
- * Well known <tt>dahdi</tt> based SS7 cards are <tt>Diguim</tt> and
- * <tt>Sangoma</tt>
+ * Well known <tt>dahdi</tt> based SS7 cards are <tt>Diguim</tt> and <tt>Sangoma</tt>
  * </p>
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class DahdiLinkset extends Linkset implements Mtp3Listener {
 
@@ -74,11 +71,11 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
     private ConcurrentLinkedQueue<byte[]> queue = new ConcurrentLinkedQueue<byte[]>();
 
     public DahdiLinkset() {
-        super();        
+        super();
     }
 
     public DahdiLinkset(String linksetName, int opc, int dpc, int ni) {
-        super(linksetName, opc, dpc, ni);        
+        super(linksetName, opc, dpc, ni);
     }
 
     @Override
@@ -93,20 +90,17 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
 
             if (this.mtp3 == null) {
                 // TODO fix String to TextBuilder
-                this.mtp3 = new Mtp3(this.linksetName,scheduler);
+                this.mtp3 = new Mtp3(this.linksetName, scheduler);
             }
 
             this.mtp3.clearLinks();
-            
-            try
-            {
-            	this.mtp3.addMtp3Listener(this);
+
+            try {
+                this.mtp3.addMtp3Listener(this);
+            } catch (Exception e) {
+                // can not be another listener , this only
             }
-            catch(Exception e)
-            {
-            	//can not be another listener , this only
-            }
-            
+
             for (FastMap.Entry<String, Link> e = this.links.head(), end = this.links.tail(); (e = e.getNext()) != end;) {
                 Link value = e.getValue();
                 if (value.getMode() == LinkMode.CONFIGURED) {
@@ -125,27 +119,26 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
     }
 
     @Override
-    public void setScheduler(Scheduler scheduler)
-    {
-    	this.scheduler=scheduler;
-    	if(this.mtp3!=null)
-    		this.mtp3.setScheduler(scheduler);    	
-    	
-    	FastMap.Entry<String, Link> e = this.links.head();
+    public void setScheduler(Scheduler scheduler) {
+        this.scheduler = scheduler;
+        if (this.mtp3 != null)
+            this.mtp3.setScheduler(scheduler);
+
+        FastMap.Entry<String, Link> e = this.links.head();
         FastMap.Entry<String, Link> end = this.links.tail();
         for (; (e = e.getNext()) != end;) {
-        	Link link = e.getValue();
-        	link.setScheduler(scheduler);
+            Link link = e.getValue();
+            link.setScheduler(scheduler);
         }
-        
+
         e = this.loadedLinks.head();
         end = this.loadedLinks.tail();
         for (; (e = e.getNext()) != end;) {
-        	Link link = e.getValue();
-        	link.setScheduler(scheduler);
+            Link link = e.getValue();
+            link.setScheduler(scheduler);
         }
     }
-    
+
     /**
      * Operations
      */
@@ -305,7 +298,7 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
 
         @Override
         public boolean poll(int arg0, int arg1) {
-        	if (mtp3 != null) {
+            if (mtp3 != null) {
                 mtp3.run();
                 return true;
             } else {
@@ -336,7 +329,7 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
             if (data != null) {
                 System.arraycopy(data, 0, paramArrayOfByte, 0, data.length);
             }
-            
+
             return paramArrayOfByte == null ? 0 : data.length;
         }
 
@@ -349,15 +342,15 @@ public class DahdiLinkset extends Linkset implements Mtp3Listener {
             return paramArrayOfByte.length;
         }
 
-		public int read(ByteBuffer arg0) throws IOException {
-			// TODO Auto-generated method stub
-			return 0;
-		}
+        public int read(ByteBuffer arg0) throws IOException {
+            // TODO Auto-generated method stub
+            return 0;
+        }
 
-		public int write(ByteBuffer arg0) throws IOException {
-			// TODO Auto-generated method stub
-			return 0;
-		}
+        public int write(ByteBuffer arg0) throws IOException {
+            // TODO Auto-generated method stub
+            return 0;
+        }
     }
 
     @Override

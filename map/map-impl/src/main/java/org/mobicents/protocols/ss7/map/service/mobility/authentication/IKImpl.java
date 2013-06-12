@@ -26,23 +26,23 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.authentication.IK;
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class IKImpl  extends OctetStringBase implements IK{
+public class IKImpl extends OctetStringBase implements IK {
 
-	public IKImpl(byte[] data) {
-		super(16, 16, "IK", data);
-	}
-	
-	public IKImpl() {
-		super(16, 16, "IK");
-	}
+    public IKImpl(byte[] data) {
+        super(16, 16, "IK", data);
+    }
 
-	@Override
-	public byte[] getData() {
-		return this.data;
-	}
+    public IKImpl() {
+        super(16, 16, "IK");
+    }
+
+    @Override
+    public byte[] getData() {
+        return this.data;
+    }
 
 }

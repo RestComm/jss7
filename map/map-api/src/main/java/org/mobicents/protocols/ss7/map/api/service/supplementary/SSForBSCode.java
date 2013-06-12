@@ -24,26 +24,22 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
 
-/**	
- * 
-
-SS-ForBS-Code ::= SEQUENCE {
-	ss-Code		SS-Code,
-	basicService	BasicServiceCode	OPTIONAL,
-	...,
-	longFTN-Supported	[4]	NULL		OPTIONAL }
-
-
- * 
+/**
+ *
+ SS-ForBS-Code ::= SEQUENCE { ss-Code SS-Code, basicService BasicServiceCode OPTIONAL, ..., longFTN-Supported [4] NULL
+ * OPTIONAL }
+ *
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface SSForBSCode {
 
-	public SSCode getSsCode();
+    SSCode getSsCode();
 
-	public BasicServiceCode getBasicService();  // -> BasicServiceCode -> subscriber management !!!!!
+    BasicServiceCode getBasicService(); // -> BasicServiceCode -> subscriber management !!!!!
 
-	public boolean getLongFtnSupported();
+    boolean getLongFtnSupported();
 
 }

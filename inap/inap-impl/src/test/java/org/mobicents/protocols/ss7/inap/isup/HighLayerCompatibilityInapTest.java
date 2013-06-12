@@ -22,7 +22,8 @@
 
 package org.mobicents.protocols.ss7.inap.isup;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -31,55 +32,55 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.UserTeleserviceInformationImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserTeleserviceInformation;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class HighLayerCompatibilityInapTest {
 
-	public byte[] getData() {
-		return new byte[] { (byte) 151, 2, (byte) 145, (byte) 129 };
-	}
+    public byte[] getData() {
+        return new byte[] { (byte) 151, 2, (byte) 145, (byte) 129 };
+    }
 
-	public byte[] getIntData() {
-		return new byte[] { (byte) 145, (byte) 129 };
-	}
+    public byte[] getIntData() {
+        return new byte[] { (byte) 145, (byte) 129 };
+    }
 
-	@Test(groups = { "functional.decode","isup"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "isup" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData();
-		AsnInputStream ais = new AsnInputStream(data);
-		HighLayerCompatibilityInapImpl elem = new HighLayerCompatibilityInapImpl();
-		int tag = ais.readTag();
-		elem.decodeAll(ais);
-		UserTeleserviceInformation hlc = elem.getHighLayerCompatibility();
-		assertTrue(Arrays.equals(elem.getData(), this.getIntData()));
-		assertEquals(hlc.getCodingStandard(), 0);
-		assertEquals(hlc.getEHighLayerCharIdentification(), 0);
-		assertEquals(hlc.getEVidedoTelephonyCharIdentification(), 0);
-		assertEquals(hlc.getInterpretation(), 4);
-		assertEquals(hlc.getPresentationMethod(), 1);
-		assertEquals(hlc.getHighLayerCharIdentification(), 1);
-	}
+        byte[] data = this.getData();
+        AsnInputStream ais = new AsnInputStream(data);
+        HighLayerCompatibilityInapImpl elem = new HighLayerCompatibilityInapImpl();
+        int tag = ais.readTag();
+        elem.decodeAll(ais);
+        UserTeleserviceInformation hlc = elem.getHighLayerCompatibility();
+        assertTrue(Arrays.equals(elem.getData(), this.getIntData()));
+        assertEquals(hlc.getCodingStandard(), 0);
+        assertEquals(hlc.getEHighLayerCharIdentification(), 0);
+        assertEquals(hlc.getEVidedoTelephonyCharIdentification(), 0);
+        assertEquals(hlc.getInterpretation(), 4);
+        assertEquals(hlc.getPresentationMethod(), 1);
+        assertEquals(hlc.getHighLayerCharIdentification(), 1);
+    }
 
-	@Test(groups = { "functional.encode","isup"})
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "isup" })
+    public void testEncode() throws Exception {
 
-		HighLayerCompatibilityInapImpl elem = new HighLayerCompatibilityInapImpl(this.getIntData());
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 23);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+        HighLayerCompatibilityInapImpl elem = new HighLayerCompatibilityInapImpl(this.getIntData());
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 23);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
 
-		UserTeleserviceInformation hlc = new UserTeleserviceInformationImpl(0, 4, 1, 1);
-		elem = new HighLayerCompatibilityInapImpl(hlc);
-		aos = new AsnOutputStream();
-		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 23);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
-		
-//		int codingStandard, int interpretation, int presentationMethod, int highLayerCharIdentification
-	}
+        UserTeleserviceInformation hlc = new UserTeleserviceInformationImpl(0, 4, 1, 1);
+        elem = new HighLayerCompatibilityInapImpl(hlc);
+        aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 23);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+
+        // int codingStandard, int interpretation, int presentationMethod, int highLayerCharIdentification
+    }
 }

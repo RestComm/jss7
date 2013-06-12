@@ -23,21 +23,16 @@
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
 /**
-*
-oMidCallSpecificInfo [6] SEQUENCE {
-midCallEvents [1] CHOICE {
-dTMFDigitsCompleted [3] Digits {bound},
-dTMFDigitsTimeOut [4] Digits {bound}
-} OPTIONAL,
-...
-},
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ oMidCallSpecificInfo [6] SEQUENCE { midCallEvents [1] CHOICE { dTMFDigitsCompleted [3] Digits {bound}, dTMFDigitsTimeOut [4]
+ * Digits {bound} } OPTIONAL, ... },
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface OMidCallSpecificInfo {
 
-	public MidCallEvents getMidCallEvents();
+    MidCallEvents getMidCallEvents();
 
 }

@@ -25,33 +25,27 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-VoiceBroadcastData ::= SEQUENCE {
-	groupid		GroupId, 
-	-- groupId shall be filled with six TBCD fillers (1111)if the longGroupId is present
-	broadcastInitEntitlement	NULL			OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...,
-	longGroupId	[0] Long-GroupId	OPTIONAL }
-	
--- VoiceBroadcastData containing a longGroupId shall not be sent to VLRs that did not
--- indicate support of long Group IDs within the Update Location or Restore Data 
-	-- request message
-
- * 
- * 
+ *
+ VoiceBroadcastData ::= SEQUENCE { groupid GroupId, -- groupId shall be filled with six TBCD fillers (1111)if the longGroupId
+ * is present broadcastInitEntitlement NULL OPTIONAL, extensionContainer ExtensionContainer OPTIONAL, ..., longGroupId [0]
+ * Long-GroupId OPTIONAL }
+ *
+ * -- VoiceBroadcastData containing a longGroupId shall not be sent to VLRs that did not -- indicate support of long Group IDs
+ * within the Update Location or Restore Data -- request message
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface VoiceBroadcastData {
 
-	public GroupId getGroupId();
+    GroupId getGroupId();
 
-	public boolean getBroadcastInitEntitlement();
+    boolean getBroadcastInitEntitlement();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public LongGroupId getLongGroupId();
+    LongGroupId getLongGroupId();
 
 }

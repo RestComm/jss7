@@ -33,32 +33,32 @@ import org.mobicents.protocols.ss7.m3ua.parameter.InfoString;
 import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 
 /**
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class ASPDownAckImpl extends M3UAMessageImpl implements ASPDownAck {
 
-	public ASPDownAckImpl() {
-		super(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK, MessageType.S_ASP_DOWN_ACK);
-	}
+    public ASPDownAckImpl() {
+        super(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN_ACK, MessageType.S_ASP_DOWN_ACK);
+    }
 
-	public InfoString getInfoString() {
-		return (InfoString) parameters.get(Parameter.INFO_String);
-	}
+    public InfoString getInfoString() {
+        return (InfoString) parameters.get(Parameter.INFO_String);
+    }
 
-	public void setInfoString(InfoString str) {
-		if (str != null) {
-			parameters.put(Parameter.INFO_String, str);
-		}
-	}
+    public void setInfoString(InfoString str) {
+        if (str != null) {
+            parameters.put(Parameter.INFO_String, str);
+        }
+    }
 
-	@Override
-	protected void encodeParams(ByteBuffer buffer) {
+    @Override
+    protected void encodeParams(ByteBuffer buffer) {
 
-		if (parameters.containsKey(Parameter.INFO_String)) {
-			((ParameterImpl) parameters.get(Parameter.INFO_String)).write(buffer);
-		}
-	}
+        if (parameters.containsKey(Parameter.INFO_String)) {
+            ((ParameterImpl) parameters.get(Parameter.INFO_String)).write(buffer);
+        }
+    }
 
 }

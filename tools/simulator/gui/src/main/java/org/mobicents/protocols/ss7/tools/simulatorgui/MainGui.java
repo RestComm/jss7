@@ -25,37 +25,36 @@ package org.mobicents.protocols.ss7.tools.simulatorgui;
 import java.awt.EventQueue;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class MainGui implements Runnable {
-	
-	private final String appName;
 
-	public MainGui(String appName) {
-		this.appName = appName;
-	}
+    private final String appName;
 
-	public static void main(String[] args) {
+    public MainGui(String appName) {
+        this.appName = appName;
+    }
 
-		String appName = "main";
-		if (args != null && args.length > 0) {
-			appName = args[0];
-		}
+    public static void main(String[] args) {
 
-		EventQueue.invokeLater(new MainGui(appName));
-	}
+        String appName = "main";
+        if (args != null && args.length > 0) {
+            appName = args[0];
+        }
 
-	@Override
-	public void run() {
-		try {
-			ConnectionForm frame = new ConnectionForm();
-			frame.setAppName(appName);
-			frame.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        EventQueue.invokeLater(new MainGui(appName));
+    }
+
+    @Override
+    public void run() {
+        try {
+            ConnectionForm frame = new ConnectionForm();
+            frame.setAppName(appName);
+            frame.setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
-

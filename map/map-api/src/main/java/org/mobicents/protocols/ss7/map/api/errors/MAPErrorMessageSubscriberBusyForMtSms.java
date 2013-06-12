@@ -24,37 +24,26 @@ package org.mobicents.protocols.ss7.map.api.errors;
 
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
-
 /**
- * 
- * subscriberBusyForMT-SMS  ERROR ::= {
- *	PARAMETER
- *		SubBusyForMT-SMS-Param
- *		-- optional
- *	CODE	local:31 }
  *
- * 
- * SubBusyForMT-SMS-Param ::= SEQUENCE {
- *	extensionContainer	ExtensionContainer	OPTIONAL,
- *	... ,
- *	gprsConnectionSuspended	NULL			OPTIONAL }
- *	-- If GprsConnectionSuspended is not understood it shall 
- *	-- be discarded
+ * subscriberBusyForMT-SMS ERROR ::= { PARAMETER SubBusyForMT-SMS-Param -- optional CODE local:31 }
  *
- * 
+ *
+ * SubBusyForMT-SMS-Param ::= SEQUENCE { extensionContainer ExtensionContainer OPTIONAL, ... , gprsConnectionSuspended NULL
+ * OPTIONAL } -- If GprsConnectionSuspended is not understood it shall -- be discarded
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MAPErrorMessageSubscriberBusyForMtSms extends MAPErrorMessage {
-	
-	public MAPExtensionContainer getExtensionContainer();
 
-	public Boolean getGprsConnectionSuspended();
+    MAPExtensionContainer getExtensionContainer();
 
-	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
+    Boolean getGprsConnectionSuspended();
 
-	public void setGprsConnectionSuspended(Boolean gprsConnectionSuspended);
+    void setExtensionContainer(MAPExtensionContainer extensionContainer);
+
+    void setGprsConnectionSuspended(Boolean gprsConnectionSuspended);
 
 }
-
-

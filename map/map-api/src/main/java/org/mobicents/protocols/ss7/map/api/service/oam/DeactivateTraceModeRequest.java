@@ -25,66 +25,34 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
-/**	
- * 
- 
-MAP V1-2-3:
-
-MAP V3:
-activateTraceMode  OPERATION ::= {				--Timer m
-	ARGUMENT
-		ActivateTraceModeArg
-	RESULT
-		ActivateTraceModeRes
-		-- optional
-	ERRORS {
-		systemFailure |
-		dataMissing |
-		unexpectedDataValue |
-		facilityNotSupported |
-		unidentifiedSubscriber |
-		tracingBufferFull}
-	CODE	local:50 }
-
-MAP V2:
-DeactivateTraceMode ::= OPERATION--Timer m
-ARGUMENT
-	deactivateTraceModeArg	DeactivateTraceModeArg
-RESULT
-ERRORS {
-	SystemFailure,
-	DataMissing,
-	UnexpectedDataValue,
-	FacilityNotSupported,
-	UnidentifiedSubscriber}
-
-MAP V3:
-DeactivateTraceModeArg ::= SEQUENCE {
-	imsi			[0] IMSI		OPTIONAL,
-	traceReference	[1] TraceReference,
-	extensionContainer	[2] ExtensionContainer	OPTIONAL,
-	...,
-	traceReference2	[3] TraceReference2	OPTIONAL
-	}
-
-MAP V2:
-DeactivateTraceModeArg ::= SEQUENCE {
-	imsi[0] 			IMSI	OPTIONAL,
-	traceReference[1] 	TraceReference,
-...}
-
- * 
+/**
+ *
+ MAP V1-2-3:
+ *
+ * MAP V3: activateTraceMode OPERATION ::= { --Timer m ARGUMENT ActivateTraceModeArg RESULT ActivateTraceModeRes -- optional
+ * ERRORS { systemFailure | dataMissing | unexpectedDataValue | facilityNotSupported | unidentifiedSubscriber |
+ * tracingBufferFull} CODE local:50 }
+ *
+ * MAP V2: DeactivateTraceMode ::= OPERATION--Timer m ARGUMENT deactivateTraceModeArg DeactivateTraceModeArg RESULT ERRORS {
+ * SystemFailure, DataMissing, UnexpectedDataValue, FacilityNotSupported, UnidentifiedSubscriber}
+ *
+ * MAP V3: DeactivateTraceModeArg ::= SEQUENCE { imsi [0] IMSI OPTIONAL, traceReference [1] TraceReference, extensionContainer
+ * [2] ExtensionContainer OPTIONAL, ..., traceReference2 [3] TraceReference2 OPTIONAL }
+ *
+ * MAP V2: DeactivateTraceModeArg ::= SEQUENCE { imsi[0] IMSI OPTIONAL, traceReference[1] TraceReference, ...}
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface DeactivateTraceModeRequest extends OamMessage {
 
-	public IMSI getImsi();
+    IMSI getImsi();
 
-	public TraceReference getTraceReference();
+    TraceReference getTraceReference();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public TraceReference2 getTraceReference2();
+    TraceReference2 getTraceReference2();
 
 }

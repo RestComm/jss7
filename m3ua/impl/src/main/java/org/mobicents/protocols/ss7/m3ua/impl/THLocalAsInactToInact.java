@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -32,60 +32,58 @@ import org.mobicents.protocols.ss7.m3ua.message.mgmt.Notify;
 import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 
 /**
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class THLocalAsInactToInact implements TransitionHandler {
 
-	private static final Logger logger = Logger.getLogger(THLocalAsInactToInact.class);
+    private static final Logger logger = Logger.getLogger(THLocalAsInactToInact.class);
 
-	private AsImpl asImpl = null;
-	private FSM fsm;
+    private AsImpl asImpl = null;
+    private FSM fsm;
 
-	public THLocalAsInactToInact(AsImpl asImpl, FSM fsm) {
-		this.asImpl = asImpl;
-		this.fsm = fsm;
-	}
+    public THLocalAsInactToInact(AsImpl asImpl, FSM fsm) {
+        this.asImpl = asImpl;
+        this.fsm = fsm;
+    }
 
-	public boolean process(FSMState state) {
-		try {
-			if (asImpl.getFunctionality() != Functionality.IPSP) {
-				//Send Notify only for ASP or SGW
-				AspImpl remAsp = (AspImpl) this.fsm.getAttribute(AsImpl.ATTRIBUTE_ASP);
+    public boolean process(FSMState state) {
+        try {
+            if (asImpl.getFunctionality() != Functionality.IPSP) {
+                // Send Notify only for ASP or SGW
+                AspImpl remAsp = (AspImpl) this.fsm.getAttribute(AsImpl.ATTRIBUTE_ASP);
 
-				if (remAsp == null) {
-					logger.error(String.format("No ASP found. %s", this.fsm.toString()));
-					return false;
-				}
-				
-				Notify msg = createNotify(remAsp);
-				remAsp.getAspFactory().write(msg);
-			}
-			return true;
-		} catch (Exception e) {
-			logger.error(String.format("Error while translating Rem AS to INACTIVE message. %s", this.fsm.toString()),
-					e);
-		}
-		return false;
-	}
+                if (remAsp == null) {
+                    logger.error(String.format("No ASP found. %s", this.fsm.toString()));
+                    return false;
+                }
 
-	private Notify createNotify(AspImpl remAsp) {
-		Notify msg = (Notify) this.asImpl.getMessageFactory().createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
+                Notify msg = createNotify(remAsp);
+                remAsp.getAspFactory().write(msg);
+            }
+            return true;
+        } catch (Exception e) {
+            logger.error(String.format("Error while translating Rem AS to INACTIVE message. %s", this.fsm.toString()), e);
+        }
+        return false;
+    }
 
-		Status status = this.asImpl.getParameterFactory().createStatus(Status.STATUS_AS_State_Change,
-				Status.INFO_AS_INACTIVE);
-		msg.setStatus(status);
+    private Notify createNotify(AspImpl remAsp) {
+        Notify msg = (Notify) this.asImpl.getMessageFactory().createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
 
-		if (remAsp.getASPIdentifier() != null) {
-			msg.setASPIdentifier(remAsp.getASPIdentifier());
-		}
+        Status status = this.asImpl.getParameterFactory().createStatus(Status.STATUS_AS_State_Change, Status.INFO_AS_INACTIVE);
+        msg.setStatus(status);
 
-		if (this.asImpl.getRoutingContext() != null) {
-			msg.setRoutingContext(this.asImpl.getRoutingContext());
-		}
+        if (remAsp.getASPIdentifier() != null) {
+            msg.setASPIdentifier(remAsp.getASPIdentifier());
+        }
 
-		return msg;
-	}
+        if (this.asImpl.getRoutingContext() != null) {
+            msg.setRoutingContext(this.asImpl.getRoutingContext());
+        }
+
+        return msg;
+    }
 
 }

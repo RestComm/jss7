@@ -23,19 +23,17 @@
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
 /**
- * 
-
-UtranPositioningDataInfo ::= OCTET STRING (SIZE (3..11))
-	-- Refers to the Position Data defined in 3GPP TS 25.413.
-	-- This is composed of the positioningDataDiscriminator and the positioningDataSet
-	-- included in positionData as defined in 3GPP TS 25.413.
-
- * 
+ *
+ UtranPositioningDataInfo ::= OCTET STRING (SIZE (3..11)) -- Refers to the Position Data defined in 3GPP TS 25.413. -- This is
+ * composed of the positioningDataDiscriminator and the positioningDataSet -- included in positionData as defined in 3GPP TS
+ * 25.413.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface UtranPositioningDataInfo {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

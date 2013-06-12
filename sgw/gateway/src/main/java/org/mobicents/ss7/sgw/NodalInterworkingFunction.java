@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -48,158 +48,146 @@ import org.mobicents.ss7.linkset.oam.LinksetSelector;
 import org.mobicents.ss7.linkset.oam.LinksetStream;
 
 /** */
-public class NodalInterworkingFunction extends Task implements Layer4,Mtp3UserPartListener {
+public class NodalInterworkingFunction extends Task implements Layer4, Mtp3UserPartListener {
 
-	private static Logger logger = Logger.getLogger(NodalInterworkingFunction.class);
+    private static Logger logger = Logger.getLogger(NodalInterworkingFunction.class);
 
-	private LinksetSelector linkSetSelector = new LinksetSelector();
-	private LinksetStream linksetStream = null;
+    private LinksetSelector linkSetSelector = new LinksetSelector();
+    private LinksetStream linksetStream = null;
 
-	private LinksetManager linksetManager = null;
+    private LinksetManager linksetManager = null;
 
-	private M3UAManagementImpl m3UAManagement = null;
-	private Mtp3TransferPrimitiveFactory mtp3TransferPrimitiveFactory = null;
+    private M3UAManagementImpl m3UAManagement = null;
+    private Mtp3TransferPrimitiveFactory mtp3TransferPrimitiveFactory = null;
 
-	private boolean started = false;
+    private boolean started = false;
 
-	private int OP_READ_WRITE = 3;
+    private int OP_READ_WRITE = 3;
 
-	//max data size is 2176;
-	private byte[] rxBuffer=new byte[2176];
-	private byte[] tempBuffer;
-	
-	private ConcurrentLinkedQueue<byte[]> mtpqueue = new ConcurrentLinkedQueue<byte[]>();
-	private ConcurrentLinkedQueue<Mtp3TransferPrimitive> m3uaqueue = new ConcurrentLinkedQueue<Mtp3TransferPrimitive>();
+    // max data size is 2176;
+    private byte[] rxBuffer = new byte[2176];
+    private byte[] tempBuffer;
 
-	private IntConcurrentHashMap<Linkset> linksets=new IntConcurrentHashMap<Linkset>();
-	public NodalInterworkingFunction(Scheduler scheduler) {
-		super(scheduler);
-	}
+    private ConcurrentLinkedQueue<byte[]> mtpqueue = new ConcurrentLinkedQueue<byte[]>();
+    private ConcurrentLinkedQueue<Mtp3TransferPrimitive> m3uaqueue = new ConcurrentLinkedQueue<Mtp3TransferPrimitive>();
 
-	public LinksetManager getLinksetManager() {
-		return linksetManager;
-	}
+    private IntConcurrentHashMap<Linkset> linksets = new IntConcurrentHashMap<Linkset>();
 
-	public void setLinksetManager(LinksetManager linksetManager) {
-		this.linksetManager = linksetManager;
-	}
+    public NodalInterworkingFunction(Scheduler scheduler) {
+        super(scheduler);
+    }
 
-	public int getQueueNumber()
-	{
-		return scheduler.INTERNETWORKING_QUEUE;
-	}
-	
-	public M3UAManagement getM3UAManagement() {
-		return m3UAManagement;
-	}
+    public LinksetManager getLinksetManager() {
+        return linksetManager;
+    }
 
-	public void setM3UAManagement(M3UAManagement m3UAManagement) {
-		this.m3UAManagement = (M3UAManagementImpl)m3UAManagement;
-		this.m3UAManagement.addMtp3UserPartListener(this);
-		this.mtp3TransferPrimitiveFactory = this.m3UAManagement.getMtp3TransferPrimitiveFactory();
-	}
+    public void setLinksetManager(LinksetManager linksetManager) {
+        this.linksetManager = linksetManager;
+    }
 
-	// Layer4 methods
-	public void add(Linkset linkset) {
-		try {
-			linksets.add(linkset,linkset.getApc());
-			
-			linksetStream = linkset.getLinksetStream();
-			linksetStream.register(this.linkSetSelector);
-		} catch (IOException ex) {
-			logger.error(String.format("Registration for %s LinksetStream failed", linkset.getName()), ex);
-		}
-	}
+    public int getQueueNumber() {
+        return scheduler.INTERNETWORKING_QUEUE;
+    }
 
-	public void remove(Linkset linkset) {
-		linksets.remove(linkset.getApc());
+    public M3UAManagement getM3UAManagement() {
+        return m3UAManagement;
+    }
 
-	}
+    public void setM3UAManagement(M3UAManagement m3UAManagement) {
+        this.m3UAManagement = (M3UAManagementImpl) m3UAManagement;
+        this.m3UAManagement.addMtp3UserPartListener(this);
+        this.mtp3TransferPrimitiveFactory = this.m3UAManagement.getMtp3TransferPrimitiveFactory();
+    }
 
-	// Life cycle methods
-	public void start() throws Exception {
+    // Layer4 methods
+    public void add(Linkset linkset) {
+        try {
+            linksets.add(linkset, linkset.getApc());
 
-		// Linkset
-		this.linksetManager.setLayer4(this);
+            linksetStream = linkset.getLinksetStream();
+            linksetStream.register(this.linkSetSelector);
+        } catch (IOException ex) {
+            logger.error(String.format("Registration for %s LinksetStream failed", linkset.getName()), ex);
+        }
+    }
 
-		// Add all linkset stream
-		FastMap<String, Linkset> map = this.linksetManager.getLinksets();
-		for (FastMap.Entry<String, Linkset> e = map.head(), end = map.tail(); (e = e.getNext()) != end;) {
-			Linkset value = e.getValue();
-			this.add(value);
-		}
+    public void remove(Linkset linkset) {
+        linksets.remove(linkset.getApc());
 
-		this.started = true;
-		this.activate(false);
-		scheduler.submit(this,scheduler.INTERNETWORKING_QUEUE);
-	}
+    }
 
-	public void stop() throws Exception {
-		this.started = false;
-	}
+    // Life cycle methods
+    public void start() throws Exception {
 
-	@Override
-	public long perform() {
-		Mtp3TransferPrimitive currPrimitive;
-		if (!started) {
-			return 0;
-		}
-		
-		try
-		{
-			FastList<SelectorKey> selected = linkSetSelector.selectNow(OP_READ_WRITE, 1);
-			for (FastList.Node<SelectorKey> n = selected.head(), end = selected.tail(); (n = n.getNext()) != end;) {
-				SelectorKey key = n.getValue();
-				int size=((LinksetStream) key.getStream()).read(rxBuffer);
-				if(size>0)
-				{
-					tempBuffer=new byte[size];
-					System.arraycopy(rxBuffer, 0, tempBuffer, 0, size);
-					
-					currPrimitive=mtp3TransferPrimitiveFactory.createMtp3TransferPrimitive(tempBuffer);
-					this.m3UAManagement.sendMessage(currPrimitive);				
-				}
-			}
-		}
-		catch(IOException e)
-		{			
-		}
-								
-		try
-		{
-			currPrimitive = null;			
-			while ((currPrimitive = m3uaqueue.poll()) != null)
-			{				
-				Linkset value = linksets.get(currPrimitive.getDpc());
-				if(value!=null)
-					value.getLinksetStream().write(currPrimitive.encodeMtp3());				
-			}
-		}
-		catch(IOException e)
-		{			
-		}						
-		
-		scheduler.submit(this,scheduler.INTERNETWORKING_QUEUE);
-		return 0;
-	}
-	
-	public void onMtp3TransferMessage(Mtp3TransferPrimitive msg)
-	{
-		m3uaqueue.offer(msg);
-	}
+        // Linkset
+        this.linksetManager.setLayer4(this);
 
-	public void onMtp3PauseMessage(Mtp3PausePrimitive msg)
-	{
-		//not used
-	}
+        // Add all linkset stream
+        FastMap<String, Linkset> map = this.linksetManager.getLinksets();
+        for (FastMap.Entry<String, Linkset> e = map.head(), end = map.tail(); (e = e.getNext()) != end;) {
+            Linkset value = e.getValue();
+            this.add(value);
+        }
 
-	public void onMtp3ResumeMessage(Mtp3ResumePrimitive msg)
-	{
-		//not used
-	}
+        this.started = true;
+        this.activate(false);
+        scheduler.submit(this, scheduler.INTERNETWORKING_QUEUE);
+    }
 
-	public void onMtp3StatusMessage(Mtp3StatusPrimitive msg)
-	{
-		//not used
-	}
+    public void stop() throws Exception {
+        this.started = false;
+    }
+
+    @Override
+    public long perform() {
+        Mtp3TransferPrimitive currPrimitive;
+        if (!started) {
+            return 0;
+        }
+
+        try {
+            FastList<SelectorKey> selected = linkSetSelector.selectNow(OP_READ_WRITE, 1);
+            for (FastList.Node<SelectorKey> n = selected.head(), end = selected.tail(); (n = n.getNext()) != end;) {
+                SelectorKey key = n.getValue();
+                int size = ((LinksetStream) key.getStream()).read(rxBuffer);
+                if (size > 0) {
+                    tempBuffer = new byte[size];
+                    System.arraycopy(rxBuffer, 0, tempBuffer, 0, size);
+
+                    currPrimitive = mtp3TransferPrimitiveFactory.createMtp3TransferPrimitive(tempBuffer);
+                    this.m3UAManagement.sendMessage(currPrimitive);
+                }
+            }
+        } catch (IOException e) {
+        }
+
+        try {
+            currPrimitive = null;
+            while ((currPrimitive = m3uaqueue.poll()) != null) {
+                Linkset value = linksets.get(currPrimitive.getDpc());
+                if (value != null)
+                    value.getLinksetStream().write(currPrimitive.encodeMtp3());
+            }
+        } catch (IOException e) {
+        }
+
+        scheduler.submit(this, scheduler.INTERNETWORKING_QUEUE);
+        return 0;
+    }
+
+    public void onMtp3TransferMessage(Mtp3TransferPrimitive msg) {
+        m3uaqueue.offer(msg);
+    }
+
+    public void onMtp3PauseMessage(Mtp3PausePrimitive msg) {
+        // not used
+    }
+
+    public void onMtp3ResumeMessage(Mtp3ResumePrimitive msg) {
+        // not used
+    }
+
+    public void onMtp3StatusMessage(Mtp3StatusPrimitive msg) {
+        // not used
+    }
 }

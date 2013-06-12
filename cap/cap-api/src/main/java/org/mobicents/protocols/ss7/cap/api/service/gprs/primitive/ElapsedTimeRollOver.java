@@ -23,27 +23,20 @@
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
 /**
-*
-
-ElapsedTimeRollOver ::= CHOICE {
-rO-TimeGPRSIfNoTariffSwitch [0] INTEGER (0..255),
-rO-TimeGPRSIfTariffSwitch [1] SEQUENCE {
-rO-TimeGPRSSinceLastTariffSwitch [0] INTEGER (0..255) OPTIONAL,
-rO-TimeGPRSTariffSwitchInterval [1] INTEGER (0..255) OPTIONAL
-}
-}
--- rO-TimeGPRSIfNoTariffSwitch, rO-TimeGPRSSinceLastTariffSwitch and
--- rO-TimeGPRSTariffSwitchInterval
--- present counters indicating the number of parameter range rollovers.
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ ElapsedTimeRollOver ::= CHOICE { rO-TimeGPRSIfNoTariffSwitch [0] INTEGER (0..255), rO-TimeGPRSIfTariffSwitch [1] SEQUENCE {
+ * rO-TimeGPRSSinceLastTariffSwitch [0] INTEGER (0..255) OPTIONAL, rO-TimeGPRSTariffSwitchInterval [1] INTEGER (0..255) OPTIONAL
+ * } } -- rO-TimeGPRSIfNoTariffSwitch, rO-TimeGPRSSinceLastTariffSwitch and -- rO-TimeGPRSTariffSwitchInterval -- present
+ * counters indicating the number of parameter range rollovers.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface ElapsedTimeRollOver {
 
-	public Integer getROTimeGPRSIfNoTariffSwitch();
+    Integer getROTimeGPRSIfNoTariffSwitch();
 
-	public ROTimeGPRSIfTariffSwitch getROTimeGPRSIfTariffSwitch();
+    ROTimeGPRSIfTariffSwitch getROTimeGPRSIfTariffSwitch();
 
 }

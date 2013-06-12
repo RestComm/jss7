@@ -23,16 +23,15 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-TraceReference2 ::= OCTET STRING (SIZE (3))
-
- * 
+ *
+ TraceReference2 ::= OCTET STRING (SIZE (3))
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface TraceReference2 {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

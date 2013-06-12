@@ -25,18 +25,16 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 import org.mobicents.protocols.asn.BitSetStrictLength;
 
 /**
- * 
-
-AdditionalInfo ::= BIT STRING (SIZE (1..136))
---	 Refers to Additional Info as specified in 3GPP TS 43.068 
-
- * 
- * 
+ *
+ AdditionalInfo ::= BIT STRING (SIZE (1..136)) -- Refers to Additional Info as specified in 3GPP TS 43.068
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface AdditionalInfo {
 
-	public BitSetStrictLength getData();
+    BitSetStrictLength getData();
 
 }

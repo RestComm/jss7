@@ -23,36 +23,34 @@
 package org.mobicents.protocols.ss7.inap.api.primitives;
 
 /**
-*
-BothwayThroughConnectionInd ::= ENUMERATED {
-  bothwayPathRequired(0), bothwayPathNotRequired(1)}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ BothwayThroughConnectionInd ::= ENUMERATED { bothwayPathRequired(0), bothwayPathNotRequired(1)}
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public enum BothwayThroughConnectionInd {
-	bothwayPathRequired(0), 
-	bothwayPathNotRequired(1);
+    bothwayPathRequired(0), bothwayPathNotRequired(1);
 
-	private int code;
+    private int code;
 
-	private BothwayThroughConnectionInd(int code) {
-		this.code = code;
-	}
+    private BothwayThroughConnectionInd(int code) {
+        this.code = code;
+    }
 
-	public static BothwayThroughConnectionInd getInstance(int code) {
-		switch (code) {
-		case 0:
-			return BothwayThroughConnectionInd.bothwayPathRequired;
-		case 1:
-			return BothwayThroughConnectionInd.bothwayPathNotRequired;
-		}
+    public static BothwayThroughConnectionInd getInstance(int code) {
+        switch (code) {
+            case 0:
+                return BothwayThroughConnectionInd.bothwayPathRequired;
+            case 1:
+                return BothwayThroughConnectionInd.bothwayPathNotRequired;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public int getCode() {
-		return code;
-	}
+    public int getCode() {
+        return code;
+    }
 }

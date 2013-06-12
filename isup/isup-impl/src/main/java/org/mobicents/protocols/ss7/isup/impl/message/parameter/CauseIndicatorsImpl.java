@@ -23,10 +23,10 @@
 /**
  * Start time:15:14:32 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
- * 
+ *
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
@@ -39,140 +39,140 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 /**
  * Start time:15:14:32 2009-03-30<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 public class CauseIndicatorsImpl extends AbstractISUPParameter implements CauseIndicators {
 
-	// FIXME: we ignore EXT fields , is this ok ?
-	
-	private int location = 0;
-	private int causeValue = 0;
-	private int codingStandard = 0;
-	private byte[] diagnostics = null;
+    // FIXME: we ignore EXT fields , is this ok ?
 
-	public CauseIndicatorsImpl() {
-		super();
-		
-	}
+    private int location = 0;
+    private int causeValue = 0;
+    private int codingStandard = 0;
+    private byte[] diagnostics = null;
 
-	public CauseIndicatorsImpl(int codingStandard, int location, int causeValue, byte[] diagnostics) {
-		super();
-		this.setCodingStandard(codingStandard);
-		this.setLocation(location);
-		this.setCauseValue(causeValue);
-		this.diagnostics = diagnostics;
-	}
+    public CauseIndicatorsImpl() {
+        super();
 
-	public int decode(byte[] b) throws ParameterException {
+    }
 
-		// FIXME: there are ext bits, does this mean this param can be from 1 to
-		// 3+ bytes?
-		// but trace shows that extension bit is always on... does this mean
-		// that we can have mutliptle indicators?
-		if (b == null || b.length < 2) {
-			throw new ParameterException("byte[] must not be null or has size less than 2");
-		}
-		// Used because of Q.850 - we must ignore recomendation
-		int index = 0;
-		// first two bytes are mandatory
-		int v = 0;
-		// remove ext
-		v = b[index] & 0x7F;
-		this.location = v & 0x0F;
-		this.codingStandard = v >> 5;
-		if (((b[index] & 0x7F) >> 7) == 0) {
-			index += 2;
-		} else {
-			index++;
-		}
-		v = 0;
-		v = b[1] & 0x7F;
-		this.causeValue = v;
-		if (b.length == 2) {
-			return 2;
-		} else {
-			if ((b.length - 2) % 3 != 0) {
-				throw new ParameterException("Diagnostics part  must have 3xN bytes, it has: " + (b.length - 2));
-			}
+    public CauseIndicatorsImpl(int codingStandard, int location, int causeValue, byte[] diagnostics) {
+        super();
+        this.setCodingStandard(codingStandard);
+        this.setLocation(location);
+        this.setCauseValue(causeValue);
+        this.diagnostics = diagnostics;
+    }
 
-			int byteCounter = 2;
+    public int decode(byte[] b) throws ParameterException {
 
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			for (int i = 2; i < b.length; i++) {
-				bos.write(b[i]);
-				byteCounter++;
-			}
+        // FIXME: there are ext bits, does this mean this param can be from 1 to
+        // 3+ bytes?
+        // but trace shows that extension bit is always on... does this mean
+        // that we can have mutliptle indicators?
+        if (b == null || b.length < 2) {
+            throw new ParameterException("byte[] must not be null or has size less than 2");
+        }
+        // Used because of Q.850 - we must ignore recomendation
+        int index = 0;
+        // first two bytes are mandatory
+        int v = 0;
+        // remove ext
+        v = b[index] & 0x7F;
+        this.location = v & 0x0F;
+        this.codingStandard = v >> 5;
+        if (((b[index] & 0x7F) >> 7) == 0) {
+            index += 2;
+        } else {
+            index++;
+        }
+        v = 0;
+        v = b[1] & 0x7F;
+        this.causeValue = v;
+        if (b.length == 2) {
+            return 2;
+        } else {
+            if ((b.length - 2) % 3 != 0) {
+                throw new ParameterException("Diagnostics part  must have 3xN bytes, it has: " + (b.length - 2));
+            }
 
-			this.diagnostics = bos.toByteArray();
+            int byteCounter = 2;
 
-			return byteCounter;
-		}
-	}
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            for (int i = 2; i < b.length; i++) {
+                bos.write(b[i]);
+                byteCounter++;
+            }
 
-	public byte[] encode() throws ParameterException {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            this.diagnostics = bos.toByteArray();
 
-		int v = this.location & 0x0F;
-		v |= (byte) ((this.codingStandard & 0x03) << 5) | (0x01 << 7);
-		bos.write(v);
-		bos.write(this.causeValue | (0x01 << 7));
-		if (this.diagnostics != null){
-			try {
-				bos.write(this.diagnostics);
-			} catch (IOException e) {
-				throw new ParameterException(e);
-			}
-		}
-		byte[] b = bos.toByteArray();
+            return byteCounter;
+        }
+    }
 
-		return b;
-	}
+    public byte[] encode() throws ParameterException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-	public int encode(ByteArrayOutputStream bos) throws ParameterException {
-		byte[] b = this.encode();
-		try {
-			bos.write(b);
-		} catch (IOException e) {
-			throw new ParameterException(e);
-		}
-		return b.length;
-	}
+        int v = this.location & 0x0F;
+        v |= (byte) ((this.codingStandard & 0x03) << 5) | (0x01 << 7);
+        bos.write(v);
+        bos.write(this.causeValue | (0x01 << 7));
+        if (this.diagnostics != null) {
+            try {
+                bos.write(this.diagnostics);
+            } catch (IOException e) {
+                throw new ParameterException(e);
+            }
+        }
+        byte[] b = bos.toByteArray();
 
-	public int getCodingStandard() {
-		return codingStandard;
-	}
+        return b;
+    }
 
-	public void setCodingStandard(int codingStandard) {
-		this.codingStandard = codingStandard & 0x03;
-	}
+    public int encode(ByteArrayOutputStream bos) throws ParameterException {
+        byte[] b = this.encode();
+        try {
+            bos.write(b);
+        } catch (IOException e) {
+            throw new ParameterException(e);
+        }
+        return b.length;
+    }
 
-	public int getLocation() {
-		return location;
-	}
+    public int getCodingStandard() {
+        return codingStandard;
+    }
 
-	public void setLocation(int location) {
-		this.location = location & 0x0F;
-	}
+    public void setCodingStandard(int codingStandard) {
+        this.codingStandard = codingStandard & 0x03;
+    }
 
-	public int getCauseValue() {
-		return causeValue & 0x7F;
-	}
+    public int getLocation() {
+        return location;
+    }
 
-	public void setCauseValue(int causeValue) {
-		this.causeValue = causeValue;
-	}
+    public void setLocation(int location) {
+        this.location = location & 0x0F;
+    }
 
-	public byte[] getDiagnostics() {
-		return diagnostics;
-	}
+    public int getCauseValue() {
+        return causeValue & 0x7F;
+    }
 
-	public void setDiagnostics(byte[] diagnostics) {
-		this.diagnostics = diagnostics;
-	}
+    public void setCauseValue(int causeValue) {
+        this.causeValue = causeValue;
+    }
 
-	public int getCode() {
+    public byte[] getDiagnostics() {
+        return diagnostics;
+    }
 
-		return _PARAMETER_CODE;
-	}
+    public void setDiagnostics(byte[] diagnostics) {
+        this.diagnostics = diagnostics;
+    }
+
+    public int getCode() {
+
+        return _PARAMETER_CODE;
+    }
 }

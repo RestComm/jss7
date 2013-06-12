@@ -40,62 +40,59 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.supplementary.SSCodeImpl;
 import org.testng.annotations.Test;
 
-
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public class ExtCallBarInfoTest {
-	
-	public byte[] getData() {
-		return new byte[] { 48, 95, 4, 1, 0, 48, 49, 48, 47, -126, 1, 22, -124,
-				1, 3, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14,
-				15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23,
-				24, 25, 26, -95, 3, 31, 32, 33, 48, 39, -96, 32, 48, 10, 6, 3,
-				42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6,
-				3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
-	};
-	
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testDecode() throws Exception {
-		byte[] data = this.getData();
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
-		ExtCallBarInfoImpl prim = new ExtCallBarInfoImpl();
-		prim.decodeAll(asn);
 
-		assertEquals(tag, Tag.SEQUENCE);
-		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+    public byte[] getData() {
+        return new byte[] { 48, 95, 4, 1, 0, 48, 49, 48, 47, -126, 1, 22, -124, 1, 3, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4,
+                11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33,
+                48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21,
+                22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
+    };
 
-		MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
-		assertEquals(prim.getSsCode().getSupplementaryCodeValue(), SupplementaryCodeValue.allServices);
-		assertNotNull(prim.getCallBarringFeatureList());
-		assertTrue(prim.getCallBarringFeatureList().size() == 1);
-		ExtCallBarringFeature ec = prim.getCallBarringFeatureList().get(0);
-		assertNotNull(ec);
-		assertEquals(ec.getBasicService().getExtBearerService().getBearerServiceCodeValue(), BearerServiceCodeValue.Asynchronous9_6kbps);
-		assertNotNull(extensionContainer);
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
-	}
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
+        byte[] data = this.getData();
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
+        ExtCallBarInfoImpl prim = new ExtCallBarInfoImpl();
+        prim.decodeAll(asn);
 
-	@Test(groups = { "functional.encode", "primitives" })
-	public void testEncode() throws Exception {
-		SSCode ssCode = new SSCodeImpl(SupplementaryCodeValue.allServices);
-		ExtBearerServiceCodeImpl b = new ExtBearerServiceCodeImpl(BearerServiceCodeValue.Asynchronous9_6kbps);
-		ExtBasicServiceCodeImpl basicService = new ExtBasicServiceCodeImpl(b);
-		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
-		ExtSSStatusImpl ssStatus =  new ExtSSStatusImpl(false, false, true, true);
-		
-		ExtCallBarringFeatureImpl callBarringFeature = new ExtCallBarringFeatureImpl(basicService,
-				ssStatus, extensionContainer);
-		ArrayList<ExtCallBarringFeature> callBarringFeatureList = new ArrayList<ExtCallBarringFeature>();
-		callBarringFeatureList.add(callBarringFeature);
-		
-		ExtCallBarInfoImpl prim = new ExtCallBarInfoImpl(ssCode, callBarringFeatureList, extensionContainer);
-		AsnOutputStream asn = new AsnOutputStream();
-		prim.encodeAll(asn);
-		
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
-	}
+        assertEquals(tag, Tag.SEQUENCE);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+
+        MAPExtensionContainer extensionContainer = prim.getExtensionContainer();
+        assertEquals(prim.getSsCode().getSupplementaryCodeValue(), SupplementaryCodeValue.allServices);
+        assertNotNull(prim.getCallBarringFeatureList());
+        assertTrue(prim.getCallBarringFeatureList().size() == 1);
+        ExtCallBarringFeature ec = prim.getCallBarringFeatureList().get(0);
+        assertNotNull(ec);
+        assertEquals(ec.getBasicService().getExtBearerService().getBearerServiceCodeValue(),
+                BearerServiceCodeValue.Asynchronous9_6kbps);
+        assertNotNull(extensionContainer);
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(extensionContainer));
+    }
+
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
+        SSCode ssCode = new SSCodeImpl(SupplementaryCodeValue.allServices);
+        ExtBearerServiceCodeImpl b = new ExtBearerServiceCodeImpl(BearerServiceCodeValue.Asynchronous9_6kbps);
+        ExtBasicServiceCodeImpl basicService = new ExtBasicServiceCodeImpl(b);
+        MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
+        ExtSSStatusImpl ssStatus = new ExtSSStatusImpl(false, false, true, true);
+
+        ExtCallBarringFeatureImpl callBarringFeature = new ExtCallBarringFeatureImpl(basicService, ssStatus, extensionContainer);
+        ArrayList<ExtCallBarringFeature> callBarringFeatureList = new ArrayList<ExtCallBarringFeature>();
+        callBarringFeatureList.add(callBarringFeature);
+
+        ExtCallBarInfoImpl prim = new ExtCallBarInfoImpl(ssCode, callBarringFeatureList, extensionContainer);
+        AsnOutputStream asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -27,7 +27,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
-import org.mobicents.protocols.ss7.tcap.api.TCListener;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
@@ -39,278 +38,258 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 
 /**
  * Interface for class representing Dialog/Transaction.
- * 
+ *
  * @author baranowb
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface Dialog {
 
-	/**
-	 * returns this dialog ID. It MUST be unique at any given time in local
-	 * stack.
-	 * 
-	 * @return
-	 */
-	public Long getLocalDialogId();
+    /**
+     * returns this dialog ID. It MUST be unique at any given time in local stack.
+     *
+     * @return
+     */
+    Long getLocalDialogId();
 
-	/**
-	 * return the remote Dialog Id. This will be null if Dialog is locally
-	 * originated and not confirmed yet
-	 * 
-	 * @return
-	 */
-	public Long getRemoteDialogId();
+    /**
+     * return the remote Dialog Id. This will be null if Dialog is locally originated and not confirmed yet
+     *
+     * @return
+     */
+    Long getRemoteDialogId();
 
-	/**
-	 * Gets local sccp address
-	 * 
-	 * @return
-	 */
-	public SccpAddress getLocalAddress();
-	
-	/**
-	 * Sets local Sccp Address.
-	 * 
-	 * @param localAddress
-	 */
-	public void setLocalAddress(SccpAddress localAddress);
+    /**
+     * Gets local sccp address
+     *
+     * @return
+     */
+    SccpAddress getLocalAddress();
 
-	/**
-	 * Gets remote sccp address
-	 * 
-	 * @return
-	 */
-	public SccpAddress getRemoteAddress();
-	
-	/**
-	 * Sets remote Sccp Address
-	 * 
-	 * @param remoteAddress
-	 */
-	public void setRemoteAddress(SccpAddress remoteAddress);
+    /**
+     * Sets local Sccp Address.
+     *
+     * @param localAddress
+     */
+    void setLocalAddress(SccpAddress localAddress);
 
-	/**
-	 * Last sent/received ACN
-	 * 
-	 * @return the acn
-	 */
-	public ApplicationContextName getApplicationContextName();
+    /**
+     * Gets remote sccp address
+     *
+     * @return
+     */
+    SccpAddress getRemoteAddress();
 
-	/**
-	 * Last sent/received UI
-	 * 
-	 * @return the ui
-	 */
-	public UserInformation getUserInformation();
+    /**
+     * Sets remote Sccp Address
+     *
+     * @param remoteAddress
+     */
+    void setRemoteAddress(SccpAddress remoteAddress);
 
-	/**
-	 * returns new, unique for this dialog, invocation id to be used in
-	 * TC_INVOKE. If there is no free invoke id, it returns null. Invoke ID is
-	 * freed once operation using it is canceled, timeouts or simply returns
-	 * final value.
-	 * 
-	 * @return
-	 */
-	public Long getNewInvokeId() throws TCAPException;
+    /**
+     * Last sent/received ACN
+     *
+     * @return the acn
+     */
+    ApplicationContextName getApplicationContextName();
 
-	/**
-	 * Cancels INVOKE pending to be sent. It is equivalent to TC-U-CANCEL.
-	 * 
-	 * @return <ul>
-	 *         <li><b>true</b> - if operation has been success and invoke id has
-	 *         been return to pool of available ids.</li>
-	 *         <li><b>false</b> -</li>
-	 *         </ul>
-	 * @throws TCAPException
-	 *             - thrown if passed invoke id is wrong
-	 */
-	public boolean cancelInvocation(Long invokeId) throws TCAPException;
+    /**
+     * Last sent/received UI
+     *
+     * @return the ui
+     */
+    UserInformation getUserInformation();
 
-	/**
-	 * 
-	 * @return <ul>
-	 *         <li><b>true </b></li> - if dialog is established(at least one
-	 *         TC_CONTINUE has been sent/received.)
-	 *         <li><b>false</b></li> - no TC_CONTINUE sent/received
-	 *         </ul>
-	 */
-	public boolean isEstabilished();
+    /**
+     * returns new, unique for this dialog, invocation id to be used in TC_INVOKE. If there is no free invoke id, it returns
+     * null. Invoke ID is freed once operation using it is canceled, timeouts or simply returns final value.
+     *
+     * @return
+     */
+    Long getNewInvokeId() throws TCAPException;
 
-	/**
-	 * 
-	 * @return <ul>
-	 *         <li><b>true </b></li> - if dialog is structured - its created
-	 *         with TC_BEGIN not TC_UNI
-	 *         <li><b>false</b></li> - otherwise
-	 *         </ul>
-	 */
-	public boolean isStructured();
+    /**
+     * Cancels INVOKE pending to be sent. It is equivalent to TC-U-CANCEL.
+     *
+     * @return <ul>
+     *         <li><b>true</b> - if operation has been success and invoke id has been return to pool of available ids.</li>
+     *         <li><b>false</b> -</li>
+     *         </ul>
+     * @throws TCAPException - thrown if passed invoke id is wrong
+     */
+    boolean cancelInvocation(Long invokeId) throws TCAPException;
 
-	// //////////////////
-	// Sender methods //
-	// //////////////////
-	/**
-	 * Schedules component for sending. All components on list are queued.
-	 * Components are sent once message primitive is issued.
-	 * 
-	 * @param componentRequest
-	 * @throws TCAPSendException
-	 */
-	public void sendComponent(Component componentRequest) throws TCAPSendException;
+    /**
+     *
+     * @return <ul>
+     *         <li><b>true </b></li> - if dialog is established(at least one TC_CONTINUE has been sent/received.)
+     *         <li><b>false</b></li> - no TC_CONTINUE sent/received
+     *         </ul>
+     */
+    boolean isEstabilished();
 
-	/**
-	 * If a TCAP user will not answer to an incoming Invoke
-	 * with Response, Error or Reject components
-	 * it should invoke this method to remove the incoming Invoke from a pending incoming Invokes list 
-	 * 
-	 * @param invokeId
-	 */
-	public void processInvokeWithoutAnswer(Long invokeId);
+    /**
+     *
+     * @return <ul>
+     *         <li><b>true </b></li> - if dialog is structured - its created with TC_BEGIN not TC_UNI
+     *         <li><b>false</b></li> - otherwise
+     *         </ul>
+     */
+    boolean isStructured();
 
-	/**
-	 * Send initial primitive for Structured dialog.
-	 * 
-	 * @param event
-	 * @throws TCAPSendException
-	 *             - thrown if dialog is in bad state, ie. Being has already
-	 *             been sent or dialog has been removed.
-	 */
-	public void send(TCBeginRequest event) throws TCAPSendException;
+    // //////////////////
+    // Sender methods //
+    // //////////////////
+    /**
+     * Schedules component for sending. All components on list are queued. Components are sent once message primitive is issued.
+     *
+     * @param componentRequest
+     * @throws TCAPSendException
+     */
+    void sendComponent(Component componentRequest) throws TCAPSendException;
 
-	/**
-	 * Sends intermediate primitive for Structured dialog.
-	 * 
-	 * @param event
-	 * @throws TCAPSendException
-	 *             - thrown if dialog is in bad state, ie. Begin has not been
-	 *             sent or dialog has been removed.
-	 */
-	public void send(TCContinueRequest event) throws TCAPSendException;
+    /**
+     * If a TCAP user will not answer to an incoming Invoke with Response, Error or Reject components it should invoke this
+     * method to remove the incoming Invoke from a pending incoming Invokes list
+     *
+     * @param invokeId
+     */
+    void processInvokeWithoutAnswer(Long invokeId);
 
-	/**
-	 * Sends dialog end request.
-	 * 
-	 * @param event
-	 * @throws TCAPSendException
-	 *             - thrown if dialog is in bad state, ie. Begin has not been
-	 *             sent or dialog has been removed.
-	 */
-	public void send(TCEndRequest event) throws TCAPSendException;
+    /**
+     * Send initial primitive for Structured dialog.
+     *
+     * @param event
+     * @throws TCAPSendException - thrown if dialog is in bad state, ie. Being has already been sent or dialog has been removed.
+     */
+    void send(TCBeginRequest event) throws TCAPSendException;
 
-	/**
-	 * Sends Abort primitive with indication to user as source of termination.
-	 * 
-	 * @param event
-	 * @throws TCAPSendException
-	 */
-	public void send(TCUserAbortRequest event) throws TCAPSendException;
+    /**
+     * Sends intermediate primitive for Structured dialog.
+     *
+     * @param event
+     * @throws TCAPSendException - thrown if dialog is in bad state, ie. Begin has not been sent or dialog has been removed.
+     */
+    void send(TCContinueRequest event) throws TCAPSendException;
 
-	/**
-	 * Sends unstructured dialog primitive. After this method returns dialog is
-	 * expunged from stack as its life cycle reaches end.
-	 * 
-	 * @param event
-	 * @throws TCAPSendException
-	 */
-	public void send(TCUniRequest event) throws TCAPSendException;
+    /**
+     * Sends dialog end request.
+     *
+     * @param event
+     * @throws TCAPSendException - thrown if dialog is in bad state, ie. Begin has not been sent or dialog has been removed.
+     */
+    void send(TCEndRequest event) throws TCAPSendException;
 
-	/**
-	 * Programmer hook to release.
-	 */
-	public void release();
+    /**
+     * Sends Abort primitive with indication to user as source of termination.
+     *
+     * @param event
+     * @throws TCAPSendException
+     */
+    void send(TCUserAbortRequest event) throws TCAPSendException;
 
-	/**
-	 * Resets timeout timer for particular operation.
-	 * 
-	 * @param invokeId
-	 * @throws TCAPException
-	 */
-	public void resetTimer(Long invokeId) throws TCAPException;
+    /**
+     * Sends unstructured dialog primitive. After this method returns dialog is expunged from stack as its life cycle reaches
+     * end.
+     *
+     * @param event
+     * @throws TCAPSendException
+     */
+    void send(TCUniRequest event) throws TCAPSendException;
 
-	/**
-	 * This method can be called on timeout of dialog, inside
-	 * {@link TCListener#onDialogTimeout(Dialog)} callback. If its called,
-	 * dialog wont be removed in case application does not perform 'send'.
-	 */
-	public void keepAlive();
+    /**
+     * Programmer hook to release.
+     */
+    void release();
 
-	/**
-	 * Returns the state of this Dialog
-	 * 
-	 * @return
-	 */
-	public TRPseudoState getState();
+    /**
+     * Resets timeout timer for particular operation.
+     *
+     * @param invokeId
+     * @throws TCAPException
+     */
+    void resetTimer(Long invokeId) throws TCAPException;
 
-	/**
-	 * Return the maximum TCAP message length (in bytes) that are allowed for
-	 * this dialog
-	 * 
-	 * @return
-	 */
-	public int getMaxUserDataLength();
+    /**
+     * This method can be called on timeout of dialog, inside {@link TCListener#onDialogTimeout(Dialog)} callback. If its
+     * called, dialog wont be removed in case application does not perform 'send'.
+     */
+    void keepAlive();
 
-	/**
-	 * Return the TCAP message length (in bytes) that will be after encoding
-	 * This value must not exceed getMaxUserDataLength() value
-	 * 
-	 * @param event
-	 * @return
-	 */
-	public int getDataLength(TCBeginRequest event) throws TCAPSendException;
+    /**
+     * Returns the state of this Dialog
+     *
+     * @return
+     */
+    TRPseudoState getState();
 
-	/**
-	 * Return the TCAP message length (in bytes) that will be after encoding
-	 * This value must not exceed getMaxUserDataLength() value
-	 * 
-	 * @param event
-	 * @return
-	 */
-	public int getDataLength(TCContinueRequest event) throws TCAPSendException;
+    /**
+     * Return the maximum TCAP message length (in bytes) that are allowed for this dialog
+     *
+     * @return
+     */
+    int getMaxUserDataLength();
 
-	/**
-	 * Return the TCAP message length (in bytes) that will be after encoding
-	 * This value must not exceed getMaxUserDataLength() value
-	 * 
-	 * @param event
-	 * @return
-	 */
-	public int getDataLength(TCEndRequest event) throws TCAPSendException;
+    /**
+     * Return the TCAP message length (in bytes) that will be after encoding This value must not exceed getMaxUserDataLength()
+     * value
+     *
+     * @param event
+     * @return
+     */
+    int getDataLength(TCBeginRequest event) throws TCAPSendException;
 
-	/**
-	 * Return the TCAP message length (in bytes) that will be after encoding
-	 * This value must not exceed getMaxUserDataLength() value
-	 * 
-	 * @param event
-	 * @return
-	 */
-	public int getDataLength(TCUniRequest event) throws TCAPSendException;
+    /**
+     * Return the TCAP message length (in bytes) that will be after encoding This value must not exceed getMaxUserDataLength()
+     * value
+     *
+     * @param event
+     * @return
+     */
+    int getDataLength(TCContinueRequest event) throws TCAPSendException;
 
-	/**
-	 * Getting from the Dialog a user-defined object to save relating to the
-	 * Dialog information
-	 * 
-	 * @return
-	 */
-	public Object getUserObject();
+    /**
+     * Return the TCAP message length (in bytes) that will be after encoding This value must not exceed getMaxUserDataLength()
+     * value
+     *
+     * @param event
+     * @return
+     */
+    int getDataLength(TCEndRequest event) throws TCAPSendException;
 
-	/**
-	 * Store in the Dialog a user-defined object to save relating to the Dialog
-	 * information
-	 * 
-	 * @param userObject
-	 */
-	public void setUserObject(Object userObject);
+    /**
+     * Return the TCAP message length (in bytes) that will be after encoding This value must not exceed getMaxUserDataLength()
+     * value
+     *
+     * @param event
+     * @return
+     */
+    int getDataLength(TCUniRequest event) throws TCAPSendException;
 
-	/**
-	 * 
-	 * @return Returns if a dialog works in preview mode
-	 */
-	public boolean getPreviewMode();
+    /**
+     * Getting from the Dialog a user-defined object to save relating to the Dialog information
+     *
+     * @return
+     */
+    Object getUserObject();
 
-	/**
-	 * @return This ReentrantLock object should for synchronizing of Dialog using in multithread environment 
-	 */
-	public ReentrantLock getDialogLock();
+    /**
+     * Store in the Dialog a user-defined object to save relating to the Dialog information
+     *
+     * @param userObject
+     */
+    void setUserObject(Object userObject);
+
+    /**
+     *
+     * @return Returns if a dialog works in preview mode
+     */
+    boolean getPreviewMode();
+
+    /**
+     * @return This ReentrantLock object should for synchronizing of Dialog using in multithread environment
+     */
+    ReentrantLock getDialogLock();
 
 }

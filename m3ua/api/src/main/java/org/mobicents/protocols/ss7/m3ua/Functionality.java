@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -22,36 +22,36 @@
 package org.mobicents.protocols.ss7.m3ua;
 
 /**
- * 
+ *
  * @author amit bhayani
  *
  */
 public enum Functionality {
-	AS("AS"), IPSP("IPSP"), SGW("SGW");
+    AS("AS"), IPSP("IPSP"), SGW("SGW");
 
-	private static final String TYPE_AS = "AS";
-	private static final String TYPE_IPSP = "IPSP";
-	private static final String TYPE_SGW = "SGW";
+    private static final String TYPE_AS = "AS";
+    private static final String TYPE_IPSP = "IPSP";
+    private static final String TYPE_SGW = "SGW";
 
-	private String type = null;
+    private String type = null;
 
-	private Functionality(String type) {
-		this.type = type;
-	}
+    private Functionality(String type) {
+        this.type = type;
+    }
 
-	public static Functionality getFunctionality(String type) {
-		if (TYPE_AS.equals(type)) {
-			return AS;
-		} else if (TYPE_IPSP.equals(type)) {
-			return IPSP;
-		} else if (TYPE_SGW.equals(type)) {
-			return SGW;
-		}
-		return null;
-	}
+    public static Functionality getFunctionality(String type) {
+        if (TYPE_AS.equals(type)) {
+            return AS;
+        } else if (TYPE_IPSP.equals(type)) {
+            return IPSP;
+        } else if (TYPE_SGW.equals(type)) {
+            return SGW;
+        }
+        return null;
+    }
 
-	public String getType() {
-		return this.type;
-	}
+    public String getType() {
+        return this.type;
+    }
 
 }

@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -25,47 +25,34 @@ package org.mobicents.protocols.ss7.map.api.errors;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
-*
-MAP V2-3
-absentSubscriber  ERROR ::= {
-	PARAMETER
- 		AbsentSubscriberParam
- 		-- optional
- 		-- AbsentSubscriberParam must not be used in version <3
- 	CODE	local:27 }
-
-AbsentSubscriberParam ::= SEQUENCE {
- 	extensionContainer	ExtensionContainer	OPTIONAL,
- 	...,
- 	absentSubscriberReason	[0] AbsentSubscriberReason	OPTIONAL}
- 
-MAP V1
-AbsentSubscriber ::= ERROR
-	PARAMETER
-	mwd-Set BOOLEAN
-	-- optional
-	-- mwd-Set must be absent in version greater 1
- 
- 
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ MAP V2-3 absentSubscriber ERROR ::= { PARAMETER AbsentSubscriberParam -- optional -- AbsentSubscriberParam must not be used
+ * in version <3 CODE local:27 }
+ *
+ * AbsentSubscriberParam ::= SEQUENCE { extensionContainer ExtensionContainer OPTIONAL, ..., absentSubscriberReason [0]
+ * AbsentSubscriberReason OPTIONAL}
+ *
+ * MAP V1 AbsentSubscriber ::= ERROR PARAMETER mwd-Set BOOLEAN -- optional -- mwd-Set must be absent in version greater 1
+ *
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface MAPErrorMessageAbsentSubscriber extends MAPErrorMessage {
-	
-	// following is for MAP V3 only
-	public MAPExtensionContainer getExtensionContainer();
 
-	public AbsentSubscriberReason getAbsentSubscriberReason();
+    // following is for MAP V3 only
+    MAPExtensionContainer getExtensionContainer();
 
-	public void setExtensionContainer(MAPExtensionContainer extensionContainer);
+    AbsentSubscriberReason getAbsentSubscriberReason();
 
-	public void setAbsentSubscriberReason(AbsentSubscriberReason absentSubscriberReason);
+    void setExtensionContainer(MAPExtensionContainer extensionContainer);
 
-	// following is for MAP V1 only
-	public Boolean getMwdSet();
+    void setAbsentSubscriberReason(AbsentSubscriberReason absentSubscriberReason);
 
-	public void setMwdSet(Boolean val);
+    // following is for MAP V1 only
+    Boolean getMwdSet();
+
+    void setMwdSet(Boolean val);
 
 }
-

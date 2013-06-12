@@ -23,17 +23,16 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
 /**
-*
-E-UTRAN-CGI ::= OCTET STRING (SIZE (7))
-	-- Octets are coded as described in 3GPP TS 29.118.
-
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ E-UTRAN-CGI ::= OCTET STRING (SIZE (7)) -- Octets are coded as described in 3GPP TS 29.118.
+ *
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface EUtranCgi {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

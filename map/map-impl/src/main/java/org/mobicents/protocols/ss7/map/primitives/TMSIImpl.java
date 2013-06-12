@@ -25,23 +25,23 @@ package org.mobicents.protocols.ss7.map.primitives;
 import org.mobicents.protocols.ss7.map.api.primitives.TMSI;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class TMSIImpl extends OctetStringBase implements TMSI{
+public class TMSIImpl extends OctetStringBase implements TMSI {
 
-	public TMSIImpl(byte[] data) {
-		super(1, 4, "TMSI", data);
-	}
-	
-	public TMSIImpl() {
-		super(1, 4, "TMSI");
-	}
+    public TMSIImpl(byte[] data) {
+        super(1, 4, "TMSI", data);
+    }
 
-	@Override
-	public byte[] getData() {
-		return this.data;
-	}
+    public TMSIImpl() {
+        super(1, 4, "TMSI");
+    }
+
+    @Override
+    public byte[] getData() {
+        return this.data;
+    }
 
 }

@@ -22,54 +22,56 @@
 
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.testng.*;import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class DpSpecificCriteriaTest {
 
-	public byte[] getData1() {
-		return new byte[] { (byte) 129, 2, 3, (byte) 232 };
-	}
+    public byte[] getData1() {
+        return new byte[] { (byte) 129, 2, 3, (byte) 232 };
+    }
 
-	@Test(groups = { "functional.decode","circuitSwitchedCall.primitive"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData1();
-		AsnInputStream ais = new AsnInputStream(data);
-		DpSpecificCriteriaImpl elem = new DpSpecificCriteriaImpl();
-		int tag = ais.readTag();
-		elem.decodeAll(ais);
-		assertEquals((int) elem.getApplicationTimer(), 1000);
-		assertNull(elem.getMidCallControlInfo());
-		assertNull(elem.getDpSpecificCriteriaAlt());
-		
-		// TODO: implement other choices
-	}
+        byte[] data = this.getData1();
+        AsnInputStream ais = new AsnInputStream(data);
+        DpSpecificCriteriaImpl elem = new DpSpecificCriteriaImpl();
+        int tag = ais.readTag();
+        elem.decodeAll(ais);
+        assertEquals((int) elem.getApplicationTimer(), 1000);
+        assertNull(elem.getMidCallControlInfo());
+        assertNull(elem.getDpSpecificCriteriaAlt());
 
-	@Test(groups = { "functional.encode","circuitSwitchedCall.primitive"})
-	public void testEncode() throws Exception {
+        // TODO: implement other choices
+    }
 
-		DpSpecificCriteriaImpl elem = new DpSpecificCriteriaImpl(1000);
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
-		
-		// TODO: implement other choices
+    @Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
+    public void testEncode() throws Exception {
 
-//		CauseIndicators ci = new CauseIndicatorsImpl(0, 4, 16, null);
-//		elem = new CauseCapImpl(ci);
-//		aos = new AsnOutputStream();
-//		elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
-//		assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
-	}
+        DpSpecificCriteriaImpl elem = new DpSpecificCriteriaImpl(1000);
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+
+        // TODO: implement other choices
+
+        // CauseIndicators ci = new CauseIndicatorsImpl(0, 4, 16, null);
+        // elem = new CauseCapImpl(ci);
+        // aos = new AsnOutputStream();
+        // elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
+        // assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+    }
 }

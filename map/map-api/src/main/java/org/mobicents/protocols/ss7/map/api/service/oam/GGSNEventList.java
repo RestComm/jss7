@@ -23,21 +23,18 @@
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
 /**
- * 
-
-GGSN-EventList ::= BIT STRING {
-	pdpContext (0),
-	mbmsContext (1)} (SIZE (2..8))
--- Other bits than listed above shall be discarded.
-
- * 
+ *
+ GGSN-EventList ::= BIT STRING { pdpContext (0), mbmsContext (1)} (SIZE (2..8)) -- Other bits than listed above shall be
+ * discarded.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface GGSNEventList {
 
-	public boolean getPdpContext();
+    boolean getPdpContext();
 
-	public boolean getMbmsContext();
+    boolean getMbmsContext();
 
 }

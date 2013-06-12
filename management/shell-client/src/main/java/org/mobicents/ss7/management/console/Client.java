@@ -35,9 +35,9 @@ import org.mobicents.ss7.management.transceiver.Message;
 import org.mobicents.ss7.management.transceiver.ShellChannel;
 
 /**
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class Client {
 
@@ -64,8 +64,7 @@ public class Client {
         // channel.bind(new InetSocketAddress(address, port));
 
         selector = provider.openSelector();
-        skey = channel.register(selector, SelectionKey.OP_READ
-                | SelectionKey.OP_WRITE);
+        skey = channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
 
         channel.connect(endpoint);
         if (channel.isConnectionPending()) {
@@ -83,7 +82,7 @@ public class Client {
     public Message run(Message outgoing) throws IOException {
 
         if (!this.isConnected) {
-        	return provider.getMessageFactory().createMessage("Not yet connected");
+            return provider.getMessageFactory().createMessage("Not yet connected");
         }
 
         int count = 30;
@@ -93,16 +92,14 @@ public class Client {
         while (count > 0) {
             FastSet<ChannelSelectionKey> keys = selector.selectNow();
 
-            for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record
-                    .getNext()) != end;) {
-                ChannelSelectionKey key = (ChannelSelectionKey) keys
-                        .valueOf(record);
+            for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record.getNext()) != end;) {
+                ChannelSelectionKey key = (ChannelSelectionKey) keys.valueOf(record);
                 ShellChannel chan = (ShellChannel) key.channel();
 
                 if (!wrote && key.isWritable()) {
-                	if(outgoing!=null){
-                		chan.send(outgoing);
-                	}
+                    if (outgoing != null) {
+                        chan.send(outgoing);
+                    }
                     wrote = true;
                 }
 

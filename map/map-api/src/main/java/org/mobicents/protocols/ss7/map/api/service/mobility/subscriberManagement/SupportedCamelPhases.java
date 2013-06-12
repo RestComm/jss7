@@ -24,26 +24,21 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 
 /**
  *
- * SupportedCamelPhases ::= BIT STRING {
- *		phase1 (0),
- *		phase2 (1),
- *		phase3 (2),
- *		phase4 (3)} (SIZE (1..16)) 
- *	-- A node shall mark in the BIT STRING all CAMEL Phases it supports.
- *	-- Other values than listed above shall be discarded.
- 
-* 
-* @author sergey vetyutnev
-* 
-*/
+ * SupportedCamelPhases ::= BIT STRING { phase1 (0), phase2 (1), phase3 (2), phase4 (3)} (SIZE (1..16)) -- A node shall mark in
+ * the BIT STRING all CAMEL Phases it supports. -- Other values than listed above shall be discarded.
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface SupportedCamelPhases {
 
-	public boolean getPhase1Supported();
+    boolean getPhase1Supported();
 
-	public boolean getPhase2Supported();
+    boolean getPhase2Supported();
 
-	public boolean getPhase3Supported();
+    boolean getPhase3Supported();
 
-	public boolean getPhase4Supported();
+    boolean getPhase4Supported();
 
 }

@@ -26,21 +26,21 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class APNImpl extends OctetStringBase implements APN {
 
-	public APNImpl() {
-		super(2, 63, "APN");
-	}
+    public APNImpl() {
+        super(2, 63, "APN");
+    }
 
-	public APNImpl(byte[] data) {
-		super(2, 63, "APN", data);
-	}
+    public APNImpl(byte[] data) {
+        super(2, 63, "APN", data);
+    }
 
-	public byte[] getData() {
-		return data;
-	}	
+    public byte[] getData() {
+        return data;
+    }
 }

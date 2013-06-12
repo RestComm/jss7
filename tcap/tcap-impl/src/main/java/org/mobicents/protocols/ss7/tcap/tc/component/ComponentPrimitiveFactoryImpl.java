@@ -21,7 +21,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.mobicents.protocols.ss7.tcap.tc.component;
 
@@ -43,100 +43,97 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 
 /**
  * @author baranowb
- * 
+ *
  */
 public class ComponentPrimitiveFactoryImpl implements ComponentPrimitiveFactory {
 
-	private TCAPProviderImpl provider;
-	
-	public ComponentPrimitiveFactoryImpl(TCAPProviderImpl tcaProviderImpl) {
-		this.provider = tcaProviderImpl;
-	}
+    private TCAPProviderImpl provider;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory#createTCInvokeRequest()
-	 */
-	public Invoke createTCInvokeRequest() {
+    public ComponentPrimitiveFactoryImpl(TCAPProviderImpl tcaProviderImpl) {
+        this.provider = tcaProviderImpl;
+    }
 
-		InvokeImpl t = (InvokeImpl) TcapFactory.createComponentInvoke();
-		t.setProvider(provider);
-		return t;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory#
-	 * createTCInvokeRequest()
-	 */
-	public Invoke createTCInvokeRequest(InvokeClass invokeClass) {
+    /*
+     * (non-Javadoc)
+     *
+     * @seeorg.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory#createTCInvokeRequest()
+     */
+    public Invoke createTCInvokeRequest() {
 
-		InvokeImpl t = (InvokeImpl) TcapFactory.createComponentInvoke(invokeClass);
-		t.setProvider(provider);
-		return t;
-	}
+        InvokeImpl t = (InvokeImpl) TcapFactory.createComponentInvoke();
+        t.setProvider(provider);
+        return t;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory#
-	 * createTCRejectRequest()
-	 */
-	public Reject createTCRejectRequest() {
+    /*
+     * (non-Javadoc)
+     *
+     * @seeorg.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory# createTCInvokeRequest()
+     */
+    public Invoke createTCInvokeRequest(InvokeClass invokeClass) {
 
-		return TcapFactory.createComponentReject();
-	}
-	
-	public ReturnError createTCReturnErrorRequest() {
+        InvokeImpl t = (InvokeImpl) TcapFactory.createComponentInvoke(invokeClass);
+        t.setProvider(provider);
+        return t;
+    }
 
-		return TcapFactory.createComponentReturnError();
-	}
-	
+    /*
+     * (non-Javadoc)
+     *
+     * @seeorg.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory# createTCRejectRequest()
+     */
+    public Reject createTCRejectRequest() {
 
+        return TcapFactory.createComponentReject();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory#
-	 * createTCResultRequest(boolean)
-	 */
-	public ReturnResultLast createTCResultLastRequest() {
-		
-		return TcapFactory.createComponentReturnResultLast();
-		
-	}
-	public ReturnResult createTCResultRequest() {
-		
-		return TcapFactory.createComponentReturnResult();
-	}
+    public ReturnError createTCReturnErrorRequest() {
 
-	public OperationCode createOperationCode() {
-		return TcapFactory.createOperationCode();
-	}
+        return TcapFactory.createComponentReturnError();
+    }
 
-	public ErrorCode createErrorCode() {
-		return TcapFactory.createErrorCode();
-	}
-	
-	public Parameter createParameter() {
-		return TcapFactory.createParameter();
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @seeorg.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory# createTCResultRequest(boolean)
+     */
+    public ReturnResultLast createTCResultLastRequest() {
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory#createParameter(int, int, boolean)
-	 */
-	public Parameter createParameter(int tag, int tagClass, boolean isPrimitive) {
-		Parameter p = TcapFactory.createParameter();
-		p.setTag(tag);
-		p.setTagClass(tagClass);
-		p.setPrimitive(isPrimitive);
-		return p;
-	}
-	
-	public Problem createProblem(ProblemType pt)
-	{
-		return TcapFactory.createProblem(pt);
-	}
+        return TcapFactory.createComponentReturnResultLast();
+
+    }
+
+    public ReturnResult createTCResultRequest() {
+
+        return TcapFactory.createComponentReturnResult();
+    }
+
+    public OperationCode createOperationCode() {
+        return TcapFactory.createOperationCode();
+    }
+
+    public ErrorCode createErrorCode() {
+        return TcapFactory.createErrorCode();
+    }
+
+    public Parameter createParameter() {
+        return TcapFactory.createParameter();
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory#createParameter(int, int, boolean)
+     */
+    public Parameter createParameter(int tag, int tagClass, boolean isPrimitive) {
+        Parameter p = TcapFactory.createParameter();
+        p.setTag(tag);
+        p.setTagClass(tagClass);
+        p.setPrimitive(isPrimitive);
+        return p;
+    }
+
+    public Problem createProblem(ProblemType pt) {
+        return TcapFactory.createProblem(pt);
+    }
 }

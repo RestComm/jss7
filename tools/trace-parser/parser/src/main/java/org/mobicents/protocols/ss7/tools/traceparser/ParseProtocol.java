@@ -23,17 +23,17 @@
 package org.mobicents.protocols.ss7.tools.traceparser;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public enum ParseProtocol {
-	Map(1), Cap(2);
+    Map(1), Cap(2);
 
-	int code;
+    int code;
 
-	ParseProtocol(int code) {
-		this.code = code;
-	}
+    ParseProtocol(int code) {
+        this.code = code;
+    }
 
 }

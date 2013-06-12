@@ -23,18 +23,15 @@
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 /**
- * 
-
-	RESULT
-		SS-Info
-		-- optional
-
- * 
+ *
+ RESULT SS-Info -- optional
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ActivateSSResponse extends SupplementaryMessage {
 
-	public SSInfo getSsInfo();
+    SSInfo getSsInfo();
 
 }

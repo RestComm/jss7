@@ -35,18 +35,18 @@ import org.mobicents.protocols.ss7.indicator.NumberingPlan;
  *
  * @author kulikov
  */
-public class GT0011  extends GlobalTitle {
-    private final static GlobalTitleIndicator gti = GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_AND_ENCODING_SCHEME;
-    private int tt;    
+public class GT0011 extends GlobalTitle {
+    private static final GlobalTitleIndicator gti = GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_AND_ENCODING_SCHEME;
+    private int tt;
     private NumberingPlan np;
     private EncodingScheme es;
-    
+
     private String digits;
-    
+
     public GT0011() {
         digits = "";
     }
-    
+
     public GT0011(int tt, NumberingPlan np, String digits) {
         this.tt = tt;
         this.np = np;
@@ -61,7 +61,7 @@ public class GT0011  extends GlobalTitle {
     public NumberingPlan getNp() {
         return np;
     }
-    
+
     public String getDigits() {
         return digits;
     }
@@ -69,23 +69,21 @@ public class GT0011  extends GlobalTitle {
     public GlobalTitleIndicator getIndicator() {
         return gti;
     }
-    
-    
+
     public boolean equals(Object other) {
         if (!(other instanceof GlobalTitle)) {
             return false;
         }
-        
+
         GlobalTitle gt = (GlobalTitle) other;
         if (gt.getIndicator() != gti) {
             return false;
         }
-        
-        GT0011 gt1 = (GT0011)gt;
+
+        GT0011 gt1 = (GT0011) gt;
         return gt1.tt == tt && gt1.np == np && gt1.digits.equals(digits);
     }
 
-    
     public int hashCode() {
         int hash = 7;
         hash = 41 * hash + this.tt;
@@ -93,32 +91,31 @@ public class GT0011  extends GlobalTitle {
         hash = 41 * hash + (this.digits != null ? this.digits.hashCode() : 0);
         return hash;
     }
-    
-	public String toString() {
-		return "GT0011{tt=" + tt +", np="+ np + ", digits=" + digits + "}";
-	}
-    
-    
-	// default XML representation.
-	protected static final XMLFormat<GT0011> XML = new XMLFormat<GT0011>(GT0011.class) {
 
-		public void write(GT0011 ai, OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(TRANSLATION_TYPE, ai.tt);
-			xml.setAttribute(ENCODING_SCHEME, ai.es.getValue());
-			xml.setAttribute(NUMBERING_PLAN, ai.np.getValue());
-			xml.setAttribute(DIGITS, ai.digits);
-		}
+    public String toString() {
+        return "GT0011{tt=" + tt + ", np=" + np + ", digits=" + digits + "}";
+    }
 
-		public void read(InputElement xml, GT0011 ai) throws XMLStreamException {
-			ai.tt = xml.getAttribute(TRANSLATION_TYPE).toInt();
-			ai.es = EncodingScheme.valueOf(xml.getAttribute(ENCODING_SCHEME).toInt());
-			try {
-				ai.np = NumberingPlan.valueOf(xml.getAttribute(NUMBERING_PLAN).toInt());
-			} catch (IOException e) {
-				throw new XMLStreamException(e);
-			}
-			ai.digits = xml.getAttribute(DIGITS).toString();
-		}
-	};    
-    
+    // default XML representation.
+    protected static final XMLFormat<GT0011> XML = new XMLFormat<GT0011>(GT0011.class) {
+
+        public void write(GT0011 ai, OutputElement xml) throws XMLStreamException {
+            xml.setAttribute(TRANSLATION_TYPE, ai.tt);
+            xml.setAttribute(ENCODING_SCHEME, ai.es.getValue());
+            xml.setAttribute(NUMBERING_PLAN, ai.np.getValue());
+            xml.setAttribute(DIGITS, ai.digits);
+        }
+
+        public void read(InputElement xml, GT0011 ai) throws XMLStreamException {
+            ai.tt = xml.getAttribute(TRANSLATION_TYPE).toInt();
+            ai.es = EncodingScheme.valueOf(xml.getAttribute(ENCODING_SCHEME).toInt());
+            try {
+                ai.np = NumberingPlan.valueOf(xml.getAttribute(NUMBERING_PLAN).toInt());
+            } catch (IOException e) {
+                throw new XMLStreamException(e);
+            }
+            ai.digits = xml.getAttribute(DIGITS).toString();
+        }
+    };
+
 }

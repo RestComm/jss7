@@ -26,33 +26,27 @@ import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 
 /**
-*
-oAnswerSpecificInfo [5] SEQUENCE {
-destinationAddress [50] CalledPartyNumber {bound} OPTIONAL,
-or-Call [51] NULL OPTIONAL,
-forwardedCall [52] NULL OPTIONAL,
-chargeIndicator [53] ChargeIndicator OPTIONAL,
-ext-basicServiceCode [54] Ext-BasicServiceCode OPTIONAL,
-ext-basicServiceCode2 [55] Ext-BasicServiceCode OPTIONAL,
-...
-},
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ oAnswerSpecificInfo [5] SEQUENCE { destinationAddress [50] CalledPartyNumber {bound} OPTIONAL, or-Call [51] NULL OPTIONAL,
+ * forwardedCall [52] NULL OPTIONAL, chargeIndicator [53] ChargeIndicator OPTIONAL, ext-basicServiceCode [54]
+ * Ext-BasicServiceCode OPTIONAL, ext-basicServiceCode2 [55] Ext-BasicServiceCode OPTIONAL, ... },
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface OAnswerSpecificInfo {
 
-	public CalledPartyNumberCap getDestinationAddress();
+    CalledPartyNumberCap getDestinationAddress();
 
-	public boolean getOrCall();
+    boolean getOrCall();
 
-	public boolean getForwardedCall();
+    boolean getForwardedCall();
 
-	public ChargeIndicator getChargeIndicator();
+    ChargeIndicator getChargeIndicator();
 
-	public ExtBasicServiceCode getExtBasicServiceCode();
+    ExtBasicServiceCode getExtBasicServiceCode();
 
-	public ExtBasicServiceCode getExtBasicServiceCode2();
+    ExtBasicServiceCode getExtBasicServiceCode2();
 
 }

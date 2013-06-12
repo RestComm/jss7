@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -29,89 +29,86 @@ import java.util.concurrent.Executors;
 import javolution.util.FastMap;
 
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
-import org.mobicents.protocols.ss7.sccp.impl.SccpProviderImpl;
-import org.mobicents.protocols.ss7.sccp.impl.SccpRoutingControl;
-import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 
 /**
  * @author baranowb
- * 
+ *
  */
 public class SccpStackImplProxy extends SccpStackImpl {
 
-	/**
-	 * 
+    /**
+	 *
 	 */
-	public SccpStackImplProxy(String name) {
-		super(name);
-	}
+    public SccpStackImplProxy(String name) {
+        super(name);
+    }
 
-	public SccpManagementProxy getManagementProxy() {
-		return (SccpManagementProxy) super.sccpManagement;
-	}
+    public SccpManagementProxy getManagementProxy() {
+        return (SccpManagementProxy) super.sccpManagement;
+    }
 
-	@Override
-	public void start() {
-		this.persistFile.clear();
+    @Override
+    public void start() {
+        this.persistFile.clear();
 
-		if (persistDir != null) {
-			this.persistFile.append(persistDir).append(File.separator).append(this.name).append("_")
-					.append(PERSIST_FILE_NAME);
-		} else {
-			persistFile.append(System.getProperty(SCCP_MANAGEMENT_PERSIST_DIR_KEY, System.getProperty(USER_DIR_KEY)))
-					.append(File.separator).append(this.name).append("_").append(PERSIST_FILE_NAME);
-		}
+        if (persistDir != null) {
+            this.persistFile.append(persistDir).append(File.separator).append(this.name).append("_").append(PERSIST_FILE_NAME);
+        } else {
+            persistFile.append(System.getProperty(SCCP_MANAGEMENT_PERSIST_DIR_KEY, System.getProperty(USER_DIR_KEY)))
+                    .append(File.separator).append(this.name).append("_").append(PERSIST_FILE_NAME);
+        }
 
-		logger.info(String.format("SCCP Management configuration file path %s", persistFile.toString()));
+        logger.info(String.format("SCCP Management configuration file path %s", persistFile.toString()));
 
-		try {
-			this.load();
-		} catch (FileNotFoundException e) {
-			logger.warn(String.format("Failed to load the Sccp Management configuration file. \n%s", e.getMessage()));
-		}
-		
-		this.messageFactory = new MessageFactoryImpl(this);
+        try {
+            this.load();
+        } catch (FileNotFoundException e) {
+            logger.warn(String.format("Failed to load the Sccp Management configuration file. \n%s", e.getMessage()));
+        }
 
-		this.sccpProvider = new SccpProviderImpl(this);
+        this.messageFactory = new MessageFactoryImpl(this);
 
-		super.sccpManagement = new SccpManagementProxy(this.getName(), sccpProvider, this);
-		super.sccpRoutingControl = new SccpRoutingControl(sccpProvider, this);
+        this.sccpProvider = new SccpProviderImpl(this);
 
-		super.sccpManagement.setSccpRoutingControl(sccpRoutingControl);
-		super.sccpRoutingControl.setSccpManagement(sccpManagement);
+        super.sccpManagement = new SccpManagementProxy(this.getName(), sccpProvider, this);
+        super.sccpRoutingControl = new SccpRoutingControl(sccpProvider, this);
 
-		this.router = new RouterImpl(this.getName(), this);
-		this.router.setPersistDir(this.getPersistDir());
-		this.router.start();
+        super.sccpManagement.setSccpRoutingControl(sccpRoutingControl);
+        super.sccpRoutingControl.setSccpManagement(sccpManagement);
 
-		this.sccpResource = new SccpResourceImpl(this.getName());
-		this.sccpResource.setPersistDir(this.getPersistDir());
-		this.sccpResource.start();
+        this.router = new RouterImpl(this.getName(), this);
+        this.router.setPersistDir(this.getPersistDir());
+        this.router.start();
 
-		this.sccpRoutingControl.start();
-		this.sccpManagement.start();
-		// layer3exec.execute(new MtpStreamHandler());
+        this.sccpResource = new SccpResourceImpl(this.getName());
+        this.sccpResource.setPersistDir(this.getPersistDir());
+        this.sccpResource.start();
 
-		this.timerExecutors = Executors.newScheduledThreadPool(1);
+        this.sccpRoutingControl.start();
+        this.sccpManagement.start();
+        // layer3exec.execute(new MtpStreamHandler());
 
-		for (FastMap.Entry<Integer, Mtp3UserPart> e = this.mtp3UserParts.head(), end = this.mtp3UserParts.tail(); (e = e.getNext()) != end;) {
-			Mtp3UserPart mup = e.getValue();
-			mup.addMtp3UserPartListener(this);
-		}
-//		this.mtp3UserPart.addMtp3UserPartListener(this);
+        this.timerExecutors = Executors.newScheduledThreadPool(1);
 
-		this.state = State.RUNNING;
-	}
+        for (FastMap.Entry<Integer, Mtp3UserPart> e = this.mtp3UserParts.head(), end = this.mtp3UserParts.tail(); (e = e
+                .getNext()) != end;) {
+            Mtp3UserPart mup = e.getValue();
+            mup.addMtp3UserPartListener(this);
+        }
+        // this.mtp3UserPart.addMtp3UserPartListener(this);
 
-	public int getReassemplyCacheSize() {
-		return reassemplyCache.size();
-	}
+        this.state = State.RUNNING;
+    }
 
-	@Override
-	public void setReassemblyTimerDelay(int reassemblyTimerDelay) {
-		this.reassemblyTimerDelay = reassemblyTimerDelay;
-	}
+    public int getReassemplyCacheSize() {
+        return reassemplyCache.size();
+    }
+
+    @Override
+    public void setReassemblyTimerDelay(int reassemblyTimerDelay) {
+        this.reassemblyTimerDelay = reassemblyTimerDelay;
+    }
 
 }

@@ -37,86 +37,83 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
 public class ODBDataTest {
 
-	public byte[] getData() {
-		return new byte[] { 48, 52, 3, 5, 3, 74, -43, 85, 80, 3, 2, 4, 80, 48,
-				39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5,
-				6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26,
-				-95, 3, 31, 32, 33 };
-	};
+    public byte[] getData() {
+        return new byte[] { 48, 52, 3, 5, 3, 74, -43, 85, 80, 3, 2, 4, 80, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13,
+                14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
+    };
 
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testDecode() throws Exception {
-		byte[] data = this.getData();
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
-		ODBDataImpl prim = new ODBDataImpl();
-		prim.decodeAll(asn);
-		
-		assertEquals(tag, Tag.SEQUENCE);
-		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
-		
-		ODBGeneralData oDBGeneralData = prim.getODBGeneralData();
-		assertTrue(!oDBGeneralData.getAllOGCallsBarred());
-		assertTrue(oDBGeneralData.getInternationalOGCallsBarred());
-		assertTrue(!oDBGeneralData.getInternationalOGCallsNotToHPLMNCountryBarred());
-		assertTrue(oDBGeneralData.getInterzonalOGCallsBarred());
-		assertTrue(!oDBGeneralData.getInterzonalOGCallsNotToHPLMNCountryBarred());
-		assertTrue(oDBGeneralData.getInterzonalOGCallsAndInternationalOGCallsNotToHPLMNCountryBarred());
-		assertTrue(!oDBGeneralData.getPremiumRateInformationOGCallsBarred());
-		assertTrue(oDBGeneralData.getPremiumRateEntertainementOGCallsBarred());
-		assertTrue(!oDBGeneralData.getSsAccessBarred());
-		assertTrue(oDBGeneralData.getAllECTBarred());
-		assertTrue(!oDBGeneralData.getChargeableECTBarred());
-		assertTrue(oDBGeneralData.getInternationalECTBarred());
-		assertTrue(!oDBGeneralData.getInterzonalECTBarred());
-		assertTrue(oDBGeneralData.getDoublyChargeableECTBarred());
-		assertTrue(!oDBGeneralData.getMultipleECTBarred());
-		assertTrue(oDBGeneralData.getAllPacketOrientedServicesBarred());
-		assertTrue(!oDBGeneralData.getRoamerAccessToHPLMNAPBarred());
-		assertTrue(oDBGeneralData.getRoamerAccessToVPLMNAPBarred());
-		assertTrue(!oDBGeneralData.getRoamingOutsidePLMNOGCallsBarred()); 
-		assertTrue(oDBGeneralData.getAllICCallsBarred());
-		assertTrue(!oDBGeneralData.getRoamingOutsidePLMNICCallsBarred());
-		assertTrue(oDBGeneralData.getRoamingOutsidePLMNICountryICCallsBarred());
-		assertTrue(!oDBGeneralData.getRoamingOutsidePLMNBarred());
-		assertTrue(oDBGeneralData.getRoamingOutsidePLMNCountryBarred());
-		assertTrue(!oDBGeneralData.getRegistrationAllCFBarred());
-		assertTrue(oDBGeneralData.getRegistrationCFNotToHPLMNBarred());
-		assertTrue(!oDBGeneralData.getRegistrationInterzonalCFBarred());
-		assertTrue(oDBGeneralData.getRegistrationInterzonalCFNotToHPLMNBarred());
-		assertTrue(!oDBGeneralData.getRegistrationInternationalCFBarred());
-		
-		ODBHPLMNData odbHplmnData = prim.getOdbHplmnData();
-		
-		assertTrue(!odbHplmnData.getPlmnSpecificBarringType1());
-		assertTrue(odbHplmnData.getPlmnSpecificBarringType2());
-		assertTrue(!odbHplmnData.getPlmnSpecificBarringType3());
-		assertTrue(odbHplmnData.getPlmnSpecificBarringType4());
-		assertNotNull(prim.getExtensionContainer());
-		assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(prim.getExtensionContainer()));
-	}
-	
-	@Test(groups = { "functional.encode", "primitives" })
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
+        byte[] data = this.getData();
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
+        ODBDataImpl prim = new ODBDataImpl();
+        prim.decodeAll(asn);
 
-		ODBGeneralData oDBGeneralData = new ODBGeneralDataImpl(false, true, false, true, false, 
-				true, false, true, false, true, false, true, false, true, 
-				false, true, false, true, false, true, false, true, false, 
-				true, false, true, false, true, false);
-		ODBHPLMNData odbHplmnData = new ODBHPLMNDataImpl(false, true, false, true);
-		MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
-		
-		ODBDataImpl prim = new ODBDataImpl(oDBGeneralData, odbHplmnData, extensionContainer);
-		
-		AsnOutputStream asn = new AsnOutputStream();
-		prim.encodeAll(asn);
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
-	}
+        assertEquals(tag, Tag.SEQUENCE);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+
+        ODBGeneralData oDBGeneralData = prim.getODBGeneralData();
+        assertTrue(!oDBGeneralData.getAllOGCallsBarred());
+        assertTrue(oDBGeneralData.getInternationalOGCallsBarred());
+        assertTrue(!oDBGeneralData.getInternationalOGCallsNotToHPLMNCountryBarred());
+        assertTrue(oDBGeneralData.getInterzonalOGCallsBarred());
+        assertTrue(!oDBGeneralData.getInterzonalOGCallsNotToHPLMNCountryBarred());
+        assertTrue(oDBGeneralData.getInterzonalOGCallsAndInternationalOGCallsNotToHPLMNCountryBarred());
+        assertTrue(!oDBGeneralData.getPremiumRateInformationOGCallsBarred());
+        assertTrue(oDBGeneralData.getPremiumRateEntertainementOGCallsBarred());
+        assertTrue(!oDBGeneralData.getSsAccessBarred());
+        assertTrue(oDBGeneralData.getAllECTBarred());
+        assertTrue(!oDBGeneralData.getChargeableECTBarred());
+        assertTrue(oDBGeneralData.getInternationalECTBarred());
+        assertTrue(!oDBGeneralData.getInterzonalECTBarred());
+        assertTrue(oDBGeneralData.getDoublyChargeableECTBarred());
+        assertTrue(!oDBGeneralData.getMultipleECTBarred());
+        assertTrue(oDBGeneralData.getAllPacketOrientedServicesBarred());
+        assertTrue(!oDBGeneralData.getRoamerAccessToHPLMNAPBarred());
+        assertTrue(oDBGeneralData.getRoamerAccessToVPLMNAPBarred());
+        assertTrue(!oDBGeneralData.getRoamingOutsidePLMNOGCallsBarred());
+        assertTrue(oDBGeneralData.getAllICCallsBarred());
+        assertTrue(!oDBGeneralData.getRoamingOutsidePLMNICCallsBarred());
+        assertTrue(oDBGeneralData.getRoamingOutsidePLMNICountryICCallsBarred());
+        assertTrue(!oDBGeneralData.getRoamingOutsidePLMNBarred());
+        assertTrue(oDBGeneralData.getRoamingOutsidePLMNCountryBarred());
+        assertTrue(!oDBGeneralData.getRegistrationAllCFBarred());
+        assertTrue(oDBGeneralData.getRegistrationCFNotToHPLMNBarred());
+        assertTrue(!oDBGeneralData.getRegistrationInterzonalCFBarred());
+        assertTrue(oDBGeneralData.getRegistrationInterzonalCFNotToHPLMNBarred());
+        assertTrue(!oDBGeneralData.getRegistrationInternationalCFBarred());
+
+        ODBHPLMNData odbHplmnData = prim.getOdbHplmnData();
+
+        assertTrue(!odbHplmnData.getPlmnSpecificBarringType1());
+        assertTrue(odbHplmnData.getPlmnSpecificBarringType2());
+        assertTrue(!odbHplmnData.getPlmnSpecificBarringType3());
+        assertTrue(odbHplmnData.getPlmnSpecificBarringType4());
+        assertNotNull(prim.getExtensionContainer());
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(prim.getExtensionContainer()));
+    }
+
+    @Test(groups = { "functional.encode", "primitives" })
+    public void testEncode() throws Exception {
+
+        ODBGeneralData oDBGeneralData = new ODBGeneralDataImpl(false, true, false, true, false, true, false, true, false, true,
+                false, true, false, true, false, true, false, true, false, true, false, true, false, true, false, true, false,
+                true, false);
+        ODBHPLMNData odbHplmnData = new ODBHPLMNDataImpl(false, true, false, true);
+        MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
+
+        ODBDataImpl prim = new ODBDataImpl(oDBGeneralData, odbHplmnData, extensionContainer);
+
+        AsnOutputStream asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+    }
 
 }

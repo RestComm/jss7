@@ -23,21 +23,18 @@
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 /**
- * 
-
-SS-SubscriptionOption ::= CHOICE {
-	cliRestrictionOption	[2] CliRestrictionOption,
-	overrideCategory	[1] OverrideCategory}
-
- * 
- * 
+ *
+ SS-SubscriptionOption ::= CHOICE { cliRestrictionOption [2] CliRestrictionOption, overrideCategory [1] OverrideCategory}
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SSSubscriptionOption {
 
-	public CliRestrictionOption getCliRestrictionOption();
+    CliRestrictionOption getCliRestrictionOption();
 
-	public OverrideCategory getOverrideCategory();
+    OverrideCategory getOverrideCategory();
 
 }

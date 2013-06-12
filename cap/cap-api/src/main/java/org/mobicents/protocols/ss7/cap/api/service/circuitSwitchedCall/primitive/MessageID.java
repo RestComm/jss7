@@ -25,37 +25,27 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
 import java.util.ArrayList;
 
 /**
-*
-
-MessageID {PARAMETERS-BOUND : bound} ::= CHOICE { 
- elementaryMessageID     [0] Integer4, 
- text        [1] SEQUENCE { 
-  messageContent      [0] IA5String (SIZE(bound.&minMessageContentLength .. bound.&maxMessageContentLength)), 
-  attributes       [1] OCTET STRING (SIZE(bound.&minAttributesLength .. bound.&maxAttributesLength))     OPTIONAL 
- }, 
- elementaryMessageIDs    [29] SEQUENCE SIZE (1.. bound.&numOfMessageIDs) OF Integer4, 
- variableMessage      [30] SEQUENCE { 
-  elementaryMessageID     [0] Integer4, 
-  variableParts      [1] SEQUENCE SIZE (1..5) OF VariablePart {bound} 
-  } 
- } 
--- Use of the text parameter is network operator/equipment vendor specific.
-
-numOfMessageIDs ::= 16
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ MessageID {PARAMETERS-BOUND : bound} ::= CHOICE { elementaryMessageID [0] Integer4, text [1] SEQUENCE { messageContent [0]
+ * IA5String (SIZE(bound.&minMessageContentLength .. bound.&maxMessageContentLength)), attributes [1] OCTET STRING
+ * (SIZE(bound.&minAttributesLength .. bound.&maxAttributesLength)) OPTIONAL }, elementaryMessageIDs [29] SEQUENCE SIZE (1..
+ * bound.&numOfMessageIDs) OF Integer4, variableMessage [30] SEQUENCE { elementaryMessageID [0] Integer4, variableParts [1]
+ * SEQUENCE SIZE (1..5) OF VariablePart {bound} } } -- Use of the text parameter is network operator/equipment vendor specific.
+ *
+ * numOfMessageIDs ::= 16
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface MessageID {
 
-	public Integer getElementaryMessageID();
+    Integer getElementaryMessageID();
 
-	public MessageIDText getText();
+    MessageIDText getText();
 
-	public ArrayList<Integer> getElementaryMessageIDs();
+    ArrayList<Integer> getElementaryMessageIDs();
 
-	public VariableMessage getVariableMessage();
+    VariableMessage getVariableMessage();
 
 }
-

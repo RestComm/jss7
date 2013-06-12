@@ -23,16 +23,15 @@
 package org.mobicents.protocols.ss7.map.api.primitives;
 
 /**
-*
-DiameterIdentity ::= OCTET STRING (SIZE(9..55))
--- content of DiameterIdentity is defined in IETF RFC 3588 [139]
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ DiameterIdentity ::= OCTET STRING (SIZE(9..55)) -- content of DiameterIdentity is defined in IETF RFC 3588 [139]
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface DiameterIdentity {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

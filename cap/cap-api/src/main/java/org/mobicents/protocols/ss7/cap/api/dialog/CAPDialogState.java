@@ -24,14 +24,14 @@ package org.mobicents.protocols.ss7.cap.api.dialog;
 
 /**
  * @author amit bhayani
- * 
+ *
  */
 public enum CAPDialogState {
-	Idle,
+    Idle,
 
-	InitialReceived, InitialSent,
+    InitialReceived, InitialSent,
 
-	Active,
-	// additional state to mark removal
-	Expunged;
+    Active,
+    // additional state to mark removal
+    Expunged;
 }

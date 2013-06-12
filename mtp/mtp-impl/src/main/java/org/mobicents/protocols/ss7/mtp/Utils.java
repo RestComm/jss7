@@ -23,28 +23,21 @@
 package org.mobicents.protocols.ss7.mtp;
 
 import java.nio.ByteBuffer;
-import java.util.LinkedList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.log4j.Logger;
 
 public class Utils {
-    /////////////////////////
+    // ///////////////////////
     // Some common statics //
-    /////////////////////////
+    // ///////////////////////
     /**
      * Indicate value not set;
      */
     public static final byte _VALUE_NOT_SET = -1;
 
-    public final static String dump(ByteBuffer buff, int size, boolean asBits) {
+    public static final String dump(ByteBuffer buff, int size, boolean asBits) {
         return dump(buff.array(), size, asBits);
     }
 
-    public final static String dump(byte[] buff, int size, boolean asBits) {
+    public static final String dump(byte[] buff, int size, boolean asBits) {
         String s = "";
         for (int i = 0; i < size; i++) {
             String ss = null;
@@ -59,7 +52,7 @@ public class Utils {
         return s;
     }
 
-    public final static String fillInZeroPrefix(String ss, boolean asBits) {
+    public static final String fillInZeroPrefix(String ss, boolean asBits) {
         if (asBits) {
             if (ss.length() < 8) {
                 for (int j = ss.length(); j < 8; j++) {
@@ -77,7 +70,7 @@ public class Utils {
         return ss;
     }
 
-    public final static String dump(int[] buff, int size) {
+    public static final String dump(int[] buff, int size) {
         String s = "";
         for (int i = 0; i < size; i++) {
             String ss = Integer.toHexString(buff[i] & 0xff);
@@ -110,9 +103,10 @@ public class Utils {
         createTrace(t, sb, true);
         return sb.toString();
     }
-    
+
     /**
      * Construct a String containing a hex-dump of a byte array
+     *
      * @param label the label of the hexdump or null
      * @param bytes the data to dump
      * @return a string containing the hexdump

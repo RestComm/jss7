@@ -22,93 +22,90 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.map.primitives.LAIFixedLengthImpl;
-import org.testng.*;import org.testng.annotations.*;
-
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class LAIFixedLengthTest {
 
-	public byte[] getData() {
-		return new byte[] { 4, 5, 82, (byte) 240, 16, 17, 92 };
-	};
+    public byte[] getData() {
+        return new byte[] { 4, 5, 82, (byte) 240, 16, 17, 92 };
+    };
 
-	public byte[] getDataVal() {
-		return new byte[] { 82, (byte) 240, 16, 17, 92 };
-	};
+    public byte[] getDataVal() {
+        return new byte[] { 82, (byte) 240, 16, 17, 92 };
+    };
 
-	public byte[] getData2() {
-		return new byte[] { 4, 5, 16, 97, 66, 1, 77 };
-	};
-	
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testDecode() throws Exception {
+    public byte[] getData2() {
+        return new byte[] { 4, 5, 16, 97, 66, 1, 77 };
+    };
 
-		byte[] data = this.getData();
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
 
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
+        byte[] data = this.getData();
 
-		LAIFixedLengthImpl prim = new LAIFixedLengthImpl();
-		prim.decodeAll(asn);
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
 
-		assertNotNull(prim.getData());
-		assertTrue(Arrays.equals(getDataVal(), prim.getData()));		
-		
-		assertEquals(prim.getMCC(), 250);
-		assertEquals(prim.getMNC(), 1);
-		assertEquals(prim.getLac(), 4444);
+        LAIFixedLengthImpl prim = new LAIFixedLengthImpl();
+        prim.decodeAll(asn);
 
-		
-		data = this.getData2();
+        assertNotNull(prim.getData());
+        assertTrue(Arrays.equals(getDataVal(), prim.getData()));
 
-		asn = new AsnInputStream(data);
-		tag = asn.readTag();
+        assertEquals(prim.getMCC(), 250);
+        assertEquals(prim.getMNC(), 1);
+        assertEquals(prim.getLac(), 4444);
 
-		prim = new LAIFixedLengthImpl();
-		prim.decodeAll(asn);
+        data = this.getData2();
 
-		assertNotNull(prim.getData());
-		
-		assertEquals(prim.getMCC(), 11);
-		assertEquals(prim.getMNC(), 246);
-		assertEquals(prim.getLac(), 333);
-	}
-	
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testEncode() throws Exception {
+        asn = new AsnInputStream(data);
+        tag = asn.readTag();
 
-		LAIFixedLengthImpl prim = new LAIFixedLengthImpl(250, 1, 4444);
+        prim = new LAIFixedLengthImpl();
+        prim.decodeAll(asn);
 
-		AsnOutputStream asn = new AsnOutputStream();
-		prim.encodeAll(asn);
+        assertNotNull(prim.getData());
 
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+        assertEquals(prim.getMCC(), 11);
+        assertEquals(prim.getMNC(), 246);
+        assertEquals(prim.getLac(), 333);
+    }
 
-		
-		prim = new LAIFixedLengthImpl(getDataVal());
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testEncode() throws Exception {
 
-		asn = new AsnOutputStream();
-		prim.encodeAll(asn);
+        LAIFixedLengthImpl prim = new LAIFixedLengthImpl(250, 1, 4444);
 
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+        AsnOutputStream asn = new AsnOutputStream();
+        prim.encodeAll(asn);
 
-		
-		prim = new LAIFixedLengthImpl(11, 246, 333);
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
 
-		asn = new AsnOutputStream();
-		prim.encodeAll(asn);
+        prim = new LAIFixedLengthImpl(getDataVal());
 
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
-	}
+        asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+
+        prim = new LAIFixedLengthImpl(11, 246, 333);
+
+        asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
+    }
 }

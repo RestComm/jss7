@@ -22,7 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -31,70 +32,69 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class SpecializedResourceReportRequestTest {
 
-	public byte[] getData1() {
-		return new byte[] { (byte)159, 50, 0 };
-	}
+    public byte[] getData1() {
+        return new byte[] { (byte) 159, 50, 0 };
+    }
 
-	public byte[] getData2() {
-		return new byte[] { (byte)159, 51, 0 };
-	}
+    public byte[] getData2() {
+        return new byte[] { (byte) 159, 51, 0 };
+    }
 
-	public byte[] getData3() {
-		return new byte[] { 5, 0 };
-	}
+    public byte[] getData3() {
+        return new byte[] { 5, 0 };
+    }
 
-	@Test(groups = { "functional.decode","circuitSwitchedCall.primitive"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
+    public void testDecode() throws Exception {
 
-		byte[] data = this.getData1();
-		AsnInputStream ais = new AsnInputStream(data);
-		int tag = ais.readTag();
-		SpecializedResourceReportRequestImpl elem = new SpecializedResourceReportRequestImpl(true);
-		elem.decodeAll(ais);
-		assertTrue(elem.getAllAnnouncementsComplete());
-		assertFalse(elem.getFirstAnnouncementStarted());
+        byte[] data = this.getData1();
+        AsnInputStream ais = new AsnInputStream(data);
+        int tag = ais.readTag();
+        SpecializedResourceReportRequestImpl elem = new SpecializedResourceReportRequestImpl(true);
+        elem.decodeAll(ais);
+        assertTrue(elem.getAllAnnouncementsComplete());
+        assertFalse(elem.getFirstAnnouncementStarted());
 
-		data = this.getData2();
-		ais = new AsnInputStream(data);
-		tag = ais.readTag();
-		elem = new SpecializedResourceReportRequestImpl(true);
-		elem.decodeAll(ais);
-		assertFalse(elem.getAllAnnouncementsComplete());
-		assertTrue(elem.getFirstAnnouncementStarted());
+        data = this.getData2();
+        ais = new AsnInputStream(data);
+        tag = ais.readTag();
+        elem = new SpecializedResourceReportRequestImpl(true);
+        elem.decodeAll(ais);
+        assertFalse(elem.getAllAnnouncementsComplete());
+        assertTrue(elem.getFirstAnnouncementStarted());
 
-		data = this.getData3();
-		ais = new AsnInputStream(data);
-		elem = new SpecializedResourceReportRequestImpl(false);
-		tag = ais.readTag();
-		elem.decodeAll(ais);
-		assertFalse(elem.getAllAnnouncementsComplete());
-		assertFalse(elem.getFirstAnnouncementStarted());
-	}
+        data = this.getData3();
+        ais = new AsnInputStream(data);
+        elem = new SpecializedResourceReportRequestImpl(false);
+        tag = ais.readTag();
+        elem.decodeAll(ais);
+        assertFalse(elem.getAllAnnouncementsComplete());
+        assertFalse(elem.getFirstAnnouncementStarted());
+    }
 
-	@Test(groups = { "functional.encode","circuitSwitchedCall.primitive"})
-	public void testEncode() throws Exception {
+    @Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
+    public void testEncode() throws Exception {
 
-		SpecializedResourceReportRequestImpl elem = new SpecializedResourceReportRequestImpl(true, false, true);
-		AsnOutputStream aos = new AsnOutputStream();
-		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
-		// boolean isAllAnnouncementsComplete, boolean isFirstAnnouncementStarted, boolean isCAPVersion4orLater
+        SpecializedResourceReportRequestImpl elem = new SpecializedResourceReportRequestImpl(true, false, true);
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+        // boolean isAllAnnouncementsComplete, boolean isFirstAnnouncementStarted, boolean isCAPVersion4orLater
 
-		elem = new SpecializedResourceReportRequestImpl(false, true, true);
-		aos = new AsnOutputStream();
-		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
+        elem = new SpecializedResourceReportRequestImpl(false, true, true);
+        aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
 
-		elem = new SpecializedResourceReportRequestImpl(false, false, false);
-		aos = new AsnOutputStream();
-		elem.encodeAll(aos);
-		assertTrue(Arrays.equals(aos.toByteArray(), this.getData3()));
-	}
+        elem = new SpecializedResourceReportRequestImpl(false, false, false);
+        aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData3()));
+    }
 }
-

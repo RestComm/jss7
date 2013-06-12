@@ -22,7 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -32,65 +33,65 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.testng.annotations.Test;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class GeographicalInformationTest {
 
-	private byte[] getEncodedData() {
-		return new byte[] { 4, 8, 16, 30, -109, -23, 121, -103, -103, 0 };
-	}
+    private byte[] getEncodedData() {
+        return new byte[] { 4, 8, 16, 30, -109, -23, 121, -103, -103, 0 };
+    }
 
-	private byte[] getEncodedData2() {
-		return new byte[] { 4, 8, 16, -28, 6, 95, -128, 91, 5, 20 };
-	}
+    private byte[] getEncodedData2() {
+        return new byte[] { 4, 8, 16, -28, 6, 95, -128, 91, 5, 20 };
+    }
 
-	@Test(groups = { "functional.decode","subscriberInformation"})
-	public void testDecode() throws Exception {
+    @Test(groups = { "functional.decode", "subscriberInformation" })
+    public void testDecode() throws Exception {
 
-		byte[] rawData = getEncodedData();
+        byte[] rawData = getEncodedData();
 
-		AsnInputStream asn = new AsnInputStream(rawData);
+        AsnInputStream asn = new AsnInputStream(rawData);
 
-		int tag = asn.readTag();
-		GeographicalInformationImpl impl = new GeographicalInformationImpl();
-		impl.decodeAll(asn);
+        int tag = asn.readTag();
+        GeographicalInformationImpl impl = new GeographicalInformationImpl();
+        impl.decodeAll(asn);
 
-		assertEquals(impl.getTypeOfShape(), TypeOfShape.EllipsoidPointWithUncertaintyCircle);
-		assertTrue(Math.abs(impl.getLatitude() - 21.5) < 0.01);
-		assertTrue(Math.abs(impl.getLongitude() - 171) < 0.01);
-		assertTrue(Math.abs(impl.getUncertainty() - 0) < 0.01);
+        assertEquals(impl.getTypeOfShape(), TypeOfShape.EllipsoidPointWithUncertaintyCircle);
+        assertTrue(Math.abs(impl.getLatitude() - 21.5) < 0.01);
+        assertTrue(Math.abs(impl.getLongitude() - 171) < 0.01);
+        assertTrue(Math.abs(impl.getUncertainty() - 0) < 0.01);
 
+        rawData = getEncodedData2();
+        asn = new AsnInputStream(rawData);
+        tag = asn.readTag();
+        impl = new GeographicalInformationImpl();
+        impl.decodeAll(asn);
 
-		rawData = getEncodedData2();
-		asn = new AsnInputStream(rawData);
-		tag = asn.readTag();
-		impl = new GeographicalInformationImpl();
-		impl.decodeAll(asn);
+        assertEquals(impl.getTypeOfShape(), TypeOfShape.EllipsoidPointWithUncertaintyCircle);
+        assertTrue(Math.abs(impl.getLatitude() - (-70.33)) < 0.01);
+        assertTrue(Math.abs(impl.getLongitude() - (-0.5)) < 0.01);
+        assertTrue(Math.abs(impl.getUncertainty() - 57.28) < 0.01);
+    }
 
-		assertEquals(impl.getTypeOfShape(), TypeOfShape.EllipsoidPointWithUncertaintyCircle);
-		assertTrue(Math.abs(impl.getLatitude() - (-70.33)) < 0.01);
-		assertTrue(Math.abs(impl.getLongitude() - (-0.5)) < 0.01);
-		assertTrue(Math.abs(impl.getUncertainty() - 57.28) < 0.01);
-	}
+    @Test(groups = { "functional.encode", "subscriberInformation" })
+    public void testEncode() throws Exception {
 
-	@Test(groups = { "functional.encode","subscriberInformation"})
-	public void testEncode() throws Exception {
+        GeographicalInformationImpl impl = new GeographicalInformationImpl(TypeOfShape.EllipsoidPointWithUncertaintyCircle,
+                21.5, 171, 0);
+        AsnOutputStream asnOS = new AsnOutputStream();
+        impl.encodeAll(asnOS);
+        byte[] encodedData = asnOS.toByteArray();
+        byte[] rawData = getEncodedData();
+        assertTrue(Arrays.equals(rawData, encodedData));
 
-		GeographicalInformationImpl impl = new GeographicalInformationImpl(TypeOfShape.EllipsoidPointWithUncertaintyCircle, 21.5, 171, 0);
-		AsnOutputStream asnOS = new AsnOutputStream();
-		impl.encodeAll(asnOS);
-		byte[] encodedData = asnOS.toByteArray();
-		byte[] rawData = getEncodedData();
-		assertTrue(Arrays.equals(rawData, encodedData));
-
-		impl = new GeographicalInformationImpl(TypeOfShape.EllipsoidPointWithUncertaintyCircle, -70.33, -0.5, 58);
-		asnOS = new AsnOutputStream();
-		impl.encodeAll(asnOS);
-		encodedData = asnOS.toByteArray();
-		rawData = getEncodedData2();
-		assertTrue(Arrays.equals(rawData, encodedData));
-	}
+        impl = new GeographicalInformationImpl(TypeOfShape.EllipsoidPointWithUncertaintyCircle, -70.33, -0.5, 58);
+        asnOS = new AsnOutputStream();
+        impl.encodeAll(asnOS);
+        encodedData = asnOS.toByteArray();
+        rawData = getEncodedData2();
+        assertTrue(Arrays.equals(rawData, encodedData));
+    }
 
 }

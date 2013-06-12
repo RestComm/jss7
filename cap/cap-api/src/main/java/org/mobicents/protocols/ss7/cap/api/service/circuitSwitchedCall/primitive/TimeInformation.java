@@ -23,24 +23,20 @@
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
-*
-TimeInformation ::= CHOICE {
-timeIfNoTariffSwitch [0] TimeIfNoTariffSwitch,
-timeIfTariffSwitch [1] TimeIfTariffSwitch
-}
--- Indicates call duration information
-
-TimeIfNoTariffSwitch ::= INTEGER(0..864000)
--- TimeIfNoTariffSwitch is measured in 100 millisecond intervals
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ TimeInformation ::= CHOICE { timeIfNoTariffSwitch [0] TimeIfNoTariffSwitch, timeIfTariffSwitch [1] TimeIfTariffSwitch } --
+ * Indicates call duration information
+ *
+ * TimeIfNoTariffSwitch ::= INTEGER(0..864000) -- TimeIfNoTariffSwitch is measured in 100 millisecond intervals
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface TimeInformation {
 
-	public Integer getTimeIfNoTariffSwitch();
+    Integer getTimeIfNoTariffSwitch();
 
-	public TimeIfTariffSwitch getTimeIfTariffSwitch();
+    TimeIfTariffSwitch getTimeIfTariffSwitch();
 
 }

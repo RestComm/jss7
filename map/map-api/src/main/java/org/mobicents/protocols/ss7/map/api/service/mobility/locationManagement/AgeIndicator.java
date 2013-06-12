@@ -23,18 +23,16 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 
 /**
- * 
-
-AgeIndicator ::= OCTET STRING (SIZE (1..6))
-	-- The internal structure of this parameter is implementation specific.
-
- * 
- * 
+ *
+ AgeIndicator ::= OCTET STRING (SIZE (1..6)) -- The internal structure of this parameter is implementation specific.
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface AgeIndicator {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

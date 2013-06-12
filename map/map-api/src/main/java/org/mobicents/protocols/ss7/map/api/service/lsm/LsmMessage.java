@@ -26,8 +26,8 @@ import org.mobicents.protocols.ss7.map.api.MAPMessage;
 
 /**
  * @author amit bhayani
- * 
+ *
  */
 public interface LsmMessage extends MAPMessage {
-	MAPDialogLsm getMAPDialog();
+    MAPDialogLsm getMAPDialog();
 }

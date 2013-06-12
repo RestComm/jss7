@@ -40,259 +40,262 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSSubscriptionOption;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
-import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
-import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtSSStatusImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.SSCodeImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.SSSubscriptionOptionImpl;
 
 /**
  * @author daniel bichara
  * @author sergey vetyutnev
- * 
+ *
  */
 public class ExtSSDataImpl extends SequenceBase implements ExtSSData {
 
-	private static final int _TAG_ss_Status = 4;
-	private static final int _TAG_extensionContainer = 5;
+    private static final int _TAG_ss_Status = 4;
+    private static final int _TAG_extensionContainer = 5;
 
-	private SSCode ssCode = null;
-	private ExtSSStatus ssStatus = null;
-	private SSSubscriptionOption ssSubscriptionOption = null;
-	private ArrayList<ExtBasicServiceCode> basicServiceGroupList = null;
-	private MAPExtensionContainer extensionContainer = null;
+    private SSCode ssCode = null;
+    private ExtSSStatus ssStatus = null;
+    private SSSubscriptionOption ssSubscriptionOption = null;
+    private ArrayList<ExtBasicServiceCode> basicServiceGroupList = null;
+    private MAPExtensionContainer extensionContainer = null;
 
-	public ExtSSDataImpl() {
-		super("ExtSSData");
-	}
+    public ExtSSDataImpl() {
+        super("ExtSSData");
+    }
 
-	/**
-	 * 
-	 */
-	public ExtSSDataImpl(SSCode ssCode, ExtSSStatus ssStatus,
-			SSSubscriptionOption ssSubscriptionOption, ArrayList<ExtBasicServiceCode> basicServiceGroupList,
-		MAPExtensionContainer extensionContainer) {
-		super("ExtSSData");
+    /**
+    *
+    */
+    public ExtSSDataImpl(SSCode ssCode, ExtSSStatus ssStatus, SSSubscriptionOption ssSubscriptionOption,
+            ArrayList<ExtBasicServiceCode> basicServiceGroupList, MAPExtensionContainer extensionContainer) {
+        super("ExtSSData");
 
-		this.ssCode = ssCode;
-		this.ssStatus = ssStatus;
-		this.ssSubscriptionOption = ssSubscriptionOption;
-		this.basicServiceGroupList = basicServiceGroupList;
-		this.extensionContainer = extensionContainer;
-	}
+        this.ssCode = ssCode;
+        this.ssStatus = ssStatus;
+        this.ssSubscriptionOption = ssSubscriptionOption;
+        this.basicServiceGroupList = basicServiceGroupList;
+        this.extensionContainer = extensionContainer;
+    }
 
-	public SSCode getSsCode() {
-		return this.ssCode;
-	}
+    public SSCode getSsCode() {
+        return this.ssCode;
+    }
 
-	public ExtSSStatus getSsStatus() {
-		return this.ssStatus;
-	}
+    public ExtSSStatus getSsStatus() {
+        return this.ssStatus;
+    }
 
-	public SSSubscriptionOption getSSSubscriptionOption() {
-		return this.ssSubscriptionOption;
-	}
+    public SSSubscriptionOption getSSSubscriptionOption() {
+        return this.ssSubscriptionOption;
+    }
 
-	public ArrayList<ExtBasicServiceCode> getBasicServiceGroupList() {
-		return this.basicServiceGroupList;
-	}
+    public ArrayList<ExtBasicServiceCode> getBasicServiceGroupList() {
+        return this.basicServiceGroupList;
+    }
 
-	public MAPExtensionContainer getExtensionContainer() {
-		return this.extensionContainer;
-	}
+    public MAPExtensionContainer getExtensionContainer() {
+        return this.extensionContainer;
+    }
 
-	protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-		ExtBasicServiceCode serviceItem = null;
-		this.ssCode = null;
-		this.ssStatus = null;
-		this.ssSubscriptionOption = null;
-		this.basicServiceGroupList = null;
-		this.extensionContainer = null;
+    protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+        ExtBasicServiceCode serviceItem = null;
+        this.ssCode = null;
+        this.ssStatus = null;
+        this.ssSubscriptionOption = null;
+        this.basicServiceGroupList = null;
+        this.extensionContainer = null;
 
-		AsnInputStream ais = ansIS.readSequenceStreamData(length);
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
-		int num = 0;
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        int num = 0;
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-			int tag = ais.readTag();
+            int tag = ais.readTag();
 
-			switch (num) {
-			case 0:	// ssCode
-				if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || tag != Tag.STRING_OCTET || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ssCode: bad tag or tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.ssCode = new SSCodeImpl();
-				((SSCodeImpl) this.ssCode).decodeAll(ais);
-				break;
-			
-			case 1:	// ss-Status
-				if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || tag != _TAG_ss_Status || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + "._TAG_ss_Status: bad tag or tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.ssStatus = new ExtSSStatusImpl();
-				((ExtSSStatusImpl) this.ssStatus).decodeAll(ais);
-				break;
+            switch (num) {
+                case 0: // ssCode
+                    if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || tag != Tag.STRING_OCTET || !ais.isTagPrimitive())
+                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ".ssCode: bad tag or tag class or not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.ssCode = new SSCodeImpl();
+                    ((SSCodeImpl) this.ssCode).decodeAll(ais);
+                    break;
 
-			default:
-				switch (ais.getTagClass()) {
-				case Tag.CLASS_CONTEXT_SPECIFIC:
-					switch (tag) {
-					case SSSubscriptionOptionImpl._TAG_overrideCategory:
-					case SSSubscriptionOptionImpl._TAG_cliRestrictionOption:
-						this.ssSubscriptionOption = new SSSubscriptionOptionImpl();
-						((SSSubscriptionOptionImpl) this.ssSubscriptionOption).decodeAll(ais);						
-						break;
+                case 1: // ss-Status
+                    if (ais.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || tag != _TAG_ss_Status || !ais.isTagPrimitive())
+                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + "._TAG_ss_Status: bad tag or tag class or not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.ssStatus = new ExtSSStatusImpl();
+                    ((ExtSSStatusImpl) this.ssStatus).decodeAll(ais);
+                    break;
 
-					case _TAG_extensionContainer:
-						if (ais.isTagPrimitive())
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: is primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						this.extensionContainer = new MAPExtensionContainerImpl();
-						((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
-						break;
+                default:
+                    switch (ais.getTagClass()) {
+                        case Tag.CLASS_CONTEXT_SPECIFIC:
+                            switch (tag) {
+                                case SSSubscriptionOptionImpl._TAG_overrideCategory:
+                                case SSSubscriptionOptionImpl._TAG_cliRestrictionOption:
+                                    this.ssSubscriptionOption = new SSSubscriptionOptionImpl();
+                                    ((SSSubscriptionOptionImpl) this.ssSubscriptionOption).decodeAll(ais);
+                                    break;
 
-					default:
-						ais.advanceElement();
-						break;
-					}
-					break;
+                                case _TAG_extensionContainer:
+                                    if (ais.isTagPrimitive())
+                                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                                + ".extensionContainer: is primitive",
+                                                MAPParsingComponentExceptionReason.MistypedParameter);
+                                    this.extensionContainer = new MAPExtensionContainerImpl();
+                                    ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                                    break;
 
-				case Tag.CLASS_UNIVERSAL: // basicServiceGroupList
-					switch (tag) {
-					case Tag.SEQUENCE:
-						AsnInputStream ais2 = ais.readSequenceStream();
-						this.basicServiceGroupList = new ArrayList<ExtBasicServiceCode>();
-						while (true) {
-							if (ais2.available() == 0)
-								break;
+                                default:
+                                    ais.advanceElement();
+                                    break;
+                            }
+                            break;
 
-							ais2.readTag();
-							serviceItem = new ExtBasicServiceCodeImpl();
-							((ExtBasicServiceCodeImpl) serviceItem).decodeAll(ais2);
-							this.basicServiceGroupList.add(serviceItem);
-						}
-						if (this.basicServiceGroupList.size() < 1 && this.basicServiceGroupList.size() > 32) {
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ ": Parameter basicServiceGroupList size must be from 1 to 32, found: " + this.basicServiceGroupList.size(),
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						}
-						break;
-					default:
-						ais.advanceElement();
-						break;
-					}
-					break;
-				
-				default:
-					ais.advanceElement();
-					break;
-				}
-				break;
-			}
+                        case Tag.CLASS_UNIVERSAL: // basicServiceGroupList
+                            switch (tag) {
+                                case Tag.SEQUENCE:
+                                    AsnInputStream ais2 = ais.readSequenceStream();
+                                    this.basicServiceGroupList = new ArrayList<ExtBasicServiceCode>();
+                                    while (true) {
+                                        if (ais2.available() == 0)
+                                            break;
 
-			num++;
-		}
+                                        ais2.readTag();
+                                        serviceItem = new ExtBasicServiceCodeImpl();
+                                        ((ExtBasicServiceCodeImpl) serviceItem).decodeAll(ais2);
+                                        this.basicServiceGroupList.add(serviceItem);
+                                    }
+                                    if (this.basicServiceGroupList.size() < 1 && this.basicServiceGroupList.size() > 32) {
+                                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                                + ": Parameter basicServiceGroupList size must be from 1 to 32, found: "
+                                                + this.basicServiceGroupList.size(),
+                                                MAPParsingComponentExceptionReason.MistypedParameter);
+                                    }
+                                    break;
+                                default:
+                                    ais.advanceElement();
+                                    break;
+                            }
+                            break;
 
-		if (this.ssCode == null)
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": ssCode required.", MAPParsingComponentExceptionReason.MistypedParameter);
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+                    break;
+            }
 
-		if (this.ssStatus == null)
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": ssStatus required.", MAPParsingComponentExceptionReason.MistypedParameter);
+            num++;
+        }
 
-	}
+        if (this.ssCode == null)
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": ssCode required.",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData
-	 * (org.mobicents.protocols.asn.AsnOutputStream)
-	 */
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+        if (this.ssStatus == null)
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": ssStatus required.",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
 
-		if (this.ssCode == null)
-			throw new MAPException("Error while encoding " + _PrimitiveName + ": ssCode required.");
+    }
 
-		if (this.ssStatus == null)
-			throw new MAPException("Error while encoding " + _PrimitiveName + ": ssStatus required.");
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData (org.mobicents.protocols.asn.AsnOutputStream)
+     */
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-		if (this.basicServiceGroupList != null && (this.basicServiceGroupList.size() < 1 || this.basicServiceGroupList.size() > 32)) {
-			throw new MAPException("Error while encoding " + _PrimitiveName + ": Parameter basicServiceGroupList size must be from 1 to 32, found: "
-					+ this.basicServiceGroupList.size());
-		}
+        if (this.ssCode == null)
+            throw new MAPException("Error while encoding " + _PrimitiveName + ": ssCode required.");
 
-		try {
+        if (this.ssStatus == null)
+            throw new MAPException("Error while encoding " + _PrimitiveName + ": ssStatus required.");
 
-			((SSCodeImpl) this.ssCode).encodeAll(asnOs);
+        if (this.basicServiceGroupList != null
+                && (this.basicServiceGroupList.size() < 1 || this.basicServiceGroupList.size() > 32)) {
+            throw new MAPException("Error while encoding " + _PrimitiveName
+                    + ": Parameter basicServiceGroupList size must be from 1 to 32, found: "
+                    + this.basicServiceGroupList.size());
+        }
 
-			((ExtSSStatusImpl) this.ssStatus).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ss_Status);
+        try {
 
-			if (this.ssSubscriptionOption != null) {
-				((SSSubscriptionOptionImpl) this.ssSubscriptionOption).encodeAll(asnOs);
-			}
+            ((SSCodeImpl) this.ssCode).encodeAll(asnOs);
 
-			if (this.basicServiceGroupList != null) {
-				asnOs.writeTag(Tag.CLASS_UNIVERSAL, false, Tag.SEQUENCE);
-				int pos = asnOs.StartContentDefiniteLength();
-				for (ExtBasicServiceCode serviceItem: this.basicServiceGroupList) {
-					((ExtBasicServiceCodeImpl) serviceItem).encodeAll(asnOs);
-				}
-				asnOs.FinalizeContent(pos);
-			}
+            ((ExtSSStatusImpl) this.ssStatus).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ss_Status);
 
-			if (this.extensionContainer != null)
-				((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_extensionContainer);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+            if (this.ssSubscriptionOption != null) {
+                ((SSSubscriptionOptionImpl) this.ssSubscriptionOption).encodeAll(asnOs);
+            }
 
+            if (this.basicServiceGroupList != null) {
+                asnOs.writeTag(Tag.CLASS_UNIVERSAL, false, Tag.SEQUENCE);
+                int pos = asnOs.StartContentDefiniteLength();
+                for (ExtBasicServiceCode serviceItem : this.basicServiceGroupList) {
+                    ((ExtBasicServiceCodeImpl) serviceItem).encodeAll(asnOs);
+                }
+                asnOs.FinalizeContent(pos);
+            }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+            if (this.extensionContainer != null)
+                ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                        _TAG_extensionContainer);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-		if (this.ssCode != null) {
-			sb.append("ssCode=");
-			sb.append(this.ssCode.toString());
-			sb.append(", ");
-		}
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
 
-		if (this.ssStatus != null) {
-			sb.append("ssStatus=");
-			sb.append(this.ssStatus.toString());
-			sb.append(", ");
-		}
+        if (this.ssCode != null) {
+            sb.append("ssCode=");
+            sb.append(this.ssCode.toString());
+            sb.append(", ");
+        }
 
-		if (this.ssSubscriptionOption != null) {
-			sb.append("ssSubscriptionOption=");
-			sb.append(this.ssSubscriptionOption.toString());
-			sb.append(", ");
-		}
+        if (this.ssStatus != null) {
+            sb.append("ssStatus=");
+            sb.append(this.ssStatus.toString());
+            sb.append(", ");
+        }
 
-		if (this.basicServiceGroupList != null) {
-			sb.append("basicServiceGroupList=[");
-			boolean firstItem = true;
-			for (ExtBasicServiceCode be : this.basicServiceGroupList) {
-				if (firstItem)
-					firstItem = false;
-				else
-					sb.append(", ");
-				sb.append(be.toString());
-			}
-			sb.append("], ");
-		}
+        if (this.ssSubscriptionOption != null) {
+            sb.append("ssSubscriptionOption=");
+            sb.append(this.ssSubscriptionOption.toString());
+            sb.append(", ");
+        }
 
-		if (this.extensionContainer != null) {
-			sb.append("extensionContainer=");
-			sb.append(this.extensionContainer.toString());
-		}
+        if (this.basicServiceGroupList != null) {
+            sb.append("basicServiceGroupList=[");
+            boolean firstItem = true;
+            for (ExtBasicServiceCode be : this.basicServiceGroupList) {
+                if (firstItem)
+                    firstItem = false;
+                else
+                    sb.append(", ");
+                sb.append(be.toString());
+            }
+            sb.append("], ");
+        }
 
-		sb.append("]");
+        if (this.extensionContainer != null) {
+            sb.append("extensionContainer=");
+            sb.append(this.extensionContainer.toString());
+        }
 
-		return sb.toString();
-	}
+        sb.append("]");
+
+        return sb.toString();
+    }
 
 }

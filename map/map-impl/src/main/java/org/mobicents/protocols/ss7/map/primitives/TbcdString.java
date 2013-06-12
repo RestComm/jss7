@@ -35,270 +35,269 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 
 /**
- * 
+ *
  * @author amit bhayani
  * @author sergey vetyutnev
- * 
+ *
  */
 public abstract class TbcdString implements MAPAsnPrimitive {
 
-	protected static int DIGIT_1_MASK = 0x0F;
-	protected static int DIGIT_2_MASK = 0xF0;
+    protected static int DIGIT_1_MASK = 0x0F;
+    protected static int DIGIT_2_MASK = 0xF0;
 
-	protected String data;
+    protected String data;
 
-	protected int minLength;
-	protected int maxLength;
-	protected String _PrimitiveName;
+    protected int minLength;
+    protected int maxLength;
+    protected String _PrimitiveName;
 
-	public TbcdString(int minLength, int maxLength, String _PrimitiveName) {
-		this.minLength = minLength;
-		this.maxLength = maxLength;
-		this._PrimitiveName = _PrimitiveName;
-	}
+    public TbcdString(int minLength, int maxLength, String _PrimitiveName) {
+        this.minLength = minLength;
+        this.maxLength = maxLength;
+        this._PrimitiveName = _PrimitiveName;
+    }
 
-	public TbcdString(int minLength, int maxLength, String _PrimitiveName, String data) {
-		this(minLength, maxLength, _PrimitiveName);
+    public TbcdString(int minLength, int maxLength, String _PrimitiveName, String data) {
+        this(minLength, maxLength, _PrimitiveName);
 
-		this.data = data;
-	}
+        this.data = data;
+    }
 
-	public int getTag() throws MAPException {
-		return Tag.STRING_OCTET;
-	}
+    public int getTag() throws MAPException {
+        return Tag.STRING_OCTET;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-	@Override
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+    @Override
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException {
+    protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException {
 
-		if (!ansIS.isTagPrimitive())
-			throw new MAPParsingComponentException("Error decoding " + _PrimitiveName + ": field must be primitive",
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		
-		if (length < this.minLength || length > this.maxLength)
-			throw new MAPParsingComponentException("Error decoding " + _PrimitiveName + ": the field must contain from " + this.minLength + " to "
-					+ this.maxLength + " octets. Contains: " + length, MAPParsingComponentExceptionReason.MistypedParameter);
+        if (!ansIS.isTagPrimitive())
+            throw new MAPParsingComponentException("Error decoding " + _PrimitiveName + ": field must be primitive",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
 
-		try {
-			this.data = decodeString(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-	
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		
-		this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-	}
+        if (length < this.minLength || length > this.maxLength)
+            throw new MAPParsingComponentException("Error decoding " + _PrimitiveName + ": the field must contain from "
+                    + this.minLength + " to " + this.maxLength + " octets. Contains: " + length,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        try {
+            this.data = decodeString(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
-		if (this.data == null)
-			throw new MAPException("Error while encoding the " + _PrimitiveName + ": data is not defined");
+        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+    }
 
-		encodeString(asnOs, this.data);
-	}
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 
-	public static String decodeString(InputStream ansIS, int length) throws IOException, MAPParsingComponentException {
-		StringBuilder s = new StringBuilder();
-		for (int i1 = 0; i1 < length; i1++) {
-			int b = ansIS.read();
+        try {
+            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
 
-			int digit1 = (b & DIGIT_1_MASK);
-			if (digit1 == 15) {
-				// this is mask
-			} else {
-				s.append(decodeNumber(digit1));
-			}
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-			int digit2 = ((b & DIGIT_2_MASK) >> 4);
-			if (digit2 == 15) {
-				// this is mask
-			} else {
-				s.append(decodeNumber(digit2));
-			}
-		}
+        if (this.data == null)
+            throw new MAPException("Error while encoding the " + _PrimitiveName + ": data is not defined");
 
-		return s.toString();
-	}
+        encodeString(asnOs, this.data);
+    }
 
-	public static void encodeString(OutputStream asnOs, String data) throws MAPException {
-		char[] chars = data.toCharArray();
-		for (int i = 0; i < chars.length; i = i + 2) {
-			char a = chars[i];
+    public static String decodeString(InputStream ansIS, int length) throws IOException, MAPParsingComponentException {
+        StringBuilder s = new StringBuilder();
+        for (int i1 = 0; i1 < length; i1++) {
+            int b = ansIS.read();
 
-			int digit1 = encodeNumber(a);
-			int digit2;
-			if ((i + 1) == chars.length) {
-				// add the filler instead
-				digit2 = 15;
-			} else {
-				char b = chars[i + 1];
-				digit2 = encodeNumber(b);
-			}
+            int digit1 = (b & DIGIT_1_MASK);
+            if (digit1 == 15) {
+                // this is mask
+            } else {
+                s.append(decodeNumber(digit1));
+            }
 
-			int digit = (digit2 << 4) | digit1;
+            int digit2 = ((b & DIGIT_2_MASK) >> 4);
+            if (digit2 == 15) {
+                // this is mask
+            } else {
+                s.append(decodeNumber(digit2));
+            }
+        }
 
-			try {
-				asnOs.write(digit);
-			} catch (IOException e) {
-				throw new MAPException("Error when encoding TbcdString: " + e.getMessage(), e);
-			}
-		}
-		
-	}
-	
-	protected static int encodeNumber(char c) throws MAPException {
-		switch (c) {
-		case '0':
-			return 0;
-		case '1':
-			return 1;
-		case '2':
-			return 2;
-		case '3':
-			return 3;
-		case '4':
-			return 4;
-		case '5':
-			return 5;
-		case '6':
-			return 6;
-		case '7':
-			return 7;
-		case '8':
-			return 8;
-		case '9':
-			return 9;
-		case '*':
-			return 10;
-		case '#':
-			return 11;
-		case 'a':
-			return 12;
-		case 'b':
-			return 13;
-		case 'c':
-			return 14;
-		default:
-			throw new MAPException(
-					"char should be between 0 - 9, *, #, a, b, c for Telephony Binary Coded Decimal String. Received "
-							+ c);
+        return s.toString();
+    }
 
-		}
-	}
+    public static void encodeString(OutputStream asnOs, String data) throws MAPException {
+        char[] chars = data.toCharArray();
+        for (int i = 0; i < chars.length; i = i + 2) {
+            char a = chars[i];
 
-	protected static char decodeNumber(int i) throws MAPParsingComponentException {
-		switch (i) {
-		case 0:
-			return '0';
-		case 1:
-			return '1';
-		case 2:
-			return '2';
-		case 3:
-			return '3';
-		case 4:
-			return '4';
-		case 5:
-			return '5';
-		case 6:
-			return '6';
-		case 7:
-			return '7';
-		case 8:
-			return '8';
-		case 9:
-			return '9';
-		case 10:
-			return '*';
-		case 11:
-			return '#';
-		case 12:
-			return 'a';
-		case 13:
-			return 'b';
-		case 14:
-			return 'c';
-			// case 15:
-			// return 'd';
-		default:
-			throw new MAPParsingComponentException(
-					"Integer should be between 0 - 15 for Telephony Binary Coded Decimal String. Received "
-							+ i, MAPParsingComponentExceptionReason.MistypedParameter);
+            int digit1 = encodeNumber(a);
+            int digit2;
+            if ((i + 1) == chars.length) {
+                // add the filler instead
+                digit2 = 15;
+            } else {
+                char b = chars[i + 1];
+                digit2 = encodeNumber(b);
+            }
 
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return _PrimitiveName + " [" + this.data + "]";
-	}
+            int digit = (digit2 << 4) | digit1;
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
-		return result;
-	}
+            try {
+                asnOs.write(digit);
+            } catch (IOException e) {
+                throw new MAPException("Error when encoding TbcdString: " + e.getMessage(), e);
+            }
+        }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		TbcdString other = (TbcdString) obj;
-		if (data == null) {
-			if (other.data != null)
-				return false;
-		} else if (!data.equals(other.data))
-			return false;
-		return true;
-	}
+    }
+
+    protected static int encodeNumber(char c) throws MAPException {
+        switch (c) {
+            case '0':
+                return 0;
+            case '1':
+                return 1;
+            case '2':
+                return 2;
+            case '3':
+                return 3;
+            case '4':
+                return 4;
+            case '5':
+                return 5;
+            case '6':
+                return 6;
+            case '7':
+                return 7;
+            case '8':
+                return 8;
+            case '9':
+                return 9;
+            case '*':
+                return 10;
+            case '#':
+                return 11;
+            case 'a':
+                return 12;
+            case 'b':
+                return 13;
+            case 'c':
+                return 14;
+            default:
+                throw new MAPException(
+                        "char should be between 0 - 9, *, #, a, b, c for Telephony Binary Coded Decimal String. Received " + c);
+
+        }
+    }
+
+    protected static char decodeNumber(int i) throws MAPParsingComponentException {
+        switch (i) {
+            case 0:
+                return '0';
+            case 1:
+                return '1';
+            case 2:
+                return '2';
+            case 3:
+                return '3';
+            case 4:
+                return '4';
+            case 5:
+                return '5';
+            case 6:
+                return '6';
+            case 7:
+                return '7';
+            case 8:
+                return '8';
+            case 9:
+                return '9';
+            case 10:
+                return '*';
+            case 11:
+                return '#';
+            case 12:
+                return 'a';
+            case 13:
+                return 'b';
+            case 14:
+                return 'c';
+                // case 15:
+                // return 'd';
+            default:
+                throw new MAPParsingComponentException(
+                        "Integer should be between 0 - 15 for Telephony Binary Coded Decimal String. Received " + i,
+                        MAPParsingComponentExceptionReason.MistypedParameter);
+
+        }
+    }
+
+    @Override
+    public String toString() {
+        return _PrimitiveName + " [" + this.data + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((data == null) ? 0 : data.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        TbcdString other = (TbcdString) obj;
+        if (data == null) {
+            if (other.data != null)
+                return false;
+        } else if (!data.equals(other.data))
+            return false;
+        return true;
+    }
 }
-

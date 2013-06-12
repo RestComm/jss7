@@ -27,14 +27,13 @@ import org.mobicents.ss7.management.console.ShellExecutor;
 
 /**
  * Provides executor service for {@link LinksetManager}
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class LinksetExecutor implements ShellExecutor {
 
-    private static final Logger logger = Logger
-            .getLogger(LinksetExecutor.class);
+    private static final Logger logger = Logger.getLogger(LinksetExecutor.class);
 
     private LinksetManager linksetManager = null;
 
@@ -53,8 +52,7 @@ public class LinksetExecutor implements ShellExecutor {
     public String execute(String[] options) {
 
         if (this.linksetManager == null) {
-            logger
-                    .warn("LinksetManager not set. Command will not be executed ");
+            logger.warn("LinksetManager not set. Command will not be executed ");
             return LinkOAMMessages.SERVER_ERROR;
         }
 
@@ -121,12 +119,14 @@ public class LinksetExecutor implements ShellExecutor {
         return LinkOAMMessages.INVALID_COMMAND;
     }
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.ss7.management.console.ShellExecutor#handles(java.lang.String)
-	 */
-	@Override
-	public boolean handles(String command) {
-		return (command.startsWith("linkset"));
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.ss7.management.console.ShellExecutor#handles(java.lang.String)
+     */
+    @Override
+    public boolean handles(String command) {
+        return (command.startsWith("linkset"));
+    }
 
 }

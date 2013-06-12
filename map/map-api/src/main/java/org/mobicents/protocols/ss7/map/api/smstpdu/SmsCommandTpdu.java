@@ -24,55 +24,55 @@ package org.mobicents.protocols.ss7.map.api.smstpdu;
 
 /**
  * SMS-COMMAND pdu
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SmsCommandTpdu extends SmsTpdu {
 
-	/**
-	 * @return TP-UDHI field
-	 */
-	public boolean getUserDataHeaderIndicator();
+    /**
+     * @return TP-UDHI field
+     */
+    boolean getUserDataHeaderIndicator();
 
-	/**
-	 * @return TP-SRR field
-	 */
-	public boolean getStatusReportRequest();
+    /**
+     * @return TP-SRR field
+     */
+    boolean getStatusReportRequest();
 
-	/**
-	 * @return TP-MR field
-	 */
-	public int getMessageReference();
+    /**
+     * @return TP-MR field
+     */
+    int getMessageReference();
 
-	/**
-	 * @return TP-PID field
-	 */
-	public ProtocolIdentifier getProtocolIdentifier();
+    /**
+     * @return TP-PID field
+     */
+    ProtocolIdentifier getProtocolIdentifier();
 
-	/**
-	 * @return TP-CT field
-	 */
-	public CommandType getCommandType();
+    /**
+     * @return TP-CT field
+     */
+    CommandType getCommandType();
 
-	/**
-	 * @return TP-MN field
-	 */
-	public int getMessageNumber();
+    /**
+     * @return TP-MN field
+     */
+    int getMessageNumber();
 
-	/**
-	 * @return TP-DA field
-	 */
-	public AddressField getDestinationAddress();
+    /**
+     * @return TP-DA field
+     */
+    AddressField getDestinationAddress();
 
-	/**
-	 * @return TP-CDL field
-	 */
-	public int getCommandDataLength();
+    /**
+     * @return TP-CDL field
+     */
+    int getCommandDataLength();
 
-	/**
-	 * @return TP-CD field
-	 */
-	public CommandData getCommandData();
+    /**
+     * @return TP-CD field
+     */
+    CommandData getCommandData();
 
 }

@@ -27,20 +27,17 @@ import java.util.ArrayList;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
- * 
-
-MAP V1:
-RESULT 
-	sentParameterList SentParameterList 
-
-SentParameterList ::= SEQUENCE SIZE (1..6) OF SentParameter
-
- * 
+ *
+ MAP V1: RESULT sentParameterList SentParameterList
+ *
+ * SentParameterList ::= SEQUENCE SIZE (1..6) OF SentParameter
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SendParametersResponse extends MobilityMessage {
 
-	public ArrayList<SentParameter> getSentParameterList();
+    ArrayList<SentParameter> getSentParameterList();
 
 }

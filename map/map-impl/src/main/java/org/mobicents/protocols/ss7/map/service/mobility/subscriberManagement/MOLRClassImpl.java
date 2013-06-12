@@ -39,153 +39,159 @@ import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.service.supplementary.SSCodeImpl;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class MOLRClassImpl extends SequenceBase implements MOLRClass{
-	
-	public static final int _TAG_extensionContainer = 0;
+public class MOLRClassImpl extends SequenceBase implements MOLRClass {
 
-	private SSCode ssCode;
-	private ExtSSStatus ssStatus;
-	private MAPExtensionContainer extensionContainer;
-	
-	public MOLRClassImpl() {
-		super("MOLRClass");
-	}
-	
-	public MOLRClassImpl( SSCode ssCode,
-			ExtSSStatus ssStatus, MAPExtensionContainer extensionContainer) {
-		super("MOLRClass");
-		this.ssCode = ssCode;
-		this.ssStatus = ssStatus;
-		this.extensionContainer = extensionContainer;
-	}
+    public static final int _TAG_extensionContainer = 0;
 
-	@Override
-	public SSCode getSsCode() {
-		return this.ssCode;
-	}
-	@Override
-	public ExtSSStatus getSsStatus() {
-		return this.ssStatus;
-	}
-	@Override
-	public MAPExtensionContainer getExtensionContainer() {
-		return this.extensionContainer;
-	}
-	@Override
-	protected void _decode(AsnInputStream asnIS, int length)
-			throws MAPParsingComponentException, IOException, AsnException {
+    private SSCode ssCode;
+    private ExtSSStatus ssStatus;
+    private MAPExtensionContainer extensionContainer;
 
-		this.ssCode = null;
-		this.ssStatus = null;
-		this.extensionContainer = null;
+    public MOLRClassImpl() {
+        super("MOLRClass");
+    }
 
-		AsnInputStream ais = asnIS.readSequenceStreamData(length);
+    public MOLRClassImpl(SSCode ssCode, ExtSSStatus ssStatus, MAPExtensionContainer extensionContainer) {
+        super("MOLRClass");
+        this.ssCode = ssCode;
+        this.ssStatus = ssStatus;
+        this.extensionContainer = extensionContainer;
+    }
 
-		int num = 0;
-		while (true) {
-			if (ais.available() == 0)
-				break;
+    @Override
+    public SSCode getSsCode() {
+        return this.ssCode;
+    }
 
-			int tag = ais.readTag();
+    @Override
+    public ExtSSStatus getSsStatus() {
+        return this.ssStatus;
+    }
 
-			switch (num) {
-			case 0:
-				if (tag != Tag.STRING_OCTET || ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ssCode: bad tag, tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.ssCode = new SSCodeImpl();
-				((SSCodeImpl) this.ssCode).decodeAll(ais);
-				break;
-			case 1:
-				if (tag != Tag.STRING_OCTET || ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
-					throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".ssStatus: bad tag, tag class or not primitive",
-							MAPParsingComponentExceptionReason.MistypedParameter);
-				this.ssStatus = new ExtSSStatusImpl();
-				((ExtSSStatusImpl) this.ssStatus).decodeAll(ais);
-				break;
-			default:
-				switch (ais.getTagClass()) {
-				case Tag.CLASS_CONTEXT_SPECIFIC: {
-					switch (tag) {
-					case _TAG_extensionContainer: 
-						if (ais.isTagPrimitive())
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".extensionContainer: Parameter is primitive",
-									MAPParsingComponentExceptionReason.MistypedParameter);
-						this.extensionContainer = new MAPExtensionContainerImpl();
-						((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
-						break;
-					default:
-						ais.advanceElement();
-						break;
-					}
-				}
-				break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-			}
-			num++;
-		}
+    @Override
+    public MAPExtensionContainer getExtensionContainer() {
+        return this.extensionContainer;
+    }
 
-		if (this.ssCode == null) {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament ssCode is mandatory but does not found",
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-		if (this.ssStatus == null) {
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament ssStatus is mandatory but does not found",
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    @Override
+    protected void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		
-		if (this.ssCode == null)
-			throw new MAPException("Error while encoding" + _PrimitiveName + ": ssCode must not be null");
-		
-		if (this.ssStatus == null)
-			throw new MAPException("Error while encoding" + _PrimitiveName + ": ssStatus must not be null");
-	
-		((SSCodeImpl) this.ssCode).encodeAll(asnOs);
+        this.ssCode = null;
+        this.ssStatus = null;
+        this.extensionContainer = null;
 
-		((ExtSSStatusImpl) this.ssStatus).encodeAll(asnOs);
-		
-		if (this.extensionContainer != null)
-			((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs,Tag.CLASS_CONTEXT_SPECIFIC, _TAG_extensionContainer);
+        AsnInputStream ais = asnIS.readSequenceStreamData(length);
 
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
+        int num = 0;
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-		if (this.ssCode != null) {
-			sb.append("ssCode=");
-			sb.append(this.ssCode.toString());
-			sb.append(", ");
-		}
-		
-		if (this.ssStatus != null) {
-			sb.append("ssStatus=");
-			sb.append(this.ssStatus.toString());
-			sb.append(", ");
-		}
+            int tag = ais.readTag();
 
-		if (this.extensionContainer != null) {
-			sb.append("extensionContainer=");
-			sb.append(this.extensionContainer.toString());
-			sb.append(" ");
-		}
+            switch (num) {
+                case 0:
+                    if (tag != Tag.STRING_OCTET || ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
+                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ".ssCode: bad tag, tag class or not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.ssCode = new SSCodeImpl();
+                    ((SSCodeImpl) this.ssCode).decodeAll(ais);
+                    break;
+                case 1:
+                    if (tag != Tag.STRING_OCTET || ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive())
+                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ".ssStatus: bad tag, tag class or not primitive",
+                                MAPParsingComponentExceptionReason.MistypedParameter);
+                    this.ssStatus = new ExtSSStatusImpl();
+                    ((ExtSSStatusImpl) this.ssStatus).decodeAll(ais);
+                    break;
+                default:
+                    switch (ais.getTagClass()) {
+                        case Tag.CLASS_CONTEXT_SPECIFIC: {
+                            switch (tag) {
+                                case _TAG_extensionContainer:
+                                    if (ais.isTagPrimitive())
+                                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                                + ".extensionContainer: Parameter is primitive",
+                                                MAPParsingComponentExceptionReason.MistypedParameter);
+                                    this.extensionContainer = new MAPExtensionContainerImpl();
+                                    ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                                    break;
+                                default:
+                                    ais.advanceElement();
+                                    break;
+                            }
+                        }
+                            break;
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+            }
+            num++;
+        }
 
-		sb.append("]");
+        if (this.ssCode == null) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": Parament ssCode is mandatory but does not found", MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+        if (this.ssStatus == null) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": Parament ssStatus is mandatory but does not found",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		return sb.toString();
-	}
-	
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
+
+        if (this.ssCode == null)
+            throw new MAPException("Error while encoding" + _PrimitiveName + ": ssCode must not be null");
+
+        if (this.ssStatus == null)
+            throw new MAPException("Error while encoding" + _PrimitiveName + ": ssStatus must not be null");
+
+        ((SSCodeImpl) this.ssCode).encodeAll(asnOs);
+
+        ((ExtSSStatusImpl) this.ssStatus).encodeAll(asnOs);
+
+        if (this.extensionContainer != null)
+            ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                    _TAG_extensionContainer);
+
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.ssCode != null) {
+            sb.append("ssCode=");
+            sb.append(this.ssCode.toString());
+            sb.append(", ");
+        }
+
+        if (this.ssStatus != null) {
+            sb.append("ssStatus=");
+            sb.append(this.ssStatus.toString());
+            sb.append(", ");
+        }
+
+        if (this.extensionContainer != null) {
+            sb.append("extensionContainer=");
+            sb.append(this.extensionContainer.toString());
+            sb.append(" ");
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 }

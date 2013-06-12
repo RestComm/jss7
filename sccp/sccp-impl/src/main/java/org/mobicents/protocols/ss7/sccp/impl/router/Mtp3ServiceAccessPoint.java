@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -28,121 +28,121 @@ import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class Mtp3ServiceAccessPoint implements XMLSerializable {
-	private static final String MTP3_ID = "mtp3Id";
-	private static final String OPC = "opc";
-	private static final String NI = "ni";
-//	private static final String DPC_LIST = "dpcList";
-	
-	private int mtp3Id;
-	private int opc;
-	private int ni;
+    private static final String MTP3_ID = "mtp3Id";
+    private static final String OPC = "opc";
+    private static final String NI = "ni";
+    // private static final String DPC_LIST = "dpcList";
 
-	private Mtp3DestinationMap<Integer, Mtp3Destination> dpcList = new Mtp3DestinationMap<Integer, Mtp3Destination>();
+    private int mtp3Id;
+    private int opc;
+    private int ni;
 
-	public Mtp3ServiceAccessPoint() {
-	}
+    private Mtp3DestinationMap<Integer, Mtp3Destination> dpcList = new Mtp3DestinationMap<Integer, Mtp3Destination>();
 
-	public Mtp3ServiceAccessPoint(int mtp3Id, int opc, int ni) {
-		this.mtp3Id = mtp3Id;
-		this.opc = opc;
-		this.ni = ni;
-	}
+    public Mtp3ServiceAccessPoint() {
+    }
 
-	public int getMtp3Id() {
-		return mtp3Id;
-	}
+    public Mtp3ServiceAccessPoint(int mtp3Id, int opc, int ni) {
+        this.mtp3Id = mtp3Id;
+        this.opc = opc;
+        this.ni = ni;
+    }
 
-	public int getOpc() {
-		return opc;
-	}
+    public int getMtp3Id() {
+        return mtp3Id;
+    }
 
-	public int getNi() {
-		return ni;
-	}
+    public int getOpc() {
+        return opc;
+    }
 
-	public Mtp3Destination getMtp3Destination(int destId) {
-		return this.dpcList.get(destId);
-	}
+    public int getNi() {
+        return ni;
+    }
 
-	public FastMap<Integer, Mtp3Destination> getMtp3Destinations() {
-		return this.dpcList;
-	}
+    public Mtp3Destination getMtp3Destination(int destId) {
+        return this.dpcList.get(destId);
+    }
 
-	public void addMtp3Destination(int destId, Mtp3Destination dest) {
-		synchronized (this) {
-			Mtp3DestinationMap<Integer, Mtp3Destination> newDpcList = new Mtp3DestinationMap<Integer, Mtp3Destination>();
-			newDpcList.putAll(this.dpcList);
-			newDpcList.put(destId, dest);
-			this.dpcList = newDpcList;
-		}
-	}
+    public FastMap<Integer, Mtp3Destination> getMtp3Destinations() {
+        return this.dpcList;
+    }
 
-	public void removeMtp3Destination(int destId) {
-		synchronized (this) {
-			Mtp3DestinationMap<Integer, Mtp3Destination> newDpcList = new Mtp3DestinationMap<Integer, Mtp3Destination>();
-			newDpcList.putAll(this.dpcList);
-			newDpcList.remove(destId);
-			this.dpcList = newDpcList;
-		}
-	}
+    public void addMtp3Destination(int destId, Mtp3Destination dest) {
+        synchronized (this) {
+            Mtp3DestinationMap<Integer, Mtp3Destination> newDpcList = new Mtp3DestinationMap<Integer, Mtp3Destination>();
+            newDpcList.putAll(this.dpcList);
+            newDpcList.put(destId, dest);
+            this.dpcList = newDpcList;
+        }
+    }
 
-	public boolean matches(int dpc, int sls) {
-		for (FastMap.Entry<Integer, Mtp3Destination> e = this.dpcList.head(), end = this.dpcList.tail(); (e = e.getNext()) != end;) {
-			if (e.getValue().match(dpc, sls))
-				return true;
-		}
-		return false;
-	}
+    public void removeMtp3Destination(int destId) {
+        synchronized (this) {
+            Mtp3DestinationMap<Integer, Mtp3Destination> newDpcList = new Mtp3DestinationMap<Integer, Mtp3Destination>();
+            newDpcList.putAll(this.dpcList);
+            newDpcList.remove(destId);
+            this.dpcList = newDpcList;
+        }
+    }
 
-	@Override
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		sb.append("mtp3Id=").append(this.mtp3Id).append(", opc=").append(this.opc).append(", ni=").append(this.ni).append(", dpcList=[");
+    public boolean matches(int dpc, int sls) {
+        for (FastMap.Entry<Integer, Mtp3Destination> e = this.dpcList.head(), end = this.dpcList.tail(); (e = e.getNext()) != end;) {
+            if (e.getValue().match(dpc, sls))
+                return true;
+        }
+        return false;
+    }
 
-		boolean isFirst = true;
-		for (FastMap.Entry<Integer, Mtp3Destination> e = this.dpcList.head(), end = this.dpcList.tail(); (e = e.getNext()) != end;) {
-			Integer id = e.getKey();
-			Mtp3Destination dest = e.getValue();
-			if (isFirst)
-				isFirst = false;
-			else
-				sb.append(", ");
-			sb.append("[key=");
-			sb.append(id);
-			sb.append(", ");
-			sb.append(dest.toString());
-			sb.append("], ");
-		}
-		sb.append("]");
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("mtp3Id=").append(this.mtp3Id).append(", opc=").append(this.opc).append(", ni=").append(this.ni)
+                .append(", dpcList=[");
 
-		return sb.toString();
-	}
+        boolean isFirst = true;
+        for (FastMap.Entry<Integer, Mtp3Destination> e = this.dpcList.head(), end = this.dpcList.tail(); (e = e.getNext()) != end;) {
+            Integer id = e.getKey();
+            Mtp3Destination dest = e.getValue();
+            if (isFirst)
+                isFirst = false;
+            else
+                sb.append(", ");
+            sb.append("[key=");
+            sb.append(id);
+            sb.append(", ");
+            sb.append(dest.toString());
+            sb.append("], ");
+        }
+        sb.append("]");
 
-	protected static final XMLFormat<Mtp3ServiceAccessPoint> XML = new XMLFormat<Mtp3ServiceAccessPoint>(
-			Mtp3ServiceAccessPoint.class) {
+        return sb.toString();
+    }
 
-		public void write(Mtp3ServiceAccessPoint sap, OutputElement xml) throws XMLStreamException {
-			xml.setAttribute(MTP3_ID, sap.mtp3Id);
-			xml.setAttribute(OPC, sap.opc);
-			xml.setAttribute(NI, sap.ni);
+    protected static final XMLFormat<Mtp3ServiceAccessPoint> XML = new XMLFormat<Mtp3ServiceAccessPoint>(
+            Mtp3ServiceAccessPoint.class) {
 
-//			XMLStreamWriter writer = xml.getStreamWriter();
+        public void write(Mtp3ServiceAccessPoint sap, OutputElement xml) throws XMLStreamException {
+            xml.setAttribute(MTP3_ID, sap.mtp3Id);
+            xml.setAttribute(OPC, sap.opc);
+            xml.setAttribute(NI, sap.ni);
 
-			xml.add(sap.dpcList);
-		}
+            // XMLStreamWriter writer = xml.getStreamWriter();
 
-		public void read(InputElement xml, Mtp3ServiceAccessPoint sap) throws XMLStreamException {
-			sap.mtp3Id = xml.getAttribute(MTP3_ID).toInt();
-			sap.opc = xml.getAttribute(OPC).toInt();
-			sap.ni = xml.getAttribute(NI).toInt();
+            xml.add(sap.dpcList);
+        }
 
-			sap.dpcList = xml.getNext();
-		}
-	};
+        public void read(InputElement xml, Mtp3ServiceAccessPoint sap) throws XMLStreamException {
+            sap.mtp3Id = xml.getAttribute(MTP3_ID).toInt();
+            sap.opc = xml.getAttribute(OPC).toInt();
+            sap.ni = xml.getAttribute(NI).toInt();
+
+            sap.dpcList = xml.getNext();
+        }
+    };
 }
-

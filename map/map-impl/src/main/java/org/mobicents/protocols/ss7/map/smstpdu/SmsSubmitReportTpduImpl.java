@@ -38,217 +38,223 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.SmsTpduType;
 import org.mobicents.protocols.ss7.map.api.smstpdu.UserData;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class SmsSubmitReportTpduImpl extends SmsTpduImpl implements SmsSubmitReportTpdu {
 
-	private boolean userDataHeaderIndicator;
-	private FailureCause failureCause;
-	private ParameterIndicator parameterIndicator;
-	private AbsoluteTimeStamp serviceCentreTimeStamp;
-	private ProtocolIdentifier protocolIdentifier;
-	private DataCodingScheme dataCodingScheme;
-	private int userDataLength;
-	private UserData userData;
+    private boolean userDataHeaderIndicator;
+    private FailureCause failureCause;
+    private ParameterIndicator parameterIndicator;
+    private AbsoluteTimeStamp serviceCentreTimeStamp;
+    private ProtocolIdentifier protocolIdentifier;
+    private DataCodingScheme dataCodingScheme;
+    private int userDataLength;
+    private UserData userData;
 
-	private SmsSubmitReportTpduImpl() {
-		this.tpduType = SmsTpduType.SMS_SUBMIT_REPORT;
-		this.mobileOriginatedMessage = false;
-	}
+    private SmsSubmitReportTpduImpl() {
+        this.tpduType = SmsTpduType.SMS_SUBMIT_REPORT;
+        this.mobileOriginatedMessage = false;
+    }
 
-	public SmsSubmitReportTpduImpl(FailureCause failureCause, AbsoluteTimeStamp serviceCentreTimeStamp, ProtocolIdentifier protocolIdentifier,
-			UserData userData) {
-		this();
+    public SmsSubmitReportTpduImpl(FailureCause failureCause, AbsoluteTimeStamp serviceCentreTimeStamp,
+            ProtocolIdentifier protocolIdentifier, UserData userData) {
+        this();
 
-		this.failureCause = failureCause;
-		this.serviceCentreTimeStamp = serviceCentreTimeStamp;
-		this.protocolIdentifier = protocolIdentifier;
-		this.userData = userData;
-	}
+        this.failureCause = failureCause;
+        this.serviceCentreTimeStamp = serviceCentreTimeStamp;
+        this.protocolIdentifier = protocolIdentifier;
+        this.userData = userData;
+    }
 
-	public SmsSubmitReportTpduImpl(byte[] data, Charset gsm8Charset) throws MAPException {
-		this();
+    public SmsSubmitReportTpduImpl(byte[] data, Charset gsm8Charset) throws MAPException {
+        this();
 
-		if (data == null)
-			throw new MAPException("Error creating a new SmsSubmitReportTpdu instance: data is empty");
-		if (data.length < 1)
-			throw new MAPException("Error creating a new SmsSubmitReportTpdu instance: data length is equal zero");
+        if (data == null)
+            throw new MAPException("Error creating a new SmsSubmitReportTpdu instance: data is empty");
+        if (data.length < 1)
+            throw new MAPException("Error creating a new SmsSubmitReportTpdu instance: data length is equal zero");
 
-		ByteArrayInputStream stm = new ByteArrayInputStream(data);
+        ByteArrayInputStream stm = new ByteArrayInputStream(data);
 
-		int bt = stm.read();
-		if ((bt & _MASK_TP_UDHI) != 0)
-			this.userDataHeaderIndicator = true;
+        int bt = stm.read();
+        if ((bt & _MASK_TP_UDHI) != 0)
+            this.userDataHeaderIndicator = true;
 
-		bt = stm.read();
-		if (bt == -1)
-			throw new MAPException("Error creating a new SmsDeliverReportTpdu instance: Failure-Cause and Parameter-Indicator fields have not been found");
-		if ((bt & 0x80) != 0) {
-			// Failure-Cause exists
-			this.failureCause = new FailureCauseImpl(bt);
-			
-			bt = stm.read();
-			if (bt == -1)
-				throw new MAPException("Error creating a new SmsDeliverReportTpdu instance: Parameter-Indicator field has not been found");
-		}
-		
-		this.parameterIndicator = new ParameterIndicatorImpl(bt);
+        bt = stm.read();
+        if (bt == -1)
+            throw new MAPException(
+                    "Error creating a new SmsDeliverReportTpdu instance: Failure-Cause and Parameter-Indicator fields have not been found");
+        if ((bt & 0x80) != 0) {
+            // Failure-Cause exists
+            this.failureCause = new FailureCauseImpl(bt);
 
-		this.serviceCentreTimeStamp = AbsoluteTimeStampImpl.createMessage(stm);
+            bt = stm.read();
+            if (bt == -1)
+                throw new MAPException(
+                        "Error creating a new SmsDeliverReportTpdu instance: Parameter-Indicator field has not been found");
+        }
 
-		if (this.parameterIndicator.getTP_PIDPresence()) {
-			bt = stm.read();
-			if (bt == -1)
-				throw new MAPException("Error creating a new SmsDeliverTpduImpl instance: protocolIdentifier field has not been found");
-			this.protocolIdentifier = new ProtocolIdentifierImpl(bt);
-		}
+        this.parameterIndicator = new ParameterIndicatorImpl(bt);
 
-		if (this.parameterIndicator.getTP_DCSPresence()) {
-			bt = stm.read();
-			if (bt == -1)
-				throw new MAPException("Error creating a new SmsDeliverTpduImpl instance: dataCodingScheme field has not been found");
-			this.dataCodingScheme = new DataCodingSchemeImpl(bt);
-		}
+        this.serviceCentreTimeStamp = AbsoluteTimeStampImpl.createMessage(stm);
 
-		if (this.parameterIndicator.getTP_UDLPresence()) {
-			this.userDataLength = stm.read();
-			if (this.userDataLength == -1)
-				throw new MAPException("Error creating a new SmsDeliverTpduImpl instance: userDataLength field has not been found");
+        if (this.parameterIndicator.getTP_PIDPresence()) {
+            bt = stm.read();
+            if (bt == -1)
+                throw new MAPException(
+                        "Error creating a new SmsDeliverTpduImpl instance: protocolIdentifier field has not been found");
+            this.protocolIdentifier = new ProtocolIdentifierImpl(bt);
+        }
 
-			int avail = stm.available();
-			byte[] buf = new byte[avail];
-			try {
-				stm.read(buf);
-			} catch (IOException e) {
-				throw new MAPException("IOException while creating a new SmsDeliverTpduImpl instance: " + e.getMessage(), e);
-			}
-			userData = new UserDataImpl(buf, dataCodingScheme, userDataLength, userDataHeaderIndicator, gsm8Charset);
-		}
-	}
+        if (this.parameterIndicator.getTP_DCSPresence()) {
+            bt = stm.read();
+            if (bt == -1)
+                throw new MAPException(
+                        "Error creating a new SmsDeliverTpduImpl instance: dataCodingScheme field has not been found");
+            this.dataCodingScheme = new DataCodingSchemeImpl(bt);
+        }
 
-	public boolean getUserDataHeaderIndicator() {
-		return this.userDataHeaderIndicator;
-	}
+        if (this.parameterIndicator.getTP_UDLPresence()) {
+            this.userDataLength = stm.read();
+            if (this.userDataLength == -1)
+                throw new MAPException(
+                        "Error creating a new SmsDeliverTpduImpl instance: userDataLength field has not been found");
 
-	public FailureCause getFailureCause() {
-		return failureCause;
-	}
+            int avail = stm.available();
+            byte[] buf = new byte[avail];
+            try {
+                stm.read(buf);
+            } catch (IOException e) {
+                throw new MAPException("IOException while creating a new SmsDeliverTpduImpl instance: " + e.getMessage(), e);
+            }
+            userData = new UserDataImpl(buf, dataCodingScheme, userDataLength, userDataHeaderIndicator, gsm8Charset);
+        }
+    }
 
-	public ParameterIndicator getParameterIndicator() {
-		return parameterIndicator;
-	}
+    public boolean getUserDataHeaderIndicator() {
+        return this.userDataHeaderIndicator;
+    }
 
-	public AbsoluteTimeStamp getServiceCentreTimeStamp() {
-		return serviceCentreTimeStamp;
-	}
+    public FailureCause getFailureCause() {
+        return failureCause;
+    }
 
-	public ProtocolIdentifier getProtocolIdentifier() {
-		return protocolIdentifier;
-	}
+    public ParameterIndicator getParameterIndicator() {
+        return parameterIndicator;
+    }
 
-	public DataCodingScheme getDataCodingScheme() {
-		return dataCodingScheme;
-	}
+    public AbsoluteTimeStamp getServiceCentreTimeStamp() {
+        return serviceCentreTimeStamp;
+    }
 
-	public int getUserDataLength() {
-		return userDataLength;
-	}
+    public ProtocolIdentifier getProtocolIdentifier() {
+        return protocolIdentifier;
+    }
 
-	public UserData getUserData() {
-		return userData;
-	}
+    public DataCodingScheme getDataCodingScheme() {
+        return dataCodingScheme;
+    }
 
-	public byte[] encodeData() throws MAPException {
+    public int getUserDataLength() {
+        return userDataLength;
+    }
 
-		if (this.serviceCentreTimeStamp == null)
-			throw new MAPException("Parameter serviceCentreTimeStamp must not be null");
+    public UserData getUserData() {
+        return userData;
+    }
 
-		if (this.userData != null) {
-			this.userData.encode();
-			this.userDataHeaderIndicator = this.userData.getEncodedUserDataHeaderIndicator();
-			this.userDataLength = this.userData.getEncodedUserDataLength();
-			this.dataCodingScheme = this.userData.getDataCodingScheme();
+    public byte[] encodeData() throws MAPException {
 
-			if (this.userData.getEncodedData().length > _UserDataSubmitReportLimit)
-				throw new MAPException("User data field length may not increase " + _UserDataSubmitReportLimit);
-		}
+        if (this.serviceCentreTimeStamp == null)
+            throw new MAPException("Parameter serviceCentreTimeStamp must not be null");
 
-		AsnOutputStream res = new AsnOutputStream();
+        if (this.userData != null) {
+            this.userData.encode();
+            this.userDataHeaderIndicator = this.userData.getEncodedUserDataHeaderIndicator();
+            this.userDataLength = this.userData.getEncodedUserDataLength();
+            this.dataCodingScheme = this.userData.getDataCodingScheme();
 
-		// byte 0
-		res.write(SmsTpduType.SMS_SUBMIT_REPORT.getEncodedValue() | (this.userDataHeaderIndicator ? _MASK_TP_UDHI : 0));
+            if (this.userData.getEncodedData().length > _UserDataSubmitReportLimit)
+                throw new MAPException("User data field length may not increase " + _UserDataSubmitReportLimit);
+        }
 
-		if (this.failureCause != null)
-			res.write(this.failureCause.getCode());
+        AsnOutputStream res = new AsnOutputStream();
 
-		this.parameterIndicator = new ParameterIndicatorImpl(this.userData != null, this.dataCodingScheme != null, this.protocolIdentifier != null);
-		res.write(this.parameterIndicator.getCode());
-		this.serviceCentreTimeStamp.encodeData(res);
+        // byte 0
+        res.write(SmsTpduType.SMS_SUBMIT_REPORT.getEncodedValue() | (this.userDataHeaderIndicator ? _MASK_TP_UDHI : 0));
 
-		if (this.protocolIdentifier != null) {
-			res.write(this.protocolIdentifier.getCode());
-		}
-		if (this.dataCodingScheme != null) {
-			res.write(this.dataCodingScheme.getCode());
-		}
+        if (this.failureCause != null)
+            res.write(this.failureCause.getCode());
 
-		if (this.userData != null) {
-			res.write(this.userDataLength);
-			res.write(this.userData.getEncodedData());
-		}
+        this.parameterIndicator = new ParameterIndicatorImpl(this.userData != null, this.dataCodingScheme != null,
+                this.protocolIdentifier != null);
+        res.write(this.parameterIndicator.getCode());
+        this.serviceCentreTimeStamp.encodeData(res);
 
-		return res.toByteArray();
-	}
+        if (this.protocolIdentifier != null) {
+            res.write(this.protocolIdentifier.getCode());
+        }
+        if (this.dataCodingScheme != null) {
+            res.write(this.dataCodingScheme.getCode());
+        }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
+        if (this.userData != null) {
+            res.write(this.userDataLength);
+            res.write(this.userData.getEncodedData());
+        }
 
-		sb.append("SMS-SUBMIT-REPORT tpdu [");
+        return res.toByteArray();
+    }
 
-		boolean started = false;
-		if (this.userDataHeaderIndicator) {
-			sb.append("userDataHeaderIndicator");
-			started = true;
-		}
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
 
-		if (this.failureCause != null) {
-			if (started)
-				sb.append(", ");
-			sb.append("failureCause=");
-			sb.append(this.failureCause.toString());
-			started = true;
-		}
-		if (this.parameterIndicator != null) {
-			if (started)
-				sb.append(", ");
-			sb.append(this.parameterIndicator.toString());
-			started = true;
-		}
-		if (this.serviceCentreTimeStamp != null) {
-			if (started)
-				sb.append(", ");
-			sb.append("serviceCentreTimeStamp [");
-			sb.append(this.serviceCentreTimeStamp.toString());
-			sb.append("]");
-			started = true;
-		}
-		if (this.protocolIdentifier != null) {
-			if (started)
-				sb.append(", ");
-			sb.append(this.protocolIdentifier.toString());
-			started = true;
-		}
-		if (this.userData != null) {
-			sb.append("\nMSG [");
-			sb.append(this.userData.toString());
-			sb.append("]");
-		}
+        sb.append("SMS-SUBMIT-REPORT tpdu [");
 
-		sb.append("]");
+        boolean started = false;
+        if (this.userDataHeaderIndicator) {
+            sb.append("userDataHeaderIndicator");
+            started = true;
+        }
 
-		return sb.toString();
-	}
+        if (this.failureCause != null) {
+            if (started)
+                sb.append(", ");
+            sb.append("failureCause=");
+            sb.append(this.failureCause.toString());
+            started = true;
+        }
+        if (this.parameterIndicator != null) {
+            if (started)
+                sb.append(", ");
+            sb.append(this.parameterIndicator.toString());
+            started = true;
+        }
+        if (this.serviceCentreTimeStamp != null) {
+            if (started)
+                sb.append(", ");
+            sb.append("serviceCentreTimeStamp [");
+            sb.append(this.serviceCentreTimeStamp.toString());
+            sb.append("]");
+            started = true;
+        }
+        if (this.protocolIdentifier != null) {
+            if (started)
+                sb.append(", ");
+            sb.append(this.protocolIdentifier.toString());
+            started = true;
+        }
+        if (this.userData != null) {
+            sb.append("\nMSG [");
+            sb.append(this.userData.toString());
+            sb.append("]");
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

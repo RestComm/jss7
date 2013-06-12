@@ -25,28 +25,21 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 
-/**	
- * 
- 
-MAP V1:
-BeginSubscriberActivity ::= OPERATION--Timer m
-ARGUMENT
-	beginSubscriberActivityArg	BeginSubscriberActivityArg
-
-BeginSubscriberActivityArg ::= SEQUENCE {
-	imsi						IMSI,
-	originatingEntityNumber		ISDN-AddressString
-}
-
-
- * 
+/**
+ *
+ MAP V1: BeginSubscriberActivity ::= OPERATION--Timer m ARGUMENT beginSubscriberActivityArg BeginSubscriberActivityArg
+ *
+ * BeginSubscriberActivityArg ::= SEQUENCE { imsi IMSI, originatingEntityNumber ISDN-AddressString }
+ *
+ *
+ *
  * @author sergey vetyutnev
  *
  */
-public interface BeginSubscriberActivityRequest extends  SupplementaryMessage {
+public interface BeginSubscriberActivityRequest extends SupplementaryMessage {
 
-	public IMSI getImsi();
+    IMSI getImsi();
 
-	public ISDNAddressString getOriginatingEntityNumber();
+    ISDNAddressString getOriginatingEntityNumber();
 
 }

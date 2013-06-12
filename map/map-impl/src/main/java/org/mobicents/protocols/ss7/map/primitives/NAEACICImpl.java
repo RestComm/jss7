@@ -32,138 +32,135 @@ import org.mobicents.protocols.ss7.map.api.primitives.NetworkIdentificationPlanV
 import org.mobicents.protocols.ss7.map.api.primitives.NetworkIdentificationTypeValue;
 
 /**
- * 
  *
- ___________________________________________________________
-|           |   8 |  7  |  6  |  5  |  4  |  3  |  2  |  1  |
-|___________|_____|_____|_____|_____|_____|_____|_____|_____|
-| Octet 1:  |Spare| Type of net idn |    network idn plan   |
-|___________|_____|_________________|_______________________|
-| Octet 2:  |        DIGIT 2        |     DIGIT 1           |
-| __________|_______________________|_______________________|
-| Octet 3:  |    DIGIT 4(or 0000)   |     DIGIT 3           |
-|___________|_______________________|_______________________|
-
+ *
+ ___________________________________________________________ | | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 |
+ * |___________|_____|_____|_____|_____|_____|_____|_____|_____| | Octet 1: |Spare| Type of net idn | network idn plan |
+ * |___________|_____|_________________|_______________________| | Octet 2: | DIGIT 2 | DIGIT 1 | |
+ * __________|_______________________|_______________________| | Octet 3: | DIGIT 4(or 0000) | DIGIT 3 |
+ * |___________|_______________________|_______________________|
+ *
  *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class NAEACICImpl extends OctetStringBase implements NAEACIC{
-	
-	protected static final int NETWORK_IND_PLAN_MASK = 0x0F;
-	protected static final int NETWORK_IND_TYPE_MASK = 0x70;
-	protected static final int THREE_OCTET_CARRIER_CODE_MASK = 0x0F;
+public class NAEACICImpl extends OctetStringBase implements NAEACIC {
 
-	public NAEACICImpl() {
-		super(3, 3, "NAEACIC");
-	}
+    protected static final int NETWORK_IND_PLAN_MASK = 0x0F;
+    protected static final int NETWORK_IND_TYPE_MASK = 0x70;
+    protected static final int THREE_OCTET_CARRIER_CODE_MASK = 0x0F;
 
-	public NAEACICImpl(byte[] data) {
-		super(3, 3, "NAEACIC", data);
-	}
+    public NAEACICImpl() {
+        super(3, 3, "NAEACIC");
+    }
 
-	public NAEACICImpl(String carrierCode,NetworkIdentificationPlanValue networkIdentificationPlanValue,
-			NetworkIdentificationTypeValue networkIdentificationTypeValue) throws MAPException {
-		super(3, 3, "NAEACIC");
-		setParameters(carrierCode, networkIdentificationPlanValue, networkIdentificationTypeValue);
-	}
+    public NAEACICImpl(byte[] data) {
+        super(3, 3, "NAEACIC", data);
+    }
 
-	@Override
-	public byte[] getData() {
-		return data;
-	}
+    public NAEACICImpl(String carrierCode, NetworkIdentificationPlanValue networkIdentificationPlanValue,
+            NetworkIdentificationTypeValue networkIdentificationTypeValue) throws MAPException {
+        super(3, 3, "NAEACIC");
+        setParameters(carrierCode, networkIdentificationPlanValue, networkIdentificationTypeValue);
+    }
 
-	public String getCarrierCode(){
+    @Override
+    public byte[] getData() {
+        return data;
+    }
 
-		if (this.data == null || this.data.length == 0)
-			return null;
+    public String getCarrierCode() {
 
-		try {
-			ByteArrayInputStream stm = new ByteArrayInputStream(this.data);
-			stm.read();
-			String address = TbcdString.decodeString(stm, this.data.length - 1);
-			if(address.length() == 4 && this.getNetworkIdentificationPlanValue().equals(NetworkIdentificationPlanValue.threeDigitCarrierIdentification)){
-				return address.substring(0,3);
-			}
-			return address;
-		} catch (MAPParsingComponentException e) {
-			return null;
-		} catch (IOException e) {
-			return null;
-		}
-	}
+        if (this.data == null || this.data.length == 0)
+            return null;
 
-	public NetworkIdentificationPlanValue getNetworkIdentificationPlanValue(){
-		if (this.data == null || this.data.length == 0)
-			return null;
+        try {
+            ByteArrayInputStream stm = new ByteArrayInputStream(this.data);
+            stm.read();
+            String address = TbcdString.decodeString(stm, this.data.length - 1);
+            if (address.length() == 4
+                    && this.getNetworkIdentificationPlanValue().equals(
+                            NetworkIdentificationPlanValue.threeDigitCarrierIdentification)) {
+                return address.substring(0, 3);
+            }
+            return address;
+        } catch (MAPParsingComponentException e) {
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
 
-		int planValue = this.data[0];
-		return NetworkIdentificationPlanValue.getInstance(planValue & NETWORK_IND_PLAN_MASK);
-	}
+    public NetworkIdentificationPlanValue getNetworkIdentificationPlanValue() {
+        if (this.data == null || this.data.length == 0)
+            return null;
 
-	public NetworkIdentificationTypeValue getNetworkIdentificationTypeValue(){
+        int planValue = this.data[0];
+        return NetworkIdentificationPlanValue.getInstance(planValue & NETWORK_IND_PLAN_MASK);
+    }
 
-		if (this.data == null || this.data.length == 0)
-			return null;
+    public NetworkIdentificationTypeValue getNetworkIdentificationTypeValue() {
 
-		int typeValue = this.data[0];
-		typeValue = ((typeValue & NETWORK_IND_TYPE_MASK) >> 4);
-		return NetworkIdentificationTypeValue.getInstance(typeValue);
-	}
+        if (this.data == null || this.data.length == 0)
+            return null;
 
+        int typeValue = this.data[0];
+        typeValue = ((typeValue & NETWORK_IND_TYPE_MASK) >> 4);
+        return NetworkIdentificationTypeValue.getInstance(typeValue);
+    }
 
-	private void setParameters(String carrierCode,NetworkIdentificationPlanValue networkIdentificationPlanValue,
-			NetworkIdentificationTypeValue networkIdentificationTypeValue) throws MAPException {
+    private void setParameters(String carrierCode, NetworkIdentificationPlanValue networkIdentificationPlanValue,
+            NetworkIdentificationTypeValue networkIdentificationTypeValue) throws MAPException {
 
-		if (carrierCode == null || networkIdentificationPlanValue == null || networkIdentificationTypeValue == null)
-			throw new MAPException("Error when encoding " + _PrimitiveName + ": carrierCode, networkIdentificationPlanValue or networkIdentificationTypeValue is empty");
+        if (carrierCode == null || networkIdentificationPlanValue == null || networkIdentificationTypeValue == null)
+            throw new MAPException("Error when encoding " + _PrimitiveName
+                    + ": carrierCode, networkIdentificationPlanValue or networkIdentificationTypeValue is empty");
 
-		if (!(carrierCode.length() == 3 || carrierCode.length()== 4 ))
-			throw new MAPException("Error when encoding " + _PrimitiveName + ": carrierCode lenght should be 3 or 4");
+        if (!(carrierCode.length() == 3 || carrierCode.length() == 4))
+            throw new MAPException("Error when encoding " + _PrimitiveName + ": carrierCode lenght should be 3 or 4");
 
-		ByteArrayOutputStream stm = new ByteArrayOutputStream();
+        ByteArrayOutputStream stm = new ByteArrayOutputStream();
 
-		int octOne = 0;
-		octOne = octOne |  (networkIdentificationTypeValue.getCode() << 4);
-		octOne = octOne |   networkIdentificationPlanValue.getCode();
+        int octOne = 0;
+        octOne = octOne | (networkIdentificationTypeValue.getCode() << 4);
+        octOne = octOne | networkIdentificationPlanValue.getCode();
 
-		stm.write(octOne);
+        stm.write(octOne);
 
-		try {
-			TbcdString.encodeString(stm, carrierCode);
-		} catch (MAPException e) {
-			throw new MAPException(e);
-		}
+        try {
+            TbcdString.encodeString(stm, carrierCode);
+        } catch (MAPException e) {
+            throw new MAPException(e);
+        }
 
-		this.data = stm.toByteArray();
+        this.data = stm.toByteArray();
 
-		if(carrierCode.length()==3){
-			this.data[2]  = (byte)(this.data[2] & THREE_OCTET_CARRIER_CODE_MASK) ;
-		}
-	}
+        if (carrierCode.length() == 3) {
+            this.data[2] = (byte) (this.data[2] & THREE_OCTET_CARRIER_CODE_MASK);
+        }
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName);
-		sb.append(" [");
-		if (this.getNetworkIdentificationPlanValue() != null) {
-			sb.append("NetworkIdentificationPlanValue=");
-			sb.append(this.getNetworkIdentificationPlanValue());
-		}
-		if (this.getNetworkIdentificationTypeValue() != null) {
-			sb.append(", NetworkIdentificationTypeValue=");
-			sb.append(this.getNetworkIdentificationTypeValue());
-		}
-		if (this.getCarrierCode() != null) {
-			sb.append(", CarrierCode=");
-			sb.append(this.getCarrierCode());
-		}
-		sb.append("]");
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+        if (this.getNetworkIdentificationPlanValue() != null) {
+            sb.append("NetworkIdentificationPlanValue=");
+            sb.append(this.getNetworkIdentificationPlanValue());
+        }
+        if (this.getNetworkIdentificationTypeValue() != null) {
+            sb.append(", NetworkIdentificationTypeValue=");
+            sb.append(this.getNetworkIdentificationTypeValue());
+        }
+        if (this.getCarrierCode() != null) {
+            sb.append(", CarrierCode=");
+            sb.append(this.getCarrierCode());
+        }
+        sb.append("]");
 
-		return sb.toString();
-	}
-
+        return sb.toString();
+    }
 
 }

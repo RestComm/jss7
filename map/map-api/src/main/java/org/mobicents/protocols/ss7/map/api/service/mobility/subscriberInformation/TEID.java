@@ -23,19 +23,17 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
 /**
- * 
-
-TEID ::= OCTET STRING (SIZE (4))
---	This type carries the value part of the Tunnel Endpoint Identifier which is used to 
---	distinguish between different tunnels between the same pair of entities which communicate 
---	using the GPRS Tunnelling Protocol The encoding is defined in 3GPP TS 29.060.
-
- * 
+ *
+ TEID ::= OCTET STRING (SIZE (4)) -- This type carries the value part of the Tunnel Endpoint Identifier which is used to --
+ * distinguish between different tunnels between the same pair of entities which communicate -- using the GPRS Tunnelling
+ * Protocol The encoding is defined in 3GPP TS 29.060.
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface TEID {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

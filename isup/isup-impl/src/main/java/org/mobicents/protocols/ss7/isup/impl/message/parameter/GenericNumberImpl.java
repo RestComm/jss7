@@ -23,10 +23,10 @@
 /**
  * Start time:17:36:23 2009-03-29<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
  *         </a>
- * 
+ *
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
@@ -39,160 +39,157 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 /**
  * Start time:17:36:23 2009-03-29<br>
  * Project: mobicents-isup-stack<br>
- * 
+ *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  * @author Oleg Kulikoff
  */
 public class GenericNumberImpl extends AbstractNAINumber implements GenericNumber {
 
-	private static final int _TURN_ON = 1;
-	private static final int _TURN_OFF = 0;
+    private static final int _TURN_ON = 1;
+    private static final int _TURN_OFF = 0;
 
-	protected int numberQualifierIndicator;
-	protected int numberingPlanIndicator;
+    protected int numberQualifierIndicator;
+    protected int numberingPlanIndicator;
 
-	protected int addressRepresentationRestrictedIndicator;
-	protected boolean numberIncomplete;
-	protected int screeningIndicator;
+    protected int addressRepresentationRestrictedIndicator;
+    protected boolean numberIncomplete;
+    protected int screeningIndicator;
 
-	public GenericNumberImpl(int natureOfAddresIndicator, String address, int numberQualifierIndicator, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator,
-			boolean numberIncomplete, int screeningIndicator) {
-		super(natureOfAddresIndicator, address);
-		this.numberQualifierIndicator = numberQualifierIndicator;
-		this.numberingPlanIndicator = numberingPlanIndicator;
-		this.addressRepresentationRestrictedIndicator = addressRepresentationREstrictedIndicator;
-		this.numberIncomplete = numberIncomplete;
-		this.screeningIndicator = screeningIndicator;
-	}
+    public GenericNumberImpl(int natureOfAddresIndicator, String address, int numberQualifierIndicator,
+            int numberingPlanIndicator, int addressRepresentationREstrictedIndicator, boolean numberIncomplete,
+            int screeningIndicator) {
+        super(natureOfAddresIndicator, address);
+        this.numberQualifierIndicator = numberQualifierIndicator;
+        this.numberingPlanIndicator = numberingPlanIndicator;
+        this.addressRepresentationRestrictedIndicator = addressRepresentationREstrictedIndicator;
+        this.numberIncomplete = numberIncomplete;
+        this.screeningIndicator = screeningIndicator;
+    }
 
-	public GenericNumberImpl(byte[] representation) throws ParameterException {
-		super(representation);
+    public GenericNumberImpl(byte[] representation) throws ParameterException {
+        super(representation);
 
-	}
+    }
 
-	public GenericNumberImpl(ByteArrayInputStream bis) throws ParameterException {
-		super(bis);
-		
-	}
+    public GenericNumberImpl(ByteArrayInputStream bis) throws ParameterException {
+        super(bis);
 
-	public GenericNumberImpl() {
-		super();
-		
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io.
-	 * ByteArrayInputStream)
-	 */
-	
-	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
-		int b = bis.read() & 0xff;
+    public GenericNumberImpl() {
+        super();
 
-		this.numberIncomplete = ((b & 0x80) >> 7) == _TURN_ON;
-		this.numberingPlanIndicator = (b & 0x70) >> 4;
-		this.addressRepresentationRestrictedIndicator = (b & 0x0c) >> 2;
-		this.screeningIndicator = (b & 0x03);
-		return 1;
-	}
+    }
 
-	/**
-	 * makes checks on APRI - see NOTE to APRI in Q.763, p 23
-	 */
-	protected void doAddressPresentationRestricted() {
+    /*
+     * (non-Javadoc)
+     *
+     * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io. ByteArrayInputStream)
+     */
 
-		if (this.addressRepresentationRestrictedIndicator != _APRI_NOT_AVAILABLE)
-			return;
-		// NOTE 1 If the parameter is included and the address presentation
-		// restricted indicator indicates
-		// address not available, octets 3 to n( this are digits.) are omitted,
-		// the subfields in items a - odd/evem, b -nai , c - ni and d -npi, are
-		// coded with
-		// 0's, and the subfield f - filler, is coded with 11.
-		this.oddFlag = 0;
-		this.natureOfAddresIndicator = 0;
-		this.numberingPlanIndicator = 0;
-		this.numberIncomplete = _NI_COMPLETE;
-		// 11
-		this.screeningIndicator = 3;
-		this.setAddress("");
-	}
+    public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
+        int b = bis.read() & 0xff;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io.
-	 * ByteArrayOutputStream)
-	 */
-	
-	public int encodeBody(ByteArrayOutputStream bos) {
+        this.numberIncomplete = ((b & 0x80) >> 7) == _TURN_ON;
+        this.numberingPlanIndicator = (b & 0x70) >> 4;
+        this.addressRepresentationRestrictedIndicator = (b & 0x0c) >> 2;
+        this.screeningIndicator = (b & 0x03);
+        return 1;
+    }
 
-		int c = this.screeningIndicator;
-		c |= (this.addressRepresentationRestrictedIndicator << 2);
-		c |= (this.numberingPlanIndicator << 4);
-		c |= ((this.numberIncomplete ? _TURN_ON : _TURN_OFF) << 7);
+    /**
+     * makes checks on APRI - see NOTE to APRI in Q.763, p 23
+     */
+    protected void doAddressPresentationRestricted() {
 
-		bos.write(c);
+        if (this.addressRepresentationRestrictedIndicator != _APRI_NOT_AVAILABLE)
+            return;
+        // NOTE 1 If the parameter is included and the address presentation
+        // restricted indicator indicates
+        // address not available, octets 3 to n( this are digits.) are omitted,
+        // the subfields in items a - odd/evem, b -nai , c - ni and d -npi, are
+        // coded with
+        // 0's, and the subfield f - filler, is coded with 11.
+        this.oddFlag = 0;
+        this.natureOfAddresIndicator = 0;
+        this.numberingPlanIndicator = 0;
+        this.numberIncomplete = _NI_COMPLETE;
+        // 11
+        this.screeningIndicator = 3;
+        this.setAddress("");
+    }
 
-		return 1;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io. ByteArrayOutputStream)
+     */
 
-	
-	public int decodeHeader(ByteArrayInputStream bis) throws ParameterException {
-		this.numberQualifierIndicator = bis.read() & 0xff;
-		return super.decodeHeader(bis) + 1;
-	}
+    public int encodeBody(ByteArrayOutputStream bos) {
 
-	
-	public int encodeHeader(ByteArrayOutputStream bos) {
-		doAddressPresentationRestricted();
-		bos.write(this.numberQualifierIndicator);
-		return super.encodeHeader(bos) + 1;
-	}
+        int c = this.screeningIndicator;
+        c |= (this.addressRepresentationRestrictedIndicator << 2);
+        c |= (this.numberingPlanIndicator << 4);
+        c |= ((this.numberIncomplete ? _TURN_ON : _TURN_OFF) << 7);
 
-	public int getNumberQualifierIndicator() {
-		return numberQualifierIndicator;
-	}
+        bos.write(c);
 
-	public void setNumberQualifierIndicator(int numberQualifierIndicator) {
-		this.numberQualifierIndicator = numberQualifierIndicator;
-	}
+        return 1;
+    }
 
-	public int getNumberingPlanIndicator() {
-		return numberingPlanIndicator;
-	}
+    public int decodeHeader(ByteArrayInputStream bis) throws ParameterException {
+        this.numberQualifierIndicator = bis.read() & 0xff;
+        return super.decodeHeader(bis) + 1;
+    }
 
-	public void setNumberingPlanIndicator(int numberingPlanIndicator) {
-		this.numberingPlanIndicator = numberingPlanIndicator & 0x07;
-	}
+    public int encodeHeader(ByteArrayOutputStream bos) {
+        doAddressPresentationRestricted();
+        bos.write(this.numberQualifierIndicator);
+        return super.encodeHeader(bos) + 1;
+    }
 
-	public int getAddressRepresentationRestrictedIndicator() {
-		return addressRepresentationRestrictedIndicator;
-	}
+    public int getNumberQualifierIndicator() {
+        return numberQualifierIndicator;
+    }
 
-	public void setAddressRepresentationRestrictedIndicator(int addressRepresentationREstrictedIndicator) {
-		this.addressRepresentationRestrictedIndicator = addressRepresentationREstrictedIndicator & 0x03;
-	}
+    public void setNumberQualifierIndicator(int numberQualifierIndicator) {
+        this.numberQualifierIndicator = numberQualifierIndicator;
+    }
 
-	public boolean isNumberIncomplete() {
-		return numberIncomplete;
-	}
+    public int getNumberingPlanIndicator() {
+        return numberingPlanIndicator;
+    }
 
-	public void setNumberIncompleter(boolean numberIncomplete) {
-		this.numberIncomplete = numberIncomplete;
-	}
+    public void setNumberingPlanIndicator(int numberingPlanIndicator) {
+        this.numberingPlanIndicator = numberingPlanIndicator & 0x07;
+    }
 
-	public int getScreeningIndicator() {
-		return screeningIndicator;
-	}
+    public int getAddressRepresentationRestrictedIndicator() {
+        return addressRepresentationRestrictedIndicator;
+    }
 
-	public void setScreeningIndicator(int screeningIndicator) {
-		this.screeningIndicator = screeningIndicator & 0x03;
-	}
+    public void setAddressRepresentationRestrictedIndicator(int addressRepresentationREstrictedIndicator) {
+        this.addressRepresentationRestrictedIndicator = addressRepresentationREstrictedIndicator & 0x03;
+    }
 
-	public int getCode() {
+    public boolean isNumberIncomplete() {
+        return numberIncomplete;
+    }
 
-		return _PARAMETER_CODE;
-	}
+    public void setNumberIncompleter(boolean numberIncomplete) {
+        this.numberIncomplete = numberIncomplete;
+    }
+
+    public int getScreeningIndicator() {
+        return screeningIndicator;
+    }
+
+    public void setScreeningIndicator(int screeningIndicator) {
+        this.screeningIndicator = screeningIndicator & 0x03;
+    }
+
+    public int getCode() {
+
+        return _PARAMETER_CODE;
+    }
 }

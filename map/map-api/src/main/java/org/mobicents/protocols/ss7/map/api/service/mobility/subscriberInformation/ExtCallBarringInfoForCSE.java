@@ -23,43 +23,38 @@
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
 import java.util.ArrayList;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtCallBarringFeature;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.Password;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 
-/**	
- * 
-
-Ext-CallBarringInfoFor-CSE ::= SEQUENCE {
-	ss-Code		[0]	SS-Code,
-	callBarringFeatureList	[1]	Ext-CallBarFeatureList,
-	password		[2]	Password	OPTIONAL,
-	wrongPasswordAttemptsCounter	[3]	WrongPasswordAttemptsCounter	OPTIONAL,
-	notificationToCSE	[4]	NULL		OPTIONAL,
-	extensionContainer	[5]	ExtensionContainer 	OPTIONAL,
-	...}
-
-Ext-CallBarFeatureList ::= SEQUENCE SIZE (1..32) OF Ext-CallBarringFeature
-
-WrongPasswordAttemptsCounter ::= INTEGER (0..4)
-
- * 
+/**
+ *
+ Ext-CallBarringInfoFor-CSE ::= SEQUENCE { ss-Code [0] SS-Code, callBarringFeatureList [1] Ext-CallBarFeatureList, password
+ * [2] Password OPTIONAL, wrongPasswordAttemptsCounter [3] WrongPasswordAttemptsCounter OPTIONAL, notificationToCSE [4] NULL
+ * OPTIONAL, extensionContainer [5] ExtensionContainer OPTIONAL, ...}
+ *
+ * Ext-CallBarFeatureList ::= SEQUENCE SIZE (1..32) OF Ext-CallBarringFeature
+ *
+ * WrongPasswordAttemptsCounter ::= INTEGER (0..4)
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface ExtCallBarringInfoForCSE {
 
-	public SSCode getSsCode();
+    SSCode getSsCode();
 
-	public ArrayList<ExtCallBarringFeature> getCallBarringFeatureList();
+    ArrayList<ExtCallBarringFeature> getCallBarringFeatureList();
 
-	public Password getPassword();
+    Password getPassword();
 
-	public Integer getWrongPasswordAttemptsCounter();
+    Integer getWrongPasswordAttemptsCounter();
 
-	public boolean getNotificationToCSE();
+    boolean getNotificationToCSE();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

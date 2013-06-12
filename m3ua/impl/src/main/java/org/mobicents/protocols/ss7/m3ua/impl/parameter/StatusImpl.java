@@ -26,9 +26,9 @@ import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 
 /**
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class StatusImpl extends ParameterImpl implements Status {
 

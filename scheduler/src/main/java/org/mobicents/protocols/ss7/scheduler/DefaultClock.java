@@ -23,11 +23,10 @@
 package org.mobicents.protocols.ss7.scheduler;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Clock implementation wich uses the default OS clock.
- * 
+ *
  * @author kulikov
  */
 public class DefaultClock implements Clock {

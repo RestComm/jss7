@@ -25,28 +25,23 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-AMBR ::= SEQUENCE {
-	max-RequestedBandwidth-UL	[0] Bandwidth,
-	max-RequestedBandwidth-DL	[1] Bandwidth,
-	extensionContainer	[2] ExtensionContainer	OPTIONAL,
-	... }
-
-Bandwidth ::= INTEGER 
-	-- bits per second
-
- * 
- * 
+ *
+ AMBR ::= SEQUENCE { max-RequestedBandwidth-UL [0] Bandwidth, max-RequestedBandwidth-DL [1] Bandwidth, extensionContainer [2]
+ * ExtensionContainer OPTIONAL, ... }
+ *
+ * Bandwidth ::= INTEGER -- bits per second
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface AMBR {
 
-	public int getMaxRequestedBandwidthUL();
+    int getMaxRequestedBandwidthUL();
 
-	public int getMaxRequestedBandwidthDL();
+    int getMaxRequestedBandwidthDL();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

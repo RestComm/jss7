@@ -24,17 +24,18 @@ package org.mobicents.protocols.ss7.sccp.parameter;
 
 /**
  * Importance parameter
- * 
+ *
  * @author baranowb
  * @author kulikov
  */
-public interface Importance extends Parameter{
-	
-	  public final static int PARAMETER_CODE = 0x12;
+public interface Importance extends Parameter {
+
+    int PARAMETER_CODE = 0x12;
+
     /**
      * Gets the value of this parameter.
-     * 
+     *
      * @return parameter value.
      */
-    public int getValue();
+    int getValue();
 }

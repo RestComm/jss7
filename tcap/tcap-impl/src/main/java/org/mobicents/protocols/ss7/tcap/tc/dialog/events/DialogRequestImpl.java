@@ -21,7 +21,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.mobicents.protocols.ss7.tcap.tc.dialog.events;
 
@@ -35,36 +35,33 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.EventType;
  */
 public abstract class DialogRequestImpl implements DialogRequest {
 
-	
-	private Dialog dialog;
-	private EventType type;
+    private Dialog dialog;
+    private EventType type;
 
-	
-	protected DialogRequestImpl(EventType type) {
-		super();
-		this.type = type;
-	}
-	
-	/**
-	 * @return the dialog
-	 */
-	public Dialog getDialog() {
-		return dialog;
-	}
+    protected DialogRequestImpl(EventType type) {
+        super();
+        this.type = type;
+    }
 
-	/**
-	 * @param dialog the dialog to set
-	 */
-	public void setDialog(Dialog dialog) {
-		this.dialog = dialog;
-	}
+    /**
+     * @return the dialog
+     */
+    public Dialog getDialog() {
+        return dialog;
+    }
 
-	/**
-	 * @return the type
-	 */
-	public EventType getType() {
-		return type;
-	}
+    /**
+     * @param dialog the dialog to set
+     */
+    public void setDialog(Dialog dialog) {
+        this.dialog = dialog;
+    }
 
+    /**
+     * @return the type
+     */
+    public EventType getType() {
+        return type;
+    }
 
 }

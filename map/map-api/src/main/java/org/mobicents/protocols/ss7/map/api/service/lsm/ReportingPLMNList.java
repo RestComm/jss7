@@ -25,23 +25,19 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
 import java.util.ArrayList;
 
 /**
- * 
-
-ReportingPLMNList::= SEQUENCE {
-	plmn-ListPrioritized			[0] NULL					OPTIONAL,
-	plmn-List 						[1] PLMNList,
-	...}
-
-PLMNList::= SEQUENCE SIZE (1..20) OF ReportingPLMN
-
- * 
+ *
+ ReportingPLMNList::= SEQUENCE { plmn-ListPrioritized [0] NULL OPTIONAL, plmn-List [1] PLMNList, ...}
+ *
+ * PLMNList::= SEQUENCE SIZE (1..20) OF ReportingPLMN
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ReportingPLMNList {
 
-	public boolean getPlmnListPrioritized();
+    boolean getPlmnListPrioritized();
 
-	public ArrayList<ReportingPLMN> getPlmnList();
+    ArrayList<ReportingPLMN> getPlmnList();
 
 }

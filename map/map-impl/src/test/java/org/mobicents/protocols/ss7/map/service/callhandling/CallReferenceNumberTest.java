@@ -22,54 +22,54 @@
 
 package org.mobicents.protocols.ss7.map.service.callhandling;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class CallReferenceNumberTest {
 
-	public byte[] getData() {
-		return new byte[] { 4, 5, 19, -6, 61, 61, -22 };
-	};
+    public byte[] getData() {
+        return new byte[] { 4, 5, 19, -6, 61, 61, -22 };
+    };
 
-	public byte[] getDataVal() {
-		return new byte[] { 19, -6, 61, 61, -22 };
-	};
-	
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testDecode() throws Exception {
+    public byte[] getDataVal() {
+        return new byte[] { 19, -6, 61, 61, -22 };
+    };
 
-		byte[] data = this.getData();
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testDecode() throws Exception {
 
-		AsnInputStream asn = new AsnInputStream(data);
-		int tag = asn.readTag();
+        byte[] data = this.getData();
 
-		CallReferenceNumberImpl prim = new CallReferenceNumberImpl();
-		prim.decodeAll(asn);
+        AsnInputStream asn = new AsnInputStream(data);
+        int tag = asn.readTag();
 
-		assertNotNull(prim.getData());
-		assertTrue(Arrays.equals(getDataVal(), prim.getData()));		
-		
-	}
-	
-	@Test(groups = { "functional.decode", "primitives" })
-	public void testEncode() throws Exception {
+        CallReferenceNumberImpl prim = new CallReferenceNumberImpl();
+        prim.decodeAll(asn);
 
-		CallReferenceNumberImpl prim = new CallReferenceNumberImpl(getDataVal());
+        assertNotNull(prim.getData());
+        assertTrue(Arrays.equals(getDataVal(), prim.getData()));
 
-		AsnOutputStream asn = new AsnOutputStream();
-		prim.encodeAll(asn);
+    }
 
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
-	}
+    @Test(groups = { "functional.decode", "primitives" })
+    public void testEncode() throws Exception {
+
+        CallReferenceNumberImpl prim = new CallReferenceNumberImpl(getDataVal());
+
+        AsnOutputStream asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+    }
 }
-

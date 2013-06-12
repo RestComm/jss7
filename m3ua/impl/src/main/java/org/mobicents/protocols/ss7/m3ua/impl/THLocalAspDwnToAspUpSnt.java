@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -27,24 +27,24 @@ import org.mobicents.protocols.ss7.m3ua.impl.fsm.FSMState;
 import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 
 /**
- * 
+ *
  * @author amit bhayani
  *
  */
 public class THLocalAspDwnToAspUpSnt implements TransitionHandler {
 
-	private AspImpl aspImpl;
-	private FSM fsm;
-	private static final Logger logger = Logger.getLogger(THLocalAspDwnToAspUpSnt.class);
+    private AspImpl aspImpl;
+    private FSM fsm;
+    private static final Logger logger = Logger.getLogger(THLocalAspDwnToAspUpSnt.class);
 
-	public THLocalAspDwnToAspUpSnt(AspImpl aspImpl, FSM fsm) {
-		this.aspImpl = aspImpl;
-		this.fsm = fsm;
-	}
+    public THLocalAspDwnToAspUpSnt(AspImpl aspImpl, FSM fsm) {
+        this.aspImpl = aspImpl;
+        this.fsm = fsm;
+    }
 
-	public boolean process(FSMState state) {
-		this.aspImpl.getAspFactory().sendAspUp();
-		return true;
-	}
+    public boolean process(FSMState state) {
+        this.aspImpl.getAspFactory().sendAspUp();
+        return true;
+    }
 
 }

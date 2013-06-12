@@ -24,47 +24,45 @@ package org.mobicents.protocols.ss7.map.api.smstpdu;
 
 /**
  * SMS-DELIVER-REPORT pdu
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SmsDeliverReportTpdu extends SmsTpdu {
 
-	/**
-	 * @return TP-UDHI field
-	 */
-	public boolean getUserDataHeaderIndicator();
-	
-	/**
-	 * @return TP-FCS field
-	 * Returns null if no failure occured and the result is ACK
-	 */
-	public FailureCause getFailureCause();
-	
-	/**
-	 * @return TP-PI field
-	 */
-	public ParameterIndicator getParameterIndicator();
+    /**
+     * @return TP-UDHI field
+     */
+    boolean getUserDataHeaderIndicator();
 
-	/**
-	 * @return TP-PID field
-	 */
-	public ProtocolIdentifier getProtocolIdentifier();
-	
-	/**
-	 * @return TP-DCS field
-	 */
-	public DataCodingScheme getDataCodingScheme();
-	
-	/**
-	 * @return TP-UDL field
-	 */
-	public int getUserDataLength();
-	
-	/**
-	 * @return TP-UD field
-	 */
-	public UserData getUserData();
+    /**
+     * @return TP-FCS field Returns null if no failure occured and the result is ACK
+     */
+    FailureCause getFailureCause();
+
+    /**
+     * @return TP-PI field
+     */
+    ParameterIndicator getParameterIndicator();
+
+    /**
+     * @return TP-PID field
+     */
+    ProtocolIdentifier getProtocolIdentifier();
+
+    /**
+     * @return TP-DCS field
+     */
+    DataCodingScheme getDataCodingScheme();
+
+    /**
+     * @return TP-UDL field
+     */
+    int getUserDataLength();
+
+    /**
+     * @return TP-UD field
+     */
+    UserData getUserData();
 
 }
-

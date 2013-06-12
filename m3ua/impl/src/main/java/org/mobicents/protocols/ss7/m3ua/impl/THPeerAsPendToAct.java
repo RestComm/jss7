@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -29,38 +29,37 @@ import org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler;
 
 /**
  * @author amit bhayani
- * 
+ *
  */
 public class THPeerAsPendToAct implements TransitionHandler {
 
-	private static final Logger logger = Logger.getLogger(THPeerAsPendToAct.class);
+    private static final Logger logger = Logger.getLogger(THPeerAsPendToAct.class);
 
-	private AsImpl asImpl = null;
-	private FSM fsm;
+    private AsImpl asImpl = null;
+    private FSM fsm;
 
-	/**
-	 * 
-	 */
-	public THPeerAsPendToAct(AsImpl asImpl, FSM fsm) {
-		this.asImpl = asImpl;
-		this.fsm = fsm;
-	}
+    /**
+     *
+     */
+    public THPeerAsPendToAct(AsImpl asImpl, FSM fsm) {
+        this.asImpl = asImpl;
+        this.fsm = fsm;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler#process(org
-	 * .mobicents.protocols.ss7.m3ua.impl.fsm.State)
-	 */
-	@Override
-	public boolean process(FSMState state) {
-		
-		// Send the PayloadData (if any) from pending queue to other side
-		AspImpl causeAsp = (AspImpl) this.fsm.getAttribute(AsImpl.ATTRIBUTE_ASP);
-		this.asImpl.sendPendingPayloadData(causeAsp);
-		
-		return true;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.m3ua.impl.fsm.TransitionHandler#process(org
+     * .mobicents.protocols.ss7.m3ua.impl.fsm.State)
+     */
+    @Override
+    public boolean process(FSMState state) {
+
+        // Send the PayloadData (if any) from pending queue to other side
+        AspImpl causeAsp = (AspImpl) this.fsm.getAttribute(AsImpl.ATTRIBUTE_ASP);
+        this.asImpl.sendPendingPayloadData(causeAsp);
+
+        return true;
+    }
 
 }

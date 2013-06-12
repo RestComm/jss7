@@ -23,18 +23,16 @@
 package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
 
 /**
-*
-
-TPShortMessageSpecificInfo ::= OCTET STRING (SIZE (1))
--- contains the 1st octect of the applicable TPDU or the SMS-COMMAND TPDU as specified in
--- 3GPP TS 23.040 [6].
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ TPShortMessageSpecificInfo ::= OCTET STRING (SIZE (1)) -- contains the 1st octect of the applicable TPDU or the SMS-COMMAND
+ * TPDU as specified in -- 3GPP TS 23.040 [6].
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface TPShortMessageSpecificInfo {
 
-	public int getData();
+    int getData();
 
 }

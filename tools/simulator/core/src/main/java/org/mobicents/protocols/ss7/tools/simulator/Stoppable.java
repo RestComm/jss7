@@ -23,16 +23,16 @@
 package org.mobicents.protocols.ss7.tools.simulator;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface Stoppable {
 
-	public void stop();
+    void stop();
 
-	public void execute();
+    void execute();
 
-	public String getState();
+    String getState();
 
 }

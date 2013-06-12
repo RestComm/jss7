@@ -33,13 +33,14 @@ import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
  */
 public abstract class LsmMessageImpl extends MessageImpl implements LsmMessage, MAPAsnPrimitive {
 
-
-	/* (non-Javadoc)
-	 * @see org.mobicents.protocols.ss7.map.api.service.lsm.LsmMessage#getMAPDialog()
-	 */
-	@Override
-	public MAPDialogLsm getMAPDialog() {
-		return (MAPDialogLsm)super.getMAPDialog();
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm.LsmMessage#getMAPDialog()
+     */
+    @Override
+    public MAPDialogLsm getMAPDialog() {
+        return (MAPDialogLsm) super.getMAPDialog();
+    }
 
 }

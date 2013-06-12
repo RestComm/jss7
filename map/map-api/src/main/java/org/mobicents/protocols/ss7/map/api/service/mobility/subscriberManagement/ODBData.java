@@ -25,25 +25,21 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- * 
-
-ODB-Data ::= SEQUENCE {
-	odb-GeneralData	ODB-GeneralData,
-	odb-HPLMN-Data	ODB-HPLMN-Data	OPTIONAL,
-	extensionContainer	ExtensionContainer	OPTIONAL,
-	...}
-
- * 
- * 
+ *
+ ODB-Data ::= SEQUENCE { odb-GeneralData ODB-GeneralData, odb-HPLMN-Data ODB-HPLMN-Data OPTIONAL, extensionContainer
+ * ExtensionContainer OPTIONAL, ...}
+ *
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ODBData {
 
-	public ODBGeneralData getODBGeneralData();
+    ODBGeneralData getODBGeneralData();
 
-	public ODBHPLMNData getOdbHplmnData();
+    ODBHPLMNData getOdbHplmnData();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
 }

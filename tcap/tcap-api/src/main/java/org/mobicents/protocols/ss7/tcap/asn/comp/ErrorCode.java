@@ -30,25 +30,24 @@ import org.mobicents.protocols.ss7.tcap.asn.Encodable;
  * @author sergey netyutnev
  *
  */
-public interface ErrorCode extends Encodable{
+public interface ErrorCode extends Encodable {
 
-	//it contains valid params for error.... 
+    // it contains valid params for error....
 
-	public static final int _TAG_LOCAL = Tag.INTEGER;
-	public static final int _TAG_GLOBAL = Tag.OBJECT_IDENTIFIER;
-	public static final int _TAG_CLASS = Tag.CLASS_UNIVERSAL;
-	public static final boolean _TAG_PRIMITIVE = true;
+    int _TAG_LOCAL = Tag.INTEGER;
+    int _TAG_GLOBAL = Tag.OBJECT_IDENTIFIER;
+    int _TAG_CLASS = Tag.CLASS_UNIVERSAL;
+    boolean _TAG_PRIMITIVE = true;
 
-	
-//	public void setErrorType(ErrorCodeType t);
-	public ErrorCodeType getErrorType();
+    // void setErrorType(ErrorCodeType t);
+    ErrorCodeType getErrorType();
 
-	
-	public void setLocalErrorCode(Long localErrorCode);
-	public void setGlobalErrorCode(long[] globalErrorCode);
+    void setLocalErrorCode(Long localErrorCode);
 
+    void setGlobalErrorCode(long[] globalErrorCode);
 
-	public Long getLocalErrorCode();
-	public long[] getGlobalErrorCode();
+    Long getLocalErrorCode();
+
+    long[] getGlobalErrorCode();
 
 }

@@ -33,80 +33,59 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
 
 /**
- * 
-establishTemporaryConnection {PARAMETERS-BOUND : bound} OPERATION ::= { 
- ARGUMENT  EstablishTemporaryConnectionArg {bound} 
- RETURN RESULT FALSE 
- ERRORS   {eTCFailed | 
-     missingParameter | 
-     systemFailure | 
-     taskRefused | 
-     unexpectedComponentSequence | 
-     unexpectedDataValue | 
-     unexpectedParameter | 
-     unknownCSID} 
- CODE   opcode-establishTemporaryConnection} 
--- Direction: gsmSCF -> gsmSSF, Timer: T   
-etc
--- This operation is used to create a connection to a resource for a limited period 
--- of time (e.g. to play an announcement, to collect user information); it implies 
--- the use of the assist procedure. Refer to clause 11 for a description of the 
--- procedures associated with this operation. 
- 
-EstablishTemporaryConnectionArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { 
- assistingSSPIPRoutingAddress  [0] AssistingSSPIPRoutingAddress {bound}, 
- correlationID      [1] CorrelationID {bound}     OPTIONAL, 
- scfID        [3] ScfID {bound}       OPTIONAL, 
- extensions       [4] Extensions {bound}      OPTIONAL, 
- carrier        [5] Carrier {bound}       OPTIONAL, 
- serviceInteractionIndicatorsTwo  [6] ServiceInteractionIndicatorsTwo   OPTIONAL, 
- callSegmentID      [7] CallSegmentID {bound}     OPTIONAL, 
- naOliInfo       [50] NAOliInfo        OPTIONAL, 
- chargeNumber      [51] ChargeNumber {bound}     OPTIONAL, 
- ..., 
- originalCalledPartyID    [52] OriginalCalledPartyID {bound}   OPTIONAL, 
- callingPartyNumber     [53] CallingPartyNumber {bound}    OPTIONAL 
- } 
-
- CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..127)
- 
- * 
+ *
+ establishTemporaryConnection {PARAMETERS-BOUND : bound} OPERATION ::= { ARGUMENT EstablishTemporaryConnectionArg {bound}
+ * RETURN RESULT FALSE ERRORS {eTCFailed | missingParameter | systemFailure | taskRefused | unexpectedComponentSequence |
+ * unexpectedDataValue | unexpectedParameter | unknownCSID} CODE opcode-establishTemporaryConnection} -- Direction: gsmSCF ->
+ * gsmSSF, Timer: T etc -- This operation is used to create a connection to a resource for a limited period -- of time (e.g. to
+ * play an announcement, to collect user information); it implies -- the use of the assist procedure. Refer to clause 11 for a
+ * description of the -- procedures associated with this operation.
+ *
+ * EstablishTemporaryConnectionArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { assistingSSPIPRoutingAddress [0]
+ * AssistingSSPIPRoutingAddress {bound}, correlationID [1] CorrelationID {bound} OPTIONAL, scfID [3] ScfID {bound} OPTIONAL,
+ * extensions [4] Extensions {bound} OPTIONAL, carrier [5] Carrier {bound} OPTIONAL, serviceInteractionIndicatorsTwo [6]
+ * ServiceInteractionIndicatorsTwo OPTIONAL, callSegmentID [7] CallSegmentID {bound} OPTIONAL, naOliInfo [50] NAOliInfo
+ * OPTIONAL, chargeNumber [51] ChargeNumber {bound} OPTIONAL, ..., originalCalledPartyID [52] OriginalCalledPartyID {bound}
+ * OPTIONAL, callingPartyNumber [53] CallingPartyNumber {bound} OPTIONAL }
+ *
+ * CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..127)
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface EstablishTemporaryConnectionRequest extends CircuitSwitchedCallMessage {
 
-	/**
-	 * Use Digits.getGenericNumber() for AssistingSSPIPRoutingAddress
-	 * 
-	 * @return
-	 */
-	public Digits getAssistingSSPIPRoutingAddress();
+    /**
+     * Use Digits.getGenericNumber() for AssistingSSPIPRoutingAddress
+     *
+     * @return
+     */
+    Digits getAssistingSSPIPRoutingAddress();
 
-	/**
-	 * Use Digits.getGenericDigits() for CorrelationID
-	 * 
-	 * @return
-	 */
-	public Digits getCorrelationID();
+    /**
+     * Use Digits.getGenericDigits() for CorrelationID
+     *
+     * @return
+     */
+    Digits getCorrelationID();
 
-	public ScfID getScfID();
+    ScfID getScfID();
 
-	public CAPExtensions getExtensions();
+    CAPExtensions getExtensions();
 
-	public Carrier getCarrier();
+    Carrier getCarrier();
 
-	public ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo();
+    ServiceInteractionIndicatorsTwo getServiceInteractionIndicatorsTwo();
 
-	public Integer getCallSegmentID();
+    Integer getCallSegmentID();
 
-	public NAOliInfo getNAOliInfo();
+    NAOliInfo getNAOliInfo();
 
-	public LocationNumberCap getChargeNumber();
+    LocationNumberCap getChargeNumber();
 
-	public OriginalCalledNumberCap getOriginalCalledPartyID();
+    OriginalCalledNumberCap getOriginalCalledPartyID();
 
-	public CallingPartyNumberCap getCallingPartyNumber();
+    CallingPartyNumberCap getCallingPartyNumber();
 
 }
-

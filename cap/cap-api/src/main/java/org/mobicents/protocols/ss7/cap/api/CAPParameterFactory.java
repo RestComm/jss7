@@ -139,170 +139,275 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnErrorProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPParameterFactory {
-	
-	public CAPGprsReferenceNumber createCAPGprsReferenceNumber(Integer destinationReference, Integer originationReference);
-	
-	public CauseCap createCauseCap(byte[] data);
-	public CauseCap createCauseCap(CauseIndicators causeIndicators) throws CAPException;
-	
-	public DpSpecificCriteria createDpSpecificCriteria(Integer applicationTimer);
-	public DpSpecificCriteria createDpSpecificCriteria(MidCallControlInfo midCallControlInfo);
-	public DpSpecificCriteria createDpSpecificCriteria(DpSpecificCriteriaAlt dpSpecificCriteriaAlt);
 
-	public BCSMEvent createBCSMEvent(EventTypeBCSM eventTypeBCSM, MonitorMode monitorMode, LegID legID, DpSpecificCriteria dpSpecificCriteria,
-			boolean automaticRearm);
-	
-	public CalledPartyBCDNumber createCalledPartyBCDNumber(byte[] data);
-	public CalledPartyBCDNumber createCalledPartyBCDNumber(AddressNature addressNature, NumberingPlan numberingPlan, String address, boolean isExtension) throws CAPException;
+    CAPGprsReferenceNumber createCAPGprsReferenceNumber(Integer destinationReference, Integer originationReference);
 
-	public ExtensionField createExtensionField(Integer localCode, CriticalityType criticalityType, byte[] data);
-	public ExtensionField createExtensionField(long[] globalCode, CriticalityType criticalityType, byte[] data);
-	public CAPExtensions createCAPExtensions(ArrayList<ExtensionField> fieldsList);
-	
-	public CAMELAChBillingChargingCharacteristics createCAMELAChBillingChargingCharacteristics(byte[] data);
-	public CAMELAChBillingChargingCharacteristics createCAMELAChBillingChargingCharacteristics(long maxCallPeriodDuration, boolean releaseIfdurationExceeded,
-			Long tariffSwitchInterval, AudibleIndicator audibleIndicator, CAPExtensions extensions, boolean isCAPVersion3orLater);
-	
-	public DateAndTime createDateAndTime(int year, int month, int day, int hour, int minute, int second);
-	public TimeAndTimezone createTimeAndTimezone(int year, int month, int day, int hour, int minute, int second, int timeZone);
+    CauseCap createCauseCap(byte[] data);
 
-	public SendingSideID createSendingSideID(LegType sendingSideID);
-	public ReceivingSideID createReceivingSideID(LegType receivingSideID);
+    CauseCap createCauseCap(CauseIndicators causeIndicators) throws CAPException;
 
-	public BearerCap createBearerCap(byte[] data);
-	public BearerCap createBearerCap(UserServiceInformation userServiceInformation) throws CAPException;
-	public BearerCapability createBearerCapability(BearerCap bearerCap);
+    DpSpecificCriteria createDpSpecificCriteria(Integer applicationTimer);
 
-	public Digits createDigits(byte[] data);
-	public Digits createDigits(GenericNumber genericNumber) throws CAPException;
-	public Digits createDigits(GenericDigits genericDigits) throws CAPException;
-	public CalledPartyNumberCap createCalledPartyNumberCap(byte[] data);
-	public CalledPartyNumberCap createCalledPartyNumberCap(CalledPartyNumber calledPartyNumber) throws CAPException;
-	public CallingPartyNumberCap createCallingPartyNumberCap(byte[] data);
-	public CallingPartyNumberCap createCallingPartyNumberCap(CallingPartyNumber callingPartyNumber) throws CAPException;
-	public GenericNumberCap createGenericNumberCap(byte[] data);
-	public GenericNumberCap createGenericNumberCap(GenericNumber genericNumber) throws CAPException;
-	public LocationNumberCap createLocationNumberCap(byte[] data);
-	public LocationNumberCap createLocationNumberCap(LocationNumber locationNumber) throws CAPException;
-	public OriginalCalledNumberCap createOriginalCalledNumberCap(byte[] data);
-	public OriginalCalledNumberCap createOriginalCalledNumberCap(OriginalCalledNumber originalCalledNumber) throws CAPException;
-	public RedirectingPartyIDCap createRedirectingPartyIDCap(byte[] data);
-	public RedirectingPartyIDCap createRedirectingPartyIDCap(RedirectingNumber redirectingNumber) throws CAPException;
-	
-	public RouteSelectFailureSpecificInfo createRouteSelectFailureSpecificInfo(CauseCap failureCause);
-	public OCalledPartyBusySpecificInfo createOCalledPartyBusySpecificInfo(CauseCap busyCause);
-	public OAbandonSpecificInfo createOAbandonSpecificInfo(boolean routeNotPermitted);
-	public ONoAnswerSpecificInfo createONoAnswerSpecificInfo();
-	public OAnswerSpecificInfo createOAnswerSpecificInfo(CalledPartyNumberCap destinationAddress, boolean orCall, boolean forwardedCall,
-			ChargeIndicator chargeIndicator, ExtBasicServiceCode extBasicServiceCode, ExtBasicServiceCode extBasicServiceCode2);
-	public ODisconnectSpecificInfo createODisconnectSpecificInfo(CauseCap releaseCause);
-	public TBusySpecificInfo createTBusySpecificInfo(CauseCap busyCause, boolean callForwarded, boolean routeNotPermitted,
-			CalledPartyNumberCap forwardingDestinationNumber);
-	public TNoAnswerSpecificInfo createTNoAnswerSpecificInfo(boolean callForwarded, CalledPartyNumberCap forwardingDestinationNumber);
-	public TAnswerSpecificInfo createTAnswerSpecificInfo(CalledPartyNumberCap destinationAddress, boolean orCall, boolean forwardedCall,
-			ChargeIndicator chargeIndicator, ExtBasicServiceCode extBasicServiceCode, ExtBasicServiceCode extBasicServiceCode2);
-	public TDisconnectSpecificInfo createTDisconnectSpecificInfo(CauseCap releaseCause);
+    DpSpecificCriteria createDpSpecificCriteria(MidCallControlInfo midCallControlInfo);
 
-	public DestinationRoutingAddress createDestinationRoutingAddress(ArrayList<CalledPartyNumberCap> calledPartyNumber);
-	
-	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(RouteSelectFailureSpecificInfo routeSelectFailureSpecificInfo);
-	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(OCalledPartyBusySpecificInfo oCalledPartyBusySpecificInfo);
-	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(ONoAnswerSpecificInfo oNoAnswerSpecificInfo);
-	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(OAnswerSpecificInfo oAnswerSpecificInfo);
-	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(OMidCallSpecificInfo oMidCallSpecificInfo);
-	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(ODisconnectSpecificInfo oDisconnectSpecificInfo);
-	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(TBusySpecificInfo tBusySpecificInfo);
-	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(TNoAnswerSpecificInfo tNoAnswerSpecificInfo);
-	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(TAnswerSpecificInfo tAnswerSpecificInfo);
-	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(TMidCallSpecificInfo tMidCallSpecificInfo);
-	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(TDisconnectSpecificInfo tDisconnectSpecificInfo);
-	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(OTermSeizedSpecificInfo oTermSeizedSpecificInfo);
-	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(CallAcceptedSpecificInfo callAcceptedSpecificInfo);
-	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(OAbandonSpecificInfo oAbandonSpecificInfo);
-	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(OChangeOfPositionSpecificInfo oChangeOfPositionSpecificInfo);
-	public EventSpecificInformationBCSM createEventSpecificInformationBCSM(TChangeOfPositionSpecificInfo tChangeOfPositionSpecificInfo);
+    DpSpecificCriteria createDpSpecificCriteria(DpSpecificCriteriaAlt dpSpecificCriteriaAlt);
 
-	public RequestedInformation createRequestedInformation_CallAttemptElapsedTime(int callAttemptElapsedTimeValue);
-	public RequestedInformation createRequestedInformation_CallConnectedElapsedTime(int callConnectedElapsedTimeValue);
-	public RequestedInformation createRequestedInformation_CallStopTime(DateAndTime callStopTimeValue);
-	public RequestedInformation createRequestedInformation_ReleaseCause(CauseCap releaseCauseValue);
+    BCSMEvent createBCSMEvent(EventTypeBCSM eventTypeBCSM, MonitorMode monitorMode, LegID legID,
+            DpSpecificCriteria dpSpecificCriteria, boolean automaticRearm);
 
-	public TimeDurationChargingResult createTimeDurationChargingResult(ReceivingSideID partyToCharge, TimeInformation timeInformation, boolean legActive,
-			boolean callLegReleasedAtTcpExpiry, CAPExtensions extensions, AChChargingAddress aChChargingAddress);
-	public TimeIfTariffSwitch createTimeIfTariffSwitch(int timeSinceTariffSwitch, Integer tariffSwitchInterval);
-	public TimeInformation createTimeInformation(int timeIfNoTariffSwitch);
-	public TimeInformation createTimeInformation(TimeIfTariffSwitch timeIfTariffSwitch);
+    CalledPartyBCDNumber createCalledPartyBCDNumber(byte[] data);
 
-	public IPSSPCapabilities createIPSSPCapabilities(boolean IPRoutingAddressSupported, boolean VoiceBackSupported,
-			boolean VoiceInformationSupportedViaSpeechRecognition, boolean VoiceInformationSupportedViaVoiceRecognition,
-			boolean GenerationOfVoiceAnnouncementsFromTextSupported, byte[] extraData);
+    CalledPartyBCDNumber createCalledPartyBCDNumber(AddressNature addressNature, NumberingPlan numberingPlan,
+            String address, boolean isExtension) throws CAPException;
 
-	public InitialDPArgExtension createInitialDPArgExtension(ISDNAddressString gmscAddress, CalledPartyNumberCap forwardingDestinationNumber,
-			MSClassmark2 msClassmark2, IMEI imei, SupportedCamelPhases supportedCamelPhases, OfferedCamel4Functionalities offeredCamel4Functionalities,
-			BearerCapability bearerCapability2, ExtBasicServiceCode extBasicServiceCode2, HighLayerCompatibilityInap highLayerCompatibility2,
-			LowLayerCompatibility lowLayerCompatibility, LowLayerCompatibility lowLayerCompatibility2, boolean enhancedDialledServicesAllowed, UUData uuData,
-			boolean isCAPVersion3orLater);
+    ExtensionField createExtensionField(Integer localCode, CriticalityType criticalityType, byte[] data);
 
-	public AlertingPatternCap createAlertingPatternCap(AlertingPattern alertingPattern);
-	public AlertingPatternCap createAlertingPatternCap(byte[] data);
-	public NAOliInfo createNAOliInfo(byte[] data);
-	public NAOliInfo createNAOliInfo(int value);
+    ExtensionField createExtensionField(long[] globalCode, CriticalityType criticalityType, byte[] data);
 
-	public ScfID createScfID(byte[] data);
-	public ServiceInteractionIndicatorsTwo createServiceInteractionIndicatorsTwo(ForwardServiceInteractionInd forwardServiceInteractionInd,
-			BackwardServiceInteractionInd backwardServiceInteractionInd, BothwayThroughConnectionInd bothwayThroughConnectionInd,
-			ConnectedNumberTreatmentInd connectedNumberTreatmentInd, boolean nonCUGCall, HoldTreatmentIndicator holdTreatmentIndicator,
-			CwTreatmentIndicator cwTreatmentIndicator, EctTreatmentIndicator ectTreatmentIndicator);
+    CAPExtensions createCAPExtensions(ArrayList<ExtensionField> fieldsList);
 
-	public FCIBCCCAMELsequence1 createFCIBCCCAMELsequence1(byte[] freeFormatData, SendingSideID partyToCharge, AppendFreeFormatData appendFreeFormatData);
+    CAMELAChBillingChargingCharacteristics createCAMELAChBillingChargingCharacteristics(byte[] data);
 
-	public CAMELSCIBillingChargingCharacteristicsAlt createCAMELSCIBillingChargingCharacteristicsAlt();
-	public CAI_GSM0224 createCAI_GSM0224(Integer e1, Integer e2, Integer e3, Integer e4, Integer e5, Integer e6, Integer e7);
-	public AOCSubsequent createAOCSubsequent(CAI_GSM0224 cai_GSM0224, Integer tariffSwitchInterval);
-	public AOCBeforeAnswer createAOCBeforeAnswer(CAI_GSM0224 aocInitial, AOCSubsequent aocSubsequent);
-	public SCIBillingChargingCharacteristics createSCIBillingChargingCharacteristics(AOCBeforeAnswer aocBeforeAnswer);
-	public SCIBillingChargingCharacteristics createSCIBillingChargingCharacteristics(AOCSubsequent aocSubsequent);
-	public SCIBillingChargingCharacteristics createSCIBillingChargingCharacteristics(CAMELSCIBillingChargingCharacteristicsAlt aocExtension);
+    CAMELAChBillingChargingCharacteristics createCAMELAChBillingChargingCharacteristics(long maxCallPeriodDuration,
+            boolean releaseIfdurationExceeded, Long tariffSwitchInterval, AudibleIndicator audibleIndicator,
+            CAPExtensions extensions, boolean isCAPVersion3orLater);
 
-	public VariablePartPrice createVariablePartPrice(byte[] data);
-	public VariablePartPrice createVariablePartPrice(double price);
-	public VariablePartPrice createVariablePartPrice(int integerPart, int hundredthPart);
-	public VariablePartDate createVariablePartDate(byte[] data);
-	public VariablePartDate createVariablePartDate(int year, int month, int day);
-	public VariablePartTime createVariablePartTime(byte[] data);
-	public VariablePartTime createVariablePartTime(int hour, int minute);
-	public VariablePart createVariablePart(Integer integer);
-	public VariablePart createVariablePart(Digits number);
-	public VariablePart createVariablePart(VariablePartTime time);
-	public VariablePart createVariablePart(VariablePartDate date);
-	public VariablePart createVariablePart(VariablePartPrice price);
-	
-	public MessageIDText createMessageIDText(String messageContent, byte[] attributes);
-	public VariableMessage createVariableMessage(int elementaryMessageID, ArrayList<VariablePart> variableParts);
-	public MessageID createMessageID(Integer elementaryMessageID);
-	public MessageID createMessageID(MessageIDText text);
-	public MessageID createMessageID(ArrayList<Integer> elementaryMessageIDs);
-	public MessageID createMessageID(VariableMessage variableMessage);
-	public InbandInfo createInbandInfo(MessageID messageID, Integer numberOfRepetitions, Integer duration, Integer interval);
-	
-	public Tone createTone(int toneID, Integer duration);
-	public InformationToSend createInformationToSend(InbandInfo inbandInfo);
-	public InformationToSend createInformationToSend(Tone tone);
-	public CollectedDigits createCollectedDigits(Integer minimumNbOfDigits, int maximumNbOfDigits, byte[] endOfReplyDigit, byte[] cancelDigit,
-			byte[] startDigit, Integer firstDigitTimeOut, Integer interDigitTimeOut, ErrorTreatment errorTreatment, Boolean interruptableAnnInd,
-			Boolean voiceInformation, Boolean voiceBack);
-	public CollectedInfo createCollectedInfo(CollectedDigits collectedDigits);
-	public CallSegmentToCancel createCallSegmentToCancel(Integer invokeID, Integer callSegmentID);
+    DateAndTime createDateAndTime(int year, int month, int day, int hour, int minute, int second);
 
-	public Problem createProblemGeneral(GeneralProblemType prob);
-	public Problem createProblemInvoke(InvokeProblemType prob);
-	public Problem createProblemResult(ReturnResultProblemType prob);
-	public Problem createProblemError(ReturnErrorProblemType prob);
+    TimeAndTimezone createTimeAndTimezone(int year, int month, int day, int hour, int minute, int second, int timeZone);
+
+    SendingSideID createSendingSideID(LegType sendingSideID);
+
+    ReceivingSideID createReceivingSideID(LegType receivingSideID);
+
+    BearerCap createBearerCap(byte[] data);
+
+    BearerCap createBearerCap(UserServiceInformation userServiceInformation) throws CAPException;
+
+    BearerCapability createBearerCapability(BearerCap bearerCap);
+
+    Digits createDigits(byte[] data);
+
+    Digits createDigits(GenericNumber genericNumber) throws CAPException;
+
+    Digits createDigits(GenericDigits genericDigits) throws CAPException;
+
+    CalledPartyNumberCap createCalledPartyNumberCap(byte[] data);
+
+    CalledPartyNumberCap createCalledPartyNumberCap(CalledPartyNumber calledPartyNumber) throws CAPException;
+
+    CallingPartyNumberCap createCallingPartyNumberCap(byte[] data);
+
+    CallingPartyNumberCap createCallingPartyNumberCap(CallingPartyNumber callingPartyNumber) throws CAPException;
+
+    GenericNumberCap createGenericNumberCap(byte[] data);
+
+    GenericNumberCap createGenericNumberCap(GenericNumber genericNumber) throws CAPException;
+
+    LocationNumberCap createLocationNumberCap(byte[] data);
+
+    LocationNumberCap createLocationNumberCap(LocationNumber locationNumber) throws CAPException;
+
+    OriginalCalledNumberCap createOriginalCalledNumberCap(byte[] data);
+
+    OriginalCalledNumberCap createOriginalCalledNumberCap(OriginalCalledNumber originalCalledNumber) throws CAPException;
+
+    RedirectingPartyIDCap createRedirectingPartyIDCap(byte[] data);
+
+    RedirectingPartyIDCap createRedirectingPartyIDCap(RedirectingNumber redirectingNumber) throws CAPException;
+
+    RouteSelectFailureSpecificInfo createRouteSelectFailureSpecificInfo(CauseCap failureCause);
+
+    OCalledPartyBusySpecificInfo createOCalledPartyBusySpecificInfo(CauseCap busyCause);
+
+    OAbandonSpecificInfo createOAbandonSpecificInfo(boolean routeNotPermitted);
+
+    ONoAnswerSpecificInfo createONoAnswerSpecificInfo();
+
+    OAnswerSpecificInfo createOAnswerSpecificInfo(CalledPartyNumberCap destinationAddress, boolean orCall,
+            boolean forwardedCall, ChargeIndicator chargeIndicator, ExtBasicServiceCode extBasicServiceCode,
+            ExtBasicServiceCode extBasicServiceCode2);
+
+    ODisconnectSpecificInfo createODisconnectSpecificInfo(CauseCap releaseCause);
+
+    TBusySpecificInfo createTBusySpecificInfo(CauseCap busyCause, boolean callForwarded, boolean routeNotPermitted,
+            CalledPartyNumberCap forwardingDestinationNumber);
+
+    TNoAnswerSpecificInfo createTNoAnswerSpecificInfo(boolean callForwarded,
+            CalledPartyNumberCap forwardingDestinationNumber);
+
+    TAnswerSpecificInfo createTAnswerSpecificInfo(CalledPartyNumberCap destinationAddress, boolean orCall,
+            boolean forwardedCall, ChargeIndicator chargeIndicator, ExtBasicServiceCode extBasicServiceCode,
+            ExtBasicServiceCode extBasicServiceCode2);
+
+    TDisconnectSpecificInfo createTDisconnectSpecificInfo(CauseCap releaseCause);
+
+    DestinationRoutingAddress createDestinationRoutingAddress(ArrayList<CalledPartyNumberCap> calledPartyNumber);
+
+    EventSpecificInformationBCSM createEventSpecificInformationBCSM(
+            RouteSelectFailureSpecificInfo routeSelectFailureSpecificInfo);
+
+    EventSpecificInformationBCSM createEventSpecificInformationBCSM(
+            OCalledPartyBusySpecificInfo oCalledPartyBusySpecificInfo);
+
+    EventSpecificInformationBCSM createEventSpecificInformationBCSM(ONoAnswerSpecificInfo oNoAnswerSpecificInfo);
+
+    EventSpecificInformationBCSM createEventSpecificInformationBCSM(OAnswerSpecificInfo oAnswerSpecificInfo);
+
+    EventSpecificInformationBCSM createEventSpecificInformationBCSM(OMidCallSpecificInfo oMidCallSpecificInfo);
+
+    EventSpecificInformationBCSM createEventSpecificInformationBCSM(ODisconnectSpecificInfo oDisconnectSpecificInfo);
+
+    EventSpecificInformationBCSM createEventSpecificInformationBCSM(TBusySpecificInfo tBusySpecificInfo);
+
+    EventSpecificInformationBCSM createEventSpecificInformationBCSM(TNoAnswerSpecificInfo tNoAnswerSpecificInfo);
+
+    EventSpecificInformationBCSM createEventSpecificInformationBCSM(TAnswerSpecificInfo tAnswerSpecificInfo);
+
+    EventSpecificInformationBCSM createEventSpecificInformationBCSM(TMidCallSpecificInfo tMidCallSpecificInfo);
+
+    EventSpecificInformationBCSM createEventSpecificInformationBCSM(TDisconnectSpecificInfo tDisconnectSpecificInfo);
+
+    EventSpecificInformationBCSM createEventSpecificInformationBCSM(OTermSeizedSpecificInfo oTermSeizedSpecificInfo);
+
+    EventSpecificInformationBCSM createEventSpecificInformationBCSM(CallAcceptedSpecificInfo callAcceptedSpecificInfo);
+
+    EventSpecificInformationBCSM createEventSpecificInformationBCSM(OAbandonSpecificInfo oAbandonSpecificInfo);
+
+    EventSpecificInformationBCSM createEventSpecificInformationBCSM(
+            OChangeOfPositionSpecificInfo oChangeOfPositionSpecificInfo);
+
+    EventSpecificInformationBCSM createEventSpecificInformationBCSM(
+            TChangeOfPositionSpecificInfo tChangeOfPositionSpecificInfo);
+
+    RequestedInformation createRequestedInformation_CallAttemptElapsedTime(int callAttemptElapsedTimeValue);
+
+    RequestedInformation createRequestedInformation_CallConnectedElapsedTime(int callConnectedElapsedTimeValue);
+
+    RequestedInformation createRequestedInformation_CallStopTime(DateAndTime callStopTimeValue);
+
+    RequestedInformation createRequestedInformation_ReleaseCause(CauseCap releaseCauseValue);
+
+    TimeDurationChargingResult createTimeDurationChargingResult(ReceivingSideID partyToCharge,
+            TimeInformation timeInformation, boolean legActive, boolean callLegReleasedAtTcpExpiry, CAPExtensions extensions,
+            AChChargingAddress aChChargingAddress);
+
+    TimeIfTariffSwitch createTimeIfTariffSwitch(int timeSinceTariffSwitch, Integer tariffSwitchInterval);
+
+    TimeInformation createTimeInformation(int timeIfNoTariffSwitch);
+
+    TimeInformation createTimeInformation(TimeIfTariffSwitch timeIfTariffSwitch);
+
+    IPSSPCapabilities createIPSSPCapabilities(boolean IPRoutingAddressSupported, boolean VoiceBackSupported,
+            boolean VoiceInformationSupportedViaSpeechRecognition, boolean VoiceInformationSupportedViaVoiceRecognition,
+            boolean GenerationOfVoiceAnnouncementsFromTextSupported, byte[] extraData);
+
+    InitialDPArgExtension createInitialDPArgExtension(ISDNAddressString gmscAddress,
+            CalledPartyNumberCap forwardingDestinationNumber, MSClassmark2 msClassmark2, IMEI imei,
+            SupportedCamelPhases supportedCamelPhases, OfferedCamel4Functionalities offeredCamel4Functionalities,
+            BearerCapability bearerCapability2, ExtBasicServiceCode extBasicServiceCode2,
+            HighLayerCompatibilityInap highLayerCompatibility2, LowLayerCompatibility lowLayerCompatibility,
+            LowLayerCompatibility lowLayerCompatibility2, boolean enhancedDialledServicesAllowed, UUData uuData,
+            boolean isCAPVersion3orLater);
+
+    AlertingPatternCap createAlertingPatternCap(AlertingPattern alertingPattern);
+
+    AlertingPatternCap createAlertingPatternCap(byte[] data);
+
+    NAOliInfo createNAOliInfo(byte[] data);
+
+    NAOliInfo createNAOliInfo(int value);
+
+    ScfID createScfID(byte[] data);
+
+    ServiceInteractionIndicatorsTwo createServiceInteractionIndicatorsTwo(
+            ForwardServiceInteractionInd forwardServiceInteractionInd,
+            BackwardServiceInteractionInd backwardServiceInteractionInd,
+            BothwayThroughConnectionInd bothwayThroughConnectionInd, ConnectedNumberTreatmentInd connectedNumberTreatmentInd,
+            boolean nonCUGCall, HoldTreatmentIndicator holdTreatmentIndicator, CwTreatmentIndicator cwTreatmentIndicator,
+            EctTreatmentIndicator ectTreatmentIndicator);
+
+    FCIBCCCAMELsequence1 createFCIBCCCAMELsequence1(byte[] freeFormatData, SendingSideID partyToCharge,
+            AppendFreeFormatData appendFreeFormatData);
+
+    CAMELSCIBillingChargingCharacteristicsAlt createCAMELSCIBillingChargingCharacteristicsAlt();
+
+    CAI_GSM0224 createCAI_GSM0224(Integer e1, Integer e2, Integer e3, Integer e4, Integer e5, Integer e6, Integer e7);
+
+    AOCSubsequent createAOCSubsequent(CAI_GSM0224 cai_GSM0224, Integer tariffSwitchInterval);
+
+    AOCBeforeAnswer createAOCBeforeAnswer(CAI_GSM0224 aocInitial, AOCSubsequent aocSubsequent);
+
+    SCIBillingChargingCharacteristics createSCIBillingChargingCharacteristics(AOCBeforeAnswer aocBeforeAnswer);
+
+    SCIBillingChargingCharacteristics createSCIBillingChargingCharacteristics(AOCSubsequent aocSubsequent);
+
+    SCIBillingChargingCharacteristics createSCIBillingChargingCharacteristics(
+            CAMELSCIBillingChargingCharacteristicsAlt aocExtension);
+
+    VariablePartPrice createVariablePartPrice(byte[] data);
+
+    VariablePartPrice createVariablePartPrice(double price);
+
+    VariablePartPrice createVariablePartPrice(int integerPart, int hundredthPart);
+
+    VariablePartDate createVariablePartDate(byte[] data);
+
+    VariablePartDate createVariablePartDate(int year, int month, int day);
+
+    VariablePartTime createVariablePartTime(byte[] data);
+
+    VariablePartTime createVariablePartTime(int hour, int minute);
+
+    VariablePart createVariablePart(Integer integer);
+
+    VariablePart createVariablePart(Digits number);
+
+    VariablePart createVariablePart(VariablePartTime time);
+
+    VariablePart createVariablePart(VariablePartDate date);
+
+    VariablePart createVariablePart(VariablePartPrice price);
+
+    MessageIDText createMessageIDText(String messageContent, byte[] attributes);
+
+    VariableMessage createVariableMessage(int elementaryMessageID, ArrayList<VariablePart> variableParts);
+
+    MessageID createMessageID(Integer elementaryMessageID);
+
+    MessageID createMessageID(MessageIDText text);
+
+    MessageID createMessageID(ArrayList<Integer> elementaryMessageIDs);
+
+    MessageID createMessageID(VariableMessage variableMessage);
+
+    InbandInfo createInbandInfo(MessageID messageID, Integer numberOfRepetitions, Integer duration, Integer interval);
+
+    Tone createTone(int toneID, Integer duration);
+
+    InformationToSend createInformationToSend(InbandInfo inbandInfo);
+
+    InformationToSend createInformationToSend(Tone tone);
+
+    CollectedDigits createCollectedDigits(Integer minimumNbOfDigits, int maximumNbOfDigits, byte[] endOfReplyDigit,
+            byte[] cancelDigit, byte[] startDigit, Integer firstDigitTimeOut, Integer interDigitTimeOut,
+            ErrorTreatment errorTreatment, Boolean interruptableAnnInd, Boolean voiceInformation, Boolean voiceBack);
+
+    CollectedInfo createCollectedInfo(CollectedDigits collectedDigits);
+
+    CallSegmentToCancel createCallSegmentToCancel(Integer invokeID, Integer callSegmentID);
+
+    Problem createProblemGeneral(GeneralProblemType prob);
+
+    Problem createProblemInvoke(InvokeProblemType prob);
+
+    Problem createProblemResult(ReturnResultProblemType prob);
+
+    Problem createProblemError(ReturnErrorProblemType prob);
 
 }
-

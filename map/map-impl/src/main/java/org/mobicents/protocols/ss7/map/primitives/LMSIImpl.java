@@ -35,142 +35,137 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public class LMSIImpl implements LMSI, MAPAsnPrimitive {
-	
-	private byte[] data;
 
-	
-	public LMSIImpl() {
-	}
-	
-	public LMSIImpl(byte[] data) {
-		this.data = data;
-	}
+    private byte[] data;
 
+    public LMSIImpl() {
+    }
 
-	public int getTag() {
-		return Tag.STRING_OCTET;
-	}
+    public LMSIImpl(byte[] data) {
+        this.data = data;
+    }
 
-	public int getTagClass() {
-		return Tag.CLASS_UNIVERSAL;
-	}
+    public int getTag() {
+        return Tag.STRING_OCTET;
+    }
 
-	public boolean getIsPrimitive() {
-		return true;
-	}
+    public int getTagClass() {
+        return Tag.CLASS_UNIVERSAL;
+    }
 
-	public byte[] getData() {
-		return this.data;
-	}
-	
+    public boolean getIsPrimitive() {
+        return true;
+    }
 
-	public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
+    public byte[] getData() {
+        return this.data;
+    }
 
-		try {
-			int length = ansIS.readLength();
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding LMSI: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
 
-	public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
+        try {
+            int length = ansIS.readLength();
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding LMSI: " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this._decode(ansIS, length);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding LMSI: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
+    public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
 
-	private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException {
-		
-		if (length != 4)
-			throw new MAPParsingComponentException("Error decoding LMSI: the LMSI field must contain 4 octets. Contains: " + length,
-					MAPParsingComponentExceptionReason.MistypedParameter);
+        try {
+            this._decode(ansIS, length);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding LMSI: " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		try {
-			this.data = new byte[4];
-			ansIS.read(this.data);
-		} catch (IOException e) {
-			throw new MAPParsingComponentException("IOException when decoding LMSI: " + e.getMessage(), e,
-					MAPParsingComponentExceptionReason.MistypedParameter);
-		}
-	}
-	
-	public void encodeAll(AsnOutputStream asnOs) throws MAPException {
-		
-		this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
-	}
+    private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException {
 
-	public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
-		
-		try {
-			asnOs.writeTag(tagClass, true, tag);
-			int pos = asnOs.StartContentDefiniteLength();
-			this.encodeData(asnOs);
-			asnOs.FinalizeContent(pos);
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding LMSI: " + e.getMessage(), e);
-		}
-	}
+        if (length != 4)
+            throw new MAPParsingComponentException("Error decoding LMSI: the LMSI field must contain 4 octets. Contains: "
+                    + length, MAPParsingComponentExceptionReason.MistypedParameter);
 
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
+        try {
+            this.data = new byte[4];
+            ansIS.read(this.data);
+        } catch (IOException e) {
+            throw new MAPParsingComponentException("IOException when decoding LMSI: " + e.getMessage(), e,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
 
-		if (this.data == null)
-			throw new MAPException("Error while encoding the LMSI: data is not defined");
+    public void encodeAll(AsnOutputStream asnOs) throws MAPException {
 
-		if (this.data.length != 4)
-			throw new MAPException("Error while encoding the LMSI: data field length must equale 4");
+        this.encodeAll(asnOs, Tag.CLASS_UNIVERSAL, Tag.STRING_OCTET);
+    }
 
-		asnOs.write(this.data);
-	}
+    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
 
-	@Override
-	public String toString() {
-		return "LMSI [Data= " + this.printDataArr() + "]";
-	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(data);
-		return result;
-	}
+        try {
+            asnOs.writeTag(tagClass, true, tag);
+            int pos = asnOs.StartContentDefiniteLength();
+            this.encodeData(asnOs);
+            asnOs.FinalizeContent(pos);
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding LMSI: " + e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		LMSIImpl other = (LMSIImpl) obj;
-		if (!Arrays.equals(data, other.data))
-			return false;
-		return true;
-	}
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
 
-	private String printDataArr() {
-		StringBuilder sb = new StringBuilder();
-		if( this.data!=null ) {
-			for( int b : this.data ) {
-				sb.append(b);
-				sb.append(" ");
-			}
-		}
-		
-		return sb.toString();
-	}
+        if (this.data == null)
+            throw new MAPException("Error while encoding the LMSI: data is not defined");
+
+        if (this.data.length != 4)
+            throw new MAPException("Error while encoding the LMSI: data field length must equale 4");
+
+        asnOs.write(this.data);
+    }
+
+    @Override
+    public String toString() {
+        return "LMSI [Data= " + this.printDataArr() + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(data);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LMSIImpl other = (LMSIImpl) obj;
+        if (!Arrays.equals(data, other.data))
+            return false;
+        return true;
+    }
+
+    private String printDataArr() {
+        StringBuilder sb = new StringBuilder();
+        if (this.data != null) {
+            for (int b : this.data) {
+                sb.append(b);
+                sb.append(" ");
+            }
+        }
+
+        return sb.toString();
+    }
 }
-
-

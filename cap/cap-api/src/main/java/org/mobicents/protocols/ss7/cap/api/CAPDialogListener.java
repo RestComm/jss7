@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -29,64 +29,61 @@ import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 
 /**
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface CAPDialogListener {
-	/**
-	 * Called after all components has been processed.
-	 */
-	public void onDialogDelimiter(CAPDialog capDialog);
-
-	/**
-     * When TC-BEGIN received. If CAP user rejects this dialog it should call          
-     * CAPDialog.abort()  	 
+    /**
+     * Called after all components has been processed.
      */
-	public void onDialogRequest(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber);
-	
-	/**
-	 * When TC-CONTINUE or TC-END received with dialogueResponse DialoguePDU
-	 * (AARE-apdu) (dialog accepted) this is called before ComponentPortion is
-	 * called
-	 */
-	public void onDialogAccept(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber);
+    void onDialogDelimiter(CAPDialog capDialog);
 
-	/**
-	 * When TC-ABORT received with user abort
-	 * userReason is defined only if generalReason=UserSpecific
-	 */
-	public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, CAPUserAbortReason userReason);
+    /**
+     * When TC-BEGIN received. If CAP user rejects this dialog it should call CAPDialog.abort()
+     */
+    void onDialogRequest(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber);
 
-	/**
-	 * When TC-ABORT received with provider abort
-	 * 
-	 */
-	public void onDialogProviderAbort(CAPDialog capDialog, PAbortCauseType abortCause);
+    /**
+     * When TC-CONTINUE or TC-END received with dialogueResponse DialoguePDU (AARE-apdu) (dialog accepted) this is called before
+     * ComponentPortion is called
+     */
+    void onDialogAccept(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber);
 
-	/**
-	 * When TC-END received 
-	 */
-	public void onDialogClose(CAPDialog capDialog);
+    /**
+     * When TC-ABORT received with user abort userReason is defined only if generalReason=UserSpecific
+     */
+    void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, CAPUserAbortReason userReason);
 
-	/**
-	 * Called when the CADDialog has been released
-	 * 
-	 * @param capDialog
-	 */
-	public void onDialogRelease(CAPDialog capDialog);
+    /**
+     * When TC-ABORT received with provider abort
+     *
+     */
+    void onDialogProviderAbort(CAPDialog capDialog, PAbortCauseType abortCause);
 
-	/**
-	 * Called when the CADDialog is about to aborted because of TimeOut
-	 * 
-	 * @param capDialog
-	 */
-	public void onDialogTimeout(CAPDialog capDialog);
+    /**
+     * When TC-END received
+     */
+    void onDialogClose(CAPDialog capDialog);
 
-	/**
-	 * Called to notice of abnormal cases
-	 * 
-	 */
-	public void onDialogNotice(CAPDialog capDialog, CAPNoticeProblemDiagnostic noticeProblemDiagnostic);
+    /**
+     * Called when the CADDialog has been released
+     *
+     * @param capDialog
+     */
+    void onDialogRelease(CAPDialog capDialog);
+
+    /**
+     * Called when the CADDialog is about to aborted because of TimeOut
+     *
+     * @param capDialog
+     */
+    void onDialogTimeout(CAPDialog capDialog);
+
+    /**
+     * Called to notice of abnormal cases
+     *
+     */
+    void onDialogNotice(CAPDialog capDialog, CAPNoticeProblemDiagnostic noticeProblemDiagnostic);
 
 }

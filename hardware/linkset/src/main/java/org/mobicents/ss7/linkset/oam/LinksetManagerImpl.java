@@ -32,52 +32,41 @@ import javolution.util.FastMap;
 import javolution.xml.XMLBinding;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
-import javolution.xml.stream.XMLStreamException;
-
-import org.mobicents.protocols.ss7.scheduler.Scheduler;
 
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
 
 /**
  * <p>
  * LinksetManager is responsible for managing {@link Linkset} and {@link Link}.
  * </p>
  * <p>
- * For every successful operation
- * {@link #activateLinkset(String[] activateLinkset), {@link #deactivateLinkset(String[]) deactivateLinkset},
- * {@link #activateLink(String[]) activateLink},
- * {@link #deactivateLink(String[]) deactivateLink},
- * {@link #createLinkset(String[]) createLinkset},
- * {@link #createLink(String[]) createLink},
- * {@link #deleteLinkset(String[]) deleteLinkset},
- * {@link #deleteLink(String[]) deleteLink} LinksetManager will serialize the
- * linkset's and link's managed. The path for serialized file follows the rule
- * as below
+ * For every successful operation {@link #activateLinkset(String[] activateLinkset), {@link #deactivateLinkset(String[])
+ * deactivateLinkset}, {@link #activateLink(String[]) activateLink}, {@link #deactivateLink(String[]) deactivateLink},
+ * {@link #createLinkset(String[]) createLinkset}, {@link #createLink(String[]) createLink}, {@link #deleteLinkset(String[])
+ * deleteLinkset}, {@link #deleteLink(String[]) deleteLink} LinksetManager will serialize the linkset's and link's managed. The
+ * path for serialized file follows the rule as below
  * </p>
  * <p>
- * LinksetManager when {@link #start() started} looks for file
- * <tt>linksetmanager.xml</tt> containing serialized information of underlying
- * linksets and links. Set the directory path by calling
- * {@link #setPersistDir(String)} to direct LinksetManager to look at specified
- * directory for underlying serialized file.
+ * LinksetManager when {@link #start() started} looks for file <tt>linksetmanager.xml</tt> containing serialized information of
+ * underlying linksets and links. Set the directory path by calling {@link #setPersistDir(String)} to direct LinksetManager to
+ * look at specified directory for underlying serialized file.
  * </p>
  * <p>
- * If directory path is not set, LinksetManager searches for system property
- * <tt>linkset.persist.dir</tt> to get the path for directory
+ * If directory path is not set, LinksetManager searches for system property <tt>linkset.persist.dir</tt> to get the path for
+ * directory
  * </p>
- * 
+ *
  * <p>
- * Even if <tt>linkset.persist.dir</tt> system property is not set,
- * LinksetManager will look at property <tt>user.dir</tt>
+ * Even if <tt>linkset.persist.dir</tt> system property is not set, LinksetManager will look at property <tt>user.dir</tt>
  * </p>
- * 
+ *
  * <p>
- * For every new linkset created successfully, LinksetManager calls
- * {@link Layer4#add(Linkset)}
+ * For every new linkset created successfully, LinksetManager calls {@link Layer4#add(Linkset)}
  * </p>
- * 
+ *
  * @author amit bhayani
- * 
+ *
  */
 public class LinksetManagerImpl implements LinksetManager {
 
@@ -107,13 +96,13 @@ public class LinksetManagerImpl implements LinksetManager {
     private Layer4 layer4 = null;
 
     private Scheduler scheduler;
-    
+
     private String name;
-    
+
     public LinksetManagerImpl(String name) {
-    	this.name = name;
-    	binding.setAlias(Linkset.class, LINKSET);
-        binding.setAlias(Link.class, LINK);            	
+        this.name = name;
+        binding.setAlias(Linkset.class, LINKSET);
+        binding.setAlias(Link.class, LINK);
         binding.setClassAttribute(CLASS_ATTRIBUTE);
     }
 
@@ -122,14 +111,14 @@ public class LinksetManagerImpl implements LinksetManager {
     }
 
     public void setScheduler(Scheduler scheduler) {
-        this.scheduler = scheduler;       
+        this.scheduler = scheduler;
     }
-    
+
     @Override
     public LinksetFactoryFactory getLinksetFactoryFactory() {
         return linksetFactoryFactory;
     }
-    
+
     @Override
     public void setLinksetFactoryFactory(LinksetFactoryFactory linksetFactoryFactory) {
         this.linksetFactoryFactory = linksetFactoryFactory;
@@ -160,24 +149,18 @@ public class LinksetManagerImpl implements LinksetManager {
         this.persistFile.clear();
 
         if (persistDir != null) {
-            this.persistFile.append(persistDir).append(File.separator).append(
-                    PERSIST_FILE_NAME);
+            this.persistFile.append(persistDir).append(File.separator).append(PERSIST_FILE_NAME);
         } else {
-            persistFile.append(
-                    System.getProperty(LINKSET_PERSIST_DIR_KEY, System
-                            .getProperty(USER_DIR_KEY))).append(File.separator)
-                    .append(PERSIST_FILE_NAME);
+            persistFile.append(System.getProperty(LINKSET_PERSIST_DIR_KEY, System.getProperty(USER_DIR_KEY)))
+                    .append(File.separator).append(PERSIST_FILE_NAME);
         }
 
-        logger.info(String.format("SS7 configuration file path %s", persistFile
-                .toString()));
+        logger.info(String.format("SS7 configuration file path %s", persistFile.toString()));
 
         try {
             this.load();
         } catch (FileNotFoundException e) {
-            logger.warn(String.format(
-                    "Failed to load the SS7 configuration file. \n%s", e
-                            .getMessage()));
+            logger.warn(String.format("Failed to load the SS7 configuration file. \n%s", e.getMessage()));
         }
 
         logger.info("Started LinksetManager");
@@ -192,34 +175,32 @@ public class LinksetManagerImpl implements LinksetManager {
      */
 
     public String showLinkset(String[] options) throws Exception {
-    	StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer();
         FastMap.Entry<String, Linkset> e = this.linksets.head();
         FastMap.Entry<String, Linkset> end = this.linksets.tail();
         for (; (e = e.getNext()) != end;) {
-        	Linkset linkset = e.getValue();
+            Linkset linkset = e.getValue();
             linkset.print(sb, 0, 4);
             sb.append(FormatterHelp.NEW_LINE);
         }
-        
-        if(sb.length()==0)
-        	sb.append(" ");
-        
+
+        if (sb.length() == 0)
+            sb.append(" ");
+
         System.out.println(sb.toString());
-        
+
         return sb.toString();
     }
 
     /**
      * <p>
-     * Expected command is "linkset create <linkset-type> <options>
-     * <linkset-name>". linkset is
+     * Expected command is "linkset create <linkset-type> <options> <linkset-name>". linkset is
      * {@link org.mobicents.ss7.management.console.Subject}
      * </p>
      * <p>
-     * For example for creation of dahdi linkset, the command is : linkset
-     * create dahdi opc 1 apc 2 ni 3 linkset1
+     * For example for creation of dahdi linkset, the command is : linkset create dahdi opc 1 apc 2 ni 3 linkset1
      * </p>
-     * 
+     *
      * @param options
      * @return
      */
@@ -249,7 +230,7 @@ public class LinksetManagerImpl implements LinksetManager {
 
     /**
      * Expected command is "linkset delete <linkset-name>"
-     * 
+     *
      * @param options
      * @return
      * @throws Exception
@@ -283,7 +264,7 @@ public class LinksetManagerImpl implements LinksetManager {
 
     /**
      * Expected command is "linkset activate linkset1"
-     * 
+     *
      * @param options
      * @return
      * @throws Exception
@@ -312,7 +293,7 @@ public class LinksetManagerImpl implements LinksetManager {
 
     /**
      * Expected command is "linkset deactivate linkset1"
-     * 
+     *
      * @param options
      * @return
      * @throws Exception
@@ -342,16 +323,14 @@ public class LinksetManagerImpl implements LinksetManager {
 
     /**
      * <p>
-     * Create new Link. The expected command is "linkset link create <options>
-     * linkset1 link1" where linkset1 is the linkset name and "link1" is link
-     * name to be created and associated with "linkset1". The <options> depends
-     * on type of link to be created
+     * Create new Link. The expected command is "linkset link create <options> linkset1
+     * link1" where linkset1 is the linkset name and "link1" is link name to be created and associated with "linkset1". The
+     * <options> depends on type of link to be created
      * </p>
      * <p>
-     * For example to create link for Dahdi linkset type is : linkset link
-     * create span 1 code 1 channel 1 linkset1 link1
+     * For example to create link for Dahdi linkset type is : linkset link create span 1 code 1 channel 1 linkset1 link1
      * </p>
-     * 
+     *
      * @param options
      * @return
      */
@@ -381,7 +360,7 @@ public class LinksetManagerImpl implements LinksetManager {
 
     /**
      * Expected command is "linkset link delete linkset1 link1"
-     * 
+     *
      * @param options
      * @return
      * @throws Exception
@@ -413,7 +392,7 @@ public class LinksetManagerImpl implements LinksetManager {
 
     /**
      * Expected command is "linkset link activate linkset1 link1"
-     * 
+     *
      * @param options
      * @return
      * @throws Exception
@@ -448,7 +427,7 @@ public class LinksetManagerImpl implements LinksetManager {
 
     /**
      * Expected command is "linkset link deactivate linkset1 link1"
-     * 
+     *
      * @param options
      * @return
      * @throws Exception
@@ -485,19 +464,17 @@ public class LinksetManagerImpl implements LinksetManager {
      * Persist
      */
     protected void store() {
-    	linksetFactoryFactory.loadBinding(binding);
-    	// TODO : Should we keep reference to Objects rather than recreating
+        linksetFactoryFactory.loadBinding(binding);
+        // TODO : Should we keep reference to Objects rather than recreating
         // everytime?
         try {
-            XMLObjectWriter writer = XMLObjectWriter
-                    .newInstance(new FileOutputStream(persistFile.toString()));
+            XMLObjectWriter writer = XMLObjectWriter.newInstance(new FileOutputStream(persistFile.toString()));
             writer.setBinding(binding);
             // Enables cross-references.
             // writer.setReferenceResolver(new XMLReferenceResolver());
             writer.setIndentation(TAB_INDENT);
 
-            for (FastMap.Entry<String, Linkset> e = this.linksets.head(), end = this.linksets
-                    .tail(); (e = e.getNext()) != end;) {
+            for (FastMap.Entry<String, Linkset> e = this.linksets.head(), end = this.linksets.tail(); (e = e.getNext()) != end;) {
                 Linkset value = e.getValue();
                 writer.write(value);
             }
@@ -510,16 +487,15 @@ public class LinksetManagerImpl implements LinksetManager {
 
     /**
      * Load and create LinkSets and Link from persisted file
-     * 
+     *
      * @throws Exception
      */
     protected void load() throws FileNotFoundException {
-    	linksetFactoryFactory.loadBinding(binding);
-    	
-    	XMLObjectReader reader = null;
+        linksetFactoryFactory.loadBinding(binding);
+
+        XMLObjectReader reader = null;
         try {
-            reader = XMLObjectReader.newInstance(new FileInputStream(
-                    persistFile.toString()));
+            reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));
 
             reader.setBinding(binding);
             // reader.setReferenceResolver(new XMLReferenceResolver());
@@ -531,25 +507,22 @@ public class LinksetManagerImpl implements LinksetManager {
                 Linkset linkset = reader.read();
                 linkset.setScheduler(scheduler);
                 linkset.activateLinks();
-                try
-                {
-                	linkset.activate();
+                try {
+                    linkset.activate();
+                } catch (Exception e) {
+                    // possibly already activated
                 }
-                catch(Exception e)
-                {
-                	//possibly already activated
-                }
-                
+
                 this.linksets.put(linkset.getName(), linkset);
             }
         } catch (Exception ex) {
-            //this.logger.info(
-        	// "Error while re-creating Linksets from persisted file", ex);
+            // this.logger.info(
+            // "Error while re-creating Linksets from persisted file", ex);
         }
     }
 
-    public static void main(String args[]) throws Exception {
-    	LinksetManagerImpl linkSetManager = new LinksetManagerImpl("LinksetManager");
+    public static void main(String[] args) throws Exception {
+        LinksetManagerImpl linkSetManager = new LinksetManagerImpl("LinksetManager");
 
         LinksetFactoryFactory linksetFactoryFactory = new LinksetFactoryFactory();
         // linksetFactoryFactory.addFactory(new DahdiLinksetFactory());
@@ -567,8 +540,8 @@ public class LinksetManagerImpl implements LinksetManager {
         System.out.println(linkSetManager1.linksets.size());
     }
 
-	@Override
-	public String getName() {
-		return this.name;
-	}
+    @Override
+    public String getName() {
+        return this.name;
+    }
 }

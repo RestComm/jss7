@@ -29,41 +29,30 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 
 /**
-*
-
-eventReportBCSM {PARAMETERS-BOUND : bound} OPERATION ::= { 
- ARGUMENT  EventReportBCSMArg {bound} 
- RETURN RESULT FALSE 
- ALWAYS RESPONDS FALSE 
- CODE   opcode-eventReportBCSM} 
--- Direction: gsmSSF -> gsmSCF, Timer: Terb 
--- This operation is used to notify the gsmSCF of a call-related event (e.g. BCSM 
--- events such as O_Busy or O_No_Answer) previously requested by the gsmSCF in a 
--- RequestReportBCSMEvent operation. 
-
-EventReportBCSMArg {PARAMETERS-BOUND : bound} ::= SEQUENCE {
-eventTypeBCSM [0] EventTypeBCSM,
-eventSpecificInformationBCSM [2] EventSpecificInformationBCSM {bound} OPTIONAL,
-legID [3] ReceivingSideID OPTIONAL,
-miscCallInfo [4] MiscCallInfo DEFAULT {messageType request},
-extensions [5] Extensions {bound} OPTIONAL,
-...
-}
-
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ eventReportBCSM {PARAMETERS-BOUND : bound} OPERATION ::= { ARGUMENT EventReportBCSMArg {bound} RETURN RESULT FALSE ALWAYS
+ * RESPONDS FALSE CODE opcode-eventReportBCSM} -- Direction: gsmSSF -> gsmSCF, Timer: Terb -- This operation is used to notify
+ * the gsmSCF of a call-related event (e.g. BCSM -- events such as O_Busy or O_No_Answer) previously requested by the gsmSCF in
+ * a -- RequestReportBCSMEvent operation.
+ *
+ * EventReportBCSMArg {PARAMETERS-BOUND : bound} ::= SEQUENCE { eventTypeBCSM [0] EventTypeBCSM, eventSpecificInformationBCSM
+ * [2] EventSpecificInformationBCSM {bound} OPTIONAL, legID [3] ReceivingSideID OPTIONAL, miscCallInfo [4] MiscCallInfo DEFAULT
+ * {messageType request}, extensions [5] Extensions {bound} OPTIONAL, ... }
+ *
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface EventReportBCSMRequest extends CircuitSwitchedCallMessage {
 
-	public EventTypeBCSM getEventTypeBCSM();
+    EventTypeBCSM getEventTypeBCSM();
 
-	public EventSpecificInformationBCSM getEventSpecificInformationBCSM();
+    EventSpecificInformationBCSM getEventSpecificInformationBCSM();
 
-	public ReceivingSideID getLegID();
+    ReceivingSideID getLegID();
 
-	public MiscCallInfo getMiscCallInfo();
+    MiscCallInfo getMiscCallInfo();
 
-	public CAPExtensions getExtensions();
+    CAPExtensions getExtensions();
 
 }

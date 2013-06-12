@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -26,63 +26,60 @@ import java.io.Serializable;
 
 /**
  * Base class of MAP ReturnError messages
- * 
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface MAPErrorMessage extends Serializable {
 
-	public Long getErrorCode();
+    Long getErrorCode();
 
-	
-	public boolean isEmParameterless();
+    boolean isEmParameterless();
 
-	public boolean isEmExtensionContainer();
+    boolean isEmExtensionContainer();
 
-	public boolean isEmFacilityNotSup();
+    boolean isEmFacilityNotSup();
 
-	public boolean isEmSMDeliveryFailure();
+    boolean isEmSMDeliveryFailure();
 
-	public boolean isEmSystemFailure();
+    boolean isEmSystemFailure();
 
-	public boolean isEmUnknownSubscriber();
+    boolean isEmUnknownSubscriber();
 
-	public boolean isEmAbsentSubscriberSM();
+    boolean isEmAbsentSubscriberSM();
 
-	public boolean isEmAbsentSubscriber();
+    boolean isEmAbsentSubscriber();
 
-	public boolean isEmSubscriberBusyForMtSms();
+    boolean isEmSubscriberBusyForMtSms();
 
-	public boolean isEmCallBarred();
+    boolean isEmCallBarred();
 
-	public boolean isEmUnauthorizedLCSClient();
+    boolean isEmUnauthorizedLCSClient();
 
-	public boolean isEmPositionMethodFailure();
+    boolean isEmPositionMethodFailure();
 
+    MAPErrorMessageParameterless getEmParameterless();
 
-	
-	public MAPErrorMessageParameterless getEmParameterless();
+    MAPErrorMessageExtensionContainer getEmExtensionContainer();
 
-	public MAPErrorMessageExtensionContainer getEmExtensionContainer();
+    MAPErrorMessageFacilityNotSup getEmFacilityNotSup();
 
-	public MAPErrorMessageFacilityNotSup getEmFacilityNotSup();
+    MAPErrorMessageSMDeliveryFailure getEmSMDeliveryFailure();
 
-	public MAPErrorMessageSMDeliveryFailure getEmSMDeliveryFailure();
+    MAPErrorMessageSystemFailure getEmSystemFailure();
 
-	public MAPErrorMessageSystemFailure getEmSystemFailure();
+    MAPErrorMessageUnknownSubscriber getEmUnknownSubscriber();
 
-	public MAPErrorMessageUnknownSubscriber getEmUnknownSubscriber();
+    MAPErrorMessageAbsentSubscriberSM getEmAbsentSubscriberSM();
 
-	public MAPErrorMessageAbsentSubscriberSM getEmAbsentSubscriberSM();
+    MAPErrorMessageAbsentSubscriber getEmAbsentSubscriber();
 
-	public MAPErrorMessageAbsentSubscriber getEmAbsentSubscriber();
-	
-	public MAPErrorMessageSubscriberBusyForMtSms getEmSubscriberBusyForMtSms();
-	
-	public MAPErrorMessageCallBarred getEmCallBarred();
+    MAPErrorMessageSubscriberBusyForMtSms getEmSubscriberBusyForMtSms();
 
-	public MAPErrorMessageUnauthorizedLCSClient getEmUnauthorizedLCSClient();
+    MAPErrorMessageCallBarred getEmCallBarred();
 
-	public MAPErrorMessagePositionMethodFailure getEmPositionMethodFailure();
+    MAPErrorMessageUnauthorizedLCSClient getEmUnauthorizedLCSClient();
+
+    MAPErrorMessagePositionMethodFailure getEmPositionMethodFailure();
 
 }

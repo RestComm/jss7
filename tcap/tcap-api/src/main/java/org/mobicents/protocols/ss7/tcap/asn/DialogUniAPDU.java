@@ -21,7 +21,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.mobicents.protocols.ss7.tcap.asn;
 
@@ -31,15 +31,17 @@ package org.mobicents.protocols.ss7.tcap.asn;
  */
 public interface DialogUniAPDU extends DialogAPDU {
 
+    // opt, default is 1(no other defined)
+    int getProtocolVersion();
 
+    // mandatory
+    ApplicationContextName getApplicationContextName();
 
-	//opt, default is 1(no other defined)
-	public int getProtocolVersion();
-	//mandatory
-	public ApplicationContextName getApplicationContextName();
-	public void setApplicationContextName(ApplicationContextName acn);
-	//opt
-	public UserInformation getUserInformation();
-	public void setUserInformation(UserInformation ui);
-	
+    void setApplicationContextName(ApplicationContextName acn);
+
+    // opt
+    UserInformation getUserInformation();
+
+    void setUserInformation(UserInformation ui);
+
 }

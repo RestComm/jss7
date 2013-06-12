@@ -1,5 +1,5 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012. 
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -32,7 +32,7 @@ import org.mobicents.protocols.ss7.m3ua.impl.scheduler.M3UATask;
  */
 public class FSM extends M3UATask {
 
-    static final protected Logger logger = Logger.getLogger(FSM.class);
+    protected static final Logger logger = Logger.getLogger(FSM.class);
 
     public static final String ATTRIBUTE_MESSAGE = "message";
 
@@ -89,7 +89,7 @@ public class FSM extends M3UATask {
     public void removeAttribute(String name) {
         attributes.remove(name);
     }
-    
+
     public Transition createTransition(String name, String from, String to) {
         if (name.equals("timeout")) {
             throw new IllegalArgumentException("timeout is illegal name for transition");
@@ -127,9 +127,8 @@ public class FSM extends M3UATask {
 
     /**
      * Processes transition.
-     * 
-     * @param name
-     *            the name of transition.
+     *
+     * @param name the name of transition.
      */
     public void signal(String name) throws UnknownTransitionException {
 
@@ -165,8 +164,9 @@ public class FSM extends M3UATask {
 
     @Override
     public String toString() {
-        return String.format("FSM.name=%s old state=%s, current state=%s", this.name, (this.oldState!=null)?this.oldState.getName():"",
-                (this.currentState!=null)?this.currentState.getName():"");
+        return String.format("FSM.name=%s old state=%s, current state=%s", this.name,
+                (this.oldState != null) ? this.oldState.getName() : "",
+                (this.currentState != null) ? this.currentState.getName() : "");
     }
 
 }

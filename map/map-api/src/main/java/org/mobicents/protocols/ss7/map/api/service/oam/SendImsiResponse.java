@@ -24,18 +24,16 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
 
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 
-/**	
- * 
- 
-	RESULT
-		IMSI
-
- * 
+/**
+ *
+ RESULT IMSI
+ *
+ *
  * @author sergey vetyutnev
  *
  */
 public interface SendImsiResponse extends OamMessage {
 
-	public IMSI getImsi();
+    IMSI getImsi();
 
 }

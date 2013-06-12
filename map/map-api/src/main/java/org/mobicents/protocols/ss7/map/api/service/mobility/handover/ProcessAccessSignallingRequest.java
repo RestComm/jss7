@@ -28,65 +28,49 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
- * 
-
-MAP V1-2-3:
-
-MAP V3:
-processAccessSignalling  OPERATION ::= {				--Timer s
-	ARGUMENT
-		ProcessAccessSignalling-Arg
-	CODE	local:33 }
-
-MAP V2:
-ProcessAccessSignalling ::= OPERATION--Timer s
-ARGUMENT
-bss-APDU	ExternalSignalInfo
-
-
-MAP V3:
-ProcessAccessSignalling-Arg ::= [3] SEQUENCE {
-	an-APDU		AccessNetworkSignalInfo,
-	selectedUMTS-Algorithms	[1]	SelectedUMTS-Algorithms	OPTIONAL,
-	selectedGSM-Algorithm	[2]	SelectedGSM-Algorithm	OPTIONAL,
-	chosenRadioResourceInformation	[3] ChosenRadioResourceInformation OPTIONAL,
-	selectedRab-Id	[4] RAB-Id	OPTIONAL,
-	extensionContainer	[0]	ExtensionContainer 	OPTIONAL,
-	...,
-	iUSelectedCodec	[5] Codec		OPTIONAL,
-	iuAvailableCodecsList	[6] CodecList	OPTIONAL,
-	aoipSelectedCodecTarget	[7] AoIPCodec	OPTIONAL,
-	aoipAvailableCodecsListMap	[8] AoIPCodecsList	OPTIONAL }
-
-RAB-Id ::= INTEGER (1..255)
-
- * 
+ *
+ MAP V1-2-3:
+ *
+ * MAP V3: processAccessSignalling OPERATION ::= { --Timer s ARGUMENT ProcessAccessSignalling-Arg CODE local:33 }
+ *
+ * MAP V2: ProcessAccessSignalling ::= OPERATION--Timer s ARGUMENT bss-APDU ExternalSignalInfo
+ *
+ *
+ * MAP V3: ProcessAccessSignalling-Arg ::= [3] SEQUENCE { an-APDU AccessNetworkSignalInfo, selectedUMTS-Algorithms [1]
+ * SelectedUMTS-Algorithms OPTIONAL, selectedGSM-Algorithm [2] SelectedGSM-Algorithm OPTIONAL, chosenRadioResourceInformation
+ * [3] ChosenRadioResourceInformation OPTIONAL, selectedRab-Id [4] RAB-Id OPTIONAL, extensionContainer [0] ExtensionContainer
+ * OPTIONAL, ..., iUSelectedCodec [5] Codec OPTIONAL, iuAvailableCodecsList [6] CodecList OPTIONAL, aoipSelectedCodecTarget [7]
+ * AoIPCodec OPTIONAL, aoipAvailableCodecsListMap [8] AoIPCodecsList OPTIONAL }
+ *
+ * RAB-Id ::= INTEGER (1..255)
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface ProcessAccessSignallingRequest extends MobilityMessage {
 
-	public AccessNetworkSignalInfo getAnApdu();
+    AccessNetworkSignalInfo getAnApdu();
 
-	public SelectedUMTSAlgorithms getSelectedUMTSAlgorithms();
+    SelectedUMTSAlgorithms getSelectedUMTSAlgorithms();
 
-	public SelectedGSMAlgorithm getSelectedGSMAlgorithm();
+    SelectedGSMAlgorithm getSelectedGSMAlgorithm();
 
-	public ChosenRadioResourceInformation getChosenRadioResourceInformation();
+    ChosenRadioResourceInformation getChosenRadioResourceInformation();
 
-	public Integer getSelectedRabId();
+    Integer getSelectedRabId();
 
-	public MAPExtensionContainer getExtensionContainer();
+    MAPExtensionContainer getExtensionContainer();
 
-	public Codec getIUSelectedCodec();
+    Codec getIUSelectedCodec();
 
-	public CodecList getIuAvailableCodecsList();
+    CodecList getIuAvailableCodecsList();
 
-	public AoIPCodec getAoipSelectedCodecTarget();
+    AoIPCodec getAoipSelectedCodecTarget();
 
-	public AoIPCodecsList getAoipAvailableCodecsListMap();
+    AoIPCodecsList getAoipAvailableCodecsListMap();
 
-	// for MAP V1-2 only
-	public ExternalSignalInfo getBssAPDU();
+    // for MAP V1-2 only
+    ExternalSignalInfo getBssAPDU();
 
 }

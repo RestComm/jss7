@@ -23,23 +23,19 @@
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
 /**
- * 
-
-SS-Info ::= CHOICE {
-	forwardingInfo	[0] ForwardingInfo,
-	callBarringInfo	[1] CallBarringInfo,
-	ss-Data		[3] SS-Data}
-
- * 
+ *
+ SS-Info ::= CHOICE { forwardingInfo [0] ForwardingInfo, callBarringInfo [1] CallBarringInfo, ss-Data [3] SS-Data}
+ *
+ *
  * @author sergey vetyutnev
- * 
+ *
  */
 public interface SSInfo {
 
-	public ForwardingInfo getForwardingInfo();
+    ForwardingInfo getForwardingInfo();
 
-	public CallBarringInfo getCallBarringInfo();
+    CallBarringInfo getCallBarringInfo();
 
-	public SSData getSsData();
+    SSData getSsData();
 
 }

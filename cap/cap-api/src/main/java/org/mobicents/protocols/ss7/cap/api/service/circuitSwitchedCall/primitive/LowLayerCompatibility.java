@@ -23,25 +23,21 @@
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
-*
-LowLayerCompatibility {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE ( 
- bound.&minLowLayerCompatibilityLength .. bound.&maxLowLayerCompatibilityLength)) 
--- indicates the LowLayerCompatibility for the calling party. 
--- Refer to 3GPP TS 24.008 [9] for encoding. 
--- It shall be coded as in the value part defined in 3GPP TS 24.008. 
--- i.e. the 3GPP TS 24.008 IEI and 3GPP TS 24.008 octet length indicator 
--- shall not be included.
-
-minLowLayerCompatibilityLength ::= 1
-maxLowLayerCompatibilityLength ::= 16
- 
-} 
-* 
-* @author sergey vetyutnev
-* 
-*/
+ *
+ LowLayerCompatibility {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE ( bound.&minLowLayerCompatibilityLength ..
+ * bound.&maxLowLayerCompatibilityLength)) -- indicates the LowLayerCompatibility for the calling party. -- Refer to 3GPP TS
+ * 24.008 [9] for encoding. -- It shall be coded as in the value part defined in 3GPP TS 24.008. -- i.e. the 3GPP TS 24.008 IEI
+ * and 3GPP TS 24.008 octet length indicator -- shall not be included.
+ *
+ * minLowLayerCompatibilityLength ::= 1 maxLowLayerCompatibilityLength ::= 16
+ *
+ * }
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface LowLayerCompatibility {
 
-	public byte[] getData();
+    byte[] getData();
 
 }

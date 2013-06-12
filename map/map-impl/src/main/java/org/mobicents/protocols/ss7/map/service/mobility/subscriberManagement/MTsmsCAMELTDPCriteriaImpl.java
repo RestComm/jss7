@@ -37,178 +37,178 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 
 /**
- * 
+ *
  * @author Lasith Waruna Perera
- * 
+ *
  */
-public class MTsmsCAMELTDPCriteriaImpl  extends SequenceBase implements MTsmsCAMELTDPCriteria {
+public class MTsmsCAMELTDPCriteriaImpl extends SequenceBase implements MTsmsCAMELTDPCriteria {
 
-	private static final int _TAG_tPDUTypeCriterion = 0;
-	
-	private SMSTriggerDetectionPoint smsTriggerDetectionPoint;
-	private ArrayList<MTSMSTPDUType> tPDUTypeCriterion;
-	
-	public MTsmsCAMELTDPCriteriaImpl() {
-		super("MTsmsCAMELTDPCriteria");
-	}
+    private static final int _TAG_tPDUTypeCriterion = 0;
 
-	public MTsmsCAMELTDPCriteriaImpl(
-			SMSTriggerDetectionPoint smsTriggerDetectionPoint,
-			ArrayList<MTSMSTPDUType> tPDUTypeCriterion) {
-		super("MTsmsCAMELTDPCriteria");
-		this.smsTriggerDetectionPoint = smsTriggerDetectionPoint;
-		this.tPDUTypeCriterion = tPDUTypeCriterion;
-	}
+    private SMSTriggerDetectionPoint smsTriggerDetectionPoint;
+    private ArrayList<MTSMSTPDUType> tPDUTypeCriterion;
 
+    public MTsmsCAMELTDPCriteriaImpl() {
+        super("MTsmsCAMELTDPCriteria");
+    }
 
-	@Override
-	public SMSTriggerDetectionPoint getSMSTriggerDetectionPoint() {
-		return this.smsTriggerDetectionPoint;
-	}
+    public MTsmsCAMELTDPCriteriaImpl(SMSTriggerDetectionPoint smsTriggerDetectionPoint,
+            ArrayList<MTSMSTPDUType> tPDUTypeCriterion) {
+        super("MTsmsCAMELTDPCriteria");
+        this.smsTriggerDetectionPoint = smsTriggerDetectionPoint;
+        this.tPDUTypeCriterion = tPDUTypeCriterion;
+    }
 
-	@Override
-	public ArrayList<MTSMSTPDUType> getTPDUTypeCriterion() {
-		return this.tPDUTypeCriterion;
-	}
+    @Override
+    public SMSTriggerDetectionPoint getSMSTriggerDetectionPoint() {
+        return this.smsTriggerDetectionPoint;
+    }
 
-	@Override
-	protected void _decode(AsnInputStream asnIS, int length)
-			throws MAPParsingComponentException, IOException, AsnException {
-		this.smsTriggerDetectionPoint = null;
-		this.tPDUTypeCriterion = null;
+    @Override
+    public ArrayList<MTSMSTPDUType> getTPDUTypeCriterion() {
+        return this.tPDUTypeCriterion;
+    }
 
-		AsnInputStream ais = asnIS.readSequenceStreamData(length);
+    @Override
+    protected void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+        this.smsTriggerDetectionPoint = null;
+        this.tPDUTypeCriterion = null;
 
-		while (true) {
-			if (ais.available() == 0)
-				break;
+        AsnInputStream ais = asnIS.readSequenceStreamData(length);
 
-			int tag = ais.readTag();
-			
-			switch (ais.getTagClass()) {
-			case Tag.CLASS_UNIVERSAL:
-				switch (tag) {
-				case Tag.ENUMERATED:
-					if (!ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ".smsTriggerDetectionPoint:  not primitive",
-								MAPParsingComponentExceptionReason.MistypedParameter);
-					
-					int code = (int) ais.readInteger();
-					this.smsTriggerDetectionPoint = SMSTriggerDetectionPoint.getInstance(code);
-					break;
-				default:
-					ais.advanceElement();
-					break;
-				}
-				break;
-				
-			case Tag.CLASS_CONTEXT_SPECIFIC:
-				
-				switch (tag) {
-				case _TAG_tPDUTypeCriterion:
-					if (ais.isTagPrimitive())
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-								+ ".tPDUTypeCriterion: is primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-					AsnInputStream ais2 = ais.readSequenceStream();
-					this.tPDUTypeCriterion = new ArrayList<MTSMSTPDUType>();
-					while (true) {
-						if (ais2.available() == 0)
-							break;
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-						int tag2 = ais2.readTag();
-						if (tag2 != Tag.ENUMERATED || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || !ais2.isTagPrimitive())
-							throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-									+ ".mtSMSTPDUType: bad tag or tagClass or is not primitive ", MAPParsingComponentExceptionReason.MistypedParameter);
+            int tag = ais.readTag();
 
-						int code = (int) ais2.readInteger();
-						MTSMSTPDUType mtSMSTPDUType = MTSMSTPDUType.getInstance(code);
-						this.tPDUTypeCriterion.add(mtSMSTPDUType);
-					}
+            switch (ais.getTagClass()) {
+                case Tag.CLASS_UNIVERSAL:
+                    switch (tag) {
+                        case Tag.ENUMERATED:
+                            if (!ais.isTagPrimitive())
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ".smsTriggerDetectionPoint:  not primitive",
+                                        MAPParsingComponentExceptionReason.MistypedParameter);
 
-					if (this.tPDUTypeCriterion.size() < 1 || this.tPDUTypeCriterion.size() > 6) {
-						throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parameter tPDUTypeCriterion size must be from 1 to 6, found: "
-								+ this.tPDUTypeCriterion.size(), MAPParsingComponentExceptionReason.MistypedParameter);
-					}
-					break;
+                            int code = (int) ais.readInteger();
+                            this.smsTriggerDetectionPoint = SMSTriggerDetectionPoint.getInstance(code);
+                            break;
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+                    break;
 
-				default:
-					ais.advanceElement();
-					break;
-				}
-				break;
-			
-			default:
-				ais.advanceElement();
-				break;
-			}
+                case Tag.CLASS_CONTEXT_SPECIFIC:
 
-		}
-		
-		if (this.smsTriggerDetectionPoint == null)
-			throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName + ": Parament smsTriggerDetectionPoint is mandatory but does not found",
-					MAPParsingComponentExceptionReason.MistypedParameter);
+                    switch (tag) {
+                        case _TAG_tPDUTypeCriterion:
+                            if (ais.isTagPrimitive())
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ".tPDUTypeCriterion: is primitive",
+                                        MAPParsingComponentExceptionReason.MistypedParameter);
+                            AsnInputStream ais2 = ais.readSequenceStream();
+                            this.tPDUTypeCriterion = new ArrayList<MTSMSTPDUType>();
+                            while (true) {
+                                if (ais2.available() == 0)
+                                    break;
 
+                                int tag2 = ais2.readTag();
+                                if (tag2 != Tag.ENUMERATED || ais2.getTagClass() != Tag.CLASS_UNIVERSAL
+                                        || !ais2.isTagPrimitive())
+                                    throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                            + ".mtSMSTPDUType: bad tag or tagClass or is not primitive ",
+                                            MAPParsingComponentExceptionReason.MistypedParameter);
 
-	}
+                                int code = (int) ais2.readInteger();
+                                MTSMSTPDUType mtSMSTPDUType = MTSMSTPDUType.getInstance(code);
+                                this.tPDUTypeCriterion.add(mtSMSTPDUType);
+                            }
 
-	@Override
-	public void encodeData(AsnOutputStream asnOs) throws MAPException {
-		if (this.smsTriggerDetectionPoint == null)
-			throw new MAPException("Error while encoding " + _PrimitiveName + ": smsTriggerDetectionPoint required.");
+                            if (this.tPDUTypeCriterion.size() < 1 || this.tPDUTypeCriterion.size() > 6) {
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ": Parameter tPDUTypeCriterion size must be from 1 to 6, found: "
+                                        + this.tPDUTypeCriterion.size(), MAPParsingComponentExceptionReason.MistypedParameter);
+                            }
+                            break;
 
-		if (this.tPDUTypeCriterion != null && (this.tPDUTypeCriterion.size() < 1 || this.tPDUTypeCriterion.size() > 6)) {
-			throw new MAPException("Error while encoding " + _PrimitiveName + ": Parameter tPDUTypeCriterion size must be from 1 to 6, found: "
-					+ this.tPDUTypeCriterion.size());
-		}
-		
-		try {
-			asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.smsTriggerDetectionPoint.getCode());
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+                    break;
 
-			if (this.tPDUTypeCriterion != null){
-				asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_tPDUTypeCriterion);
-				int pos = asnOs.StartContentDefiniteLength();
-				for (MTSMSTPDUType mtSMSTPDUType: this.tPDUTypeCriterion) {
-					asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, mtSMSTPDUType.getCode());
-				}
-				asnOs.FinalizeContent(pos);
-			}
+                default:
+                    ais.advanceElement();
+                    break;
+            }
 
-		} catch (AsnException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		} catch (IOException e) {
-			throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-		}
-	}
+        }
 
+        if (this.smsTriggerDetectionPoint == null)
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": Parament smsTriggerDetectionPoint is mandatory but does not found",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(_PrimitiveName + " [");
-		
-		if (this.smsTriggerDetectionPoint != null) {
-			sb.append("smsTriggerDetectionPoint=");
-			sb.append(this.smsTriggerDetectionPoint.toString());
-			sb.append(", ");
-		}
+    }
 
-		if (this.tPDUTypeCriterion != null) {
-			sb.append("mobilityTriggers=[");
-			boolean firstItem = true;
-			for (MTSMSTPDUType be : this.tPDUTypeCriterion) {
-				if (firstItem)
-					firstItem = false;
-				else
-					sb.append(", ");
-				sb.append(be.toString());
-			}
-			sb.append("] ");
-		}
+    @Override
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
+        if (this.smsTriggerDetectionPoint == null)
+            throw new MAPException("Error while encoding " + _PrimitiveName + ": smsTriggerDetectionPoint required.");
 
-		sb.append("]");
+        if (this.tPDUTypeCriterion != null && (this.tPDUTypeCriterion.size() < 1 || this.tPDUTypeCriterion.size() > 6)) {
+            throw new MAPException("Error while encoding " + _PrimitiveName
+                    + ": Parameter tPDUTypeCriterion size must be from 1 to 6, found: " + this.tPDUTypeCriterion.size());
+        }
 
-		return sb.toString();
-	}
-	
-	
+        try {
+            asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.smsTriggerDetectionPoint.getCode());
+
+            if (this.tPDUTypeCriterion != null) {
+                asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _TAG_tPDUTypeCriterion);
+                int pos = asnOs.StartContentDefiniteLength();
+                for (MTSMSTPDUType mtSMSTPDUType : this.tPDUTypeCriterion) {
+                    asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, mtSMSTPDUType.getCode());
+                }
+                asnOs.FinalizeContent(pos);
+            }
+
+        } catch (AsnException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.smsTriggerDetectionPoint != null) {
+            sb.append("smsTriggerDetectionPoint=");
+            sb.append(this.smsTriggerDetectionPoint.toString());
+            sb.append(", ");
+        }
+
+        if (this.tPDUTypeCriterion != null) {
+            sb.append("mobilityTriggers=[");
+            boolean firstItem = true;
+            for (MTSMSTPDUType be : this.tPDUTypeCriterion) {
+                if (firstItem)
+                    firstItem = false;
+                else
+                    sb.append(", ");
+                sb.append(be.toString());
+            }
+            sb.append("] ");
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 }
