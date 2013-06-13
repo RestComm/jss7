@@ -222,14 +222,15 @@ public class DialogImpl implements Dialog {
 	 * @param pdd
 	 * @param sideB
 	 */
-	protected DialogImpl(long dialogId, SccpAddress localAddress, SccpAddress remoteAddress, int seqControl, ScheduledExecutorService executor,
-			TCAPProviderImpl provider, PrevewDialogData pdd, boolean sideB) {
-		this.localAddress = localAddress;
-		this.remoteAddress = remoteAddress;
-		this.localTransactionId = dialogId;
-		this.executor = executor;
-		this.provider = provider;
-		this.structured = true;
+    protected DialogImpl(SccpAddress localAddress, SccpAddress remoteAddress, int seqControl,
+            ScheduledExecutorService executor, TCAPProviderImpl provider, PrevewDialogData pdd, boolean sideB) {
+        this.localAddress = localAddress;
+        this.remoteAddress = remoteAddress;
+        this.localTransactionIdObject = pdd.getDialogId();
+        this.localTransactionId = pdd.getDialogId();
+        this.executor = executor;
+        this.provider = provider;
+        this.structured = true;
 
 		this.seqControl = seqControl;
 		this.previewMode = true;

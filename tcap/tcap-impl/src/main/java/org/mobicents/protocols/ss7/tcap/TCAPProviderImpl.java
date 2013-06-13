@@ -826,48 +826,61 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 			if (this.dialogPreviewList.size() >= this.stack.getMaxDialogs())
 				throw new TCAPException("Current dialog count exceeds its maximum value");
 
-			PrevewDialogData pdd = new PrevewDialogData(this);
-			this.dialogPreviewList.put(ky, pdd);
-			DialogImpl di = new DialogImpl(0, localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, false);
-			pdd.setPrevewDialogDataKey1(ky);
-			
-			pdd.startIdleTimer();
-			
-			return di;
-		}
-	}
+            Long dialogId = this.getAvailableTxIdPreview();
+            PrevewDialogData pdd = new PrevewDialogData(this, dialogId);
+            this.dialogPreviewList.put(ky, pdd);
+            DialogImpl di = new DialogImpl(localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, false);
+            pdd.setPrevewDialogDataKey1(ky);
 
-	private Dialog getPreviewDialog(PrevewDialogDataKey ky1, PrevewDialogDataKey ky2, SccpAddress localAddress, SccpAddress remoteAddress, int seqControl) {
-		synchronized (this.dialogPreviewList) {
-			PrevewDialogData pdd = this.dialogPreviewList.get(ky1);
-			DialogImpl di = null;
-			boolean sideB = false;
-			if (pdd != null) {
-				sideB = pdd.getPrevewDialogDataKey1().equals(ky1);
-				di = new DialogImpl(0, localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, sideB);
-			} else {
-				pdd = this.dialogPreviewList.get(ky2);
-				if (pdd != null) {
-					sideB = pdd.getPrevewDialogDataKey1().equals(ky1);
-					di = new DialogImpl(0, localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, sideB);
-				} else {
-					return null;
-				}
-			}
-			
-			pdd.restartIdleTimer();
-
-			if (pdd.getPrevewDialogDataKey2() == null && ky2 != null) {
-				if (pdd.getPrevewDialogDataKey1().equals(ky1))
-					pdd.setPrevewDialogDataKey2(ky2);
-				else
-					pdd.setPrevewDialogDataKey2(ky1);
-				this.dialogPreviewList.put(pdd.getPrevewDialogDataKey2(), pdd);
-			}
+            pdd.startIdleTimer();
 
 			return di;
 		}
 	}
+
+    private Long getAvailableTxIdPreview() throws TCAPException {
+        while (true) {
+            if (this.curDialogId < this.stack.getDialogIdRangeStart())
+                this.curDialogId = this.stack.getDialogIdRangeStart() - 1;
+            if (++this.curDialogId > this.stack.getDialogIdRangeEnd())
+                this.curDialogId = this.stack.getDialogIdRangeStart();
+            Long id = this.curDialogId;
+            return id;
+        }
+    }
+
+    private Dialog getPreviewDialog(PrevewDialogDataKey ky1, PrevewDialogDataKey ky2, SccpAddress localAddress,
+            SccpAddress remoteAddress, int seqControl) {
+        synchronized (this.dialogPreviewList) {
+            PrevewDialogData pdd = this.dialogPreviewList.get(ky1);
+            DialogImpl di = null;
+            boolean sideB = false;
+            if (pdd != null) {
+                sideB = pdd.getPrevewDialogDataKey1().equals(ky1);
+                di = new DialogImpl(localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, sideB);
+            } else {
+                pdd = this.dialogPreviewList.get(ky2);
+                if (pdd != null) {
+                    sideB = pdd.getPrevewDialogDataKey1().equals(ky1);
+                    di = new DialogImpl(localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, sideB);
+                } else {
+                    return null;
+                }
+            }
+
+            pdd.restartIdleTimer();
+
+            if (pdd.getPrevewDialogDataKey2() == null && ky2 != null) {
+                if (pdd.getPrevewDialogDataKey1().equals(ky1))
+                    pdd.setPrevewDialogDataKey2(ky2);
+                else
+                    pdd.setPrevewDialogDataKey2(ky1);
+                this.dialogPreviewList.put(pdd.getPrevewDialogDataKey2(), pdd);
+            }
+
+            return di;
+        }
+    }
 
 	protected void removePreviewDialog(DialogImpl di) {
 		PrevewDialogData pdd = this.dialogPreviewList.get(di.prevewDialogData.getPrevewDialogDataKey1());
@@ -932,15 +945,18 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 		}
 
 		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + this.dpc;
-			result = prime * result + ((sccpDigits == null) ? 0 : sccpDigits.hashCode());
-			result = prime * result + this.ssn;
-			result = prime * result + (int) (this.origTxId + (this.origTxId >> 32));
-			return result;
-		}
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            if (this.sccpDigits != null) {
+                result = prime * result + ((sccpDigits == null) ? 0 : sccpDigits.hashCode());
+            } else {
+                result = prime * result + this.dpc;
+            }
+            result = prime * result + this.ssn;
+            result = prime * result + (int) (this.origTxId + (this.origTxId >> 32));
+            return result;
+        }
 	}
 }
 
