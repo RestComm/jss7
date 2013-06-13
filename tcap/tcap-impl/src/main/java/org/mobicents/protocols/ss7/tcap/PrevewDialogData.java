@@ -51,9 +51,11 @@ public class PrevewDialogData {
     private ScheduledExecutorService executor;
     private TCAPProviderImpl provider;
     private long idleTaskTimeout;
+    private Long dialogId;
 
-    public PrevewDialogData(TCAPProviderImpl provider) {
+    public PrevewDialogData(TCAPProviderImpl provider, Long dialogId) {
         this.provider = provider;
+        this.dialogId = dialogId;
         TCAPStack stack = provider.getStack();
         this.idleTaskTimeout = stack.getDialogIdleTimeout();
         this.executor = provider._EXECUTOR;
@@ -61,6 +63,10 @@ public class PrevewDialogData {
 
     public ApplicationContextName getLastACN() {
         return lastACN;
+    }
+
+    public Long getDialogId() {
+        return dialogId;
     }
 
     public InvokeImpl[] getOperationsSentA() {

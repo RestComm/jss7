@@ -55,7 +55,7 @@ public class RequestReportBCSMEventRequestImpl extends CircuitSwitchedCallMessag
     public static final int _ID_bcsmEvents = 0;
     public static final int _ID_extensions = 2;
 
-    public static final String _PrimitiveName = "ApplyChargingRequestIndication";
+    public static final String _PrimitiveName = "RequestReportBCSMEventRequest";
 
     private static final String EXTENSIONS = "extensions";
     private static final String BCSM_EVENT = "bcsmEvent";

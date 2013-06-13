@@ -848,14 +848,26 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             if (this.dialogPreviewList.size() >= this.stack.getMaxDialogs())
                 throw new TCAPException("Current dialog count exceeds its maximum value");
 
-            PrevewDialogData pdd = new PrevewDialogData(this);
+            Long dialogId = this.getAvailableTxIdPreview();
+            PrevewDialogData pdd = new PrevewDialogData(this, dialogId);
             this.dialogPreviewList.put(ky, pdd);
-            DialogImpl di = new DialogImpl(0, localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, false);
+            DialogImpl di = new DialogImpl(localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, false);
             pdd.setPrevewDialogDataKey1(ky);
 
             pdd.startIdleTimer();
 
             return di;
+        }
+    }
+
+    private Long getAvailableTxIdPreview() throws TCAPException {
+        while (true) {
+            if (this.curDialogId < this.stack.getDialogIdRangeStart())
+                this.curDialogId = this.stack.getDialogIdRangeStart() - 1;
+            if (++this.curDialogId > this.stack.getDialogIdRangeEnd())
+                this.curDialogId = this.stack.getDialogIdRangeStart();
+            Long id = this.curDialogId;
+            return id;
         }
     }
 
@@ -867,12 +879,12 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             boolean sideB = false;
             if (pdd != null) {
                 sideB = pdd.getPrevewDialogDataKey1().equals(ky1);
-                di = new DialogImpl(0, localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, sideB);
+                di = new DialogImpl(localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, sideB);
             } else {
                 pdd = this.dialogPreviewList.get(ky2);
                 if (pdd != null) {
                     sideB = pdd.getPrevewDialogDataKey1().equals(ky1);
-                    di = new DialogImpl(0, localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, sideB);
+                    di = new DialogImpl(localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, sideB);
                 } else {
                     return null;
                 }
@@ -958,8 +970,11 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + this.dpc;
-            result = prime * result + ((sccpDigits == null) ? 0 : sccpDigits.hashCode());
+            if (this.sccpDigits != null) {
+                result = prime * result + ((sccpDigits == null) ? 0 : sccpDigits.hashCode());
+            } else {
+                result = prime * result + this.dpc;
+            }
             result = prime * result + this.ssn;
             result = prime * result + (int) (this.origTxId + (this.origTxId >> 32));
             return result;
