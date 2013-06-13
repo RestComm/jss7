@@ -8,7 +8,8 @@
 		<para>
 			You can manage Linksets using the
 			<literal>linkset</literal>
-			command. It allows you to perform the following operations:
+			command. <literal>linkset</literal> are used only when dahdi based cards are configured. 
+			It allows you to perform the following operations:
 		</para>
 		<itemizedlist>
 			<listitem>
@@ -46,25 +47,13 @@
 			<para>Linkset can be create by issuing command with following structure:</para>
 			<programlisting>
 linkset create &lt;linkset-type&gt; opc &lt;point-code&gt; apc &lt;point-code&gt; ni &lt;network-id&gt; &lt;linkset-name&gt; </programlisting>
-			<para>or in case of dialogic:</para>
-			<programlisting>
-linkset create dialogic opc &lt;point-code&gt; apc &lt;point-code&gt; ni &lt;network-id&gt; srcmod &lt;src-mode&gt; destmod &lt;dest-mode&gt; &lt;linkset-name&gt; </programlisting>
-			<para>or in case of M3UA:</para>
-			<programlisting>
-linkset create m3ua opc &lt;point-code&gt; apc &lt;point-code&gt; ni &lt;network-id&gt; as &lt;as-name&gt; &lt;linkset-name&gt; </programlisting>
 			<para>Where:</para>
 			<variablelist>
 				<varlistentry>
 					<term>linkset-type</term>
 					<listitem>
 						<para>
-							refers to type of linkset to be created, ie.
-							<literal>dahdi</literal>
-							,
-							<literal>dialogic</literal>
-							or
-							<literal>m3ua</literal>
-							. Correct values depend on which linkset factories have been deployed. <!-- AMIT: add reference to linkset section/chapter -->
+							refers to type of linkset to be created. Only <literal>dahdi</literal> is supported.
 						</para>
 					</listitem>
 				</varlistentry>
@@ -72,20 +61,14 @@ linkset create m3ua opc &lt;point-code&gt; apc &lt;point-code&gt; ni &lt;network
 					<term>point-code</term>
 					<listitem>
 						<para>
-							is simply
-							<literal>MTP</literal>
-							point - either local(
-							<literal>opc</literal>
-							) or remote(
-							<literal>dpc</literal>
-							)
+							is <literal>MTP</literal> point - either local (<literal>opc</literal>) or remote(<literal>dpc</literal>)
 						</para>
 					</listitem>
 				</varlistentry>
 				<varlistentry>
 					<term>ni</term>
 					<listitem>
-						<para>is simply network identifier. It can have following values:</para>
+						<para>is network identifier. It can have following values:</para>
 						<variablelist>
 							<varlistentry>
 								<term>0</term>
@@ -120,19 +103,11 @@ linkset create m3ua opc &lt;point-code&gt; apc &lt;point-code&gt; ni &lt;network
 						<para>simple string name, which identifies linkset</para>
 					</listitem>
 				</varlistentry>
-				<varlistentry>
-					<term>as-name</term>
-					<listitem>
-						<para>Name of AS that M3UALinkset wrapps. Make sure that AS is already created as explained in <xref linkend="shell_m3ua_as_side_create"/> </para>
-					</listitem>
-				</varlistentry>				
 			</variablelist>
 			<example>
 				<title>Linkset creation</title>
 				<screen>
 mobicents(10.65.208.215:3435)>linkset create dahdi opc 1 apc 2 ni 0 linkset1
-LinkSet successfully added
-mobicents(10.65.208.215:3435)>linkset create dialogic opc 3 apc 4 ni 3 srcmod 1 destmod 2 linkset2
 LinkSet successfully added
 				</screen>
 			</example>
