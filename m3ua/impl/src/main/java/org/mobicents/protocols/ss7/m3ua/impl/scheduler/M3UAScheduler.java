@@ -51,7 +51,7 @@ public class M3UAScheduler implements Runnable {
         for (FastList.Node<M3UATask> n = tasks.head(), end = tasks.tail(); (n = n.getNext()) != end;) {
             M3UATask task = n.getValue();
             // check if has been canceled from different thread.
-            if (task.canceled) {
+            if (task.isCanceled()) {
                 // tasks.delete(n);
                 removed.add(task);
             } else {
@@ -64,7 +64,7 @@ public class M3UAScheduler implements Runnable {
                     }
                 }
                 // check if its canceled after run;
-                if (task.canceled) {
+                if (task.isCanceled()) {
                     removed.add(task);
                 }
             }
