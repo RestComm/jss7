@@ -22,9 +22,14 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.scheduler;
 
+/**
+ *
+ * @author Amit Bhayani
+ *
+ */
 public abstract class M3UATask {
 
-    protected boolean canceled = false;
+    protected volatile boolean canceled = false;
     protected int index;
     protected M3UAScheduler scheduler;
 
