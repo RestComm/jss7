@@ -531,6 +531,18 @@ public class RouterTest {
             return null;
         }
 
+        @Override
+        public void setPreviewMode(boolean previewMode) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public boolean isPreviewMode() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
     }
 
     private class Mtp3UserPartImpl implements Mtp3UserPart {

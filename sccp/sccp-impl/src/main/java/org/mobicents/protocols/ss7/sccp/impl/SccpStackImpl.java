@@ -94,6 +94,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     private static final String REASSEMBLY_TIMER_DELAY = "reassemblytimerdelay";
     private static final String MAX_DATA_MSG = "maxdatamessage";
     private static final String REMOVE_SPC = "removespc";
+    private static final String PREVIEW_MODE = "previewMode";
     private static final String SST_TIMER_DURATION_MIN = "ssttimerduration_min";
     private static final String SST_TIMER_DURATION_MAX = "ssttimerduration_max";
     private static final String SST_TIMER_DURATION_INCREASE_FACTOR = "ssttimerduration_increasefactor";
@@ -123,6 +124,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     // current by sstTimerDuration_IncreaseFactor)
     // TODO: make it configurable
     protected double sstTimerDuration_IncreaseFactor = 1.5;
+
+    private boolean previewMode = false;
 
     protected volatile State state = State.IDLE;
 
@@ -231,6 +234,12 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         this.store();
     }
 
+    public void setPreviewMode(boolean previewMode) {
+        this.previewMode = previewMode;
+
+        this.store();
+    }
+
     public void setSstTimerDuration_Min(int sstTimerDuration_Min) {
         // 5-10 seconds
         if (sstTimerDuration_Min < 5000)
@@ -266,6 +275,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
     public boolean isRemoveSpc() {
         return this.removeSpc;
+    }
+
+    public boolean isPreviewMode() {
+        return this.previewMode;
     }
 
     public int getSstTimerDuration_Min() {
@@ -947,6 +960,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             writer.write(this.reassemblyTimerDelay, REASSEMBLY_TIMER_DELAY, Integer.class);
             writer.write(this.maxDataMessage, MAX_DATA_MSG, Integer.class);
             writer.write(this.removeSpc, REMOVE_SPC, Boolean.class);
+            writer.write(this.previewMode, PREVIEW_MODE, Boolean.class);
             writer.write(this.sstTimerDuration_Min, SST_TIMER_DURATION_MIN, Integer.class);
             writer.write(this.sstTimerDuration_Max, SST_TIMER_DURATION_MAX, Integer.class);
             writer.write(this.sstTimerDuration_IncreaseFactor, SST_TIMER_DURATION_INCREASE_FACTOR, Double.class);
@@ -973,6 +987,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             this.reassemblyTimerDelay = reader.read(REASSEMBLY_TIMER_DELAY, Integer.class);
             this.maxDataMessage = reader.read(MAX_DATA_MSG, Integer.class);
             this.removeSpc = reader.read(REMOVE_SPC, Boolean.class);
+            Boolean b1 = reader.read(PREVIEW_MODE, Boolean.class);
+            if (b1 != null)
+                this.previewMode = b1;
+
             this.sstTimerDuration_Min = reader.read(SST_TIMER_DURATION_MIN, Integer.class);
             this.sstTimerDuration_Max = reader.read(SST_TIMER_DURATION_MAX, Integer.class);
             this.sstTimerDuration_IncreaseFactor = reader.read(SST_TIMER_DURATION_INCREASE_FACTOR, Double.class);

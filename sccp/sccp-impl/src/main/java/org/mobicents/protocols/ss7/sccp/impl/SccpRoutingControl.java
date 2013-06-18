@@ -23,6 +23,9 @@
 package org.mobicents.protocols.ss7.sccp.impl;
 
 import java.io.IOException;
+import java.util.Map;
+
+import javolution.util.FastMap;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -95,6 +98,26 @@ public class SccpRoutingControl {
     }
 
     protected void routeMssgFromMtp(SccpAddressedMessageImpl msg) throws IOException {
+        if (this.sccpStackImpl.isPreviewMode()) {
+            // we route all incoming message (except management messages) to all registered SccpListeners
+
+            int ssn = msg.getCalledPartyAddress().getSubsystemNumber();
+            if (ssn == 1) {
+                return;
+            }
+
+            FastMap<Integer, SccpListener> lstListn = this.sccpProviderImpl.getAllSccpListeners();
+            for (Map.Entry<Integer, SccpListener> val : lstListn.entrySet()) {
+                SccpListener listener = val.getValue();
+                if (msg instanceof SccpDataMessage) {
+                    SccpDataMessage dataMsg = (SccpDataMessage) msg;
+                    listener.onMessage(dataMsg);
+                }
+            }
+
+            return;
+        }
+
         // TODO if the local SCCP or node is in an overload condition, SCRC
         // shall inform SCMG
 
@@ -159,6 +182,11 @@ public class SccpRoutingControl {
     }
 
     protected void routeMssgFromSccpUser(SccpAddressedMessageImpl msg) throws IOException {
+        if (this.sccpStackImpl.isPreviewMode()) {
+            // we drop off local originated message in pereviewMode
+            return;
+        }
+
         this.route(msg);
     }
 

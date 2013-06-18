@@ -92,6 +92,10 @@ public interface SccpStack {
      */
     boolean isRemoveSpc();
 
+    void setPreviewMode(boolean previewMode);
+
+    boolean isPreviewMode();
+
     SccpResource getSccpResource();
 
     int getSstTimerDuration_Min();
