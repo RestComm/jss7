@@ -128,7 +128,7 @@ public class ExtForwInfoImpl extends SequenceBase implements ExtForwInfo {
                         this.forwardingFeatureList.add(featureItem);
                     }
 
-                    if (this.forwardingFeatureList.size() > 1 || this.forwardingFeatureList.size() > 32) {
+                    if (this.forwardingFeatureList.size() < 1 || this.forwardingFeatureList.size() > 32) {
                         throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
                                 + ": Parameter forwardingFeatureList size must be from 1 to 32, found: "
                                 + this.forwardingFeatureList.size(), MAPParsingComponentExceptionReason.MistypedParameter);
