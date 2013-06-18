@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -36,9 +36,9 @@ import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
 import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
 import org.mobicents.protocols.ss7.cap.api.primitives.TimerID;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPDialogSms;
-import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.CAMELFCISMSBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.EventSpecificInformationSMS;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.EventTypeSMS;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequence1SMS;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.RPCause;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSAddressString;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSEvent;
@@ -88,8 +88,8 @@ public class CAPDialogSmsImpl extends CAPDialogImpl implements CAPDialogSms {
             CalledPartyBCDNumber destinationSubscriberNumber, ISDNAddressString smscAddress, CAPExtensions extensions)
             throws CAPException {
 
-        if (this.appCntx != CAPApplicationContext.CapV3_cap3_sms)
-            throw new CAPException("Bad application context name for ConnectSMSRequest: must be CapV3_gsmSCF_gprsSSF");
+        if (this.appCntx != CAPApplicationContext.CapV3_cap3_sms && this.appCntx != CAPApplicationContext.CapV4_cap4_sms)
+            throw new CAPException("Bad application context name for ConnectSMSRequest: must be CapV3_cap3_sms or CapV4_cap4_sms");
 
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
@@ -141,9 +141,8 @@ public class CAPDialogSmsImpl extends CAPDialogImpl implements CAPDialogSms {
             EventSpecificInformationSMS eventSpecificInformationSMS, MiscCallInfo miscCallInfo, CAPExtensions extensions)
             throws CAPException {
 
-        if (this.appCntx != CAPApplicationContext.CapV3_cap3_sms)
-            throw new CAPException(
-                    "Bad application context name for EventReportSMSRequest: must be CapV3_gprsSSF_gsmSCF");
+        if (this.appCntx != CAPApplicationContext.CapV3_cap3_sms && this.appCntx != CAPApplicationContext.CapV4_cap4_sms)
+            throw new CAPException("Bad application context name for ConnectSMSRequest: must be CapV3_cap3_sms or CapV4_cap4_sms");
 
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class4);
@@ -183,18 +182,15 @@ public class CAPDialogSmsImpl extends CAPDialogImpl implements CAPDialogSms {
     }
 
     @Override
-    public Long addFurnishChargingInformationSMSRequest(
-            CAMELFCISMSBillingChargingCharacteristics camelFCISMSBillingChargingCharacteristics) throws CAPException {
-        return this.addFurnishChargingInformationSMSRequest(_Timer_Default, camelFCISMSBillingChargingCharacteristics);
+    public Long addFurnishChargingInformationSMSRequest(FCIBCCCAMELsequence1SMS fciBCCCAMELsequence1) throws CAPException {
+        return this.addFurnishChargingInformationSMSRequest(_Timer_Default, fciBCCCAMELsequence1);
     }
 
     @Override
-    public Long addFurnishChargingInformationSMSRequest(int customInvokeTimeout,
-            CAMELFCISMSBillingChargingCharacteristics camelFCISMSBillingChargingCharacteristics) throws CAPException {
+    public Long addFurnishChargingInformationSMSRequest(int customInvokeTimeout, FCIBCCCAMELsequence1SMS fciBCCCAMELsequence1) throws CAPException {
 
-        if (this.appCntx != CAPApplicationContext.CapV3_cap3_sms)
-            throw new CAPException(
-                    "Bad application context name for FurnishChargingInformationSMSRequest: must be CapV3_gsmSCF_gprsSSF");
+        if (this.appCntx != CAPApplicationContext.CapV3_cap3_sms && this.appCntx != CAPApplicationContext.CapV4_cap4_sms)
+            throw new CAPException("Bad application context name for ConnectSMSRequest: must be CapV3_cap3_sms or CapV4_cap4_sms");
 
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
@@ -207,8 +203,7 @@ public class CAPDialogSmsImpl extends CAPDialogImpl implements CAPDialogSms {
         oc.setLocalOperationCode((long) CAPOperationCode.furnishChargingInformationSMS);
         invoke.setOperationCode(oc);
 
-        FurnishChargingInformationSMSRequestImpl req = new FurnishChargingInformationSMSRequestImpl(
-                camelFCISMSBillingChargingCharacteristics);
+        FurnishChargingInformationSMSRequestImpl req = new FurnishChargingInformationSMSRequestImpl(fciBCCCAMELsequence1);
         AsnOutputStream aos = new AsnOutputStream();
         req.encodeData(aos);
 
@@ -259,8 +254,8 @@ public class CAPDialogSmsImpl extends CAPDialogImpl implements CAPDialogSms {
             ISDNAddressString mscAddress, ISDNAddressString sgsnNumber, MSClassmark2 mSClassmark2,
             GPRSMSClass gprsMSClass, IMEI imei, ISDNAddressString calledPartyNumber) throws CAPException {
 
-        if (this.appCntx != CAPApplicationContext.CapV3_cap3_sms)
-            throw new CAPException("Bad application context name for InitialDPSMSRequest: must be CapV3_gprsSSF_gsmSCF");
+        if (this.appCntx != CAPApplicationContext.CapV3_cap3_sms && this.appCntx != CAPApplicationContext.CapV4_cap4_sms)
+            throw new CAPException("Bad application context name for ConnectSMSRequest: must be CapV3_cap3_sms or CapV4_cap4_sms");
 
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
@@ -310,8 +305,8 @@ public class CAPDialogSmsImpl extends CAPDialogImpl implements CAPDialogSms {
     @Override
     public Long addReleaseSMSRequest(int customInvokeTimeout, RPCause rpCause) throws CAPException {
 
-        if (this.appCntx != CAPApplicationContext.CapV3_cap3_sms)
-            throw new CAPException("Bad application context name for ReleaseSMSRequest: must be CapV3_cap3_sms");
+        if (this.appCntx != CAPApplicationContext.CapV3_cap3_sms && this.appCntx != CAPApplicationContext.CapV4_cap4_sms)
+            throw new CAPException("Bad application context name for ConnectSMSRequest: must be CapV3_cap3_sms or CapV4_cap4_sms");
 
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class4);
@@ -359,9 +354,8 @@ public class CAPDialogSmsImpl extends CAPDialogImpl implements CAPDialogSms {
     public Long addRequestReportSMSEventRequest(int customInvokeTimeout, ArrayList<SMSEvent> smsEvents,
             CAPExtensions extensions) throws CAPException {
 
-        if (this.appCntx != CAPApplicationContext.CapV3_cap3_sms)
-            throw new CAPException(
-                    "Bad application context name for RequestReportSMSEventRequest: must be CapV3_gsmSCF_gprsSSF");
+        if (this.appCntx != CAPApplicationContext.CapV3_cap3_sms && this.appCntx != CAPApplicationContext.CapV4_cap4_sms)
+            throw new CAPException("Bad application context name for ConnectSMSRequest: must be CapV3_cap3_sms or CapV4_cap4_sms");
 
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
@@ -408,8 +402,8 @@ public class CAPDialogSmsImpl extends CAPDialogImpl implements CAPDialogSms {
     public Long addResetTimerSMSRequest(int customInvokeTimeout, TimerID timerID, int timerValue,
             CAPExtensions extensions) throws CAPException {
 
-        if (this.appCntx != CAPApplicationContext.CapV3_cap3_sms)
-            throw new CAPException("Bad application context name for ResetTimerSMSRequest: must be CapV3_cap3_sms");
+        if (this.appCntx != CAPApplicationContext.CapV3_cap3_sms && this.appCntx != CAPApplicationContext.CapV4_cap4_sms)
+            throw new CAPException("Bad application context name for ConnectSMSRequest: must be CapV3_cap3_sms or CapV4_cap4_sms");
 
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
@@ -433,6 +427,41 @@ public class CAPDialogSmsImpl extends CAPDialogImpl implements CAPDialogSms {
         p.setTag(req.getTag());
         p.setData(aos.toByteArray());
         invoke.setParameter(p);
+
+        Long invokeId;
+        try {
+            invokeId = this.tcapDialog.getNewInvokeId();
+            invoke.setInvokeId(invokeId);
+        } catch (TCAPException e) {
+            throw new CAPException(e.getMessage(), e);
+        }
+
+        this.sendInvokeComponent(invoke);
+
+        return invokeId;
+    }
+
+    @Override
+    public Long addContinueSMSRequest() throws CAPException {
+
+        return addContinueSMSRequest(_Timer_Default);
+    }
+
+    @Override
+    public Long addContinueSMSRequest(int customInvokeTimeout) throws CAPException {
+
+        if (this.appCntx != CAPApplicationContext.CapV3_cap3_sms && this.appCntx != CAPApplicationContext.CapV4_cap4_sms)
+            throw new CAPException("Bad application context name for ConnectSMSRequest: must be CapV3_cap3_sms or CapV4_cap4_sms");
+
+        Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class4);
+        if (customInvokeTimeout == _Timer_Default)
+            invoke.setTimeout(_Timer_Sms_Short);
+        else
+            invoke.setTimeout(customInvokeTimeout);
+
+        OperationCode oc = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+        oc.setLocalOperationCode((long) CAPOperationCode.continueSMS);
+        invoke.setOperationCode(oc);
 
         Long invokeId;
         try {

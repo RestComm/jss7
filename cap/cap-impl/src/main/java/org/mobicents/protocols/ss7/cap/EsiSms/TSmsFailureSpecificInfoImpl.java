@@ -46,8 +46,6 @@ public class TSmsFailureSpecificInfoImpl extends SequenceBase implements TSmsFai
 
     public static final int _ID_failureCause = 0;
 
-    public static final int _ID_TSmsFailureSpecificInfo = 2;
-
     private MTSMSCause failureCause;
 
     public TSmsFailureSpecificInfoImpl() {
@@ -62,16 +60,6 @@ public class TSmsFailureSpecificInfoImpl extends SequenceBase implements TSmsFai
     @Override
     public MTSMSCause GetFailureCause() {
         return this.failureCause;
-    }
-
-    @Override
-    public int getTag() throws CAPException {
-        return _ID_TSmsFailureSpecificInfo;
-    }
-
-    @Override
-    public int getTagClass() {
-        return Tag.CLASS_CONTEXT_SPECIFIC;
     }
 
     @Override

@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.mobicents.protocols.ss7.cap.service.gprs.primitive;
 
 import java.io.IOException;
@@ -31,8 +32,8 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
-import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FCIBCCCAMELsequence1;
-import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FreeFormatData;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FCIBCCCAMELsequence1Gprs;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FreeFormatDataGprs;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPID;
 import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
@@ -42,7 +43,7 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  * @author Lasith Waruna Perera
  *
  */
-public class FCIBCCCAMELsequence1Impl extends SequenceBase implements FCIBCCCAMELsequence1 {
+public class FCIBCCCAMELsequence1GprsImpl extends SequenceBase implements FCIBCCCAMELsequence1Gprs {
 
     public static final int _ID_freeFormatData = 0;
     public static final int _ID_pdpID = 1;
@@ -50,23 +51,23 @@ public class FCIBCCCAMELsequence1Impl extends SequenceBase implements FCIBCCCAME
 
     public static final int _ID_FCIBCCCAMELsequence1 = 0;
 
-    private FreeFormatData freeFormatData;
+    private FreeFormatDataGprs freeFormatData;
     private PDPID pdpID;
     private AppendFreeFormatData appendFreeFormatData;
 
-    public FCIBCCCAMELsequence1Impl() {
-        super("FCIBCCCAMELsequence1");
+    public FCIBCCCAMELsequence1GprsImpl() {
+        super("FCIBCCCAMELsequence1Gprs");
     }
 
-    public FCIBCCCAMELsequence1Impl(FreeFormatData freeFormatData, PDPID pdpID, AppendFreeFormatData appendFreeFormatData) {
-        super("FCIBCCCAMELsequence1");
+    public FCIBCCCAMELsequence1GprsImpl(FreeFormatDataGprs freeFormatData, PDPID pdpID, AppendFreeFormatData appendFreeFormatData) {
+        super("FCIBCCCAMELsequence1Gprs");
         this.freeFormatData = freeFormatData;
         this.pdpID = pdpID;
         this.appendFreeFormatData = appendFreeFormatData;
     }
 
     @Override
-    public FreeFormatData getFreeFormatData() {
+    public FreeFormatDataGprs getFreeFormatData() {
         return this.freeFormatData;
     }
 
@@ -112,8 +113,8 @@ public class FCIBCCCAMELsequence1Impl extends SequenceBase implements FCIBCCCAME
                             throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
                                     + ".freeFormatData: Parameter is not primitive",
                                     CAPParsingComponentExceptionReason.MistypedParameter);
-                        this.freeFormatData = new FreeFormatDataImpl();
-                        ((FreeFormatDataImpl) this.freeFormatData).decodeAll(ais);
+                        this.freeFormatData = new FreeFormatDataGprsImpl();
+                        ((FreeFormatDataGprsImpl) this.freeFormatData).decodeAll(ais);
                         break;
                     case _ID_pdpID:
                         if (!ais.isTagPrimitive())
@@ -155,7 +156,7 @@ public class FCIBCCCAMELsequence1Impl extends SequenceBase implements FCIBCCCAME
 
         try {
 
-            ((FreeFormatDataImpl) this.freeFormatData).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_freeFormatData);
+            ((FreeFormatDataGprsImpl) this.freeFormatData).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_freeFormatData);
 
             if (this.pdpID != null)
                 ((PDPIDImpl) this.pdpID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_pdpID);

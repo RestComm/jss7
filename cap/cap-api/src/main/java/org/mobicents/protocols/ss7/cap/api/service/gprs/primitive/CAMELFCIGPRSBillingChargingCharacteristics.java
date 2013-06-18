@@ -34,6 +34,6 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  */
 public interface CAMELFCIGPRSBillingChargingCharacteristics {
 
-    FCIBCCCAMELsequence1 getFCIBCCCAMELsequence1();
+    FCIBCCCAMELsequence1Gprs getFCIBCCCAMELsequence1();
 
 }

@@ -30,6 +30,7 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FreeFormatData;
 import org.mobicents.protocols.ss7.cap.primitives.SendingSideIDImpl;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.testng.annotations.Test;
@@ -57,7 +58,7 @@ public class FCIBCCCAMELsequence1Test {
         FCIBCCCAMELsequence1Impl elem = new FCIBCCCAMELsequence1Impl();
         int tag = ais.readTag();
         elem.decodeAll(ais);
-        assertTrue(Arrays.equals(elem.getFreeFormatData(), this.getDataFFD()));
+        assertTrue(Arrays.equals(elem.getFreeFormatData().getData(), this.getDataFFD()));
         assertEquals(elem.getPartyToCharge().getSendingSideID(), LegType.leg2);
         assertEquals(elem.getAppendFreeFormatData(), AppendFreeFormatData.append);
     }
@@ -66,7 +67,8 @@ public class FCIBCCCAMELsequence1Test {
     public void testEncode() throws Exception {
 
         SendingSideIDImpl partyToCharge = new SendingSideIDImpl(LegType.leg2);
-        FCIBCCCAMELsequence1Impl elem = new FCIBCCCAMELsequence1Impl(getDataFFD(), partyToCharge, AppendFreeFormatData.append);
+        FreeFormatData ffd = new FreeFormatDataImpl(getDataFFD());
+        FCIBCCCAMELsequence1Impl elem = new FCIBCCCAMELsequence1Impl(ffd, partyToCharge, AppendFreeFormatData.append);
         AsnOutputStream aos = new AsnOutputStream();
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));

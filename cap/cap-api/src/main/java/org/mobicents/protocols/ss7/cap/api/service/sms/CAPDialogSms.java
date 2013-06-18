@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -30,9 +30,9 @@ import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
 import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
 import org.mobicents.protocols.ss7.cap.api.primitives.TimerID;
-import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.CAMELFCISMSBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.EventSpecificInformationSMS;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.EventTypeSMS;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequence1SMS;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.RPCause;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSAddressString;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSEvent;
@@ -56,35 +56,49 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
  *
  */
 public interface CAPDialogSms extends CAPDialog {
-    Long addConnectSMSRequest(SMSAddressString callingPartysNumber,
-            CalledPartyBCDNumber destinationSubscriberNumber,
-            ISDNAddressString smscAddress, CAPExtensions extensions)  throws CAPException;
-    Long addConnectSMSRequest(int customInvokeTimeout,SMSAddressString callingPartysNumber,
-            CalledPartyBCDNumber destinationSubscriberNumber,ISDNAddressString smscAddress, CAPExtensions extensions) throws CAPException;
-    Long addEventReportSMSRequest(EventTypeSMS eventTypeSMS,EventSpecificInformationSMS eventSpecificInformationSMS,MiscCallInfo miscCallInfo, CAPExtensions extensions) throws CAPException;
-    Long addEventReportSMSRequest(int customInvokeTimeout,EventTypeSMS eventTypeSMS,
-            EventSpecificInformationSMS eventSpecificInformationSMS,
-            MiscCallInfo miscCallInfo, CAPExtensions extensions)  throws CAPException;
-    Long addFurnishChargingInformationSMSRequest(CAMELFCISMSBillingChargingCharacteristics camelFCISMSBillingChargingCharacteristics)  throws CAPException;
-    Long addFurnishChargingInformationSMSRequest(int customInvokeTimeout,CAMELFCISMSBillingChargingCharacteristics camelFCISMSBillingChargingCharacteristics)  throws CAPException;
-    Long addInitialDPSMSRequest(int serviceKey, CalledPartyBCDNumber destinationSubscriberNumber,
-            SMSAddressString callingPartyNumber, EventTypeSMS eventTypeSMS,IMSI imsi, LocationInformation locationInformationMSC,
-            LocationInformationGPRS locationInformationGPRS,ISDNAddressString smscCAddress, TimeAndTimezone timeAndTimezone,
-            TPShortMessageSpecificInfo tPShortMessageSpecificInfo,TPProtocolIdentifier tPProtocolIdentifier,
-            TPDataCodingScheme tPDataCodingScheme,TPValidityPeriod tPValidityPeriod, CAPExtensions extensions,
-            CallReferenceNumber smsReferenceNumber,ISDNAddressString mscAddress, ISDNAddressString sgsnNumber,
-            MSClassmark2 mSClassmark2, GPRSMSClass gprsMSClass, IMEI imei,ISDNAddressString calledPartyNumber)  throws CAPException;
-   Long addInitialDPSMSRequest(int customInvokeTimeout,int serviceKey, CalledPartyBCDNumber destinationSubscriberNumber,
-            SMSAddressString callingPartyNumber, EventTypeSMS eventTypeSMS,IMSI imsi, LocationInformation locationInformationMSC,
-            LocationInformationGPRS locationInformationGPRS,ISDNAddressString smscCAddress, TimeAndTimezone timeAndTimezone,
-            TPShortMessageSpecificInfo tPShortMessageSpecificInfo,TPProtocolIdentifier tPProtocolIdentifier,
-            TPDataCodingScheme tPDataCodingScheme,TPValidityPeriod tPValidityPeriod, CAPExtensions extensions,
-            CallReferenceNumber smsReferenceNumber,ISDNAddressString mscAddress, ISDNAddressString sgsnNumber,
-            MSClassmark2 mSClassmark2, GPRSMSClass gprsMSClass, IMEI imei,ISDNAddressString calledPartyNumber)  throws CAPException;
-    Long addReleaseSMSRequest(RPCause rpCause)  throws CAPException;
-    Long addReleaseSMSRequest(int customInvokeTimeout,RPCause rpCause)  throws CAPException;
-    Long addRequestReportSMSEventRequest(ArrayList<SMSEvent> smsEvents, CAPExtensions extensions)  throws CAPException;
-    Long addRequestReportSMSEventRequest(int customInvokeTimeout,ArrayList<SMSEvent> smsEvents, CAPExtensions extensions)  throws CAPException;
-    Long addResetTimerSMSRequest(TimerID timerID, int timerValue, CAPExtensions extensions)  throws CAPException;
-    Long addResetTimerSMSRequest(int customInvokeTimeout,TimerID timerID, int timerValue, CAPExtensions extensions)  throws CAPException;
+    Long addConnectSMSRequest(SMSAddressString callingPartysNumber, CalledPartyBCDNumber destinationSubscriberNumber, ISDNAddressString smscAddress,
+            CAPExtensions extensions) throws CAPException;
+
+    Long addConnectSMSRequest(int customInvokeTimeout, SMSAddressString callingPartysNumber, CalledPartyBCDNumber destinationSubscriberNumber,
+            ISDNAddressString smscAddress, CAPExtensions extensions) throws CAPException;
+
+    Long addEventReportSMSRequest(EventTypeSMS eventTypeSMS, EventSpecificInformationSMS eventSpecificInformationSMS, MiscCallInfo miscCallInfo,
+            CAPExtensions extensions) throws CAPException;
+
+    Long addEventReportSMSRequest(int customInvokeTimeout, EventTypeSMS eventTypeSMS, EventSpecificInformationSMS eventSpecificInformationSMS,
+            MiscCallInfo miscCallInfo, CAPExtensions extensions) throws CAPException;
+
+    Long addFurnishChargingInformationSMSRequest(FCIBCCCAMELsequence1SMS fciBCCCAMELsequence1) throws CAPException;
+
+    Long addFurnishChargingInformationSMSRequest(int customInvokeTimeout, FCIBCCCAMELsequence1SMS fciBCCCAMELsequence1) throws CAPException;
+
+    Long addInitialDPSMSRequest(int serviceKey, CalledPartyBCDNumber destinationSubscriberNumber, SMSAddressString callingPartyNumber,
+            EventTypeSMS eventTypeSMS, IMSI imsi, LocationInformation locationInformationMSC, LocationInformationGPRS locationInformationGPRS,
+            ISDNAddressString smscCAddress, TimeAndTimezone timeAndTimezone, TPShortMessageSpecificInfo tPShortMessageSpecificInfo,
+            TPProtocolIdentifier tPProtocolIdentifier, TPDataCodingScheme tPDataCodingScheme, TPValidityPeriod tPValidityPeriod, CAPExtensions extensions,
+            CallReferenceNumber smsReferenceNumber, ISDNAddressString mscAddress, ISDNAddressString sgsnNumber, MSClassmark2 mSClassmark2,
+            GPRSMSClass gprsMSClass, IMEI imei, ISDNAddressString calledPartyNumber) throws CAPException;
+
+    Long addInitialDPSMSRequest(int customInvokeTimeout, int serviceKey, CalledPartyBCDNumber destinationSubscriberNumber, SMSAddressString callingPartyNumber,
+            EventTypeSMS eventTypeSMS, IMSI imsi, LocationInformation locationInformationMSC, LocationInformationGPRS locationInformationGPRS,
+            ISDNAddressString smscCAddress, TimeAndTimezone timeAndTimezone, TPShortMessageSpecificInfo tPShortMessageSpecificInfo,
+            TPProtocolIdentifier tPProtocolIdentifier, TPDataCodingScheme tPDataCodingScheme, TPValidityPeriod tPValidityPeriod, CAPExtensions extensions,
+            CallReferenceNumber smsReferenceNumber, ISDNAddressString mscAddress, ISDNAddressString sgsnNumber, MSClassmark2 mSClassmark2,
+            GPRSMSClass gprsMSClass, IMEI imei, ISDNAddressString calledPartyNumber) throws CAPException;
+
+    Long addReleaseSMSRequest(RPCause rpCause) throws CAPException;
+
+    Long addReleaseSMSRequest(int customInvokeTimeout, RPCause rpCause) throws CAPException;
+
+    Long addRequestReportSMSEventRequest(ArrayList<SMSEvent> smsEvents, CAPExtensions extensions) throws CAPException;
+
+    Long addRequestReportSMSEventRequest(int customInvokeTimeout, ArrayList<SMSEvent> smsEvents, CAPExtensions extensions) throws CAPException;
+
+    Long addResetTimerSMSRequest(TimerID timerID, int timerValue, CAPExtensions extensions) throws CAPException;
+
+    Long addResetTimerSMSRequest(int customInvokeTimeout, TimerID timerID, int timerValue, CAPExtensions extensions) throws CAPException;
+
+    Long addContinueSMSRequest() throws CAPException;
+
+    Long addContinueSMSRequest(int customInvokeTimeout) throws CAPException;
 }

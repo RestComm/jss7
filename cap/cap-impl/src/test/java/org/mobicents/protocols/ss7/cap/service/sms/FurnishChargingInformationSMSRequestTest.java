@@ -31,12 +31,10 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
-import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.CAMELFCISMSBillingChargingCharacteristics;
-import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequence1;
-import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatData;
-import org.mobicents.protocols.ss7.cap.service.sms.primitive.CAMELFCISMSBillingChargingCharacteristicsImpl;
-import org.mobicents.protocols.ss7.cap.service.sms.primitive.FCIBCCCAMELsequence1Impl;
-import org.mobicents.protocols.ss7.cap.service.sms.primitive.FreeFormatDataImpl;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequence1SMS;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatDataSMS;
+import org.mobicents.protocols.ss7.cap.service.sms.primitive.FCIBCCCAMELsequence1SMSImpl;
+import org.mobicents.protocols.ss7.cap.service.sms.primitive.FreeFormatDataSMSImpl;
 import org.testng.annotations.Test;
 
 /**
@@ -47,7 +45,8 @@ import org.testng.annotations.Test;
 public class FurnishChargingInformationSMSRequestTest {
 
     public byte[] getData() {
-        return new byte[] { 4, 17, 48, 15, -96, 13, -128, 8, 48, 6, -128, 1, 3, -118, 1, 1, -127, 1, 1 };
+        return new byte[] { 4, 15, -96, 13, -128, 8, 48, 6, -128, 1, 3, -118, 1, 1, -127, 1, 1 };
+//        return new byte[] { 4, 17, 48, 15, -96, 13, -128, 8, 48, 6, -128, 1, 3, -118, 1, 1, -127, 1, 1 };
     };
 
     public byte[] getFreeFormatData() {
@@ -65,9 +64,7 @@ public class FurnishChargingInformationSMSRequestTest {
         assertEquals(tag, Tag.STRING_OCTET);
         assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 
-        CAMELFCISMSBillingChargingCharacteristics camelFCISMSBillingChargingCharacteristics = prim
-                .getCAMELFCISMSBillingChargingCharacteristics();
-        FCIBCCCAMELsequence1 fcIBCCCAMELsequence1 = camelFCISMSBillingChargingCharacteristics.getFCIBCCCAMELsequence1();
+        FCIBCCCAMELsequence1SMS fcIBCCCAMELsequence1 = prim.getFCIBCCCAMELsequence1();
         assertNotNull(fcIBCCCAMELsequence1);
         assertTrue(Arrays.equals(fcIBCCCAMELsequence1.getFreeFormatData().getData(), this.getFreeFormatData()));
         assertEquals(fcIBCCCAMELsequence1.getAppendFreeFormatData(), AppendFreeFormatData.append);
@@ -77,14 +74,11 @@ public class FurnishChargingInformationSMSRequestTest {
     @Test(groups = { "functional.encode", "primitives" })
     public void testEncode() throws Exception {
 
-        FreeFormatData freeFormatData = new FreeFormatDataImpl(getFreeFormatData());
-        FCIBCCCAMELsequence1Impl fcIBCCCAMELsequence1 = new FCIBCCCAMELsequence1Impl(freeFormatData,
+        FreeFormatDataSMS freeFormatData = new FreeFormatDataSMSImpl(getFreeFormatData());
+        FCIBCCCAMELsequence1SMSImpl fcIBCCCAMELsequence1 = new FCIBCCCAMELsequence1SMSImpl(freeFormatData,
                 AppendFreeFormatData.append);
-        CAMELFCISMSBillingChargingCharacteristicsImpl camelFCISMSBillingChargingCharacteristics = new CAMELFCISMSBillingChargingCharacteristicsImpl(
-                fcIBCCCAMELsequence1);
 
-        FurnishChargingInformationSMSRequestImpl prim = new FurnishChargingInformationSMSRequestImpl(
-                camelFCISMSBillingChargingCharacteristics);
+        FurnishChargingInformationSMSRequestImpl prim = new FurnishChargingInformationSMSRequestImpl(fcIBCCCAMELsequence1);
         AsnOutputStream asn = new AsnOutputStream();
         prim.encodeAll(asn);
 

@@ -26,7 +26,6 @@ import java.io.IOException;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.EsiSms.TSmsDeliverySpecificInfo;
@@ -41,20 +40,8 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  */
 public class TSmsDeliverySpecificInfoImpl extends SequenceBase implements TSmsDeliverySpecificInfo {
 
-    public static final int _ID_TSmsDeliverySpecificInfo = 3;
-
     public TSmsDeliverySpecificInfoImpl() {
         super("TSmsDeliverySpecificInfo");
-    }
-
-    @Override
-    public int getTag() throws CAPException {
-        return _ID_TSmsDeliverySpecificInfo;
-    }
-
-    @Override
-    public int getTagClass() {
-        return Tag.CLASS_CONTEXT_SPECIFIC;
     }
 
     @Override

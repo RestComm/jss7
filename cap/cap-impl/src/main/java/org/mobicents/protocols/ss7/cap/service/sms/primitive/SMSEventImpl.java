@@ -44,7 +44,7 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 public class SMSEventImpl extends SequenceBase implements SMSEvent {
 
     public static final int _ID_eventTypeSMS = 0;
-    public static final int _ID_monitorMode = 10;
+    public static final int _ID_monitorMode = 1;
 
     private EventTypeSMS eventTypeSMS;
     private MonitorMode monitorMode;

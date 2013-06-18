@@ -43,5 +43,5 @@ public enum EventType {
     InitialDpGprsRequest, RequestReportGPRSEventRequest, ApplyChargingGPRSRequest, EntityReleasedGPRSRequest, ConnectGPRSRequest, ContinueGPRSRequest, ReleaseGPRSRequest, ResetTimerGPRSRequest, FurnishChargingInformationGPRSRequest, CancelGPRSRequest, SendChargingInformationGPRSRequest, applyChargingReportGPRS, EventReportGPRSRequest, EventReportGPRSResponse, ApplyChargingReportGPRSResponse, ApplyChargingReportGPRSRequest, EntityReleasedGPRSResponse, ActivityTestGPRSRequest, ActivityTestGPRSResponse,
 
     // sms event Type
-    ConnectSMSRequest, EventReportSMSRequest, FurnishChargingInformationSMSRequest, InitialDPSMSRequest, ReleaseSMSRequest, RequestReportSMSEventRequest, ResetTimerSMSRequest
+    ConnectSMSRequest, EventReportSMSRequest, FurnishChargingInformationSMSRequest, InitialDPSMSRequest, ReleaseSMSRequest, RequestReportSMSEventRequest, ResetTimerSMSRequest, ContinueSMSRequest
 }

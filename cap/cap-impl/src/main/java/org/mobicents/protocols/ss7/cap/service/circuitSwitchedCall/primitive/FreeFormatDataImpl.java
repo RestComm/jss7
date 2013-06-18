@@ -20,31 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.service.sms;
+package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
-import org.mobicents.protocols.ss7.cap.api.CAPServiceListener;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FreeFormatData;
+import org.mobicents.protocols.ss7.cap.primitives.OctetStringBase;
 
 /**
- *
- * @author sergey vetyutnev
- *
- */
-public interface CAPServiceSmsListener extends CAPServiceListener {
+*
+* @author Lasith Waruna Perera
+*
+*/
+public class FreeFormatDataImpl extends OctetStringBase implements FreeFormatData {
 
-    void onConnectSMSRequest(ConnectSMSRequest ind);
+    public FreeFormatDataImpl() {
+        super(1, 160, "FreeFormatData");
+    }
 
-    void onEventReportSMSRequest(EventReportSMSRequest ind);
+    public FreeFormatDataImpl(byte[] data) {
+        super(1, 160, "FreeFormatData", data);
+    }
 
-    void onFurnishChargingInformationSMSRequest(FurnishChargingInformationSMSRequest ind);
-
-    void onInitialDPSMSRequest(InitialDPSMSRequest ind);
-
-    void onReleaseSMSRequest(ReleaseSMSRequest ind);
-
-    void onRequestReportSMSEventRequest(RequestReportSMSEventRequest ind);
-
-    void onResetTimerSMSRequest(ResetTimerSMSRequest ind);
-
-    void onContinueSMSRequest(ContinueSMSRequest ind);
+    @Override
+    public byte[] getData() {
+        return data;
+    }
 
 }

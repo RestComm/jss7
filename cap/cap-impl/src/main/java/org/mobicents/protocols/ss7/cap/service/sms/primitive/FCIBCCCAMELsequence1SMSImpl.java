@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.mobicents.protocols.ss7.cap.service.sms.primitive;
 
 import java.io.IOException;
@@ -31,8 +32,8 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
-import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequence1;
-import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatData;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequence1SMS;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatDataSMS;
 import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.inap.api.INAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
@@ -42,28 +43,28 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  * @author Lasith Waruna Perera
  *
  */
-public class FCIBCCCAMELsequence1Impl extends SequenceBase implements FCIBCCCAMELsequence1 {
+public class FCIBCCCAMELsequence1SMSImpl extends SequenceBase implements FCIBCCCAMELsequence1SMS {
 
     public static final int _ID_freeFormatData = 0;
     public static final int _ID_appendFreeFormatData = 1;
 
     public static final int _ID_FCIBCCCAMELsequence1 = 0;
 
-    private FreeFormatData freeFormatData;
+    private FreeFormatDataSMS freeFormatData;
     private AppendFreeFormatData appendFreeFormatData;
 
-    public FCIBCCCAMELsequence1Impl() {
-        super("FCIBCCCAMELsequence1");
+    public FCIBCCCAMELsequence1SMSImpl() {
+        super("FCIBCCCAMELsequence1SMS");
     }
 
-    public FCIBCCCAMELsequence1Impl(FreeFormatData freeFormatData, AppendFreeFormatData appendFreeFormatData) {
-        super("FCIBCCCAMELsequence1");
+    public FCIBCCCAMELsequence1SMSImpl(FreeFormatDataSMS freeFormatData, AppendFreeFormatData appendFreeFormatData) {
+        super("FCIBCCCAMELsequence1SMS");
         this.freeFormatData = freeFormatData;
         this.appendFreeFormatData = appendFreeFormatData;
     }
 
     @Override
-    public FreeFormatData getFreeFormatData() {
+    public FreeFormatDataSMS getFreeFormatData() {
         return this.freeFormatData;
     }
 
@@ -103,8 +104,8 @@ public class FCIBCCCAMELsequence1Impl extends SequenceBase implements FCIBCCCAME
                         throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
                                 + ".freeFormatData: Parameter is not primitive",
                                 CAPParsingComponentExceptionReason.MistypedParameter);
-                    this.freeFormatData = new FreeFormatDataImpl();
-                    ((FreeFormatDataImpl) this.freeFormatData).decodeAll(ais);
+                    this.freeFormatData = new FreeFormatDataSMSImpl();
+                    ((FreeFormatDataSMSImpl) this.freeFormatData).decodeAll(ais);
                     break;
                 case _ID_appendFreeFormatData:
                     if (!ais.isTagPrimitive())
@@ -138,7 +139,7 @@ public class FCIBCCCAMELsequence1Impl extends SequenceBase implements FCIBCCCAME
 
         try {
 
-            ((FreeFormatDataImpl) this.freeFormatData).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_freeFormatData);
+            ((FreeFormatDataSMSImpl) this.freeFormatData).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_freeFormatData);
 
             if (this.appendFreeFormatData != null) {
                 asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_appendFreeFormatData,

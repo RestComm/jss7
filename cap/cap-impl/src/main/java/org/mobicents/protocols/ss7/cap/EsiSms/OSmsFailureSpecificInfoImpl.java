@@ -45,8 +45,6 @@ public class OSmsFailureSpecificInfoImpl extends SequenceBase implements OSmsFai
 
     public static final int _ID_failureCause = 0;
 
-    public static final int _ID_OSmsFailureSpecificInfo = 0;
-
     private MOSMSCause failureCause;
 
     public OSmsFailureSpecificInfoImpl() {
@@ -56,16 +54,6 @@ public class OSmsFailureSpecificInfoImpl extends SequenceBase implements OSmsFai
     public OSmsFailureSpecificInfoImpl(MOSMSCause failureCause) {
         super("OSmsFailureSpecificInfo");
         this.failureCause = failureCause;
-    }
-
-    @Override
-    public int getTag() throws CAPException {
-        return _ID_OSmsFailureSpecificInfo;
-    }
-
-    @Override
-    public int getTagClass() {
-        return Tag.CLASS_CONTEXT_SPECIFIC;
     }
 
     @Override

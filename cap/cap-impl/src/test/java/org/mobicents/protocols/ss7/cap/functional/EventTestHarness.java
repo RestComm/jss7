@@ -83,6 +83,7 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.ResetTimerGPRSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.SendChargingInformationGPRSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSmsListener;
 import org.mobicents.protocols.ss7.cap.api.service.sms.ConnectSMSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.ContinueSMSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.sms.EventReportSMSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.sms.FurnishChargingInformationSMSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.sms.InitialDPSMSRequest;
@@ -576,6 +577,13 @@ public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwi
     public void onResetTimerSMSRequest(ResetTimerSMSRequest ind) {
         this.logger.debug("ResetTimerSMSRequest");
         TestEvent te = TestEvent.createReceivedEvent(EventType.ResetTimerSMSRequest, ind, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onContinueSMSRequest(ContinueSMSRequest ind) {
+        this.logger.debug("ContinueSMSRequest");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.ContinueSMSRequest, ind, sequence++);
         this.observerdEvents.add(te);
     }
    

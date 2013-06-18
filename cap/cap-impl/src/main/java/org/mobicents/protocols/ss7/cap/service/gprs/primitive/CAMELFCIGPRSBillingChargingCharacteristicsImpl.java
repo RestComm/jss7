@@ -31,7 +31,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.CAMELFCIGPRSBillingChargingCharacteristics;
-import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FCIBCCCAMELsequence1;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FCIBCCCAMELsequence1Gprs;
 import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
@@ -45,19 +45,19 @@ public class CAMELFCIGPRSBillingChargingCharacteristicsImpl extends SequenceBase
 
     public static final int _ID_fcIBCCCAMELsequence1 = 0;
 
-    private FCIBCCCAMELsequence1 fcIBCCCAMELsequence1;
+    private FCIBCCCAMELsequence1Gprs fcIBCCCAMELsequence1;
 
     public CAMELFCIGPRSBillingChargingCharacteristicsImpl() {
         super("CAMELFCIGPRSBillingChargingCharacteristics");
     }
 
-    public CAMELFCIGPRSBillingChargingCharacteristicsImpl(FCIBCCCAMELsequence1 fcIBCCCAMELsequence1) {
+    public CAMELFCIGPRSBillingChargingCharacteristicsImpl(FCIBCCCAMELsequence1Gprs fcIBCCCAMELsequence1) {
         super("CAMELFCIGPRSBillingChargingCharacteristics");
         this.fcIBCCCAMELsequence1 = fcIBCCCAMELsequence1;
     }
 
     @Override
-    public FCIBCCCAMELsequence1 getFCIBCCCAMELsequence1() {
+    public FCIBCCCAMELsequence1Gprs getFCIBCCCAMELsequence1() {
         return this.fcIBCCCAMELsequence1;
     }
 
@@ -81,8 +81,8 @@ public class CAMELFCIGPRSBillingChargingCharacteristicsImpl extends SequenceBase
                             throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
                                     + ".fcIBCCCAMELsequence1: Parameter is primitive",
                                     CAPParsingComponentExceptionReason.MistypedParameter);
-                        this.fcIBCCCAMELsequence1 = new FCIBCCCAMELsequence1Impl();
-                        ((FCIBCCCAMELsequence1Impl) this.fcIBCCCAMELsequence1).decodeAll(ais);
+                        this.fcIBCCCAMELsequence1 = new FCIBCCCAMELsequence1GprsImpl();
+                        ((FCIBCCCAMELsequence1GprsImpl) this.fcIBCCCAMELsequence1).decodeAll(ais);
                         break;
                     default:
                         ais.advanceElement();
@@ -105,7 +105,7 @@ public class CAMELFCIGPRSBillingChargingCharacteristicsImpl extends SequenceBase
         if (this.fcIBCCCAMELsequence1 == null)
             throw new CAPException("Error while encoding " + _PrimitiveName + ": fcIBCCCAMELsequence1 must not be null");
 
-        ((FCIBCCCAMELsequence1Impl) this.fcIBCCCAMELsequence1).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+        ((FCIBCCCAMELsequence1GprsImpl) this.fcIBCCCAMELsequence1).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
                 _ID_fcIBCCCAMELsequence1);
 
     }

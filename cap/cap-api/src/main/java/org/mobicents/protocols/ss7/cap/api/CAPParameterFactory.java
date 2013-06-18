@@ -96,6 +96,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FCIBCCCAMELsequence1;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ForwardServiceInteractionInd;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FreeFormatData;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.HoldTreatmentIndicator;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.IPSSPCapabilities;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InbandInfo;
@@ -128,7 +129,7 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.ChargingRollOv
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.ElapsedTime;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.ElapsedTimeRollOver;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.EndUserAddress;
-import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FreeFormatData;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FreeFormatDataGprs;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSCause;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEvent;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventSpecificInformation;
@@ -390,7 +391,7 @@ public interface CAPParameterFactory {
             boolean nonCUGCall, HoldTreatmentIndicator holdTreatmentIndicator, CwTreatmentIndicator cwTreatmentIndicator,
             EctTreatmentIndicator ectTreatmentIndicator);
 
-    FCIBCCCAMELsequence1 createFCIBCCCAMELsequence1(byte[] freeFormatData, SendingSideID partyToCharge,
+    FCIBCCCAMELsequence1 createFCIBCCCAMELsequence1(FreeFormatData freeFormatData, SendingSideID partyToCharge,
             AppendFreeFormatData appendFreeFormatData);
 
     CAMELSCIBillingChargingCharacteristicsAlt createCAMELSCIBillingChargingCharacteristicsAlt();
@@ -473,7 +474,7 @@ public interface CAPParameterFactory {
     AOCGPRS createAOCGPRS(CAI_GSM0224 aocInitial, AOCSubsequent aocSubsequent);
 
     CAMELFCIGPRSBillingChargingCharacteristics createCAMELFCIGPRSBillingChargingCharacteristics(
-            org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FCIBCCCAMELsequence1 fcIBCCCAMELsequence1);
+            org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FCIBCCCAMELsequence1Gprs fcIBCCCAMELsequence1);
 
     CAMELSCIGPRSBillingChargingCharacteristics createCAMELSCIGPRSBillingChargingCharacteristics(AOCGPRS aocGPRS,
             PDPID pdpID);
@@ -501,10 +502,10 @@ public interface CAPParameterFactory {
     EndUserAddress createEndUserAddress(PDPTypeOrganization pdpTypeOrganization, PDPTypeNumber pdpTypeNumber,
             PDPAddress pdpAddress);
 
-    org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FCIBCCCAMELsequence1 createFCIBCCCAMELsequence1(
-            FreeFormatData freeFormatData, PDPID pdpID, AppendFreeFormatData appendFreeFormatData);
+    org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FCIBCCCAMELsequence1Gprs createFCIBCCCAMELsequence1(
+            FreeFormatDataGprs freeFormatData, PDPID pdpID, AppendFreeFormatData appendFreeFormatData);
 
-    FreeFormatData createFreeFormatData(byte[] data);
+    FreeFormatDataGprs createFreeFormatData(byte[] data);
 
     GPRSCause createGPRSCause(int data);
 
@@ -599,8 +600,8 @@ public interface CAPParameterFactory {
     SMSAddressString getSMSAddressString(AddressNature addressNature, NumberingPlan numberingPlan, String address);
     RPCause getRPCause( int data);
     MTSMSCause getMTSMSCause( int data);
-    org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatData getFreeFormatData(byte[] data);
-    org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequence1 getFCIBCCCAMELsequence1(org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatData freeFormatData,AppendFreeFormatData appendFreeFormatData);
+    org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatDataSMS getFreeFormatData(byte[] data);
+    org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequence1SMS getFCIBCCCAMELsequence1(org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatDataSMS freeFormatData,AppendFreeFormatData appendFreeFormatData);
     EventSpecificInformationSMS getEventSpecificInformationSMSImpl(OSmsFailureSpecificInfo oSmsFailureSpecificInfo);
     EventSpecificInformationSMS getEventSpecificInformationSMSImpl(OSmsSubmissionSpecificInfo oSmsSubmissionSpecificInfo) ;
     EventSpecificInformationSMS getEventSpecificInformationSMSImpl(TSmsFailureSpecificInfo tSmsFailureSpecificInfo) ;

@@ -30,7 +30,7 @@ freeFormatData      [0] OCTET STRING (SIZE(1 .. 160))
 * @author Lasith Waruna Perera
 *
 */
-public interface FreeFormatData {
+public interface FreeFormatDataSMS {
     byte[] getData();
 }
 

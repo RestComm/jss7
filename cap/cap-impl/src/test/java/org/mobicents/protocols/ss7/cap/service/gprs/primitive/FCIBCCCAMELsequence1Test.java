@@ -30,7 +30,7 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
-import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FreeFormatData;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FreeFormatDataGprs;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPID;
 import org.testng.annotations.Test;
 
@@ -54,10 +54,10 @@ public class FCIBCCCAMELsequence1Test {
         byte[] data = this.getData();
         AsnInputStream asn = new AsnInputStream(data);
         int tag = asn.readTag();
-        FCIBCCCAMELsequence1Impl prim = new FCIBCCCAMELsequence1Impl();
+        FCIBCCCAMELsequence1GprsImpl prim = new FCIBCCCAMELsequence1GprsImpl();
         prim.decodeAll(asn);
 
-        assertEquals(tag, FCIBCCCAMELsequence1Impl._ID_FCIBCCCAMELsequence1);
+        assertEquals(tag, FCIBCCCAMELsequence1GprsImpl._ID_FCIBCCCAMELsequence1);
         assertEquals(asn.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
 
         assertEquals(prim.getFreeFormatData().getData(), this.getFreeFormatData());
@@ -68,9 +68,9 @@ public class FCIBCCCAMELsequence1Test {
     @Test(groups = { "functional.encode", "primitives" })
     public void testEncode() throws Exception {
 
-        FreeFormatData freeFormatData = new FreeFormatDataImpl(this.getFreeFormatData());
+        FreeFormatDataGprs freeFormatData = new FreeFormatDataGprsImpl(this.getFreeFormatData());
         PDPID pdpID = new PDPIDImpl(2);
-        FCIBCCCAMELsequence1Impl prim = new FCIBCCCAMELsequence1Impl(freeFormatData, pdpID, AppendFreeFormatData.append);
+        FCIBCCCAMELsequence1GprsImpl prim = new FCIBCCCAMELsequence1GprsImpl(freeFormatData, pdpID, AppendFreeFormatData.append);
         AsnOutputStream asn = new AsnOutputStream();
         prim.encodeAll(asn);
         assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));

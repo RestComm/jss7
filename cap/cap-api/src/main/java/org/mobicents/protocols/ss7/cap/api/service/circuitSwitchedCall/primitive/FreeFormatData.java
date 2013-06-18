@@ -20,20 +20,22 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
-
-import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
+package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
 /**
- *
- fCIBCCCAMELsequence1 [0] SEQUENCE { freeFormatData [0] OCTET STRING (SIZE(1 .. 160)), appendFreeFormatData [1]
- * AppendFreeFormatData DEFAULT overwrite } }
- *
- *
- * @author sergey vetyutnev
- *
- */
-public interface FCIBCCCAMELsequence1 {
-    FreeFormatData getFreeFormatData();
-    AppendFreeFormatData getAppendFreeFormatData();
+*
+FreeFormatData ::= OCTET STRING (SIZE (1..160))
+*
+*
+* -- The endOfReplyDigit, cancelDigit, and startDigit parameters have been -- designated as OCTET STRING, and are to be encoded
+* as BCD, one digit per octet -- only, contained in the four least significant bits of each OCTET. The following encoding shall
+* -- be applied for the non-decimal characters: -- 1011 (*), 1100 (#).
+*
+*
+*
+* @author Lasith Waruna Perera
+*
+*/
+public interface FreeFormatData {
+    byte[] getData();
 }

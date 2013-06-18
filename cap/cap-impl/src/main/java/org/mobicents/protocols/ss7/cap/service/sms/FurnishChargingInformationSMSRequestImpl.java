@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.mobicents.protocols.ss7.cap.service.sms;
 
 import java.io.IOException;
@@ -33,8 +34,8 @@ import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.service.sms.FurnishChargingInformationSMSRequest;
-import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.CAMELFCISMSBillingChargingCharacteristics;
-import org.mobicents.protocols.ss7.cap.service.sms.primitive.CAMELFCISMSBillingChargingCharacteristicsImpl;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequence1SMS;
+import org.mobicents.protocols.ss7.cap.service.sms.primitive.FCIBCCCAMELsequence1SMSImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
@@ -42,29 +43,22 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
  * @author Lasith Waruna Perera
  *
  */
-public class FurnishChargingInformationSMSRequestImpl extends SmsMessageImpl implements
-        FurnishChargingInformationSMSRequest {
+public class FurnishChargingInformationSMSRequestImpl extends SmsMessageImpl implements FurnishChargingInformationSMSRequest {
 
     public static final String _PrimitiveName = "FurnishChargingInformationSMSRequest";
 
-    public static final int _ID_eventTypeSMS = 0;
-    public static final int _ID_eventSpecificInformationSMS = 1;
-
-    private CAMELFCISMSBillingChargingCharacteristics camelFCISMSBillingChargingCharacteristics;
+    private FCIBCCCAMELsequence1SMS FCIBCCCAMELsequence1;
 
     public FurnishChargingInformationSMSRequestImpl() {
-        super();
     }
 
-    public FurnishChargingInformationSMSRequestImpl(
-            CAMELFCISMSBillingChargingCharacteristics camelFCISMSBillingChargingCharacteristics) {
-        super();
-        this.camelFCISMSBillingChargingCharacteristics = camelFCISMSBillingChargingCharacteristics;
+    public FurnishChargingInformationSMSRequestImpl(FCIBCCCAMELsequence1SMS fciBCCCAMELsequence1) {
+        this.FCIBCCCAMELsequence1 = fciBCCCAMELsequence1;
     }
 
     @Override
-    public CAMELFCISMSBillingChargingCharacteristics getCAMELFCISMSBillingChargingCharacteristics() {
-        return this.camelFCISMSBillingChargingCharacteristics;
+    public FCIBCCCAMELsequence1SMS getFCIBCCCAMELsequence1() {
+        return this.FCIBCCCAMELsequence1;
     }
 
     @Override
@@ -128,22 +122,42 @@ public class FurnishChargingInformationSMSRequestImpl extends SmsMessageImpl imp
     private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException,
             AsnException, MAPParsingComponentException {
 
-        this.camelFCISMSBillingChargingCharacteristics = null;
+        this.FCIBCCCAMELsequence1 = null;
 
         byte[] buf = ansIS.readOctetStringData(length);
-        AsnInputStream aiss = new AsnInputStream(buf);
-
-        int tag = aiss.readTag();
-
-        if (tag != Tag.SEQUENCE || aiss.getTagClass() != Tag.CLASS_UNIVERSAL || aiss.isTagPrimitive())
-            throw new CAPParsingComponentException("Error when decoding " + _PrimitiveName
-                    + ": bad tag or tagClass or is primitive of the choice camelFCISMSBillingChargingCharacteristics",
+        if (buf.length < 5 || buf.length > 255)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": data length must be from 5 to 255, found: " + buf.length,
                     CAPParsingComponentExceptionReason.MistypedParameter);
 
-        this.camelFCISMSBillingChargingCharacteristics = new CAMELFCISMSBillingChargingCharacteristicsImpl();
-        ((CAMELFCISMSBillingChargingCharacteristicsImpl) this.camelFCISMSBillingChargingCharacteristics)
-                .decodeAll(aiss);
+        AsnInputStream ais = new AsnInputStream(buf);
 
+        while (true) {
+            if (ais.available() == 0)
+                break;
+
+            int tag = ais.readTag();
+
+            if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                switch (tag) {
+                    case FCIBCCCAMELsequence1SMSImpl._ID_FCIBCCCAMELsequence1:
+                        this.FCIBCCCAMELsequence1 = new FCIBCCCAMELsequence1SMSImpl();
+                        ((FCIBCCCAMELsequence1SMSImpl) this.FCIBCCCAMELsequence1).decodeAll(ais);
+                        break;
+
+                    default:
+                        ais.advanceElement();
+                        break;
+                }
+            } else {
+                ais.advanceElement();
+            }
+        }
+
+        if (this.FCIBCCCAMELsequence1 == null)
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": the single choice FCIBCCCAMELsequence1 is not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
     }
 
     @Override
@@ -166,20 +180,36 @@ public class FurnishChargingInformationSMSRequestImpl extends SmsMessageImpl imp
     @Override
     public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-        if (this.camelFCISMSBillingChargingCharacteristics == null)
-            throw new CAPException("Error while encoding " + _PrimitiveName
-                    + ": camelFCISMSBillingChargingCharacteristics must not be null");
+        if (this.FCIBCCCAMELsequence1 == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": FCIBCCCAMELsequence1 must not be null");
 
-        try {
-            asnOs.writeTag(Tag.CLASS_UNIVERSAL, false, Tag.SEQUENCE);
-            int pos = asnOs.StartContentDefiniteLength();
-            ((CAMELFCISMSBillingChargingCharacteristicsImpl) this.camelFCISMSBillingChargingCharacteristics)
-                    .encodeData(asnOs);
-            asnOs.FinalizeContent(pos);
-        } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        AsnOutputStream aos = new AsnOutputStream();
+        ((FCIBCCCAMELsequence1SMSImpl) this.FCIBCCCAMELsequence1).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
+                FCIBCCCAMELsequence1SMSImpl._ID_FCIBCCCAMELsequence1);
+
+        byte[] buf = aos.toByteArray();
+        if (buf.length < 5 || buf.length > 255)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": data length must be from 5 to 255, encoded: "
+                    + buf.length);
+
+        asnOs.writeOctetStringData(buf);
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.FCIBCCCAMELsequence1 != null) {
+            sb.append("FCIBCCCAMELsequence1=");
+            sb.append(FCIBCCCAMELsequence1.toString());
         }
 
+        sb.append("]");
+
+        return sb.toString();
     }
 
 }

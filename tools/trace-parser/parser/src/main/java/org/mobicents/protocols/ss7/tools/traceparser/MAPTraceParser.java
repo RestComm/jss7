@@ -92,6 +92,7 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.ResetTimerGPRSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.SendChargingInformationGPRSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSmsListener;
 import org.mobicents.protocols.ss7.cap.api.service.sms.ConnectSMSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.ContinueSMSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.sms.EventReportSMSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.sms.FurnishChargingInformationSMSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.sms.InitialDPSMSRequest;
@@ -2199,6 +2200,12 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
     public void onResetTimerSMSRequest(ResetTimerSMSRequest ind) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public void onContinueSMSRequest(ContinueSMSRequest ind) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

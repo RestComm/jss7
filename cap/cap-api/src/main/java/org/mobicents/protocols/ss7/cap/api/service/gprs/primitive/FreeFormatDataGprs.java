@@ -19,28 +19,23 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.mobicents.protocols.ss7.cap.service.sms.primitive;
 
-import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatData;
-import org.mobicents.protocols.ss7.cap.primitives.OctetStringBase;
+package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
 /**
+ *
+ FreeFormatData ::= OCTET STRING (SIZE (1..160))
+ *
+ *
+ * -- The endOfReplyDigit, cancelDigit, and startDigit parameters have been -- designated as OCTET STRING, and are to be encoded
+ * as BCD, one digit per octet -- only, contained in the four least significant bits of each OCTET. The following encoding shall
+ * -- be applied for the non-decimal characters: -- 1011 (*), 1100 (#).
+ *
+ *
  *
  * @author Lasith Waruna Perera
  *
  */
-public class FreeFormatDataImpl extends OctetStringBase implements FreeFormatData {
-
-    public FreeFormatDataImpl() {
-        super(1, 160, "FreeFormatData");
-    }
-
-    public FreeFormatDataImpl(byte[] data) {
-        super(1, 160, "FreeFormatData", data);
-    }
-
-    @Override
-    public byte[] getData() {
-        return data;
-    }
+public interface FreeFormatDataGprs {
+    byte[] getData();
 }

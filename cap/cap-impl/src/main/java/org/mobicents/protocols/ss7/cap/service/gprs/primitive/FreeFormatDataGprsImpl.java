@@ -19,9 +19,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.mobicents.protocols.ss7.cap.service.gprs.primitive;
 
-import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FreeFormatData;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FreeFormatDataGprs;
 import org.mobicents.protocols.ss7.cap.primitives.OctetStringBase;
 
 /**
@@ -29,14 +30,14 @@ import org.mobicents.protocols.ss7.cap.primitives.OctetStringBase;
  * @author Lasith Waruna Perera
  *
  */
-public class FreeFormatDataImpl extends OctetStringBase implements FreeFormatData {
+public class FreeFormatDataGprsImpl extends OctetStringBase implements FreeFormatDataGprs {
 
-    public FreeFormatDataImpl() {
-        super(1, 160, "FreeFormatData");
+    public FreeFormatDataGprsImpl() {
+        super(1, 160, "FreeFormatDataGprs");
     }
 
-    public FreeFormatDataImpl(byte[] data) {
-        super(1, 160, "FreeFormatData", data);
+    public FreeFormatDataGprsImpl(byte[] data) {
+        super(1, 160, "FreeFormatDataGprs", data);
     }
 
     @Override

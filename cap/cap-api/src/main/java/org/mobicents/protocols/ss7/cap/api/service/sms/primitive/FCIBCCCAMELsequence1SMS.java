@@ -20,31 +20,22 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.service.sms;
+package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
 
-import org.mobicents.protocols.ss7.cap.api.CAPServiceListener;
+import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
 
 /**
+ *
+ fCIBCCCAMELsequence1 [0] SEQUENCE { freeFormatData [0] OCTET STRING (SIZE(1 .. 160)), appendFreeFormatData [1]
+ * AppendFreeFormatData DEFAULT overwrite } }
+ *
  *
  * @author sergey vetyutnev
  *
  */
-public interface CAPServiceSmsListener extends CAPServiceListener {
+public interface FCIBCCCAMELsequence1SMS {
 
-    void onConnectSMSRequest(ConnectSMSRequest ind);
+    FreeFormatDataSMS getFreeFormatData();
 
-    void onEventReportSMSRequest(EventReportSMSRequest ind);
-
-    void onFurnishChargingInformationSMSRequest(FurnishChargingInformationSMSRequest ind);
-
-    void onInitialDPSMSRequest(InitialDPSMSRequest ind);
-
-    void onReleaseSMSRequest(ReleaseSMSRequest ind);
-
-    void onRequestReportSMSEventRequest(RequestReportSMSEventRequest ind);
-
-    void onResetTimerSMSRequest(ResetTimerSMSRequest ind);
-
-    void onContinueSMSRequest(ContinueSMSRequest ind);
-
+    AppendFreeFormatData getAppendFreeFormatData();
 }

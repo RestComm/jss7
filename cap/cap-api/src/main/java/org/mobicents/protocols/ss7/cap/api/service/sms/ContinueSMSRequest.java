@@ -19,22 +19,28 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
+
+package org.mobicents.protocols.ss7.cap.api.service.sms;
 
 /**
- *
- FreeFormatData ::= OCTET STRING (SIZE (1..160))
- *
- *
- * -- The endOfReplyDigit, cancelDigit, and startDigit parameters have been -- designated as OCTET STRING, and are to be encoded
- * as BCD, one digit per octet -- only, contained in the four least significant bits of each OCTET. The following encoding shall
- * -- be applied for the non-decimal characters: -- 1011 (*), 1100 (#).
- *
- *
- *
- * @author Lasith Waruna Perera
- *
- */
-public interface FreeFormatData {
-    byte[] getData();
+*
+continueSMS OPERATION ::= {
+RETURN RESULT FALSE
+ALWAYS RESPONDS FALSE
+CODE opcode-continueSMS}
+-- Direction: gsmSCF -> smsSSF, Timer: Tcuesms
+-- This operation is used to request the smsSSF to proceed with
+-- Short Message processing at the DP at which it previously suspended
+-- Short Message processing to await gsmSCF instructions (i.e. proceed
+-- to the next Point in Association in the SMS FSM). The smsSSF
+-- continues SMS processing without substituting new data from the gsmSCF.
+
+*
+*
+*
+* @author sergey vetyutnev
+*
+*/
+public interface ContinueSMSRequest extends SmsMessage {
+
 }

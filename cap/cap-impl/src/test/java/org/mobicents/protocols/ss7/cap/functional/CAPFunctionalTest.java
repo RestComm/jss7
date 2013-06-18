@@ -95,6 +95,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FCIBCCCAMELsequence1;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FreeFormatData;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.IPSSPCapabilities;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InformationToSend;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.RequestedInformation;
@@ -124,7 +125,7 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.AccessPointNam
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.CAMELSCIGPRSBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.ChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.ChargingResult;
-import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FreeFormatData;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FreeFormatDataGprs;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventSpecificInformation;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventType;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPID;
@@ -133,6 +134,7 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.ReleaseSMSRequest;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCallImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.AOCSubsequentImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAI_GSM0224Impl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.FreeFormatDataImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.AOCGPRSImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.AccessPointNameImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.CAMELFCIGPRSBillingChargingCharacteristicsImpl;
@@ -140,8 +142,8 @@ import org.mobicents.protocols.ss7.cap.service.gprs.primitive.CAMELSCIGPRSBillin
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.ChargingCharacteristicsImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.ChargingResultImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.ElapsedTimeImpl;
-import org.mobicents.protocols.ss7.cap.service.gprs.primitive.FCIBCCCAMELsequence1Impl;
-import org.mobicents.protocols.ss7.cap.service.gprs.primitive.FreeFormatDataImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.FCIBCCCAMELsequence1GprsImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.FreeFormatDataGprsImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.GPRSEventSpecificInformationImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.PDPIDImpl;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
@@ -406,7 +408,7 @@ public class CAPFunctionalTest extends SccpHarness {
                 super.onFurnishChargingInformationRequest(ind);
 
                 byte[] freeFormatData = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
-                assertTrue(Arrays.equals(ind.getFCIBCCCAMELsequence1().getFreeFormatData(), freeFormatData));
+                assertTrue(Arrays.equals(ind.getFCIBCCCAMELsequence1().getFreeFormatData().getData(), freeFormatData));
                 assertEquals(ind.getFCIBCCCAMELsequence1().getPartyToCharge().getSendingSideID(), LegType.leg1);
                 assertEquals(ind.getFCIBCCCAMELsequence1().getAppendFreeFormatData(), AppendFreeFormatData.append);
                 ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
@@ -616,9 +618,10 @@ public class CAPFunctionalTest extends SccpHarness {
                             dlg.send();
 
                             byte[] freeFormatData = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
+                            FreeFormatData ffd = new FreeFormatDataImpl(freeFormatData);
                             SendingSideID partyToCharge1 = this.capParameterFactory.createSendingSideID(LegType.leg1);
                             FCIBCCCAMELsequence1 FCIBCCCAMELsequence1 = this.capParameterFactory.createFCIBCCCAMELsequence1(
-                                    freeFormatData, partyToCharge1, AppendFreeFormatData.append);
+                                    ffd, partyToCharge1, AppendFreeFormatData.append);
                             dlg.addFurnishChargingInformationRequest(FCIBCCCAMELsequence1);
                             dlg.send();
                             this.observerdEvents.add(TestEvent.createSentEvent(EventType.FurnishChargingInformationRequest,
@@ -3494,9 +3497,9 @@ public class CAPFunctionalTest extends SccpHarness {
 
                             byte[] bFreeFormatData = new byte[] { 48, 6, -128, 1, 5, -127, 1, 2 };
 
-                            FreeFormatData freeFormatData = new FreeFormatDataImpl(bFreeFormatData);
+                            FreeFormatDataGprs freeFormatData = new FreeFormatDataGprsImpl(bFreeFormatData);
                             PDPID pdpID = new PDPIDImpl(2);
-                            FCIBCCCAMELsequence1Impl fcIBCCCAMELsequence1 = new FCIBCCCAMELsequence1Impl(freeFormatData, pdpID,
+                            FCIBCCCAMELsequence1GprsImpl fcIBCCCAMELsequence1 = new FCIBCCCAMELsequence1GprsImpl(freeFormatData, pdpID,
                                     AppendFreeFormatData.append);
 
                             CAMELFCIGPRSBillingChargingCharacteristicsImpl fciGPRSBillingChargingCharacteristics = new CAMELFCIGPRSBillingChargingCharacteristicsImpl(
@@ -3711,9 +3714,9 @@ public class CAPFunctionalTest extends SccpHarness {
                     switch (dialogStep) {
                         case 1:
                             byte[] bFreeFormatData = new byte[] { 48, 6, -128, 1, 5, -127, 1, 2 };
-                            FreeFormatData freeFormatData = new FreeFormatDataImpl(bFreeFormatData);
+                            FreeFormatDataGprs freeFormatData = new FreeFormatDataGprsImpl(bFreeFormatData);
                             PDPID pdpID = new PDPIDImpl(2);
-                            FCIBCCCAMELsequence1Impl fcIBCCCAMELsequence1 = new FCIBCCCAMELsequence1Impl(freeFormatData, pdpID,
+                            FCIBCCCAMELsequence1GprsImpl fcIBCCCAMELsequence1 = new FCIBCCCAMELsequence1GprsImpl(freeFormatData, pdpID,
                                     AppendFreeFormatData.append);
                             CAMELFCIGPRSBillingChargingCharacteristicsImpl fciGPRSBillingChargingCharacteristics = new CAMELFCIGPRSBillingChargingCharacteristicsImpl(
                                     fcIBCCCAMELsequence1);

@@ -33,9 +33,9 @@ import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
  * @author sergey vetyutnev
  *
  */
-public interface FCIBCCCAMELsequence1 {
+public interface FCIBCCCAMELsequence1Gprs {
 
-    FreeFormatData getFreeFormatData();
+    FreeFormatDataGprs getFreeFormatData();
 
     PDPID getPDPID();
 

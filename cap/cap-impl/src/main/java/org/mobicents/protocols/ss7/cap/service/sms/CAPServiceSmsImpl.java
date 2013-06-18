@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -123,51 +123,58 @@ public class CAPServiceSmsImpl extends CAPServiceBaseImpl implements CAPServiceS
 
         switch (ocValueInt) {
         case CAPOperationCode.connectSMS:
-            if (acn == CAPApplicationContext.CapV3_cap3_sms) {
+            if (acn == CAPApplicationContext.CapV3_cap3_sms || acn == CAPApplicationContext.CapV4_cap4_sms) {
                 if (compType == ComponentType.Invoke) {
                     this.connectSMSRequest(parameter, capDialogSmsImpl, invokeId);
                 }
             }
             break;
         case CAPOperationCode.eventReportSMS:
-            if (acn == CAPApplicationContext.CapV3_cap3_sms) {
+            if (acn == CAPApplicationContext.CapV3_cap3_sms || acn == CAPApplicationContext.CapV4_cap4_sms) {
                 if (compType == ComponentType.Invoke) {
                     this.eventReportSMSRequest(parameter, capDialogSmsImpl, invokeId);
                 }
             }
             break;
         case CAPOperationCode.furnishChargingInformationSMS:
-            if (acn == CAPApplicationContext.CapV3_cap3_sms) {
+            if (acn == CAPApplicationContext.CapV3_cap3_sms || acn == CAPApplicationContext.CapV4_cap4_sms) {
                 if (compType == ComponentType.Invoke) {
                     this.furnishChargingInformationSMSRequest(parameter, capDialogSmsImpl, invokeId);
                 }
             }
             break;
         case CAPOperationCode.initialDPSMS:
-            if (acn == CAPApplicationContext.CapV3_cap3_sms) {
+            if (acn == CAPApplicationContext.CapV3_cap3_sms || acn == CAPApplicationContext.CapV4_cap4_sms) {
                 if (compType == ComponentType.Invoke) {
                     this.initialDPSMSRequest(parameter, capDialogSmsImpl, invokeId);
                 }
             }
             break;
         case CAPOperationCode.releaseSMS:
-            if (acn == CAPApplicationContext.CapV3_cap3_sms) {
+            if (acn == CAPApplicationContext.CapV3_cap3_sms || acn == CAPApplicationContext.CapV4_cap4_sms) {
                 if (compType == ComponentType.Invoke) {
                     this.releaseSMSRequest(parameter, capDialogSmsImpl, invokeId);
                 }
             }
             break;
         case CAPOperationCode.requestReportSMSEvent:
-            if (acn == CAPApplicationContext.CapV3_cap3_sms) {
+            if (acn == CAPApplicationContext.CapV3_cap3_sms || acn == CAPApplicationContext.CapV4_cap4_sms) {
                 if (compType == ComponentType.Invoke) {
                     this.requestReportSMSEventRequest(parameter, capDialogSmsImpl, invokeId);
                 }
             }
             break;
         case CAPOperationCode.resetTimerSMS:
-            if (acn == CAPApplicationContext.CapV3_cap3_sms) {
+            if (acn == CAPApplicationContext.CapV3_cap3_sms || acn == CAPApplicationContext.CapV4_cap4_sms) {
                 if (compType == ComponentType.Invoke) {
                     this.resetTimerSMSRequest(parameter, capDialogSmsImpl, invokeId);
+                }
+            }
+            break;
+        case CAPOperationCode.continueSMS:
+            if (acn == CAPApplicationContext.CapV3_cap3_sms || acn == CAPApplicationContext.CapV4_cap4_sms) {
+                if (compType == ComponentType.Invoke) {
+                    this.continueSMSRequest(parameter, capDialogSmsImpl, invokeId);
                 }
             }
             break;
@@ -397,6 +404,24 @@ public class CAPServiceSmsImpl extends CAPServiceBaseImpl implements CAPServiceS
                 ((CAPServiceSmsListener) serLis).onResetTimerSMSRequest(ind);
             } catch (Exception e) {
                 loger.error("Error processing ResetTimerSMSRequest: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    private void continueSMSRequest(Parameter parameter, CAPDialogSmsImpl capDialogImpl, Long invokeId)
+            throws CAPParsingComponentException {
+
+        ContinueSMSRequestImpl ind = new ContinueSMSRequestImpl();
+
+        ind.setInvokeId(invokeId);
+        ind.setCAPDialog(capDialogImpl);
+
+        for (CAPServiceListener serLis : this.serviceListeners) {
+            try {
+                serLis.onCAPMessage(ind);
+                ((CAPServiceSmsListener) serLis).onContinueSMSRequest(ind);
+            } catch (Exception e) {
+                loger.error("Error processing continueSMSRequest: " + e.getMessage(), e);
             }
         }
     }

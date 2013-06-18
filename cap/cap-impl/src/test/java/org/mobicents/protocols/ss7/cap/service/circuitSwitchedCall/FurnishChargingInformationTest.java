@@ -31,8 +31,10 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FreeFormatData;
 import org.mobicents.protocols.ss7.cap.primitives.SendingSideIDImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.FCIBCCCAMELsequence1Impl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.FreeFormatDataImpl;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.testng.annotations.Test;
 
@@ -60,7 +62,7 @@ public class FurnishChargingInformationTest {
         int tag = ais.readTag();
         assertEquals(tag, Tag.STRING_OCTET);
         elem.decodeAll(ais);
-        assertTrue(Arrays.equals(elem.getFCIBCCCAMELsequence1().getFreeFormatData(), this.getDataFFD()));
+        assertTrue(Arrays.equals(elem.getFCIBCCCAMELsequence1().getFreeFormatData().getData(), this.getDataFFD()));
         assertEquals(elem.getFCIBCCCAMELsequence1().getPartyToCharge().getSendingSideID(), LegType.leg2);
         assertEquals(elem.getFCIBCCCAMELsequence1().getAppendFreeFormatData(), AppendFreeFormatData.append);
     }
@@ -69,7 +71,8 @@ public class FurnishChargingInformationTest {
     public void testEncode() throws Exception {
 
         SendingSideIDImpl partyToCharge = new SendingSideIDImpl(LegType.leg2);
-        FCIBCCCAMELsequence1Impl fci = new FCIBCCCAMELsequence1Impl(getDataFFD(), partyToCharge, AppendFreeFormatData.append);
+        FreeFormatData ffd = new FreeFormatDataImpl(getDataFFD());
+        FCIBCCCAMELsequence1Impl fci = new FCIBCCCAMELsequence1Impl(ffd, partyToCharge, AppendFreeFormatData.append);
         FurnishChargingInformationRequestImpl elem = new FurnishChargingInformationRequestImpl(fci);
         AsnOutputStream aos = new AsnOutputStream();
         elem.encodeAll(aos);

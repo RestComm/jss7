@@ -113,6 +113,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FCIBCCCAMELsequence1;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ForwardServiceInteractionInd;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FreeFormatData;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.HoldTreatmentIndicator;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.IPSSPCapabilities;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InbandInfo;
@@ -146,7 +147,7 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.ChargingRollOv
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.ElapsedTime;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.ElapsedTimeRollOver;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.EndUserAddress;
-import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FreeFormatData;
+import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FreeFormatDataGprs;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSCause;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEvent;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventSpecificInformation;
@@ -241,7 +242,7 @@ import org.mobicents.protocols.ss7.cap.service.gprs.primitive.ChargingRollOverIm
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.ElapsedTimeImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.ElapsedTimeRollOverImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.EndUserAddressImpl;
-import org.mobicents.protocols.ss7.cap.service.gprs.primitive.FreeFormatDataImpl;
+import org.mobicents.protocols.ss7.cap.service.gprs.primitive.FreeFormatDataGprsImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.GPRSCauseImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.GPRSEventImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.GPRSEventSpecificInformationImpl;
@@ -776,7 +777,7 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
     }
 
     @Override
-    public FCIBCCCAMELsequence1 createFCIBCCCAMELsequence1(byte[] freeFormatData, SendingSideID partyToCharge,
+    public FCIBCCCAMELsequence1 createFCIBCCCAMELsequence1(FreeFormatData freeFormatData, SendingSideID partyToCharge,
             AppendFreeFormatData appendFreeFormatData) {
         return new FCIBCCCAMELsequence1Impl(freeFormatData, partyToCharge, appendFreeFormatData);
     }
@@ -957,7 +958,7 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
 
     @Override
     public CAMELFCIGPRSBillingChargingCharacteristics createCAMELFCIGPRSBillingChargingCharacteristics(
-            org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FCIBCCCAMELsequence1 fcIBCCCAMELsequence1) {
+            org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FCIBCCCAMELsequence1Gprs fcIBCCCAMELsequence1) {
 
         return new CAMELFCIGPRSBillingChargingCharacteristicsImpl(fcIBCCCAMELsequence1);
     }
@@ -1026,15 +1027,15 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
     }
 
     @Override
-    public org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FCIBCCCAMELsequence1 createFCIBCCCAMELsequence1(
-            FreeFormatData freeFormatData, PDPID pdpID, AppendFreeFormatData appendFreeFormatData) {
-        return new org.mobicents.protocols.ss7.cap.service.gprs.primitive.FCIBCCCAMELsequence1Impl(freeFormatData, pdpID,
+    public org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FCIBCCCAMELsequence1Gprs createFCIBCCCAMELsequence1(
+            FreeFormatDataGprs freeFormatData, PDPID pdpID, AppendFreeFormatData appendFreeFormatData) {
+        return new org.mobicents.protocols.ss7.cap.service.gprs.primitive.FCIBCCCAMELsequence1GprsImpl(freeFormatData, pdpID,
                 appendFreeFormatData);
     }
 
     @Override
-    public FreeFormatData createFreeFormatData(byte[] data) {
-        return new FreeFormatDataImpl(data);
+    public FreeFormatDataGprs createFreeFormatData(byte[] data) {
+        return new FreeFormatDataGprsImpl(data);
     }
 
     @Override
@@ -1267,15 +1268,15 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
     }
 
     @Override
-    public org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatData getFreeFormatData(byte[] data) {
-        return new org.mobicents.protocols.ss7.cap.service.sms.primitive.FreeFormatDataImpl(data);
+    public org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatDataSMS getFreeFormatData(byte[] data) {
+        return new org.mobicents.protocols.ss7.cap.service.sms.primitive.FreeFormatDataSMSImpl(data);
     }
 
     @Override
-    public org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequence1 getFCIBCCCAMELsequence1(
-            org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatData freeFormatData,
+    public org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequence1SMS getFCIBCCCAMELsequence1(
+            org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatDataSMS freeFormatData,
             AppendFreeFormatData appendFreeFormatData) {
-        return new org.mobicents.protocols.ss7.cap.service.sms.primitive.FCIBCCCAMELsequence1Impl(freeFormatData,
+        return new org.mobicents.protocols.ss7.cap.service.sms.primitive.FCIBCCCAMELsequence1SMSImpl(freeFormatData,
                 appendFreeFormatData);
     }
 

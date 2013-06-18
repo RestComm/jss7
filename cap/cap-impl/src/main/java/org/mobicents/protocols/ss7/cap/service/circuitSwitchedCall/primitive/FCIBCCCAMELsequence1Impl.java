@@ -34,6 +34,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
 import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FCIBCCCAMELsequence1;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FreeFormatData;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.cap.primitives.SendingSideIDImpl;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
@@ -51,22 +52,21 @@ public class FCIBCCCAMELsequence1Impl implements FCIBCCCAMELsequence1, CAPAsnPri
 
     public static final String _PrimitiveName = "FCIBCCCAMELsequence1";
 
-    private byte[] freeFormatData;
+    private FreeFormatData freeFormatData;
     private SendingSideID partyToCharge;
     private AppendFreeFormatData appendFreeFormatData;
 
     public FCIBCCCAMELsequence1Impl() {
     }
 
-    public FCIBCCCAMELsequence1Impl(byte[] freeFormatData, SendingSideID partyToCharge,
-            AppendFreeFormatData appendFreeFormatData) {
+    public FCIBCCCAMELsequence1Impl(FreeFormatData freeFormatData, SendingSideID partyToCharge, AppendFreeFormatData appendFreeFormatData) {
         this.freeFormatData = freeFormatData;
         this.partyToCharge = partyToCharge;
         this.appendFreeFormatData = appendFreeFormatData;
     }
 
     @Override
-    public byte[] getFreeFormatData() {
+    public FreeFormatData getFreeFormatData() {
         return freeFormatData;
     }
 
@@ -140,11 +140,12 @@ public class FCIBCCCAMELsequence1Impl implements FCIBCCCAMELsequence1, CAPAsnPri
             if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
                 switch (tag) {
                     case _ID_freeFormatData:
-                        this.freeFormatData = ais.readOctetString();
-                        if (this.freeFormatData.length < 1 || this.freeFormatData.length > 160)
+                        if (!ais.isTagPrimitive())
                             throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + ": freeFormatData length must be from 1 to 160, found: " + this.freeFormatData.length,
+                                    + ".freeFormatData: Parameter is not primitive",
                                     CAPParsingComponentExceptionReason.MistypedParameter);
+                        this.freeFormatData = new FreeFormatDataImpl();
+                        ((FreeFormatDataImpl) this.freeFormatData).decodeAll(ais);
                         break;
                     case _ID_partyToCharge:
                         AsnInputStream ais2 = ais.readSequenceStream();
@@ -194,12 +195,12 @@ public class FCIBCCCAMELsequence1Impl implements FCIBCCCAMELsequence1, CAPAsnPri
 
         if (this.freeFormatData == null)
             throw new CAPException("Error while encoding " + _PrimitiveName + ": freeFormatData must not be null");
-        if (this.freeFormatData.length < 1 || this.freeFormatData.length > 160)
-            throw new CAPException("Error while encoding " + _PrimitiveName
-                    + ": freeFormatData length must not be from 1 to 160, found: " + this.freeFormatData.length);
+//        if (this.freeFormatData.length < 1 || this.freeFormatData.length > 160)
+//            throw new CAPException("Error while encoding " + _PrimitiveName
+//                    + ": freeFormatData length must not be from 1 to 160, found: " + this.freeFormatData.length);
 
         try {
-            aos.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _ID_freeFormatData, this.freeFormatData);
+            ((FreeFormatDataImpl) this.freeFormatData).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_freeFormatData);
 
             if (this.partyToCharge != null) {
                 aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_partyToCharge);
@@ -225,9 +226,9 @@ public class FCIBCCCAMELsequence1Impl implements FCIBCCCAMELsequence1, CAPAsnPri
         sb.append(" [");
 
         if (this.freeFormatData != null) {
-            sb.append("freeFormatData=[");
-            sb.append(printDataArr(freeFormatData));
-            sb.append("]");
+            sb.append("freeFormatData=");
+            sb.append(this.freeFormatData.toString());
+            sb.append(", ");
         }
         if (this.partyToCharge != null) {
             sb.append(", partyToCharge=");
