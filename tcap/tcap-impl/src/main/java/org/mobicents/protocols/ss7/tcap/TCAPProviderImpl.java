@@ -590,7 +590,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                         di = this.dialogs.get(dialogId);
                     }
                     if (di == null) {
-                        logger.error("No dialog/transaction for id: " + dialogId);
+                        logger.warn("TC-CONTINUE: No dialog/transaction for id: " + dialogId);
                         this.sendProviderAbort(PAbortCauseType.UnrecognizedTxID, tcm.getOriginatingTransactionId(),
                                 remoteAddress, localAddress, message.getSls());
                     } else {
@@ -664,67 +664,64 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
                     break;
 
-                case TCEndMessage._TAG:
-                    TCEndMessage teb = null;
-                    try {
-                        teb = TcapFactory.createTCEndMessage(ais);
-                    } catch (ParseException e) {
-                        logger.error("ParseException when parsing TCEndMessage: " + e.toString(), e);
-                        return;
-                    }
+            case TCEndMessage._TAG:
+                TCEndMessage teb = null;
+                try {
+                    teb = TcapFactory.createTCEndMessage(ais);
+                } catch (ParseException e) {
+                    logger.error("ParseException when parsing TCEndMessage: " + e.toString(), e);
+                    return;
+                }
 
-                    dialogId = Utils.decodeTransactionId(teb.getDestinationTransactionId());
+                dialogId = Utils.decodeTransactionId(teb.getDestinationTransactionId());
+                if (this.stack.getPreviewMode()) {
+                    PrevewDialogDataKey ky = new PrevewDialogDataKey(message.getIncomingDpc(),
+                            (message.getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress().getGlobalTitle().getDigits() : null),
+                            message.getCalledPartyAddress().getSubsystemNumber(), dialogId);
+                    di = (DialogImpl) this.getPreviewDialog(ky, null, localAddress, remoteAddress, seqControl);
+                } else {
+                    di = this.dialogs.get(dialogId);
+                }
+                if (di == null) {
+                    logger.warn("TC-END: No dialog/transaction for id: " + dialogId);
+                } else {
+                    di.processEnd(teb, localAddress, remoteAddress);
+
                     if (this.stack.getPreviewMode()) {
-                        PrevewDialogDataKey ky = new PrevewDialogDataKey(message.getIncomingDpc(), (message
-                                .getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress()
-                                .getGlobalTitle().getDigits() : null), message.getCalledPartyAddress().getSubsystemNumber(),
-                                dialogId);
-                        di = (DialogImpl) this.getPreviewDialog(ky, null, localAddress, remoteAddress, seqControl);
-                    } else {
-                        di = this.dialogs.get(dialogId);
+                        this.removePreviewDialog(di);
                     }
-                    if (di == null) {
-                        logger.error("No dialog/transaction for id: " + dialogId);
-                    } else {
-                        di.processEnd(teb, localAddress, remoteAddress);
+                }
+                break;
 
-                        if (this.stack.getPreviewMode()) {
-                            this.removePreviewDialog(di);
-                            // di.release();
-                        }
-                    }
-                    break;
+            case TCAbortMessage._TAG:
+                TCAbortMessage tub = null;
+                try {
+                    tub = TcapFactory.createTCAbortMessage(ais);
+                } catch (ParseException e) {
+                    logger.error("ParseException when parsing TCAbortMessage: " + e.toString(), e);
+                    return;
+                }
 
-                case TCAbortMessage._TAG:
-                    TCAbortMessage tub = null;
-                    try {
-                        tub = TcapFactory.createTCAbortMessage(ais);
-                    } catch (ParseException e) {
-                        logger.error("ParseException when parsing TCAbortMessage: " + e.toString(), e);
-                        return;
-                    }
+                dialogId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
+                if (this.stack.getPreviewMode()) {
+                    long dId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
+                    PrevewDialogDataKey ky = new PrevewDialogDataKey(message.getIncomingDpc(),
+                            (message.getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress().getGlobalTitle().getDigits() : null),
+                            message.getCalledPartyAddress().getSubsystemNumber(), dId);
+                    di = (DialogImpl) this.getPreviewDialog(ky, null, localAddress, remoteAddress, seqControl);
+                } else {
+                    di = this.dialogs.get(dialogId);
+                }
+                if (di == null) {
+                    logger.warn("TC-ABORT: No dialog/transaction for id: " + dialogId);
+                } else {
+                    di.processAbort(tub, localAddress, remoteAddress);
 
-                    dialogId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
                     if (this.stack.getPreviewMode()) {
-                        long dId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
-                        PrevewDialogDataKey ky = new PrevewDialogDataKey(message.getIncomingDpc(), (message
-                                .getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress()
-                                .getGlobalTitle().getDigits() : null), message.getCalledPartyAddress().getSubsystemNumber(),
-                                dId);
-                        di = (DialogImpl) this.getPreviewDialog(ky, null, localAddress, remoteAddress, seqControl);
-                    } else {
-                        di = this.dialogs.get(dialogId);
+                        this.removePreviewDialog(di);
                     }
-                    if (di == null) {
-                        logger.error("No dialog/transaction for id: " + dialogId);
-                    } else {
-                        di.processAbort(tub, localAddress, remoteAddress);
-
-                        if (this.stack.getPreviewMode()) {
-                            this.removePreviewDialog(di);
-                        }
-                    }
-                    break;
+                }
+                break;
 
                 case TCUniMessage._TAG:
                     TCUniMessage tcuni;
@@ -848,6 +845,13 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             if (this.dialogPreviewList.size() >= this.stack.getMaxDialogs())
                 throw new TCAPException("Current dialog count exceeds its maximum value");
 
+            // checking if a Dialog is current already exists
+            PrevewDialogData pddx = this.dialogPreviewList.get(ky);
+            if (pddx != null) {
+                this.removePreviewDialog(pddx);
+                throw new TCAPException("Dialog with trId=" + ky.origTxId + " is already exists - we ignore it and drops curent dialog");
+            }
+
             Long dialogId = this.getAvailableTxIdPreview();
             PrevewDialogData pdd = new PrevewDialogData(this, dialogId);
             this.dialogPreviewList.put(ky, pdd);
@@ -905,16 +909,15 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     }
 
     protected void removePreviewDialog(DialogImpl di) {
-        PrevewDialogData pdd = this.dialogPreviewList.get(di.prevewDialogData.getPrevewDialogDataKey1());
         synchronized (this.dialogPreviewList) {
-            pdd = this.dialogPreviewList.get(di.prevewDialogData.getPrevewDialogDataKey1());
+            PrevewDialogData pdd = this.dialogPreviewList.get(di.prevewDialogData.getPrevewDialogDataKey1());
             if (pdd == null) {
                 pdd = this.dialogPreviewList.get(di.prevewDialogData.getPrevewDialogDataKey2());
             }
-        }
 
-        if (pdd != null)
-            removePreviewDialog(pdd);
+            if (pdd != null)
+                removePreviewDialog(pdd);
+        }
 
         this.doRelease(di);
     }

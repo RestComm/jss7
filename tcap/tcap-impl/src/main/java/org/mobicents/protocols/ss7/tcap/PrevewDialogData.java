@@ -27,6 +27,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
@@ -37,6 +39,9 @@ import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
  *
  */
 public class PrevewDialogData {
+
+    private static final Logger logger = Logger.getLogger(PrevewDialogData.class);
+
     private ApplicationContextName lastACN;
     private InvokeImpl[] operationsSentA;
     private InvokeImpl[] operationsSentB;
@@ -155,7 +160,22 @@ public class PrevewDialogData {
             try {
                 dialogLock.lock();
 
+//                int i1 = provider.dialogPreviewList.size();
                 provider.removePreviewDialog(pdd);
+//                int i2 = provider.dialogPreviewList.size();
+
+                if (logger.isEnabledFor(Level.ERROR)) {
+                    StringBuilder sb = new StringBuilder();
+                    if (this.pdd.prevewDialogDataKey1 != null) {
+                        sb.append(", trId1=");
+                        sb.append(this.pdd.prevewDialogDataKey1.origTxId);
+                    }
+                    if (this.pdd.prevewDialogDataKey2 != null) {
+                        sb.append(", trId2=");
+                        sb.append(this.pdd.prevewDialogDataKey2.origTxId);
+                    }
+//                    logger.error("Dialog closed by a timeout" + sb.toString() + "  " + i1 + "->" + i2);
+                }
             } finally {
                 dialogLock.unlock();
             }
