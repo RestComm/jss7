@@ -143,4 +143,24 @@ public class SMSEventImpl extends SequenceBase implements SMSEvent {
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.eventTypeSMS != null) {
+            sb.append("eventTypeSMS=");
+            sb.append(this.eventTypeSMS.toString());
+        }
+
+        if (this.monitorMode != null) {
+            sb.append(", monitorMode=");
+            sb.append(this.monitorMode.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 }

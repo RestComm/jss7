@@ -213,7 +213,7 @@ public class ElapsedTimeImpl implements ElapsedTime, CAPAsnPrimitive {
         }
 
         if (this.timeGPRSIfTariffSwitch != null) {
-            sb.append("timeGPRSIfTariffSwitch=");
+            sb.append(", timeGPRSIfTariffSwitch=");
             sb.append(this.timeGPRSIfTariffSwitch.toString());
         }
 

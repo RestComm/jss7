@@ -246,4 +246,33 @@ public class RequestReportSMSEventRequestImpl extends SmsMessageImpl implements 
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName + " [");
+
+        if (this.smsEvents != null) {
+            sb.append("smsEvents=[");
+            int i1 = 0;
+            for (SMSEvent evt : this.smsEvents) {
+                if (i1 == 0)
+                    i1 = 1;
+                else
+                    sb.append(", ");
+                sb.append("smsEvent=");
+                sb.append(evt.toString());
+            }
+            sb.append("]");
+        }
+
+        if (this.extensions != null) {
+            sb.append(", extensions=");
+            sb.append(this.extensions.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 }

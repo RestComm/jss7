@@ -42,7 +42,7 @@ import org.testng.annotations.Test;
 public class SMSEventTest {
 	
 	public byte[] getData() {
-		return new byte[] { 48, 6, -128, 1, 3, -118, 1, 1 };
+		return new byte[] { 48, 6, -128, 1, 3, -127, 1, 1 };
 	};
 	
 	@Test(groups = { "functional.decode", "primitives" })
