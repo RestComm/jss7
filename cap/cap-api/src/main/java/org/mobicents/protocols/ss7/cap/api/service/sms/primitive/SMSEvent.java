@@ -26,7 +26,10 @@ import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
 
 /**
  *
- SMSEvent ::= SEQUENCE { eventTypeSMS [0] EventTypeSMS, monitorMode [1] MonitorMode }
+ SMSEvent ::= SEQUENCE {
+   eventTypeSMS [0] EventTypeSMS,
+   monitorMode  [1] MonitorMode
+ }
  *
  *
  * @author sergey vetyutnev

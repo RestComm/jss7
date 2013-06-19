@@ -47,7 +47,7 @@ import org.testng.annotations.Test;
 public class RequestReportSMSEventRequestTest {
 
     public byte[] getData() {
-        return new byte[] { 48, 30, -96, 8, 48, 6, -128, 1, 3, -118, 1, 1, -86, 18, 48, 5, 2, 1, 2, -127, 0, 48, 9, 2,
+        return new byte[] { 48, 30, -96, 8, 48, 6, -128, 1, 3, -127, 1, 1, -86, 18, 48, 5, 2, 1, 2, -127, 0, 48, 9, 2,
                 1, 3, 10, 1, 1, -127, 1, -1 };
     };
 
