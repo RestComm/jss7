@@ -55,4 +55,8 @@ public abstract class M3UATask {
         // scheduler.tasks[index] = null;
         // }
     }
+
+    public void start(){
+        this.canceled = false;
+    }
 }

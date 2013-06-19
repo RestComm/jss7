@@ -38,8 +38,8 @@ public class HeartBeatTimer extends M3UATask {
 
     private static final Heartbeat HEART_BEAT = new HeartbeatImpl();
 
-    private long lastM3UAMessageTime = 0L;
-    private int heartBeatAckMissed = 0;
+    private volatile long lastM3UAMessageTime = 0L;
+    private volatile int heartBeatAckMissed = 0;
 
     private AspFactoryImpl aspFactoryImpl = null;
 
@@ -70,7 +70,9 @@ public class HeartBeatTimer extends M3UATask {
         }
 
         if (this.heartBeatAckMissed > HEART_BEAT_ACK_MISSED_ALLOWED) {
-
+            logger.warn(String
+                    .format("HEART_BEAT ACK missed %d is greater than configured %d for AspFactory %s. Underlying Association will be stopped and started again",
+                            this.heartBeatAckMissed, HEART_BEAT_ACK_MISSED_ALLOWED, this.aspFactoryImpl.getName()));
             try {
                 this.aspFactoryImpl.transportManagement.stopAssociation(this.aspFactoryImpl.associationName);
             } catch (Exception e) {
@@ -89,5 +91,4 @@ public class HeartBeatTimer extends M3UATask {
             this.cancel();
         }
     }
-
 }
