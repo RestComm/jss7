@@ -38,7 +38,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
  -- Direction: gsmSCF -> gsmSSF or gprsSSF, Timer: Tconsms
  -- This operation is used to request the smsSSF to perform the SMS processing
  -- actions to route or forward a short message to a specified destination.
- 
+
  ConnectSMSArg {PARAMETERS-BOUND : bound} ::= SEQUENCE {
    callingPartysNumber         [0] SMS-AddressString OPTIONAL,
    destinationSubscriberNumber [1] CalledPartyBCDNumber {bound} OPTIONAL,

@@ -2205,7 +2205,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
     @Override
     public void onContinueSMSRequest(ContinueSMSRequest ind) {
         // TODO Auto-generated method stub
-        
+
     }
 
 }
