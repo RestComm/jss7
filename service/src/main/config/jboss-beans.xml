@@ -84,7 +84,6 @@
 			<parameter>SccpStack</parameter>
 		</constructor>
 		<property name="persistDir">${jboss.server.data.dir}</property>
-		<property name="removeSpc">true</property>
 		<property name="mtp3UserParts">
 			<map keyClass="java.lang.Integer" valueClass="org.mobicents.protocols.ss7.mtp.Mtp3UserPart">
 				<entry>
