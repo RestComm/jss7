@@ -48,8 +48,10 @@
 		</property>
 	</bean>
 
-	<bean name="LinksetManager" class="org.mobicents.ss7.linkset.oam.LinksetManager">
-
+	<bean name="LinksetManager" class="org.mobicents.ss7.linkset.oam.LinksetManagerImpl">
+		<constructor>
+			<parameter>LinksetManager</parameter>
+		</constructor>
 		<property name="scheduler">
 			<inject bean="Scheduler" />
 		</property>
