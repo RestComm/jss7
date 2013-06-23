@@ -103,7 +103,7 @@ public class ConnectSMSRequestImpl extends SmsMessageImpl implements ConnectSMSR
 
     @Override
     public int getOperationCode() {
-        return CAPOperationCode.initialDPSMS;
+        return CAPOperationCode.connectSMS;
     }
 
     @Override
@@ -255,6 +255,35 @@ public class ConnectSMSRequestImpl extends SmsMessageImpl implements ConnectSMSR
         } catch (MAPException e) {
             throw new CAPException("MAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.callingPartysNumber != null) {
+            sb.append("callingPartysNumber=");
+            sb.append(callingPartysNumber.toString());
+        }
+        if (this.destinationSubscriberNumber != null) {
+            sb.append(", destinationSubscriberNumber=");
+            sb.append(destinationSubscriberNumber.toString());
+        }
+        if (this.smscAddress != null) {
+            sb.append(", smscAddress=");
+            sb.append(smscAddress.toString());
+        }
+        if (this.extensions != null) {
+            sb.append(", extensions=");
+            sb.append(extensions.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
     }
 
 }

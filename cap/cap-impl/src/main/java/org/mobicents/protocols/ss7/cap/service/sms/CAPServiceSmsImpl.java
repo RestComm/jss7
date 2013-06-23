@@ -209,7 +209,6 @@ public class CAPServiceSmsImpl extends CAPServiceBaseImpl implements CAPServiceS
             try {
                 serLis.onCAPMessage(ind);
                 ((CAPServiceSmsListener) serLis).onConnectSMSRequest(ind);
-                ((CAPServiceSmsListener) serLis).onConnectSMSRequest(ind);
             } catch (Exception e) {
                 loger.error("Error processing connectSMSRequest: " + e.getMessage(), e);
             }
@@ -384,7 +383,7 @@ public class CAPServiceSmsImpl extends CAPServiceBaseImpl implements CAPServiceS
                     "Error while decoding ResetTimerSMSRequest: Parameter is mandatory but not found",
                     CAPParsingComponentExceptionReason.MistypedParameter);
 
-        if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL
+        if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL
                 || parameter.isPrimitive())
             throw new CAPParsingComponentException(
                     "Error while decoding ResetTimerSMSRequest: Bad tag or tagClass or parameter is primitive, received tag="

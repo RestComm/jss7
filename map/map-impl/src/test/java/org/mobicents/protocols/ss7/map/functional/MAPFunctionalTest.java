@@ -822,7 +822,7 @@ public class MAPFunctionalTest extends SccpHarness {
         List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
 
         // !!!! ---
-        // this.saveTrafficInFile();
+//         this.saveTrafficInFile();
         // !!!! ---
 
         client.actionA();

@@ -46,6 +46,8 @@ import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiSms.OSmsFailureSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiSms.OSmsSubmissionSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
@@ -57,8 +59,10 @@ import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 import org.mobicents.protocols.ss7.cap.api.isup.Digits;
 import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
+import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
 import org.mobicents.protocols.ss7.cap.api.primitives.DateAndTime;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
 import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
 import org.mobicents.protocols.ss7.cap.api.primitives.TimerID;
@@ -130,7 +134,22 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventSpeci
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventType;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPID;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPDialogSms;
+import org.mobicents.protocols.ss7.cap.api.service.sms.ConnectSMSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.ContinueSMSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.EventReportSMSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.FurnishChargingInformationSMSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.InitialDPSMSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.sms.ReleaseSMSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.RequestReportSMSEventRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.ResetTimerSMSRequest;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.EventSpecificInformationSMS;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.EventTypeSMS;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequence1SMS;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatDataSMS;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.MOSMSCause;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.RPCause;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSAddressString;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSEvent;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCallImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.AOCSubsequentImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAI_GSM0224Impl;
@@ -157,6 +176,8 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
 import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
@@ -207,6 +228,11 @@ public class CAPFunctionalTest extends SccpHarness {
     private Client client;
     private Server server;
 
+    @Override
+    protected int getSSN() {
+        return 146;
+    }
+
     @BeforeClass
     public void setUpClass() throws Exception {
 
@@ -237,11 +263,11 @@ public class CAPFunctionalTest extends SccpHarness {
 
         // create some fake addresses.
 
-        peer1Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
-        peer2Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
+        peer1Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 146);
+        peer2Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 146);
 
-        this.stack1 = new CAPStackImplWrapper(this.sccpProvider1, 8);
-        this.stack2 = new CAPStackImplWrapper(this.sccpProvider2, 8);
+        this.stack1 = new CAPStackImplWrapper(this.sccpProvider1, 146);
+        this.stack2 = new CAPStackImplWrapper(this.sccpProvider2, 146);
 
         this.stack1.start();
         this.stack2.start();
@@ -4194,33 +4220,77 @@ public class CAPFunctionalTest extends SccpHarness {
 
     }
 
+    private byte[] freeFD = new byte[] { 1, 2, 3, 4, 5 };
+
     /**
-     * SMS test messageflow 1 ACN=CapV3_gsmSCF_gprsSSF
-     * 
-     * TC-BEGIN + ReleaseSMSRequest + destinationReference=1001 +
-     * originationReference=2001 TC-END + destinationReference=2001 +
-     * originationReference=1001
+     * SMS test messageflow 1 ACN=CapV3_cap3_sms
+
+-> initialDPSMSRequest
+<- resetTimerSMS + requestReportSMSEventRequest
+-> eventReportSMSRequest
+<- furnishChargingInformationSMS
+<- connectSMS (TC-END)
+
      */
     @Test(groups = { "functional.flow", "dialog" })
     public void testSMS1() throws Exception {
 
         Client client = new Client(stack1, this, peer1Address, peer2Address) {
-            @Override
-            public void onDialogDelimiter(CAPDialog capDialog) {
-                super.onDialogDelimiter(capDialog);
-            }
-        };
-
-        Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
 
             private int dialogStep = 0;
 
             @Override
-            public void onReleaseSMSRequest(ReleaseSMSRequest ind) {
-                super.onReleaseSMSRequest(ind);
-                assertEquals(ind.getRPCause().getData(), 3);
+            public void onResetTimerSMSRequest(ResetTimerSMSRequest ind) {
+                super.onResetTimerSMSRequest(ind);
+
+                assertEquals(ind.getTimerID(), TimerID.tssf);
+                assertEquals(ind.getTimerValue(), 3000);
+                assertNull(ind.getExtensions());
+
                 ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
                 dialogStep = 1;
+            }
+
+            @Override
+            public void onRequestReportSMSEventRequest(RequestReportSMSEventRequest ind) {
+                super.onRequestReportSMSEventRequest(ind);
+
+                assertEquals(ind.getSMSEvents().size(), 2);
+                SMSEvent smsEvent = ind.getSMSEvents().get(0);
+                assertEquals(smsEvent.getEventTypeSMS(), EventTypeSMS.tSmsDelivery);
+                assertEquals(smsEvent.getMonitorMode(), MonitorMode.transparent);
+                assertNull(ind.getExtensions());
+                smsEvent = ind.getSMSEvents().get(1);
+                assertEquals(smsEvent.getEventTypeSMS(), EventTypeSMS.oSmsFailure);
+                assertEquals(smsEvent.getMonitorMode(), MonitorMode.notifyAndContinue);
+                assertNull(ind.getExtensions());
+
+                ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+                dialogStep = 1;
+            }
+
+            @Override
+            public void onFurnishChargingInformationSMSRequest(FurnishChargingInformationSMSRequest ind) {
+                super.onFurnishChargingInformationSMSRequest(ind);
+
+                assertEquals(ind.getFCIBCCCAMELsequence1().getFreeFormatData().getData(), freeFD);
+
+                ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+                dialogStep = 2;
+            }
+
+            @Override
+            public void onConnectSMSRequest(ConnectSMSRequest ind) {
+                super.onConnectSMSRequest(ind);
+
+                assertEquals(ind.getCallingPartysNumber().getAddressNature(), AddressNature.reserved);
+                assertEquals(ind.getCallingPartysNumber().getNumberingPlan(), NumberingPlan.ISDN);
+                assertEquals(ind.getCallingPartysNumber().getAddress(), "Drosd");
+                assertEquals(ind.getDestinationSubscriberNumber().getAddress(), "1111144444");
+                assertEquals(ind.getSMSCAddress().getAddress(), "1111155555");
+
+                ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+                dialogStep = 2;
             }
 
             @Override
@@ -4232,8 +4302,98 @@ public class CAPFunctionalTest extends SccpHarness {
                 try {
                     switch (dialogStep) {
                     case 1:
+                        OSmsFailureSpecificInfo oSmsFailureSpecificInfo = this.capParameterFactory
+                                .createOSmsFailureSpecificInfo(MOSMSCause.releaseFromRadioInterface);
+                        EventSpecificInformationSMS eventSpecificInformationSMS = this.capParameterFactory
+                                .createEventSpecificInformationSMSImpl(oSmsFailureSpecificInfo);
+                        dlg.addEventReportSMSRequest(EventTypeSMS.oSmsFailure, eventSpecificInformationSMS, null, null);
+                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.EventReportSMSRequest, null, sequence++));
+
+                        dlg.send();
+                        break;
+                    }
+                } catch (CAPException e) {
+                    this.error("Error while trying to close() Dialog", e);
+                }
+            }
+        };
+
+        Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+
+            private int dialogStep = 0;
+
+            @Override
+            public void onInitialDPSMSRequest(InitialDPSMSRequest ind) {
+                super.onInitialDPSMSRequest(ind);
+
+                assertEquals(ind.getServiceKey(), 15);
+                assertEquals(ind.getDestinationSubscriberNumber().getAddress(), "123678");
+                assertEquals(ind.getDestinationSubscriberNumber().getNumberingPlan(), NumberingPlan.ISDN);
+                assertEquals(ind.getDestinationSubscriberNumber().getAddressNature(), AddressNature.international_number);
+                assertEquals(ind.getCallingPartyNumber().getAddress(), "123999");
+                assertEquals(ind.getImsi().getData(), "12345678901234");
+                assertEquals(ind.getEventTypeSMS(), EventTypeSMS.smsDeliveryRequested);
+
+                ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+                dialogStep = 1;
+            }
+
+            @Override
+            public void onEventReportSMSRequest(EventReportSMSRequest ind) {
+                super.onEventReportSMSRequest(ind);
+
+                assertEquals(ind.getEventTypeSMS(), EventTypeSMS.oSmsFailure);
+                assertEquals(ind.getEventSpecificInformationSMS().getOSmsFailureSpecificInfo().getFailureCause(), MOSMSCause.releaseFromRadioInterface);
+
+                ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+                dialogStep = 2;
+            }
+
+            @Override
+            public void onDialogDelimiter(CAPDialog capDialog) {
+                super.onDialogDelimiter(capDialog);
+
+                CAPDialogSms dlg = (CAPDialogSms) capDialog;
+
+                try {
+                    switch (dialogStep) {
+                    case 1:
+                        dlg.addResetTimerSMSRequest(TimerID.tssf, 3000, null);
+                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.ResetTimerSMSRequest,
+                                null, sequence++));
+
+                        ArrayList<SMSEvent> smsEvents = new ArrayList<SMSEvent>();
+                        SMSEvent smsEvent = this.capParameterFactory.createSMSEvent(EventTypeSMS.tSmsDelivery, MonitorMode.transparent);
+                        smsEvents.add(smsEvent);
+                        smsEvent = this.capParameterFactory.createSMSEvent(EventTypeSMS.oSmsFailure, MonitorMode.notifyAndContinue);
+                        smsEvents.add(smsEvent);
+                        dlg.addRequestReportSMSEventRequest(smsEvents, null);
+                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.RequestReportSMSEventRequest,
+                                null, sequence++));
+
+                        dlg.send();
+                        break;
+
+                    case 2:
+                        FreeFormatDataSMS freeFormatData = this.capParameterFactory.createFreeFormatDataSMS(freeFD);
+                        FCIBCCCAMELsequence1SMS fciBCCCAMELsequence1 = this.capParameterFactory.createFCIBCCCAMELsequence1(freeFormatData, null);
+                        dlg.addFurnishChargingInformationSMSRequest(fciBCCCAMELsequence1);
+                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.FurnishChargingInformationSMSRequest,
+                                null, sequence++));
+
+                        dlg.send();
+
+                        SMSAddressString callingPartysNumber = this.capParameterFactory.createSMSAddressString(AddressNature.reserved,
+                                NumberingPlan.ISDN, "Drosd");
+                        CalledPartyBCDNumber destinationSubscriberNumber = this.capParameterFactory.createCalledPartyBCDNumber(
+                                AddressNature.international_number, NumberingPlan.ISDN, "1111144444");
+                        ISDNAddressString smscAddress = this.mapParameterFactory.createISDNAddressString(AddressNature.international_number,
+                                NumberingPlan.ISDN, "1111155555");
+                        dlg.addConnectSMSRequest(callingPartysNumber, destinationSubscriberNumber, smscAddress, null);
+                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.ConnectSMSRequest,
+                                null, sequence++));
+
                         dlg.close(false);
-                        dialogStep = 0;
                         break;
                     }
                 } catch (CAPException e) {
@@ -4247,10 +4407,173 @@ public class CAPFunctionalTest extends SccpHarness {
         int count = 0;
         // Client side events
         List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
-        TestEvent te = TestEvent.createSentEvent(EventType.ReleaseSMSRequest, null, count++, stamp);
+        TestEvent te = TestEvent.createSentEvent(EventType.InitialDPSMSRequest, null, count++, stamp);
         clientExpectedEvents.add(te);
 
         te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.ResetTimerSMSRequest, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.RequestReportSMSEventRequest, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.EventReportSMSRequest, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.FurnishChargingInformationSMSRequest, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.ConnectSMSRequest, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++,
+                (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        count = 0;
+        // Server side events
+        List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+        te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.InitialDPSMSRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.ResetTimerSMSRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.RequestReportSMSEventRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.EventReportSMSRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.FurnishChargingInformationSMSRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.ConnectSMSRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+        
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++,
+                (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        // ..................
+        this.saveTrafficInFile();
+        // ..................
+
+        client.suppressInvokeTimeout();
+        client.sendInitialDpSmsRequest(CAPApplicationContext.CapV3_cap3_sms);
+
+        waitForEnd();
+
+        client.compareEvents(clientExpectedEvents);
+        server.compareEvents(serverExpectedEvents);
+
+    }
+
+    /**
+     * SMS test messageflow 2 ACN=CapV4_cap4_sms
+
+-> initialDPSMSRequest
+<- continueSMS
+
+     */
+    @Test(groups = { "functional.flow", "dialog" })
+    public void testSMS2() throws Exception {
+
+        Client client = new Client(stack1, this, peer1Address, peer2Address) {
+
+            private int dialogStep = 0;
+
+            @Override
+            public void onContinueSMSRequest(ContinueSMSRequest ind) {
+                super.onContinueSMSRequest(ind);
+
+                ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+                dialogStep = 1;
+            }
+
+            @Override
+            public void onDialogDelimiter(CAPDialog capDialog) {
+                super.onDialogDelimiter(capDialog);
+
+                CAPDialogSms dlg = (CAPDialogSms) capDialog;
+
+            }
+        };
+
+        Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+
+            private int dialogStep = 0;
+
+            @Override
+            public void onInitialDPSMSRequest(InitialDPSMSRequest ind) {
+                super.onInitialDPSMSRequest(ind);
+
+                assertEquals(ind.getServiceKey(), 15);
+                assertEquals(ind.getDestinationSubscriberNumber().getAddress(), "123678");
+                assertEquals(ind.getDestinationSubscriberNumber().getNumberingPlan(), NumberingPlan.ISDN);
+                assertEquals(ind.getDestinationSubscriberNumber().getAddressNature(), AddressNature.international_number);
+                assertEquals(ind.getCallingPartyNumber().getAddress(), "123999");
+                assertEquals(ind.getImsi().getData(), "12345678901234");
+                assertEquals(ind.getEventTypeSMS(), EventTypeSMS.smsDeliveryRequested);
+
+                ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+                dialogStep = 1;
+            }
+
+            @Override
+            public void onDialogDelimiter(CAPDialog capDialog) {
+                super.onDialogDelimiter(capDialog);
+
+                CAPDialogSms dlg = (CAPDialogSms) capDialog;
+
+                try {
+                    switch (dialogStep) {
+                    case 1:
+                        dlg.addContinueSMSRequest();
+                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.ContinueSMSRequest, null, sequence++));
+
+                        dlg.close(false);
+                        break;
+                    }
+                } catch (CAPException e) {
+                    this.error("Error while trying to close() Dialog", e);
+                }
+            }
+
+        };
+
+        long stamp = System.currentTimeMillis();
+        int count = 0;
+        // Client side events
+        List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+        TestEvent te = TestEvent.createSentEvent(EventType.InitialDPSMSRequest, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.ContinueSMSRequest, null, count++, stamp);
         clientExpectedEvents.add(te);
 
         te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
@@ -4266,10 +4589,138 @@ public class CAPFunctionalTest extends SccpHarness {
         te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
         serverExpectedEvents.add(te);
 
-        te = TestEvent.createReceivedEvent(EventType.ReleaseSMSRequest, null, count++, stamp);
+        te = TestEvent.createReceivedEvent(EventType.InitialDPSMSRequest, null, count++, stamp);
         serverExpectedEvents.add(te);
 
         te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.ContinueSMSRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+        
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++,
+                (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        client.suppressInvokeTimeout();
+        client.sendInitialDpSmsRequest(CAPApplicationContext.CapV4_cap4_sms);
+
+        waitForEnd();
+
+        client.compareEvents(clientExpectedEvents);
+        server.compareEvents(serverExpectedEvents);
+
+    }
+
+    /**
+     * SMS test messageflow 3 ACN=CapV4_cap4_sms
+
+-> initialDPSMSRequest
+<- releaseSMS
+
+     */
+    @Test(groups = { "functional.flow", "dialog" })
+    public void testSMS3() throws Exception {
+
+        Client client = new Client(stack1, this, peer1Address, peer2Address) {
+
+            private int dialogStep = 0;
+
+            @Override
+            public void onReleaseSMSRequest(ReleaseSMSRequest ind) {
+                super.onReleaseSMSRequest(ind);
+
+                assertEquals(ind.getRPCause().getData(), 8);
+
+                ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+                dialogStep = 1;
+            }
+
+            @Override
+            public void onDialogDelimiter(CAPDialog capDialog) {
+                super.onDialogDelimiter(capDialog);
+
+                CAPDialogSms dlg = (CAPDialogSms) capDialog;
+
+            }
+        };
+
+        Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+
+            private int dialogStep = 0;
+
+            @Override
+            public void onInitialDPSMSRequest(InitialDPSMSRequest ind) {
+                super.onInitialDPSMSRequest(ind);
+
+                assertEquals(ind.getServiceKey(), 15);
+                assertEquals(ind.getDestinationSubscriberNumber().getAddress(), "123678");
+                assertEquals(ind.getDestinationSubscriberNumber().getNumberingPlan(), NumberingPlan.ISDN);
+                assertEquals(ind.getDestinationSubscriberNumber().getAddressNature(), AddressNature.international_number);
+                assertEquals(ind.getCallingPartyNumber().getAddress(), "123999");
+                assertEquals(ind.getImsi().getData(), "12345678901234");
+                assertEquals(ind.getEventTypeSMS(), EventTypeSMS.smsDeliveryRequested);
+
+                ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+                dialogStep = 1;
+            }
+
+            @Override
+            public void onDialogDelimiter(CAPDialog capDialog) {
+                super.onDialogDelimiter(capDialog);
+
+                CAPDialogSms dlg = (CAPDialogSms) capDialog;
+
+                try {
+                    switch (dialogStep) {
+                    case 1:
+                        RPCause rpCause = this.capParameterFactory.createRPCause(8);
+                        dlg.addReleaseSMSRequest(rpCause);
+                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.ReleaseSMSRequest, null, sequence++));
+
+                        dlg.close(false);
+                        break;
+                    }
+                } catch (CAPException e) {
+                    this.error("Error while trying to close() Dialog", e);
+                }
+            }
+
+        };
+
+        long stamp = System.currentTimeMillis();
+        int count = 0;
+        // Client side events
+        List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+        TestEvent te = TestEvent.createSentEvent(EventType.InitialDPSMSRequest, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.ReleaseSMSRequest, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++,
+                (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        count = 0;
+        // Server side events
+        List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+        te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.InitialDPSMSRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.ReleaseSMSRequest, null, count++, stamp);
         serverExpectedEvents.add(te);
 
         te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++,
@@ -4277,7 +4728,7 @@ public class CAPFunctionalTest extends SccpHarness {
         serverExpectedEvents.add(te);
 
         client.suppressInvokeTimeout();
-        client.sendReleaseSmsRequest(CAPApplicationContext.CapV3_cap3_sms);
+        client.sendInitialDpSmsRequest(CAPApplicationContext.CapV4_cap4_sms);
 
         waitForEnd();
 

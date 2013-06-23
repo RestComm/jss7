@@ -40,11 +40,15 @@ import org.testng.annotations.Test;
  *
  */
 public class SMSAddressStringTest {
-	
-	public byte[] getData() {
-		return new byte[] { 4, 9, -111, 33, 67, 101, -121, 25, 50, 84, 118 };
-	};
-	
+
+    public byte[] getData() {
+        return new byte[] { 4, 9, -111, 33, 67, 101, -121, 25, 50, 84, 118 };
+    };
+
+    public byte[] getData2() {
+        return new byte[] { 4, 11, (byte) 209, (byte) 208, (byte) 178, (byte) 188, 60, (byte) 167, (byte) 203, (byte) 223, (byte) 233, 117, 24 };
+    };
+
 	@Test(groups = { "functional.decode", "primitives" })
 	public void testDecode() throws Exception {
 		byte[] data = this.getData();
@@ -57,16 +61,38 @@ public class SMSAddressStringTest {
 		assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 		
 		assertEquals(prim.getAddressNature(), AddressNature.international_number);
-		assertEquals(prim.getNumberingPlan(), NumberingPlan.ISDN);
+        assertEquals(prim.getNumberingPlan(), NumberingPlan.ISDN);
+        assertEquals(prim.getAddress(), "1234567891234567");
+
+
+		data = this.getData2();
+        asn = new AsnInputStream(data);
+        tag = asn.readTag();
+        prim = new SMSAddressStringImpl();
+        prim.decodeAll(asn);
+        
+        assertEquals(tag, Tag.STRING_OCTET);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+        
+        assertEquals(prim.getAddressNature(), AddressNature.reserved);
+        assertEquals(prim.getNumberingPlan(), NumberingPlan.ISDN);
+        assertEquals(prim.getAddress(), "Perestroika");
 	}
 	
 	@Test(groups = { "functional.encode", "primitives" })
 	public void testEncode() throws Exception {
-		SMSAddressStringImpl prim = new SMSAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "1234567891234567");
-		AsnOutputStream asn = new AsnOutputStream();
-		prim.encodeAll(asn);
-		
-		assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+        SMSAddressStringImpl prim = new SMSAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "1234567891234567");
+        AsnOutputStream asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+        
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData()));
+
+
+        prim = new SMSAddressStringImpl(AddressNature.reserved, NumberingPlan.ISDN, "Perestroika");
+        asn = new AsnOutputStream();
+        prim.encodeAll(asn);
+        
+        assertTrue(Arrays.equals(asn.toByteArray(), this.getData2()));
 	}
 	
 }
