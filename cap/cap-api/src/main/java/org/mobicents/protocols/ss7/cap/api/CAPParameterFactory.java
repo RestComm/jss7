@@ -154,6 +154,9 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.TransferredVol
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.VolumeIfTariffSwitch;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.EventSpecificInformationSMS;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.EventTypeSMS;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequence1SMS;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatDataSMS;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.MOSMSCause;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.MTSMSCause;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.RPCause;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSAddressString;
@@ -505,7 +508,9 @@ public interface CAPParameterFactory {
     org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.FCIBCCCAMELsequence1Gprs createFCIBCCCAMELsequence1(
             FreeFormatDataGprs freeFormatData, PDPID pdpID, AppendFreeFormatData appendFreeFormatData);
 
-    FreeFormatDataGprs createFreeFormatData(byte[] data);
+    FreeFormatData createFreeFormatData(byte[] data);
+
+    FreeFormatDataGprs createFreeFormatDataGprs(byte[] data);
 
     GPRSCause createGPRSCause(int data);
 
@@ -588,22 +593,44 @@ public interface CAPParameterFactory {
             EndUserAddress endUserAddress, QualityOfService qualityOfService, TimeAndTimezone timeAndTimezone,
             GSNAddress gsnAddress);
 
-    PDPContextEstablishmentSpecificInformation createPDPContextEstablishmentSpecificInformation(
-            AccessPointName accessPointName, EndUserAddress endUserAddress, QualityOfService qualityOfService,
-            LocationInformationGPRS locationInformationGPRS, TimeAndTimezone timeAndTimezone,
+    PDPContextEstablishmentSpecificInformation createPDPContextEstablishmentSpecificInformation(AccessPointName accessPointName, EndUserAddress endUserAddress,
+            QualityOfService qualityOfService, LocationInformationGPRS locationInformationGPRS, TimeAndTimezone timeAndTimezone,
             PDPInitiationType pdpInitiationType, boolean secondaryPDPContext);
-    TPValidityPeriod getTPValidityPeriod(byte[] data);
-    TPShortMessageSpecificInfo getTPShortMessageSpecificInfo(int data);
-    TPProtocolIdentifier getTPProtocolIdentifier( int data);
-    TPDataCodingScheme getTPDataCodingScheme( int data);
-    SMSEvent getSMSEvent( EventTypeSMS eventTypeSMS, MonitorMode monitorMode);
-    SMSAddressString getSMSAddressString(AddressNature addressNature, NumberingPlan numberingPlan, String address);
-    RPCause getRPCause( int data);
-    MTSMSCause getMTSMSCause( int data);
-    org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatDataSMS getFreeFormatData(byte[] data);
-    org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequence1SMS getFCIBCCCAMELsequence1(org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatDataSMS freeFormatData,AppendFreeFormatData appendFreeFormatData);
-    EventSpecificInformationSMS getEventSpecificInformationSMSImpl(OSmsFailureSpecificInfo oSmsFailureSpecificInfo);
-    EventSpecificInformationSMS getEventSpecificInformationSMSImpl(OSmsSubmissionSpecificInfo oSmsSubmissionSpecificInfo) ;
-    EventSpecificInformationSMS getEventSpecificInformationSMSImpl(TSmsFailureSpecificInfo tSmsFailureSpecificInfo) ;
-    EventSpecificInformationSMS getEventSpecificInformationSMSImpl(TSmsDeliverySpecificInfo tSmsDeliverySpecificInfo);
+
+    TPValidityPeriod createTPValidityPeriod(byte[] data);
+
+    TPShortMessageSpecificInfo createTPShortMessageSpecificInfo(int data);
+
+    TPProtocolIdentifier createTPProtocolIdentifier(int data);
+
+    TPDataCodingScheme createTPDataCodingScheme(int data);
+
+    SMSEvent createSMSEvent(EventTypeSMS eventTypeSMS, MonitorMode monitorMode);
+
+    SMSAddressString createSMSAddressString(AddressNature addressNature, NumberingPlan numberingPlan, String address);
+
+    RPCause createRPCause(int data);
+
+    MTSMSCause createMTSMSCause(int data);
+
+    FreeFormatDataSMS createFreeFormatDataSMS(byte[] data);
+
+    FCIBCCCAMELsequence1SMS createFCIBCCCAMELsequence1(FreeFormatDataSMS freeFormatData, AppendFreeFormatData appendFreeFormatData);
+
+    EventSpecificInformationSMS createEventSpecificInformationSMSImpl(OSmsFailureSpecificInfo oSmsFailureSpecificInfo);
+
+    EventSpecificInformationSMS createEventSpecificInformationSMSImpl(OSmsSubmissionSpecificInfo oSmsSubmissionSpecificInfo);
+
+    EventSpecificInformationSMS createEventSpecificInformationSMSImpl(TSmsFailureSpecificInfo tSmsFailureSpecificInfo);
+
+    EventSpecificInformationSMS createEventSpecificInformationSMSImpl(TSmsDeliverySpecificInfo tSmsDeliverySpecificInfo);
+
+    OSmsFailureSpecificInfo createOSmsFailureSpecificInfo(MOSMSCause failureCause);
+
+    OSmsSubmissionSpecificInfo createOSmsSubmissionSpecificInfo();
+
+    TSmsFailureSpecificInfo createTSmsFailureSpecificInfo(MTSMSCause failureCause);
+
+    TSmsDeliverySpecificInfo createTSmsDeliverySpecificInfo();
+
 }

@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 import org.mobicents.protocols.ss7.cap.api.isup.Digits;
 import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
+import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
 import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
 import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
@@ -64,7 +65,9 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventSpeci
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventType;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPID;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPDialogSms;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.EventTypeSMS;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.RPCause;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSAddressString;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.primitives.TimeAndTimezoneImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.InitialDPRequestImpl;
@@ -159,6 +162,7 @@ public class Client extends EventTestHarness {
 
         this.capProvider.getCAPServiceCircuitSwitchedCall().addCAPServiceListener(this);
         this.capProvider.getCAPServiceGprs().addCAPServiceListener(this);
+        this.capProvider.getCAPServiceSms().addCAPServiceListener(this);
 
         this.capProvider.getCAPServiceCircuitSwitchedCall().acivate();
         this.capProvider.getCAPServiceGprs().acivate();
@@ -787,15 +791,30 @@ public class Client extends EventTestHarness {
         clientGprsDialog.send();
     }
 
-    public void sendReleaseSmsRequest(CAPApplicationContext appCnt) throws CAPException {
+    public void sendInitialDpSmsRequest(CAPApplicationContext appCnt) throws CAPException {
 
-        clientSmsDialog = this.capProvider.getCAPServiceSms().createNewDialog(appCnt, this.thisAddress,
-                this.remoteAddress);
-        RPCause rpCause = new RPCauseImpl(3);
-        clientSmsDialog.addReleaseSMSRequest(rpCause);
-        this.observerdEvents.add(TestEvent.createSentEvent(EventType.ReleaseSMSRequest, null, sequence++));
+        clientSmsDialog = this.capProvider.getCAPServiceSms().createNewDialog(appCnt, this.thisAddress, this.remoteAddress);
+
+        CalledPartyBCDNumber destinationSubscriberNumber = this.capParameterFactory.createCalledPartyBCDNumber(AddressNature.international_number, NumberingPlan.ISDN,
+                "123678");
+        SMSAddressString callingPartyNumber = this.capParameterFactory.createSMSAddressString(AddressNature.international_number, NumberingPlan.ISDN, "123999");
+        IMSI imsi = this.mapParameterFactory.createIMSI("12345678901234");
+        clientSmsDialog.addInitialDPSMSRequest(15, destinationSubscriberNumber, callingPartyNumber, EventTypeSMS.smsDeliveryRequested, imsi, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this.observerdEvents.add(TestEvent.createSentEvent(EventType.InitialDPSMSRequest, null, sequence++));
+
         clientSmsDialog.send();
     }
+
+//    public void sendReleaseSmsRequest(CAPApplicationContext appCnt) throws CAPException {
+//
+//        clientSmsDialog = this.capProvider.getCAPServiceSms().createNewDialog(appCnt, this.thisAddress,
+//                this.remoteAddress);
+//        RPCause rpCause = new RPCauseImpl(3);
+//        clientSmsDialog.addReleaseSMSRequest(rpCause);
+//        this.observerdEvents.add(TestEvent.createSentEvent(EventType.ReleaseSMSRequest, null, sequence++));
+//        clientSmsDialog.send();
+//    }
 
     public void debug(String message) {
         this.logger.debug(message);

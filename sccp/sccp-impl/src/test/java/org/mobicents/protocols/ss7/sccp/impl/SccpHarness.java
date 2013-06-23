@@ -161,7 +161,13 @@ public abstract class SccpHarness {
         ((Mtp3UserPartImpl) this.mtp3UserPart2).saveTrafficInFile = true;
 
         try {
-            FileOutputStream fs = new FileOutputStream(Util.getTmpTestDir() + File.separator + "MsgLog.pcap", false);
+//            String tmpDir = Util.getTmpTestDir();
+//            if (tmpDir != null)
+//                tmpDir = tmpDir + File.separator;
+//            else
+//                tmpDir = "";
+//            FileOutputStream fs = new FileOutputStream(tmpDir + "MsgLog.pcap", false);
+            FileOutputStream fs = new FileOutputStream("MsgLog.pcap", false);
 
             // pcap global header
             fs.write(0xd4);
