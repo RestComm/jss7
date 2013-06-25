@@ -153,4 +153,21 @@ public class ReleaseSMSRequestImpl extends SmsMessageImpl implements ReleaseSMSR
         ((RPCauseImpl) this.rpCause).encodeData(asnOs);
     }
 
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.rpCause != null) {
+            sb.append("rpCause=");
+            sb.append(rpCause.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 }

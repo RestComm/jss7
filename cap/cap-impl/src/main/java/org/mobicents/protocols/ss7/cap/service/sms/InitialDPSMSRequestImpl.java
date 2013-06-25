@@ -19,6 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.mobicents.protocols.ss7.cap.service.sms;
 
 import java.io.IOException;
@@ -650,6 +651,101 @@ public class InitialDPSMSRequestImpl extends SmsMessageImpl implements InitialDP
         } catch (MAPException e) {
             throw new CAPException("MAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        sb.append("serviceKey=");
+        sb.append(serviceKey);
+        if (this.destinationSubscriberNumber != null) {
+            sb.append(", destinationSubscriberNumber=");
+            sb.append(destinationSubscriberNumber.toString());
+        }
+        if (this.callingPartyNumber != null) {
+            sb.append(", callingPartyNumber=");
+            sb.append(callingPartyNumber.toString());
+        }
+        if (this.eventTypeSMS != null) {
+            sb.append(", eventTypeSMS=");
+            sb.append(eventTypeSMS.toString());
+        }
+        if (this.imsi != null) {
+            sb.append(", imsi=");
+            sb.append(imsi.toString());
+        }
+        if (this.locationInformationMSC != null) {
+            sb.append(", locationInformationMSC=");
+            sb.append(locationInformationMSC.toString());
+        }
+        if (this.locationInformationGPRS != null) {
+            sb.append(", locationInformationGPRS=");
+            sb.append(locationInformationGPRS.toString());
+        }
+        if (this.smscCAddress != null) {
+            sb.append(", smscCAddress=");
+            sb.append(smscCAddress.toString());
+        }
+        if (this.timeAndTimezone != null) {
+            sb.append(", timeAndTimezone=");
+            sb.append(timeAndTimezone.toString());
+        }
+        if (this.tPShortMessageSpecificInfo != null) {
+            sb.append(", tPShortMessageSpecificInfo=");
+            sb.append(tPShortMessageSpecificInfo.toString());
+        }
+        if (this.tPProtocolIdentifier != null) {
+            sb.append(", tPProtocolIdentifier=");
+            sb.append(tPProtocolIdentifier.toString());
+        }
+        if (this.tPDataCodingScheme != null) {
+            sb.append(", tPDataCodingScheme=");
+            sb.append(tPDataCodingScheme.toString());
+        }
+        if (this.tPValidityPeriod != null) {
+            sb.append(", tPValidityPeriod=");
+            sb.append(tPValidityPeriod.toString());
+        }
+        if (this.extensions != null) {
+            sb.append(", extensions=");
+            sb.append(extensions.toString());
+        }
+        if (this.smsReferenceNumber != null) {
+            sb.append(", smsReferenceNumber=");
+            sb.append(smsReferenceNumber.toString());
+        }
+        if (this.mscAddress != null) {
+            sb.append(", mscAddress=");
+            sb.append(mscAddress.toString());
+        }
+        if (this.sgsnNumber != null) {
+            sb.append(", sgsnNumber=");
+            sb.append(sgsnNumber.toString());
+        }
+        if (this.mSClassmark2 != null) {
+            sb.append(", mSClassmark2=");
+            sb.append(mSClassmark2.toString());
+        }
+        if (this.gprsMSClass != null) {
+            sb.append(", gprsMSClass=");
+            sb.append(gprsMSClass.toString());
+        }
+        if (this.imei != null) {
+            sb.append(", imei=");
+            sb.append(imei.toString());
+        }
+        if (this.calledPartyNumber != null) {
+            sb.append(", calledPartyNumber=");
+            sb.append(calledPartyNumber.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
     }
 
 }

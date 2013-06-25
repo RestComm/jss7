@@ -229,7 +229,8 @@ public class Mtp3UserPartImpl extends Mtp3UserPartBaseImpl {
                 byte[] ethPart = stm4.toByteArray();
 
                 // pcap header
-                FileOutputStream fs = new FileOutputStream(Util.getTmpTestDir() + File.separator + "MsgLog.pcap", true);
+                FileOutputStream fs = new FileOutputStream("MsgLog.pcap", true);
+//                FileOutputStream fs = new FileOutputStream(Util.getTmpTestDir() + File.separator + "MsgLog.pcap", true);
                 int ln = ethPart.length;
 
                 fs.write(0);

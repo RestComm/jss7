@@ -39,6 +39,10 @@ import org.mobicents.protocols.ss7.cap.EsiGprs.DisconnectSpecificInformationImpl
 import org.mobicents.protocols.ss7.cap.EsiGprs.PDPContextEstablishmentAcknowledgementSpecificInformationImpl;
 import org.mobicents.protocols.ss7.cap.EsiGprs.PDPContextEstablishmentSpecificInformationImpl;
 import org.mobicents.protocols.ss7.cap.EsiGprs.PdpContextchangeOfPositionSpecificInformationImpl;
+import org.mobicents.protocols.ss7.cap.EsiSms.OSmsFailureSpecificInfoImpl;
+import org.mobicents.protocols.ss7.cap.EsiSms.OSmsSubmissionSpecificInfoImpl;
+import org.mobicents.protocols.ss7.cap.EsiSms.TSmsDeliverySpecificInfoImpl;
+import org.mobicents.protocols.ss7.cap.EsiSms.TSmsFailureSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.CallAcceptedSpecificInfo;
@@ -172,6 +176,8 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.TransferredVol
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.VolumeIfTariffSwitch;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.EventSpecificInformationSMS;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.EventTypeSMS;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatDataSMS;
+import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.MOSMSCause;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.MTSMSCause;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.RPCause;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSAddressString;
@@ -261,6 +267,7 @@ import org.mobicents.protocols.ss7.cap.service.gprs.primitive.TransferredVolumeI
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.TransferredVolumeRollOverImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.VolumeIfTariffSwitchImpl;
 import org.mobicents.protocols.ss7.cap.service.sms.primitive.EventSpecificInformationSMSImpl;
+import org.mobicents.protocols.ss7.cap.service.sms.primitive.FreeFormatDataSMSImpl;
 import org.mobicents.protocols.ss7.cap.service.sms.primitive.MTSMSCauseImpl;
 import org.mobicents.protocols.ss7.cap.service.sms.primitive.RPCauseImpl;
 import org.mobicents.protocols.ss7.cap.service.sms.primitive.SMSAddressStringImpl;
@@ -1034,7 +1041,7 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
     }
 
     @Override
-    public FreeFormatDataGprs createFreeFormatData(byte[] data) {
+    public FreeFormatDataGprs createFreeFormatDataGprs(byte[] data) {
         return new FreeFormatDataGprsImpl(data);
     }
 
@@ -1228,52 +1235,52 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
     }
 
     @Override
-    public TPValidityPeriod getTPValidityPeriod(byte[] data) {
+    public TPValidityPeriod createTPValidityPeriod(byte[] data) {
         return new TPValidityPeriodImpl(data);
     }
 
     @Override
-    public TPShortMessageSpecificInfo getTPShortMessageSpecificInfo(int data) {
+    public TPShortMessageSpecificInfo createTPShortMessageSpecificInfo(int data) {
         return new TPShortMessageSpecificInfoImpl(data);
     }
 
     @Override
-    public TPProtocolIdentifier getTPProtocolIdentifier(int data) {
+    public TPProtocolIdentifier createTPProtocolIdentifier(int data) {
         return new TPProtocolIdentifierImpl(data);
     }
 
     @Override
-    public TPDataCodingScheme getTPDataCodingScheme(int data) {
+    public TPDataCodingScheme createTPDataCodingScheme(int data) {
         return new TPDataCodingSchemeImpl(data);
     }
 
     @Override
-    public SMSEvent getSMSEvent(EventTypeSMS eventTypeSMS, MonitorMode monitorMode) {
+    public SMSEvent createSMSEvent(EventTypeSMS eventTypeSMS, MonitorMode monitorMode) {
         return new SMSEventImpl(eventTypeSMS, monitorMode);
     }
 
     @Override
-    public SMSAddressString getSMSAddressString(AddressNature addressNature, NumberingPlan numberingPlan, String address) {
+    public SMSAddressString createSMSAddressString(AddressNature addressNature, NumberingPlan numberingPlan, String address) {
         return new SMSAddressStringImpl(addressNature, numberingPlan, address);
     }
 
     @Override
-    public RPCause getRPCause(int data) {
+    public RPCause createRPCause(int data) {
         return new RPCauseImpl(data);
     }
 
     @Override
-    public MTSMSCause getMTSMSCause(int data) {
+    public MTSMSCause createMTSMSCause(int data) {
         return new MTSMSCauseImpl(data);
     }
 
     @Override
-    public org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatDataSMS getFreeFormatData(byte[] data) {
-        return new org.mobicents.protocols.ss7.cap.service.sms.primitive.FreeFormatDataSMSImpl(data);
+    public org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FreeFormatData createFreeFormatData(byte[] data) {
+        return new org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.FreeFormatDataImpl(data);
     }
 
     @Override
-    public org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequence1SMS getFCIBCCCAMELsequence1(
+    public org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequence1SMS createFCIBCCCAMELsequence1(
             org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatDataSMS freeFormatData,
             AppendFreeFormatData appendFreeFormatData) {
         return new org.mobicents.protocols.ss7.cap.service.sms.primitive.FCIBCCCAMELsequence1SMSImpl(freeFormatData,
@@ -1281,26 +1288,51 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
     }
 
     @Override
-    public EventSpecificInformationSMS getEventSpecificInformationSMSImpl(
+    public EventSpecificInformationSMS createEventSpecificInformationSMSImpl(
             OSmsFailureSpecificInfo oSmsFailureSpecificInfo) {
         return new EventSpecificInformationSMSImpl(oSmsFailureSpecificInfo);
     }
 
     @Override
-    public EventSpecificInformationSMS getEventSpecificInformationSMSImpl(
+    public EventSpecificInformationSMS createEventSpecificInformationSMSImpl(
             OSmsSubmissionSpecificInfo oSmsSubmissionSpecificInfo) {
         return new EventSpecificInformationSMSImpl(oSmsSubmissionSpecificInfo);
     }
 
     @Override
-    public EventSpecificInformationSMS getEventSpecificInformationSMSImpl(
+    public EventSpecificInformationSMS createEventSpecificInformationSMSImpl(
             TSmsFailureSpecificInfo tSmsFailureSpecificInfo) {
         return new EventSpecificInformationSMSImpl(tSmsFailureSpecificInfo);
     }
 
     @Override
-    public EventSpecificInformationSMS getEventSpecificInformationSMSImpl(
+    public EventSpecificInformationSMS createEventSpecificInformationSMSImpl(
             TSmsDeliverySpecificInfo tSmsDeliverySpecificInfo) {
         return new EventSpecificInformationSMSImpl(tSmsDeliverySpecificInfo);
+    }
+
+    @Override
+    public FreeFormatDataSMS createFreeFormatDataSMS(byte[] data) {
+        return new FreeFormatDataSMSImpl(data);
+    }
+
+    @Override
+    public OSmsFailureSpecificInfo createOSmsFailureSpecificInfo(MOSMSCause failureCause) {
+        return new OSmsFailureSpecificInfoImpl(failureCause);
+    }
+
+    @Override
+    public OSmsSubmissionSpecificInfo createOSmsSubmissionSpecificInfo() {
+        return new OSmsSubmissionSpecificInfoImpl();
+    }
+
+    @Override
+    public TSmsFailureSpecificInfo createTSmsFailureSpecificInfo(MTSMSCause failureCause) {
+        return new TSmsFailureSpecificInfoImpl(failureCause);
+    }
+
+    @Override
+    public TSmsDeliverySpecificInfo createTSmsDeliverySpecificInfo() {
+        return new TSmsDeliverySpecificInfoImpl();
     }
 }

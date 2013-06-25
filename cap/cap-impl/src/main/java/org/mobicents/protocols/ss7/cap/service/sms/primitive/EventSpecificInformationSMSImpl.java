@@ -260,4 +260,33 @@ public class EventSpecificInformationSMSImpl implements EventSpecificInformation
         }
     }
 
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.oSmsFailureSpecificInfo != null) {
+            sb.append("oSmsFailureSpecificInfo=");
+            sb.append(oSmsFailureSpecificInfo.toString());
+        }
+        if (this.oSmsSubmissionSpecificInfo != null) {
+            sb.append(" oSmsSubmissionSpecificInfo=");
+            sb.append(oSmsSubmissionSpecificInfo.toString());
+        }
+        if (this.tSmsFailureSpecificInfo != null) {
+            sb.append(" tSmsFailureSpecificInfo=");
+            sb.append(tSmsFailureSpecificInfo.toString());
+        }
+        if (this.tSmsDeliverySpecificInfo != null) {
+            sb.append(" tSmsDeliverySpecificInfo=");
+            sb.append(tSmsDeliverySpecificInfo.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 }

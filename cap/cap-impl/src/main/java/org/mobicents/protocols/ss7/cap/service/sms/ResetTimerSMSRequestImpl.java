@@ -83,7 +83,7 @@ public class ResetTimerSMSRequestImpl extends SmsMessageImpl implements ResetTim
 
     @Override
     public CAPMessageType getMessageType() {
-        return CAPMessageType.requestReportSMSEvent_Request;
+        return CAPMessageType.resetTimerSMS_Request;
     }
 
     @Override
@@ -232,6 +232,29 @@ public class ResetTimerSMSRequestImpl extends SmsMessageImpl implements ResetTim
         } catch (AsnException e) {
             throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.timerID != null) {
+            sb.append("timerID=");
+            sb.append(timerID.toString());
+        }
+        sb.append(", timerValue=");
+        sb.append(timerValue);
+        if (this.extensions != null) {
+            sb.append(", extensions=");
+            sb.append(extensions.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
     }
 
 }

@@ -153,4 +153,25 @@ public class FCIBCCCAMELsequence1SMSImpl extends SequenceBase implements FCIBCCC
         }
     }
 
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.freeFormatData != null) {
+            sb.append("freeFormatData=");
+            sb.append(freeFormatData.toString());
+        }
+        if (this.appendFreeFormatData != null) {
+            sb.append(", appendFreeFormatData=");
+            sb.append(appendFreeFormatData.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 }

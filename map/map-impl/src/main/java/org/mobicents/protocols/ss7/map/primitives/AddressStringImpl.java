@@ -127,7 +127,7 @@ public class AddressStringImpl implements AddressString, MAPAsnPrimitive {
                     MAPParsingComponentExceptionReason.MistypedParameter);
     }
 
-    private void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException {
+    protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException {
 
         this._testLengthDecode(length);
 

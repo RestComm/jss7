@@ -221,6 +221,10 @@ public class EventReportSMSRequestImpl extends SmsMessageImpl implements EventRe
             }
         }
 
+        if (this.eventTypeSMS == null) {
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": eventTypeSMS parameter mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
     }
 
     @Override
@@ -243,10 +247,11 @@ public class EventReportSMSRequestImpl extends SmsMessageImpl implements EventRe
     @Override
     public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-        try {
+        if (this.eventTypeSMS == null)
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": eventTypeSMS must not be null");
 
-            if (this.eventTypeSMS != null)
-                asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_eventTypeSMS, this.eventTypeSMS.getCode());
+        try {
+            asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_eventTypeSMS, this.eventTypeSMS.getCode());
 
             if (this.eventSpecificInformationSMS != null) {
                 try {
@@ -272,6 +277,35 @@ public class EventReportSMSRequestImpl extends SmsMessageImpl implements EventRe
         } catch (INAPException e) {
             throw new CAPException("INAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.eventTypeSMS != null) {
+            sb.append("eventTypeSMS=");
+            sb.append(eventTypeSMS.toString());
+        }
+        if (this.eventSpecificInformationSMS != null) {
+            sb.append(", eventSpecificInformationSMS=");
+            sb.append(eventSpecificInformationSMS.toString());
+        }
+        if (this.miscCallInfo != null) {
+            sb.append(", miscCallInfo=");
+            sb.append(miscCallInfo.toString());
+        }
+        if (this.extensions != null) {
+            sb.append(", extensions=");
+            sb.append(extensions.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
     }
 
 }
