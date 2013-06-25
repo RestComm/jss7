@@ -46,7 +46,10 @@ public interface TCAPStack {
      * @throws IllegalStateException - if stack is already running or not configured
      * @throws StartFailedException
      */
-    void start() throws IllegalStateException;
+    void start() throws Exception;
+    
+    
+    public boolean isStarted();
 
     /**
      * Sets millisecond value for dialog timeout. It specifies how long dialog can be idle - not receive/send any messages.
