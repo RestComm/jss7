@@ -35,7 +35,7 @@ public interface MAPStack {
 
     void stop();
 
-    void start() throws IllegalStateException;
+    void start() throws Exception;
 
     TCAPStack getTCAPStack();
 

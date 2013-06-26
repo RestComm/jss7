@@ -145,7 +145,7 @@ public class ClientDialogic implements MAPDialogListener, MAPServiceSmsListener 
         this.sccpStack.getRouter().addMtp3Destination(1, 1, SERVET_SPC, SERVET_SPC, 0, 255, 255);
     }
 
-    private void initMAP() {
+    private void initMAP() throws Exception {
 
         System.out.println("initMAP");
 

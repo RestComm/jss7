@@ -62,7 +62,7 @@ public class CAPStackImpl implements CAPStack {
     }
 
     @Override
-    public void start() throws IllegalStateException {
+    public void start() throws Exception {
         if (state != State.CONFIGURED) {
             throw new IllegalStateException("Stack has not been configured or is already running!");
         }

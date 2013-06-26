@@ -31,7 +31,7 @@ import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 /**
  * @author amit bhayani
  * @author baranowb
- * 
+ *
  */
 public class TCAPStackImpl implements TCAPStack {
 
@@ -114,7 +114,7 @@ public class TCAPStackImpl implements TCAPStack {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#getProvider()
      */
     public TCAPProvider getProvider() {
@@ -124,7 +124,7 @@ public class TCAPStackImpl implements TCAPStack {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#setDialogIdleTimeout(long)
      */
     public void setDialogIdleTimeout(long v) {
@@ -143,7 +143,7 @@ public class TCAPStackImpl implements TCAPStack {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#getDialogIdleTimeout()
      */
     public long getDialogIdleTimeout() {
@@ -152,7 +152,7 @@ public class TCAPStackImpl implements TCAPStack {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#setInvokeTimeout(long)
      */
     public void setInvokeTimeout(long v) {
@@ -169,7 +169,7 @@ public class TCAPStackImpl implements TCAPStack {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#getInvokeTimeout()
      */
     public long getInvokeTimeout() {

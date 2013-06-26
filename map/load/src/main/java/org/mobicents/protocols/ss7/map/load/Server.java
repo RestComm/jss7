@@ -158,7 +158,7 @@ public class Server extends TestHarness {
         this.sccpStack.getRouter().addMtp3Destination(1, 1, CLIENT_SPC, CLIENT_SPC, 0, 255, 255);
     }
 
-    private void initMAP() {
+    private void initMAP() throws Exception {
         this.mapStack = new MAPStackImpl(this.sccpStack.getSccpProvider(), SSN);
         this.mapProvider = this.mapStack.getMAPProvider();
 

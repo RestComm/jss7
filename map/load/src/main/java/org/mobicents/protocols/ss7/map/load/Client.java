@@ -171,7 +171,7 @@ public class Client extends TestHarness {
         this.sccpStack.getRouter().addMtp3Destination(1, 1, SERVET_SPC, SERVET_SPC, 0, 255, 255);
     }
 
-    private void initTCAP() {
+    private void initTCAP() throws Exception {
         this.tcapStack = new TCAPStackImpl(this.sccpStack.getSccpProvider(), SSN);
         this.tcapStack.setDialogIdleTimeout(60000);
         this.tcapStack.setInvokeTimeout(30000);
@@ -179,7 +179,7 @@ public class Client extends TestHarness {
         this.tcapStack.start();
     }
 
-    private void initMAP() {
+    private void initMAP() throws Exception {
 
         System.out.println("initMAP");
 

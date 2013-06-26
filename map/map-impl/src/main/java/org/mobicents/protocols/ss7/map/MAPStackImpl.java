@@ -61,7 +61,7 @@ public class MAPStackImpl implements MAPStack, CongestionListener {
         return this.mapProvider;
     }
 
-    public void start() throws IllegalStateException {
+    public void start() throws Exception {
         if (state != State.CONFIGURED) {
             throw new IllegalStateException("Stack has not been configured or is already running!");
         }

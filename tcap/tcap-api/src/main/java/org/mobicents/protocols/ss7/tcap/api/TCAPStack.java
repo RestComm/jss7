@@ -47,9 +47,9 @@ public interface TCAPStack {
      * @throws StartFailedException
      */
     void start() throws Exception;
-    
-    
-    public boolean isStarted();
+
+
+    boolean isStarted();
 
     /**
      * Sets millisecond value for dialog timeout. It specifies how long dialog can be idle - not receive/send any messages.

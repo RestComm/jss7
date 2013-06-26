@@ -129,7 +129,7 @@ public class CapMan implements CapManMBean, Stoppable {
     public void execute() {
     }
 
-    private void initCap(SccpStack sccpStack, int ssn) {
+    private void initCap(SccpStack sccpStack, int ssn) throws Exception {
 
         this.capStack = new CAPStackImpl(sccpStack.getSccpProvider(), ssn);
         this.capStack.start();

@@ -260,7 +260,7 @@ public class MapMan implements MapManMBean, Stoppable {
     public void execute() {
     }
 
-    private void initMap(SccpStack sccpStack, int ssn) {
+    private void initMap(SccpStack sccpStack, int ssn) throws Exception {
 
         this.mapStack = new MAPStackImpl(sccpStack.getSccpProvider(), ssn);
         this.mapStack.start();
