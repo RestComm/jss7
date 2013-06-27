@@ -329,7 +329,7 @@ public class M3UAShellExecutor implements ShellExecutor {
                         factory = this.m3uaManagement.createAspFactory(aspname, assocName, false);
                     } else {
                         int count = 5;
-                        long aspid = 0;
+                        long aspid = -1;
                         boolean isHeartBeatEnabled = false;
                         while (count < args.length) {
                             String key = args[count++];
@@ -345,7 +345,11 @@ public class M3UAShellExecutor implements ShellExecutor {
                                 return M3UAOAMMessages.INVALID_COMMAND;
                             }
                         }
-                        factory = this.m3uaManagement.createAspFactory(aspname, assocName, aspid, isHeartBeatEnabled);
+                        if(aspid == -1){
+                            factory = this.m3uaManagement.createAspFactory(aspname, assocName, isHeartBeatEnabled);
+                        } else {
+                            factory = this.m3uaManagement.createAspFactory(aspname, assocName, aspid, isHeartBeatEnabled);
+                        }
                     }
                     return String.format(M3UAOAMMessages.CREATE_ASP_SUCESSFULL, factory.getName());
                 } else if (raspCmd.equals("destroy")) {
