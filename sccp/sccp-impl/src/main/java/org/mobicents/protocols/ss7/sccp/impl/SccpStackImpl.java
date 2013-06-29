@@ -709,7 +709,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         SccpMessageImpl msg = null;
         try {
             // checking if incoming dpc is local
-            if (!this.router.spcIsLocal(mtp3Msg.getDpc())) {
+            if (!this.isPreviewMode() && !this.router.spcIsLocal(mtp3Msg.getDpc())) {
 
                 // incoming dpc is not local - trying to find the target SAP and
                 // send a message to MTP3 (MTP transit function)
