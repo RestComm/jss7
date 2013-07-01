@@ -864,7 +864,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         }
     }
 
-    private Dialog getPreviewDialog(PrevewDialogDataKey ky1, PrevewDialogDataKey ky2, SccpAddress localAddress,
+    protected Dialog getPreviewDialog(PrevewDialogDataKey ky1, PrevewDialogDataKey ky2, SccpAddress localAddress,
             SccpAddress remoteAddress, int seqControl) {
         synchronized (this.dialogPreviewList) {
             PrevewDialogData pdd = this.dialogPreviewList.get(ky1);
