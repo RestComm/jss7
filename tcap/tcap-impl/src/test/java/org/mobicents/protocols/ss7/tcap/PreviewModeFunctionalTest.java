@@ -439,6 +439,10 @@ public class PreviewModeFunctionalTest {
         expectedEvents.add(te);
         te = TestEvent.createReceivedEvent(EventType.Invoke, null, 1, stamp);
         expectedEvents.add(te);
+        te = TestEvent.createReceivedEvent(EventType.DialogTimeout, null, 2, stamp + 2000);
+        expectedEvents.add(te);
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3, stamp + 2000);
+        expectedEvents.add(te);
 
         this.tcapStack1.setInvokeTimeout(1000);
         this.tcapStack1.setDialogIdleTimeout(2000);

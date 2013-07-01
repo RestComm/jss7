@@ -414,6 +414,9 @@ public class DialogImpl implements Dialog {
     }
 
     public void keepAlive() {
+        if (this.previewMode)
+            return;
+
         try {
             this.dialogLock.lock();
             if (this.idleTimerInvoked) {
