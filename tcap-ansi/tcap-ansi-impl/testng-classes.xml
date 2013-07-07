@@ -1,0 +1,30 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Functional" parallel="classes" thread-count="4"  verbose="1">
+	<test name="functional">
+		
+		<!-- 
+	    <groups>
+		    <run>
+		      <include name="functional"  />
+		      <include name="timeout"  />
+		      <include name="idle"  />
+		      <!__ 
+		      <include name="end"  />
+		       __>
+		    </run>
+	  	</groups>
+	  	 -->
+	  	 
+	  	
+	  	<packages>
+      		<package name="org.mobicents.protocols.ss7.tcapAnsi" />
+      		<package name="org.mobicents.protocols.ss7.tcapAnsi.dialog.timeout" />
+  		 </packages>
+  		 <!-- TODO: to speed up more, divide those tests into classes 
+  		 <classes>
+  		 	<class name="org.mobicents.protocols.ss7.tcap.dialog.timeout.DialogIdleEndTest"/>
+  		 	<class name="org.mobicents.protocols.ss7.tcap.dialog.timeout.DialogIdleTest"/>
+  		 </classes>
+  		  -->
+	</test>
+</suite>
