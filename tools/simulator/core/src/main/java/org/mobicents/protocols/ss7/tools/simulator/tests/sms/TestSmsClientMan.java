@@ -272,6 +272,17 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
     }
 
     @Override
+    public boolean isContinueDialog() {
+        return this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isContinueDialog();
+    }
+
+    @Override
+    public void setContinueDialog(boolean val) {
+        this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().setContinueDialog(val);
+        this.testerHost.markStore();
+    }
+
+    @Override
     public void putSRIReaction(String val) {
         SRIReaction x = SRIReaction.createInstance(val);
         if (x != null)
@@ -728,11 +739,15 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
                     if (!this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isOneNotificationFor100Dialogs()) {
                         this.testerHost.sendNotif(SOURCE_NAME, "Sent: mtResp", "", Level.DEBUG);
                     }
+
+                    if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isContinueDialog())
+                        this.needSendSend = true;
+                    else
+                        this.needSendClose = true;
                 } else {
                     sendMtError(curDialog, invokeId);
+                    this.needSendClose = true;
                 }
-
-                this.needSendClose = true;
 
             } catch (MAPException e) {
                 this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addMtForwardShortMessageResponse : " + e.getMessage(), e, Level.ERROR);
@@ -898,11 +913,15 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
                 if (!this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isOneNotificationFor100Dialogs()) {
                     this.testerHost.sendNotif(SOURCE_NAME, "Sent: mtResp", "", Level.DEBUG);
                 }
+
+                if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isContinueDialog())
+                    this.needSendSend = true;
+                else
+                    this.needSendClose = true;
             } else {
                 sendMtError(curDialog, invokeId);
+                this.needSendClose = true;
             }
-
-            this.needSendClose = true;
 
         } catch (MAPException e) {
             this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking addMtForwardShortMessageResponse : " + e.getMessage(), e, Level.ERROR);

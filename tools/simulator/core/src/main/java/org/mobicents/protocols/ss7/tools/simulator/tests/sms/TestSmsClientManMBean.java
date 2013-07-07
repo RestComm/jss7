@@ -111,6 +111,11 @@ public interface TestSmsClientManMBean {
 
     void setOneNotificationFor100Dialogs(boolean val);
 
+    boolean isContinueDialog();
+
+    void setContinueDialog(boolean val);
+
+
     void putAddressNature(String val);
 
     void putNumberingPlan(String val);
