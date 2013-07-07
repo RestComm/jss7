@@ -78,6 +78,7 @@ import org.mobicents.protocols.ss7.map.smstpdu.DataCodingSchemeImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.ProtocolIdentifierImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.SmsDeliverTpduImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.UserDataImpl;
+import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
@@ -672,6 +673,10 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
         long invokeId = curDialog.getLocalDialogId();
         currentRequestDef += "Rsvd mtResp;";
         this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: mtResp", "", Level.DEBUG);
+
+        if (ind.getMAPDialog().getTCAPMessageType() == MessageType.Continue) {
+            needSendClose = true;;
+        }
     }
 
     @Override
@@ -777,6 +782,10 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
         long invokeId = curDialog.getLocalDialogId();
         currentRequestDef += "Rsvd mtResp;";
         this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: mtResp", "", Level.DEBUG);
+
+        if (ind.getMAPDialog().getTCAPMessageType() == MessageType.Continue) {
+            needSendClose = true;;
+        }
     }
 
     @Override

@@ -79,7 +79,9 @@ public class TestSmsClientStandardManMBean extends StandardMBean {
                 new MBeanAttributeInfo("SmsCodingType", SmsCodingType.class.getName(), "Character set for SMS encoding", true, true, false),
                 new MBeanAttributeInfo("OneNotificationFor100Dialogs", boolean.class.getName(),
                         "If true there will be only one notification per every 100 received dialogs (recommended for the auto answering mode)", true, true,
-                        true), };
+                        true),
+                new MBeanAttributeInfo("ContinueDialog", boolean.class.getName(), "If true SmsClient will not close MtForwardSM and send TC-CONTINUE", true,
+                        true, true), };
 
         MBeanParameterInfo[] signString = new MBeanParameterInfo[] { new MBeanParameterInfo("val", String.class.getName(), "Index number or value") };
 

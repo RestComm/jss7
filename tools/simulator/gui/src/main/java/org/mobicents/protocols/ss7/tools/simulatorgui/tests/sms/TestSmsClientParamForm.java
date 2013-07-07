@@ -79,6 +79,7 @@ public class TestSmsClientParamForm extends JDialog {
     private JCheckBox cbSRIScAddressNotIncluded;
     private JComboBox cbMtFSMReaction;
     private JCheckBox cbOneNotificationFor100Dialogs;
+    private JCheckBox cbContinueDialog;
 
     public TestSmsClientParamForm(JFrame owner) {
         super(owner, true);
@@ -171,6 +172,10 @@ public class TestSmsClientParamForm extends JDialog {
         cbMtFSMReaction = new JComboBox();
         cbMtFSMReaction.setBounds(312, 13, 309, 20);
         panel_mtfsm.add(cbMtFSMReaction);
+        
+        cbContinueDialog = new JCheckBox("Continue dialog after MtForwardSM receiving (MtForwardSM resnonse in TC-CONTINUE)");
+        cbContinueDialog.setBounds(12, 39, 609, 23);
+        panel_mtfsm.add(cbContinueDialog);
 
         JPanel panel_mofsm = new JPanel();
         tabbedPane.addTab("MoFSM request", null, panel_mofsm, null);
@@ -323,6 +328,7 @@ public class TestSmsClientParamForm extends JDialog {
 
         cbSRIScAddressNotIncluded.setSelected(this.smsClient.isSRIScAddressNotIncluded());
         cbOneNotificationFor100Dialogs.setSelected(this.smsClient.isOneNotificationFor100Dialogs());
+        cbContinueDialog.setSelected(this.smsClient.isContinueDialog());
     }
 
     private void loadDataA() {
@@ -346,6 +352,7 @@ public class TestSmsClientParamForm extends JDialog {
 
         cbSRIScAddressNotIncluded.setSelected(false);
         cbOneNotificationFor100Dialogs.setSelected(false);
+        cbContinueDialog.setSelected(false);
     }
 
     private void loadDataB() {
@@ -380,6 +387,7 @@ public class TestSmsClientParamForm extends JDialog {
 
         this.smsClient.setSRIScAddressNotIncluded(cbSRIScAddressNotIncluded.isSelected());
         this.smsClient.setOneNotificationFor100Dialogs(cbOneNotificationFor100Dialogs.isSelected());
+        this.smsClient.setContinueDialog(cbContinueDialog.isSelected());
 
         return true;
     }

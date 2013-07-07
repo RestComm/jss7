@@ -54,6 +54,7 @@ public class TestSmsClientConfigurationData {
     protected static final String SRI_SC_ADDRESS_NOT_INCLUDED = "sriScAddressNotIncluded";
     protected static final String MT_FSM_REACTION = "mtFSMReaction";
     protected static final String ONE_NOTIFICATION_FOR_100_DIALOGS = "oneNotificationFor100Dialogs";
+    protected static final String CONTINUE_DIALOG = "continueDialog";
 
     protected AddressNature addressNature = AddressNature.international_number;
     protected NumberingPlan numberingPlan = NumberingPlan.ISDN;
@@ -71,6 +72,7 @@ public class TestSmsClientConfigurationData {
     protected boolean sriScAddressNotIncluded = false;
     protected MtFSMReaction mtFSMReaction = new MtFSMReaction(MtFSMReaction.VAL_RETURN_SUCCESS);
     protected boolean oneNotificationFor100Dialogs = false;
+    protected boolean continueDialog = false;
 
     public AddressNature getAddressNature() {
         return addressNature;
@@ -192,6 +194,14 @@ public class TestSmsClientConfigurationData {
         this.oneNotificationFor100Dialogs = oneNotificationFor100Dialogs;
     }
 
+    public boolean isContinueDialog() {
+        return this.continueDialog;
+    }
+
+    public void setContinueDialog(boolean val) {
+        this.continueDialog = val;
+    }
+
     protected static final XMLFormat<TestSmsClientConfigurationData> XML = new XMLFormat<TestSmsClientConfigurationData>(TestSmsClientConfigurationData.class) {
 
         public void write(TestSmsClientConfigurationData srv, OutputElement xml) throws XMLStreamException {
@@ -199,6 +209,7 @@ public class TestSmsClientConfigurationData {
             xml.setAttribute(SRI_SC_ADDRESS_NOT_INCLUDED, srv.sriScAddressNotIncluded);
 
             xml.setAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS, srv.oneNotificationFor100Dialogs);
+            xml.setAttribute(CONTINUE_DIALOG, srv.continueDialog);
 
             xml.add(srv.serviceCenterAddress, SERVICE_CENTER_ADDRESS, String.class);
             xml.add(srv.sriResponseImsi, SRI_RESPONSE_IMSI, String.class);
@@ -223,6 +234,9 @@ public class TestSmsClientConfigurationData {
             CharArray chArr = xml.getAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS);
             if (chArr != null)
                 srv.oneNotificationFor100Dialogs = chArr.toBoolean();
+            chArr = xml.getAttribute(CONTINUE_DIALOG);
+            if (chArr != null)
+                srv.continueDialog = chArr.toBoolean();
 
             srv.serviceCenterAddress = (String) xml.get(SERVICE_CENTER_ADDRESS, String.class);
             srv.sriResponseImsi = (String) xml.get(SRI_RESPONSE_IMSI, String.class);
