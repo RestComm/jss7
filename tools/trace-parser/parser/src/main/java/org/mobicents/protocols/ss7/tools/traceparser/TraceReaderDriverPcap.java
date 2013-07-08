@@ -214,11 +214,11 @@ public class TraceReaderDriverPcap extends TraceReaderDriverBase implements Trac
         int messageClass = data[2] & 0xFF;
         int messageType = data[3] & 0xFF;
 
-        if (messageClass == 1 && messageType == 1) { // parse only transfer message - payload data
-            int msgLen = ((data[4] & 0xFF) << 24) + ((data[5] & 0xFF) << 16) + ((data[6] & 0xFF) << 8) + (data[7] & 0xFF);
+        int msgLen = ((data[4] & 0xFF) << 24) + ((data[5] & 0xFF) << 16) + ((data[6] & 0xFF) << 8) + (data[7] & 0xFF);
+        if (data.length < msgLen)
+            return;
 
-            if (data.length < msgLen)
-                return;
+        if (messageClass == 1 && messageType == 1) { // parse only transfer message - payload data
 
             int pos = 8;
             long networkAppearance = -1;
@@ -261,6 +261,15 @@ public class TraceReaderDriverPcap extends TraceReaderDriverBase implements Trac
 
             if (protocolData != null) {
                 this.parseM3uaProtocolData(networkAppearance, routingContext, correlationId, protocolData);
+            }
+        } else if (messageClass == 6 && messageType == 1) {
+            int len2 = ((data[18] & 0xFF) << 8) + data[19] & 0xFF;
+            byte[] protocolData = new byte[len2 - 4 + 3];
+            protocolData[2] = 63;
+            System.arraycopy(data, 20, protocolData, 3, protocolData.length - 3);
+
+            for (TraceReaderListener ls : this.listeners) {
+                ls.ss7Message(protocolData);
             }
         }
     }
