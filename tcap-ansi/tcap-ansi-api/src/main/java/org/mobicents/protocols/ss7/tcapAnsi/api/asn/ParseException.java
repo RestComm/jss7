@@ -38,26 +38,41 @@ public class ParseException extends Exception {
     private RejectProblem problem;
     private Long invokeId;
 
-    public ParseException(PAbortCause pAbortCauseType, RejectProblem problem) {
+    public ParseException(PAbortCause pAbortCauseType) {
         this.pAbortCauseType = pAbortCauseType;
+    }
+
+    public ParseException(RejectProblem problem) {
         this.problem = problem;
     }
 
-    public ParseException(PAbortCause pAbortCauseType, RejectProblem problem, String message) {
+    public ParseException(PAbortCause pAbortCauseType, String message) {
         super(message);
         this.pAbortCauseType = pAbortCauseType;
+    }
+
+    public ParseException(RejectProblem problem, String message) {
+        super(message);
         this.problem = problem;
     }
 
-    public ParseException(PAbortCause pAbortCauseType, RejectProblem problem, Throwable cause) {
+    public ParseException(PAbortCause pAbortCauseType, Throwable cause) {
         super(cause);
         this.pAbortCauseType = pAbortCauseType;
+    }
+
+    public ParseException(RejectProblem problem, Throwable cause) {
+        super(cause);
         this.problem = problem;
     }
 
-    public ParseException(PAbortCause pAbortCauseType, RejectProblem problem, String message, Throwable cause) {
+    public ParseException(PAbortCause pAbortCauseType, String message, Throwable cause) {
         super(message, cause);
         this.pAbortCauseType = pAbortCauseType;
+    }
+
+    public ParseException(RejectProblem problem, String message, Throwable cause) {
+        super(message, cause);
         this.problem = problem;
     }
 

@@ -57,9 +57,9 @@ public interface DialogPortion extends Encodable {
 
     void setApplicationContext(ApplicationContext val);
 
-    UserInformation[] getUserInformation();
+    UserInformation getUserInformation();
 
-    void setUserInformation(UserInformation[] val);
+    void setUserInformation(UserInformation val);
 
     SecurityContext getSecurityContext();
 

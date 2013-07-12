@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,20 +22,13 @@
 
 package org.mobicents.protocols.ss7.tcapAnsi.asn;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-
-import java.io.IOException;
-import java.util.Arrays;
+import static org.testng.Assert.*;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.EncodeException;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ParseException;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Component;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ComponentType;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Reject;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.RejectProblem;
 import org.mobicents.protocols.ss7.tcapAnsi.asn.TcapFactory;
 import org.testng.annotations.Test;
 
@@ -47,64 +40,62 @@ import org.testng.annotations.Test;
 @Test(groups = { "asn" })
 public class RejectTest {
 
-    private byte[] getData() {
-        return new byte[] { (byte) 164, 6, 2, 1, 1, (byte) 129, 1, 2 };
-    }
+    private byte[] data1 = new byte[] { -20, 9, -49, 1, 5, -43, 2, 2, 3, -16, 0 };
 
-    private byte[] getDataNullInvokeId() {
-        return new byte[] { -92, 5, 5, 0, -128, 1, 0 };
-    }
+    private byte[] data2 = new byte[] { -20, 8, -49, 0, -43, 2, 2, 3, -16, 0 };
 
     @Test(groups = { "functional.decode" })
-    public void testDecode() throws IOException, ParseException {
+    public void testDecode() throws Exception {
 
-//        byte[] b = getData();
-//        AsnInputStream asnIs = new AsnInputStream(b);
-//        Component comp = TcapFactory.createComponent(asnIs);
-//
-//        assertEquals(ComponentType.Reject, comp.getType(), "Wrong component Type");
-//        Reject rej = (Reject) comp;
-//        assertEquals(new Long(1), rej.getInvokeId(), "Wrong invoke ID");
-//        Problem prb = rej.getProblem();
-//        assertEquals(ProblemType.Invoke, prb.getType());
-//        assertEquals(InvokeProblemType.MistypedParameter, prb.getInvokeProblemType());
-//
-//        b = getDataNullInvokeId();
-//        asnIs = new AsnInputStream(b);
-//        comp = TcapFactory.createComponent(asnIs);
-//
-//        assertEquals(ComponentType.Reject, comp.getType(), "Wrong component Type");
-//        rej = (Reject) comp;
-//        assertNull(rej.getInvokeId());
-//        prb = rej.getProblem();
-//        assertEquals(ProblemType.General, prb.getType());
-//        assertEquals(GeneralProblemType.UnrecognizedComponent, prb.getGeneralProblemType());
+        // 1
+        AsnInputStream ais = new AsnInputStream(this.data1);
+        int tag = ais.readTag();
+        assertEquals(tag, Reject._TAG_REJECT);
+        assertEquals(ais.getTagClass(), Tag.CLASS_PRIVATE);
+
+        Reject rej = TcapFactory.createComponentReject();
+        rej.decode(ais);
+
+        assertEquals((long) rej.getCorrelationId(), 5);
+        assertEquals(rej.getProblem(), RejectProblem.invokeIncorrectParameter);
+        assertFalse(rej.isLocalOriginated());
+
+        // 2
+        ais = new AsnInputStream(this.data2);
+        tag = ais.readTag();
+        assertEquals(tag, Reject._TAG_REJECT);
+        assertEquals(ais.getTagClass(), Tag.CLASS_PRIVATE);
+
+        rej = TcapFactory.createComponentReject();
+        rej.decode(ais);
+
+        assertNull(rej.getCorrelationId());
+        assertEquals(rej.getProblem(), RejectProblem.invokeIncorrectParameter);
+        assertFalse(rej.isLocalOriginated());
     }
 
     @Test(groups = { "functional.encode" })
-    public void testEncode() throws IOException, EncodeException {
+    public void testEncode() throws Exception {
 
-//        byte[] expected = this.getData();
-//        Reject rej = TcapFactory.createComponentReject();
-//        rej.setInvokeId(1L);
-//        Problem prb = TcapFactory.createProblem(ProblemType.Invoke);
-//        prb.setInvokeProblemType(InvokeProblemType.MistypedParameter);
-//        rej.setProblem(prb);
-//
-//        AsnOutputStream asnos = new AsnOutputStream();
-//        rej.encode(asnos);
-//        byte[] encodedData = asnos.toByteArray();
-//        assertTrue(Arrays.equals(expected, encodedData));
-//
-//        expected = this.getDataNullInvokeId();
-//        rej = TcapFactory.createComponentReject();
-//        prb = TcapFactory.createProblem(ProblemType.General);
-//        prb.setGeneralProblemType(GeneralProblemType.UnrecognizedComponent);
-//        rej.setProblem(prb);
-//
-//        asnos = new AsnOutputStream();
-//        rej.encode(asnos);
-//        encodedData = asnos.toByteArray();
-//        assertTrue(Arrays.equals(expected, encodedData));
+        // 1
+        Reject rej = TcapFactory.createComponentReject();
+        rej.setCorrelationId(5L);
+        rej.setProblem(RejectProblem.invokeIncorrectParameter);
+
+        AsnOutputStream aos = new AsnOutputStream();
+        rej.encode(aos);
+        byte[] encodedData = aos.toByteArray();
+        byte[] expectedData = data1;
+        assertEquals(encodedData, expectedData);
+
+        // 2
+        rej = TcapFactory.createComponentReject();
+        rej.setProblem(RejectProblem.invokeIncorrectParameter);
+
+        aos = new AsnOutputStream();
+        rej.encode(aos);
+        encodedData = aos.toByteArray();
+        expectedData = data2;
+        assertEquals(encodedData, expectedData);
     }
 }

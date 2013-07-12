@@ -37,7 +37,6 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ProtocolVersion;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.SecurityContext;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.PAbortCause;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.RejectProblem;
 
 /**
  *
@@ -50,7 +49,7 @@ public class DialogPortionImpl implements DialogPortion {
 
     private ProtocolVersion protocolVersion;
     private ApplicationContext applicationContext;
-    private UserInformation[] userInformation;
+    private UserInformation userInformation;
     private SecurityContext securityContext;
     private Confidentiality confidentiality;
 
@@ -81,12 +80,12 @@ public class DialogPortionImpl implements DialogPortion {
     }
 
     @Override
-    public UserInformation[] getUserInformation() {
+    public UserInformation getUserInformation() {
         return userInformation;
     }
 
     @Override
-    public void setUserInformation(UserInformation[] val) {
+    public void setUserInformation(UserInformation val) {
         userInformation = val;
     }
 
@@ -118,6 +117,10 @@ public class DialogPortionImpl implements DialogPortion {
         this.securityContext = null;
         this.confidentiality = null;
 
+        if (aisA.getTagClass() != Tag.CLASS_PRIVATE || aisA.isTagPrimitive())
+            throw new ParseException(PAbortCause.UnrecognizedDialoguePortionID,
+                    "Error decoding DialogPortion: bad tag or tagClass or not primitive, found tagClass=" + aisA.getTagClass());
+
         try {
             AsnInputStream ais = aisA.readSequenceStream();
 
@@ -131,7 +134,7 @@ public class DialogPortionImpl implements DialogPortion {
                     switch (tag) {
                     case ProtocolVersion._TAG_PROTOCOL_VERSION:
                         if (!ais.isTagPrimitive())
-                            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
+                            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion,
                                     "Error decoding DialogPortion: ProtocolVersion must be primitive");
                         this.protocolVersion = TcapFactory.createProtocolVersion(ais);
                         break;
@@ -139,18 +142,21 @@ public class DialogPortionImpl implements DialogPortion {
                     case ApplicationContext._TAG_INTEGER:
                     case ApplicationContext._TAG_OBJECT_ID:
                         if (!ais.isTagPrimitive())
-                            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
+                            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion,
                                     "Error decoding DialogPortion: ApplicationContext must be primitive");
                         this.applicationContext = TcapFactory.createApplicationContext(ais);
                         break;
 
                     case UserInformation._TAG_USER_INFORMATION:
-                        // TODO: implement it
-                        ais.advanceElement();
+                        if (ais.isTagPrimitive())
+                            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion,
+                                    "Error decoding DialogPortion: UserInformation must not be primitive");
+                        this.userInformation = new UserInformationImpl();
+                        this.userInformation.decode(ais);
                         break;
 
                     default:
-                        throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
+                        throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion,
                                 "Error decoding DialogPortion: Bad tag or tag class: tag=" + tag + ", tagClass=" + ais.getTagClass());
                     }
                 } else if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
@@ -158,69 +164,38 @@ public class DialogPortionImpl implements DialogPortion {
                     case SecurityContext._TAG_SECURITY_CONTEXT_INTEGER:
                     case SecurityContext._TAG_SECURITY_CONTEXT_OID:
                         if (!ais.isTagPrimitive())
-                            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
+                            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion,
                                     "Error decoding DialogPortion: SecurityContext must be primitive");
-                        // TODO: implement it
-                        ais.advanceElement();
+                        this.securityContext = new SecurityContextImpl();
+                        this.securityContext.decode(ais);
                         break;
 
                     case Confidentiality._TAG_CONFIDENTIALITY:
-                        // TODO: implement it
-                        ais.advanceElement();
+                        this.confidentiality = new ConfidentialityImpl();
+                        this.confidentiality.decode(ais);
                         break;
 
                     default:
-                        throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
+                        throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion,
                                 "Error decoding DialogPortion: Bad tag or tag class: tag=" + tag + ", tagClass=" + ais.getTagClass());
                     }
                 } else {
-                    throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
+                    throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion,
                             "Error decoding DialogPortion: Bad tag or tag class: tag=" + tag + ", tagClass=" + ais.getTagClass());
                 }
             }
 
-
-//            int tag = ais.readTag();
-//            if (tag != Tag.EXTERNAL)
-//                throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
-//                        "Error decoding DialogPortion: wrong value of tag, expected EXTERNAL, found: " + tag);
-//
-//            ext.decode(ais);
-//
-//            if (!isAsn() || !isOid()) {
-//                throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
-//                        "Error decoding DialogPortion: Oid and Asd parts not found");
-//            }
-//
-//            // Check Oid
-//            if (Arrays.equals(_DIALG_UNI, this.getOidValue()))
-//                this.uniDirectional = true;
-//            else if (Arrays.equals(_DIALG_STRUCTURED, this.getOidValue()))
-//                this.uniDirectional = false;
-//            else
-//                throw new ParseException(PAbortCauseType.IncorrectTxPortion, null,
-//                        "Error decoding DialogPortion: bad Oid value");
-//
-//            AsnInputStream loaclAsnIS = new AsnInputStream(ext.getEncodeType());
-//
-//            // now lets get APDU
-//            tag = loaclAsnIS.readTag();
-//            this.dialogAPDU = TcapFactory.createDialogAPDU(loaclAsnIS, tag, isUnidirectional());
-
-
         } catch (IOException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                    "IOException while decoding DialogPortion: " + e.getMessage(), e);
+            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, "IOException while decoding DialogPortion: " + e.getMessage(), e);
         } catch (AsnException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                    "AsnException while decoding DialogPortion: " + e.getMessage(), e);
+            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, "AsnException while decoding DialogPortion: " + e.getMessage(), e);
         }
     }
 
     public void encode(AsnOutputStream aos) throws EncodeException {
 
         try {
-            aos.writeTag(Tag.CLASS_APPLICATION, false, DialogPortion._TAG_DIALOG_PORTION);
+            aos.writeTag(Tag.CLASS_PRIVATE, false, DialogPortion._TAG_DIALOG_PORTION);
             int pos = aos.StartContentDefiniteLength();
 
             if (this.protocolVersion != null) {
@@ -231,8 +206,8 @@ public class DialogPortionImpl implements DialogPortion {
                 this.applicationContext.encode(aos);
             }
 
-            if (this.userInformation != null && this.userInformation.length > 0) {
-                // TODO: implement it
+            if (this.userInformation != null) {
+                this.userInformation.encode(aos);
             }
 
             if (this.securityContext != null) {
@@ -264,17 +239,10 @@ public class DialogPortionImpl implements DialogPortion {
             sb.append(this.getApplicationContext());
             sb.append(", ");
         }
-        if (this.getUserInformation() != null && this.getUserInformation().length > 0) {
+        if (this.getUserInformation() != null) {
             sb.append("UserInformation=[");
-            int i1 = 0;
-            for (UserInformation ui : this.getUserInformation()) {
-                if (i1 == 0)
-                    i1 = 1;
-                else
-                    sb.append(", ");
-                sb.append(ui.toString());
-            }
-            sb.append("], ");
+            sb.append(this.getUserInformation());
+            sb.append(", ");
         }
         if (this.getSecurityContext() != null) {
             sb.append("SecurityContext=");

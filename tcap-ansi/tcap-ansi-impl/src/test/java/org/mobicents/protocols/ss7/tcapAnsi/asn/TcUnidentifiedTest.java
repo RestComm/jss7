@@ -20,37 +20,35 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.tcapAnsi.api.asn;
+package org.mobicents.protocols.ss7.tcapAnsi.asn;
 
-/**
- *
- * @author sergey vetyutnev
+import static org.testng.Assert.*;
 
-Confidentiality ::= SEQUENCE {
-    confidentialityId   CHOICE {
-        integerConfidentialityId    [0] IMPLICIT INTEGER,
-        objectConfidentialityId     [1] IMPLICIT OBJECT IDENTIFIER
-    } OPTIONAL,
-    ...
-    --The extension marker indicates the possible presence of items
-    --in the confidentiality set that are used by the confidentiality
-    --algorithm.
-}
+import org.mobicents.protocols.asn.AsnInputStream;
+import org.testng.annotations.Test;
 
- *
- */
-public interface Confidentiality extends Encodable {
+@Test(groups = { "asn" })
+public class TcUnidentifiedTest {
 
-    int _TAG_CONFIDENTIALITY = 2;
-    int _TAG_INTEGER_CONFIDENTIALITY_ID = 0;
-    int _TAG_OBJECT_CONFIDENTIALITY_ID = 1;
+    private byte[] data1 = new byte[] { -26, 15, -57, 8, 1, 1, 2, 2, 3, 3, 4, 4, -7, 3, -37, 1, 66 };
 
-    Long getIntegerConfidentialityId();
+    private byte[] trIdO = new byte[] { 1, 1, 2, 2 };
+    private byte[] trIdD = new byte[] { 3, 3, 4, 4 };
 
-    void setIntegerConfidentialityId(Long val);
+    @Test(groups = { "functional.decode" })
+    public void testDecode() throws Exception {
 
-    long[] getObjectConfidentialityId();
+        // 1
+        AsnInputStream ais = new AsnInputStream(this.data1);
+        int tag = ais.readTag();
 
-    void setObjectConfidentialityId(long[] val);
+        TCUnidentifiedMessage tcm = new TCUnidentifiedMessage();
+        tcm.decode(ais);
+
+        assertEquals(tcm.getOriginatingTransactionId(), trIdO);
+        assertEquals(tcm.getDestinationTransactionId(), trIdD);
+        assertTrue(tcm.isDialogPortionExists());
+
+    }
 
 }

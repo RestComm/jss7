@@ -27,11 +27,11 @@ import java.io.IOException;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.EncodeException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ParseException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ErrorCode;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ErrorCodeType;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.PAbortCause;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.RejectProblem;
 
 /**
@@ -93,11 +93,9 @@ public class ErrorCodeImpl implements ErrorCode {
                 this.setPrivateErrorCode(val);
             }
         } catch (IOException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                    "IOException while decoding ErrorCode: " + e.getMessage(), e);
+            throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "IOException while decoding ErrorCode: " + e.getMessage(), e);
         } catch (AsnException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                    "AsnException while decoding ErrorCode: " + e.getMessage(), e);
+            throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "AsnException while decoding ErrorCode: " + e.getMessage(), e);
         }
     }
 
@@ -113,9 +111,9 @@ public class ErrorCodeImpl implements ErrorCode {
 
         try {
             if (this.type == ErrorCodeType.National && this.nationalErrorCode != null) {
-                aos.writeInteger(this.nationalErrorCode);
+                aos.writeInteger(Tag.CLASS_PRIVATE, ErrorCode._TAG_NATIONAL, this.nationalErrorCode);
             } else if (this.type == ErrorCodeType.Private && this.privateErrorCode != null) {
-                aos.writeInteger(this.privateErrorCode);
+                aos.writeInteger(Tag.CLASS_PRIVATE, ErrorCode._TAG_PRIVATE, this.privateErrorCode);
             } else {
                 throw new EncodeException("Error code: No error code set!");
             }

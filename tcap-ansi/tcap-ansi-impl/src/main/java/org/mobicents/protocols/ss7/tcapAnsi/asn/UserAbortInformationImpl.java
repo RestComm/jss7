@@ -35,7 +35,6 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ParseException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserAbortInformation;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.PAbortCause;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.RejectProblem;
 
 /**
 *
@@ -66,10 +65,10 @@ public class UserAbortInformationImpl implements UserAbortInformation {
 
             ext.decode(localAis);
         } catch (IOException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
+            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion,
                     "IOException while decoding UserInformation: " + e.getMessage(), e);
         } catch (AsnException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
+            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion,
                     "AsnException while decoding UserInformation: " + e.getMessage(), e);
         }
     }

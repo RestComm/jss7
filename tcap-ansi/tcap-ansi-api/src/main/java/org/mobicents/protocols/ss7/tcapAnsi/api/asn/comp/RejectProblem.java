@@ -241,7 +241,28 @@ public enum RejectProblem {
             return transactionResourceUnavailable;
         }
 
-        throw new ParseException(PAbortCause.IncorrectTransactionPortion, RejectProblem.generalIncorrectComponentCoding, "Wrong value of type: " + t);
+        throw new ParseException(RejectProblem.generalIncorrectComponentCoding, "Wrong value of type RejectProblem: " + t);
+    }
+
+    public static RejectProblem getFromPAbortCause(PAbortCause t) {
+
+        if (t == PAbortCause.UnrecognizedPackageType) {
+            return transactionUnrecognizedPackageType;
+        } else if (t == PAbortCause.IncorrectTransactionPortion) {
+            return transactionIncorrectTransPortion;
+        } else if (t == PAbortCause.BadlyStructuredTransactionPortion) {
+            return transactionBadlyStructuredTransPortion;
+        } else if (t == PAbortCause.UnassignedRespondingTransactionID) {
+            return transactionUnassignedRespondingTransID;
+        } else if (t == PAbortCause.PermissionToReleaseProblem) {
+            return transactionPermissionToReleaseProblem;
+        } else if (t == PAbortCause.ResourceUnavailable) {
+            return transactionResourceUnavailable;
+        } else if (t == PAbortCause.UnrecognizedDialoguePortionID) {
+            return generalUnrecognisedComponentType;
+        }
+
+        return null;
     }
 
 }

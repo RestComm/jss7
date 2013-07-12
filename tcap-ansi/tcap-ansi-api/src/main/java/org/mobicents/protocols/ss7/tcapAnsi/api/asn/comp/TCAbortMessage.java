@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp;
 
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.DialogPortion;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.Encodable;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformationElement;
 
 /**
  *
@@ -47,22 +48,22 @@ public interface TCAbortMessage extends Encodable {
 
     int _TAG_ABORT = 22;
     int _TAG_P_ABORT_CAUSE = 23;
+    int _TAG_USER_ABORT_INFORMATION = 24;
 
     byte[] getDestinationTransactionId();
 
     void setDestinationTransactionId(byte[] t);
 
-    PAbortCause getPAbortCause();
-
-    void setPAbortCause(PAbortCause t);
-
     DialogPortion getDialogPortion();
 
     void setDialogPortion(DialogPortion dp);
 
-    // TODO: add UserAbortInformation
+    PAbortCause getPAbortCause();
 
-    // External getUserAbortInformation();
+    void setPAbortCause(PAbortCause t);
 
-    // void setUserAbortInformation(External uai);
+    UserInformationElement getUserAbortInformation();
+
+    void setUserAbortInformation(UserInformationElement uai);
+
 }

@@ -33,18 +33,19 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.EncodeException;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformationElement;
 import org.testng.annotations.Test;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
-public class UserInformationTest {
+ *
+ * @author amit bhayani
+ * @author sergey vetyutnev
+ *
+ */
+@Test(groups = { "asn" })
+public class UserInformationElementTest {
 
-    private byte[] data = new byte[] { (byte) 253, 20, 40, 18, 6, 7, 4, 0, 0, 1, 1, 1, 1, -96, 7, 1, 2, 3, 4, 5, 6, 7 };
+    private byte[] data = new byte[] { 40, 18, 6, 7, 4, 0, 0, 1, 1, 1, 1, -96, 7, 1, 2, 3, 4, 5, 6, 7 };
 
     private byte[] dataValue = new byte[] { 1, 2, 3, 4, 5, 6, 7 };
 
@@ -53,15 +54,12 @@ public class UserInformationTest {
 
         AsnInputStream asin = new AsnInputStream(data);
         int tag = asin.readTag();
-        assertEquals(UserInformation._TAG_USER_INFORMATION, tag);
-        assertEquals(Tag.CLASS_PRIVATE, asin.getTagClass());
+        assertEquals(UserInformationElement._TAG_EXTERNAL, tag);
+        assertEquals(Tag.CLASS_UNIVERSAL, asin.getTagClass());
         assertFalse(asin.isTagPrimitive());
 
-        UserInformation userInformation = new UserInformationImpl();
-        userInformation.decode(asin);
-
-        assertEquals(userInformation.getUserInformationElements().length, 1);
-        UserInformationElement userInformationElement = userInformation.getUserInformationElements()[0];
+        UserInformationElement userInformationElement = new UserInformationElementImpl();
+        userInformationElement.decode(asin);
 
         assertTrue(userInformationElement.isOid());
 
@@ -85,11 +83,8 @@ public class UserInformationTest {
         userInformationElement.setAsn(true);
         userInformationElement.setEncodeType(dataValue);
 
-        UserInformation userInformation = new UserInformationImpl();
-        userInformation.setUserInformationElements(new UserInformationElement[] { userInformationElement });
-
         AsnOutputStream asnos = new AsnOutputStream();
-        userInformation.encode(asnos);
+        userInformationElement.encode(asnos);
 
         byte[] userInfData = asnos.toByteArray();
 

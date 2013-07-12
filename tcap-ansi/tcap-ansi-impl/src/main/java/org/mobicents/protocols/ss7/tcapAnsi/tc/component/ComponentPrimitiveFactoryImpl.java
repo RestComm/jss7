@@ -100,7 +100,7 @@ public class ComponentPrimitiveFactoryImpl implements ComponentPrimitiveFactory 
 
     public ReturnResultNotLast createTCResultRequest() {
 
-        return TcapFactory.createComponentReturnResult();
+        return TcapFactory.createComponentReturnResultNotLast();
     }
 
     public OperationCode createOperationCode() {

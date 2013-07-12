@@ -36,6 +36,8 @@ UserInformation ::= [PRIVATE 29] IMPLICIT SEQUENCE OF EXTERNAL
 */
 public interface UserInformationElement extends Encodable {
 
+    int _TAG_EXTERNAL = 8;
+
     byte[] getEncodeType() throws AsnException;
 
     void setEncodeType(byte[] data);

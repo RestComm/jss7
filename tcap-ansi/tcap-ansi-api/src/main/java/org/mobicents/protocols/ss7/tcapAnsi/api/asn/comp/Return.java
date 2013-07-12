@@ -35,17 +35,8 @@ package org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp;
  */
 public interface Return extends Component {
 
-    void setParameters(Parameter[] p);
+    void setParameter(Parameter p);
 
-    Parameter[] getParameters();
-
-    /**
-     * if true Parameter will be (or was) encoded as a SET
-     * it false Parameter will be (or was) encoded as a SEQUENCE
-     * @return
-     */
-    boolean getParameterIsSETStyle();
-
-    void setParameterIsSETStyle(boolean val);
+    Parameter getParameter();
 
 }

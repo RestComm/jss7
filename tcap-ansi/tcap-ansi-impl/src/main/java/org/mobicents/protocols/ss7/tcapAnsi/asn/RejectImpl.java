@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.tcapAnsi.asn;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -33,7 +32,6 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.asn.EncodeException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ParseException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ComponentType;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.PAbortCause;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Reject;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.RejectProblem;
@@ -47,8 +45,6 @@ public class RejectImpl implements Reject {
 
     protected Long correlationId;
     private RejectProblem rejectProblem;
-    protected Parameter[] parameters;
-    private boolean parameterIsSETStyle;
     private boolean localOriginated = false;
 
 
@@ -63,36 +59,16 @@ public class RejectImpl implements Reject {
     }
 
     @Override
-    public Parameter[] getParameters() {
-        return this.parameters;
-    }
-
-    @Override
-    public void setParameters(Parameter[] p) {
-        this.parameters = p;
-    }
-
-    @Override
     public Long getCorrelationId() {
         return correlationId;
     }
 
     @Override
     public void setCorrelationId(Long i) {
-        if ((i == null) || (i < -128 || i > 127)) {
+        if (i != null && (i < -128 || i > 127)) {
             throw new IllegalArgumentException("Correlation ID our of range: <-128,127>: " + i);
         }
         this.correlationId = i;
-    }
-
-    @Override
-    public boolean getParameterIsSETStyle() {
-        return parameterIsSETStyle;
-    }
-
-    @Override
-    public void setParameterIsSETStyle(boolean val) {
-        parameterIsSETStyle = val;
     }
 
     public ComponentType getType() {
@@ -118,67 +94,33 @@ public class RejectImpl implements Reject {
 
         this.correlationId = null;
         this.rejectProblem = null;
-        this.parameters = null;
-        this.parameterIsSETStyle = false;
         this.localOriginated = false;
 
         try {
             AsnInputStream localAis = ais.readSequenceStream();
 
             // correlationId
-            int tag = localAis.readTag();
-            if (tag != Component._TAG_INVOKE_ID || localAis.getTagClass() != Tag.CLASS_PRIVATE || !localAis.isTagPrimitive()) {
-                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalIncorrectComponentPortion,
-                        "InvokeID in Reject has bad tag or tag class or is not primitive: tag=" + tag + ", tagClass=" + localAis.getTagClass());
-            }
-            byte[] buf = localAis.readOctetString();
-            if (buf.length > 1)
-                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalBadlyStructuredCompPortion,
-                        "InvokeID in Reject must be 0 or 1 bytes length, found bytes=" + buf.length);
-            if (buf.length >= 1)
+            byte[] buf = TcapFactory.readComponentId(localAis, 0, 1);
+            if (buf.length > 0)
                 this.setCorrelationId((long) buf[0]);
 
             // rejectProblem
-            tag = localAis.readTag();
+            int tag = localAis.readTag();
             if (tag != Reject._TAG_REJECT_PROBLEM || localAis.getTagClass() != Tag.CLASS_PRIVATE
                     || !localAis.isTagPrimitive()) {
-                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalIncorrectComponentPortion,
+                throw new ParseException(RejectProblem.generalIncorrectComponentPortion,
                         "RejectProblem in Reject has bad tag or tag class or is not primitive: tag=" + tag + ", tagClass=" + localAis.getTagClass());
             }
             long i1 = localAis.readInteger();
             this.rejectProblem = RejectProblem.getFromInt(i1);
 
-            // Parameters
-            tag = localAis.readTag();
-            if ((tag != Parameter._TAG_SEQUENCE && tag != Parameter._TAG_SET) || localAis.getTagClass() != Tag.CLASS_PRIVATE || localAis.isTagPrimitive()) {
-                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalIncorrectComponentPortion,
-                        "Parameters in ReturnError has bad tag or tag class or is primitive: tag=" + tag + ", tagClass=" + localAis.getTagClass());
-            }
-            if (tag == Parameter._TAG_SEQUENCE)
-                parameterIsSETStyle = false;
-            else
-                parameterIsSETStyle = true;
-
-            AsnInputStream ais2 = localAis.readSequenceStream();
-            ArrayList<Parameter> pars = new ArrayList<Parameter>();
-            while (true) {
-                if (ais2.available() == 0)
-                    break;
-
-                ais2.readTag();
-                Parameter par = TcapFactory.createParameter(ais2);
-                pars.add(par);
-            }
-            Parameter[] res = new Parameter[pars.size()];
-            pars.toArray(res);
-            this.setParameters(res);
+            // Empty parameter
+            // we do not parse an empty parameter because it is useless
 
         } catch (IOException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalBadlyStructuredCompPortion,
-                    "IOException while decoding Reject: " + e.getMessage(), e);
+            throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "IOException while decoding Reject: " + e.getMessage(), e);
         } catch (AsnException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalBadlyStructuredCompPortion,
-                    "AsnException while decoding Reject: " + e.getMessage(), e);
+            throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "AsnException while decoding Reject: " + e.getMessage(), e);
         }
     }
 
@@ -189,8 +131,6 @@ public class RejectImpl implements Reject {
      */
     public void encode(AsnOutputStream aos) throws EncodeException {
 
-        if (this.getParameterIsSETStyle() && (this.parameters == null || this.parameters.length == 0))
-            throw new EncodeException("Error encoding Reject: for Paramaters SET we have to have at least one parameter");
         if (this.getProblem() == null)
             throw new EncodeException("Error encoding Reject: RejectProblem must not be null");
 
@@ -202,7 +142,7 @@ public class RejectImpl implements Reject {
             // correlationId
             byte[] buf;
             if (this.correlationId != null) {
-                buf = new byte[2];
+                buf = new byte[1];
                 buf[0] = (byte) (long) this.correlationId;
             } else {
                 buf = new byte[0];
@@ -212,19 +152,9 @@ public class RejectImpl implements Reject {
             // rejectProblem
             aos.writeInteger(Tag.CLASS_PRIVATE, Reject._TAG_REJECT_PROBLEM, this.rejectProblem.getType());
 
-            // parameters
-            if (this.getParameterIsSETStyle()) {
-                aos.writeTag(Tag.CLASS_PRIVATE, false, Parameter._TAG_SET);
-            } else {
-                aos.writeTag(Tag.CLASS_PRIVATE, false, Parameter._TAG_SEQUENCE);
-            }
-            int pos2 = aos.StartContentDefiniteLength();
-            if (this.parameters != null && this.parameters.length > 0) {
-                for (Parameter par : this.parameters) {
-                    par.encode(aos);
-                }
-            }
-            aos.FinalizeContent(pos2);
+            // Empty parameter
+            aos.writeTag(Tag.CLASS_PRIVATE, false, Parameter._TAG_SEQUENCE);
+            aos.writeLength(0);
 
             aos.FinalizeContent(pos);
 
@@ -238,6 +168,9 @@ public class RejectImpl implements Reject {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Reject[");
+        sb.append("localOriginated=");
+        sb.append(this.localOriginated);
+        sb.append(", ");
         if (this.getCorrelationId() != null) {
             sb.append("CorrelationId=");
             sb.append(this.getCorrelationId());
@@ -247,15 +180,6 @@ public class RejectImpl implements Reject {
             sb.append("Problem=");
             sb.append(this.getProblem());
             sb.append(", ");
-        }
-        if (this.getParameters() != null && this.getParameters().length > 0) {
-            sb.append("Parameters=[");
-            for (Parameter par : this.getParameters()) {
-                sb.append("Parameter=[");
-                sb.append(par);
-                sb.append("], ");
-            }
-            sb.append("]");
         }
         sb.append("]");
 

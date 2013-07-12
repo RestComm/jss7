@@ -38,6 +38,12 @@ public interface SecurityContext extends Encodable {
     int _TAG_SECURITY_CONTEXT_INTEGER = 0;
     int _TAG_SECURITY_CONTEXT_OID = 1;
 
-    // TODO: implement it
+    Long getIntegerSecurityId();
+
+    void setIntegerSecurityId(Long val);
+
+    long[] getObjectSecurityId();
+
+    void setObjectSecurityId(long[] val);
 
 }

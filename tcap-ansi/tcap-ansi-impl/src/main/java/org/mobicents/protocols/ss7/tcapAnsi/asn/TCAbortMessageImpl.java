@@ -32,8 +32,8 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.DialogPortion;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.EncodeException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ParseException;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformationElement;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.PAbortCause;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.RejectProblem;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.TCAbortMessage;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.TCQueryMessage;
 
@@ -48,9 +48,7 @@ public class TCAbortMessageImpl implements TCAbortMessage {
     private byte[] destinationTransactionId;
     private DialogPortion dp;
     private PAbortCause pAbortCause;
-    // TODO: implement userAbortInformation
-//    private External userAbortInformation;
-
+    private UserInformationElement userAbortInformation;
 
     /*
      * (non-Javadoc)
@@ -104,83 +102,87 @@ public class TCAbortMessageImpl implements TCAbortMessage {
         this.pAbortCause = t;
     }
 
+    @Override
+    public UserInformationElement getUserAbortInformation() {
+        return userAbortInformation;
+    }
+
+    @Override
+    public void setUserAbortInformation(UserInformationElement uai) {
+        userAbortInformation = uai;
+    }
+
     /*
      * (non-Javadoc)
      *
      * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols .asn.AsnInputStream)
      */
     public void decode(AsnInputStream ais) throws ParseException {
-        this.dp = null;
         this.destinationTransactionId = null;
+        this.dp = null;
         this.pAbortCause = null;
+        this.userAbortInformation = null;
 
         try {
             AsnInputStream localAis = ais.readSequenceStream();
 
+            // transaction portion
+            TransactionID tid = TcapFactory.readTransactionID(localAis);
+            if (tid.getFirstElem() == null || tid.getSecondElem() != null) {
+                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion,
+                        "Error decoding TCAbortMessage: transactionId must contain one and only one transactionId");
+            }
+            this.destinationTransactionId = tid.getFirstElem();
+
+            if (localAis.available() == 0) {
+                throw new ParseException(PAbortCause.UnrecognizedDialoguePortionID,
+                        "Error decoding TCAbortMessage: neither P-Abort-cause nor dialog portion or userInformation is found");
+            }
             int tag = localAis.readTag();
-            if (tag != TCQueryMessage._TAG_TRANSACTION_ID || localAis.getTagClass() != Tag.CLASS_PRIVATE || !localAis.isTagPrimitive())
-                throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                        "Error decoding TCAbortMessage: bad tag or tagClass or not primitive for originatingTransactionId, found tagClass=" + localAis.getTagClass()
-                                + ", tag=" + tag);
-            this.destinationTransactionId = localAis.readOctetString();
-            if (this.destinationTransactionId.length != 4)
-                throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                        "Error decoding TCAbortMessage: destinationTransactionId bad length, must be 4, found =" + this.destinationTransactionId.length);
+            if (localAis.getTagClass() != Tag.CLASS_PRIVATE)
+                throw new ParseException(PAbortCause.IncorrectTransactionPortion,
+                        "Error decoding TCAbortMessage: bad tagClass for P-Abort-cause, userInformation or abortCause, found tagClass=" + localAis.getTagClass());
 
-            while (true) {
-                if (localAis.available() == 0)
-                    break;
+            switch (tag) {
+            case TCAbortMessage._TAG_P_ABORT_CAUSE:
+                // P-Abort-cause
+                if (!localAis.isTagPrimitive())
+                    throw new ParseException(PAbortCause.IncorrectTransactionPortion, "Error decoding TCAbortMessage: P_ABORT_CAUSE is not primitive");
+                int i1 = (int)localAis.readInteger();
+                this.pAbortCause = PAbortCause.getFromInt(i1);
+                break;
 
-                tag = localAis.readTag();
-                if (localAis.isTagPrimitive() || localAis.getTagClass() != Tag.CLASS_PRIVATE)
-                    throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                            "Error decoding TCAbortMessage: bad tagClass or primitive for dialogPortion or componentPortion, found tagClass="
-                                    + localAis.getTagClass());
-
-                switch (tag) {
-                case DialogPortion._TAG_DIALOG_PORTION:
-                    if (this.dp != null) {
-                        throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                                "Error decoding TCAbortMessage: double DialogPortion");
-                    }
+            case DialogPortion._TAG_DIALOG_PORTION:
+            case TCAbortMessage._TAG_USER_ABORT_INFORMATION:
+                // Dialog portion (opt) + UserAbortInformation
+                if (tag == DialogPortion._TAG_DIALOG_PORTION) {
+                    // Dialog portion
                     this.dp = TcapFactory.createDialogPortion(localAis);
-                    break;
-
-                case TCAbortMessage._TAG_P_ABORT_CAUSE:
-                    if (this.pAbortCause != null) {
-                        throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                                "Error decoding TCAbortMessage: double PAbortCause");
-                    }
-                    int i1 = (int) localAis.readInteger();
-                    this.pAbortCause = PAbortCause.getFromInt(i1);
-                    if (this.pAbortCause == null) {
-                        throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                                "Error decoding TCAbortMessage: bad PAbortCause value");
-                    }
-                    break;
-
-                // TODO: implement userAbortInformation
-
-                default:
-                    throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                            "Error decoding TCAbortMessage: bad tag: " + tag);
+                    if (localAis.available() == 0)
+                        return;
+                    tag = localAis.readTag();
                 }
+
+                // UserAbortInformation
+                if (tag != TCAbortMessage._TAG_USER_ABORT_INFORMATION || localAis.getTagClass() != Tag.CLASS_PRIVATE || localAis.isTagPrimitive())
+                    throw new ParseException(PAbortCause.IncorrectTransactionPortion,
+                            "Error decoding TCAbortMessage: bad tag or tagClass or is primitive for userAbortInformation, found tagClass="
+                                    + localAis.getTagClass() + ", tag" + tag);
+                UserInformationElementImpl uai = new UserInformationElementImpl();
+                uai.decode(localAis);
+                if (uai.isOid())
+                    this.userAbortInformation = uai;
+                break;
+
+            default:
+                throw new ParseException(PAbortCause.IncorrectTransactionPortion,
+                        "Error decoding TCAbortMessage: bad tag for P-Abort-cause, userInformation or abortCause, found tag=" + tag);
             }
 
-            if (this.pAbortCause == null && this.dp == null)
-                throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                        "Error decoding TCAbortMessage: no parameters has been found");
-
-            if (this.pAbortCause != null && this.dp != null)
-                throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                        "Error decoding TCAbortMessage: both pAbortCause and DialogPortion/UserAbortInformation has been found");
-
         } catch (IOException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                    "IOException while decoding TCAbortMessage: " + e.getMessage(), e);
+            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, "IOException while decoding TCAbortMessage: " + e.getMessage(), e);
         } catch (AsnException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                    "AsnException while decoding TCAbortMessage: " + e.getMessage(), e);
+            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, "AsnException while decoding TCAbortMessage: " + e.getMessage(), e);
         }
     }
 
@@ -194,9 +196,9 @@ public class TCAbortMessageImpl implements TCAbortMessage {
         if (this.destinationTransactionId == null || this.destinationTransactionId.length != 4)
             throw new EncodeException("Error while encoding TCAbortMessage: destinationTransactionId is not defined or has not a length 4");
 
-        if (this.pAbortCause == null && this.dp == null)
+        if (this.pAbortCause == null && (this.dp == null && this.userAbortInformation == null))
             throw new EncodeException("Error while encoding TCAbortMessage: neither PAbortCause nor DialogPortion/UserAbortInformation is defined");
-        if (this.pAbortCause != null && this.dp != null)
+        if (this.pAbortCause != null && (this.dp != null || this.userAbortInformation != null))
             throw new EncodeException("Error while encoding TCAbortMessage: both PAbortCause and DialogPortion/UserAbortInformation is defined");
 
         try {
@@ -210,7 +212,12 @@ public class TCAbortMessageImpl implements TCAbortMessage {
             } else {
                 if (this.dp != null)
                     this.dp.encode(aos);
-                // TODO: implement userAbortInformation
+                if (this.userAbortInformation != null) {
+                    ((UserInformationElementImpl) this.userAbortInformation).encode(aos, Tag.CLASS_PRIVATE, TCAbortMessage._TAG_USER_ABORT_INFORMATION);
+                } else {
+                    aos.writeTag(Tag.CLASS_PRIVATE, false, TCAbortMessage._TAG_USER_ABORT_INFORMATION);
+                    aos.writeLength(0);
+                }
             }
 
             aos.FinalizeContent(pos);
@@ -241,7 +248,10 @@ public class TCAbortMessageImpl implements TCAbortMessage {
             sb.append(this.dp);
             sb.append(", ");
         }
-        // TODO: implement userAbortInformation
+        if (this.userAbortInformation != null) {
+            sb.append("userAbortInformation=");
+            sb.append(this.userAbortInformation);
+        }
         sb.append("]");
         return sb.toString();
     }

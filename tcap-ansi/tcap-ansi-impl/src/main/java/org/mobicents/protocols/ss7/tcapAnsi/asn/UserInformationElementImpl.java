@@ -22,20 +22,15 @@
 
 package org.mobicents.protocols.ss7.tcapAnsi.asn;
 
-import java.io.IOException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.BitSetStrictLength;
 import org.mobicents.protocols.asn.External;
-import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.EncodeException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ParseException;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformationElement;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.PAbortCause;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.RejectProblem;
 
 /**
 *
@@ -57,41 +52,27 @@ public class UserInformationElementImpl implements UserInformationElement {
     public void decode(AsnInputStream ais) throws ParseException {
 
         try {
-            AsnInputStream localAis = ais.readSequenceStream();
-
-            int tag = localAis.readTag();
-            if (tag != Tag.EXTERNAL || localAis.getTagClass() != Tag.CLASS_UNIVERSAL)
-                throw new AsnException("Error decoding UserInformation.sequence: wrong tag or tag class: tag=" + tag
-                        + ", tagClass=" + localAis.getTagClass());
-
-            ext.decode(localAis);
-        } catch (IOException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                    "IOException while decoding UserInformation: " + e.getMessage(), e);
+            ext.decode(ais);
         } catch (AsnException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                    "AsnException while decoding UserInformation: " + e.getMessage(), e);
+            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, "AsnException while decoding UserInformationElement: " + e.getMessage(), e);
         }
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.asn.External#encode(org.mobicents.protocols.asn.AsnOutputStream)
-     */
 
     public void encode(AsnOutputStream aos) throws EncodeException {
 
         try {
-            aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, UserInformation._TAG_USER_INFORMATION);
-            int pos = aos.StartContentDefiniteLength();
-
             ext.encode(aos);
-
-            aos.FinalizeContent(pos);
-
         } catch (AsnException e) {
-            throw new EncodeException("AsnException when encoding UserInformation: " + e.getMessage(), e);
+            throw new EncodeException("AsnException when encoding UserInformationElement: " + e.getMessage(), e);
+        }
+    }
+
+    public void encode(AsnOutputStream aos, int tagClass, int tag) throws EncodeException {
+
+        try {
+            ext.encode(aos, tagClass, tag);
+        } catch (AsnException e) {
+            throw new EncodeException("AsnException when encoding UserInformationElement: " + e.getMessage(), e);
         }
     }
 

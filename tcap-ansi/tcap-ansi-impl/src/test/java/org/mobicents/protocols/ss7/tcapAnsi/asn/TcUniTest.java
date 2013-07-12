@@ -27,31 +27,30 @@ import static org.testng.Assert.*;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ApplicationContext;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.DialogPortion;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Component;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Parameter;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.TCUniMessage;
 import org.mobicents.protocols.ss7.tcapAnsi.asn.TcapFactory;
 import org.testng.annotations.Test;
 
 /**
  *
- * @author amit bhayani
  * @author sergey vetyutnev
  *
  */
 @Test(groups = { "asn" })
-public class InvokeTest {
+public class TcUniTest {
 
-    private byte[] data1 = new byte[] { (byte) 233, 41, (byte) 207, 1, 0, (byte) 209, 2, 9, 53, (byte) 242, 32, (byte) 159, 105, 0, (byte) 159, 116, 0,
-            (byte) 159, (byte) 129, 0, 1, 8, (byte) 136, 5, 22, 25, 50, 4, 0, (byte) 159, (byte) 129, 65, 1, 1, (byte) 159, (byte) 129, 67, 5, 34, 34, 34, 34,
-            34 };    
+    private byte[] data1 = new byte[] { -31, 22, -57, 0, -24, 18, -23, 16, -49, 1, 0, -47, 2, 9, 53, -14, 7, 1, 2, 3, 4, 5, 6, 7 };
 
-    private byte[] data2 = new byte[] { -19, 9, -49, 2, 20, 10, -48, 1, -13, -14, 0 };    
+    private byte[] data2 = new byte[] { -31, 27, -57, 0, -7, 3, -37, 1, 66, -24, 18, -23, 16, -49, 1, 0, -47, 2, 9, 53, -14, 7, 1, 2, 3, 4, 5, 6, 7 };
 
-    private byte[] data3 = new byte[] { -19, 7, -49, 0, -48, 1, -13, -14, 0 };    
-
-    private byte[] parData = new byte[] { -97, 105, 0, -97, 116, 0, -97, -127, 0, 1, 8, -120, 5, 22, 25, 50, 4, 0, -97, -127, 65, 1, 1, -97, -127, 67, 5, 34,
-            34, 34, 34, 34 };
+    private byte[] parData = new byte[] { 1, 2, 3, 4, 5, 6, 7 };
 
     @Test(groups = { "functional.decode" })
     public void testDecode() throws Exception {
@@ -59,12 +58,16 @@ public class InvokeTest {
         // 1
         AsnInputStream ais = new AsnInputStream(this.data1);
         int tag = ais.readTag();
-        assertEquals(tag, Invoke._TAG_INVOKE_LAST);
+        assertEquals(tag, TCUniMessage._TAG_UNI);
         assertEquals(ais.getTagClass(), Tag.CLASS_PRIVATE);
 
-        Invoke inv = TcapFactory.createComponentInvoke();
-        inv.decode(ais);
+        TCUniMessage tcm = TcapFactory.createTCUniMessage(ais);
 
+        assertNull(tcm.getDialogPortion());
+        assertEquals(tcm.getComponent().length, 1);
+        Component cmp = tcm.getComponent()[0];
+        assertEquals(cmp.getType(), ComponentType.InvokeLast);
+        Invoke inv = (Invoke) cmp;
         assertFalse(inv.isNotLast());
         assertEquals((long) inv.getInvokeId(), 0);
         assertNull(inv.getCorrelationId());
@@ -78,47 +81,41 @@ public class InvokeTest {
         // 2
         ais = new AsnInputStream(this.data2);
         tag = ais.readTag();
-        assertEquals(tag, Invoke._TAG_INVOKE_NOT_LAST);
+        assertEquals(tag, TCUniMessage._TAG_UNI);
         assertEquals(ais.getTagClass(), Tag.CLASS_PRIVATE);
 
-        inv = TcapFactory.createComponentInvoke();
-        inv.decode(ais);
+        tcm = TcapFactory.createTCUniMessage(ais);
 
-        assertTrue(inv.isNotLast());
-        assertEquals((long) inv.getInvokeId(), 20);
-        assertEquals((long) inv.getCorrelationId(), 10);
-        assertEquals((long) inv.getOperationCode().getNationalOperationCode(), -13);
-        p = inv.getParameter();
-        assertEquals(p.getTag(), 18);
-        assertEquals(p.getTagClass(), Tag.CLASS_PRIVATE);
-        assertFalse(p.isPrimitive());
-        assertEquals(p.getData(), new byte[0]);
-
-        // 3
-        ais = new AsnInputStream(this.data3);
-        tag = ais.readTag();
-        assertEquals(tag, Invoke._TAG_INVOKE_NOT_LAST);
-        assertEquals(ais.getTagClass(), Tag.CLASS_PRIVATE);
-
-        inv = TcapFactory.createComponentInvoke();
-        inv.decode(ais);
-
-        assertTrue(inv.isNotLast());
-        assertNull(inv.getInvokeId());
+        assertEquals(tcm.getComponent().length, 1);
+        cmp = tcm.getComponent()[0];
+        assertEquals(cmp.getType(), ComponentType.InvokeLast);
+        inv = (Invoke) cmp;
+        assertFalse(inv.isNotLast());
+        assertEquals((long) inv.getInvokeId(), 0);
         assertNull(inv.getCorrelationId());
-        assertEquals((long) inv.getOperationCode().getNationalOperationCode(), -13);
+        assertEquals((long) inv.getOperationCode().getPrivateOperationCode(), 2357);
         p = inv.getParameter();
         assertEquals(p.getTag(), 18);
         assertEquals(p.getTagClass(), Tag.CLASS_PRIVATE);
         assertFalse(p.isPrimitive());
-        assertEquals(p.getData(), new byte[0]);
+        assertEquals(p.getData(), parData);
+
+        DialogPortion dp = tcm.getDialogPortion();
+        assertNull(dp.getProtocolVersion());
+        ApplicationContext ac = dp.getApplicationContext();
+        assertEquals(ac.getInteger(), 66);
+        assertNull(dp.getConfidentiality());
+        assertNull(dp.getSecurityContext());
+        assertNull(dp.getUserInformation());
     }
 
     @Test(groups = { "functional.encode" })
     public void testEncode() throws Exception {
 
         // 1
+        Component[] cc = new Component[1];
         Invoke inv = TcapFactory.createComponentInvoke();
+        cc[0] = inv;
         inv.setInvokeId(0L);
         inv.setNotLast(false);
         OperationCode oc = TcapFactory.createOperationCode();
@@ -128,43 +125,29 @@ public class InvokeTest {
         p.setData(parData);
         inv.setParameter(p);
 
+        TCUniMessage tcm = TcapFactory.createTCUniMessage();
+        tcm.setComponent(cc);
+
         AsnOutputStream aos = new AsnOutputStream();
-        inv.encode(aos);
+        tcm.encode(aos);
         byte[] encodedData = aos.toByteArray();
         byte[] expectedData = data1;
         assertEquals(encodedData, expectedData);
 
         // 2
-        inv = TcapFactory.createComponentInvoke();
-        inv.setInvokeId(20L);
-        inv.setCorrelationId(10L);
-        inv.setNotLast(true);
-        oc = TcapFactory.createOperationCode();
-        oc.setNationalOperationCode(-13L);
-        inv.setOperationCode(oc);
-        p = TcapFactory.createParameterSet();
-        inv.setParameter(p);
+        tcm = TcapFactory.createTCUniMessage();
+        tcm.setComponent(cc);
+
+        DialogPortion dp = TcapFactory.createDialogPortion();
+        ApplicationContext ac = TcapFactory.createApplicationContext(66);
+        dp.setApplicationContext(ac);
+        tcm.setDialogPortion(dp);
 
         aos = new AsnOutputStream();
-        inv.encode(aos);
+        tcm.encode(aos);
         encodedData = aos.toByteArray();
         expectedData = data2;
         assertEquals(encodedData, expectedData);
 
-        // 3
-        inv = TcapFactory.createComponentInvoke();
-        inv.setNotLast(true);
-        oc = TcapFactory.createOperationCode();
-        oc.setNationalOperationCode(-13L);
-        inv.setOperationCode(oc);
-        p = TcapFactory.createParameterSet();
-        inv.setParameter(p);
-
-        aos = new AsnOutputStream();
-        inv.encode(aos);
-        encodedData = aos.toByteArray();
-        expectedData = data3;
-        assertEquals(encodedData, expectedData);
     }
-
 }

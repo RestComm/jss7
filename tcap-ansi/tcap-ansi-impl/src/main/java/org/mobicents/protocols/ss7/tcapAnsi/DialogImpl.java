@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPStack;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ApplicationContext;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.DialogPortion;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.EncodeException;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ProtocolVersion;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ComponentType;
@@ -110,6 +111,7 @@ public class DialogImpl implements Dialog {
     private byte[] remoteTransactionId;
     private Long remoteTransactionIdObject;
 
+    private ProtocolVersion protocolVersion;
     private SccpAddress localAddress;
     private SccpAddress remoteAddress;
 
@@ -474,7 +476,7 @@ public class DialogImpl implements Dialog {
             this.dialogLock.lock();
             this.idleTimerActionTaken = true;
             restartIdleTimer();
-            TCQueryMessageImpl tcbm = (TCQueryMessageImpl) TcapFactory.createTCBeginMessage();
+            TCQueryMessageImpl tcbm = (TCQueryMessageImpl) TcapFactory.createTCQueryMessage();
 
             // build DP
 
@@ -541,7 +543,7 @@ public class DialogImpl implements Dialog {
             if (this.state == TRPseudoState.InitialReceived) {
                 this.idleTimerActionTaken = true;
                 restartIdleTimer();
-                TCConversationMessageImpl tcbm = (TCConversationMessageImpl) TcapFactory.createTCContinueMessage();
+                TCConversationMessageImpl tcbm = (TCConversationMessageImpl) TcapFactory.createTCConversationMessage();
 
                 if (event.getApplicationContextName() != null) {
 
@@ -597,7 +599,7 @@ public class DialogImpl implements Dialog {
                 this.idleTimerActionTaken = true;
                 restartIdleTimer();
                 // in this we ignore acn and passed args(except qos)
-                TCConversationMessageImpl tcbm = (TCConversationMessageImpl) TcapFactory.createTCContinueMessage();
+                TCConversationMessageImpl tcbm = (TCConversationMessageImpl) TcapFactory.createTCConversationMessage();
 
                 tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
                 tcbm.setDestinationTransactionId(this.remoteTransactionId);
@@ -654,7 +656,7 @@ public class DialogImpl implements Dialog {
                 // indication primitive
                 this.idleTimerActionTaken = true;
                 stopIdleTimer();
-                tcbm = (TCResponseMessageImpl) TcapFactory.createTCEndMessage();
+                tcbm = (TCResponseMessageImpl) TcapFactory.createTCResponseMessage();
                 tcbm.setDestinationTransactionId(this.remoteTransactionId);
 
                 if (this.scheduledComponentList.size() > 0) {
@@ -691,7 +693,7 @@ public class DialogImpl implements Dialog {
 
             } else if (state == TRPseudoState.Active) {
                 restartIdleTimer();
-                tcbm = (TCResponseMessageImpl) TcapFactory.createTCEndMessage();
+                tcbm = (TCResponseMessageImpl) TcapFactory.createTCResponseMessage();
 
                 tcbm.setDestinationTransactionId(this.remoteTransactionId);
                 if (this.scheduledComponentList.size() > 0) {
@@ -966,7 +968,7 @@ public class DialogImpl implements Dialog {
 
     public int getDataLength(TCQueryRequest event) throws TCAPSendException {
 
-        TCQueryMessageImpl tcbm = (TCQueryMessageImpl) TcapFactory.createTCBeginMessage();
+        TCQueryMessageImpl tcbm = (TCQueryMessageImpl) TcapFactory.createTCQueryMessage();
 
         if (event.getApplicationContextName() != null) {
             DialogPortion dp = TcapFactory.createDialogPortion();
@@ -1004,7 +1006,7 @@ public class DialogImpl implements Dialog {
 
     public int getDataLength(TCConversationRequest event) throws TCAPSendException {
 
-        TCConversationMessageImpl tcbm = (TCConversationMessageImpl) TcapFactory.createTCContinueMessage();
+        TCConversationMessageImpl tcbm = (TCConversationMessageImpl) TcapFactory.createTCConversationMessage();
 
         if (event.getApplicationContextName() != null) {
 
@@ -1056,7 +1058,7 @@ public class DialogImpl implements Dialog {
 
         // TC-END request primitive issued in response to a TC-BEGIN
         // indication primitive
-        TCResponseMessageImpl tcbm = (TCResponseMessageImpl) TcapFactory.createTCEndMessage();
+        TCResponseMessageImpl tcbm = (TCResponseMessageImpl) TcapFactory.createTCResponseMessage();
         tcbm.setDestinationTransactionId(this.remoteTransactionId);
 
         if (this.scheduledComponentList.size() > 0) {
@@ -1149,6 +1151,16 @@ public class DialogImpl implements Dialog {
     // /////////////////
     // LOCAL METHODS //
     // /////////////////
+
+    @Override
+    public ProtocolVersion getProtocolVersion() {
+        return protocolVersion;
+    }
+
+    @Override
+    public void setProtocolVersion(ProtocolVersion protocolVersion) {
+        this.protocolVersion = protocolVersion;
+    }
 
     /**
      * @param remoteTransactionId the remoteTransactionId to set
@@ -1671,10 +1683,7 @@ public class DialogImpl implements Dialog {
         List<Component> resultingIndications = new ArrayList<Component>();
         for (Component ci : components) {
             Long invokeId;
-            if (ci.getType() == ComponentType.Invoke)
-                invokeId = ((InvokeImpl) ci).getCorrelationId();
-            else
-                invokeId = ci.getCorrelationId();
+            invokeId = ci.getCorrelationId();
             InvokeImpl invoke = null;
             int index = 0;
             if (invokeId != null) {
@@ -1686,12 +1695,8 @@ public class DialogImpl implements Dialog {
 
             case Invoke:
                 if (invokeId != null && invoke == null) {
-                    logger.error(String.format("Rx : %s but no sent Invoke for linkedId exists", ci));
-
-                    // Problem p = new ProblemImpl();
-                    // p.setInvokeProblemType(InvokeProblemType.UnrechognizedLinkedID);
-                    // this.addReject(resultingIndications, ci.getInvokeId(),
-                    // p);
+                    logger.error(String.format("Rx : %s but no sent Invoke for correlationId exists", ci));
+                    this.addReject(resultingIndications, ((InvokeImpl) ci).getInvokeId(), RejectProblem.invokeUnrecognisedCorrelationId);
                 } else {
                     if (invoke != null) {
                         ((InvokeImpl) ci).setCorrelationInvoke(invoke);
@@ -1704,18 +1709,17 @@ public class DialogImpl implements Dialog {
                         ((InvokeImpl) ci).setDialog(this);
                         ((InvokeImpl) ci).setState(OperationState.Sent);
                     } else {
-                        if (!this.addIncomingInvokeId(ci.getCorrelationId())) {
+                        if (!this.addIncomingInvokeId(((InvokeImpl) ci).getInvokeId())) {
                             logger.error(String.format("Rx : %s but there is already Invoke with this invokeId", ci));
-
-//                            Problem p = new ProblemImpl();
-//                            p.setInvokeProblemType(InvokeProblemType.DuplicateInvokeID);
-//                            this.addReject(resultingIndications, ci.getInvokeId(), p);
+                            this.addReject(resultingIndications, ((InvokeImpl) ci).getInvokeId(), RejectProblem.invokeDuplicateInvocation);
                         } else {
                             resultingIndications.add(ci);
                         }
                     }
                 }
                 break;
+                // .................................
+
 
             case ReturnResultNotLast:
 

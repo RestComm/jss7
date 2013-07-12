@@ -61,17 +61,8 @@ public interface ReturnError extends Component {
 
     ErrorCode getErrorCode();
 
-    void setParameters(Parameter[] p);
+    void setParameter(Parameter p);
 
-    Parameter[] getParameters();
-
-    /**
-     * if true Parameter will be (or was) encoded as a SET
-     * it false Parameter will be (or was) encoded as a SEQUENCE
-     * @return
-     */
-    boolean getParameterIsSETStyle();
-
-    void setParameterIsSETStyle(boolean val);
+    Parameter getParameter();
 
 }

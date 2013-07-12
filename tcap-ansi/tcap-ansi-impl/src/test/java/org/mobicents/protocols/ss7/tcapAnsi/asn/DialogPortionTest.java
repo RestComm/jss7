@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,216 +22,125 @@
 
 package org.mobicents.protocols.ss7.tcapAnsi.asn;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ApplicationContext;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.Confidentiality;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.DialogPortion;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ProtocolVersion;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.SecurityContext;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformation;
-import org.mobicents.protocols.ss7.tcapAnsi.asn.DialogPortionImpl;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformationElement;
 import org.testng.annotations.Test;
 
 /**
- * @author baranowb
- * @author amit bhayani
- * @author sergey vetyutnev
- */
+*
+* @author sergey vetyutnev
+*
+*/
 @Test(groups = { "asn" })
 public class DialogPortionTest {
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
+    private byte[] data1 = new byte[] { -7, 33, -38, 1, 3, -3, 20, 40, 18, 6, 7, 4, 0, 0, 1, 1, 1, 1, -96, 7, 1, 2, 3, 4, 5, 6, 7, -128, 1, 10, -94, 3, -128,
+            1, 20 };
+
+    private byte[] data2 = new byte[] { -7, 11, -37, 1, 30, -127, 1, 42, -94, 3, -127, 1, 44 };    
+
+    private byte[] dataValue = new byte[] { 1, 2, 3, 4, 5, 6, 7 };
+
+    @Test(groups = { "functional.decode" })
+    public void testDecode() throws Exception {
+
+        // 1
+        AsnInputStream ais = new AsnInputStream(this.data1);
+        int tag = ais.readTag();
+        assertEquals(tag, DialogPortion._TAG_DIALOG_PORTION);
+        assertEquals(ais.getTagClass(), Tag.CLASS_PRIVATE);
+
+        DialogPortion dp = TcapFactory.createDialogPortion();
+        dp.decode(ais);
+
+        assertNull(dp.getApplicationContext());
+        assertTrue(dp.getProtocolVersion().isT1_114_2000Supported());
+        UserInformation ui = dp.getUserInformation();
+        assertTrue(Arrays.equals(new long[] { 0, 4, 0, 0, 1, 1, 1, 1 }, ui.getUserInformationElements()[0].getOidValue()));
+        assertEquals(dataValue, ui.getUserInformationElements()[0].getEncodeType());
+
+        SecurityContext sc = dp.getSecurityContext();
+        assertEquals((long) sc.getIntegerSecurityId(), 10);
+        Confidentiality con = dp.getConfidentiality();
+        assertEquals((long) con.getIntegerConfidentialityId(), 20);
+
+        // 2
+        ais = new AsnInputStream(this.data2);
+        tag = ais.readTag();
+        assertEquals(tag, DialogPortion._TAG_DIALOG_PORTION);
+        assertEquals(ais.getTagClass(), Tag.CLASS_PRIVATE);
+
+        dp = TcapFactory.createDialogPortion();
+        dp.decode(ais);
+
+        assertNull(dp.getProtocolVersion());
+        assertEquals(dp.getApplicationContext().getInteger(), 30);
+        assertNull(dp.getUserInformation());
+
+        sc = dp.getSecurityContext();
+        assertTrue(Arrays.equals(sc.getObjectSecurityId(), new long[] { 1, 2 }));
+        con = dp.getConfidentiality();
+        assertTrue(Arrays.equals(con.getObjectConfidentialityId(), new long[] { 1, 4 }));
     }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
+    @Test(groups = { "functional.encode" })
+    public void testEncode() throws Exception {
 
-    @BeforeMethod
-    public void setUp() {
+        // 1
+        DialogPortion dp = TcapFactory.createDialogPortion();
+        ProtocolVersion pv = TcapFactory.createProtocolVersionFull();
+        dp.setProtocolVersion(pv);
+        UserInformation ui = TcapFactory.createUserInformation();
+        UserInformationElement[] uie = new UserInformationElement[1];
+        uie[0] = new UserInformationElementImpl();
+        uie[0].setOid(true);
+        uie[0].setOidValue(new long[] { 0, 4, 0, 0, 1, 1, 1, 1 });
+        uie[0].setAsn(true);
+        uie[0].setEncodeType(dataValue);
+        ui.setUserInformationElements(uie);
+        dp.setUserInformation(ui);
+        SecurityContext sc = new SecurityContextImpl();
+        sc.setIntegerSecurityId(10L);
+        dp.setSecurityContext(sc);
+        Confidentiality con = new ConfidentialityImpl();
+        con.setIntegerConfidentialityId(20L);
+        dp.setConfidentiality(con);
 
-    }
+        AsnOutputStream aos = new AsnOutputStream();
+        dp.encode(aos);
+        byte[] encodedData = aos.toByteArray();
+        byte[] expectedData = data1;
+        assertEquals(encodedData, expectedData);
 
-    @AfterMethod
-    public void tearDown() {
+        // 2
+        dp = TcapFactory.createDialogPortion();
+        ApplicationContext ac = TcapFactory.createApplicationContext(30);
+        dp.setApplicationContext(ac);
+        sc = new SecurityContextImpl();
+        sc.setObjectSecurityId(new long[] { 1, 2 });
+        dp.setSecurityContext(sc);
+        con = new ConfidentialityImpl();
+        con.setObjectConfidentialityId(new long[] { 1, 4 });
+        dp.setConfidentiality(con);
 
-    }
+        aos = new AsnOutputStream();
+        dp.encode(aos);
+        encodedData = aos.toByteArray();
+        expectedData = data2;
+        assertEquals(encodedData, expectedData);
 
-    @Test(groups = { "functional.encode", "functional.decode" })
-    public void testDialogPortion_UserInformation() throws Exception {
-
-//        // Hex dump is from wireshark trace for TCAP - MAP/USSD
-//        byte[] b = new byte[] { 0x6b, 0x41, 0x28, 0x3f, 0x06, 0x07, 0x00, 0x11, (byte) 0x86, 0x05, 0x01, 0x01, 0x01,
-//                (byte) 0xa0, 0x34, 0x60, 0x32, (byte) 0xa1, 0x09, 0x06, 0x07, 0x04, 0x00, 0x00, 0x01, 0x00, 0x13, 0x02,
-//                (byte) 0xbe, 0x25, 0x28, 0x23, 0x06, 0x07, 0x04, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, (byte) 0xa0, 0x18,
-//                (byte) 0xa0, (byte) 0x80, (byte) 0x80, 0x09, (byte) 0x96, 0x02, 0x24, (byte) 0x80, 0x03, 0x00, (byte) 0x80,
-//                0x00, (byte) 0xf2, (byte) 0x81, 0x07, (byte) 0x91, 0x13, 0x26, (byte) 0x98, (byte) 0x86, 0x03, (byte) 0xf0,
-//                0x00, 0x00 };
-//
-//        AsnInputStream asin = new AsnInputStream(b);
-//        asin.readTag();
-//        DialogPortionImpl dpi = new DialogPortionImpl();
-//        dpi.decode(asin);
-//
-//        long[] oidValue = dpi.getOidValue();
-//        Arrays.equals(new long[] { 0, 0, 17, 773, 1, 1, 1 }, oidValue);
-//
-//        DialogAPDU dialogAPDU = dpi.getDialogAPDU();
-//
-//        assertNotNull(dialogAPDU);
-//
-//        assertEquals(DialogAPDUType.Request, dialogAPDU.getType());
-//
-//        DialogRequestAPDU dialogRequestAPDU = (DialogRequestAPDU) dialogAPDU;
-//
-//        ApplicationContext acn = dialogRequestAPDU.getApplicationContextName();
-//
-//        assertNotNull(acn);
-//
-//        assertTrue(Arrays.equals(new long[] { 0, 4, 0, 0, 1, 0, 19, 2 }, acn.getOid()));
-//
-//        UserInformation userInfos = dialogRequestAPDU.getUserInformation();
-//
-//        assertNotNull(userInfos);
-//
-//        UserInformation userInformation = userInfos;
-//
-//        assertTrue(userInformation.isOid());
-//
-//        assertTrue(Arrays.equals(new long[] { 0, 4, 0, 0, 1, 1, 1, 1 }, userInformation.getOidValue()));
-//
-//        assertFalse(userInformation.isInteger());
-//
-//        assertTrue(userInformation.isAsn());
-//        assertTrue(Arrays.equals(new byte[] { (byte) 0xa0, (byte) 0x80, (byte) 0x80, 0x09, (byte) 0x96, 0x02, 0x24,
-//                (byte) 0x80, 0x03, 0x00, (byte) 0x80, 0x00, (byte) 0xf2, (byte) 0x81, 0x07, (byte) 0x91, 0x13, 0x26,
-//                (byte) 0x98, (byte) 0x86, 0x03, (byte) 0xf0, 0x00, 0x00 }, userInformation.getEncodeType()));
-//
-//        // encoded version with definite length style
-//        byte[] b2 = new byte[] { 107, 69, 40, 67, 6, 7, 0, 17, -122, 5, 1, 1, 1, -96, 56, 96, 54, -128, 2, 7, -128, -95, 9, 6,
-//                7, 4, 0, 0, 1, 0, 19, 2, -66, 37, 40, 35, 6, 7, 4, 0, 0, 1, 1, 1, 1, -96, 24, -96, -128, -128, 9, -106, 2, 36,
-//                -128, 3, 0, -128, 0, -14, -127, 7, -111, 19, 38, -104, -122, 3, -16, 0, 0 };
-//
-//        AsnOutputStream aso = new AsnOutputStream();
-//        dpi.encode(aso);
-//        byte[] encoded = aso.toByteArray();
-//        assertTrue(Arrays.equals(b2, encoded));
-
-    }
-
-    @Test(groups = { "functional.encode", "functional.decode" })
-    public void testDialogPortion_DialogRequestAPDU() throws Exception {
-//        // trace
-//        byte[] b = new byte[] { 107, 30, 40, 28, 6, 7, 0, 17, (byte) 134, 5, 1, 1, 1, (byte) 160, 17, 0x60, 15, (byte) 128, 2,
-//                7, (byte) 128, (byte) 161, 9, 6, 7, 4, 0, 1, 1, 1, 3, 0 };
-//        // In HEX
-//        // 6B 1E 28 1C 06 07 00 11 86 05 01 01 01 A0 11 60 0F 80 02 07 80 A1 09
-//        // 06 07 04 00 01 01 01 03 00
-//
-//        AsnInputStream asin = new AsnInputStream(b);
-//        asin.readTag();
-//        DialogPortionImpl dpi = new DialogPortionImpl();
-//        dpi.decode(asin);
-//
-//        DialogAPDU d = dpi.getDialogAPDU();
-//        assertNotNull(d);
-//        assertEquals(DialogAPDUType.Request, d.getType());
-//        DialogRequestAPDU dr = (DialogRequestAPDU) d;
-//        assertTrue(Arrays.equals(new long[] { 0, 4, 0, 1, 1, 1, 3, 0 }, dr.getApplicationContextName().getOid()));
-//        assertNull(dr.getUserInformation());
-//
-//        AsnOutputStream aso = new AsnOutputStream();
-//        dpi.encode(aso);
-//        byte[] encoded = aso.toByteArray();
-//        assertTrue(Arrays.equals(b, encoded));
-//
-//        // try {
-//        // dpi.getEncodeBitStringType();
-//        // fail();
-//        // } catch (UnsupportedOperationException e) {
-//        //
-//        // }
-//        try {
-//            encoded = null;
-//            encoded = dpi.getEncodeType();
-//            assertNotNull(encoded);
-//
-//        } catch (Exception e) {
-//            fail();
-//            e.printStackTrace();
-//        }
-//        assertTrue(dpi.isAsn());
-//        assertTrue(dpi.isOid());
-//        assertFalse(dpi.isUnidirectional());
-//
-//        assertFalse(dpi.isArbitrary());
-//        assertFalse(dpi.isOctet());
-//        assertFalse(dpi.isObjDescriptor());
-//        assertFalse(dpi.isInteger());
-//
-//        DialogAPDU _apid = dpi.getDialogAPDU();
-//        assertEquals(DialogAPDUType.Request, _apid.getType());
-//        assertFalse(_apid.isUniDirectional());
-//        DialogRequestAPDU apdu = (DialogRequestAPDU) _apid;
-//
-//        // no idea how to check rest...?
-
-    }
-
-    @Test(groups = { "functional.encode", "functional.decode" })
-    public void testDialogPortion_DialogAbortAPDU() throws Exception {
-
-//        // trace
-//        byte[] b = new byte[] { 0x6B, 0x12, 0x28, 0x10, 0x06, 0x07, 0x00, 0x11, (byte) 0x86, 0x05, 0x01, 0x01, 0x01,
-//                (byte) 0xA0, 0x05, 0x64, 0x03, (byte) 0x80, 0x01, 0x01 };
-//        AsnInputStream asin = new AsnInputStream(b);
-//        asin.readTag();
-//        DialogPortionImpl dpi = new DialogPortionImpl();
-//        dpi.decode(asin);
-//        AsnOutputStream aso = new AsnOutputStream();
-//        dpi.encode(aso);
-//        byte[] encoded = aso.toByteArray();
-//        assertTrue(Arrays.equals(b, encoded));
-//
-//        // try {
-//        // dpi.getEncodeBitStringType();
-//        // fail();
-//        // } catch (UnsupportedOperationException e) {
-//        //
-//        // }
-//        try {
-//            encoded = null;
-//            encoded = dpi.getEncodeType();
-//            assertNotNull(encoded);
-//
-//        } catch (Exception e) {
-//            fail();
-//            e.printStackTrace();
-//        }
-//        assertTrue(dpi.isAsn());
-//        assertTrue(dpi.isOid());
-//        assertFalse(dpi.isUnidirectional());
-//
-//        assertFalse(dpi.isArbitrary());
-//        assertFalse(dpi.isOctet());
-//        assertFalse(dpi.isObjDescriptor());
-//        assertFalse(dpi.isInteger());
-//
-//        DialogAPDU _apid = dpi.getDialogAPDU();
-//        assertEquals(DialogAPDUType.Abort, _apid.getType());
-//        assertFalse(_apid.isUniDirectional());
-//        DialogAbortAPDU apdu = (DialogAbortAPDU) _apid;
     }
 
 }

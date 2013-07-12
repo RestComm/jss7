@@ -65,7 +65,6 @@ public interface Invoke extends Component {
 
     void setNotLast(boolean val);
 
-    // optional
     void setInvokeId(Long i);
 
     Long getInvokeId();
@@ -74,24 +73,13 @@ public interface Invoke extends Component {
 
     void setCorrelationInvoke(Invoke val);
 
-    // mandatory
     void setOperationCode(OperationCode i);
 
     OperationCode getOperationCode();
 
-    // optional
-    void setParameters(Parameter[] p);
+    void setParameter(Parameter p);
 
-    Parameter[] getParameters();
-
-    /**
-     * if true Parameter will be (or was) encoded as a SET
-     * it false Parameter will be (or was) encoded as a SEQUENCE
-     * @return
-     */
-    boolean getParameterIsSETStyle();
-
-    void setParameterIsSETStyle(boolean val);
+    Parameter getParameter();
 
     /**
      * @return the current invokeTimeout value

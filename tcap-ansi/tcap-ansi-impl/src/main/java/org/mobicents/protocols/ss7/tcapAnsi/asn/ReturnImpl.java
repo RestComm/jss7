@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.tcapAnsi.asn;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -33,7 +32,6 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.asn.EncodeException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ParseException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ComponentType;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.PAbortCause;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.RejectProblem;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Return;
@@ -49,17 +47,16 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ReturnResultNotLast;
 public abstract class ReturnImpl implements Return {
 
     protected Long correlationId;
-    protected Parameter[] parameters;
-    private boolean parameterIsSETStyle;
+    protected Parameter parameter;
 
     @Override
-    public Parameter[] getParameters() {
-        return this.parameters;
+    public Parameter getParameter() {
+        return this.parameter;
     }
 
     @Override
-    public void setParameters(Parameter[] p) {
-        this.parameters = p;
+    public void setParameter(Parameter p) {
+        this.parameter = p;
     }
 
     @Override
@@ -75,16 +72,6 @@ public abstract class ReturnImpl implements Return {
         this.correlationId = i;
     }
 
-    @Override
-    public boolean getParameterIsSETStyle() {
-        return parameterIsSETStyle;
-    }
-
-    @Override
-    public void setParameterIsSETStyle(boolean val) {
-        parameterIsSETStyle = val;
-    }
-
     /*
      * (non-Javadoc)
      *
@@ -93,56 +80,22 @@ public abstract class ReturnImpl implements Return {
     public void decode(AsnInputStream ais) throws ParseException {
 
         this.correlationId = null;
-        this.parameters = null;
-        this.parameterIsSETStyle = false;
+        this.parameter = null;
 
         try {
             AsnInputStream localAis = ais.readSequenceStream();
 
             // correlationId
-            int tag = localAis.readTag();
-            if (tag != Component._TAG_INVOKE_ID || localAis.getTagClass() != Tag.CLASS_PRIVATE || !localAis.isTagPrimitive()) {
-                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalIncorrectComponentPortion,
-                        "InvokeID in ReturnResult has bad tag or tag class or is not primitive: tag=" + tag + ", tagClass=" + localAis.getTagClass());
-            }
-            byte[] buf = localAis.readOctetString();
-            if (buf.length > 1)
-                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalBadlyStructuredCompPortion,
-                        "InvokeID in ReturnResult must be 0 or 1 bytes length, found bytes=" + buf.length);
-            if (buf.length >= 1)
-                this.setCorrelationId((long) buf[0]);
+            byte[] buf = TcapFactory.readComponentId(localAis, 1, 1);
+            this.setCorrelationId((long) buf[0]);
 
-            // Parameters
-            tag = localAis.readTag();
-            if ((tag != Parameter._TAG_SEQUENCE && tag != Parameter._TAG_SET) || localAis.getTagClass() != Tag.CLASS_PRIVATE || localAis.isTagPrimitive()) {
-                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalIncorrectComponentPortion,
-                        "Parameters in ReturnResult has bad tag or tag class or is primitive: tag=" + tag + ", tagClass=" + localAis.getTagClass());
-            }
-            if (tag == Parameter._TAG_SEQUENCE)
-                parameterIsSETStyle = false;
-            else
-                parameterIsSETStyle = true;
-
-            AsnInputStream ais2 = localAis.readSequenceStream();
-            ArrayList<Parameter> pars = new ArrayList<Parameter>();
-            while (true) {
-                if (ais2.available() == 0)
-                    break;
-
-                ais2.readTag();
-                Parameter par = TcapFactory.createParameter(ais2);
-                pars.add(par);
-            }
-            Parameter[] res = new Parameter[pars.size()];
-            pars.toArray(res);
-            this.setParameters(res);
+            // Parameter
+            this.parameter = TcapFactory.readParameter(localAis);
 
         } catch (IOException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalBadlyStructuredCompPortion,
-                    "IOException while decoding ReturnResult: " + e.getMessage(), e);
+            throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "IOException while decoding ReturnResult: " + e.getMessage(), e);
         } catch (AsnException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalBadlyStructuredCompPortion,
-                    "AsnException while decoding ReturnResult: " + e.getMessage(), e);
+            throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "AsnException while decoding ReturnResult: " + e.getMessage(), e);
         }
     }
 
@@ -153,8 +106,10 @@ public abstract class ReturnImpl implements Return {
      */
     public void encode(AsnOutputStream aos) throws EncodeException {
 
-        if (this.getParameterIsSETStyle() && (this.parameters == null || this.parameters.length == 0))
-            throw new EncodeException("Error encoding ReturnResult: for Paramaters SET we have to have at least one parameter");
+        if (this.parameter == null)
+            throw new EncodeException("Error encoding ReturnResult: Paramater is mandatory but is not set");
+        if (this.correlationId == null)
+            throw new EncodeException("Error encoding ReturnResult: correlationId is mandatory but is not set");
 
         try {
             // tag
@@ -165,28 +120,12 @@ public abstract class ReturnImpl implements Return {
             int pos = aos.StartContentDefiniteLength();
 
             // correlationId
-            byte[] buf;
-            if (this.correlationId != null) {
-                buf = new byte[2];
-                buf[0] = (byte) (long) this.correlationId;
-            } else {
-                buf = new byte[0];
-            }
+            byte[] buf = new byte[1];
+            buf[0] = (byte) (long) this.correlationId;
             aos.writeOctetString(Tag.CLASS_PRIVATE, Component._TAG_INVOKE_ID, buf);
 
             // parameters
-            if (this.getParameterIsSETStyle()) {
-                aos.writeTag(Tag.CLASS_PRIVATE, false, Parameter._TAG_SET);
-            } else {
-                aos.writeTag(Tag.CLASS_PRIVATE, false, Parameter._TAG_SEQUENCE);
-            }
-            int pos2 = aos.StartContentDefiniteLength();
-            if (this.parameters != null && this.parameters.length > 0) {
-                for (Parameter par : this.parameters) {
-                    par.encode(aos);
-                }
-            }
-            aos.FinalizeContent(pos2);
+            this.parameter.encode(aos);
 
             aos.FinalizeContent(pos);
 
@@ -209,14 +148,10 @@ public abstract class ReturnImpl implements Return {
             sb.append(this.getCorrelationId());
             sb.append(", ");
         }
-        if (this.getParameters() != null && this.getParameters().length > 0) {
-            sb.append("Parameters=[");
-            for (Parameter par : this.getParameters()) {
-                sb.append("Parameter=[");
-                sb.append(par);
-                sb.append("], ");
-            }
-            sb.append("]");
+        if (this.getParameter() != null) {
+            sb.append("Parameter=[");
+            sb.append(this.getParameter());
+            sb.append("], ");
         }
         sb.append("]");
 

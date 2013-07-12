@@ -54,19 +54,6 @@ public interface Reject extends Component {
 
     RejectProblem getProblem();
 
-    void setParameters(Parameter[] p);
-
-    Parameter[] getParameters();
-
-    /**
-     * if true Parameter will be (or was) encoded as a SET
-     * it false Parameter will be (or was) encoded as a SEQUENCE
-     * @return
-     */
-    boolean getParameterIsSETStyle();
-
-    void setParameterIsSETStyle(boolean val);
-
     /**
      * @return true: local originated Reject (rejecting a bad incoming primitive by a local side) false: remote originated
      *         Reject (rejecting a bad outgoing primitive by a peer)

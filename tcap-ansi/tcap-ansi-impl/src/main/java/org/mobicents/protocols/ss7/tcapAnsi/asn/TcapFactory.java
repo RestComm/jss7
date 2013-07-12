@@ -23,7 +23,10 @@
 package org.mobicents.protocols.ss7.tcapAnsi.asn;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -58,6 +61,8 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.tc.component.InvokeClass;
  */
 public final class TcapFactory {
 
+    private static final Logger logger = Logger.getLogger(TcapFactory.class); // listenres
+
     public static DialogPortion createDialogPortion(AsnInputStream ais) throws ParseException {
         DialogPortionImpl dpi = new DialogPortionImpl();
         dpi.decode(ais);
@@ -68,8 +73,15 @@ public final class TcapFactory {
         return new DialogPortionImpl();
     }
 
-    public static ProtocolVersion createProtocolVersion() {
+    public static ProtocolVersion createProtocolVersionFull() {
         return new ProtocolVersionImpl();
+    }
+
+    public static ProtocolVersion createProtocolVersionEmpty() {
+        ProtocolVersionImpl pv = new ProtocolVersionImpl();
+        pv.setT1_114_1996Supported(false);
+        pv.setT1_114_2000Supported(false);
+        return pv;
     }
 
     public static ProtocolVersion createProtocolVersion(AsnInputStream ais) throws ParseException {
@@ -117,24 +129,24 @@ public final class TcapFactory {
         return tc;
     }
 
-    public static TCConversationMessage createTCContinueMessage(AsnInputStream localAis) throws ParseException {
+    public static TCConversationMessage createTCConversationMessage(AsnInputStream localAis) throws ParseException {
         TCConversationMessageImpl tc = new TCConversationMessageImpl();
         tc.decode(localAis);
         return tc;
     }
 
-    public static TCConversationMessage createTCContinueMessage() {
+    public static TCConversationMessage createTCConversationMessage() {
         TCConversationMessageImpl tc = new TCConversationMessageImpl();
         return tc;
     }
 
-    public static TCResponseMessage createTCEndMessage(AsnInputStream localAis) throws ParseException {
+    public static TCResponseMessage createTCResponseMessage(AsnInputStream localAis) throws ParseException {
         TCResponseMessageImpl tc = new TCResponseMessageImpl();
         tc.decode(localAis);
         return tc;
     }
 
-    public static TCResponseMessage createTCEndMessage() {
+    public static TCResponseMessage createTCResponseMessage() {
         TCResponseMessageImpl tc = new TCResponseMessageImpl();
         return tc;
     }
@@ -150,13 +162,13 @@ public final class TcapFactory {
         return tc;
     }
 
-    public static TCQueryMessage createTCBeginMessage(AsnInputStream localAis) throws ParseException {
+    public static TCQueryMessage createTCQueryMessage(AsnInputStream localAis) throws ParseException {
         TCQueryMessageImpl tc = new TCQueryMessageImpl();
         tc.decode(localAis);
         return tc;
     }
 
-    public static TCQueryMessage createTCBeginMessage() {
+    public static TCQueryMessage createTCQueryMessage() {
         TCQueryMessageImpl tc = new TCQueryMessageImpl();
         return tc;
     }
@@ -177,6 +189,22 @@ public final class TcapFactory {
         return p;
     }
 
+    public static Parameter createParameterSet() {
+        ParameterImpl p = new ParameterImpl();
+        p.setTagClass(Tag.CLASS_PRIVATE);
+        p.setTag(Parameter._TAG_SET);
+        p.setPrimitive(false);
+        return p;
+    }
+
+    public static Parameter createParameterSequence() {
+        ParameterImpl p = new ParameterImpl();
+        p.setTagClass(Tag.CLASS_PRIVATE);
+        p.setTag(Parameter._TAG_SEQUENCE);
+        p.setPrimitive(false);
+        return p;
+    }
+
     public static Parameter createParameter(AsnInputStream localAis)
             throws ParseException {
         ParameterImpl p = new ParameterImpl();
@@ -184,66 +212,14 @@ public final class TcapFactory {
         return p;
     }
 
-    public static Component createComponent(AsnInputStream localAis) throws ParseException {
-
-        try {
-            try {
-                int tag = localAis.readTag();
-
-                Component c = null;
-                if (localAis.getTagClass() != Tag.CLASS_PRIVATE) {
-                    throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalUnrecognisedComponentType,
-                            "Error decoding a component: bad tag class: " + localAis.getTagClass());
-                }
-
-                switch (tag) {
-                case Invoke._TAG_INVOKE_LAST:
-                case Invoke._TAG_INVOKE_NOT_LAST:
-                    c = createComponentInvoke();
-                    c.decode(localAis);
-                    break;
-                case ReturnResultNotLast._TAG_RETURN_RESULT_NOT_LAST:
-                    c = createComponentReturnResult();
-                    c.decode(localAis);
-                    break;
-                case ReturnResultLast._TAG_RETURN_RESULT_LAST:
-                    c = createComponentReturnResultLast();
-                    c.decode(localAis);
-                    break;
-                case ReturnError._TAG_RETURN_ERROR:
-                    c = createComponentReturnError();
-                    c.decode(localAis);
-                    break;
-                case Reject._TAG_REJECT:
-                    c = createComponentReject();
-                    c.decode(localAis);
-                    break;
-                default:
-                    localAis.advanceElement();
-                    throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalUnrecognisedComponentType,
-                            "Error decoding a component: bad tag: " + tag);
-                }
-
-                return c;
-            } catch (IOException e) {
-                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalBadlyStructuredCompPortion,
-                        "IOException while decoding component: " + e.getMessage(), e);
-            } catch (AsnException e) {
-                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalBadlyStructuredCompPortion,
-                        "AsnException while decoding component: " + e.getMessage(), e);
-            }
-        } catch (ParseException e) {
-            if (e.getProblem() != null) {
-                Reject rej = TcapFactory.createComponentReject();
-                rej.setLocalOriginated(true);
-                rej.setCorrelationId(e.getInvokeId());
-                rej.setProblem(e.getProblem());
-
-                return rej;
-            } else {
-                throw e;
-            }
-        }
+    public static Parameter createParameter(int tag, AsnInputStream localAis, boolean singleParameterInAsn)
+            throws ParseException {
+        ParameterImpl p = new ParameterImpl();
+        p.setTag(tag);
+        if (singleParameterInAsn)
+            p.setSingleParameterInAsn();
+        p.decode(localAis);
+        return p;
     }
 
     public static Reject createComponentReject() {
@@ -256,7 +232,7 @@ public final class TcapFactory {
         return new ReturnResultLastImpl();
     }
 
-    public static ReturnResultNotLast createComponentReturnResult() {
+    public static ReturnResultNotLast createComponentReturnResultNotLast() {
 
         return new ReturnResultNotLastImpl();
     }
@@ -283,4 +259,176 @@ public final class TcapFactory {
         ErrorCode p = new ErrorCodeImpl();
         return p;
     }
+
+    public static TransactionID readTransactionID(AsnInputStream ais) throws ParseException {
+
+        try {
+            int tag = ais.readTag();
+            if (tag != TCQueryMessage._TAG_TRANSACTION_ID || ais.getTagClass() != Tag.CLASS_PRIVATE || !ais.isTagPrimitive())
+                throw new ParseException(PAbortCause.IncorrectTransactionPortion,
+                        "Error decoding TransactionID: bad tag or tagClass or not primitive for TransactionId, found tagClass=" + ais.getTagClass() + ", tag="
+                                + tag);
+
+            byte[] buf = ais.readOctetString();
+            if (buf.length != 0 && buf.length != 4 && buf.length != 8)
+                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion,
+                        "Error decoding TransactionID: originatingTransactionId bad length, must be 0, 4 or 8, found =" + buf.length);
+            TransactionID res = new TransactionID();
+            if (buf.length == 4) {
+                res.setFirstElem(buf);
+            }
+            if (buf.length == 8) {
+                byte[] firstElem = new byte[4];
+                byte[] secondElem = new byte[4];
+                System.arraycopy(buf, 0, firstElem, 0, 4);
+                System.arraycopy(buf, 4, secondElem, 0, 4);
+                res.setFirstElem(firstElem);
+                res.setSecondElem(secondElem);
+            }
+            return res;
+        } catch (IOException e) {
+            throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, "IOException while decoding TransactionID: " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, "AsnException while decoding TransactionID: " + e.getMessage(), e);
+        }
+    }
+
+    public static Component[] readComponents(AsnInputStream ais) {
+
+        List<Component> cps = new ArrayList<Component>();
+        AsnInputStream compAis = null;
+        try {
+            int tag = ais.getTag();
+            if (tag != TCQueryMessage._TAG_COMPONENT_SEQUENCE || ais.getTagClass() != Tag.CLASS_PRIVATE || ais.isTagPrimitive()) {
+                throw new ParseException(RejectProblem.generalUnrecognisedComponentType, "Bad component sequence tag or tag class or is primitive, tag=" + tag
+                        + ", tagClass=" + ais.getTagClass());
+            }
+
+            try {
+                compAis = ais.readSequenceStream();
+            } catch (IOException e) {
+                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, "IOException while decoding Components: " + e.getMessage(), e);
+            } catch (AsnException e) {
+                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, "AsnException while decoding Components: " + e.getMessage(), e);
+            }
+        } catch (ParseException e) {
+            logger.error("Local Reject: " + e.getProblem() + ", " + e.getMessage(), e);
+
+            if (e.getProblem() != null) {
+                Reject rej = TcapFactory.createComponentReject();
+                rej.setLocalOriginated(true);
+                rej.setCorrelationId(e.getInvokeId());
+                rej.setProblem(e.getProblem());
+                cps.add(rej);
+            }
+        }
+
+        while (compAis.available() > 0) {
+            try {
+                Component c = TcapFactory.createComponent(compAis);
+                if (c == null) {
+                    break;
+                }
+                cps.add(c);
+            } catch (ParseException e) {
+                logger.error("Local Reject: " + e.getProblem() + ", " + e.getMessage(), e);
+
+                if (e.getProblem() != null) {
+                    Reject rej = TcapFactory.createComponentReject();
+                    rej.setLocalOriginated(true);
+                    rej.setCorrelationId(e.getInvokeId());
+                    rej.setProblem(e.getProblem());
+                    cps.add(rej);
+                }
+            }
+        }
+
+        Component[] res = new Component[cps.size()];
+        cps.toArray(res);
+        return res;
+    }
+
+    public static Component createComponent(AsnInputStream localAis) throws ParseException {
+
+        try {
+            int tag = localAis.readTag();
+
+            Component c = null;
+            if (localAis.getTagClass() != Tag.CLASS_PRIVATE) {
+                throw new ParseException(RejectProblem.generalUnrecognisedComponentType, "Error decoding a component: bad tag class: " + localAis.getTagClass());
+            }
+
+            switch (tag) {
+            case Invoke._TAG_INVOKE_LAST:
+            case Invoke._TAG_INVOKE_NOT_LAST:
+                c = createComponentInvoke();
+                c.decode(localAis);
+                break;
+            case ReturnResultNotLast._TAG_RETURN_RESULT_NOT_LAST:
+                c = createComponentReturnResultNotLast();
+                c.decode(localAis);
+                break;
+            case ReturnResultLast._TAG_RETURN_RESULT_LAST:
+                c = createComponentReturnResultLast();
+                c.decode(localAis);
+                break;
+            case ReturnError._TAG_RETURN_ERROR:
+                c = createComponentReturnError();
+                c.decode(localAis);
+                break;
+            case Reject._TAG_REJECT:
+                c = createComponentReject();
+                c.decode(localAis);
+                break;
+            default:
+                localAis.advanceElement();
+                throw new ParseException(RejectProblem.generalUnrecognisedComponentType, "Error decoding a component: bad tag: " + tag);
+            }
+
+            return c;
+        } catch (IOException e) {
+            throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "IOException while decoding component: " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "AsnException while decoding component: " + e.getMessage(), e);
+        }
+    }
+
+    public static Parameter readParameter(AsnInputStream localAis) throws ParseException {
+        if (localAis.available() == 0)
+            throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "Parameter is not found when decoding a Parameter");
+
+        int tag;
+        try {
+            tag = localAis.readTag();
+            if ((tag != Parameter._TAG_SEQUENCE && tag != Parameter._TAG_SET) || localAis.getTagClass() != Tag.CLASS_PRIVATE || localAis.isTagPrimitive()) {
+                throw new ParseException(RejectProblem.generalIncorrectComponentPortion,
+                        "Parameters sequence/set has bad tag or tag class or is primitive: tag=" + tag + ", tagClass=" + localAis.getTagClass());
+            }
+            Parameter par = TcapFactory.createParameter(localAis);
+            return par;
+        } catch (IOException e) {
+            throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "IOException while decoding parameter: " + e.getMessage(), e);
+        }
+    }
+
+    public static byte[] readComponentId(AsnInputStream localAis, int minLen, int maxLen) throws ParseException {
+        try {
+            int tag = localAis.readTag();
+            if (tag != Component._TAG_INVOKE_ID || localAis.getTagClass() != Tag.CLASS_PRIVATE || !localAis.isTagPrimitive()) {
+                throw new ParseException(RejectProblem.generalIncorrectComponentPortion, "ComponentID has bad tag or tag class or is not primitive: tag=" + tag
+                        + ", tagClass=" + localAis.getTagClass());
+            }
+            byte[] buf = localAis.readOctetString();
+            if (buf.length < minLen || buf.length > maxLen) {
+                throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "ComponentID has bad length: " + buf.length + ", minLength=" + minLen
+                        + ", maxLength=" + maxLen);
+            }
+            return buf;
+        } catch (IOException e) {
+            throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "IOException while decoding ComponentId: " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "AsnException while decoding ComponentId: " + e.getMessage(), e);
+        }
+    }
 }
+

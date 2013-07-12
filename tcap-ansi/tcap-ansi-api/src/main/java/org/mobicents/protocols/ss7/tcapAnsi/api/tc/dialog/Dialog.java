@@ -28,6 +28,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ApplicationContext;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ProtocolVersion;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCQueryRequest;
@@ -58,6 +59,10 @@ public interface Dialog {
      * @return
      */
     Long getRemoteDialogId();
+
+    ProtocolVersion getProtocolVersion();
+
+    void setProtocolVersion(ProtocolVersion protocolVersion);
 
     /**
      * Gets local sccp address

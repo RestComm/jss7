@@ -29,10 +29,10 @@ import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.DialogPortion;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.Encodable;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.EncodeException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ParseException;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.TCQueryMessage;
 
 /**
  * @author amit bhayani
@@ -42,9 +42,9 @@ public class TCUnidentifiedMessage implements Encodable {
 
     private static final Logger logger = Logger.getLogger(TCUnidentifiedMessage.class);
 
-    // mandatory
     private byte[] originatingTransactionId;
     private byte[] destinationTransactionId;
+    private boolean dialogPortionExists = false;
 
     /**
      *
@@ -60,6 +60,10 @@ public class TCUnidentifiedMessage implements Encodable {
         return destinationTransactionId;
     }
 
+    public boolean isDialogPortionExists() {
+        return dialogPortionExists;
+    }
+
     public void encode(AsnOutputStream aos) throws EncodeException {
         throw new EncodeException("Not Supported");
     }
@@ -68,20 +72,17 @@ public class TCUnidentifiedMessage implements Encodable {
         try {
             AsnInputStream localAis = ais.readSequenceStream();
 
+            // transaction portion
+            TransactionID tid = TcapFactory.readTransactionID(localAis);
+            this.originatingTransactionId = tid.getFirstElem();
+            this.destinationTransactionId = tid.getSecondElem();
+
+            // dialog portion
             int tag = localAis.readTag();
-            if (tag != TCQueryMessage._TAG_TRANSACTION_ID || localAis.getTagClass() != Tag.CLASS_PRIVATE || !localAis.isTagPrimitive()) {
+            if (tag != DialogPortion._TAG_DIALOG_PORTION || localAis.getTagClass() != Tag.CLASS_PRIVATE || localAis.isTagPrimitive()) {
                 return;
             }
-            byte[] buf = localAis.readOctetString();
-            if (buf.length == 4) {
-                this.originatingTransactionId = buf;
-            }
-            if (buf.length == 4) {
-                this.originatingTransactionId = new byte[4];
-                this.destinationTransactionId = new byte[4];
-                System.arraycopy(buf, 0, this.originatingTransactionId, 0, 4);
-                System.arraycopy(buf, 4, this.destinationTransactionId, 0, 4);
-            }
+            dialogPortionExists = true;
 
         } catch (IOException e) {
             logger.error("Error while decoding for TCUnidentifiedMessage", e);

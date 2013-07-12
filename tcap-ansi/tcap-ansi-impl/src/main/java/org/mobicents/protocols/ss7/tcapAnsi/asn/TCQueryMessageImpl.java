@@ -23,9 +23,7 @@
 package org.mobicents.protocols.ss7.tcapAnsi.asn;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -36,7 +34,6 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.asn.EncodeException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ParseException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.PAbortCause;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.RejectProblem;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.TCQueryMessage;
 
 /**
@@ -132,9 +129,9 @@ public class TCQueryMessageImpl implements TCQueryMessage {
      * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#decode(org.mobicents.protocols .asn.AsnInputStream)
      */
     public void decode(AsnInputStream ais) throws ParseException {
-        this.dp = null;
         this.dialogTermitationPermission = false;
         this.originatingTransactionId = null;
+        this.dp = null;
         this.component = null;
 
         try {
@@ -145,70 +142,34 @@ public class TCQueryMessageImpl implements TCQueryMessage {
 
             AsnInputStream localAis = ais.readSequenceStream();
 
+            // transaction portion
+            TransactionID tid = TcapFactory.readTransactionID(localAis);
+            if (tid.getFirstElem() == null || tid.getSecondElem() != null) {
+                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion,
+                        "Error decoding TCQueryMessage: transactionId must contain only one transactionId");
+            }
+            this.originatingTransactionId = tid.getFirstElem();
+
+            // dialog portion
+            if (localAis.available() == 0) {
+                throw new ParseException(PAbortCause.UnrecognizedDialoguePortionID,
+                        "Error decoding TCQueryMessage: neither dialog no component portion is found");
+            }
             int tag = localAis.readTag();
-            if (tag != TCQueryMessage._TAG_TRANSACTION_ID || localAis.getTagClass() != Tag.CLASS_PRIVATE || !localAis.isTagPrimitive())
-                throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                        "Error decoding TCQueryMessage: bad tag or tagClass or not primitive for originatingTransactionId, found tagClass=" + localAis.getTagClass()
-                                + ", tag=" + tag);
-            this.originatingTransactionId = localAis.readOctetString();
-            if (this.originatingTransactionId.length != 4)
-                throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                        "Error decoding TCQueryMessage: originatingTransactionId bad length, must be 4, found =" + this.originatingTransactionId.length);
-
-            while (true) {
+            if (tag == DialogPortion._TAG_DIALOG_PORTION) {
+                this.dp = TcapFactory.createDialogPortion(localAis);
                 if (localAis.available() == 0)
-                    break;
-
+                    return;
                 tag = localAis.readTag();
-                if (localAis.isTagPrimitive() || localAis.getTagClass() != Tag.CLASS_PRIVATE)
-                    throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                            "Error decoding TCQueryMessage: bad tagClass or primitive for dialogPortion or componentPortion, found tagClass="
-                                    + localAis.getTagClass());
-
-                switch (tag) {
-                case DialogPortion._TAG_DIALOG_PORTION:
-                    if (this.dp != null) {
-                        throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                                "Error decoding TCQueryMessage: double DialogPortion");
-                    }
-                    this.dp = TcapFactory.createDialogPortion(localAis);
-                    break;
-
-                case TCQueryMessage._TAG_COMPONENT_SEQUENCE:
-                    if (this.component != null) {
-                        throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                                "Error decoding TCQueryMessage: double ComponentPortion");
-                    }
-                    AsnInputStream compAis = localAis.readSequenceStream();
-                    List<Component> cps = new ArrayList<Component>();
-                    while (compAis.available() > 0) {
-                        Component c = TcapFactory.createComponent(compAis);
-                        if (c == null) {
-                            break;
-                        }
-                        cps.add(c);
-                    }
-
-                    this.component = new Component[cps.size()];
-                    this.component = cps.toArray(this.component);
-                    break;
-
-                default:
-                    throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                            "Error decoding TCQueryMessage: bad tag: " + tag);
-                }
             }
 
-            if (this.component == null || this.dp == null)
-                throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                        "Error decoding TCQueryMessage: neither componentPortion nor dialogPortion has been found");
+            // component portion
+            this.component = TcapFactory.readComponents(localAis);
 
         } catch (IOException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                    "IOException while decoding TCQueryMessage: " + e.getMessage(), e);
+            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, "IOException while decoding TCQueryMessage: " + e.getMessage(), e);
         } catch (AsnException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                    "AsnException while decoding TCQueryMessage: " + e.getMessage(), e);
+            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, "AsnException while decoding TCQueryMessage: " + e.getMessage(), e);
         }
 
     }
@@ -266,9 +227,9 @@ public class TCQueryMessageImpl implements TCQueryMessage {
         sb.append(", ");
 
         if (this.originatingTransactionId != null) {
-            sb.append("originatingTransactionId=[");
+            sb.append("originatingTransactionId=");
             sb.append(Arrays.toString(this.originatingTransactionId));
-            sb.append("], ");
+            sb.append(", ");
         }
         if (this.dp != null) {
             sb.append("DialogPortion=");
@@ -283,7 +244,7 @@ public class TCQueryMessageImpl implements TCQueryMessage {
                     i1 = 1;
                 else
                     sb.append(", ");
-                sb.append(comp.toString());
+                sb.append(comp);
             }
             sb.append("], ");
         }

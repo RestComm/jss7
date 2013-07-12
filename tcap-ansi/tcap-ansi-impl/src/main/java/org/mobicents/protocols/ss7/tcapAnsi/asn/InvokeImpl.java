@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.tcapAnsi.asn;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.concurrent.Future;
 
 import org.mobicents.protocols.asn.AsnException;
@@ -39,7 +38,6 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.OperationCode;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.PAbortCause;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.RejectProblem;
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.component.InvokeClass;
@@ -66,9 +64,8 @@ public class InvokeImpl implements Invoke {
     private Long correlationId;
     private Invoke correlationInvoke;
     private OperationCode operationCode;
-    private Parameter[] parameters;
+    private Parameter parameter;
     private boolean notLast;
-    private boolean parameterIsSETStyle;
 
     public InvokeImpl() {
         // Set Default Class
@@ -147,23 +144,13 @@ public class InvokeImpl implements Invoke {
     }
 
     @Override
-    public Parameter[] getParameters() {
-        return this.parameters;
+    public Parameter getParameter() {
+        return this.parameter;
     }
 
     @Override
-    public void setParameters(Parameter[] p) {
-        this.parameters = p;
-    }
-
-    @Override
-    public boolean getParameterIsSETStyle() {
-        return this.parameterIsSETStyle;
-    }
-
-    @Override
-    public void setParameterIsSETStyle(boolean val) {
-        this.parameterIsSETStyle = val;
+    public void setParameter(Parameter p) {
+        this.parameter = p;
     }
 
     @Override
@@ -185,8 +172,7 @@ public class InvokeImpl implements Invoke {
         this.correlationId = null;
         this.correlationInvoke = null;
         this.operationCode = null;
-        this.parameters = null;
-        this.parameterIsSETStyle = false;
+        this.parameter = null;
 
         try {
             if (ais.getTag() == Invoke._TAG_INVOKE_NOT_LAST)
@@ -197,60 +183,30 @@ public class InvokeImpl implements Invoke {
             AsnInputStream localAis = ais.readSequenceStream();
 
             // invokeId & correlationId
-            int tag = localAis.readTag();
-            if (tag != Component._TAG_INVOKE_ID || localAis.getTagClass() != Tag.CLASS_PRIVATE || !localAis.isTagPrimitive()) {
-                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalIncorrectComponentPortion,
-                        "InvokeID in Invoke has bad tag or tag class or is not primitive: tag=" + tag + ", tagClass=" + localAis.getTagClass());
-            }
-            byte[] buf = localAis.readOctetString();
-            if (buf.length > 2)
-                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalBadlyStructuredCompPortion,
-                        "InvokeID in Invoke must be 0, 1 or 2 bytes length, found bytes=" + buf.length);
+            byte[] buf = TcapFactory.readComponentId(localAis, 0, 2);
             if (buf.length >= 1)
                 this.setInvokeId((long) buf[0]);
             if (buf.length >= 2)
                 this.setCorrelationId((long) buf[1]);
 
             // operationCode
-            tag = localAis.readTag();
+            if (localAis.available() == 0)
+                throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "OperationCode is not found when decoding Invoke");
+            int tag = localAis.readTag();
             if ((tag != OperationCode._TAG_NATIONAL && tag != OperationCode._TAG_PRIVATE) || localAis.getTagClass() != Tag.CLASS_PRIVATE
                     || !localAis.isTagPrimitive()) {
-                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalIncorrectComponentPortion,
+                throw new ParseException(RejectProblem.generalIncorrectComponentPortion,
                         "OperationCode in Invoke has bad tag or tag class or is not primitive: tag=" + tag + ", tagClass=" + localAis.getTagClass());
             }
             this.operationCode = TcapFactory.createOperationCode(localAis);
 
-            // Parameters
-            tag = localAis.readTag();
-            if ((tag != Parameter._TAG_SEQUENCE && tag != Parameter._TAG_SET) || localAis.getTagClass() != Tag.CLASS_PRIVATE
-                    || localAis.isTagPrimitive()) {
-                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalIncorrectComponentPortion,
-                        "Parameters in Invoke has bad tag or tag class or is primitive: tag=" + tag + ", tagClass=" + localAis.getTagClass());
-            }
-            if (tag == Parameter._TAG_SEQUENCE)
-                parameterIsSETStyle = false;
-            else
-                parameterIsSETStyle = true;
-
-            AsnInputStream ais2 = localAis.readSequenceStream();
-            ArrayList<Parameter> pars = new ArrayList<Parameter>();
-            while (true) {
-                if (ais2.available() == 0)
-                    break;
-
-                ais2.readTag();
-                Parameter par = TcapFactory.createParameter(ais2);
-                pars.add(par);
-            }
-            Parameter[] res = new Parameter[pars.size()];
-            pars.toArray(res);
-            this.setParameters(res);
-
+            // Parameter
+            this.parameter = TcapFactory.readParameter(localAis);
         } catch (IOException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalBadlyStructuredCompPortion,
+            throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion,
                     "IOException while decoding Invoke: " + e.getMessage(), e);
         } catch (AsnException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, RejectProblem.generalBadlyStructuredCompPortion,
+            throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion,
                     "AsnException while decoding Invoke: " + e.getMessage(), e);
         }
     }
@@ -261,10 +217,10 @@ public class InvokeImpl implements Invoke {
      * @see org.mobicents.protocols.ss7.tcap.asn.Encodable#encode(org.mobicents.protocols .asn.AsnOutputStream)
      */
     public void encode(AsnOutputStream aos) throws EncodeException {
-        if (this.getParameterIsSETStyle() && (this.parameters == null || this.parameters.length == 0))
-            throw new EncodeException("Error encoding Invoke: for Paramaters SET we have to have at least one parameter");
         if (this.operationCode == null)
             throw new EncodeException("Error encoding Invoke: operationCode is mandatory but is not set");
+        if (this.parameter == null)
+            throw new EncodeException("Error encoding Invoke: Paramater is mandatory but is not set");
 
         try {
             // tag
@@ -294,18 +250,7 @@ public class InvokeImpl implements Invoke {
             this.operationCode.encode(aos);
 
             // parameters
-            if (this.getParameterIsSETStyle()) {
-                aos.writeTag(Tag.CLASS_PRIVATE, false, Parameter._TAG_SET);
-            } else {
-                aos.writeTag(Tag.CLASS_PRIVATE, false, Parameter._TAG_SEQUENCE);
-            }
-            int pos2 = aos.StartContentDefiniteLength();
-            if (this.parameters != null && this.parameters.length > 0) {
-                for (Parameter par : this.parameters) {
-                    par.encode(aos);
-                }
-            }
-            aos.FinalizeContent(pos2);
+            this.parameter.encode(aos);
 
             aos.FinalizeContent(pos);
 
@@ -488,13 +433,9 @@ public class InvokeImpl implements Invoke {
             sb.append(this.getOperationCode());
             sb.append(", ");
         }
-        if (this.getParameters() != null && this.getParameters().length > 0) {
-            sb.append("Parameters=[");
-            for (Parameter par : this.getParameters()) {
-                sb.append("Parameter=[");
-                sb.append(par);
-                sb.append("], ");
-            }
+        if (this.getParameter() != null) {
+            sb.append("Parameter=[");
+            sb.append(this.getParameter());
             sb.append("], ");
         }
         if (this.getInvokeClass() != null) {

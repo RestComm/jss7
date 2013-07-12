@@ -32,7 +32,6 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.asn.EncodeException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ParseException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ProtocolVersion;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.PAbortCause;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.RejectProblem;
 
 /**
  * @author baranowb
@@ -99,16 +98,13 @@ public class ProtocolVersionImpl implements ProtocolVersion {
 
             byte[] buf = ais.readOctetString();
             if (buf == null || buf.length != 1)
-                throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                        "Error decoding ProtocolVersion: bad octet string length");
+                throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, "Error decoding ProtocolVersion: bad octet string length");
 
-            this.data = (buf[1] & 0xFF);
+            this.data = (buf[0] & 0xFF);
         } catch (IOException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                    "IOException while decoding ProtocolVersion: " + e.getMessage(), e);
+            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, "IOException while decoding ProtocolVersion: " + e.getMessage(), e);
         } catch (AsnException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
-                    "AsnException while decoding ProtocolVersion: " + e.getMessage(), e);
+            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, "AsnException while decoding ProtocolVersion: " + e.getMessage(), e);
         }
     }
 

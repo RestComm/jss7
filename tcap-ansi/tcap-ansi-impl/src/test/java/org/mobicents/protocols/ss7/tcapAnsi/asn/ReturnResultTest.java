@@ -27,9 +27,9 @@ import static org.testng.Assert.*;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ErrorCode;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Parameter;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ReturnError;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ReturnResultNotLast;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ReturnResultLast;
 import org.mobicents.protocols.ss7.tcapAnsi.asn.TcapFactory;
 import org.testng.annotations.Test;
 
@@ -39,11 +39,15 @@ import org.testng.annotations.Test;
  *
  */
 @Test(groups = { "asn" })
-public class ReturnErrorTest {
+public class ReturnResultTest {
 
-    private byte[] data1 = new byte[] { -21, 13, -49, 1, 5, -44, 1, 14, -14, 5, 1, 2, 3, 4, 5 };
+    private byte[] data1 = new byte[] { (byte) 0xea, 0x1d, (byte) 0xcf, 0x01, 0x00, (byte) 0xf2, 0x18, (byte) 0x89, 0x04, (byte) 0xfe, 0x3a, 0x2f, (byte) 0xe5,
+            (byte) 0x9f, (byte) 0x81, 0x38, 0x05, 0x00, 0x00, 0x00, 0x26, 0x31, (byte) 0x95, 0x03, 0x00, 0x0c, 0x06, (byte) 0x9f, 0x31, 0x01, 0x00 };
 
-    private byte[] parData = new byte[] { 1, 2, 3, 4, 5 };
+    private byte[] data2 = new byte[] { -18, 5, -49, 1, -1, -14, 0 };
+
+    private byte[] parData = new byte[] { (byte) 0x89, 0x04, (byte) 0xfe, 0x3a, 0x2f, (byte) 0xe5, (byte) 0x9f, (byte) 0x81, 0x38, 0x05, 0x00, 0x00, 0x00,
+            0x26, 0x31, (byte) 0x95, 0x03, 0x00, 0x0c, 0x06, (byte) 0x9f, 0x31, 0x01, 0x00 };
 
     @Test(groups = { "functional.decode" })
     public void testDecode() throws Exception {
@@ -51,38 +55,62 @@ public class ReturnErrorTest {
         // 1
         AsnInputStream ais = new AsnInputStream(this.data1);
         int tag = ais.readTag();
-        assertEquals(tag, ReturnError._TAG_RETURN_ERROR);
+        assertEquals(tag, ReturnResultLast._TAG_RETURN_RESULT_LAST);
         assertEquals(ais.getTagClass(), Tag.CLASS_PRIVATE);
 
-        ReturnError re = TcapFactory.createComponentReturnError();
-        re.decode(ais);
+        ReturnResultLast rrl = TcapFactory.createComponentReturnResultLast();
+        rrl.decode(ais);
 
-        assertEquals((long) re.getCorrelationId(), 5);
-        Parameter p = re.getParameter();
-        assertEquals((long) re.getErrorCode().getPrivateErrorCode(), 14);
+        assertEquals((long) rrl.getCorrelationId(), 0);
+        Parameter p = rrl.getParameter();
         assertEquals(p.getTag(), 18);
         assertEquals(p.getTagClass(), Tag.CLASS_PRIVATE);
         assertFalse(p.isPrimitive());
         assertEquals(p.getData(), parData);
+
+        // 2
+        ais = new AsnInputStream(this.data2);
+        tag = ais.readTag();
+        assertEquals(tag, ReturnResultNotLast._TAG_RETURN_RESULT_NOT_LAST);
+        assertEquals(ais.getTagClass(), Tag.CLASS_PRIVATE);
+
+        ReturnResultNotLast rrnl = TcapFactory.createComponentReturnResultNotLast();
+        rrnl.decode(ais);
+
+        assertEquals((long) rrnl.getCorrelationId(), -1);
+        p = rrnl.getParameter();
+        assertEquals(p.getTag(), 18);
+        assertEquals(p.getTagClass(), Tag.CLASS_PRIVATE);
+        assertFalse(p.isPrimitive());
+        assertEquals(p.getData(), new byte[0]);
     }
 
     @Test(groups = { "functional.encode" })
     public void testEncode() throws Exception {
 
         // 1
-        ReturnError re = TcapFactory.createComponentReturnError();
-        re.setCorrelationId(5L);
-        ErrorCode ec = TcapFactory.createErrorCode();
-        ec.setPrivateErrorCode(14L);
-        re.setErrorCode(ec);
+        ReturnResultLast rrl = TcapFactory.createComponentReturnResultLast();
+        rrl.setCorrelationId(0L);
         Parameter p = TcapFactory.createParameterSet();
         p.setData(parData);
-        re.setParameter(p);
+        rrl.setParameter(p);
 
         AsnOutputStream aos = new AsnOutputStream();
-        re.encode(aos);
+        rrl.encode(aos);
         byte[] encodedData = aos.toByteArray();
         byte[] expectedData = data1;
+        assertEquals(encodedData, expectedData);
+
+        // 2
+        ReturnResultNotLast rrnl = TcapFactory.createComponentReturnResultNotLast();
+        rrnl.setCorrelationId(-1L);
+        p = TcapFactory.createParameterSet();
+        rrnl.setParameter(p);
+
+        aos = new AsnOutputStream();
+        rrnl.encode(aos);
+        encodedData = aos.toByteArray();
+        expectedData = data2;
         assertEquals(encodedData, expectedData);
     }
 }

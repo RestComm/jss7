@@ -33,7 +33,6 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ApplicationContext;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.EncodeException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ParseException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.PAbortCause;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.RejectProblem;
 
 /**
  *
@@ -60,7 +59,7 @@ public class ApplicationContextImpl implements ApplicationContext {
 
         try {
             if (!ais.isTagPrimitive() || ais.getTagClass() != Tag.CLASS_PRIVATE)
-                throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
+                throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion,
                         "Error decoding ApplicationContext: bad tagClass or not primitive, found tagClass=" + ais.getTagClass());
 
             switch (ais.getTag()) {
@@ -75,15 +74,15 @@ public class ApplicationContextImpl implements ApplicationContext {
                 break;
 
             default:
-                throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
+                throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion,
                         "Error decoding ApplicationContext: bad tag, found tag=" + ais.getTag());
             }
 
         } catch (IOException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
+            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion,
                     "IOException while decoding ApplicationContextName: " + e.getMessage(), e);
         } catch (AsnException e) {
-            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, RejectProblem.transactionBadlyStructuredTransPortion,
+            throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion,
                     "AsnException while decoding ApplicationContextName: " + e.getMessage(), e);
         }
     }
@@ -97,11 +96,9 @@ public class ApplicationContextImpl implements ApplicationContext {
 
         try {
             if (this.isInteger()) {
-                aos.writeTag(Tag.CLASS_PRIVATE, true, ApplicationContext._TAG_INTEGER);
-                aos.writeInteger(integerVal);
+                aos.writeInteger(Tag.CLASS_PRIVATE, ApplicationContext._TAG_INTEGER, integerVal);
             } else if (this.isObjectID()) {
-                aos.writeTag(Tag.CLASS_PRIVATE, true, ApplicationContext._TAG_OBJECT_ID);
-                aos.writeObjectIdentifier(this.oidVal);
+                aos.writeObjectIdentifier(Tag.CLASS_PRIVATE, ApplicationContext._TAG_OBJECT_ID, this.oidVal);
             } else {
                 throw new EncodeException("Error while encoding ApplicationContextName: Neither OId nor Integer value is set");
             }
@@ -161,7 +158,7 @@ public class ApplicationContextImpl implements ApplicationContext {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("ApplicationContextName[");
+        sb.append("ApplicationContext[");
         if (this.isInteger()) {
             sb.append("integer=");
             sb.append(this.integerVal);

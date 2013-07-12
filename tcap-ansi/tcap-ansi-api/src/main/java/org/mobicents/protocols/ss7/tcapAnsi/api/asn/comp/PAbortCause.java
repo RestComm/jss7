@@ -128,7 +128,7 @@ public enum PAbortCause {
             case 10:
                 return InconsistentDialoguePortion;
             default:
-                throw new ParseException(null, null, "Wrong value of response: " + t);
+                throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, "Wrong value of response: " + t);
         }
     }
 }
