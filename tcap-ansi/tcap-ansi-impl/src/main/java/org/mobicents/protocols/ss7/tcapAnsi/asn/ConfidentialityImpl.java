@@ -104,7 +104,7 @@ public class ConfidentialityImpl implements Confidentiality {
 
     @Override
     public void encode(AsnOutputStream aos) throws EncodeException {
-        
+
         try {
             aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, Confidentiality._TAG_CONFIDENTIALITY);
             int pos = aos.StartContentDefiniteLength();
