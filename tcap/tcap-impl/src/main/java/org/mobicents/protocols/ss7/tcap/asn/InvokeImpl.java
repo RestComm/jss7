@@ -341,7 +341,7 @@ public class InvokeImpl implements Invoke {
     /**
      * @param state the state to set
      */
-    public synchronized void setState(OperationState state) {
+    public void setState(OperationState state) {
         if (this.dialog == null) {
             // bad call on server side.
             return;
@@ -426,11 +426,17 @@ public class InvokeImpl implements Invoke {
 
         public void run() {
 
-            // op failed, we must delete it from dialog and notify!
-            timerFuture = null;
-            setState(OperationState.Idle);
-            // TC-L-CANCEL
-            ((DialogImpl) invoke.dialog).operationTimedOut(invoke);
+            try {
+                dialog.getDialogLock().lock();
+
+                // op failed, we must delete it from dialog and notify!
+                timerFuture = null;
+                setState(OperationState.Idle);
+                // TC-L-CANCEL
+                ((DialogImpl) invoke.dialog).operationTimedOut(invoke);
+            } finally {
+                dialog.getDialogLock().unlock();
+            }
         }
 
     }

@@ -1207,53 +1207,41 @@ public class DialogImpl implements Dialog {
 
     void processUni(TCUniMessage msg, SccpAddress localAddress, SccpAddress remoteAddress) {
 
-        // TCUniIndicationImpl tcUniIndication = null;
         try {
             this.dialogLock.lock();
-            // this is invoked ONLY for server.
-            // if (state != TRPseudoState.Idle) {
-            // // should we terminate dialog here?
-            // if (logger.isEnabledFor(Level.ERROR)) {
-            // logger.error("Received Uni primitive, but state is not: " +
-            // TRPseudoState.Idle + ". Dialog: " + this);
-            // }
-            // return;
-            // // throw new
-            // TCAPException("Received Uni primitive, but state is not: " +
-            // TRPseudoState.Idle + ". Dialog: " + this);
-            // }
-            // lets setup
-            this.setRemoteAddress(remoteAddress);
-            this.setLocalAddress(localAddress);
 
-            // no dialog portion!
-            // convert to indications
-            TCUniIndicationImpl tcUniIndication = (TCUniIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider
-                    .getDialogPrimitiveFactory()).createUniIndication(this);
+            try {
+                this.setRemoteAddress(remoteAddress);
+                this.setLocalAddress(localAddress);
 
-            tcUniIndication.setDestinationAddress(localAddress);
-            tcUniIndication.setOriginatingAddress(remoteAddress);
-            // now comps
-            Component[] comps = msg.getComponent();
-            tcUniIndication.setComponents(comps);
+                // no dialog portion!
+                // convert to indications
+                TCUniIndicationImpl tcUniIndication = (TCUniIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider.getDialogPrimitiveFactory())
+                        .createUniIndication(this);
 
-            if (msg.getDialogPortion() != null) {
-                // it should be dialog req?
-                DialogPortion dp = msg.getDialogPortion();
-                DialogUniAPDU apdu = (DialogUniAPDU) dp.getDialogAPDU();
-                this.lastACN = apdu.getApplicationContextName();
-                this.lastUI = apdu.getUserInformation();
-                tcUniIndication.setApplicationContextName(this.lastACN);
-                tcUniIndication.setUserInformation(this.lastUI);
+                tcUniIndication.setDestinationAddress(localAddress);
+                tcUniIndication.setOriginatingAddress(remoteAddress);
+                // now comps
+                Component[] comps = msg.getComponent();
+                tcUniIndication.setComponents(comps);
+
+                if (msg.getDialogPortion() != null) {
+                    // it should be dialog req?
+                    DialogPortion dp = msg.getDialogPortion();
+                    DialogUniAPDU apdu = (DialogUniAPDU) dp.getDialogAPDU();
+                    this.lastACN = apdu.getApplicationContextName();
+                    this.lastUI = apdu.getUserInformation();
+                    tcUniIndication.setApplicationContextName(this.lastACN);
+                    tcUniIndication.setUserInformation(this.lastUI);
+                }
+
+                // lets deliver to provider, this MUST not throw anything
+                this.provider.deliver(this, tcUniIndication);
+
+            } finally {
+                this.release();
             }
-
-            // lets deliver to provider, this MUST not throw anything
-            this.provider.deliver(this, tcUniIndication);
-            // schedule removal
-            // this.release();
-
         } finally {
-            this.release();
             this.dialogLock.unlock();
         }
     }
