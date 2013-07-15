@@ -200,6 +200,7 @@ public class TCConversationMessageImpl implements TCConversationMessage {
         if (this.destinationTransactionId == null || this.destinationTransactionId.length != 4)
             throw new EncodeException("Error while encoding TCConversationMessage: destinationTransactionId is not defined or has not a length 4");
 
+        // TODO: should we send a Component without both components and dialogPortion ?
         if ((this.component == null || this.component.length == 0) && this.dp == null)
             throw new EncodeException("Error while encoding TCConversationMessage: neither dialogPortion nor componentPortion is defined");
 

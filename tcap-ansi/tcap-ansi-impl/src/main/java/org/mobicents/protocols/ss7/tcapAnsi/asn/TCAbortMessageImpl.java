@@ -140,7 +140,7 @@ public class TCAbortMessageImpl implements TCAbortMessage {
             }
             int tag = localAis.readTag();
             if (localAis.getTagClass() != Tag.CLASS_PRIVATE)
-                throw new ParseException(PAbortCause.IncorrectTransactionPortion,
+                throw new ParseException(PAbortCause.UnrecognizedDialoguePortionID,
                         "Error decoding TCAbortMessage: bad tagClass for P-Abort-cause, userInformation or abortCause, found tagClass=" + localAis.getTagClass());
 
             switch (tag) {

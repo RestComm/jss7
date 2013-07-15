@@ -44,7 +44,9 @@ public interface ComponentPrimitiveFactory {
      *
      * @return return new instance of ({@link Invoke}
      */
-    Invoke createTCInvokeRequest();
+    Invoke createTCInvokeRequestNotLast();
+
+    Invoke createTCInvokeRequestLast();
 
     /**
      * <p>
@@ -60,7 +62,9 @@ public interface ComponentPrimitiveFactory {
      * @param invokeClass The Class of Operation
      * @return new instance of ({@link Invoke}
      */
-    Invoke createTCInvokeRequest(InvokeClass invokeClass);
+    Invoke createTCInvokeRequestNotLast(InvokeClass invokeClass);
+
+    Invoke createTCInvokeRequestLast(InvokeClass invokeClass);
 
     Reject createTCRejectRequest();
 

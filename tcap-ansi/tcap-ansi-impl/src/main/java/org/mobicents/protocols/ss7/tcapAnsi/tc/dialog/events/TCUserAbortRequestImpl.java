@@ -25,8 +25,8 @@ package org.mobicents.protocols.ss7.tcapAnsi.tc.dialog.events;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ApplicationContext;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.Confidentiality;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.SecurityContext;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserAbortInformation;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformation;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformationElement;
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.EventType;
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCUserAbortRequest;
 
@@ -43,7 +43,7 @@ public class TCUserAbortRequestImpl extends DialogRequestImpl implements TCUserA
     private UserInformation userInformation;
     private SecurityContext securityContext;
     private Confidentiality confidentiality;
-    private UserAbortInformation userAbortInformation;
+    private UserInformationElement userAbortInformation;
 
     TCUserAbortRequestImpl() {
         super(EventType.Abort);
@@ -103,12 +103,12 @@ public class TCUserAbortRequestImpl extends DialogRequestImpl implements TCUserA
     }
 
     @Override
-    public UserAbortInformation getUserAbortInformation() {
+    public UserInformationElement getUserAbortInformation() {
         return userAbortInformation;
     }
 
     @Override
-    public void setUserAbortInformation(UserAbortInformation val) {
+    public void setUserAbortInformation(UserInformationElement val) {
         userAbortInformation = val;
     }
 

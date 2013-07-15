@@ -39,4 +39,8 @@ public interface Return extends Component {
 
     Parameter getParameter();
 
+    void setOperationCode(OperationCode i);
+
+    OperationCode getOperationCode();
+
 }

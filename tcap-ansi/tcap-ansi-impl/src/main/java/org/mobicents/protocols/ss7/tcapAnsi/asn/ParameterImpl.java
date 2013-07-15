@@ -30,6 +30,7 @@ import java.util.List;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.EncodeException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ParseException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Parameter;
@@ -231,15 +232,22 @@ public class ParameterImpl implements Parameter {
                 aos.writeLength(0);
             }
         } catch (IOException e) {
-            throw new EncodeException(e);
+            throw new EncodeException("IOException while encoding Parameter: " + e.getMessage(), e);
         } catch (AsnException e) {
-            throw new EncodeException(e);
+            throw new EncodeException("AsnException while encoding Parameter: " + e.getMessage(), e);
         }
     }
 
-//    public String toString() {
-//        return "Parameter[data=" + Arrays.toString(data) + ", primitive=" + primitive + ", tag=" + tag + ", tagClass=" + tagClass + "]";
-//    }
+    protected static void encodeEmptyParameter(AsnOutputStream aos) throws EncodeException {
+        try {
+            aos.writeTag(Tag.CLASS_PRIVATE, false, Parameter._TAG_SEQUENCE);
+            aos.writeLength(0);
+        } catch (IOException e) {
+            throw new EncodeException("IOException while encoding EmptyParameter: " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new EncodeException("AsnException while encoding EmptyParameter: " + e.getMessage(), e);
+        }
+    }
 
     public String toString() {
         return "Parameter[data=" + Arrays.toString(data) + ", parameters=" + Arrays.toString(parameters) + ", primitive="

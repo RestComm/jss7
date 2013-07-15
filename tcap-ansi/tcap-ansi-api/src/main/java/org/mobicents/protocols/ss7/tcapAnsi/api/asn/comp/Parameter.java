@@ -75,4 +75,8 @@ public interface Parameter extends Encodable {
      */
     void setTagClass(int tagClass);
 
+    Parameter[] getParameters();
+
+    void setParameters(Parameter[] paramss);
+
 }

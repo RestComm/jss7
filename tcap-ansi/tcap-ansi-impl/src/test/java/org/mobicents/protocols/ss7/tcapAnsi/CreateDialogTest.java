@@ -87,23 +87,23 @@ public class CreateDialogTest {
     @Test(groups = { "functional.flow" })
     public void createDialogTest() throws Exception {
 
-//        SccpAddress localAddress = new SccpAddress();
-//        SccpAddress remoteAddress = new SccpAddress();
-//
-//        Dialog dlg1 = this.tcapStack1.getProvider().getNewDialog(localAddress, remoteAddress);
-//        assertEquals((long) dlg1.getLocalDialogId(), 1L);
-//
-//        try {
-//            Dialog dlg2 = this.tcapStack1.getProvider().getNewDialog(localAddress, remoteAddress, 1L);
-//            fail("Must be failure because dialogID==1 is busy");
-//        } catch (Exception e) {
-//        }
-//
-//        Dialog dlg3 = this.tcapStack1.getProvider().getNewDialog(localAddress, remoteAddress, 2L);
-//        assertEquals((long) dlg3.getLocalDialogId(), 2L);
-//
-//        Dialog dlg4 = this.tcapStack1.getProvider().getNewDialog(localAddress, remoteAddress);
-//        assertEquals((long) dlg4.getLocalDialogId(), 3L);
+        SccpAddress localAddress = new SccpAddress();
+        SccpAddress remoteAddress = new SccpAddress();
+
+        Dialog dlg1 = this.tcapStack1.getProvider().getNewDialog(localAddress, remoteAddress);
+        assertEquals((long) dlg1.getLocalDialogId(), 1L);
+
+        try {
+            Dialog dlg2 = this.tcapStack1.getProvider().getNewDialog(localAddress, remoteAddress, 1L);
+            fail("Must be failure because dialogID==1 is busy");
+        } catch (Exception e) {
+        }
+
+        Dialog dlg3 = this.tcapStack1.getProvider().getNewDialog(localAddress, remoteAddress, 2L);
+        assertEquals((long) dlg3.getLocalDialogId(), 2L);
+
+        Dialog dlg4 = this.tcapStack1.getProvider().getNewDialog(localAddress, remoteAddress);
+        assertEquals((long) dlg4.getLocalDialogId(), 3L);
     }
 
     private class SccpHarnessPreview implements SccpProvider {

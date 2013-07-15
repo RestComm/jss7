@@ -33,5 +33,5 @@ package org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp;
  */
 public enum ComponentType {
 
-    InvokeLast, Invoke, ReturnResultNotLast, ReturnResultLast, Reject, ReturnError;
+    InvokeLast, InvokeNotLast, ReturnResultNotLast, ReturnResultLast, Reject, ReturnError;
 }

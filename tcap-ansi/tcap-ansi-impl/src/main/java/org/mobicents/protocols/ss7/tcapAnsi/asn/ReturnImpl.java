@@ -32,6 +32,7 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.asn.EncodeException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ParseException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ComponentType;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.RejectProblem;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Return;
@@ -48,6 +49,18 @@ public abstract class ReturnImpl implements Return {
 
     protected Long correlationId;
     protected Parameter parameter;
+    private OperationCode operationCode;
+
+    @Override
+    public OperationCode getOperationCode() {
+        return this.operationCode;
+    }
+
+    @Override
+    public void setOperationCode(OperationCode i) {
+        this.operationCode = i;
+
+    }
 
     @Override
     public Parameter getParameter() {
@@ -96,6 +109,9 @@ public abstract class ReturnImpl implements Return {
             throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "IOException while decoding ReturnResult: " + e.getMessage(), e);
         } catch (AsnException e) {
             throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "AsnException while decoding ReturnResult: " + e.getMessage(), e);
+        } catch (ParseException e) {
+            e.setInvokeId(this.correlationId);
+            throw e;
         }
     }
 
@@ -106,8 +122,6 @@ public abstract class ReturnImpl implements Return {
      */
     public void encode(AsnOutputStream aos) throws EncodeException {
 
-        if (this.parameter == null)
-            throw new EncodeException("Error encoding ReturnResult: Paramater is mandatory but is not set");
         if (this.correlationId == null)
             throw new EncodeException("Error encoding ReturnResult: correlationId is mandatory but is not set");
 
@@ -125,7 +139,10 @@ public abstract class ReturnImpl implements Return {
             aos.writeOctetString(Tag.CLASS_PRIVATE, Component._TAG_INVOKE_ID, buf);
 
             // parameters
-            this.parameter.encode(aos);
+            if (this.parameter != null)
+                this.parameter.encode(aos);
+            else
+                ParameterImpl.encodeEmptyParameter(aos);
 
             aos.FinalizeContent(pos);
 
@@ -146,6 +163,11 @@ public abstract class ReturnImpl implements Return {
         if (this.getCorrelationId() != null) {
             sb.append("CorrelationId=");
             sb.append(this.getCorrelationId());
+            sb.append(", ");
+        }
+        if (this.getOperationCode() != null) {
+            sb.append("OperationCode=");
+            sb.append(this.getOperationCode());
             sb.append(", ");
         }
         if (this.getParameter() != null) {

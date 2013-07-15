@@ -123,7 +123,7 @@ public class TCUniMessageImpl implements TCUniMessage {
             // component portion
             this.component = TcapFactory.readComponents(localAis);
             if (this.component == null) {
-                throw new ParseException(PAbortCause.UnrecognizedDialoguePortionID, "Error decoding TCUniMessage: neither dialog no component portion is found");
+                throw new ParseException(PAbortCause.BadlyStructuredDialoguePortion, "Error decoding TCUniMessage: neither dialog no component portion is found");
             }
 
         } catch (IOException e) {

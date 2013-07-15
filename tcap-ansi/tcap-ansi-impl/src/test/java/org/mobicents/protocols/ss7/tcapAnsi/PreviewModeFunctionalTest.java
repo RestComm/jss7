@@ -578,21 +578,24 @@ public class PreviewModeFunctionalTest {
             for (Component comp : comList) {
                 EventType et = null;
                 switch (comp.getType()) {
-                    case Invoke:
-                        et = EventType.Invoke;
-                        break;
-                    case ReturnResultNotLast:
-                        et = EventType.ReturnResult;
-                        break;
-                    case ReturnResultLast:
-                        et = EventType.ReturnResultLast;
-                        break;
-                    case ReturnError:
-                        et = EventType.ReturnError;
-                        break;
-                    case Reject:
-                        et = EventType.Reject;
-                        break;
+                case InvokeNotLast:
+                    et = EventType.InvokeNotLast;
+                    break;
+                case InvokeLast:
+                    et = EventType.InvokeLast;
+                    break;
+                case ReturnResultNotLast:
+                    et = EventType.ReturnResult;
+                    break;
+                case ReturnResultLast:
+                    et = EventType.ReturnResultLast;
+                    break;
+                case ReturnError:
+                    et = EventType.ReturnError;
+                    break;
+                case Reject:
+                    et = EventType.Reject;
+                    break;
                 }
 
                 if (et != null) {

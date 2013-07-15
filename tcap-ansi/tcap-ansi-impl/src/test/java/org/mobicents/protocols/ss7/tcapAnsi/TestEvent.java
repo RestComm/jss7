@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -113,11 +113,6 @@ public class TestEvent implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         TestEvent other = (TestEvent) obj;
-        // if (eventSource == null) {
-        // if (other.eventSource != null)
-        // return false;
-        // } else if (!eventSource.equals(other.eventSource))
-        // return false;
         if (eventType != other.eventType)
             return false;
         if (sent != other.sent)

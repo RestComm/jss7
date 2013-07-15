@@ -501,40 +501,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         }
     }
 
-//    protected void sendProviderAbort(DialogServiceProviderType pt, byte[] remoteTransactionId, SccpAddress remoteAddress,
-//            SccpAddress localAddress, int seqControl, ApplicationContext acn) {
-//        if (this.stack.getPreviewMode())
-//            return;
-//
-//        DialogPortion dp = TcapFactory.createDialogPortion();
-//        dp.setUnidirectional(false);
-//
-//        DialogResponseAPDU apdu = TcapFactory.createDialogAPDUResponse();
-//
-//        Result res = TcapFactory.createResult();
-//        res.setResultType(ResultType.RejectedPermanent);
-//        ResultSourceDiagnostic rsd = TcapFactory.createResultSourceDiagnostic();
-//        rsd.setDialogServiceProviderType(pt);
-//        apdu.setResultSourceDiagnostic(rsd);
-//        apdu.setResult(res);
-//        apdu.setApplicationContextName(acn);
-//        dp.setDialogAPDU(apdu);
-//
-//        TCAbortMessageImpl msg = (TCAbortMessageImpl) TcapFactory.createTCAbortMessage();
-//        msg.setDestinationTransactionId(remoteTransactionId);
-//        msg.setDialogPortion(dp);
-//
-//        AsnOutputStream aos = new AsnOutputStream();
-//        try {
-//            msg.encode(aos);
-//            this.send(aos.toByteArray(), false, remoteAddress, localAddress, seqControl);
-//        } catch (Exception e) {
-//            if (logger.isEnabledFor(Level.ERROR)) {
-//                logger.error("Failed to send message: ", e);
-//            }
-//        }
-//    }
-
     public void onCoordRequest(int arg0, int arg1, int arg2) {
         // TODO Auto-generated method stub
 
@@ -600,7 +566,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                                 this.sendRejectAsProviderAbort(e.getPAbortCauseType(), tcUnidentified.getOriginatingTransactionId(), remoteAddress,
                                         localAddress, message.getSls());
                             } else {
-                                this.sendRejectAsProviderAbort(PAbortCause.BadlyStructuredDialoguePortion, tcUnidentified.getOriginatingTransactionId(),
+                                this.sendRejectAsProviderAbort(PAbortCause.BadlyStructuredTransactionPortion, tcUnidentified.getOriginatingTransactionId(),
                                         remoteAddress, localAddress, message.getSls());
                             }
                         }
@@ -671,16 +637,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                     }
                     return;
                 }
-//                if (tcb.getDialogPortion() != null && tcb.getDialogPortion().getDialogAPDU() != null
-//                        && tcb.getDialogPortion().getDialogAPDU() instanceof DialogRequestAPDUImpl) {
-//                    DialogRequestAPDUImpl dlg = (DialogRequestAPDUImpl) tcb.getDialogPortion().getDialogAPDU();
-//                    if (!dlg.getProtocolVersion().isSupportedVersion()) {
-//                        logger.error("Unsupported protocol version of  has been received when parsing TCBeginMessage");
-//                        this.sendProviderAbort(DialogServiceProviderType.NoCommonDialogPortion, tcb.getOriginatingTransactionId(), remoteAddress, localAddress,
-//                                message.getSls(), dlg.getApplicationContextName());
-//                        return;
-//                    }
-//                }
 
                 di = null;
                 try {

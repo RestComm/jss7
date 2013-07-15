@@ -119,6 +119,9 @@ public class ReturnErrorImpl implements ReturnError {
             throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "IOException while decoding ReturnError: " + e.getMessage(), e);
         } catch (AsnException e) {
             throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "AsnException while decoding ReturnError: " + e.getMessage(), e);
+        } catch (ParseException e) {
+            e.setInvokeId(this.correlationId);
+            throw e;
         }
     }
 
@@ -131,8 +134,6 @@ public class ReturnErrorImpl implements ReturnError {
 
         if (this.errorCode == null)
             throw new EncodeException("Error encoding ReturnError: ErrorCode must not be null");
-        if (this.parameter == null)
-            throw new EncodeException("Error encoding ReturnError: Paramater is mandatory but is not set");
         if (this.correlationId == null)
             throw new EncodeException("Error encoding ReturnError: correlationId is mandatory but is not set");
 
@@ -150,7 +151,10 @@ public class ReturnErrorImpl implements ReturnError {
             this.errorCode.encode(aos);
 
             // parameters
-            this.parameter.encode(aos);
+            if (this.parameter != null)
+                this.parameter.encode(aos);
+            else
+                ParameterImpl.encodeEmptyParameter(aos);
 
             aos.FinalizeContent(pos);
 

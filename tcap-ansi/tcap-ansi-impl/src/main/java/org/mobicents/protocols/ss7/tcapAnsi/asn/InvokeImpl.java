@@ -156,7 +156,7 @@ public class InvokeImpl implements Invoke {
     @Override
     public ComponentType getType() {
         if (this.isNotLast())
-            return ComponentType.Invoke;
+            return ComponentType.InvokeNotLast;
         else
             return ComponentType.InvokeLast;
     }
@@ -208,6 +208,9 @@ public class InvokeImpl implements Invoke {
         } catch (AsnException e) {
             throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion,
                     "AsnException while decoding Invoke: " + e.getMessage(), e);
+        } catch (ParseException e) {
+            e.setInvokeId(this.invokeId);
+            throw e;
         }
     }
 
@@ -219,8 +222,6 @@ public class InvokeImpl implements Invoke {
     public void encode(AsnOutputStream aos) throws EncodeException {
         if (this.operationCode == null)
             throw new EncodeException("Error encoding Invoke: operationCode is mandatory but is not set");
-        if (this.parameter == null)
-            throw new EncodeException("Error encoding Invoke: Paramater is mandatory but is not set");
 
         try {
             // tag
@@ -250,7 +251,10 @@ public class InvokeImpl implements Invoke {
             this.operationCode.encode(aos);
 
             // parameters
-            this.parameter.encode(aos);
+            if (this.parameter != null)
+                this.parameter.encode(aos);
+            else
+                ParameterImpl.encodeEmptyParameter(aos);
 
             aos.FinalizeContent(pos);
 
@@ -314,10 +318,13 @@ public class InvokeImpl implements Invoke {
         return state;
     }
 
+    static int ccccnt = 0;
+
     /**
      * @param state the state to set
      */
-    public synchronized void setState(OperationState state) {
+    public void setState(OperationState state) {
+
         if (this.dialog == null) {
             // bad call on server side.
             return;
@@ -327,14 +334,14 @@ public class InvokeImpl implements Invoke {
         if (old != state) {
 
             switch (state) {
-                case Sent:
-                    // start timer
-                    this.startTimer();
-                    break;
-                case Idle:
-                case Reject_W:
-                    this.stopTimer();
-                    dialog.operationEnded(this);
+            case Sent:
+                // start timer
+                this.startTimer();
+                break;
+            case Idle:
+            case Reject_W:
+                this.stopTimer();
+                dialog.operationEnded(this);
             }
             if (state == OperationState.Sent) {
 
@@ -402,11 +409,17 @@ public class InvokeImpl implements Invoke {
 
         public void run() {
 
-            // op failed, we must delete it from dialog and notify!
-            timerFuture = null;
-            setState(OperationState.Idle);
-            // TC-L-CANCEL
-            ((DialogImpl) invoke.dialog).operationTimedOut(invoke);
+            try {
+                dialog.getDialogLock().lock();
+
+                // op failed, we must delete it from dialog and notify!
+                timerFuture = null;
+                setState(OperationState.Idle);
+                // TC-L-CANCEL
+                ((DialogImpl) invoke.dialog).operationTimedOut(invoke);
+            } finally {
+                dialog.getDialogLock().unlock();
+            }
         }
 
     }

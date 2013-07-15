@@ -53,9 +53,18 @@ public class ComponentPrimitiveFactoryImpl implements ComponentPrimitiveFactory 
      *
      * @seeorg.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory#createTCInvokeRequest()
      */
-    public Invoke createTCInvokeRequest() {
+    public Invoke createTCInvokeRequestNotLast() {
 
         InvokeImpl t = (InvokeImpl) TcapFactory.createComponentInvoke();
+        t.setNotLast(true);
+        t.setProvider(provider);
+        return t;
+    }
+
+    public Invoke createTCInvokeRequestLast() {
+
+        InvokeImpl t = (InvokeImpl) TcapFactory.createComponentInvoke();
+        t.setNotLast(false);
         t.setProvider(provider);
         return t;
     }
@@ -65,9 +74,18 @@ public class ComponentPrimitiveFactoryImpl implements ComponentPrimitiveFactory 
      *
      * @seeorg.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory# createTCInvokeRequest()
      */
-    public Invoke createTCInvokeRequest(InvokeClass invokeClass) {
+    public Invoke createTCInvokeRequestNotLast(InvokeClass invokeClass) {
 
         InvokeImpl t = (InvokeImpl) TcapFactory.createComponentInvoke(invokeClass);
+        t.setNotLast(true);
+        t.setProvider(provider);
+        return t;
+    }
+
+    public Invoke createTCInvokeRequestLast(InvokeClass invokeClass) {
+
+        InvokeImpl t = (InvokeImpl) TcapFactory.createComponentInvoke(invokeClass);
+        t.setNotLast(false);
         t.setProvider(provider);
         return t;
     }

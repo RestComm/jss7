@@ -1,3 +1,25 @@
+/*
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.tcapAnsi;
 
 import javax.naming.InitialContext;
@@ -50,25 +72,25 @@ public class ClientTest implements TCListener {
     }
 
     public void sendInvoke() throws TCAPException, TCAPSendException {
-//        SccpAddress localAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
-//        SccpAddress remoteAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
-//
-//        clientDialog = this.tcapProvider.getNewDialog(localAddress, remoteAddress);
-//        ComponentPrimitiveFactory cpFactory = this.tcapProvider.getComponentPrimitiveFactory();
-//
-//        // create some INVOKE
-//        Invoke invoke = cpFactory.createTCInvokeRequest();
-//        invoke.setInvokeId(this.clientDialog.getNewInvokeId());
-//        OperationCode oc = cpFactory.createOperationCode();
-//        oc.setLocalOperationCode(12L);
-//        invoke.setOperationCode(oc);
-//        // no parameter
-//        this.clientDialog.sendComponent(invoke);
-//        ApplicationContext acn = this.tcapProvider.getDialogPrimitiveFactory().createApplicationContextName(_ACN_);
-//        // UI is optional!
-//        TCQueryRequest tcbr = this.tcapProvider.getDialogPrimitiveFactory().createQuery(this.clientDialog);
-//        tcbr.setApplicationContextName(acn);
-//        this.clientDialog.send(tcbr);
+        SccpAddress localAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
+        SccpAddress remoteAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
+
+        clientDialog = this.tcapProvider.getNewDialog(localAddress, remoteAddress);
+        ComponentPrimitiveFactory cpFactory = this.tcapProvider.getComponentPrimitiveFactory();
+
+        // create some INVOKE
+        Invoke invoke = cpFactory.createTCInvokeRequestNotLast();
+        invoke.setInvokeId(this.clientDialog.getNewInvokeId());
+        OperationCode oc = cpFactory.createOperationCode();
+        oc.setNationalOperationCode(12L);
+        invoke.setOperationCode(oc);
+        // no parameter
+        this.clientDialog.sendComponent(invoke);
+        ApplicationContext acn = this.tcapProvider.getDialogPrimitiveFactory().createApplicationContext(_ACN_);
+        // UI is optional!
+        TCQueryRequest tcbr = this.tcapProvider.getDialogPrimitiveFactory().createQuery(this.clientDialog, true);
+        tcbr.setApplicationContextName(acn);
+        this.clientDialog.send(tcbr);
     }
 
     public void onDialogReleased(Dialog d) {
@@ -85,14 +107,14 @@ public class ClientTest implements TCListener {
     }
 
     public void onTCConversation(TCConversationIndication ind) {
-//        // send end
-//        TCResponseRequest end = this.tcapProvider.getDialogPrimitiveFactory().createResponse(ind.getDialog());
+        // send end
+        TCResponseRequest end = this.tcapProvider.getDialogPrimitiveFactory().createResponse(ind.getDialog());
 //        end.setTermination(TerminationType.Basic);
-//        try {
-//            ind.getDialog().send(end);
-//        } catch (TCAPSendException e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            ind.getDialog().send(end);
+        } catch (TCAPSendException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void onTCResponse(TCResponseIndication ind) {

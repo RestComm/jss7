@@ -260,6 +260,8 @@ public enum RejectProblem {
             return transactionResourceUnavailable;
         } else if (t == PAbortCause.UnrecognizedDialoguePortionID) {
             return generalUnrecognisedComponentType;
+        } else if (t == PAbortCause.InconsistentDialoguePortion) {
+            return generalIncorrectComponentCoding;
         }
 
         return null;

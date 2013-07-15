@@ -109,84 +109,84 @@ public abstract class EventTestHarness implements TCListener {
     }
 
     public void sendBegin() throws TCAPException, TCAPSendException {
-//        System.err.println(this + " T[" + System.currentTimeMillis() + "]send BEGIN");
-//        ApplicationContext acn = this.tcapProvider.getDialogPrimitiveFactory().createApplicationContextName(_ACN_);
-//        // UI is optional!
-//        TCQueryRequest tcbr = this.tcapProvider.getDialogPrimitiveFactory().createQuery(this.dialog);
-//        tcbr.setApplicationContextName(acn);
-//        this.dialog.send(tcbr);
-//        this.observerdEvents.add(TestEvent.createSentEvent(EventType.Begin, tcbr, sequence++));
+        System.err.println(this + " T[" + System.currentTimeMillis() + "]send BEGIN");
+        ApplicationContext acn = this.tcapProvider.getDialogPrimitiveFactory().createApplicationContext(_ACN_);
+        // UI is optional!
+        TCQueryRequest tcbr = this.tcapProvider.getDialogPrimitiveFactory().createQuery(this.dialog, true);
+        tcbr.setApplicationContextName(acn);
+        this.dialog.send(tcbr);
+        this.observerdEvents.add(TestEvent.createSentEvent(EventType.Begin, tcbr, sequence++));
     }
 
     public void sendContinue() throws TCAPSendException, TCAPException {
-//        System.err.println(this + " T[" + System.currentTimeMillis() + "]send CONTINUE");
-//        // send end
-//        TCConversationRequest con = this.tcapProvider.getDialogPrimitiveFactory().createContinue(dialog);
-//        if (acn != null) {
-//            con.setApplicationContextName(acn);
-//            acn = null;
-//        }
-//        if (ui != null) {
-//            con.setUserInformation(ui);
-//            ui = null;
-//        }
-//        dialog.send(con);
-//        this.observerdEvents.add(TestEvent.createSentEvent(EventType.Continue, con, sequence++));
+        System.err.println(this + " T[" + System.currentTimeMillis() + "]send CONTINUE");
+        // send end
+        TCConversationRequest con = this.tcapProvider.getDialogPrimitiveFactory().createConversation(dialog, true);
+        if (acn != null) {
+            con.setApplicationContextName(acn);
+            acn = null;
+        }
+        if (ui != null) {
+            con.setUserInformation(ui);
+            ui = null;
+        }
+        dialog.send(con);
+        this.observerdEvents.add(TestEvent.createSentEvent(EventType.Continue, con, sequence++));
 
     }
 
     public void sendEnd() throws TCAPSendException {
-//        System.err.println(this + " T[" + System.currentTimeMillis() + "]send END");
-//        // send end
-//        TCResponseRequest end = this.tcapProvider.getDialogPrimitiveFactory().createResponse(dialog);
+        System.err.println(this + " T[" + System.currentTimeMillis() + "]send END");
+        // send end
+        TCResponseRequest end = this.tcapProvider.getDialogPrimitiveFactory().createResponse(dialog);
 //        end.setTermination(terminationType);
-//        if (acn != null) {
-//            end.setApplicationContextName(acn);
-//            acn = null;
-//        }
-//        if (ui != null) {
-//            end.setUserInformation(ui);
-//            ui = null;
-//        }
-//        this.observerdEvents.add(TestEvent.createSentEvent(EventType.End, end, sequence++));
-//        dialog.send(end);
+        if (acn != null) {
+            end.setApplicationContextName(acn);
+            acn = null;
+        }
+        if (ui != null) {
+            end.setUserInformation(ui);
+            ui = null;
+        }
+        this.observerdEvents.add(TestEvent.createSentEvent(EventType.End, end, sequence++));
+        dialog.send(end);
 
     }
 
     public void sendAbort(ApplicationContext acn, UserInformation ui) throws TCAPSendException {
 
-//        System.err.println(this + " T[" + System.currentTimeMillis() + "]send ABORT");
-//        TCUserAbortRequest abort = this.tcapProvider.getDialogPrimitiveFactory().createUAbort(dialog);
-//        if (acn != null) {
-//            abort.setApplicationContextName(acn);
-//        }
-//        if (ui != null) {
-//            abort.setUserInformation(ui);
-//        }
+        System.err.println(this + " T[" + System.currentTimeMillis() + "]send ABORT");
+        TCUserAbortRequest abort = this.tcapProvider.getDialogPrimitiveFactory().createUAbort(dialog);
+        if (acn != null) {
+            abort.setApplicationContextName(acn);
+        }
+        if (ui != null) {
+            abort.setUserInformation(ui);
+        }
 //        abort.setDialogServiceUserType(type);
-//        this.observerdEvents.add(TestEvent.createSentEvent(EventType.UAbort, abort, sequence++));
-//        this.dialog.send(abort);
+        this.observerdEvents.add(TestEvent.createSentEvent(EventType.UAbort, abort, sequence++));
+        this.dialog.send(abort);
 
     }
 
     public void sendUni() throws TCAPException, TCAPSendException {
-//        ComponentPrimitiveFactory cpFactory = this.tcapProvider.getComponentPrimitiveFactory();
-//
-//        // create some INVOKE
-//        Invoke invoke = cpFactory.createTCInvokeRequest(InvokeClass.Class4);
-//        invoke.setInvokeId(this.dialog.getNewInvokeId());
-//        OperationCode oc = cpFactory.createOperationCode();
-//        oc.setLocalOperationCode(new Long(12));
-//        invoke.setOperationCode(oc);
-//        // no parameter
-//        this.dialog.sendComponent(invoke);
-//
-//        System.err.println(this + " T[" + System.currentTimeMillis() + "]send UNI");
-//        ApplicationContext acn = this.tcapProvider.getDialogPrimitiveFactory().createApplicationContextName(_ACN_);
-//        TCUniRequest tcur = this.tcapProvider.getDialogPrimitiveFactory().createUni(this.dialog);
-//        tcur.setApplicationContextName(acn);
-//        this.observerdEvents.add(TestEvent.createSentEvent(EventType.Uni, tcur, sequence++));
-//        this.dialog.send(tcur);
+        ComponentPrimitiveFactory cpFactory = this.tcapProvider.getComponentPrimitiveFactory();
+
+        // create some INVOKE
+        Invoke invoke = cpFactory.createTCInvokeRequestNotLast(InvokeClass.Class4);
+        invoke.setInvokeId(this.dialog.getNewInvokeId());
+        OperationCode oc = cpFactory.createOperationCode();
+        oc.setNationalOperationCode(12L);
+        invoke.setOperationCode(oc);
+        // no parameter
+        this.dialog.sendComponent(invoke);
+
+        System.err.println(this + " T[" + System.currentTimeMillis() + "]send UNI");
+        ApplicationContext acn = this.tcapProvider.getDialogPrimitiveFactory().createApplicationContext(_ACN_);
+        TCUniRequest tcur = this.tcapProvider.getDialogPrimitiveFactory().createUni(this.dialog);
+        tcur.setApplicationContextName(acn);
+        this.observerdEvents.add(TestEvent.createSentEvent(EventType.Uni, tcur, sequence++));
+        this.dialog.send(tcur);
     }
 
     public void onTCUni(TCUniIndication ind) {
@@ -216,7 +216,7 @@ public abstract class EventTestHarness implements TCListener {
         TestEvent te = TestEvent.createReceivedEvent(EventType.Continue, ind, sequence++);
         this.observerdEvents.add(te);
         if (ind.getApplicationContextName() != null) {
-            this.acn = ind.getApplicationContextName();
+//            this.acn = ind.getApplicationContextName();
         }
 
         if (ind.getUserInformation() != null) {
@@ -288,8 +288,7 @@ public abstract class EventTestHarness implements TCListener {
         }
 
         for (int index = 0; index < expectedEvents.size(); index++) {
-            assertEquals(observerdEvents.get(index), expectedEvents.get(index), "Received event does not match, index[" + index
-                    + "]");
+            assertEquals(observerdEvents.get(index), expectedEvents.get(index), "Received event does not match, index[" + index + "]");
         }
     }
 

@@ -62,40 +62,40 @@ public class Server extends EventTestHarness {
     @Override
     public void sendContinue() throws TCAPSendException, TCAPException {
 
-//        Component[] comps = components;
-//        if (comps == null || comps.length != 2) {
-//            throw new TCAPSendException("Bad comps!");
-//        }
-//        Component c = comps[0];
-//        if (c.getType() != ComponentType.Invoke) {
-//            throw new TCAPSendException("Bad type: " + c.getType());
-//        }
-//        // lets kill this Invoke - sending ReturnResultLast
-//        Invoke invoke = (Invoke) c;
-//        ReturnResultLast rrlast = this.tcapProvider.getComponentPrimitiveFactory().createTCResultLastRequest();
-//        rrlast.setInvokeId(invoke.getInvokeId());
-//        // we need not set operationCode here because of no Parameter is sent and ReturnResultLast will not carry
-//        // ReturnResultLast value
-//        // rrlast.setOperationCode(invoke.getOperationCode());
-//        super.dialog.sendComponent(rrlast);
-//
-//        c = comps[1];
-//        if (c.getType() != ComponentType.Invoke) {
-//            throw new TCAPSendException("Bad type: " + c.getType());
-//        }
-//
-//        // lets kill this Invoke - sending Invoke with linkedId
-//        invoke = (Invoke) c;
-//        Invoke invoke2 = this.tcapProvider.getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class1);
-//        invoke2.setInvokeId(this.dialog.getNewInvokeId());
-//        invoke2.setLinkedId(invoke.getInvokeId());
-//        OperationCode oc = this.tcapProvider.getComponentPrimitiveFactory().createOperationCode();
-//        oc.setLocalOperationCode(new Long(14));
-//        invoke2.setOperationCode(oc);
-//        // no parameter
-//        this.dialog.sendComponent(invoke2);
-//
-//        super.sendContinue();
+        Component[] comps = components;
+        if (comps == null || comps.length != 2) {
+            throw new TCAPSendException("Bad comps!");
+        }
+        Component c = comps[0];
+        if (c.getType() != ComponentType.InvokeNotLast) {
+            throw new TCAPSendException("Bad type: " + c.getType());
+        }
+        // lets kill this Invoke - sending ReturnResultLast
+        Invoke invoke = (Invoke) c;
+        ReturnResultLast rrlast = this.tcapProvider.getComponentPrimitiveFactory().createTCResultLastRequest();
+        rrlast.setCorrelationId(invoke.getInvokeId());
+        // we need not set operationCode here because of no Parameter is sent and ReturnResultLast will not carry
+        // ReturnResultLast value
+        // rrlast.setOperationCode(invoke.getOperationCode());
+        super.dialog.sendComponent(rrlast);
+
+        c = comps[1];
+        if (c.getType() != ComponentType.InvokeNotLast) {
+            throw new TCAPSendException("Bad type: " + c.getType());
+        }
+
+        // lets kill this Invoke - sending Invoke with linkedId
+        invoke = (Invoke) c;
+        Invoke invoke2 = this.tcapProvider.getComponentPrimitiveFactory().createTCInvokeRequestNotLast(InvokeClass.Class1);
+        invoke2.setInvokeId(this.dialog.getNewInvokeId());
+        invoke2.setCorrelationId(invoke.getInvokeId());
+        OperationCode oc = this.tcapProvider.getComponentPrimitiveFactory().createOperationCode();
+        oc.setNationalOperationCode(14L);
+        invoke2.setOperationCode(oc);
+        // no parameter
+        this.dialog.sendComponent(invoke2);
+
+        super.sendContinue();
     }
 
     public void sendContinue2() throws TCAPSendException, TCAPException {

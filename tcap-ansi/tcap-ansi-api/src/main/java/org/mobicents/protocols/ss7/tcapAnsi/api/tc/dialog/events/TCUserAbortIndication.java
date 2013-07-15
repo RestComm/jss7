@@ -25,8 +25,8 @@ package org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ApplicationContext;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.Confidentiality;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.SecurityContext;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserAbortInformation;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformation;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformationElement;
 
 /**
  *
@@ -44,6 +44,6 @@ public interface TCUserAbortIndication extends DialogIndication {
     Confidentiality getConfidentiality();
 
 
-    UserAbortInformation getUserAbortInformation();
+    UserInformationElement getUserAbortInformation();
 
 }

@@ -307,9 +307,9 @@ public final class TcapFactory {
             try {
                 compAis = ais.readSequenceStream();
             } catch (IOException e) {
-                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, "IOException while decoding Components: " + e.getMessage(), e);
+                throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "IOException while decoding Components: " + e.getMessage(), e);
             } catch (AsnException e) {
-                throw new ParseException(PAbortCause.BadlyStructuredTransactionPortion, "AsnException while decoding Components: " + e.getMessage(), e);
+                throw new ParseException(RejectProblem.generalBadlyStructuredCompPortion, "AsnException while decoding Components: " + e.getMessage(), e);
             }
         } catch (ParseException e) {
             logger.error("Local Reject: " + e.getProblem() + ", " + e.getMessage(), e);
@@ -355,6 +355,7 @@ public final class TcapFactory {
 
             Component c = null;
             if (localAis.getTagClass() != Tag.CLASS_PRIVATE) {
+                localAis.advanceElement();
                 throw new ParseException(RejectProblem.generalUnrecognisedComponentType, "Error decoding a component: bad tag class: " + localAis.getTagClass());
             }
 
