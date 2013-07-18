@@ -80,7 +80,7 @@ public class Server extends EventTestHarness {
         super.dialog.sendComponent(rrlast);
 
         c = comps[1];
-        if (c.getType() != ComponentType.InvokeNotLast) {
+        if (c.getType() != ComponentType.InvokeLast) {
             throw new TCAPSendException("Bad type: " + c.getType());
         }
 
@@ -90,7 +90,7 @@ public class Server extends EventTestHarness {
         invoke2.setInvokeId(this.dialog.getNewInvokeId());
         invoke2.setCorrelationId(invoke.getInvokeId());
         OperationCode oc = this.tcapProvider.getComponentPrimitiveFactory().createOperationCode();
-        oc.setNationalOperationCode(14L);
+        oc.setPrivateOperationCode(14L);
         invoke2.setOperationCode(oc);
         // no parameter
         this.dialog.sendComponent(invoke2);
