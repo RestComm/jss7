@@ -150,9 +150,17 @@ public interface MAPDialogMobility extends MAPDialog {
             boolean ueReachableIndicator, boolean epsSubscriptionDataNotNeeded, UESRVCCCapability uesrvccCapability)
             throws MAPException;
 
-    void addUpdateGprsLocationResponse(long invokeId, ISDNAddressString hlrNumber,
-            MAPExtensionContainer extensionContainer, boolean addCapability, boolean sgsnMmeSeparationSupported)
-            throws MAPException;
+    void addUpdateGprsLocationResponse(long invokeId, ISDNAddressString hlrNumber, MAPExtensionContainer extensionContainer,
+            boolean addCapability, boolean sgsnMmeSeparationSupported) throws MAPException;
+
+    Long addPurgeMSRequest(int customInvokeTimeout, IMSI imsi, ISDNAddressString vlrNumber, ISDNAddressString sgsnNumber,
+            MAPExtensionContainer extensionContainer) throws MAPException;
+
+    Long addPurgeMSRequest(IMSI imsi, ISDNAddressString vlrNumber, ISDNAddressString sgsnNumber,
+            MAPExtensionContainer extensionContainer) throws MAPException;
+
+    void addPurgeMSResponse(long invokeId, boolean freezeTMSI, boolean freezePTMSI, MAPExtensionContainer extensionContainer,
+            boolean freezeMTMSI) throws MAPException;
 
     // -- Authentication management services
     Long addSendAuthenticationInfoRequest(IMSI imsi, int numberOfRequestedVectors, boolean segmentationProhibited,

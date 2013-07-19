@@ -38,6 +38,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiReques
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PurgeMSRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PurgeMSResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SendIdentificationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SendIdentificationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateGprsLocationRequest;
@@ -537,6 +539,20 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
     public void onUpdateGprsLocationResponse(UpdateGprsLocationResponse response) {
         this.logger.debug("onUpdateGprsLocationResponse");
         TestEvent te = TestEvent.createReceivedEvent(EventType.UpdateGprsLocationResp, response, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onPurgeMSRequest(PurgeMSRequest request) {
+        this.logger.debug("onPurgeMSRequest");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.PurgeMS, request, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onPurgeMSResponse(PurgeMSResponse response) {
+        this.logger.debug("onPurgeMSResponse");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.PurgeMSResp, response, sequence++);
         this.observerdEvents.add(te);
     }
 }

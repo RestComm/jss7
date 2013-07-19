@@ -127,6 +127,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.C
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancellationType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PagingArea;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PurgeMSRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PurgeMSResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SendIdentificationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SendIdentificationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedFeatures;
@@ -196,6 +198,8 @@ import org.mobicents.protocols.ss7.map.service.callhandling.SendRoutingInformati
 import org.mobicents.protocols.ss7.map.service.callhandling.SendRoutingInformationResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.TripletListTest;
 import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PurgeMSRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PurgeMSResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SendIdentificationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateGprsLocationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.InsertSubscriberDataRequestImpl;
@@ -7091,6 +7095,198 @@ public class MAPFunctionalTest extends SccpHarness {
         serverExpectedEvents.add(te);
 
         client.sendUpdateGprsLocation_V3();
+
+        waitForEnd();
+        client.compareEvents(clientExpectedEvents);
+        server.compareEvents(serverExpectedEvents);
+
+    }
+    
+    /**
+     * TC-BEGIN + PurgeMSRequest MAV V3 TC-END + PurgeMSResponse
+     */
+    @Test(groups = { "functional.flow", "dialog" })
+    public void testPurgeMSRequest_V3() throws Exception {
+
+        Client client = new Client(stack1, this, peer1Address, peer2Address) {
+
+            @Override
+            public void onPurgeMSResponse(PurgeMSResponse ind) {
+                super.onPurgeMSResponse(ind);
+                assertTrue(ind.getFreezeMTMSI());
+                assertTrue(ind.getFreezePTMSI());
+
+            }
+
+        };
+
+        Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+
+            @Override
+            public void onPurgeMSRequest(PurgeMSRequest request) {
+                super.onPurgeMSRequest(request);
+
+                MAPDialogMobility d = ((PurgeMSRequestImpl) request).getMAPDialog();
+
+                assertTrue(request.getImsi().getData().equals("111222"));
+                assertTrue(request.getSgsnNumber().getAddress().equals("22228"));
+
+                try {
+                    d.addPurgeMSResponse(((PurgeMSRequestImpl) request).getInvokeId(), true, true, null, true);
+
+                } catch (MAPException e) {
+                    this.error("Error while adding PurgeMSResponse", e);
+                    fail("Error while adding PurgeMSResponse");
+                }
+            }
+
+            @Override
+            public void onDialogDelimiter(MAPDialog mapDialog) {
+                super.onDialogDelimiter(mapDialog);
+                try {
+                    this.observerdEvents.add(TestEvent.createSentEvent(EventType.PurgeMSResp, null, sequence++));
+                    mapDialog.close(false);
+                } catch (MAPException e) {
+                    this.error("Error while sending the empty PurgeMSResponse", e);
+                    fail("Error while sending the empty PurgeMSResponse");
+                }
+            }
+        };
+
+        long stamp = System.currentTimeMillis();
+        int count = 0;
+        // Client side events
+        List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+        TestEvent te = TestEvent.createSentEvent(EventType.PurgeMS, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.PurgeMSResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        count = 0;
+        // Server side events
+        List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+        te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.PurgeMS, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.PurgeMSResp, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        client.sendPurgeMS_V3();
+
+        waitForEnd();
+        client.compareEvents(clientExpectedEvents);
+        server.compareEvents(serverExpectedEvents);
+
+    }
+
+    /**
+     * TC-BEGIN + PurgeMSRequest MAV V3 TC-END + PurgeMSResponse
+     */
+    @Test(groups = { "functional.flow", "dialog" })
+    public void testPurgeMSRequest_V2() throws Exception {
+
+        Client client = new Client(stack1, this, peer1Address, peer2Address) {
+
+            @Override
+            public void onPurgeMSResponse(PurgeMSResponse ind) {
+                super.onPurgeMSResponse(ind);
+                assertTrue(ind.getFreezeMTMSI());
+                assertTrue(ind.getFreezePTMSI());
+
+            }
+
+        };
+
+        Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+
+            @Override
+            public void onPurgeMSRequest(PurgeMSRequest request) {
+                super.onPurgeMSRequest(request);
+
+                MAPDialogMobility d = ((PurgeMSRequestImpl) request).getMAPDialog();
+
+                assertTrue(request.getImsi().getData().equals("111222"));
+                assertTrue(request.getVlrNumber().getAddress().equals("22228"));
+
+                try {
+                    d.addPurgeMSResponse(((PurgeMSRequestImpl) request).getInvokeId(), true, true, null, true);
+
+                } catch (MAPException e) {
+                    this.error("Error while adding PurgeMSResponse", e);
+                    fail("Error while adding PurgeMSResponse");
+                }
+            }
+
+            @Override
+            public void onDialogDelimiter(MAPDialog mapDialog) {
+                super.onDialogDelimiter(mapDialog);
+                try {
+                    this.observerdEvents.add(TestEvent.createSentEvent(EventType.PurgeMSResp, null, sequence++));
+                    mapDialog.close(false);
+                } catch (MAPException e) {
+                    this.error("Error while sending the empty PurgeMSResponse", e);
+                    fail("Error while sending the empty PurgeMSResponse");
+                }
+            }
+        };
+
+        long stamp = System.currentTimeMillis();
+        int count = 0;
+        // Client side events
+        List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+        TestEvent te = TestEvent.createSentEvent(EventType.PurgeMS, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.PurgeMSResp, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        count = 0;
+        // Server side events
+        List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+        te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.PurgeMS, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.PurgeMSResp, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        client.sendPurgeMS_V2();
 
         waitForEnd();
         client.compareEvents(clientExpectedEvents);

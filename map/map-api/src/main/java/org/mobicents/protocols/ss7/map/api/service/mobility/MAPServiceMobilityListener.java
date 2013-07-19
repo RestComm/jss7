@@ -29,6 +29,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiReques
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.CancelLocationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PurgeMSRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.PurgeMSResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SendIdentificationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SendIdentificationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UpdateGprsLocationRequest;
@@ -63,6 +65,10 @@ public interface MAPServiceMobilityListener extends MAPServiceListener {
     void onUpdateGprsLocationRequest(UpdateGprsLocationRequest request);
 
     void onUpdateGprsLocationResponse(UpdateGprsLocationResponse response);
+
+    void onPurgeMSRequest(PurgeMSRequest request);
+
+    void onPurgeMSResponse(PurgeMSResponse response);
 
     // -- Authentication management services
     void onSendAuthenticationInfoRequest(SendAuthenticationInfoRequest ind);

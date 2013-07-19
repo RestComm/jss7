@@ -101,6 +101,8 @@ import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiRequestImp
 import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.CancelLocationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.CancelLocationResponseImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PurgeMSRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PurgeMSResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SendIdentificationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SendIdentificationResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateGprsLocationRequestImpl;
@@ -1086,6 +1088,91 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         this.sendReturnResultLastComponent(resultLast);
 
+    }
+
+    @Override
+    public Long addPurgeMSRequest(int customInvokeTimeout, IMSI imsi, ISDNAddressString vlrNumber,
+            ISDNAddressString sgsnNumber, MAPExtensionContainer extensionContainer) throws MAPException {
+        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.msPurgingContext)
+                || ((this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+                && (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)))
+            throw new MAPException(
+                    "Bad application context name for PurgeMSRequest: must be msPurgingContext_V2 or msPurgingContext_V3");
+
+        Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+        if (customInvokeTimeout == _Timer_Default)
+            invoke.setTimeout(_Timer_m);
+        else
+            invoke.setTimeout(customInvokeTimeout);
+
+        OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+        oc.setLocalOperationCode((long) MAPOperationCode.purgeMS);
+        invoke.setOperationCode(oc);
+
+        PurgeMSRequestImpl req = new PurgeMSRequestImpl(imsi, vlrNumber, sgsnNumber, extensionContainer, this.appCntx
+                .getApplicationContextVersion().getVersion());
+
+        AsnOutputStream aos = new AsnOutputStream();
+        req.encodeData(aos);
+
+        Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+        p.setTagClass(req.getTagClass());
+        p.setPrimitive(req.getIsPrimitive());
+        p.setTag(req.getTag());
+        p.setData(aos.toByteArray());
+        invoke.setParameter(p);
+
+        Long invokeId;
+        try {
+            invokeId = this.tcapDialog.getNewInvokeId();
+            invoke.setInvokeId(invokeId);
+        } catch (TCAPException e) {
+            throw new MAPException(e.getMessage(), e);
+        }
+
+        this.sendInvokeComponent(invoke);
+
+        return invokeId;
+
+    }
+
+    @Override
+    public Long addPurgeMSRequest(IMSI imsi, ISDNAddressString vlrNumber, ISDNAddressString sgsnNumber,
+            MAPExtensionContainer extensionContainer) throws MAPException {
+        return addPurgeMSRequest(_Timer_Default, imsi, vlrNumber, sgsnNumber, extensionContainer);
+    }
+
+    @Override
+    public void addPurgeMSResponse(long invokeId, boolean freezeTMSI, boolean freezePTMSI,
+            MAPExtensionContainer extensionContainer, boolean freezeMTMSI) throws MAPException {
+        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.msPurgingContext)
+                || ((this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3) && (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)))
+            throw new MAPException(
+                    "Bad application context name for PurgeMSResponse: must be msPurgingContext_V3 OR  msPurgingContext_V2");
+
+        ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
+                .createTCResultLastRequest();
+
+        resultLast.setInvokeId(invokeId);
+
+        // Operation Code
+        OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+        oc.setLocalOperationCode((long) MAPOperationCode.purgeMS);
+        resultLast.setOperationCode(oc);
+
+        PurgeMSResponseImpl req = new PurgeMSResponseImpl(freezeTMSI, freezePTMSI, extensionContainer, freezeMTMSI);
+
+        AsnOutputStream aos = new AsnOutputStream();
+        req.encodeData(aos);
+
+        Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+        p.setTagClass(req.getTagClass());
+        p.setPrimitive(req.getIsPrimitive());
+        p.setTag(req.getTag());
+        p.setData(aos.toByteArray());
+        resultLast.setParameter(p);
+
+        this.sendReturnResultLastComponent(resultLast);
     }
 
 }

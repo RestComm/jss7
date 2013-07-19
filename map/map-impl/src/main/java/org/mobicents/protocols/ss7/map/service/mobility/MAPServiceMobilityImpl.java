@@ -50,6 +50,8 @@ import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiRequestImp
 import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.CancelLocationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.CancelLocationResponseImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PurgeMSRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PurgeMSResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SendIdentificationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SendIdentificationResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateGprsLocationRequestImpl;
@@ -174,6 +176,17 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
                 }
             case gprsLocationUpdateContext:
                 if (vers == 3) {
+                    return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
+                } else if (vers > 3) {
+                    long[] altOid = dialogApplicationContext.getOID();
+                    altOid[7] = 3;
+                    ApplicationContextName alt = TcapFactory.createApplicationContextName(altOid);
+                    return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect, alt);
+                } else {
+                    return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
+                }
+            case msPurgingContext:
+                if (vers >= 2 && vers <= 3) {
                     return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
                 } else if (vers > 3) {
                     long[] altOid = dialogApplicationContext.getOID();
@@ -318,6 +331,14 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
                         this.updateGprsLocationRequest(parameter, mapDialogMobilityImpl, invokeId);
                     else
                         this.updateGprsLocationResponse(parameter, mapDialogMobilityImpl, invokeId);
+                }
+                break;
+            case MAPOperationCode.purgeMS:
+                if (acn == MAPApplicationContextName.msPurgingContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.purgeMSRequest(parameter, mapDialogMobilityImpl, invokeId);
+                    else
+                        this.purgeMSResponse(parameter, mapDialogMobilityImpl, invokeId);
                 }
                 break;
             // -- Authentication management services
@@ -657,6 +678,81 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
                 ((MAPServiceMobilityListener) serLis).onUpdateGprsLocationResponse(ind);
             } catch (Exception e) {
                 loger.error("Error processing UpdateGprsLocationResponse: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    private void purgeMSRequest(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
+            throws MAPParsingComponentException {
+
+        long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+        if (parameter == null)
+            throw new MAPParsingComponentException("Error while decoding PurgeMSRequest: Parameter is mandatory but not found",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+
+        if (version == 3) {
+            if (parameter.getTag() != PurgeMSRequestImpl._TAG_PurgeMSRequest
+                    || parameter.getTagClass() != Tag.CLASS_CONTEXT_SPECIFIC || parameter.isPrimitive())
+                throw new MAPParsingComponentException(
+                        "Error while decoding PurgeMSRequest: Bad tag or tagClass or parameter is primitive, received tag="
+                                + parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+
+        if (version == 2) {
+            if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+                throw new MAPParsingComponentException(
+                        "Error while decoding PurgeMSRequest: Bad tag or tagClass or parameter is primitive, received tag="
+                                + parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+
+        byte[] buf = parameter.getData();
+        AsnInputStream ais = new AsnInputStream(buf, parameter.getTagClass(), parameter.isPrimitive(), parameter.getTag());
+        PurgeMSRequestImpl ind = new PurgeMSRequestImpl(version);
+        ind.decodeData(ais, buf.length);
+
+        ind.setInvokeId(invokeId);
+        ind.setMAPDialog(mapDialogImpl);
+
+        for (MAPServiceListener serLis : this.serviceListeners) {
+            try {
+                serLis.onMAPMessage(ind);
+                ((MAPServiceMobilityListener) serLis).onPurgeMSRequest(ind);
+            } catch (Exception e) {
+                loger.error("Error processing PurgeMSRequest: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    private void purgeMSResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
+            throws MAPParsingComponentException {
+        long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
+
+        PurgeMSResponseImpl ind = new PurgeMSResponseImpl();
+
+        if (parameter == null)
+            throw new MAPParsingComponentException(
+                    "Error while decoding PurgeMSResponse: Parameter is mandatory but not found",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+
+        if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+            throw new MAPParsingComponentException(
+                    "Error while decoding PurgeMSResponse V3: Bad tag or tagClass or parameter is primitive, received tag="
+                            + parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+
+        byte[] buf = parameter.getData();
+        AsnInputStream ais = new AsnInputStream(buf);
+
+        ind.decodeData(ais, buf.length);
+
+        ind.setInvokeId(invokeId);
+        ind.setMAPDialog(mapDialogImpl);
+
+        for (MAPServiceListener serLis : this.serviceListeners) {
+            try {
+                serLis.onMAPMessage(ind);
+                ((MAPServiceMobilityListener) serLis).onPurgeMSResponse(ind);
+            } catch (Exception e) {
+                loger.error("Error processing PurgeMSResponse: " + e.getMessage(), e);
             }
         }
     }

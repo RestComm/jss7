@@ -31,7 +31,7 @@ package org.mobicents.protocols.ss7.map.api;
 public enum MAPMessageType {
 
     // -- mobility
-    anyTimeInterrogation_Request, anyTimeInterrogation_Response, sendAuthenticationInfo_Request, sendAuthenticationInfo_Response, updateLocation_Request, updateLocation_Response, checkIMEI_Request, checkIMEI_Response, cancelLocation_Request, cancelLocation_Response, insertSubscriberData_Request, insertSubscriberData_Response, sendIdentification_Request, sendIdentification_Response, updateGprsLocation_Request, updateGprsLocation_Response,
+    anyTimeInterrogation_Request, anyTimeInterrogation_Response, sendAuthenticationInfo_Request, sendAuthenticationInfo_Response, updateLocation_Request, updateLocation_Response, checkIMEI_Request, checkIMEI_Response, cancelLocation_Request, cancelLocation_Response, insertSubscriberData_Request, insertSubscriberData_Response, sendIdentification_Request, sendIdentification_Response, updateGprsLocation_Request, updateGprsLocation_Response, purgeMS_Request, purgeMS_Response,
 
     // -- supplementary
     processUnstructuredSSRequest_Request, processUnstructuredSSRequest_Response, unstructuredSSRequest_Request, unstructuredSSRequest_Response, unstructuredSSNotify_Request, unstructuredSSNotify_Response,
