@@ -256,5 +256,35 @@ public class PurgeMSResponseImpl extends MobilityMessageImpl implements PurgeMSR
             throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
+  
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.freezeTMSI) {
+            sb.append("freezeTMSI, ");
+        }
+        
+        if (this.freezePTMSI) {
+            sb.append("freezePTMSI, ");
+        }
+
+        if (this.extensionContainer != null) {
+            sb.append("extensionContainer=");
+            sb.append(extensionContainer.toString());
+            sb.append(", ");
+        }
+        
+        if (this.freezeMTMSI) {
+            sb.append("freezeMTMSI ");
+        }
+        
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 
 }

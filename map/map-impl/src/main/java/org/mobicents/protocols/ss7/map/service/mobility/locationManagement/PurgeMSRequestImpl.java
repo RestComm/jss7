@@ -313,5 +313,44 @@ public class PurgeMSRequestImpl extends MobilityMessageImpl implements PurgeMSRe
         }
 
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        if (this.imsi != null) {
+            sb.append("imsi=");
+            sb.append(imsi.toString());
+            sb.append(", ");
+        }
+
+        if (this.vlrNumber != null) {
+            sb.append("vlrNumber=");
+            sb.append(vlrNumber.toString());
+            sb.append(", ");
+        }
+        
+        if (this.sgsnNumber != null) {
+            sb.append("sgsnNumber=");
+            sb.append(sgsnNumber.toString());
+            sb.append(", ");
+        }
+
+        if (this.extensionContainer != null) {
+            sb.append("extensionContainer=");
+            sb.append(extensionContainer.toString());
+            sb.append(", ");
+        }
+
+        sb.append("mapProtocolVersion=");
+        sb.append(mapProtocolVersion);
+
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 
 }
