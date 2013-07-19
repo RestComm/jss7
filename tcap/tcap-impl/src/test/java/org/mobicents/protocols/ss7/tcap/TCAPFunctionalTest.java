@@ -100,7 +100,9 @@ public class TCAPFunctionalTest extends SccpHarness {
         peer2Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
 
         this.tcapStack1 = new TCAPStackImpl(this.sccpProvider1, 8);
+        this.tcapStack1.setDoNotSendProtocolVersion(false);
         this.tcapStack2 = new TCAPStackImpl(this.sccpProvider2, 8);
+        this.tcapStack2.setDoNotSendProtocolVersion(false);
 
         this.tcapListenerWrapper = new TCAPListenerWrapper();
         this.tcapStack1.getProvider().addTCListener(tcapListenerWrapper);
@@ -154,6 +156,8 @@ public class TCAPFunctionalTest extends SccpHarness {
         // te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3,stamp+WAIT_TIME*2+_WAIT_REMOVE);
         te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3, stamp + WAIT_TIME * 2);
         serverExpectedEvents.add(te);
+
+//        this.saveTrafficInFile();
 
         client.startClientDialog();
         assertNotNull(client.dialog.getLocalAddress());

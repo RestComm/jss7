@@ -485,6 +485,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         dp.setUnidirectional(false);
 
         DialogResponseAPDU apdu = TcapFactory.createDialogAPDUResponse();
+        apdu.setDoNotSendProtocolVersion(this.getStack().getDoNotSendProtocolVersion());
 
         Result res = TcapFactory.createResult();
         res.setResultType(ResultType.RejectedPermanent);

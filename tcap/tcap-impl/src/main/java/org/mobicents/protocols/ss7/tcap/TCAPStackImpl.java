@@ -58,6 +58,7 @@ public class TCAPStackImpl implements TCAPStack {
     private long dialogIdRangeStart = 1;
     private long dialogIdRangeEnd = Integer.MAX_VALUE;
     private boolean previewMode = false;
+    private boolean doNotSendProtocolVersion = false;
 
     public TCAPStackImpl() {
         super();
@@ -211,6 +212,16 @@ public class TCAPStackImpl implements TCAPStack {
 
     public boolean getPreviewMode() {
         return previewMode;
+    }
+
+    @Override
+    public void setDoNotSendProtocolVersion(boolean val) {
+        doNotSendProtocolVersion = val;
+    }
+
+    @Override
+    public boolean getDoNotSendProtocolVersion() {
+        return doNotSendProtocolVersion;
     }
 
 }
