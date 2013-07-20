@@ -123,4 +123,8 @@ public interface TCAPStack {
      */
     boolean getPreviewMode();
 
+    void setDoNotSendProtocolVersion(boolean val);
+
+    boolean getDoNotSendProtocolVersion();
+
 }

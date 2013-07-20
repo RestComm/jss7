@@ -66,7 +66,7 @@ public class Client extends EventTestHarness {
         Invoke invoke = cpFactory.createTCInvokeRequestNotLast(InvokeClass.Class1);
         invoke.setInvokeId(this.dialog.getNewInvokeId());
         OperationCode oc = cpFactory.createOperationCode();
-        oc.setNationalOperationCode(12L);
+        oc.setPrivateOperationCode(12L);
         invoke.setOperationCode(oc);
         // no parameter
         this.dialog.sendComponent(invoke);
@@ -75,7 +75,7 @@ public class Client extends EventTestHarness {
         invoke = cpFactory.createTCInvokeRequestLast(InvokeClass.Class1);
         invoke.setInvokeId(this.dialog.getNewInvokeId());
         oc = cpFactory.createOperationCode();
-        oc.setNationalOperationCode(13L);
+        oc.setPrivateOperationCode(13L);
         invoke.setOperationCode(oc);
         // no parameter
         this.dialog.sendComponent(invoke);
@@ -115,7 +115,7 @@ public class Client extends EventTestHarness {
 
         OperationCode oc = TcapFactory.createOperationCode();
 
-        oc.setNationalOperationCode(59L);
+        oc.setPrivateOperationCode(59L);
         invoke.setOperationCode(oc);
 
         Parameter p1 = TcapFactory.createParameter();
@@ -144,7 +144,7 @@ public class Client extends EventTestHarness {
             Invoke invoke = this.tcapProvider.getComponentPrimitiveFactory().createTCInvokeRequestNotLast();
             invoke.setInvokeId(invokeId);
             OperationCode opCode = this.tcapProvider.getComponentPrimitiveFactory().createOperationCode();
-            opCode.setNationalOperationCode(0L);
+            opCode.setPrivateOperationCode(0L);
             invoke.setOperationCode(opCode);
             this.dialog.sendComponent(invoke);
         }

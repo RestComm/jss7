@@ -42,6 +42,14 @@ public class DialogResponseAPDUImpl implements DialogResponseAPDU {
     private Result result;
     private ResultSourceDiagnostic diagnostic;
     private ProtocolVersion protocolVersion = new ProtocolVersionImpl();
+    private boolean doNotSendProtocolVersion = false;
+
+    public DialogResponseAPDUImpl() {
+    }
+
+    public void setDoNotSendProtocolVersion(boolean val) {
+        doNotSendProtocolVersion = val;
+    }
 
     // optional
     private UserInformation ui;
@@ -217,7 +225,8 @@ public class DialogResponseAPDUImpl implements DialogResponseAPDU {
             aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG_RESPONSE);
             int pos = aos.StartContentDefiniteLength();
 
-            this.protocolVersion.encode(aos);
+            if (!doNotSendProtocolVersion)
+                this.protocolVersion.encode(aos);
             this.acn.encode(aos);
             this.result.encode(aos);
             this.diagnostic.encode(aos);
