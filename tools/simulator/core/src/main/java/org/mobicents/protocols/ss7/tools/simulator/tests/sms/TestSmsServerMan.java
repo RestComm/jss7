@@ -675,7 +675,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
         this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: mtResp", "", Level.DEBUG);
 
         if (ind.getMAPDialog().getTCAPMessageType() == MessageType.Continue) {
-            needSendClose = true;;
+            needSendClose = true;
         }
     }
 
@@ -784,7 +784,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
         this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: mtResp", "", Level.DEBUG);
 
         if (ind.getMAPDialog().getTCAPMessageType() == MessageType.Continue) {
-            needSendClose = true;;
+            needSendClose = true;
         }
     }
 

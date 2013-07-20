@@ -172,7 +172,6 @@ public class TestSmsClientParamForm extends JDialog {
         cbMtFSMReaction = new JComboBox();
         cbMtFSMReaction.setBounds(312, 13, 309, 20);
         panel_mtfsm.add(cbMtFSMReaction);
-        
         cbContinueDialog = new JCheckBox("Continue dialog after MtForwardSM receiving (MtForwardSM resnonse in TC-CONTINUE)");
         cbContinueDialog.setBounds(12, 39, 609, 23);
         panel_mtfsm.add(cbContinueDialog);

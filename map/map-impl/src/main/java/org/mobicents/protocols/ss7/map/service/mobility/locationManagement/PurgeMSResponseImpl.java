@@ -38,10 +38,10 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
 
 /**
-*
-* @author Lasith Waruna Perera
-*
-*/
+ *
+ * @author Lasith Waruna Perera
+ *
+ */
 public class PurgeMSResponseImpl extends MobilityMessageImpl implements PurgeMSResponse {
 
     protected static final int _TAG_freezeTMSI = 0;
@@ -256,7 +256,7 @@ public class PurgeMSResponseImpl extends MobilityMessageImpl implements PurgeMSR
             throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
-  
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -266,7 +266,7 @@ public class PurgeMSResponseImpl extends MobilityMessageImpl implements PurgeMSR
         if (this.freezeTMSI) {
             sb.append("freezeTMSI, ");
         }
-        
+
         if (this.freezePTMSI) {
             sb.append("freezePTMSI, ");
         }
@@ -276,15 +276,14 @@ public class PurgeMSResponseImpl extends MobilityMessageImpl implements PurgeMSR
             sb.append(extensionContainer.toString());
             sb.append(", ");
         }
-        
+
         if (this.freezeMTMSI) {
             sb.append("freezeMTMSI ");
         }
-        
+
         sb.append("]");
 
         return sb.toString();
     }
-
 
 }

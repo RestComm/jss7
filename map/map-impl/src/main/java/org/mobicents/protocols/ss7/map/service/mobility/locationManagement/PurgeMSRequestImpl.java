@@ -42,10 +42,10 @@ import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
 
 /**
-*
-* @author Lasith Waruna Perera
-*
-*/
+ *
+ * @author Lasith Waruna Perera
+ *
+ */
 public class PurgeMSRequestImpl extends MobilityMessageImpl implements PurgeMSRequest {
 
     protected static final int _TAG_vlrNumber = 0;
@@ -313,7 +313,7 @@ public class PurgeMSRequestImpl extends MobilityMessageImpl implements PurgeMSRe
         }
 
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -331,7 +331,7 @@ public class PurgeMSRequestImpl extends MobilityMessageImpl implements PurgeMSRe
             sb.append(vlrNumber.toString());
             sb.append(", ");
         }
-        
+
         if (this.sgsnNumber != null) {
             sb.append("sgsnNumber=");
             sb.append(sgsnNumber.toString());
@@ -351,6 +351,5 @@ public class PurgeMSRequestImpl extends MobilityMessageImpl implements PurgeMSRe
 
         return sb.toString();
     }
-
 
 }
