@@ -907,6 +907,50 @@ public class Client extends EventTestHarness {
 
     }
 
+    public void sendPurgeMS_V3() throws Exception {
+
+        this.mapProvider.getMAPServiceMobility().acivate();
+        MAPApplicationContext appCnt = null;
+
+        appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.msPurgingContext,
+                MAPApplicationContextVersion.version3);
+
+        clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null,
+                this.remoteAddress, null);
+
+        IMSI imsi = new IMSIImpl("111222");
+        ISDNAddressString sgsnNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN,
+                "22228");
+        
+        clientDialogMobility.addPurgeMSRequest(imsi, null, sgsnNumber, null);
+        
+        this.observerdEvents.add(TestEvent.createSentEvent(EventType.PurgeMS, null, sequence++));
+        clientDialogMobility.send();
+
+    }
+    
+    public void sendPurgeMS_V2() throws Exception {
+
+        this.mapProvider.getMAPServiceMobility().acivate();
+        MAPApplicationContext appCnt = null;
+
+        appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.msPurgingContext,
+                MAPApplicationContextVersion.version2);
+
+        clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(appCnt, this.thisAddress, null,
+                this.remoteAddress, null);
+
+        IMSI imsi = new IMSIImpl("111222");
+        ISDNAddressString vlrNumber = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN,
+                "22228");
+        
+        clientDialogMobility.addPurgeMSRequest(imsi, vlrNumber, null, null);
+        
+        this.observerdEvents.add(TestEvent.createSentEvent(EventType.PurgeMS, null, sequence++));
+        clientDialogMobility.send();
+
+    }
+
     public void sendProvideRoamingNumber() throws Exception {
 
         this.mapProvider.getMAPServiceCallHandling().acivate();
