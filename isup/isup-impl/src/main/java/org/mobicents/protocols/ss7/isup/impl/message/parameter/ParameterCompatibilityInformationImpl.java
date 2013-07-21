@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -36,20 +36,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
-import org.mobicents.protocols.ss7.isup.message.parameter.InstructionIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInstructionIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
 
 /**
  * Start time:12:39:34 2009-04-02<br>
  * Project: mobicents-isup-stack<br>
- * This is composed param ?
  *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
 public class ParameterCompatibilityInformationImpl extends AbstractISUPParameter implements ParameterCompatibilityInformation {
 
-    private List<Byte> parameterCodes = new ArrayList<Byte>();
-    private List<InstructionIndicators> instructionIndicators = new ArrayList<InstructionIndicators>();
+    private List<ParameterCompatibilityInstructionIndicators> instructionIndicators = new ArrayList<ParameterCompatibilityInstructionIndicators>();
 
     public ParameterCompatibilityInformationImpl(byte[] b) throws ParameterException {
         super();
@@ -84,9 +82,11 @@ public class ParameterCompatibilityInformationImpl extends AbstractISUPParameter
                     // ext bit is zero, this is last octet
 
                     if (bos.size() < 3) {
-                        this.addInstructions(parameterCode, new InstructionIndicatorsImpl(bos.toByteArray()));
+                        this.instructionIndicators.add(new ParameterCompatibilityInstructionIndicatorsImpl(parameterCode, bos
+                                .toByteArray()));
                     } else {
-                        this.addInstructions(parameterCode, new InstructionIndicatorsImpl(bos.toByteArray(), true));
+                        this.instructionIndicators.add(new ParameterCompatibilityInstructionIndicatorsImpl(
+                                parameterCode, bos.toByteArray(), true));
                     }
                     newParameter = true;
                 } else {
@@ -102,10 +102,12 @@ public class ParameterCompatibilityInformationImpl extends AbstractISUPParameter
 
     public byte[] encode() throws ParameterException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        for (int index = 0; index < this.parameterCodes.size(); index++) {
-            bos.write(this.parameterCodes.get(index).byteValue());
+        for (int index = 0; index < this.instructionIndicators.size(); index++) {
+
             try {
-                bos.write(((AbstractISUPParameter) this.instructionIndicators.get(index)).encode());
+                final ParameterCompatibilityInstructionIndicators ii = this.instructionIndicators.get(index);
+                bos.write(ii.getParameterCode());
+                bos.write(((Encodable) ii).encode());
             } catch (IOException e) {
                 throw new ParameterException(e);
             }
@@ -113,28 +115,20 @@ public class ParameterCompatibilityInformationImpl extends AbstractISUPParameter
         return bos.toByteArray();
     }
 
-    public void addInstructions(Byte parameterCode, InstructionIndicators instructionIndicators) {
-        // FIXME: do we need to check for duplicate?
-        this.parameterCodes.add(parameterCode);
-        this.instructionIndicators.add(instructionIndicators);
+    @Override
+    public void setParameterCompatibilityInstructionIndicators(
+            ParameterCompatibilityInstructionIndicators... compatibilityInstructionIndicators) {
+        this.instructionIndicators.clear();
+        if(compatibilityInstructionIndicators == null || compatibilityInstructionIndicators.length == 0)
+            return;
+        for(ParameterCompatibilityInstructionIndicators ii: compatibilityInstructionIndicators)
+            if(ii!=null)
+                this.instructionIndicators.add(ii);
     }
 
-    // FIXME: Crude API
-    public InstructionIndicators getInstructionIndicators(int index) {
-        return this.instructionIndicators.get(index);
-    }
-
-    public Byte getParameterCode(int index) {
-        return this.parameterCodes.get(index);
-    }
-
-    public int size() {
-        return this.instructionIndicators.size();
-    }
-
-    public void remove(int index) {
-        this.instructionIndicators.remove(index);
-        this.parameterCodes.remove(index);
+    @Override
+    public ParameterCompatibilityInstructionIndicators[] getParameterCompatibilityInstructionIndicators() {
+        return this.instructionIndicators.toArray(new ParameterCompatibilityInstructionIndicators[this.instructionIndicators.size()]);
     }
 
     public int getCode() {

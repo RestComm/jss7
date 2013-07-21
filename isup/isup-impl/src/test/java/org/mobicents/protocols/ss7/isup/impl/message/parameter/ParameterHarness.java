@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -37,6 +37,7 @@ import static org.testng.Assert.fail;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,7 +49,7 @@ import org.testng.annotations.Test;
 /**
  * Start time:09:16:42 2009-04-22<br>
  * Project: mobicents-isup-stack<br>
- *
+ * 
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public abstract class ParameterHarness {
@@ -73,6 +74,15 @@ public abstract class ParameterHarness {
     protected List<byte[]> goodBodies = new ArrayList<byte[]>();
 
     protected List<byte[]> badBodies = new ArrayList<byte[]>();
+
+    protected String dumpData(byte[] b) {
+        String s = "\n";
+        for (byte bb : b) {
+            s += Integer.toHexString(bb & 0xFF)+"\n";
+        }
+
+        return s;
+    }
 
     protected String makeCompare(byte[] hardcodedBody, byte[] elementEncoded) {
         int totalLength = 0;
@@ -137,6 +147,38 @@ public abstract class ParameterHarness {
         return out;
     }
 
+    protected String makeCompare(Object hardcodedBody, Object elementEncoded) {
+        int totalLength = 0;
+        if (hardcodedBody == null || elementEncoded == null) {
+            return "One arg is null";
+        }
+
+        if (Array.getLength(hardcodedBody) >= Array.getLength(elementEncoded)) {
+            totalLength = Array.getLength(hardcodedBody);
+        } else {
+            totalLength = Array.getLength(elementEncoded);
+        }
+
+        String out = "";
+
+        for (int index = 0; index < totalLength; index++) {
+            if (Array.getLength(hardcodedBody) > index) {
+                out += "hardcodedBody[" + Array.get(hardcodedBody, index) + "]";
+            } else {
+                out += "hardcodedBody[NOP]";
+            }
+            
+            if (Array.getLength(elementEncoded) > index) {
+                out += "elementEncoded[" + Array.get(elementEncoded, index) + "]";
+            } else {
+                out += "elementEncoded[NOP]";
+            }
+            out += "\n";
+        }
+
+        return out;
+    }
+
     @Test(groups = { "functional.encode", "functional.decode", "parameter" })
     public void testDecodeEncode() throws IOException, ParameterException {
 
@@ -154,7 +196,6 @@ public abstract class ParameterHarness {
             byte[] badBody = this.badBodies.get(index);
             AbstractISUPParameter component = this.getTestedComponent();
             doTestDecode(badBody, false, component, index);
-            byte[] encodedBody = component.encode();
             // TODO: make some tests here?
         }
 
@@ -184,22 +225,31 @@ public abstract class ParameterHarness {
                 throw iae;
             }
         } catch (Exception e) {
+            e.printStackTrace();
             fail("Failed to decode[" + index + "] parameter[" + component.getClass() + "]." + e + ". Passed data: "
                     + dumpData(presumableBody));
+        }
+    }
+
+    public void testValues(final Object component, final String getMethodName, final String[] getterMethodNames,
+            final Object[][] expectedValues) {
+        try {
+            Method m = component.getClass().getMethod(getMethodName);
+            Object[] parts = (Object[]) m.invoke(component, null);
+            for (int index = 0; index < parts.length; index++) {
+                testValues(parts[index], getterMethodNames, expectedValues[index]);
+            }
+        } catch (Exception e) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PrintWriter pw = new PrintWriter(baos);
             e.printStackTrace();
+            e.printStackTrace(pw);
+            fail("Failed to check values on component: " + component.getClass().getName() + ", due to: "
+                    + new String(baos.toByteArray()));
         }
     }
 
-    protected String dumpData(byte[] b) {
-        String s = "\n";
-        for (byte bb : b) {
-            s += Integer.toHexString(bb);
-        }
-
-        return s;
-    }
-
-    public void testValues(AbstractISUPParameter component, String[] getterMethodNames, Object[] expectedValues) {
+    public void testValues(final Object component, final String[] getterMethodNames, final Object[] expectedValues) {
         try {
             Class cClass = component.getClass();
             for (int index = 0; index < getterMethodNames.length; index++) {
@@ -211,9 +261,11 @@ public abstract class ParameterHarness {
                             + getterMethodNames[index] + " is null, but test values is not.");
                 }
                 if (expectedValues[index] != null && expectedValues[index].getClass().isArray()) {
-                    assertTrue(Arrays.deepEquals(new Object[] { expectedValues[index] }, new Object[] { v }),
+                    assertTrue(
+                            Arrays.deepEquals(new Object[] { expectedValues[index] }, new Object[] { v }),
                             "Failed to validate values in component: " + component.getClass().getName() + ". Value of: "
-                                    + getterMethodNames[index]);
+                                    + getterMethodNames[index] + ":\n"
+                                    + makeCompare( expectedValues[index],v));
                 } else {
                     assertEquals(v, expectedValues[index], "Failed to validate values in component: "
                             + component.getClass().getName() + ". Value of: " + getterMethodNames[index]);
@@ -224,9 +276,10 @@ public abstract class ParameterHarness {
         } catch (Exception e) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             PrintWriter pw = new PrintWriter(baos);
-            e.printStackTrace(pw);
-            fail("Failed to check values on component: " + component.getClass().getName() + ", due to: " + new String(baos.toByteArray()));
             e.printStackTrace();
+            e.printStackTrace(pw);
+            fail("Failed to check values on component: " + component.getClass().getName() + ", due to: "
+                    + new String(baos.toByteArray()));
         }
     }
 

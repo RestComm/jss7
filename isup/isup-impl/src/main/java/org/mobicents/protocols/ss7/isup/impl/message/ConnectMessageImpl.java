@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -36,7 +36,7 @@ import org.mobicents.protocols.ss7.isup.impl.message.parameter.BackwardGVNSImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.ConnectMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformation;
-import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransportParameter;
+import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransport;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardCallIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardGVNS;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallHistoryInformation;
@@ -136,8 +136,8 @@ public class ConnectMessageImpl extends ISUPMessageImpl implements ConnectMessag
      *
      * @see org.mobicents.protocols.ss7.isup.message.AnswerMessage# getApplicationTransportParameter()
      */
-    public ApplicationTransportParameter getApplicationTransportParameter() {
-        return (ApplicationTransportParameter) super.o_Parameters.get(this._INDEX_O_ApplicationTransportParameter);
+    public ApplicationTransport getApplicationTransportParameter() {
+        return (ApplicationTransport) super.o_Parameters.get(this._INDEX_O_ApplicationTransportParameter);
     }
 
     /*
@@ -348,7 +348,7 @@ public class ConnectMessageImpl extends ISUPMessageImpl implements ConnectMessag
      * @see org.mobicents.protocols.ss7.isup.message.AnswerMessage# setApplicationTransportParameter
      * (org.mobicents.protocols.ss7.isup.message. parameter.ApplicationTransportParameter)
      */
-    public void setApplicationTransportParameter(ApplicationTransportParameter value) {
+    public void setApplicationTransportParameter(ApplicationTransport value) {
         super.o_Parameters.put(this._INDEX_O_ApplicationTransportParameter, value);
     }
 
@@ -731,9 +731,9 @@ public class ConnectMessageImpl extends ISUPMessageImpl implements ConnectMessag
                 ((AbstractISUPParameter) conferenceTreatmentIndicators).decode(parameterBody);
                 this.setConferenceTreatmentIndicators(conferenceTreatmentIndicators);
                 break;
-            case ApplicationTransportParameter._PARAMETER_CODE:
-                ApplicationTransportParameter applicationTransportParameter = parameterFactory
-                        .createApplicationTransportParameter();
+            case ApplicationTransport._PARAMETER_CODE:
+                ApplicationTransport applicationTransportParameter = parameterFactory
+                        .createApplicationTransport();
                 ((AbstractISUPParameter) applicationTransportParameter).decode(parameterBody);
                 this.setApplicationTransportParameter(applicationTransportParameter);
                 break;

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,6 +22,10 @@
 
 package org.mobicents.protocols.ss7.isup.message;
 
+import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransport;
+import org.mobicents.protocols.ss7.isup.message.parameter.MessageCompatibilityInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
+
 /**
  * Start time:09:54:07 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
@@ -35,4 +39,13 @@ public interface ApplicationTransportMessage extends ISUPMessage {
      * {@link ApplicationTransportMessage}
      */
     int MESSAGE_CODE = 0x41;
+
+    void setMessageCompatibilityInformation(MessageCompatibilityInformation mci);
+    MessageCompatibilityInformation getMessageCompatibilityInformation();
+
+    void setParameterCompatibilityInformation(ParameterCompatibilityInformation pci);
+    ParameterCompatibilityInformation getParameterCompatibilityInformation();
+
+    void setApplicationTransport(ApplicationTransport atp);
+    ApplicationTransport getApplicationTransport();
 }

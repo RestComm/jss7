@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -27,7 +27,7 @@ package org.mobicents.protocols.ss7.isup;
 
 
 import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformation;
-import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransportParameter;
+import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransport;
 import org.mobicents.protocols.ss7.isup.message.parameter.AutomaticCongestionLevel;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardCallIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardGVNS;
@@ -46,6 +46,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.ChargedPartyIdentification;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitAssigmentMap;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitGroupSuperVisionMessageType;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
@@ -71,10 +72,10 @@ import org.mobicents.protocols.ss7.isup.message.parameter.HTRInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.HopCounter;
 import org.mobicents.protocols.ss7.isup.message.parameter.InformationIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.InformationRequestIndicators;
-import org.mobicents.protocols.ss7.isup.message.parameter.InstructionIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.InvokingPivotReason;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.LoopPreventionIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.MessageCompatibilityInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.MCIDRequestIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.MCIDResponseIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.MLPPPrecedence;
@@ -89,12 +90,14 @@ import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginatingISCPointCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginatingParticipatingServiceProvider;
 import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInstructionIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.PerformingPivotIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotCapability;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotCounter;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingBackwardInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingForwardInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotStatus;
 import org.mobicents.protocols.ss7.isup.message.parameter.PropagationDelayCounter;
 import org.mobicents.protocols.ss7.isup.message.parameter.QueryOnReleaseCapability;
 import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
@@ -129,6 +132,24 @@ import org.mobicents.protocols.ss7.isup.message.parameter.UserToUserIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserToUserInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
 import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.AccessTransport;
+import org.mobicents.protocols.ss7.isup.message.parameter.InvokingRedirectReasonType;
+import org.mobicents.protocols.ss7.isup.message.parameter.PerformingRedirectIndicator;
+import org.mobicents.protocols.ss7.isup.message.parameter.ErrorCode;
+import org.mobicents.protocols.ss7.isup.message.parameter.Problem;
+import org.mobicents.protocols.ss7.isup.message.parameter.Parameter;
+import org.mobicents.protocols.ss7.isup.message.parameter.Reject;
+import org.mobicents.protocols.ss7.isup.message.parameter.ReturnResult;
+import org.mobicents.protocols.ss7.isup.message.parameter.OperationCode;
+import org.mobicents.protocols.ss7.isup.message.parameter.Invoke;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectForwardInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.MessageCompatibilityInstructionIndicator;
+import org.mobicents.protocols.ss7.isup.message.parameter.InvokingRedirectReason;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectReason;
+import org.mobicents.protocols.ss7.isup.message.parameter.ReturnToInvokingExchangeDuration;
+import org.mobicents.protocols.ss7.isup.message.parameter.ReturnError;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotReason;
+import org.mobicents.protocols.ss7.isup.message.parameter.InvokingPivotReasonType;
+import org.mobicents.protocols.ss7.isup.message.parameter.Status;
 
 /**
  * Factory for parameters.
@@ -140,7 +161,9 @@ public interface ISUPParameterFactory {
 
     AccessDeliveryInformation createAccessDeliveryInformation();
 
-    ApplicationTransportParameter createApplicationTransportParameter();
+    AccessTransport createAccessTransport();
+
+    ApplicationTransport createApplicationTransport();
 
     AutomaticCongestionLevel createAutomaticCongestionLevel();
 
@@ -178,6 +201,8 @@ public interface ISUPParameterFactory {
 
     CCSS createCCSS();
 
+    ChargedPartyIdentification createChargedPartyIdentification();
+
     CircuitAssigmentMap createCircuitAssigmentMap();
 
     CircuitGroupSuperVisionMessageType createCircuitGroupSuperVisionMessageType();
@@ -204,6 +229,8 @@ public interface ISUPParameterFactory {
 
     EchoControlInformation createEchoControlInformation();
 
+    ErrorCode createErrorCode();
+
     EventInformation createEventInformation();
 
     FacilityIndicator createFacilityIndicator();
@@ -211,6 +238,8 @@ public interface ISUPParameterFactory {
     ForwardCallIndicators createForwardCallIndicators();
 
     ForwardGVNS createForwardGVNS();
+
+    GenericDigits createGenericDigits();
 
     GenericNotificationIndicator createGenericNotificationIndicator();
 
@@ -228,9 +257,11 @@ public interface ISUPParameterFactory {
 
     InformationRequestIndicators createInformationRequestIndicators();
 
-    InstructionIndicators createInstructionIndicators();
+    Invoke createInvoke();
 
-    InvokingPivotReason createInvokingPivotReason();
+    InvokingPivotReason createInvokingPivotReason(InvokingPivotReasonType type);
+
+    InvokingRedirectReason createInvokingRedirectReason(InvokingRedirectReasonType type);
 
     LocationNumber createLocationNumber();
 
@@ -239,6 +270,10 @@ public interface ISUPParameterFactory {
     MCIDRequestIndicators createMCIDRequestIndicators();
 
     MCIDResponseIndicators createMCIDResponseIndicators();
+
+    MessageCompatibilityInformation createMessageCompatibilityInformation();
+
+    MessageCompatibilityInstructionIndicator createMessageCompatibilityInstructionIndicator();
 
     MLPPPrecedence createMLPPPrecedence();
 
@@ -249,6 +284,8 @@ public interface ISUPParameterFactory {
     NetworkRoutingNumber createNetworkRoutingNumber();
 
     NetworkSpecificFacility createNetworkSpecificFacility();
+
+    OperationCode createOperationCode();
 
     OptionalBackwardCallIndicators createOptionalBackwardCallIndicators();
 
@@ -262,19 +299,31 @@ public interface ISUPParameterFactory {
 
     OriginatingParticipatingServiceProvider createOriginatingParticipatingServiceProvider();
 
+    Parameter createParameter();
+
     ParameterCompatibilityInformation createParameterCompatibilityInformation();
 
+    ParameterCompatibilityInstructionIndicators createParameterCompatibilityInstructionIndicators();
+
     PerformingPivotIndicator createPerformingPivotIndicator();
+
+    PerformingRedirectIndicator createPerformingRedirectIndicator();
 
     PivotCapability createPivotCapability();
 
     PivotCounter createPivotCounter();
+
+    PivotReason createPivotReason();
 
     PivotRoutingBackwardInformation createPivotRoutingBackwardInformation();
 
     PivotRoutingForwardInformation createPivotRoutingForwardInformation();
 
     PivotRoutingIndicators createPivotRoutingIndicators();
+
+    PivotStatus createPivotStatus();
+
+    Problem createProblem();
 
     PropagationDelayCounter createPropagationDelayCounter();
 
@@ -288,6 +337,8 @@ public interface ISUPParameterFactory {
 
     RedirectCounter createRedirectCounter();
 
+    RedirectForwardInformation createRedirectForwardformation();
+
     RedirectingNumber createRedirectingNumber();
 
     RedirectionInformation createRedirectionInformation();
@@ -296,13 +347,23 @@ public interface ISUPParameterFactory {
 
     RedirectionNumberRestriction createRedirectionNumberRestriction();
 
+    RedirectReason createRedirectReason();
+
     RedirectStatus createRedirectStatus();
+
+    Reject createReject();
 
     RemoteOperations createRemoteOperations();
 
     Reserved createReserved();
 
+    ReturnError createReturnError();
+
+    ReturnResult createReturnResult();
+
     ReturnToInvokingExchangeCallIdentifier createReturnToInvokingExchangeCallIdentifier();
+
+    ReturnToInvokingExchangeDuration createReturnToInvokingExchangeDuration();
 
     ReturnToInvokingExchangePossible createReturnToInvokingExchangePossible();
 
@@ -311,37 +372,19 @@ public interface ISUPParameterFactory {
     ServiceActivation createServiceActivation();
 
     SignalingPointCode createSignalingPointCode();
-
+    Status createStatus();
     SubsequentNumber createSubsequentNumber();
-
     SuspendResumeIndicators createSuspendResumeIndicators();
-
     TerminatingNetworkRoutingNumber createTerminatingNetworkRoutingNumber();
-
     TransimissionMediumRequierementPrime createTransimissionMediumRequierementPrime();
-
     TransitNetworkSelection createTransitNetworkSelection();
-
     TransmissionMediumRequirement createTransmissionMediumRequirement();
-
     TransmissionMediumUsed createTransmissionMediumUsed();
-
     UIDActionIndicators createUIDActionIndicators();
-
     UIDCapabilityIndicators createUIDCapabilityIndicators();
-
     UserServiceInformation createUserServiceInformation();
-
     UserServiceInformationPrime createUserServiceInformationPrime();
-
     UserTeleserviceInformation createUserTeleserviceInformation();
-
     UserToUserIndicators createUserToUserIndicators();
-
     UserToUserInformation createUserToUserInformation();
-
-    AccessTransport createAccessTransport();
-
-    GenericDigits createGenericDigits();
-
 }

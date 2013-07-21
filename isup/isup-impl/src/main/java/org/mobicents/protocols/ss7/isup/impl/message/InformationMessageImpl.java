@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -195,6 +195,11 @@ public class InformationMessageImpl extends ISUPMessageImpl implements Informati
                 CallingPartyNumber x = parameterFactory.createCallingPartyNumber();
                 ((AbstractISUPParameter) x).decode(parameterBody);
                 this.setCallingPartyNumber(x);
+                break;
+            case CallReference._PARAMETER_CODE:
+                CallReference cf = parameterFactory.createCallReference();
+                ((AbstractISUPParameter) cf).decode(parameterBody);
+                this.setCallReference(cf);
                 break;
             case ConnectionRequest._PARAMETER_CODE:
                 ConnectionRequest z = parameterFactory.createConnectionRequest();

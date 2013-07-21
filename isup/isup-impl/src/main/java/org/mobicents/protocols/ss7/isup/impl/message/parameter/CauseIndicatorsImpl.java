@@ -70,7 +70,7 @@ public class CauseIndicatorsImpl extends AbstractISUPParameter implements CauseI
 
     public int decode(byte[] b) throws ParameterException {
 
-        // FIXME: there are ext bits but we do not care about them
+        // NOTE: there are ext bits but we do not care about them
         // FIXME: "Recommendation" optional field must be encoded/decoded when codingStandard!=_CODING_STANDARD_ITUT
 
         if (b == null || b.length < 2) {

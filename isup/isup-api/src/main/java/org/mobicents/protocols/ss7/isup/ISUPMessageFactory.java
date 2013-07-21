@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -75,7 +75,7 @@ import org.mobicents.protocols.ss7.isup.message.SuspendMessage;
 import org.mobicents.protocols.ss7.isup.message.UnblockingAckMessage;
 import org.mobicents.protocols.ss7.isup.message.UnblockingMessage;
 import org.mobicents.protocols.ss7.isup.message.UnequippedCICMessage;
-import org.mobicents.protocols.ss7.isup.message.User2UserInformationMessage;
+import org.mobicents.protocols.ss7.isup.message.UserToUserInformationMessage;
 import org.mobicents.protocols.ss7.isup.message.UserPartAvailableMessage;
 import org.mobicents.protocols.ss7.isup.message.UserPartTestMessage;
 
@@ -283,8 +283,8 @@ public interface ISUPMessageFactory {
 
     UserPartTestMessage createUPT(int cic);
 
-    User2UserInformationMessage createUSR();
+    UserToUserInformationMessage createUSR();
 
-    User2UserInformationMessage createUSR(int cic);
+    UserToUserInformationMessage createUSR(int cic);
 
 }

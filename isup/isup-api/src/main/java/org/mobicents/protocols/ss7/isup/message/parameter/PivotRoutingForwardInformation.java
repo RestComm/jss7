@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -37,4 +37,20 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
 public interface PivotRoutingForwardInformation extends ISUPParameter {
     // FIXME: fill this!
     int _PARAMETER_CODE = 0x88;
+
+    int INFORMATION_RETURN_TO_INVOKING_EXCHANGE_POSSIBLE = 0x01;
+    int INFORMATION_RETURN_TO_INVOKING_EXCHANGE_CALL_ID = 0x02;
+    int INFORMATION_PERFORMING_PIVOT_INDICATOR = 0x03;
+    int INFORMATION_INVOKING_PIVOT_REASON = 0x04;
+    void setReturnToInvokingExchangePossible(ReturnToInvokingExchangePossible... duration);
+    ReturnToInvokingExchangePossible[] getReturnToInvokingExchangePossible();
+
+    void setReturnToInvokingExchangeCallIdentifier(ReturnToInvokingExchangeCallIdentifier... cid);
+    ReturnToInvokingExchangeCallIdentifier[] getReturnToInvokingExchangeCallIdentifier();
+
+    void setPerformingPivotIndicator(PerformingPivotIndicator... reason);
+    PerformingPivotIndicator[] getPerformingPivotIndicator();
+
+    void setInvokingPivotReason(InvokingPivotReason... reason);
+    InvokingPivotReason[] getInvokingPivotReason();
 }

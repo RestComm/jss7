@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -21,6 +21,9 @@
  */
 
 package org.mobicents.protocols.ss7.isup.message;
+
+import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
+import org.mobicents.protocols.ss7.isup.message.parameter.SuspendResumeIndicators;
 
 /**
  * Start time:09:54:07 2009-07-23<br>
@@ -83,4 +86,10 @@ public interface ResumeMessage extends ISUPMessage {
      * {@link ResumeMessage}
      */
     int MESSAGE_CODE = 0x0E;
+
+    void setSuspendResumeIndicators(SuspendResumeIndicators ri);
+    SuspendResumeIndicators getSuspendResumeIndicators();
+
+    void setCallReference(CallReference cr);
+    CallReference getCallReference();
 }

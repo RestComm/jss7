@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -31,6 +31,7 @@
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.message.parameter.InformationType;
 import org.mobicents.protocols.ss7.isup.message.parameter.ReturnToInvokingExchangePossible;
 
 /**
@@ -39,25 +40,22 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ReturnToInvokingExchan
  *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class ReturnToInvokingExchangePossibleImpl extends AbstractISUPParameter implements ReturnToInvokingExchangePossible {
-
+public class ReturnToInvokingExchangePossibleImpl extends AbstractInformationImpl implements ReturnToInvokingExchangePossible {
+    //its empty param, its existence is information.
+    private static final byte[] DATA = new byte[]{};
     public ReturnToInvokingExchangePossibleImpl() {
-        super();
-
+        super(InformationType.ReturnToInvokingExchangePossible);
+        //This is always 0x01;
+        super.tag = 0x01;
     }
 
-    public int decode(byte[] b) throws ParameterException {
-        // TODO Auto-generated method stub
-        return 0;
+    public void decode(byte[] b) throws ParameterException {
+        return;
     }
 
     public byte[] encode() throws ParameterException {
-        // TODO Auto-generated method stub
-        return new byte[] {};
+        return DATA;
     }
 
-    public int getCode() {
 
-        return _PARAMETER_CODE;
-    }
 }

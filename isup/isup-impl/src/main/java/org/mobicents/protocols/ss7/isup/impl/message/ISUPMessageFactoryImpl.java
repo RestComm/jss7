@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -84,11 +84,11 @@ import org.mobicents.protocols.ss7.isup.message.SuspendMessage;
 import org.mobicents.protocols.ss7.isup.message.UnblockingAckMessage;
 import org.mobicents.protocols.ss7.isup.message.UnblockingMessage;
 import org.mobicents.protocols.ss7.isup.message.UnequippedCICMessage;
-import org.mobicents.protocols.ss7.isup.message.User2UserInformationMessage;
+import org.mobicents.protocols.ss7.isup.message.UserToUserInformationMessage;
 import org.mobicents.protocols.ss7.isup.message.UserPartAvailableMessage;
 import org.mobicents.protocols.ss7.isup.message.UserPartTestMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformation;
-import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransportParameter;
+import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransport;
 import org.mobicents.protocols.ss7.isup.message.parameter.AutomaticCongestionLevel;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardCallIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardGVNS;
@@ -98,10 +98,12 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CallDiversionInformati
 import org.mobicents.protocols.ss7.isup.message.parameter.CallHistoryInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallTransferNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallTransferReference;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.ChargedPartyIdentification;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitGroupSuperVisionMessageType;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitStateIndicator;
@@ -113,6 +115,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ContinuityIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.DisplayInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.EchoControlInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.EventInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.FacilityIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.ForwardCallIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.ForwardGVNS;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
@@ -123,7 +126,11 @@ import org.mobicents.protocols.ss7.isup.message.parameter.HTRInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.InformationIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.InformationRequestIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.LoopPreventionIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.MCIDRequestIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.MCIDResponseIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.MLPPPrecedence;
+import org.mobicents.protocols.ss7.isup.message.parameter.MessageCompatibilityInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.NatureOfConnectionIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.NetworkManagementControls;
 import org.mobicents.protocols.ss7.isup.message.parameter.NetworkSpecificFacility;
@@ -131,7 +138,10 @@ import org.mobicents.protocols.ss7.isup.message.parameter.OptionalBackwardCallIn
 import org.mobicents.protocols.ss7.isup.message.parameter.OptionalForwardCallIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginatingISCPointCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotCounter;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingBackwardInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotStatus;
 import org.mobicents.protocols.ss7.isup.message.parameter.PropagationDelayCounter;
 import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectBackwardInformation;
@@ -145,6 +155,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RemoteOperations;
 import org.mobicents.protocols.ss7.isup.message.parameter.ServiceActivation;
 import org.mobicents.protocols.ss7.isup.message.parameter.SignalingPointCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.SubsequentNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.SuspendResumeIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransimissionMediumRequierementPrime;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransitNetworkSelection;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumRequirement;
@@ -184,8 +195,8 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
     private static final MessageIndexingPlaceHolder _ACM_HOLDER;
     // ANM
     private static final MessageIndexingPlaceHolder _ANM_HOLDER;
-    // FIXME: APT
-    // private static final MessageIndexingPlaceHolder _APT_HOLDER;
+    // APT
+    private static final MessageIndexingPlaceHolder _APT_HOLDER;
     // BLO
     private static final MessageIndexingPlaceHolder _BLO_HOLDER;
     // BLA
@@ -212,57 +223,72 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
     private static final MessageIndexingPlaceHolder _CNF_HOLDER;
     // CON
     private static final MessageIndexingPlaceHolder _CON_HOLDER;
-    // FIXME: COT
+    // COT
     private static final MessageIndexingPlaceHolder _COT_HOLDER;
     // CCR
     private static final MessageIndexingPlaceHolder _CCR_HOLDER;
-    // FIXME: FAC
-    // FIXME: FAA
-    // FIXME: FRJ
-    // FIXME: FAR
-    // FIXME: FOT
-    // FIXME: IDR
-    // FIXME: IRS
-    // FIXME: INR
+    // FAC
+    private static final MessageIndexingPlaceHolder _FAC_HOLDER;
+    // FAA
+    private static final MessageIndexingPlaceHolder _FAA_HOLDER;
+    // FRJ
+    private static final MessageIndexingPlaceHolder _FRJ_HOLDER;
+    // FAR
+    private static final MessageIndexingPlaceHolder _FAR_HOLDER;
+    // FOT
+    private static final MessageIndexingPlaceHolder _FOT_HOLDER;
+    // IDR
+    private static final MessageIndexingPlaceHolder _IDR_HOLDER;
+    // IRS
+    private static final MessageIndexingPlaceHolder _IRS_HOLDER;
+    // INR
     private static final MessageIndexingPlaceHolder _INR_HOLDER;
-    // FIXME: INF
+    // INF
     private static final MessageIndexingPlaceHolder _INF_HOLDER;
     // IAM
     private static final MessageIndexingPlaceHolder _IAM_HOLDER;
     // LPA
     private static final MessageIndexingPlaceHolder _LPA_HOLDER;
-    // FIXME: LPP
-    // FIXME: NRM
+    // LPP
+    private static final MessageIndexingPlaceHolder _LPP_HOLDER;
+    // NRM
+    private static final MessageIndexingPlaceHolder _NRM_HOLDER;
     // OLM
     private static final MessageIndexingPlaceHolder _OLM_HOLDER;
-    // FIXME: PAM
-    // FIXME: PRI
+    // PAM -- pam does not need that.
+    // PRI
+    private static final MessageIndexingPlaceHolder _PRI_HOLDER;
     // REL
     private static final MessageIndexingPlaceHolder _REL_HOLDER;
     // RLC
     private static final MessageIndexingPlaceHolder _RLC_HOLDER;
     // RSC
     private static final MessageIndexingPlaceHolder _RSC_HOLDER;
-    // FIXME: RES
-    // FIXME: SGM
-    // FIXME: SAM
+    // RES
+    private static final MessageIndexingPlaceHolder _RES_HOLDER;
+    // SGM
+    private static final MessageIndexingPlaceHolder _SGM_HOLDER;
+    // SAM
     private static final MessageIndexingPlaceHolder _SAM_HOLDER;
-    // FIXME: SDN
-    // FIXME: SUS
+    // SDN
+    private static final MessageIndexingPlaceHolder _SDN_HOLDER;
+    // SUS
+    private static final MessageIndexingPlaceHolder _SUS_HOLDER;
     // UBL
     private static final MessageIndexingPlaceHolder _UBL_HOLDER;
     // UBA
     private static final MessageIndexingPlaceHolder _UBA_HOLDER;
     // UCIC
     private static final MessageIndexingPlaceHolder _UCIC_HOLDER;
-    // FIXME: UPA
-    // FIXME: UPT
-    // FIXME: U2UI
+    // UPA
+    private static final MessageIndexingPlaceHolder _UPA_HOLDER;
+    // UPT
+    private static final MessageIndexingPlaceHolder _UPT_HOLDER;
+    // U2UI
+    private static final MessageIndexingPlaceHolder _U2U_HOLDER;
 
     // TODO: remove this, change to use arrays.
     static {
-        // Map<Integer,MessageIndexingPlaceHolder> _commandCode2CommandIndexes =
-        // new HashMap<Integer, MessageIndexingPlaceHolder>();
         Set<Integer> mandatoryCodes = new HashSet<Integer>();
         Set<Integer> mandatoryVariableCodes = new HashSet<Integer>();
         Set<Integer> optionalCodes = new HashSet<Integer>();
@@ -295,7 +321,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         optionalCodes.add(RedirectionNumberRestriction._PARAMETER_CODE);
         optionalCodes.add(ConferenceTreatmentIndicators._PARAMETER_CODE);
         optionalCodes.add(UIDActionIndicators._PARAMETER_CODE);
-        optionalCodes.add(ApplicationTransportParameter._PARAMETER_CODE);
+        optionalCodes.add(ApplicationTransport._PARAMETER_CODE);
         optionalCodes.add(CCNRPossibleIndicator._PARAMETER_CODE);
         optionalCodes.add(HTRInformation._PARAMETER_CODE);
         optionalCodes.add(PivotRoutingBackwardInformation._PARAMETER_CODE);
@@ -331,7 +357,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         optionalCodeToIndex.put(ConferenceTreatmentIndicators._PARAMETER_CODE,
                 AddressCompleteMessageImpl._INDEX_O_ConferenceTreatmentIndicators);
         optionalCodeToIndex.put(UIDActionIndicators._PARAMETER_CODE, AddressCompleteMessageImpl._INDEX_O_UIDActionIndicators);
-        optionalCodeToIndex.put(ApplicationTransportParameter._PARAMETER_CODE,
+        optionalCodeToIndex.put(ApplicationTransport._PARAMETER_CODE,
                 AddressCompleteMessageImpl._INDEX_O_ApplicationTransportParameter);
         optionalCodeToIndex.put(CCNRPossibleIndicator._PARAMETER_CODE,
                 AddressCompleteMessageImpl._INDEX_O_CCNRPossibleIndicator);
@@ -355,7 +381,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(ACM_HOLDER.commandCode, ACM_HOLDER);
+
         _ACM_HOLDER = ACM_HOLDER;
 
         // ANM
@@ -381,7 +407,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         optionalCodes.add(RedirectionNumberRestriction._PARAMETER_CODE);
         optionalCodes.add(DisplayInformation._PARAMETER_CODE);
         optionalCodes.add(ConferenceTreatmentIndicators._PARAMETER_CODE);
-        optionalCodes.add(ApplicationTransportParameter._PARAMETER_CODE);
+        optionalCodes.add(ApplicationTransport._PARAMETER_CODE);
         optionalCodes.add(PivotRoutingBackwardInformation._PARAMETER_CODE);
         optionalCodes.add(RedirectStatus._PARAMETER_CODE);
 
@@ -413,7 +439,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         optionalCodeToIndex.put(DisplayInformation._PARAMETER_CODE, AnswerMessageImpl._INDEX_O_DisplayInformation);
         optionalCodeToIndex.put(ConferenceTreatmentIndicators._PARAMETER_CODE,
                 AnswerMessageImpl._INDEX_O_ConferenceTreatmentIndicators);
-        optionalCodeToIndex.put(ApplicationTransportParameter._PARAMETER_CODE,
+        optionalCodeToIndex.put(ApplicationTransport._PARAMETER_CODE,
                 AnswerMessageImpl._INDEX_O_ApplicationTransportParameter);
         optionalCodeToIndex.put(PivotRoutingBackwardInformation._PARAMETER_CODE,
                 AnswerMessageImpl._INDEX_O_PivotRoutingBackwardInformation);
@@ -434,11 +460,35 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(ANM_HOLDER.commandCode, ANM_HOLDER);
+
         _ANM_HOLDER = ANM_HOLDER;
 
-        // FIXME: APT
+        // APT
 
+        optionalCodes.add(MessageCompatibilityInformation._PARAMETER_CODE);
+        optionalCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
+        optionalCodes.add(ApplicationTransport._PARAMETER_CODE);
+
+        optionalCodeToIndex.put(MessageCompatibilityInformation._PARAMETER_CODE,ApplicationTransportMessageImpl._INDEX_O_MessageCompatibilityInformation);
+        optionalCodeToIndex.put(ParameterCompatibilityInformation._PARAMETER_CODE,ApplicationTransportMessageImpl._INDEX_O_ParameterCompatibilityInformation);
+        optionalCodeToIndex.put(ApplicationTransport._PARAMETER_CODE,ApplicationTransportMessageImpl._INDEX_O_ApplicationTransportParameter);
+        MessageIndexingPlaceHolder APT_HOLDER = new MessageIndexingPlaceHolder();
+        APT_HOLDER.commandCode = ApplicationTransportMessage.MESSAGE_CODE;
+        APT_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+        APT_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+        APT_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+        APT_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+        APT_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+        APT_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+
+        _APT_HOLDER=APT_HOLDER;
+        mandatoryCodes = new HashSet<Integer>();
+        mandatoryVariableCodes = new HashSet<Integer>();
+        optionalCodes = new HashSet<Integer>();
+        mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+        mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+        optionalCodeToIndex = new HashMap<Integer, Integer>();
         // BLO
         MessageIndexingPlaceHolder BLO_HOLDER = new MessageIndexingPlaceHolder();
         BLO_HOLDER.commandCode = BlockingMessage.MESSAGE_CODE;
@@ -455,7 +505,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(BLO_HOLDER.commandCode, BLO_HOLDER);
+
         _BLO_HOLDER = BLO_HOLDER;
         // BLA
         MessageIndexingPlaceHolder BLA_HOLDER = new MessageIndexingPlaceHolder();
@@ -473,7 +523,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(BLA_HOLDER.commandCode, BLA_HOLDER);
+
         _BLA_HOLDER = BLA_HOLDER;
 
         // CPG
@@ -505,7 +555,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         optionalCodes.add(CallHistoryInformation._PARAMETER_CODE);
         optionalCodes.add(ConferenceTreatmentIndicators._PARAMETER_CODE);
         optionalCodes.add(UIDActionIndicators._PARAMETER_CODE);
-        optionalCodes.add(ApplicationTransportParameter._PARAMETER_CODE);
+        optionalCodes.add(ApplicationTransport._PARAMETER_CODE);
         optionalCodes.add(CCNRPossibleIndicator._PARAMETER_CODE);
         optionalCodes.add(PivotRoutingBackwardInformation._PARAMETER_CODE);
         optionalCodes.add(RedirectStatus._PARAMETER_CODE);
@@ -547,7 +597,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         optionalCodeToIndex.put(ConferenceTreatmentIndicators._PARAMETER_CODE,
                 CallProgressMessageImpl._INDEX_O_ConferenceTreatmentIndicators);
         optionalCodeToIndex.put(UIDActionIndicators._PARAMETER_CODE, CallProgressMessageImpl._INDEX_O_UIDActionIndicators);
-        optionalCodeToIndex.put(ApplicationTransportParameter._PARAMETER_CODE,
+        optionalCodeToIndex.put(ApplicationTransport._PARAMETER_CODE,
                 CallProgressMessageImpl._INDEX_O_ApplicationTransportParameter);
         optionalCodeToIndex.put(CCNRPossibleIndicator._PARAMETER_CODE, CallProgressMessageImpl._INDEX_O_CCNRPossibleIndicator);
         optionalCodeToIndex.put(PivotRoutingBackwardInformation._PARAMETER_CODE,
@@ -569,7 +619,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(CPG_HOLDER.commandCode, CPG_HOLDER);
+
         _CPG_HOLDER = CPG_HOLDER;
 
         // CGB
@@ -596,7 +646,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(CGB_HOLDER.commandCode, CGB_HOLDER);
+
         _CGB_HOLDER = CGB_HOLDER;
 
         // CGBA
@@ -623,8 +673,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(CGBA_HOLDER.commandCode,
-        // CGBA_HOLDER);
+
         _CGBA_HOLDER = CGBA_HOLDER;
 
         // CQM
@@ -646,7 +695,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(CQM_HOLDER.commandCode, CQM_HOLDER);
+
         _CQM_HOLDER = CQM_HOLDER;
 
         // CQR
@@ -673,7 +722,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(CQR_HOLDER.commandCode, CQR_HOLDER);
+
         _CQR_HOLDER = CQR_HOLDER;
 
         // GRS
@@ -695,7 +744,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(GRS_HOLDER.commandCode, GRS_HOLDER);
+
         _GRS_HOLDER = GRS_HOLDER;
 
         // GRA
@@ -718,7 +767,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(GRA_HOLDER.commandCode, GRA_HOLDER);
+
         _GRA_HOLDER = GRA_HOLDER;
 
         // CGU
@@ -745,7 +794,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(CGU_HOLDER.commandCode, CGU_HOLDER);
+
         _CGU_HOLDER = CGU_HOLDER;
 
         // CGUA
@@ -824,7 +873,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         optionalCodes.add(GenericNumber._PARAMETER_CODE);
         optionalCodes.add(RedirectionNumberRestriction._PARAMETER_CODE);
         optionalCodes.add(ConferenceTreatmentIndicators._PARAMETER_CODE);
-        optionalCodes.add(ApplicationTransportParameter._PARAMETER_CODE);
+        optionalCodes.add(ApplicationTransport._PARAMETER_CODE);
         optionalCodes.add(HTRInformation._PARAMETER_CODE);
         optionalCodes.add(PivotRoutingBackwardInformation._PARAMETER_CODE);
         optionalCodes.add(RedirectStatus._PARAMETER_CODE);
@@ -856,7 +905,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
                 ConnectMessageImpl._INDEX_O_RedirectionNumberRestriction);
         optionalCodeToIndex.put(ConferenceTreatmentIndicators._PARAMETER_CODE,
                 ConnectMessageImpl._INDEX_O_ConferenceTreatmentIndicators);
-        optionalCodeToIndex.put(ApplicationTransportParameter._PARAMETER_CODE,
+        optionalCodeToIndex.put(ApplicationTransport._PARAMETER_CODE,
                 ConnectMessageImpl._INDEX_O_ConferenceTreatmentIndicators);
         optionalCodeToIndex.put(HTRInformation._PARAMETER_CODE, ConnectMessageImpl._INDEX_O_HTRInformation);
         optionalCodeToIndex.put(PivotRoutingBackwardInformation._PARAMETER_CODE,
@@ -899,7 +948,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(RLC_HOLDER.commandCode, RLC_HOLDER);
+
         _COT_HOLDER = COT_HOLDER;
 
         // CCR
@@ -918,15 +967,231 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(CCR_HOLDER.commandCode, CCR_HOLDER);
+
         _CCR_HOLDER = CCR_HOLDER;
-        // FIXME: FAC
-        // FIXME: FAA
-        // FIXME: FRJ
-        // FIXME: FAR
-        // FIXME: FOT
-        // FIXME: IDR
-        // FIXME: IRS
+        // FAC
+        MessageIndexingPlaceHolder FAC_HOLDER = new MessageIndexingPlaceHolder();
+        FAC_HOLDER.commandCode = FacilityMessage.MESSAGE_CODE;
+
+        optionalCodes.add(MessageCompatibilityInformation._PARAMETER_CODE);
+        optionalCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
+        optionalCodes.add(RemoteOperations._PARAMETER_CODE);
+        optionalCodes.add(ServiceActivation._PARAMETER_CODE);
+        optionalCodes.add(CallTransferNumber._PARAMETER_CODE);
+        optionalCodes.add(AccessTransport._PARAMETER_CODE);
+        optionalCodes.add(GenericNotificationIndicator._PARAMETER_CODE);
+        optionalCodes.add(RedirectionNumber._PARAMETER_CODE);
+        optionalCodes.add(PivotRoutingIndicators._PARAMETER_CODE);
+        optionalCodes.add(PivotStatus._PARAMETER_CODE);
+        optionalCodes.add(PivotCounter._PARAMETER_CODE);
+        optionalCodes.add(PivotRoutingBackwardInformation._PARAMETER_CODE);
+        optionalCodes.add(RedirectStatus._PARAMETER_CODE);
+        optionalCodeToIndex.put(MessageCompatibilityInformation._PARAMETER_CODE, FacilityMessageImpl._INDEX_O_MessageCompatibilityInformation);
+        optionalCodeToIndex.put(ParameterCompatibilityInformation._PARAMETER_CODE, FacilityMessageImpl._INDEX_O_ParameterCompatibilityInformation);
+        optionalCodeToIndex.put(RemoteOperations._PARAMETER_CODE, FacilityMessageImpl._INDEX_O_RemoteOperations);
+        optionalCodeToIndex.put(ServiceActivation._PARAMETER_CODE, FacilityMessageImpl._INDEX_O_ServiceActivation);
+        optionalCodeToIndex.put(CallTransferNumber._PARAMETER_CODE, FacilityMessageImpl._INDEX_O_CallTransferNumber);
+        optionalCodeToIndex.put(AccessTransport._PARAMETER_CODE, FacilityMessageImpl._INDEX_O_AccessTransport);
+        optionalCodeToIndex.put(GenericNotificationIndicator._PARAMETER_CODE, FacilityMessageImpl._INDEX_O_GenericNotificationIndicator);
+        optionalCodeToIndex.put(RedirectionNumber._PARAMETER_CODE, FacilityMessageImpl._INDEX_O_RedirectionNumber);
+        optionalCodeToIndex.put(PivotRoutingIndicators._PARAMETER_CODE, FacilityMessageImpl._INDEX_O_PivotRoutingIndicators);
+        optionalCodeToIndex.put(PivotStatus._PARAMETER_CODE, FacilityMessageImpl._INDEX_O_PivotStatus);
+        optionalCodeToIndex.put(PivotCounter._PARAMETER_CODE, FacilityMessageImpl._INDEX_O_PivotCounter);
+        optionalCodeToIndex.put(PivotRoutingBackwardInformation._PARAMETER_CODE, FacilityMessageImpl._INDEX_O_PivotRoutingBackwardInformation);
+        optionalCodeToIndex.put(RedirectStatus._PARAMETER_CODE, FacilityMessageImpl._INDEX_O_RedirectStatus);
+
+
+        FAC_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+        FAC_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+        FAC_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+        FAC_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+        FAC_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+        FAC_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+        mandatoryCodes = new HashSet<Integer>();
+        mandatoryVariableCodes = new HashSet<Integer>();
+        optionalCodes = new HashSet<Integer>();
+        mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+        mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+        optionalCodeToIndex = new HashMap<Integer, Integer>();
+
+        _FAC_HOLDER = FAC_HOLDER;
+        // FAA
+        MessageIndexingPlaceHolder FAA_HOLDER = new MessageIndexingPlaceHolder();
+        FAA_HOLDER.commandCode = FacilityAcceptedMessage.MESSAGE_CODE;
+
+        mandatoryCodes.add(FacilityIndicator._PARAMETER_CODE);
+        mandatoryCodeToIndex.put(FacilityIndicator._PARAMETER_CODE, AbstractFacilityMessageImpl._INDEX_F_FacilityIndicator);
+
+        optionalCodes.add(UserToUserIndicators._PARAMETER_CODE);
+        optionalCodes.add(CallReference._PARAMETER_CODE);
+        optionalCodes.add(ConnectionRequest._PARAMETER_CODE);
+        optionalCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
+        optionalCodeToIndex.put(UserToUserIndicators._PARAMETER_CODE, AbstractFacilityMessageImpl._INDEX_O_UserToUserIndicators);
+        optionalCodeToIndex.put(CallReference._PARAMETER_CODE, AbstractFacilityMessageImpl._INDEX_O_CallReference);
+        optionalCodeToIndex.put(ConnectionRequest._PARAMETER_CODE, AbstractFacilityMessageImpl._INDEX_O_ConnectionRequest);
+        optionalCodeToIndex.put(ParameterCompatibilityInformation._PARAMETER_CODE, AbstractFacilityMessageImpl._INDEX_O_ParameterCompatibilityInformation);
+
+
+        FAA_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+        FAA_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+        FAA_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+        FAA_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+        FAA_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+        FAA_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+        mandatoryCodes = new HashSet<Integer>();
+        mandatoryVariableCodes = new HashSet<Integer>();
+        optionalCodes = new HashSet<Integer>();
+        mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+        mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+        optionalCodeToIndex = new HashMap<Integer, Integer>();
+
+        _FAA_HOLDER = FAA_HOLDER;
+        // FRJ
+        MessageIndexingPlaceHolder FRJ_HOLDER = new MessageIndexingPlaceHolder();
+        FRJ_HOLDER.commandCode = FacilityRejectedMessage.MESSAGE_CODE;
+
+        mandatoryCodes.add(FacilityIndicator._PARAMETER_CODE);
+        mandatoryCodeToIndex.put(FacilityIndicator._PARAMETER_CODE, FacilityRejectedMessageImpl._INDEX_F_FacilityIndicator);
+
+        mandatoryVariableCodes.add(CauseIndicators._PARAMETER_CODE);
+        mandatoryVariableCodeToIndex.put(CauseIndicators._PARAMETER_CODE, FacilityRejectedMessageImpl._INDEX_V_CauseIndicators);
+
+        optionalCodes.add(UserToUserIndicators._PARAMETER_CODE);
+        optionalCodeToIndex.put(UserToUserIndicators._PARAMETER_CODE, FacilityRejectedMessageImpl._INDEX_O_UserToUserIndicators);
+
+        FRJ_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+        FRJ_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+        FRJ_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+        FRJ_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+        FRJ_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+        FRJ_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+        mandatoryCodes = new HashSet<Integer>();
+        mandatoryVariableCodes = new HashSet<Integer>();
+        optionalCodes = new HashSet<Integer>();
+        mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+        mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+        optionalCodeToIndex = new HashMap<Integer, Integer>();
+
+        _FRJ_HOLDER = FRJ_HOLDER;
+
+        // FAR
+        MessageIndexingPlaceHolder FAR_HOLDER = new MessageIndexingPlaceHolder();
+        FAR_HOLDER.commandCode = FacilityRequestMessage.MESSAGE_CODE;
+
+        mandatoryCodes.add(FacilityIndicator._PARAMETER_CODE);
+        mandatoryCodeToIndex.put(FacilityIndicator._PARAMETER_CODE, AbstractFacilityMessageImpl._INDEX_F_FacilityIndicator);
+
+        optionalCodes.add(UserToUserIndicators._PARAMETER_CODE);
+        optionalCodes.add(CallReference._PARAMETER_CODE);
+        optionalCodes.add(ConnectionRequest._PARAMETER_CODE);
+        optionalCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
+        optionalCodeToIndex.put(UserToUserIndicators._PARAMETER_CODE, AbstractFacilityMessageImpl._INDEX_O_UserToUserIndicators);
+        optionalCodeToIndex.put(CallReference._PARAMETER_CODE, AbstractFacilityMessageImpl._INDEX_O_CallReference);
+        optionalCodeToIndex.put(ConnectionRequest._PARAMETER_CODE, AbstractFacilityMessageImpl._INDEX_O_ConnectionRequest);
+        optionalCodeToIndex.put(ParameterCompatibilityInformation._PARAMETER_CODE, AbstractFacilityMessageImpl._INDEX_O_ParameterCompatibilityInformation);
+
+        FAR_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+        FAR_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+        FAR_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+        FAR_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+        FAR_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+        FAR_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+        mandatoryCodes = new HashSet<Integer>();
+        mandatoryVariableCodes = new HashSet<Integer>();
+        optionalCodes = new HashSet<Integer>();
+        mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+        mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+        optionalCodeToIndex = new HashMap<Integer, Integer>();
+
+        _FAR_HOLDER = FAR_HOLDER;
+        // FOT
+        MessageIndexingPlaceHolder FOT_HOLDER = new MessageIndexingPlaceHolder();
+        FOT_HOLDER.commandCode = ForwardTransferMessage.MESSAGE_CODE;
+
+        optionalCodes.add(CallReference._PARAMETER_CODE);
+
+        optionalCodeToIndex.put(CallReference._PARAMETER_CODE, ForwardTransferMessageImpl._INDEX_O_CallReference);
+
+        FOT_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+        FOT_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+        FOT_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+        FOT_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+        FOT_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+        FOT_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+        mandatoryCodes = new HashSet<Integer>();
+        mandatoryVariableCodes = new HashSet<Integer>();
+        optionalCodes = new HashSet<Integer>();
+        mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+        mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+        optionalCodeToIndex = new HashMap<Integer, Integer>();
+        _FOT_HOLDER = FOT_HOLDER;
+        // IDR
+        MessageIndexingPlaceHolder IDR_HOLDER = new MessageIndexingPlaceHolder();
+        IDR_HOLDER.commandCode = IdentificationRequestMessage.MESSAGE_CODE;
+
+        optionalCodes.add(MCIDRequestIndicators._PARAMETER_CODE);
+        optionalCodes.add(MessageCompatibilityInformation._PARAMETER_CODE);
+        optionalCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
+
+        optionalCodeToIndex.put(MCIDRequestIndicators._PARAMETER_CODE, IdentificationRequestMessageImpl._INDEX_O_MCIDRequestIndicators);
+        optionalCodeToIndex.put(MessageCompatibilityInformation._PARAMETER_CODE, IdentificationRequestMessageImpl._INDEX_O_MessageCompatibilityInformation);
+        optionalCodeToIndex.put(ParameterCompatibilityInformation._PARAMETER_CODE, IdentificationRequestMessageImpl._INDEX_O_ParameterCompatibilityInformation);
+
+
+        IDR_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+        IDR_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+        IDR_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+        IDR_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+        IDR_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+        IDR_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+        mandatoryCodes = new HashSet<Integer>();
+        mandatoryVariableCodes = new HashSet<Integer>();
+        optionalCodes = new HashSet<Integer>();
+        mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+        mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+        optionalCodeToIndex = new HashMap<Integer, Integer>();
+        _IDR_HOLDER = IDR_HOLDER;
+        // IRS
+        MessageIndexingPlaceHolder IRS_HOLDER = new MessageIndexingPlaceHolder();
+        IRS_HOLDER.commandCode = IdentificationResponseMessage.MESSAGE_CODE;
+
+        optionalCodes.add(MCIDResponseIndicators._PARAMETER_CODE);
+        optionalCodes.add(MessageCompatibilityInformation._PARAMETER_CODE);
+        optionalCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
+        optionalCodes.add(CallingPartyNumber._PARAMETER_CODE);
+        optionalCodes.add(AccessTransport._PARAMETER_CODE);
+        optionalCodes.add(GenericNumber._PARAMETER_CODE);
+        optionalCodes.add(ChargedPartyIdentification._PARAMETER_CODE);
+
+        optionalCodeToIndex.put(MCIDResponseIndicators._PARAMETER_CODE, IdentificationResponseMessageImpl._INDEX_O_MCIDResponseIndicators);
+        optionalCodeToIndex.put(MessageCompatibilityInformation._PARAMETER_CODE, IdentificationResponseMessageImpl._INDEX_O_MessageCompatibilityInformation);
+        optionalCodeToIndex.put(ParameterCompatibilityInformation._PARAMETER_CODE, IdentificationResponseMessageImpl._INDEX_O_ParameterCompatibilityInformation);
+        optionalCodeToIndex.put(CallingPartyNumber._PARAMETER_CODE, IdentificationResponseMessageImpl._INDEX_O_CallingPartyNumber);
+        optionalCodeToIndex.put(AccessTransport._PARAMETER_CODE, IdentificationResponseMessageImpl._INDEX_O_AccessTransport);
+        optionalCodeToIndex.put(GenericNumber._PARAMETER_CODE, IdentificationResponseMessageImpl._INDEX_O_GenericNumber);
+        optionalCodeToIndex.put(ChargedPartyIdentification._PARAMETER_CODE, IdentificationResponseMessageImpl._INDEX_O_ChargedPartyIdentification);
+
+
+        IRS_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+        IRS_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+        IRS_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+        IRS_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+        IRS_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+        IRS_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+        mandatoryCodes = new HashSet<Integer>();
+        mandatoryVariableCodes = new HashSet<Integer>();
+        optionalCodes = new HashSet<Integer>();
+        mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+        mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+        optionalCodeToIndex = new HashMap<Integer, Integer>();
+        _IRS_HOLDER = IRS_HOLDER;
         // FIXME: INR
         MessageIndexingPlaceHolder INR_HOLDER = new MessageIndexingPlaceHolder();
 
@@ -959,7 +1224,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(CCR_HOLDER.commandCode, CCR_HOLDER);
+
         _INR_HOLDER = INR_HOLDER;
         // FIXME: INF
         MessageIndexingPlaceHolder INF_HOLDER = new MessageIndexingPlaceHolder();
@@ -998,7 +1263,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(CCR_HOLDER.commandCode, CCR_HOLDER);
+
         _INF_HOLDER = INF_HOLDER;
         // IAM
         mandatoryCodes.add(NatureOfConnectionIndicators._PARAMETER_CODE);
@@ -1113,7 +1378,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(IAM_HOLDER.commandCode, IAM_HOLDER);
+
         _IAM_HOLDER = IAM_HOLDER;
 
         // LPA
@@ -1132,10 +1397,64 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(LPA_HOLDER.commandCode, LPA_HOLDER);
+
         _LPA_HOLDER = LPA_HOLDER;
-        // FIXME: LPP
-        // FIXME: NRM
+        // LPP
+        MessageIndexingPlaceHolder LPP_HOLDER = new MessageIndexingPlaceHolder();
+        LPP_HOLDER.commandCode = LoopPreventionMessage.MESSAGE_CODE;
+
+        optionalCodes.add(MessageCompatibilityInformation._PARAMETER_CODE);
+        optionalCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
+        optionalCodes.add(CallTransferReference._PARAMETER_CODE);
+        optionalCodes.add(LoopPreventionIndicators._PARAMETER_CODE);
+
+        optionalCodeToIndex.put(MessageCompatibilityInformation._PARAMETER_CODE,LoopPreventionMessageImpl._INDEX_O_MessageCompatibilityInformation);
+        optionalCodeToIndex.put(ParameterCompatibilityInformation._PARAMETER_CODE,LoopPreventionMessageImpl._INDEX_O_ParameterCompatibilityInformation);
+        optionalCodeToIndex.put(CallTransferReference._PARAMETER_CODE,LoopPreventionMessageImpl._INDEX_O_CallTransferReference);
+        optionalCodeToIndex.put(LoopPreventionIndicators._PARAMETER_CODE,LoopPreventionMessageImpl._INDEX_O_LoopPreventionIndicators);
+
+        LPP_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+        LPP_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+        LPP_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+        LPP_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+        LPP_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+        LPP_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+        mandatoryCodes = new HashSet<Integer>();
+        mandatoryVariableCodes = new HashSet<Integer>();
+        optionalCodes = new HashSet<Integer>();
+        mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+        mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+        optionalCodeToIndex = new HashMap<Integer, Integer>();
+        _LPP_HOLDER = LPP_HOLDER;
+        // NRM
+        MessageIndexingPlaceHolder NRM_HOLDER = new MessageIndexingPlaceHolder();
+        NRM_HOLDER.commandCode = NetworkResourceManagementMessage.MESSAGE_CODE;
+
+        optionalCodes.add(MessageCompatibilityInformation._PARAMETER_CODE);
+        optionalCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
+        optionalCodes.add(EchoControlInformation._PARAMETER_CODE);
+
+
+        optionalCodeToIndex.put(MessageCompatibilityInformation._PARAMETER_CODE,NetworkResourceManagementMessageImpl._INDEX_O_MessageCompatibilityInformation);
+        optionalCodeToIndex.put(ParameterCompatibilityInformation._PARAMETER_CODE,NetworkResourceManagementMessageImpl._INDEX_O_ParameterCompatibilityInformation);
+        optionalCodeToIndex.put(EchoControlInformation._PARAMETER_CODE,NetworkResourceManagementMessageImpl._INDEX_O_EchoControlInformation);
+
+
+        NRM_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+        NRM_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+        NRM_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+        NRM_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+        NRM_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+        NRM_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+        mandatoryCodes = new HashSet<Integer>();
+        mandatoryVariableCodes = new HashSet<Integer>();
+        optionalCodes = new HashSet<Integer>();
+        mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+        mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+        optionalCodeToIndex = new HashMap<Integer, Integer>();
+        _NRM_HOLDER = NRM_HOLDER;
         // OLM
         MessageIndexingPlaceHolder OLM_HOLDER = new MessageIndexingPlaceHolder();
         OLM_HOLDER.commandCode = OverloadMessage.MESSAGE_CODE;
@@ -1152,11 +1471,40 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(OLM_HOLDER.commandCode, OLM_HOLDER);
-        _OLM_HOLDER = OLM_HOLDER;
-        // FIXME: PAM
-        // FIXME: PRI
 
+        _OLM_HOLDER = OLM_HOLDER;
+        // PAM - no need for this
+        // FIXME: PRI
+        MessageIndexingPlaceHolder PRI_HOLDER = new MessageIndexingPlaceHolder();
+        PRI_HOLDER.commandCode = PreReleaseInformationMessage.MESSAGE_CODE;
+
+        optionalCodes.add(MessageCompatibilityInformation._PARAMETER_CODE);
+        optionalCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
+        optionalCodes.add(OptionalForwardCallIndicators._PARAMETER_CODE);
+        optionalCodes.add(OptionalBackwardCallIndicators._PARAMETER_CODE);
+        optionalCodes.add(ApplicationTransport._PARAMETER_CODE);
+
+        optionalCodeToIndex.put(MessageCompatibilityInformation._PARAMETER_CODE,PreReleaseInformationMessageImpl._INDEX_O_MessageCompatibilityInformation);
+        optionalCodeToIndex.put(ParameterCompatibilityInformation._PARAMETER_CODE,PreReleaseInformationMessageImpl._INDEX_O_ParameterCompatibilityInformation);
+        optionalCodeToIndex.put(OptionalForwardCallIndicators._PARAMETER_CODE,PreReleaseInformationMessageImpl._INDEX_O_OptionalForwardCallIndicators);
+        optionalCodeToIndex.put(OptionalBackwardCallIndicators._PARAMETER_CODE,PreReleaseInformationMessageImpl._INDEX_O_OptionalBackwardCallIndicators);
+        optionalCodeToIndex.put(ApplicationTransport._PARAMETER_CODE,PreReleaseInformationMessageImpl._INDEX_O_ApplicationTransport);
+
+        PRI_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+        PRI_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+        PRI_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+        PRI_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+        PRI_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+        PRI_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+        mandatoryCodes = new HashSet<Integer>();
+        mandatoryVariableCodes = new HashSet<Integer>();
+        optionalCodes = new HashSet<Integer>();
+        mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+        mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+        optionalCodeToIndex = new HashMap<Integer, Integer>();
+
+        _PRI_HOLDER = PRI_HOLDER;
         // REL
         mandatoryVariableCodes.add(CauseIndicators._PARAMETER_CODE);
         mandatoryVariableCodeToIndex.put(CauseIndicators._PARAMETER_CODE, ReleaseMessageImpl._INDEX_V_CauseIndicators);
@@ -1211,7 +1559,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(REL_HOLDER.commandCode, REL_HOLDER);
+
         _REL_HOLDER = REL_HOLDER;
 
         // RLC
@@ -1233,7 +1581,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(RLC_HOLDER.commandCode, RLC_HOLDER);
+
         _RLC_HOLDER = RLC_HOLDER;
 
         // RSC
@@ -1252,10 +1600,64 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(RSC_HOLDER.commandCode, RSC_HOLDER);
+
         _RSC_HOLDER = RSC_HOLDER;
-        // FIXME: RES
-        // FIXME: SGM
+        // RES
+        mandatoryCodes.add(SuspendResumeIndicators._PARAMETER_CODE);
+        optionalCodes.add(CallReference._PARAMETER_CODE);
+        mandatoryCodeToIndex.put(SuspendResumeIndicators._PARAMETER_CODE, ResumeMessageImpl._INDEX_F_SuspendResumeIndicators);
+        optionalCodeToIndex.put(CallReference._PARAMETER_CODE,ResumeMessageImpl._INDEX_O_CallReference);
+
+        MessageIndexingPlaceHolder RES_HOLDER = new MessageIndexingPlaceHolder();
+        RES_HOLDER.commandCode = ResumeMessage.MESSAGE_CODE;
+        RES_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+        RES_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+        RES_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+        RES_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+        RES_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+        RES_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+        mandatoryCodes = new HashSet<Integer>();
+        mandatoryVariableCodes = new HashSet<Integer>();
+        optionalCodes = new HashSet<Integer>();
+        mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+        mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+        optionalCodeToIndex = new HashMap<Integer, Integer>();
+
+        _RES_HOLDER = RES_HOLDER;
+        // SGM
+        optionalCodes.add(AccessTransport._PARAMETER_CODE);
+        optionalCodes.add(UserToUserInformation._PARAMETER_CODE);
+        optionalCodes.add(MessageCompatibilityInformation._PARAMETER_CODE);
+        optionalCodes.add(GenericDigits._PARAMETER_CODE);
+        optionalCodes.add(GenericNotificationIndicator._PARAMETER_CODE);
+        optionalCodes.add(GenericNumber._PARAMETER_CODE);
+
+        optionalCodeToIndex.put(AccessTransport._PARAMETER_CODE,SegmentationMessageImpl._INDEX_O_AccessTransport);
+        optionalCodeToIndex.put(UserToUserInformation._PARAMETER_CODE,SegmentationMessageImpl._INDEX_O_UserToUserInformation);
+        optionalCodeToIndex.put(MessageCompatibilityInformation._PARAMETER_CODE,SegmentationMessageImpl._INDEX_O_MessageCompatibilityInformation);
+        optionalCodeToIndex.put(GenericDigits._PARAMETER_CODE,SegmentationMessageImpl._INDEX_O_GenericDigits);
+        optionalCodeToIndex.put(GenericNotificationIndicator._PARAMETER_CODE,SegmentationMessageImpl._INDEX_O_GenericNotificationIndicator);
+        optionalCodeToIndex.put(GenericNumber._PARAMETER_CODE,SegmentationMessageImpl._INDEX_O_GenericNumber);
+
+
+        MessageIndexingPlaceHolder SGM_HOLDER = new MessageIndexingPlaceHolder();
+        SGM_HOLDER.commandCode = SegmentationMessage.MESSAGE_CODE;
+        SGM_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+        SGM_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+        SGM_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+        SGM_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+        SGM_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+        SGM_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+        mandatoryCodes = new HashSet<Integer>();
+        mandatoryVariableCodes = new HashSet<Integer>();
+        optionalCodes = new HashSet<Integer>();
+        mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+        mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+        optionalCodeToIndex = new HashMap<Integer, Integer>();
+
+        _SGM_HOLDER = SGM_HOLDER;
         // SAM
         MessageIndexingPlaceHolder SAM_HOLDER = new MessageIndexingPlaceHolder();
 
@@ -1278,8 +1680,53 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
         _SAM_HOLDER = SAM_HOLDER;
-        // FIXME: SDN
-        // FIXME: SUS
+        // SDN
+        MessageIndexingPlaceHolder SDN_HOLDER = new MessageIndexingPlaceHolder();
+
+        optionalCodes.add(SubsequentNumber._PARAMETER_CODE);
+        optionalCodes.add(MessageCompatibilityInformation._PARAMETER_CODE);
+
+        optionalCodeToIndex.put(SubsequentNumber._PARAMETER_CODE, SubsequentDirectoryNumberMessageImpl._INDEX_O_SubsequentNumber);
+        optionalCodeToIndex.put(MessageCompatibilityInformation._PARAMETER_CODE, SubsequentDirectoryNumberMessageImpl._INDEX_O_MessageCompatibilityInformation);
+
+        SDN_HOLDER.commandCode = SubsequentDirectoryNumberMessage.MESSAGE_CODE;
+        SDN_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+        SDN_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+        SDN_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+        SDN_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+        SDN_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+        SDN_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+        mandatoryCodes = new HashSet<Integer>();
+        mandatoryVariableCodes = new HashSet<Integer>();
+        optionalCodes = new HashSet<Integer>();
+        mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+        mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+        optionalCodeToIndex = new HashMap<Integer, Integer>();
+        _SDN_HOLDER = SDN_HOLDER;
+        // SUS
+        mandatoryCodes.add(SuspendResumeIndicators._PARAMETER_CODE);
+        optionalCodes.add(CallReference._PARAMETER_CODE);
+        mandatoryCodeToIndex.put(SuspendResumeIndicators._PARAMETER_CODE, SuspendMessageImpl._INDEX_F_SuspendResumeIndicators);
+        optionalCodeToIndex.put(CallReference._PARAMETER_CODE,SuspendMessageImpl._INDEX_O_CallReference);
+
+        MessageIndexingPlaceHolder SUS_HOLDER = new MessageIndexingPlaceHolder();
+        SUS_HOLDER.commandCode = SuspendMessage.MESSAGE_CODE;
+        SUS_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+        SUS_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+        SUS_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+        SUS_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+        SUS_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+        SUS_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+        mandatoryCodes = new HashSet<Integer>();
+        mandatoryVariableCodes = new HashSet<Integer>();
+        optionalCodes = new HashSet<Integer>();
+        mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+        mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+        optionalCodeToIndex = new HashMap<Integer, Integer>();
+
+        _SUS_HOLDER = SUS_HOLDER;
         // UBL
         MessageIndexingPlaceHolder UBL_HOLDER = new MessageIndexingPlaceHolder();
         UBL_HOLDER.commandCode = UnblockingMessage.MESSAGE_CODE;
@@ -1296,7 +1743,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(UBL_HOLDER.commandCode, UBL_HOLDER);
+
         _UBL_HOLDER = UBL_HOLDER;
         // UBA
         MessageIndexingPlaceHolder UBA_HOLDER = new MessageIndexingPlaceHolder();
@@ -1314,7 +1761,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(UBA_HOLDER.commandCode, UBA_HOLDER);
+
         _UBA_HOLDER = UBA_HOLDER;
         // UCIC
         MessageIndexingPlaceHolder UCIC_HOLDER = new MessageIndexingPlaceHolder();
@@ -1332,14 +1779,78 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex = new HashMap<Integer, Integer>();
         mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
         optionalCodeToIndex = new HashMap<Integer, Integer>();
-        // _commandCode2CommandIndexes.put(UCIC_HOLDER.commandCode,
-        // UCIC_HOLDER);
+
         _UCIC_HOLDER = UCIC_HOLDER;
-        // FIXME: UPA
-        // FIXME: UPT
-        // FIXME: U2UI
-        // _COMMAND_CODE_2_COMMAND_INDEXES =
-        // Collections.unmodifiableMap(_commandCode2CommandIndexes);
+        // UPA
+        MessageIndexingPlaceHolder UPA_HOLDER = new MessageIndexingPlaceHolder();
+        UPA_HOLDER.commandCode = UserPartAvailableMessage.MESSAGE_CODE;
+
+        optionalCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
+        optionalCodeToIndex.put(ParameterCompatibilityInformation._PARAMETER_CODE,UserPartAvailableMessageImpl._INDEX_O_ParameterCompatibilityInformation);
+
+        UPA_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+        UPA_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+        UPA_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+        UPA_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+        UPA_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+        UPA_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+        mandatoryCodes = new HashSet<Integer>();
+        mandatoryVariableCodes = new HashSet<Integer>();
+        optionalCodes = new HashSet<Integer>();
+        mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+        mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+        optionalCodeToIndex = new HashMap<Integer, Integer>();
+
+        _UPA_HOLDER = UPA_HOLDER;
+        // UPT
+        MessageIndexingPlaceHolder UPT_HOLDER = new MessageIndexingPlaceHolder();
+        UPT_HOLDER.commandCode = UserPartTestMessage.MESSAGE_CODE;
+
+        optionalCodes.add(ParameterCompatibilityInformation._PARAMETER_CODE);
+        optionalCodeToIndex.put(ParameterCompatibilityInformation._PARAMETER_CODE,UserPartAvailableMessageImpl._INDEX_O_ParameterCompatibilityInformation);
+
+        UPT_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+        UPT_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+        UPT_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+        UPT_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+        UPT_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+        UPT_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+        mandatoryCodes = new HashSet<Integer>();
+        mandatoryVariableCodes = new HashSet<Integer>();
+        optionalCodes = new HashSet<Integer>();
+        mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+        mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+        optionalCodeToIndex = new HashMap<Integer, Integer>();
+
+        _UPT_HOLDER = UPT_HOLDER;
+        // U2UI
+        MessageIndexingPlaceHolder U2UI_HOLDER = new MessageIndexingPlaceHolder();
+        U2UI_HOLDER.commandCode = UserToUserInformationMessage.MESSAGE_CODE;
+
+        optionalCodes.add(AccessTransport._PARAMETER_CODE);
+        optionalCodeToIndex.put(AccessTransport._PARAMETER_CODE,UserToUserInformationMessageImpl._INDEX_O_AccessTransport);
+
+        mandatoryVariableCodes.add(UserToUserInformation._PARAMETER_CODE);
+        mandatoryVariableCodeToIndex.put(UserToUserInformation._PARAMETER_CODE,UserToUserInformationMessageImpl._INDEX_V_User2UserInformation);
+
+        U2UI_HOLDER.mandatoryCodes = Collections.unmodifiableSet(mandatoryCodes);
+        U2UI_HOLDER.mandatoryVariableCodes = Collections.unmodifiableSet(mandatoryVariableCodes);
+        U2UI_HOLDER.optionalCodes = Collections.unmodifiableSet(optionalCodes);
+        U2UI_HOLDER.mandatoryCodeToIndex = Collections.unmodifiableMap(mandatoryCodeToIndex);
+        U2UI_HOLDER.mandatoryVariableCodeToIndex = Collections.unmodifiableMap(mandatoryVariableCodeToIndex);
+        U2UI_HOLDER.optionalCodeToIndex = Collections.unmodifiableMap(optionalCodeToIndex);
+
+        mandatoryCodes = new HashSet<Integer>();
+        mandatoryVariableCodes = new HashSet<Integer>();
+        optionalCodes = new HashSet<Integer>();
+        mandatoryCodeToIndex = new HashMap<Integer, Integer>();
+        mandatoryVariableCodeToIndex = new HashMap<Integer, Integer>();
+        optionalCodeToIndex = new HashMap<Integer, Integer>();
+
+        _U2U_HOLDER = U2UI_HOLDER;
+
     }
 
     public ISUPMessageFactoryImpl(ISUPParameterFactory parameterFactory) {
@@ -1410,10 +1921,11 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      */
     @Override
     public ApplicationTransportMessage createAPT() {
-        // TODO
-        // ApplicationTransportMessageImpl apt = new ApplicationTransportMessageImpl();
-        // return apt;
-        throw new UnsupportedOperationException();
+        ApplicationTransportMessageImpl apt = new ApplicationTransportMessageImpl(_APT_HOLDER.mandatoryCodes, _APT_HOLDER.mandatoryVariableCodes,
+                _APT_HOLDER.optionalCodes, _APT_HOLDER.mandatoryCodeToIndex, _APT_HOLDER.mandatoryVariableCodeToIndex,
+                _APT_HOLDER.optionalCodeToIndex);
+
+        return apt;
     }
 
     /*
@@ -1865,8 +2377,8 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
                 UserPartTestMessage UPT = createUPT();
                 return UPT;
 
-            case User2UserInformationMessage.MESSAGE_CODE:
-                User2UserInformationMessage USR = createUSR();
+            case UserToUserInformationMessage.MESSAGE_CODE:
+                UserToUserInformationMessage USR = createUSR();
                 return USR;
             default:
                 throw new IllegalArgumentException("Not supported comamnd code: " + commandCode);
@@ -2027,10 +2539,11 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createFAA(int cic)
      */
     public FacilityAcceptedMessage createFAA() {
-        // TODO:
-        // FacilityAcceptedMessage msg = new FacilityAcceptedMessageImpl();
-        // return msg;
-        throw new UnsupportedOperationException();
+        FacilityAcceptedMessage msg = new FacilityAcceptedMessageImpl(_FAA_HOLDER.mandatoryCodes,
+                _FAA_HOLDER.mandatoryVariableCodes, _FAA_HOLDER.optionalCodes, _FAA_HOLDER.mandatoryCodeToIndex,
+                _FAA_HOLDER.mandatoryVariableCodeToIndex, _FAA_HOLDER.optionalCodeToIndex);
+
+        return msg;
     }
 
     /*
@@ -2054,10 +2567,11 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      */
     @Override
     public FacilityMessage createFAC() {
-        // TODO
-        // FacilityMessage msg = new FacilityMessageImpl();
-        // return msg;
-        throw new UnsupportedOperationException();
+        FacilityMessage msg = new FacilityMessageImpl(_FAC_HOLDER.mandatoryCodes,
+                _FAC_HOLDER.mandatoryVariableCodes, _FAC_HOLDER.optionalCodes, _FAC_HOLDER.mandatoryCodeToIndex,
+                _FAC_HOLDER.mandatoryVariableCodeToIndex, _FAC_HOLDER.optionalCodeToIndex);
+
+        return msg;
     }
 
     /*
@@ -2080,10 +2594,11 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      */
     @Override
     public FacilityRequestMessage createFAR() {
-        // TODO
-        // FacilityRequestMessage msg = new FacilityRequestMessageImpl();
-        // return msg;
-        throw new UnsupportedOperationException();
+        FacilityRequestMessage msg = new FacilityRequestMessageImpl(_FAR_HOLDER.mandatoryCodes,
+                _FAR_HOLDER.mandatoryVariableCodes, _FAR_HOLDER.optionalCodes, _FAR_HOLDER.mandatoryCodeToIndex,
+                _FAR_HOLDER.mandatoryVariableCodeToIndex, _FAR_HOLDER.optionalCodeToIndex);
+
+        return msg;
     }
 
     /*
@@ -2106,10 +2621,11 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      */
     @Override
     public ForwardTransferMessage createFOT() {
-        // TODO:
-        // ForwardTransferMessage msg = new ForwardTransferMessageImpl();
-        // return msg;
-        throw new UnsupportedOperationException();
+        ForwardTransferMessage msg = new ForwardTransferMessageImpl(_FOT_HOLDER.mandatoryCodes,
+                _FOT_HOLDER.mandatoryVariableCodes, _FOT_HOLDER.optionalCodes, _FOT_HOLDER.mandatoryCodeToIndex,
+                _FOT_HOLDER.mandatoryVariableCodeToIndex, _FOT_HOLDER.optionalCodeToIndex);
+
+        return msg;
     }
 
     /*
@@ -2132,10 +2648,11 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      */
     @Override
     public FacilityRejectedMessage createFRJ() {
-        // TODO
-        // FacilityRejectedMessage msg = new FacilityRejectedMessageImpl();
-        // return msg;
-        throw new UnsupportedOperationException();
+        FacilityRejectedMessage msg = new FacilityRejectedMessageImpl(_FRJ_HOLDER.mandatoryCodes,
+                _FRJ_HOLDER.mandatoryVariableCodes, _FRJ_HOLDER.optionalCodes, _FRJ_HOLDER.mandatoryCodeToIndex,
+                _FRJ_HOLDER.mandatoryVariableCodeToIndex, _FRJ_HOLDER.optionalCodeToIndex);
+
+        return msg;
     }
 
     /*
@@ -2157,7 +2674,6 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createGRA(int cic)
      */
     public CircuitGroupResetAckMessage createGRA() {
-
         CircuitGroupResetAckMessage msg = new CircuitGroupResetAckMessageImpl(_GRA_HOLDER.mandatoryCodes,
                 _GRA_HOLDER.mandatoryVariableCodes, _GRA_HOLDER.optionalCodes, _GRA_HOLDER.mandatoryCodeToIndex,
                 _GRA_HOLDER.mandatoryVariableCodeToIndex, _GRA_HOLDER.optionalCodeToIndex);
@@ -2238,10 +2754,10 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      */
     @Override
     public IdentificationRequestMessage createIDR() {
-        // TODO
-        // IdentificationRequestMessage msg = new IdentificationRequestMessageImpl();
-        // return msg;
-        throw new UnsupportedOperationException();
+        IdentificationRequestMessage msg = new IdentificationRequestMessageImpl(_IDR_HOLDER.mandatoryCodes,
+                _IDR_HOLDER.mandatoryVariableCodes, _IDR_HOLDER.optionalCodes, _IDR_HOLDER.mandatoryCodeToIndex,
+                _IDR_HOLDER.mandatoryVariableCodeToIndex, _IDR_HOLDER.optionalCodeToIndex);
+        return msg;
     }
 
     /*
@@ -2315,10 +2831,10 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createIRS(int cic)
      */
     public IdentificationResponseMessage createIRS() {
-        // TODO
-        // IdentificationResponseMessage msg = new IdentificationResponseMessageImpl();
-        // return msg;
-        throw new UnsupportedOperationException();
+        IdentificationResponseMessage msg = new IdentificationResponseMessageImpl(_IRS_HOLDER.mandatoryCodes,
+                _IRS_HOLDER.mandatoryVariableCodes, _IRS_HOLDER.optionalCodes, _IRS_HOLDER.mandatoryCodeToIndex,
+                _IRS_HOLDER.mandatoryVariableCodeToIndex, _IRS_HOLDER.optionalCodeToIndex);
+        return msg;
     }
 
     /*
@@ -2370,10 +2886,11 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      */
     @Override
     public LoopPreventionMessage createLPP() {
-        // TODO
-        // LoopPreventionMessage msg = new LoopPreventionMessageImpl();
-        // return msg;
-        throw new UnsupportedOperationException();
+        LoopPreventionMessage msg = new LoopPreventionMessageImpl(_LPP_HOLDER.mandatoryCodes, _LPP_HOLDER.mandatoryVariableCodes,
+                _LPP_HOLDER.optionalCodes, _LPP_HOLDER.mandatoryCodeToIndex, _LPP_HOLDER.mandatoryVariableCodeToIndex,
+                _LPP_HOLDER.optionalCodeToIndex);
+
+        return msg;
     }
 
     /*
@@ -2396,10 +2913,11 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      */
     @Override
     public NetworkResourceManagementMessage createNRM() {
-        // TODO
-        // NetworkResourceManagementMessage msg = new NetworkResourceManagementMessageImpl();
-        // return msg;
-        throw new UnsupportedOperationException();
+        NetworkResourceManagementMessage msg = new NetworkResourceManagementMessageImpl(_NRM_HOLDER.mandatoryCodes, _NRM_HOLDER.mandatoryVariableCodes,
+                _NRM_HOLDER.optionalCodes, _NRM_HOLDER.mandatoryCodeToIndex, _NRM_HOLDER.mandatoryVariableCodeToIndex,
+                _NRM_HOLDER.optionalCodeToIndex);
+
+        return msg;
     }
 
     /*
@@ -2448,10 +2966,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      */
     @Override
     public PassAlongMessage createPAM() {
-        // TODO
-        // PassAlongMessage msg = new PassAlongMessageImpl();
-        // return msg;
-        throw new UnsupportedOperationException();
+        return new PassAlongMessageImpl();
     }
 
     /*
@@ -2474,10 +2989,10 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      */
     @Override
     public PreReleaseInformationMessage createPRI() {
-        // TODO
-        // PreReleaseInformationMessage msg = new PreReleaseInformationMessageImpl();
-        // return msg;
-        throw new UnsupportedOperationException();
+        PreReleaseInformationMessage msg = new PreReleaseInformationMessageImpl(_PRI_HOLDER.mandatoryCodes, _PRI_HOLDER.mandatoryVariableCodes,
+                _PRI_HOLDER.optionalCodes, _PRI_HOLDER.mandatoryCodeToIndex, _PRI_HOLDER.mandatoryVariableCodeToIndex,
+                _PRI_HOLDER.optionalCodeToIndex);
+        return msg;
     }
 
     /*
@@ -2526,10 +3041,10 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      */
     @Override
     public ResumeMessage createRES() {
-        // TODO
-        // ResumeMessage msg = new ResumeMessageImpl();
-        // return msg;
-        throw new UnsupportedOperationException();
+        ResumeMessage msg = new ResumeMessageImpl(_RES_HOLDER.mandatoryCodes, _RES_HOLDER.mandatoryVariableCodes,
+                _RES_HOLDER.optionalCodes, _RES_HOLDER.mandatoryCodeToIndex, _RES_HOLDER.mandatoryVariableCodeToIndex,
+                _RES_HOLDER.optionalCodeToIndex);
+        return msg;
     }
 
     /*
@@ -2632,10 +3147,10 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      */
     @Override
     public SubsequentDirectoryNumberMessage createSDN() {
-        // TODO
-        // SubsequentDirectoryNumberMessage msg = new SubsequentDirectoryNumberMessageImpl();
-        // return msg;
-        throw new UnsupportedOperationException();
+        SubsequentDirectoryNumberMessage msg = new SubsequentDirectoryNumberMessageImpl(_SDN_HOLDER.mandatoryCodes,
+                _SDN_HOLDER.mandatoryVariableCodes, _SDN_HOLDER.optionalCodes, _SDN_HOLDER.mandatoryCodeToIndex,
+                _SDN_HOLDER.mandatoryVariableCodeToIndex, _SDN_HOLDER.optionalCodeToIndex);
+        return msg;
     }
 
     /*
@@ -2658,10 +3173,10 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      */
     @Override
     public SegmentationMessage createSGM() {
-        // TODO
-        // SegmentationMessage msg = new SegmentationMessageImpl();
-        // return msg;
-        throw new UnsupportedOperationException();
+        SegmentationMessage msg = new SegmentationMessageImpl(_SGM_HOLDER.mandatoryCodes,
+                _SGM_HOLDER.mandatoryVariableCodes, _SGM_HOLDER.optionalCodes, _SGM_HOLDER.mandatoryCodeToIndex,
+                _SGM_HOLDER.mandatoryVariableCodeToIndex, _SGM_HOLDER.optionalCodeToIndex);
+        return msg;
     }
 
     /*
@@ -2684,9 +3199,11 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      */
     @Override
     public SuspendMessage createSUS() {
-        // SuspendMessage msg = new SuspendMessageImpl();
-        // return msg;
-        throw new UnsupportedOperationException();
+        SuspendMessage msg = new SuspendMessageImpl(_SUS_HOLDER.mandatoryCodes, _SUS_HOLDER.mandatoryVariableCodes,
+                _SUS_HOLDER.optionalCodes, _SUS_HOLDER.mandatoryCodeToIndex, _SUS_HOLDER.mandatoryVariableCodeToIndex,
+                _SUS_HOLDER.optionalCodeToIndex);
+
+        return msg;
     }
 
     /*
@@ -2708,7 +3225,6 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createUBA(int cic)
      */
     public UnblockingAckMessage createUBA() {
-
         UnblockingAckMessage msg = new UnblockingAckMessageImpl(_UBA_HOLDER.mandatoryCodes, _UBA_HOLDER.mandatoryVariableCodes,
                 _UBA_HOLDER.optionalCodes, _UBA_HOLDER.mandatoryCodeToIndex, _UBA_HOLDER.mandatoryVariableCodeToIndex,
                 _UBA_HOLDER.optionalCodeToIndex);
@@ -2789,9 +3305,10 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      */
     @Override
     public UserPartAvailableMessage createUPA() {
-        // UserPartAvailableMessage msg = new UserPartAvailableMessageImpl();
-        // return msg;
-        throw new UnsupportedOperationException();
+        UserPartAvailableMessage msg = new UserPartAvailableMessageImpl(_UPA_HOLDER.mandatoryCodes,
+                _UPA_HOLDER.mandatoryVariableCodes, _UPA_HOLDER.optionalCodes, _UPA_HOLDER.mandatoryCodeToIndex,
+                _UPA_HOLDER.mandatoryVariableCodeToIndex, _UPA_HOLDER.optionalCodeToIndex);
+        return msg;
     }
 
     /*
@@ -2814,9 +3331,10 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      */
     @Override
     public UserPartTestMessage createUPT() {
-        // UserPartTestMessage msg = new UserPartTestMessageImpl();
-        // return msg;
-        throw new UnsupportedOperationException();
+        UserPartTestMessage msg = new UserPartTestMessageImpl(_UPT_HOLDER.mandatoryCodes,
+                _UPT_HOLDER.mandatoryVariableCodes, _UPT_HOLDER.optionalCodes, _UPT_HOLDER.mandatoryCodeToIndex,
+                _UPT_HOLDER.mandatoryVariableCodeToIndex, _UPT_HOLDER.optionalCodeToIndex);
+        return msg;
     }
 
     /*
@@ -2838,10 +3356,11 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createUSR()
      */
     @Override
-    public User2UserInformationMessage createUSR() {
-        // User2UserInformationMessage msg = new User2UserInformationMessageImpl();
-        // return msg;
-        throw new UnsupportedOperationException();
+    public UserToUserInformationMessage createUSR() {
+        UserToUserInformationMessage msg = new UserToUserInformationMessageImpl(_U2U_HOLDER.mandatoryCodes,
+                _U2U_HOLDER.mandatoryVariableCodes, _U2U_HOLDER.optionalCodes, _U2U_HOLDER.mandatoryCodeToIndex,
+                _U2U_HOLDER.mandatoryVariableCodeToIndex, _U2U_HOLDER.optionalCodeToIndex);
+        return msg;
     }
 
     /*
@@ -2849,8 +3368,8 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
      *
      * @see org.mobicents.protocols.ss7.isup.ISUPMessageFactory#createUSR(int cic)
      */
-    public User2UserInformationMessage createUSR(int cic) {
-        User2UserInformationMessage msg = createUSR();
+    public UserToUserInformationMessage createUSR(int cic) {
+        UserToUserInformationMessage msg = createUSR();
         CircuitIdentificationCode code = this.parameterFactory.createCircuitIdentificationCode();
         code.setCIC(cic);
         msg.setCircuitIdentificationCode(code);

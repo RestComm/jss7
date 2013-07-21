@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -78,7 +78,7 @@ public class InformationRequestIndicatorsTest extends ParameterHarness {
                 InformationRequestIndicatorsImpl._INDICATOR_NOT_REQUESTED, 10));
 
         String[] methodNames = { "isCallingPartAddressRequestIndicator", "isHoldingIndicator",
-                "isCallingpartysCategoryRequestIndicator", "isChargeInformationRequestIndicator",
+                "isCallingPartysCategoryRequestIndicator", "isChargeInformationRequestIndicator",
                 "isMaliciousCallIdentificationRequestIndicator", "getReserved" };
         Object[] expectedValues = { InformationRequestIndicatorsImpl._INDICATOR_REQUESTED,
                 InformationRequestIndicatorsImpl._INDICATOR_NOT_REQUESTED,

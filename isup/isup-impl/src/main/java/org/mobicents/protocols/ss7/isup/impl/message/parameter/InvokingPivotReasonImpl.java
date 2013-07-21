@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -30,8 +30,14 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.message.parameter.InformationType;
 import org.mobicents.protocols.ss7.isup.message.parameter.InvokingPivotReason;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotReason;
 
 /**
  * Start time:09:11:07 2009-04-06<br>
@@ -39,55 +45,58 @@ import org.mobicents.protocols.ss7.isup.message.parameter.InvokingPivotReason;
  *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class InvokingPivotReasonImpl extends AbstractISUPParameter implements InvokingPivotReason {
+public class InvokingPivotReasonImpl extends AbstractInformationImpl implements InvokingPivotReason {
 
-    private byte[] reasons = null;
+    private List<PivotReason> reasons = new ArrayList<PivotReason>();
 
-    public InvokingPivotReasonImpl(byte[] reasons) throws ParameterException {
-        super();
-        decode(reasons);
-    }
 
     public InvokingPivotReasonImpl() {
-        super();
-
+        super(InformationType.InvokingPivotReason);
     }
-
-    public int decode(byte[] b) throws ParameterException {
-        try {
-            this.setReasons(b);
-        } catch (Exception e) {
-            throw new ParameterException(e);
+    @Override
+    public void setReason(PivotReason... reasons) {
+        this.reasons.clear();
+        if(reasons == null){
+            return;
         }
-        return b.length;
-    }
-
-    public byte[] encode() throws ParameterException {
-        for (int index = 0; index < this.reasons.length; index++) {
-            this.reasons[index] = (byte) (this.reasons[index] & 0x7F);
+        for(PivotReason pr: reasons){
+            if(pr!=null){
+                this.reasons.add(pr);
+            }
         }
-
-        this.reasons[this.reasons.length - 1] = (byte) ((this.reasons[this.reasons.length - 1]) | (0x01 << 7));
-        return this.reasons;
     }
 
-    public byte[] getReasons() {
-        return reasons;
+    @Override
+    public PivotReason[] getReason() {
+        return this.reasons.toArray(new PivotReason[this.reasons.size()]);
     }
+    @Override
+    byte[] encode() throws ParameterException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        for (int index = 0; index < this.reasons.size(); index++) {
+            PivotReasonImpl ai = (PivotReasonImpl) this.reasons.get(index);
+            ai.trim();
 
-    public void setReasons(byte[] reasons) throws IllegalArgumentException {
-        if (reasons == null || reasons.length == 0) {
-            throw new IllegalArgumentException("byte[] must not be null and length must be greater than 0");
+            byte b = (byte) (ai.encode()[0] & 0x7F);
+            if (index + 1 == this.reasons.size()) {
+                b |= 0x80;
+            }
+            baos.write(b);
+
         }
-        this.reasons = reasons;
+        return baos.toByteArray();
     }
 
-    public int getReason(byte b) {
-        return b & 0x7F;
-    }
-
-    public int getCode() {
-
-        return _PARAMETER_CODE;
+    @Override
+    void decode(byte[] data) throws ParameterException {
+        for(int index = 0;index<data.length;index++){
+            byte b = data[index];
+            PivotReasonImpl pr = new PivotReasonImpl();
+            pr.setPivotReason((byte) (b & 0x7F));
+            if( (b & 0x80) == 0 && index +1 == data.length){
+                throw new ParameterException("Extension bit incicates more bytes, but we ran out of them!");
+            }
+            this.reasons.add(pr);
+        }
     }
 }

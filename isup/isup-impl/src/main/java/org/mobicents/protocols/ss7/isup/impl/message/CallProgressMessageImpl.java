@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -34,10 +34,11 @@ import java.util.Set;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.AbstractISUPParameter;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.EndOfOptionalParametersImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.CallProgressMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformation;
-import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransportParameter;
+import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransport;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardCallIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardGVNS;
 import org.mobicents.protocols.ss7.isup.message.parameter.CCNRPossibleIndicator;
@@ -299,8 +300,8 @@ public class CallProgressMessageImpl extends ISUPMessageImpl implements CallProg
                 ((AbstractISUPParameter) UIDA).decode(parameterBody);
                 this.setUIDActionIndicators(UIDA);
                 break;
-            case ApplicationTransportParameter._PARAMETER_CODE:
-                ApplicationTransportParameter ATP = parameterFactory.createApplicationTransportParameter();
+            case ApplicationTransport._PARAMETER_CODE:
+                ApplicationTransport ATP = parameterFactory.createApplicationTransport();
                 ((AbstractISUPParameter) ATP).decode(parameterBody);
                 this.setApplicationTransportParameter(ATP);
                 break;
@@ -318,6 +319,9 @@ public class CallProgressMessageImpl extends ISUPMessageImpl implements CallProg
                 RedirectStatus RS = parameterFactory.createRedirectStatus();
                 ((AbstractISUPParameter) RS).decode(parameterBody);
                 this.setRedirectStatus(RS);
+                break;
+            case EndOfOptionalParametersImpl._PARAMETER_CODE:
+                // we add this by default
                 break;
             default:
                 throw new ParameterException("Unrecognized parameter code for optional part: " + parameterCode);
@@ -404,7 +408,7 @@ public class CallProgressMessageImpl extends ISUPMessageImpl implements CallProg
     /**
      * @param aTP
      */
-    public void setApplicationTransportParameter(ApplicationTransportParameter aTP) {
+    public void setApplicationTransportParameter(ApplicationTransport aTP) {
         super.o_Parameters.put(_INDEX_O_ApplicationTransportParameter, aTP);
 
     }
@@ -636,8 +640,8 @@ public class CallProgressMessageImpl extends ISUPMessageImpl implements CallProg
     /**
      * @param aTP
      */
-    public ApplicationTransportParameter getApplicationTransportParameter() {
-        return (ApplicationTransportParameter) super.o_Parameters.get(_INDEX_O_ApplicationTransportParameter);
+    public ApplicationTransport getApplicationTransportParameter() {
+        return (ApplicationTransport) super.o_Parameters.get(_INDEX_O_ApplicationTransportParameter);
 
     }
 

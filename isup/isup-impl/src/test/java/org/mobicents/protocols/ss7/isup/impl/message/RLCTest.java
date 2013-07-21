@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -60,7 +60,7 @@ public class RLCTest extends MessageHarness {
         releaseCompleteMessage.setSls(2);
         final byte[] encoded = ((AbstractISUPMessage) releaseCompleteMessage).encode();
         final AbstractISUPMessage msg = (AbstractISUPMessage) getDefaultMessage();
-        msg.decode(encoded, parameterFactory);
+        msg.decode(encoded, messageFactory,parameterFactory);
         final ReleaseCompleteMessage decodedRLC = (ReleaseCompleteMessage) msg;
         Assert.assertNotNull(decodedRLC.getCauseIndicators(), "No Cause Indicators present!");
         Assert.assertEquals(decodedRLC.getCauseIndicators().getCauseValue(), CauseIndicators._CV_ALL_CLEAR, "Wrong CauseValue");

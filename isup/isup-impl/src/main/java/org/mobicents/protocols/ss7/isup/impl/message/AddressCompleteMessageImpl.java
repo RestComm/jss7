@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -40,7 +40,7 @@ import org.mobicents.protocols.ss7.isup.impl.message.parameter.EndOfOptionalPara
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.AddressCompleteMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformation;
-import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransportParameter;
+import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransport;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardCallIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.CCNRPossibleIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallDiversionInformation;
@@ -300,12 +300,12 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
         return (UIDActionIndicators) super.o_Parameters.get(_INDEX_O_UIDActionIndicators);
     }
 
-    public void setApplicationTransportParameter(ApplicationTransportParameter value) {
+    public void setApplicationTransportParameter(ApplicationTransport value) {
         super.o_Parameters.put(_INDEX_O_ApplicationTransportParameter, value);
     }
 
-    public ApplicationTransportParameter getApplicationTransportParameter() {
-        return (ApplicationTransportParameter) super.o_Parameters.get(_INDEX_O_ApplicationTransportParameter);
+    public ApplicationTransport getApplicationTransportParameter() {
+        return (ApplicationTransport) super.o_Parameters.get(_INDEX_O_ApplicationTransportParameter);
     }
 
     public void setCCNRPossibleIndicator(CCNRPossibleIndicator value) {
@@ -482,8 +482,8 @@ class AddressCompleteMessageImpl extends ISUPMessageImpl implements AddressCompl
                 ((AbstractISUPParameter) uidAI).decode(parameterBody);
                 this.setUIDActionIndicators(uidAI);
                 break;
-            case ApplicationTransportParameter._PARAMETER_CODE:
-                ApplicationTransportParameter atp = parameterFactory.createApplicationTransportParameter();
+            case ApplicationTransport._PARAMETER_CODE:
+                ApplicationTransport atp = parameterFactory.createApplicationTransport();
                 ((AbstractISUPParameter) atp).decode(parameterBody);
                 this.setApplicationTransportParameter(atp);
                 break;

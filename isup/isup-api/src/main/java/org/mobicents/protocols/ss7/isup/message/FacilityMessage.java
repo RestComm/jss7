@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -21,6 +21,20 @@
  */
 
 package org.mobicents.protocols.ss7.isup.message;
+
+import org.mobicents.protocols.ss7.isup.message.parameter.CallTransferNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericNotificationIndicator;
+import org.mobicents.protocols.ss7.isup.message.parameter.MessageCompatibilityInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotCounter;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingBackwardInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotStatus;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectStatus;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.RemoteOperations;
+import org.mobicents.protocols.ss7.isup.message.parameter.ServiceActivation;
+import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.AccessTransport;
 
 /**
  * Start time:09:54:07 2009-07-23<br>
@@ -98,4 +112,56 @@ public interface FacilityMessage extends ISUPMessage {
      * {@link FacilityMessage}
      */
     int MESSAGE_CODE = 0x33;
+
+    void setMessageCompatibilityInformation(MessageCompatibilityInformation mci);
+
+    MessageCompatibilityInformation getMessageCompatibilityInformation();
+
+    void setParameterCompatibilityInformation(ParameterCompatibilityInformation pci);
+
+    ParameterCompatibilityInformation getParameterCompatibilityInformation();
+
+    void setRemoteOperations(RemoteOperations ro);
+
+    RemoteOperations getRemoteOperations();
+
+    void setServiceActivation(ServiceActivation sa);
+
+    ServiceActivation getServiceActivation();
+
+    void setCallTransferNumber(CallTransferNumber ctn);
+
+    CallTransferNumber getCallTransferNumber();
+
+    void setAccessTransport(AccessTransport at);
+
+    AccessTransport getAccessTransport();
+
+    void setGenericNotificationIndicator(GenericNotificationIndicator gni);
+
+    GenericNotificationIndicator getGenericNotificationIndicator();
+
+    void setRedirectionNumber(RedirectionNumber rn);
+
+    RedirectionNumber getRedirectionNumber();
+
+    void setPivotRoutingIndicators(PivotRoutingIndicators pri);
+
+    PivotRoutingIndicators getPivotRoutingIndicators();
+
+    void setPivotStatus(PivotStatus ps);
+
+    PivotStatus getPivotStatus();
+
+    void setPivotCounter(PivotCounter pc);
+
+    PivotCounter getPivotCounter();
+
+    void setPivotRoutingBackwardInformation(PivotRoutingBackwardInformation prbi);
+
+    PivotRoutingBackwardInformation getPivotRoutingBackwardInformation();
+
+    void setRedirectStatus(RedirectStatus rs);
+
+    RedirectStatus getRedirectStatus();
 }

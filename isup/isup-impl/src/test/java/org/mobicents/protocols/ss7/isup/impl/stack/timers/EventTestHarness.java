@@ -315,7 +315,7 @@ public abstract class EventTestHarness /* extends TestCase */implements ISUPList
             int commandCode = payload[2];
             AbstractISUPMessage msg = (AbstractISUPMessage) provider.getMessageFactory().createCommand(commandCode);
             try {
-                msg.decode(payload, provider.getParameterFactory());
+                msg.decode(payload, provider.getMessageFactory(),provider.getParameterFactory());
                 MessageEventReceived event = new MessageEventReceived(tstamp, new ISUPEvent(provider, msg, dpc));
                 remoteEventsReceived.add(event);
             } catch (ParameterException e) {

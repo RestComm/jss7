@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -28,10 +28,21 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.AbstractISUPParameter;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.SegmentationMessage;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericNotificationIndicator;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.MessageCompatibilityInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
+import org.mobicents.protocols.ss7.isup.message.parameter.UserToUserInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.AccessTransport;
 
 /**
  * Start time:00:11:58 2009-09-07<br>
@@ -40,87 +51,155 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public class SegmentationMessageImpl extends ISUPMessageImpl implements SegmentationMessage {
+    public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
+    private static final int _MANDATORY_VAR_COUNT = 0;
+    private static final boolean _OPTIONAL_POSSIBLE = true;
+    private static final boolean _HAS_MANDATORY = true;
+
+    static final int _INDEX_F_MessageType = 0;
+
+    static final int _INDEX_O_AccessTransport = 0;
+    static final int _INDEX_O_UserToUserInformation = 1;
+    static final int _INDEX_O_MessageCompatibilityInformation = 2;
+    static final int _INDEX_O_GenericDigits = 3;
+    static final int _INDEX_O_GenericNotificationIndicator = 4;
+    static final int _INDEX_O_GenericNumber = 5;
+    static final int _INDEX_O_EndOfOptionalParameters = 6;
 
     /**
      *
      * @param source
      * @throws ParameterException
      */
-    public SegmentationMessageImpl() {
+    public SegmentationMessageImpl(Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes,
+            Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
+            Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) {
+        super(mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index,
+                optionalCode2Index);
 
+        super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
+        super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryParameters(byte[], int)
-     */
-
-    protected int decodeMandatoryParameters(ISUPParameterFactory parameterFactory, byte[] b, int index)
-            throws ParameterException {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryVariableBody(byte[], int)
-     */
 
     protected void decodeMandatoryVariableBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, int parameterIndex)
             throws ParameterException {
-        // TODO Auto-generated method stub
-
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeOptionalBody(byte[], byte)
-     */
 
     protected void decodeOptionalBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, byte parameterCode)
             throws ParameterException {
-        // TODO Auto-generated method stub
 
+        switch (parameterCode & 0xFF) {
+
+            case AccessTransport._PARAMETER_CODE:
+                AccessTransport at = parameterFactory.createAccessTransport();
+                ((AbstractISUPParameter) at).decode(parameterBody);
+                this.setAccessTransport(at);
+                break;
+
+            case UserToUserInformation._PARAMETER_CODE:
+                UserToUserInformation u2ui = parameterFactory.createUserToUserInformation();
+                ((AbstractISUPParameter) u2ui).decode(parameterBody);
+                this.setUserToUserInformation(u2ui);
+                break;
+            case MessageCompatibilityInformation._PARAMETER_CODE:
+                MessageCompatibilityInformation mci = parameterFactory.createMessageCompatibilityInformation();
+                ((AbstractISUPParameter) mci).decode(parameterBody);
+                this.setMessageCompatibilityInformation(mci);
+                break;
+            case GenericDigits._PARAMETER_CODE:
+                GenericDigits gd = parameterFactory.createGenericDigits();
+                ((AbstractISUPParameter) gd).decode(parameterBody);
+                this.setGenericDigits(gd);
+                break;
+            case GenericNotificationIndicator._PARAMETER_CODE:
+                GenericNotificationIndicator gni = parameterFactory.createGenericNotificationIndicator();
+                ((AbstractISUPParameter) gni).decode(parameterBody);
+                this.setGenericNotificationIndicator(gni);
+                break;
+            case GenericNumber._PARAMETER_CODE:
+                GenericNumber gn = parameterFactory.createGenericNumber();
+                ((AbstractISUPParameter) gn).decode(parameterBody);
+                this.setGenericNumber(gn);
+                break;
+            default:
+                throw new ParameterException("Unrecognized parameter code for optional part: " + parameterCode);
+        }
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getMessageType()
-     */
 
     public MessageType getMessageType() {
-        // TODO Auto-generated method stub
-        return null;
+        return _MESSAGE_TYPE;
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getNumberOfMandatoryVariableLengthParameters()
-     */
 
     protected int getNumberOfMandatoryVariableLengthParameters() {
-        // TODO Auto-generated method stub
-        return 0;
+        return _MANDATORY_VAR_COUNT;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#hasAllMandatoryParameters()
-     */
-
     public boolean hasAllMandatoryParameters() {
-        throw new UnsupportedOperationException();
+        return _HAS_MANDATORY;
     }
 
     protected boolean optionalPartIsPossible() {
+        return _OPTIONAL_POSSIBLE;
+    }
 
-        throw new UnsupportedOperationException();
+    @Override
+    public void setAccessTransport(AccessTransport at) {
+        super.o_Parameters.put(_INDEX_O_AccessTransport, at);
+    }
+
+    @Override
+    public AccessTransport getAccessTransport() {
+        return (AccessTransport) super.o_Parameters.get(_INDEX_O_AccessTransport);
+    }
+
+    @Override
+    public void setUserToUserInformation(UserToUserInformation u2ui) {
+        super.o_Parameters.put(_INDEX_O_UserToUserInformation, u2ui);
+    }
+
+    @Override
+    public UserToUserInformation getUserToUserInformation() {
+        return (UserToUserInformation) super.o_Parameters.get(_INDEX_O_UserToUserInformation);
+    }
+
+    @Override
+    public void setMessageCompatibilityInformation(MessageCompatibilityInformation at) {
+        super.o_Parameters.put(_INDEX_O_MessageCompatibilityInformation, at);
+    }
+
+    @Override
+    public MessageCompatibilityInformation getMessageCompatibilityInformation() {
+        return (MessageCompatibilityInformation) super.o_Parameters.get(_INDEX_O_MessageCompatibilityInformation);
+    }
+
+    @Override
+    public void setGenericDigits(GenericDigits gd) {
+        super.o_Parameters.put(_INDEX_O_GenericDigits, gd);
+    }
+
+    @Override
+    public GenericDigits getGenericDigits() {
+        return (GenericDigits) super.o_Parameters.get(_INDEX_O_GenericDigits);
+    }
+
+    @Override
+    public void setGenericNotificationIndicator(GenericNotificationIndicator gni) {
+        super.o_Parameters.put(_INDEX_O_GenericNotificationIndicator, gni);
+    }
+
+    @Override
+    public GenericNotificationIndicator getGenericNotificationIndicator() {
+        return (GenericNotificationIndicator) super.o_Parameters.get(_INDEX_O_GenericNotificationIndicator);
+    }
+
+    @Override
+    public void setGenericNumber(GenericNumber gn) {
+        super.o_Parameters.put(_INDEX_O_GenericNumber, gn);
+    }
+
+    @Override
+    public GenericNumber getGenericNumber() {
+        return (GenericNumber) super.o_Parameters.get(_INDEX_O_GenericNumber);
     }
 
 }

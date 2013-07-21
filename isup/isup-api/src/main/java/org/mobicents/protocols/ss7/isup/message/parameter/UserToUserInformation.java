@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -37,4 +37,8 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
 public interface UserToUserInformation extends ISUPParameter {
     // FIXME: fill this!
     int _PARAMETER_CODE = 0x20;
+
+    byte[] getInformation();
+
+    void setInformation(byte[] b);
 }

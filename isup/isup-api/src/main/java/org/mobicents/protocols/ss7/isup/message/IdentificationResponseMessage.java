@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -21,6 +21,14 @@
  */
 
 package org.mobicents.protocols.ss7.isup.message;
+
+import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.ChargedPartyIdentification;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.MCIDResponseIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.MessageCompatibilityInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.AccessTransport;
 
 /**
  * Start time:09:54:07 2009-07-23<br>
@@ -104,4 +112,33 @@ public interface IdentificationResponseMessage extends ISUPMessage {
      * {@link IdentificationResponseMessage}
      */
     int MESSAGE_CODE = 0x37;
+
+    void setMCIDResponseIndicators(MCIDResponseIndicators mcid);
+
+    MCIDResponseIndicators getMCIDResponseIndicators();
+
+    void setMessageCompatibilityInformation(MessageCompatibilityInformation mci);
+
+    MessageCompatibilityInformation getMessageCompatibilityInformation();
+
+    void setParameterCompatibilityInformation(ParameterCompatibilityInformation pci);
+
+    ParameterCompatibilityInformation getParameterCompatibilityInformation();
+
+    void setCallingPartyNumber(CallingPartyNumber cpn);
+
+    CallingPartyNumber getCallingPartyNumber();
+
+    void setAccessTransport(AccessTransport at);
+
+    AccessTransport getAccessTransport();
+
+    void setGenericNumber(GenericNumber gn);
+
+    GenericNumber getGenericNumber();
+
+    void setChargedPartyIdentification(ChargedPartyIdentification cpi);
+
+    ChargedPartyIdentification getChargedPartyIdentification();
+
 }

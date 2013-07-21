@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -21,6 +21,13 @@
  */
 
 package org.mobicents.protocols.ss7.isup.message;
+
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericNotificationIndicator;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.MessageCompatibilityInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.UserToUserInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.AccessTransport;
 
 /**
  * Start time:09:54:07 2009-07-23<br>
@@ -105,4 +112,29 @@ public interface SegmentationMessage extends ISUPMessage {
      * {@link SegmentationMessage}
      */
     int MESSAGE_CODE = 0x38;
+
+    void setAccessTransport(AccessTransport at);
+
+    AccessTransport getAccessTransport();
+
+    void setUserToUserInformation(UserToUserInformation u2ui);
+
+    UserToUserInformation getUserToUserInformation();
+
+    void setMessageCompatibilityInformation(MessageCompatibilityInformation at);
+
+    MessageCompatibilityInformation getMessageCompatibilityInformation();
+
+    void setGenericDigits(GenericDigits gd);
+
+    GenericDigits getGenericDigits();
+
+    void setGenericNotificationIndicator(GenericNotificationIndicator gni);
+
+    GenericNotificationIndicator getGenericNotificationIndicator();
+
+    void setGenericNumber(GenericNumber gn);
+
+    GenericNumber getGenericNumber();
+
 }

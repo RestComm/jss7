@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -43,13 +43,13 @@ public class MCIDResponseIndicatorsImpl extends AbstractISUPParameter implements
 
     private static final int _TURN_ON = 1;
     private static final int _TURN_OFF = 0;
-    // public static boolean HOLDING_NOT_RROVIDED = false;
-    //
-    // public static boolean HOLDING_PROVIDED = true;
-    //
-    // public static boolean MCID_INCLUDED = true;
-    //
-    // public static boolean MCID_NOT_INCLUDED = false;
+    public static boolean HOLDING_NOT_RROVIDED = false;
+
+    public static boolean HOLDING_PROVIDED = true;
+
+    public static boolean MCID_INCLUDED = true;
+
+    public static boolean MCID_NOT_INCLUDED = false;
 
     private boolean mcidIncludedIndicator = false;
     private boolean holdingProvidedIndicator = false;

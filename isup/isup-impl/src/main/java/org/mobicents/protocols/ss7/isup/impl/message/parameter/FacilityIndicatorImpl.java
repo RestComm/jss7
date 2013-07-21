@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -41,7 +41,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.FacilityIndicator;
  */
 public class FacilityIndicatorImpl extends AbstractISUPParameter implements FacilityIndicator {
 
-    private int facilityIndicator = 0;
+    private byte facilityIndicator = 0;
 
     public FacilityIndicatorImpl(byte[] b) throws ParameterException {
         super();
@@ -53,7 +53,7 @@ public class FacilityIndicatorImpl extends AbstractISUPParameter implements Faci
 
     }
 
-    public FacilityIndicatorImpl(int facilityIndicator) {
+    public FacilityIndicatorImpl(byte facilityIndicator) {
         super();
         this.facilityIndicator = facilityIndicator;
     }
@@ -72,11 +72,11 @@ public class FacilityIndicatorImpl extends AbstractISUPParameter implements Faci
         return b;
     }
 
-    public int getFacilityIndicator() {
+    public byte getFacilityIndicator() {
         return facilityIndicator;
     }
 
-    public void setFacilityIndicator(int facilityIndicator) {
+    public void setFacilityIndicator(byte facilityIndicator) {
         this.facilityIndicator = facilityIndicator;
     }
 

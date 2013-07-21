@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -63,25 +63,16 @@ public class CallReferenceImpl extends AbstractISUPParameter implements CallRefe
         if (b == null || b.length != 5) {
             throw new ParameterException("byte[] must not be null or have length of 5");
         }
-        // for (int i = 0; i < 3; i++) {
-        // this.callIdentity |= (b[i] << (i * 8));
-        // }
+
         this.callIdentity = ((b[0] & 0xFF) << 16) | ((b[1] & 0xFF) << 8) | (b[2] & 0xFF);
-        // this.signalingPointCode |= b[3];
-        // this.signalingPointCode |= (b[4] << 8);
         this.signalingPointCode = ((b[3] & 0xFF) | ((b[4] & 0x3F) << 8));
-        // This kills first two bits.
-        // this.signalingPointCode &= 0x3FFF;
+
         return 5;
     }
 
     public byte[] encode() throws ParameterException {
         byte[] b = new byte[5];
 
-        // for (int i = 0; i < 3; i++) {
-        // b[i] = (byte) (this.callIdentity >> (i * 8));
-        //
-        // }
 
         b[0] = (byte) (this.callIdentity >> 16);
         b[1] = (byte) (this.callIdentity >> 8);
