@@ -729,20 +729,16 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         PurgeMSResponseImpl ind = new PurgeMSResponseImpl();
 
-        if (parameter == null)
-            throw new MAPParsingComponentException(
-                    "Error while decoding PurgeMSResponse: Parameter is mandatory but not found",
-                    MAPParsingComponentExceptionReason.MistypedParameter);
+        if (parameter != null) {
+            if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+                throw new MAPParsingComponentException("Error while decoding PurgeMSResponse V3: Bad tag or tagClass or parameter is primitive, received tag="
+                        + parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
 
-        if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-            throw new MAPParsingComponentException(
-                    "Error while decoding PurgeMSResponse V3: Bad tag or tagClass or parameter is primitive, received tag="
-                            + parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+            byte[] buf = parameter.getData();
+            AsnInputStream ais = new AsnInputStream(buf);
 
-        byte[] buf = parameter.getData();
-        AsnInputStream ais = new AsnInputStream(buf);
-
-        ind.decodeData(ais, buf.length);
+            ind.decodeData(ais, buf.length);
+        }
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);

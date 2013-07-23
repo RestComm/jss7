@@ -1147,8 +1147,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
             MAPExtensionContainer extensionContainer, boolean freezeMTMSI) throws MAPException {
         if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.msPurgingContext)
                 || ((this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3) && (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)))
-            throw new MAPException(
-                    "Bad application context name for PurgeMSResponse: must be msPurgingContext_V3 OR  msPurgingContext_V2");
+            throw new MAPException("Bad application context name for PurgeMSResponse: must be msPurgingContext_V3 OR  msPurgingContext_V2");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCResultLastRequest();
@@ -1160,17 +1159,19 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         oc.setLocalOperationCode((long) MAPOperationCode.purgeMS);
         resultLast.setOperationCode(oc);
 
-        PurgeMSResponseImpl req = new PurgeMSResponseImpl(freezeTMSI, freezePTMSI, extensionContainer, freezeMTMSI);
+        PurgeMSResponseImpl resp = new PurgeMSResponseImpl(freezeTMSI, freezePTMSI, extensionContainer, freezeMTMSI);
 
-        AsnOutputStream aos = new AsnOutputStream();
-        req.encodeData(aos);
+        if (this.appCntx.getApplicationContextVersion().getVersion() >= 3 && (freezeTMSI || freezePTMSI || extensionContainer != null || freezeMTMSI)) {
+            AsnOutputStream aos = new AsnOutputStream();
+            resp.encodeData(aos);
 
-        Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-        p.setTagClass(req.getTagClass());
-        p.setPrimitive(req.getIsPrimitive());
-        p.setTag(req.getTag());
-        p.setData(aos.toByteArray());
-        resultLast.setParameter(p);
+            Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+            p.setTagClass(resp.getTagClass());
+            p.setPrimitive(resp.getIsPrimitive());
+            p.setTag(resp.getTag());
+            p.setData(aos.toByteArray());
+            resultLast.setParameter(p);
+        }
 
         this.sendReturnResultLastComponent(resultLast);
     }

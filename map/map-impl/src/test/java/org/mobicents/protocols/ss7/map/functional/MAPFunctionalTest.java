@@ -199,7 +199,6 @@ import org.mobicents.protocols.ss7.map.service.callhandling.SendRoutingInformati
 import org.mobicents.protocols.ss7.map.service.mobility.authentication.TripletListTest;
 import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PurgeMSRequestImpl;
-import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PurgeMSResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SendIdentificationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateGprsLocationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.InsertSubscriberDataRequestImpl;
@@ -1195,7 +1194,7 @@ public class MAPFunctionalTest extends SccpHarness {
         List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
 
         server.mapProvider.getMAPServiceSms().deactivate();
-        this.saveTrafficInFile();
+//        this.saveTrafficInFile();
 
         client.sendAlertServiceCentreRequestV1();
         waitForEnd();
@@ -7199,7 +7198,7 @@ public class MAPFunctionalTest extends SccpHarness {
     }
 
     /**
-     * TC-BEGIN + PurgeMSRequest MAV V3 TC-END + PurgeMSResponse
+     * TC-BEGIN + PurgeMSRequest MAP V2 TC-END + PurgeMSResponse
      */
     @Test(groups = { "functional.flow", "dialog" })
     public void testPurgeMSRequest_V2() throws Exception {
@@ -7209,8 +7208,8 @@ public class MAPFunctionalTest extends SccpHarness {
             @Override
             public void onPurgeMSResponse(PurgeMSResponse ind) {
                 super.onPurgeMSResponse(ind);
-                assertTrue(ind.getFreezeMTMSI());
-                assertTrue(ind.getFreezePTMSI());
+                assertFalse(ind.getFreezeMTMSI());
+                assertFalse(ind.getFreezePTMSI());
 
             }
 
@@ -7228,7 +7227,7 @@ public class MAPFunctionalTest extends SccpHarness {
                 assertTrue(request.getVlrNumber().getAddress().equals("22228"));
 
                 try {
-                    d.addPurgeMSResponse(((PurgeMSRequestImpl) request).getInvokeId(), true, true, null, true);
+                    d.addPurgeMSResponse(((PurgeMSRequestImpl) request).getInvokeId(), false, false, null, false);
 
                 } catch (MAPException e) {
                     this.error("Error while adding PurgeMSResponse", e);
@@ -7285,7 +7284,7 @@ public class MAPFunctionalTest extends SccpHarness {
 
         te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
         serverExpectedEvents.add(te);
-
+        
         client.sendPurgeMS_V2();
 
         waitForEnd();
