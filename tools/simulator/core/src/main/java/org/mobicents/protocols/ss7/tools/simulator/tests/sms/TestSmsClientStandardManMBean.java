@@ -80,6 +80,9 @@ public class TestSmsClientStandardManMBean extends StandardMBean {
                 new MBeanAttributeInfo("OneNotificationFor100Dialogs", boolean.class.getName(),
                         "If true there will be only one notification per every 100 received dialogs (recommended for the auto answering mode)", true, true,
                         true),
+                new MBeanAttributeInfo("Return20PersDeliveryErrors", boolean.class.getName(),
+                        "Return 20% delivery errors for SRI or MtForwardSM Requests", true, true,
+                        true),
                 new MBeanAttributeInfo("ContinueDialog", boolean.class.getName(), "If true SmsClient will not close MtForwardSM and send TC-CONTINUE", true,
                         true, true), };
 

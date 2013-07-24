@@ -79,6 +79,7 @@ public class TestSmsClientParamForm extends JDialog {
     private JCheckBox cbSRIScAddressNotIncluded;
     private JComboBox cbMtFSMReaction;
     private JCheckBox cbOneNotificationFor100Dialogs;
+    private JCheckBox cbReturn20PersDeliveryErrors;
     private JCheckBox cbContinueDialog;
 
     public TestSmsClientParamForm(JFrame owner) {
@@ -118,6 +119,10 @@ public class TestSmsClientParamForm extends JDialog {
         cbOneNotificationFor100Dialogs = new JCheckBox("One notification for 100 dialogs (recommended for bulk message mode)");
         cbOneNotificationFor100Dialogs.setBounds(10, 67, 511, 23);
         panel_gen.add(cbOneNotificationFor100Dialogs);
+
+        cbReturn20PersDeliveryErrors = new JCheckBox("Return 20% delivery errors for SRI or MtForwardSM Requests");
+        cbReturn20PersDeliveryErrors.setBounds(10, 95, 511, 23);
+        panel_gen.add(cbReturn20PersDeliveryErrors);
 
         JPanel panel_sri = new JPanel();
         tabbedPane.addTab("SRI response", panel_sri);
@@ -327,6 +332,7 @@ public class TestSmsClientParamForm extends JDialog {
 
         cbSRIScAddressNotIncluded.setSelected(this.smsClient.isSRIScAddressNotIncluded());
         cbOneNotificationFor100Dialogs.setSelected(this.smsClient.isOneNotificationFor100Dialogs());
+        cbReturn20PersDeliveryErrors.setSelected(this.smsClient.isReturn20PersDeliveryErrors());
         cbContinueDialog.setSelected(this.smsClient.isContinueDialog());
     }
 
@@ -351,6 +357,7 @@ public class TestSmsClientParamForm extends JDialog {
 
         cbSRIScAddressNotIncluded.setSelected(false);
         cbOneNotificationFor100Dialogs.setSelected(false);
+        cbReturn20PersDeliveryErrors.setSelected(false);
         cbContinueDialog.setSelected(false);
     }
 
@@ -386,6 +393,7 @@ public class TestSmsClientParamForm extends JDialog {
 
         this.smsClient.setSRIScAddressNotIncluded(cbSRIScAddressNotIncluded.isSelected());
         this.smsClient.setOneNotificationFor100Dialogs(cbOneNotificationFor100Dialogs.isSelected());
+        this.smsClient.setReturn20PersDeliveryErrors(cbReturn20PersDeliveryErrors.isSelected());
         this.smsClient.setContinueDialog(cbContinueDialog.isSelected());
 
         return true;

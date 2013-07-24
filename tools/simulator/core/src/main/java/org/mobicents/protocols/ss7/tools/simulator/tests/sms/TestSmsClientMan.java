@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.tests.sms;
 
+import java.util.Random;
+
 import org.apache.log4j.Level;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
@@ -268,6 +270,17 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
     @Override
     public void setOneNotificationFor100Dialogs(boolean val) {
         this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().setOneNotificationFor100Dialogs(val);
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public boolean isReturn20PersDeliveryErrors() {
+        return this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isReturn20PersDeliveryErrors();
+    }
+
+    @Override
+    public void setReturn20PersDeliveryErrors(boolean val) {
+        this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().setReturn20PersDeliveryErrors(val);
         this.testerHost.markStore();
     }
 
@@ -732,7 +745,20 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
             this.onMtRequest(da, oa, si, curDialog);
 
             try {
-                if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction().intValue() == MtFSMReaction.VAL_RETURN_SUCCESS) {
+                MtFSMReaction mtFSMReaction = this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction();
+
+                Random rnd = new Random();
+                if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isReturn20PersDeliveryErrors()) {
+                    int n = rnd.nextInt(5);
+                    if (n == 0) {
+                        n = rnd.nextInt(5);
+                        mtFSMReaction = new MtFSMReaction(n + 2);
+                    } else {
+                        mtFSMReaction = new MtFSMReaction(MtFSMReaction.VAL_RETURN_SUCCESS);
+                    }
+                }
+
+                if (mtFSMReaction.intValue() == MtFSMReaction.VAL_RETURN_SUCCESS) {
                     curDialog.addForwardShortMessageResponse(invokeId);
                     this.countMtFsmResp++;
 
@@ -745,7 +771,7 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
                     else
                         this.needSendClose = true;
                 } else {
-                    sendMtError(curDialog, invokeId);
+                    sendMtError(curDialog, invokeId, mtFSMReaction);
                     this.needSendClose = true;
                 }
 
@@ -755,10 +781,10 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
         }
     }
 
-    private void sendMtError(MAPDialogSms curDialog, long invokeId) throws MAPException {
+    private void sendMtError(MAPDialogSms curDialog, long invokeId, MtFSMReaction mtFSMReaction) throws MAPException {
         MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
         String uData;
-        switch (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction().intValue()) {
+        switch (mtFSMReaction.intValue()) {
         case MtFSMReaction.VAL_ERROR_MEMORY_CAPACITY_EXCEEDED:
         case MtFSMReaction.VAL_ERROR_UNKNOWN_SERVICE_CENTRE:
             SMEnumeratedDeliveryFailureCause smEnumeratedDeliveryFailureCause;
@@ -907,7 +933,20 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
         this.onMtRequest(da, oa, si, curDialog);
 
         try {
-            if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction().intValue() == MtFSMReaction.VAL_RETURN_SUCCESS) {
+            MtFSMReaction mtFSMReaction = this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction();
+
+            Random rnd = new Random();
+            if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isReturn20PersDeliveryErrors()) {
+                int n = rnd.nextInt(5);
+                if (n == 0) {
+                    n = rnd.nextInt(5);
+                    mtFSMReaction = new MtFSMReaction(n + 2);
+                } else {
+                    mtFSMReaction = new MtFSMReaction(MtFSMReaction.VAL_RETURN_SUCCESS);
+                }
+            }
+
+            if (mtFSMReaction.intValue() == MtFSMReaction.VAL_RETURN_SUCCESS) {
                 curDialog.addMtForwardShortMessageResponse(invokeId, null, null);
                 this.countMtFsmResp++;
                 if (!this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isOneNotificationFor100Dialogs()) {
@@ -919,7 +958,7 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
                 else
                     this.needSendClose = true;
             } else {
-                sendMtError(curDialog, invokeId);
+                sendMtError(curDialog, invokeId, mtFSMReaction);
                 this.needSendClose = true;
             }
 
@@ -980,7 +1019,19 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
         boolean informServiceCentrePossible = false;
 
         try {
-            switch (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSRIReaction().intValue()) {
+            SRIReaction sriReaction = this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSRIReaction();
+            Random rnd = new Random();
+            if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isReturn20PersDeliveryErrors()) {
+                int n = rnd.nextInt(5);
+                if (n == 0) {
+                    n = rnd.nextInt(4);
+                    sriReaction = new SRIReaction(n + 2);
+                } else {
+                    sriReaction = new SRIReaction(SRIReaction.VAL_RETURN_SUCCESS);
+                }
+            }
+
+            switch (sriReaction.intValue()) {
             case SRIReaction.VAL_RETURN_SUCCESS:
                 li = mapProvider.getMAPParameterFactory().createLocationInfoWithLMSI(networkNodeNumber, null, null, null, null);
                 curDialog.addSendRoutingInfoForSMResponse(invokeId, imsi, li, null, null);
@@ -1060,7 +1111,20 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
             if (informServiceCentrePossible) {
                 MWStatus mwStatus = null;
                 boolean scAddressNotIncluded = this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isSRIScAddressNotIncluded();
-                switch (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getSRIInformServiceCenter().intValue()) {
+                SRIInformServiceCenter sriInformServiceCenter = this.testerHost.getConfigurationData().getTestSmsClientConfigurationData()
+                        .getSRIInformServiceCenter();
+
+                if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isReturn20PersDeliveryErrors()) {
+                    int n = rnd.nextInt(5);
+                    if (n == 0) {
+                        n = rnd.nextInt(4);
+                        sriInformServiceCenter = new SRIInformServiceCenter(n + 2);
+                    } else {
+                        sriInformServiceCenter = new SRIInformServiceCenter(SRIInformServiceCenter.MWD_NO);
+                    }
+                }
+
+                switch (sriInformServiceCenter.intValue()) {
                 case SRIInformServiceCenter.MWD_NO:
                     break;
                 case SRIInformServiceCenter.MWD_mcef:

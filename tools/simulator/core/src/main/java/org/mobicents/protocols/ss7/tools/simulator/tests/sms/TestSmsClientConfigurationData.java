@@ -54,6 +54,7 @@ public class TestSmsClientConfigurationData {
     protected static final String SRI_SC_ADDRESS_NOT_INCLUDED = "sriScAddressNotIncluded";
     protected static final String MT_FSM_REACTION = "mtFSMReaction";
     protected static final String ONE_NOTIFICATION_FOR_100_DIALOGS = "oneNotificationFor100Dialogs";
+    protected static final String RETURN_20_PERS_DELIVERY_ERRORS = "return20PersDeliveryErrors";
     protected static final String CONTINUE_DIALOG = "continueDialog";
 
     protected AddressNature addressNature = AddressNature.international_number;
@@ -72,6 +73,7 @@ public class TestSmsClientConfigurationData {
     protected boolean sriScAddressNotIncluded = false;
     protected MtFSMReaction mtFSMReaction = new MtFSMReaction(MtFSMReaction.VAL_RETURN_SUCCESS);
     protected boolean oneNotificationFor100Dialogs = false;
+    protected boolean return20PersDeliveryErrors = false;
     protected boolean continueDialog = false;
 
     public AddressNature getAddressNature() {
@@ -194,6 +196,14 @@ public class TestSmsClientConfigurationData {
         this.oneNotificationFor100Dialogs = oneNotificationFor100Dialogs;
     }
 
+    public boolean isReturn20PersDeliveryErrors() {
+        return return20PersDeliveryErrors;
+    }
+
+    public void setReturn20PersDeliveryErrors(boolean val) {
+        this.return20PersDeliveryErrors = val;
+    }
+
     public boolean isContinueDialog() {
         return this.continueDialog;
     }
@@ -209,6 +219,7 @@ public class TestSmsClientConfigurationData {
             xml.setAttribute(SRI_SC_ADDRESS_NOT_INCLUDED, srv.sriScAddressNotIncluded);
 
             xml.setAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS, srv.oneNotificationFor100Dialogs);
+            xml.setAttribute(RETURN_20_PERS_DELIVERY_ERRORS, srv.return20PersDeliveryErrors);
             xml.setAttribute(CONTINUE_DIALOG, srv.continueDialog);
 
             xml.add(srv.serviceCenterAddress, SERVICE_CENTER_ADDRESS, String.class);
@@ -234,6 +245,9 @@ public class TestSmsClientConfigurationData {
             CharArray chArr = xml.getAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS);
             if (chArr != null)
                 srv.oneNotificationFor100Dialogs = chArr.toBoolean();
+            chArr = xml.getAttribute(RETURN_20_PERS_DELIVERY_ERRORS);
+            if (chArr != null)
+                srv.return20PersDeliveryErrors = chArr.toBoolean();
             chArr = xml.getAttribute(CONTINUE_DIALOG);
             if (chArr != null)
                 srv.continueDialog = chArr.toBoolean();

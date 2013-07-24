@@ -111,6 +111,10 @@ public interface TestSmsClientManMBean {
 
     void setOneNotificationFor100Dialogs(boolean val);
 
+    boolean isReturn20PersDeliveryErrors();
+
+    void setReturn20PersDeliveryErrors(boolean val);
+
     boolean isContinueDialog();
 
     void setContinueDialog(boolean val);
