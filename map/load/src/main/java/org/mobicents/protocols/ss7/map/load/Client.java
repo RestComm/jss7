@@ -202,9 +202,11 @@ public class Client extends TestHarness {
         // System.out.println("initiateUSSD");
 
         // First create Dialog
+        AddressString origRef = this.mapProvider.getMAPParameterFactory().createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "12345");
+        AddressString destRef = this.mapProvider.getMAPParameterFactory().createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "67890");
         MAPDialogSupplementary mapDialog = this.mapProvider.getMAPServiceSupplementary().createNewDialog(
-                MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
-                        MAPApplicationContextVersion.version2), SCCP_CLIENT_ADDRESS, null, SCCP_SERVER_ADDRESS, null);
+                MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext, MAPApplicationContextVersion.version2),
+                SCCP_CLIENT_ADDRESS, origRef, SCCP_SERVER_ADDRESS, destRef);
 
         CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
 
