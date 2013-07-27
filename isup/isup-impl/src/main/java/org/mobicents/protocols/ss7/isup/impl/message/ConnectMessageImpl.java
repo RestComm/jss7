@@ -28,14 +28,11 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message;
 
-import java.util.Map;
-import java.util.Set;
-
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.AbstractISUPParameter;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.BackwardGVNSImpl;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.ConnectedNumberImpl;
+
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.ConnectMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformation;
@@ -63,6 +60,9 @@ import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumUsed
 import org.mobicents.protocols.ss7.isup.message.parameter.UserToUserIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserToUserInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.AccessTransport;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Start time:23:58:48 2009-09-06<br>
@@ -350,7 +350,6 @@ public class ConnectMessageImpl extends ISUPMessageImpl implements ConnectMessag
      */
     public void setApplicationTransportParameter(ApplicationTransportParameter value) {
         super.o_Parameters.put(this._INDEX_O_ApplicationTransportParameter, value);
-
     }
 
     /*
@@ -583,6 +582,31 @@ public class ConnectMessageImpl extends ISUPMessageImpl implements ConnectMessag
         return (HTRInformation) super.o_Parameters.get(_INDEX_O_HTRInformation);
     }
 
+    protected int decodeMandatoryParameters(ISUPParameterFactory parameterFactory, byte[] b, int index)
+            throws ParameterException {
+        int localIndex = index;
+        index += super.decodeMandatoryParameters(parameterFactory, b, index);
+
+        if (b.length - index > 2) {
+
+            try {
+                byte[] body = new byte[2];
+                body[0] = b[index++];
+                body[1] = b[index++];
+
+                BackwardCallIndicators v = parameterFactory.createBackwardCallIndicators();
+                ((AbstractISUPParameter) v).decode(body);
+                this.setBackwardCallIndicators(v);
+            } catch (Exception e) {
+                throw new ParameterException("Failed to parse BackwardCallIndicators due to: ", e);
+            }
+
+            return index - localIndex;
+        } else {
+            throw new ParameterException("byte[] must have at least 5 octets");
+        }
+    }
+
     protected int decodeMandatoryVariableParameters(ISUPParameterFactory parameterFactory, byte[] b, int index)
             throws ParameterException {
         throw new UnsupportedOperationException("This message does not support mandatory variable parameters.");
@@ -593,7 +617,6 @@ public class ConnectMessageImpl extends ISUPMessageImpl implements ConnectMessag
      *
      * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryVariableBody (byte [], int)
      */
-
     protected void decodeMandatoryVariableBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, int parameterIndex)
             throws ParameterException {
         throw new UnsupportedOperationException("This message does not support mandatory variable parameters.");
@@ -604,7 +627,6 @@ public class ConnectMessageImpl extends ISUPMessageImpl implements ConnectMessag
      *
      * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeOptionalBody(byte [], byte)
      */
-
     protected void decodeOptionalBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, byte parameterCode)
             throws ParameterException {
         switch (parameterCode & 0xFF) {
@@ -621,10 +643,9 @@ public class ConnectMessageImpl extends ISUPMessageImpl implements ConnectMessag
                 this.setBackwardGVNS(backwardGVNS);
                 break;
             case ConnectedNumber._PARAMETER_CODE:
-                ConnectedNumber value = new ConnectedNumberImpl(parameterBody);
-                parameterFactory.createConnectedNumber();
-                ((AbstractISUPParameter) value).decode(parameterBody);
-                this.setConnectedNumber(value);
+                ConnectedNumber connectedNumber = parameterFactory.createConnectedNumber();
+                ((AbstractISUPParameter) connectedNumber).decode(parameterBody);
+                this.setConnectedNumber(connectedNumber);
                 break;
             case CallReference._PARAMETER_CODE:
                 CallReference callReference = parameterFactory.createCallReference();
@@ -742,7 +763,6 @@ public class ConnectMessageImpl extends ISUPMessageImpl implements ConnectMessag
      *
      * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getMessageType()
      */
-
     public MessageType getMessageType() {
         return this._MESSAGE_TYPE;
     }
@@ -752,7 +772,6 @@ public class ConnectMessageImpl extends ISUPMessageImpl implements ConnectMessag
      *
      * @seeorg.mobicents.protocols.ss7.isup.ISUPMessageImpl# getNumberOfMandatoryVariableLengthParameters()
      */
-
     protected int getNumberOfMandatoryVariableLengthParameters() {
         return _MANDATORY_VAR_COUNT;
     }
@@ -762,9 +781,7 @@ public class ConnectMessageImpl extends ISUPMessageImpl implements ConnectMessag
      *
      * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#hasAllMandatoryParameters ()
      */
-
     public boolean hasAllMandatoryParameters() {
-
         if (super.f_Parameters.get(_INDEX_F_BackwardCallIndicators) != null) {
             return true;
         } else {
@@ -777,7 +794,6 @@ public class ConnectMessageImpl extends ISUPMessageImpl implements ConnectMessag
      *
      * @see org.mobicents.protocols.ss7.isup.impl.ISUPMessageImpl#optionalPartIsPossible ()
      */
-
     protected boolean optionalPartIsPossible() {
 
         return true;

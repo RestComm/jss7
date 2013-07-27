@@ -50,26 +50,23 @@ public class ConnectedNumberTest extends ParameterHarness {
      * @throws IOException
      */
     public ConnectedNumberTest() throws IOException {
-        super.badBodies.add(new byte[1]);
-
+//        super.badBodies.add(new byte[1]);
+//
         super.goodBodies.add(getBody1());
-        // This will fail, cause this body has APRI allowed, so hardcoded body
-        // does nto match encoded body :)
-        // super.goodBodies.add(getBody2());
+        super.goodBodies.add(getBody2());
+        super.goodBodies.add(getBody3());
     }
 
     private byte[] getBody1() throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         // we will use odd number of digits, so we leave zero as MSB
-        int v = ConnectedNumber._NAI_SUBSCRIBER_NUMBER;
+        // 0 because - _APRI_NOT_AVAILABLE
+        int v = 0;
         bos.write(v);
         v = 0;
-        v = ConnectedNumberImpl._NPI_TELEX << 4;
-        v |= ConnectedNumberImpl._APRI_NOT_AVAILABLE << 2;
+        v = ConnectedNumberImpl._APRI_NOT_AVAILABLE << 2;
         v |= ConnectedNumberImpl._SI_NETWORK_PROVIDED;
         bos.write(v & 0x7F);
-
-        bos.write(super.getSixDigits());
         return bos.toByteArray();
     }
 
@@ -88,6 +85,21 @@ public class ConnectedNumberTest extends ParameterHarness {
         return bos.toByteArray();
     }
 
+    private byte[] getBody3() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+        // We have odd number
+        int v = ConnectedNumber._NAI_SUBSCRIBER_NUMBER;
+        bos.write(v);
+        v = 0;
+        v = ConnectedNumberImpl._NPI_TELEX << 4;
+        v |= ConnectedNumberImpl._APRI_ALLOWED << 2;
+        v |= ConnectedNumberImpl._SI_NETWORK_PROVIDED;
+        bos.write(v & 0x7F);
+        bos.write(super.getSixDigits());
+        return bos.toByteArray();
+    }
+
     @Test(groups = { "functional.encode", "functional.decode", "parameter" })
     public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException,
             IllegalAccessException, InvocationTargetException, IOException, ParameterException {
@@ -95,9 +107,9 @@ public class ConnectedNumberTest extends ParameterHarness {
 
         String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator",
                 "getNatureOfAddressIndicator", "getScreeningIndicator", "isOddFlag", "getAddress" };
-        Object[] expectedValues = { ConnectedNumberImpl._NPI_TELEX, ConnectedNumberImpl._APRI_NOT_AVAILABLE,
-                ConnectedNumber._NAI_SUBSCRIBER_NUMBER, ConnectedNumberImpl._SI_NETWORK_PROVIDED, false,
-                super.getSixDigitsString() };
+        Object[] expectedValues = { 0, ConnectedNumberImpl._APRI_NOT_AVAILABLE,
+                0, ConnectedNumberImpl._SI_NETWORK_PROVIDED, false,
+                null };
         super.testValues(bci, methodNames, expectedValues);
     }
 
@@ -114,6 +126,19 @@ public class ConnectedNumberTest extends ParameterHarness {
         super.testValues(bci, methodNames, expectedValues);
     }
 
+    @Test(groups = { "functional.encode", "functional.decode", "parameter" })
+    public void testBody3EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException,
+            IllegalAccessException, InvocationTargetException, IOException, ParameterException {
+        ConnectedNumberImpl bci = new ConnectedNumberImpl(getBody3());
+
+        String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator",
+                "getNatureOfAddressIndicator", "getScreeningIndicator", "isOddFlag", "getAddress" };
+        Object[] expectedValues = { ConnectedNumberImpl._NPI_TELEX, ConnectedNumberImpl._APRI_ALLOWED,
+                ConnectedNumber._NAI_SUBSCRIBER_NUMBER, ConnectedNumberImpl._SI_NETWORK_PROVIDED, false,
+                super.getSixDigitsString() };
+        super.testValues(bci, methodNames, expectedValues);
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -121,7 +146,7 @@ public class ConnectedNumberTest extends ParameterHarness {
      */
 
     public AbstractISUPParameter getTestedComponent() {
-        return new ConnectedNumberImpl(1, "1", 1, 1, 1);
+        return new ConnectedNumberImpl(0, null, 0, 0, 0);
     }
 
 }

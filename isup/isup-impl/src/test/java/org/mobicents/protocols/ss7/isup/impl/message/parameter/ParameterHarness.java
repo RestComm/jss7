@@ -34,7 +34,9 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -204,11 +206,11 @@ public abstract class ParameterHarness {
                 Method m = cClass.getMethod(getterMethodNames[index], null);
                 // Should not be null by now
                 Object v = m.invoke(component, null);
-                if (v == null && expectedValues != null) {
+                if (v == null && expectedValues[index] != null) {
                     fail("Failed to validate values in component: " + component.getClass().getName() + ". Value of: "
                             + getterMethodNames[index] + " is null, but test values is not.");
                 }
-                if (expectedValues[index].getClass().isArray()) {
+                if (expectedValues[index] != null && expectedValues[index].getClass().isArray()) {
                     assertTrue(Arrays.deepEquals(new Object[] { expectedValues[index] }, new Object[] { v }),
                             "Failed to validate values in component: " + component.getClass().getName() + ". Value of: "
                                     + getterMethodNames[index]);
@@ -220,7 +222,10 @@ public abstract class ParameterHarness {
             }
 
         } catch (Exception e) {
-            fail("Failed to check values on component: " + component.getClass().getName() + ", due to: " + e);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PrintWriter pw = new PrintWriter(baos);
+            e.printStackTrace(pw);
+            fail("Failed to check values on component: " + component.getClass().getName() + ", due to: " + new String(baos.toByteArray()));
             e.printStackTrace();
         }
     }

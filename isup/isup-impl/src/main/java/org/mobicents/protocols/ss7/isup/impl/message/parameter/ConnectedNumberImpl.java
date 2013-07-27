@@ -46,7 +46,7 @@ public class ConnectedNumberImpl extends AbstractNAINumber implements ConnectedN
 
     protected int numberingPlanIndicator;
 
-    protected int addressRepresentationREstrictedIndicator;
+    protected int addressRepresentationRestrictedIndicator;
 
     protected int screeningIndicator;
 
@@ -57,7 +57,6 @@ public class ConnectedNumberImpl extends AbstractNAINumber implements ConnectedN
      */
     public ConnectedNumberImpl(byte[] representation) throws ParameterException {
         super(representation);
-
     }
 
     public ConnectedNumberImpl() {
@@ -80,7 +79,7 @@ public class ConnectedNumberImpl extends AbstractNAINumber implements ConnectedN
             int addressRepresentationREstrictedIndicator, int screeningIndicator) {
         super(natureOfAddresIndicator, address);
         this.numberingPlanIndicator = numberingPlanIndicator;
-        this.addressRepresentationREstrictedIndicator = addressRepresentationREstrictedIndicator;
+        this.addressRepresentationRestrictedIndicator = addressRepresentationREstrictedIndicator;
         this.screeningIndicator = screeningIndicator;
     }
 
@@ -99,7 +98,7 @@ public class ConnectedNumberImpl extends AbstractNAINumber implements ConnectedN
         int b = bis.read() & 0xff;
 
         this.numberingPlanIndicator = (b & 0x70) >> 4;
-        this.addressRepresentationREstrictedIndicator = (b & 0x0c) >> 2;
+        this.addressRepresentationRestrictedIndicator = (b & 0x0c) >> 2;
         this.screeningIndicator = (b & 0x03);
         return 1;
     }
@@ -109,21 +108,21 @@ public class ConnectedNumberImpl extends AbstractNAINumber implements ConnectedN
      */
     protected void doAddressPresentationRestricted() {
 
-        if (this.addressRepresentationREstrictedIndicator == _APRI_NOT_AVAILABLE)
-            return;
+        if (this.addressRepresentationRestrictedIndicator == _APRI_NOT_AVAILABLE) {
 
-        // NOTE 1 If the parameter is included and the address presentation
-        // restricted indicator indicates
-        // address not available, octets 3 to n( this are digits.) are omitted,
-        // the subfields in items a - odd/evem, b -nai , c - ni and d -npi, are
-        // coded with
-        // 0's, and the subfield f - filler, is coded with 11.
-        this.oddFlag = 0;
-        this.natureOfAddresIndicator = 0;
-        this.numberingPlanIndicator = 0;
-        // 11
-        this.screeningIndicator = 3;
-        this.setAddress("");
+            // NOTE 1 If the parameter is included and the address presentation
+            // restricted indicator indicates
+            // address not available, octets 3 to n( this are digits.) are omitted,
+            // the subfields in items a - odd/evem, b -nai , c - ni and d -npi, are
+            // coded with
+            // 0's, and the subfield f - filler, is coded with 11.
+            this.oddFlag = 0;
+            this.natureOfAddresIndicator = 0;
+            this.numberingPlanIndicator = 0;
+            // 11
+            this.screeningIndicator = _SI_NETWORK_PROVIDED;
+            this.setAddress("");
+        }
     }
 
     /*
@@ -135,10 +134,20 @@ public class ConnectedNumberImpl extends AbstractNAINumber implements ConnectedN
     public int encodeBody(ByteArrayOutputStream bos) {
         int c = this.numberingPlanIndicator << 4;
 
-        c |= (this.addressRepresentationREstrictedIndicator << 2);
+        c |= (this.addressRepresentationRestrictedIndicator << 2);
         c |= (this.screeningIndicator);
         bos.write(c & 0x7F);
         return 1;
+    }
+
+    protected boolean skipDigits() {
+
+        if (this.addressRepresentationRestrictedIndicator == _APRI_NOT_AVAILABLE) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     public int getNumberingPlanIndicator() {
@@ -150,11 +159,11 @@ public class ConnectedNumberImpl extends AbstractNAINumber implements ConnectedN
     }
 
     public int getAddressRepresentationRestrictedIndicator() {
-        return addressRepresentationREstrictedIndicator;
+        return addressRepresentationRestrictedIndicator;
     }
 
     public void setAddressRepresentationRestrictedIndicator(int addressRepresentationREstrictedIndicator) {
-        this.addressRepresentationREstrictedIndicator = addressRepresentationREstrictedIndicator;
+        this.addressRepresentationRestrictedIndicator = addressRepresentationREstrictedIndicator;
     }
 
     public int getScreeningIndicator() {
