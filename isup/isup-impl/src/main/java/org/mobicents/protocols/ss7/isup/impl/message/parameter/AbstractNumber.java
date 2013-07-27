@@ -104,10 +104,6 @@ public abstract class AbstractNumber extends AbstractISUPParameter implements Nu
 
     public AbstractNumber(String address) {
         super();
-        if (address == null) {
-            throw new IllegalArgumentException("Address is null.");
-        }
-
         this.setAddress(address);
     }
 
@@ -241,7 +237,9 @@ public abstract class AbstractNumber extends AbstractISUPParameter implements Nu
      * @throws IllegalArgumentException - thrown if read error is encountered.
      */
     public int decodeDigits(ByteArrayInputStream bis) throws ParameterException {
-
+        if(skipDigits()){
+            return 0;
+        }
         if (bis.available() == 0) {
             throw new ParameterException("No more data to read.");
         }
@@ -283,6 +281,9 @@ public abstract class AbstractNumber extends AbstractISUPParameter implements Nu
      * @throws IllegalArgumentException
      */
     public int decodeDigits(ByteArrayInputStream bis, int octetsCount) throws ParameterException {
+        if(skipDigits()){
+            return 0;
+        }
         if (bis.available() == 0) {
             throw new ParameterException("No more data to read.");
         }
@@ -353,6 +354,9 @@ public abstract class AbstractNumber extends AbstractISUPParameter implements Nu
      *
      */
     public int encodeDigits(ByteArrayOutputStream bos) {
+        if(skipDigits()){
+            return 0;
+        }
         boolean isOdd = this.oddFlag == _FLAG_ODD;
 
         byte b = 0;
@@ -392,9 +396,16 @@ public abstract class AbstractNumber extends AbstractISUPParameter implements Nu
 
     public void setAddress(String address) {
         this.address = address;
+        if(address!=null){
+            // lets compute odd flag
+            oddFlag = this.address.length() % 2;
+        } else {
+            oddFlag = 0;
+        }
+    }
 
-        // lets compute odd flag
-        oddFlag = this.address.length() % 2;
+    protected boolean skipDigits(){
+        return false;
     }
 
 }
