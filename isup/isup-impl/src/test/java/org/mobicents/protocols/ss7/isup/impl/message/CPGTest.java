@@ -87,7 +87,7 @@ public class CPGTest extends MessageHarness{
 		
 		assertEquals(cn.getNatureOfAddressIndicator(),cn._NAI_SUBSCRIBER_NUMBER,"ConnectedNumber value getNatureOfAddressIndicator  does not match:");
 		assertEquals(cn.getNumberingPlanIndicator(),cn._NPI_TELEX,"ConnectedNumber value getNumberingPlanIndicator  does not match:");
-		assertEquals(cn.getAddressRepresentationRestrictedIndicator(),cn._APRI_NOT_AVAILABLE,"ConnectedNumber value getAddressRepresentationRestrictedIndicator  does not match:");
+		assertEquals(cn.getAddressRepresentationRestrictedIndicator(),cn._APRI_ALLOWED,"ConnectedNumber value getAddressRepresentationRestrictedIndicator  does not match:");
 		assertEquals(cn._SI_NETWORK_PROVIDED,cn.getScreeningIndicator(),cn._SI_NETWORK_PROVIDED,"ConnectedNumber value getScreeningIndicator  does not match:");
 		assertEquals(cn.getAddress(),"380683","ConnectedNumber value getAddress  does not match:");
 		
@@ -123,7 +123,7 @@ public class CPGTest extends MessageHarness{
 				,ConnectedNumber._PARAMETER_CODE
 				,0x05
 				,0x01
-				,0x4B
+				,0x43
 				,(byte) (0x83&0xFF)
 				,0x60
 				,0x38

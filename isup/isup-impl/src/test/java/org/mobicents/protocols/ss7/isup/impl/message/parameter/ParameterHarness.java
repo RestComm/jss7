@@ -199,10 +199,10 @@ public abstract class ParameterHarness  {
 				Method m = cClass.getMethod(getterMethodNames[index], null);
 				// Should not be null by now
 				Object v = m.invoke(component, null);
-				if (v == null && expectedValues != null) {
+				if (v == null && expectedValues[index] != null) {
 					fail("Failed to validate values in component: " + component.getClass().getName() + ". Value of: " + getterMethodNames[index] + " is null, but test values is not.");
 				}
-				if(expectedValues[index].getClass().isArray() )
+				if (expectedValues[index] != null && expectedValues[index].getClass().isArray())
 				{
 					assertTrue(Arrays.deepEquals(new Object[]{expectedValues[index]},new Object[]{ v}),"Failed to validate values in component: " + component.getClass().getName() + ". Value of: " + getterMethodNames[index]);
 				}else

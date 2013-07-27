@@ -649,7 +649,31 @@ public class ConnectMessageImpl extends ISUPMessageImpl implements ConnectMessag
 		return (HTRInformation) super.o_Parameters.get(_INDEX_O_HTRInformation);
 	}
 
-	
+    protected int decodeMandatoryParameters(ISUPParameterFactory parameterFactory, byte[] b, int index)
+            throws ParameterException {
+        int localIndex = index;
+        index += super.decodeMandatoryParameters(parameterFactory, b, index);
+
+        if (b.length - index > 2) {
+
+            try {
+                byte[] body = new byte[2];
+                body[0] = b[index++];
+                body[1] = b[index++];
+
+                BackwardCallIndicators v = parameterFactory.createBackwardCallIndicators();
+                ((AbstractISUPParameter) v).decode(body);
+                this.setBackwardCallIndicators(v);
+            } catch (Exception e) {
+                throw new ParameterException("Failed to parse BackwardCallIndicators due to: ", e);
+            }
+
+            return index - localIndex;
+        } else {
+            throw new ParameterException("byte[] must have at least 5 octets");
+        }
+    }
+
 	protected int decodeMandatoryVariableParameters(ISUPParameterFactory parameterFactory, byte[] b, int index) throws ParameterException {
 		throw new UnsupportedOperationException("This message does not support mandatory variable parameters.");
 	}
@@ -688,10 +712,9 @@ public class ConnectMessageImpl extends ISUPMessageImpl implements ConnectMessag
 			this.setBackwardGVNS(backwardGVNS);
 			break;
 		case ConnectedNumber._PARAMETER_CODE:
-			ConnectedNumber value = new ConnectedNumberImpl(parameterBody);
-			parameterFactory.createConnectedNumber();
-			((AbstractISUPParameter) value).decode(parameterBody);
-			this.setConnectedNumber(value);
+		    ConnectedNumber connectedNumber = parameterFactory.createConnectedNumber();
+			((AbstractISUPParameter) connectedNumber).decode(parameterBody);
+			this.setConnectedNumber(connectedNumber);
 			break;
 		case CallReference._PARAMETER_CODE:
 			CallReference callReference = parameterFactory.createCallReference();
