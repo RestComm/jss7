@@ -526,137 +526,142 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
                     break;
 
                 default:
-                    if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-                        switch (tag) {
-                            case _ID_calledPartyNumber:
-                                this.calledPartyNumber = new CalledPartyNumberCapImpl();
-                                ((CalledPartyNumberCapImpl) this.calledPartyNumber).decodeAll(ais);
-                                break;
-                            case _ID_callingPartyNumber:
-                                this.callingPartyNumber = new CallingPartyNumberCapImpl();
-                                ((CallingPartyNumberCapImpl) this.callingPartyNumber).decodeAll(ais);
-                                break;
-                            case _ID_callingPartysCategory:
-                                this.callingPartysCategory = new CallingPartysCategoryInapImpl();
-                                ((CallingPartysCategoryInapImpl) this.callingPartysCategory).decodeAll(ais);
-                                break;
-                            case _ID_cGEncountered:
-                                ais.advanceElement(); // TODO: implement it
-                                break;
-                            case _ID_iPSSPCapabilities:
-                                this.IPSSPCapabilities = new IPSSPCapabilitiesImpl();
-                                ((IPSSPCapabilitiesImpl) this.IPSSPCapabilities).decodeAll(ais);
-                                break;
-                            case _ID_locationNumber:
-                                this.locationNumber = new LocationNumberCapImpl();
-                                ((LocationNumberCapImpl) this.locationNumber).decodeAll(ais);
-                                break;
-                            case _ID_originalCalledPartyID:
-                                this.originalCalledPartyID = new OriginalCalledNumberCapImpl();
-                                ((OriginalCalledNumberCapImpl) this.originalCalledPartyID).decodeAll(ais);
-                                break;
-                            case _ID_extensions:
-                                this.extensions = new CAPExtensionsImpl();
-                                ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
-                                break;
-                            case _ID_highLayerCompatibility:
-                                this.highLayerCompatibility = new HighLayerCompatibilityInapImpl();
-                                ((HighLayerCompatibilityInapImpl) this.highLayerCompatibility).decodeAll(ais);
-                                break;
-                            case _ID_additionalCallingPartyNumber:
-                                this.additionalCallingPartyNumber = new DigitsImpl();
-                                ((DigitsImpl) this.additionalCallingPartyNumber).decodeAll(ais);
-                                this.additionalCallingPartyNumber.setIsGenericNumber();
-                                break;
-                            case _ID_bearerCapability:
-                                AsnInputStream ais2 = ais.readSequenceStream();
-                                ais2.readTag();
-                                this.bearerCapability = new BearerCapabilityImpl();
-                                ((BearerCapabilityImpl) this.bearerCapability).decodeAll(ais2);
-                                break;
-                            case _ID_eventTypeBCSM:
-                                i1 = (int) ais.readInteger();
-                                this.eventTypeBCSM = EventTypeBCSM.getInstance(i1);
-                                break;
-                            case _ID_redirectingPartyID:
-                                this.redirectingPartyID = new RedirectingPartyIDCapImpl();
-                                ((RedirectingPartyIDCapImpl) this.redirectingPartyID).decodeAll(ais);
-                                break;
-                            case _ID_redirectionInformation:
-                                this.redirectionInformation = new RedirectionInformationInapImpl();
-                                ((RedirectionInformationInapImpl) this.redirectionInformation).decodeAll(ais);
-                                break;
-                            case _ID_cause:
-                                ais.advanceElement(); // TODO: implement it
-                                break;
-                            case _ID_serviceInteractionIndicatorsTwo:
-                                ais.advanceElement(); // TODO: implement it
-                                break;
-                            case _ID_carrier:
-                                ais.advanceElement(); // TODO: implement it
-                                break;
-                            case _ID_cug_Index:
-                                ais.advanceElement(); // TODO: implement it
-                                break;
-                            case _ID_cug_Interlock:
-                                ais.advanceElement(); // TODO: implement it
-                                break;
-                            case _ID_cug_OutgoingAccess:
-                                ais.advanceElement(); // TODO: implement it
-                                break;
-                            case _ID_iMSI:
-                                this.imsi = new IMSIImpl();
-                                ((IMSIImpl) this.imsi).decodeAll(ais);
-                                break;
-                            case _ID_subscriberState:
-                                ais2 = ais.readSequenceStream();
-                                ais2.readTag();
-                                this.subscriberState = new SubscriberStateImpl();
-                                ((SubscriberStateImpl) this.subscriberState).decodeAll(ais2);
-                                break;
-                            case _ID_locationInformation:
-                                this.locationInformation = new LocationInformationImpl();
-                                ((LocationInformationImpl) this.locationInformation).decodeAll(ais);
-                                break;
-                            case _ID_ext_basicServiceCode:
-                                ais2 = ais.readSequenceStream();
-                                ais2.readTag();
-                                this.extBasicServiceCode = new ExtBasicServiceCodeImpl();
-                                ((ExtBasicServiceCodeImpl) this.extBasicServiceCode).decodeAll(ais2);
-                                break;
-                            case _ID_callReferenceNumber:
-                                this.callReferenceNumber = new CallReferenceNumberImpl();
-                                ((CallReferenceNumberImpl) this.callReferenceNumber).decodeAll(ais);
-                                break;
-                            case _ID_mscAddress:
-                                this.mscAddress = new ISDNAddressStringImpl();
-                                ((ISDNAddressStringImpl) this.mscAddress).decodeAll(ais);
-                                break;
-                            case _ID_calledPartyBCDNumber:
-                                this.calledPartyBCDNumber = new CalledPartyBCDNumberImpl();
-                                ((CalledPartyBCDNumberImpl) this.calledPartyBCDNumber).decodeAll(ais);
-                                break;
-                            case _ID_timeAndTimezone:
-                                this.timeAndTimezone = new TimeAndTimezoneImpl();
-                                ((TimeAndTimezoneImpl) this.timeAndTimezone).decodeAll(ais);
-                                break;
-                            case _ID_callForwardingSS_Pending:
-                                ais.readNull();
-                                this.callForwardingSSPending = true;
-                                break;
-                            case _ID_initialDPArgExtension:
-                                this.initialDPArgExtension = new InitialDPArgExtensionImpl(this.isCAPVersion3orLater);
-                                ((InitialDPArgExtensionImpl) this.initialDPArgExtension).decodeAll(ais);
-                                break;
-
-                            default:
-                                ais.advanceElement();
-                                break;
+                if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
+                    switch (tag) {
+                    case _ID_calledPartyNumber:
+                        this.calledPartyNumber = new CalledPartyNumberCapImpl();
+                        ((CalledPartyNumberCapImpl) this.calledPartyNumber).decodeAll(ais);
+                        break;
+                    case _ID_callingPartyNumber:
+                        this.callingPartyNumber = new CallingPartyNumberCapImpl();
+                        ((CallingPartyNumberCapImpl) this.callingPartyNumber).decodeAll(ais);
+                        break;
+                    case _ID_callingPartysCategory:
+                        this.callingPartysCategory = new CallingPartysCategoryInapImpl();
+                        ((CallingPartysCategoryInapImpl) this.callingPartysCategory).decodeAll(ais);
+                        break;
+                    case _ID_cGEncountered:
+                        ais.advanceElement(); // TODO: implement it
+                        break;
+                    case _ID_iPSSPCapabilities:
+                        this.IPSSPCapabilities = new IPSSPCapabilitiesImpl();
+                        ((IPSSPCapabilitiesImpl) this.IPSSPCapabilities).decodeAll(ais);
+                        break;
+                    case _ID_locationNumber:
+                        this.locationNumber = new LocationNumberCapImpl();
+                        ((LocationNumberCapImpl) this.locationNumber).decodeAll(ais);
+                        break;
+                    case _ID_originalCalledPartyID:
+                        this.originalCalledPartyID = new OriginalCalledNumberCapImpl();
+                        ((OriginalCalledNumberCapImpl) this.originalCalledPartyID).decodeAll(ais);
+                        break;
+                    case _ID_extensions:
+                        this.extensions = new CAPExtensionsImpl();
+                        ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
+                        break;
+                    case _ID_highLayerCompatibility:
+                        this.highLayerCompatibility = new HighLayerCompatibilityInapImpl();
+                        ((HighLayerCompatibilityInapImpl) this.highLayerCompatibility).decodeAll(ais);
+                        break;
+                    case _ID_additionalCallingPartyNumber:
+                        this.additionalCallingPartyNumber = new DigitsImpl();
+                        ((DigitsImpl) this.additionalCallingPartyNumber).decodeAll(ais);
+                        this.additionalCallingPartyNumber.setIsGenericNumber();
+                        break;
+                    case _ID_bearerCapability:
+                        AsnInputStream ais2 = ais.readSequenceStream();
+                        ais2.readTag();
+                        this.bearerCapability = new BearerCapabilityImpl();
+                        ((BearerCapabilityImpl) this.bearerCapability).decodeAll(ais2);
+                        break;
+                    case _ID_eventTypeBCSM:
+                        i1 = (int) ais.readInteger();
+                        this.eventTypeBCSM = EventTypeBCSM.getInstance(i1);
+                        break;
+                    case _ID_redirectingPartyID:
+                        this.redirectingPartyID = new RedirectingPartyIDCapImpl();
+                        ((RedirectingPartyIDCapImpl) this.redirectingPartyID).decodeAll(ais);
+                        break;
+                    case _ID_redirectionInformation:
+                        this.redirectionInformation = new RedirectionInformationInapImpl();
+                        ((RedirectionInformationInapImpl) this.redirectionInformation).decodeAll(ais);
+                        break;
+                    case _ID_cause:
+                        ais.advanceElement(); // TODO: implement it
+                        break;
+                    case _ID_serviceInteractionIndicatorsTwo:
+                        ais.advanceElement(); // TODO: implement it
+                        break;
+                    case _ID_carrier:
+                        ais.advanceElement(); // TODO: implement it
+                        break;
+                    case _ID_cug_Index:
+                        ais.advanceElement(); // TODO: implement it
+                        break;
+                    case _ID_cug_Interlock:
+                        ais.advanceElement(); // TODO: implement it
+                        break;
+                    case _ID_cug_OutgoingAccess:
+                        ais.advanceElement(); // TODO: implement it
+                        break;
+                    case _ID_iMSI:
+                        int len = ais.readLength();
+                        if (len == 0) {
+                            ais.advanceElementData(len);
+                        } else {
+                            this.imsi = new IMSIImpl();
+                            ((IMSIImpl) this.imsi).decodeData(ais, len);
                         }
-                    } else {
+                        break;
+                    case _ID_subscriberState:
+                        ais2 = ais.readSequenceStream();
+                        ais2.readTag();
+                        this.subscriberState = new SubscriberStateImpl();
+                        ((SubscriberStateImpl) this.subscriberState).decodeAll(ais2);
+                        break;
+                    case _ID_locationInformation:
+                        this.locationInformation = new LocationInformationImpl();
+                        ((LocationInformationImpl) this.locationInformation).decodeAll(ais);
+                        break;
+                    case _ID_ext_basicServiceCode:
+                        ais2 = ais.readSequenceStream();
+                        ais2.readTag();
+                        this.extBasicServiceCode = new ExtBasicServiceCodeImpl();
+                        ((ExtBasicServiceCodeImpl) this.extBasicServiceCode).decodeAll(ais2);
+                        break;
+                    case _ID_callReferenceNumber:
+                        this.callReferenceNumber = new CallReferenceNumberImpl();
+                        ((CallReferenceNumberImpl) this.callReferenceNumber).decodeAll(ais);
+                        break;
+                    case _ID_mscAddress:
+                        this.mscAddress = new ISDNAddressStringImpl();
+                        ((ISDNAddressStringImpl) this.mscAddress).decodeAll(ais);
+                        break;
+                    case _ID_calledPartyBCDNumber:
+                        this.calledPartyBCDNumber = new CalledPartyBCDNumberImpl();
+                        ((CalledPartyBCDNumberImpl) this.calledPartyBCDNumber).decodeAll(ais);
+                        break;
+                    case _ID_timeAndTimezone:
+                        this.timeAndTimezone = new TimeAndTimezoneImpl();
+                        ((TimeAndTimezoneImpl) this.timeAndTimezone).decodeAll(ais);
+                        break;
+                    case _ID_callForwardingSS_Pending:
+                        ais.readNull();
+                        this.callForwardingSSPending = true;
+                        break;
+                    case _ID_initialDPArgExtension:
+                        this.initialDPArgExtension = new InitialDPArgExtensionImpl(this.isCAPVersion3orLater);
+                        ((InitialDPArgExtensionImpl) this.initialDPArgExtension).decodeAll(ais);
+                        break;
+
+                    default:
                         ais.advanceElement();
+                        break;
                     }
-                    break;
+                } else {
+                    ais.advanceElement();
+                }
+                break;
             }
 
             num++;
