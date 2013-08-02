@@ -24,8 +24,9 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 
 /**
  *
- CancellationType ::= ENUMERATED { updateProcedure (0), subscriptionWithdraw (1), ..., initialAttachProcedure (2)} -- The HLR
- * shall not send values other than listed above
+ CancellationType ::= ENUMERATED {
+   updateProcedure (0), subscriptionWithdraw (1), ..., initialAttachProcedure (2)}
+ -- The HLR shall not send values other than listed above
  *
  *
  * @author sergey vetyutnev

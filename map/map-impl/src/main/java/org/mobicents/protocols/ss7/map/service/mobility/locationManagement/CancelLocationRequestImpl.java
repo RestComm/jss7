@@ -264,7 +264,7 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements Ca
                     switch (ais.getTagClass()) {
                         case Tag.CLASS_UNIVERSAL:
                             switch (tag) {
-                                case Tag.INTEGER:
+                                case Tag.ENUMERATED:
                                     if (!ais.isTagPrimitive()) {
                                         throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
                                                 + ".cancellationType: is not primitive",
@@ -429,7 +429,7 @@ public class CancelLocationRequestImpl extends MobilityMessageImpl implements Ca
 
             if (this.cancellationType != null) {
                 try {
-                    asnOs.writeInteger(this.cancellationType.getCode());
+                    asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.ENUMERATED, this.cancellationType.getCode());
                 } catch (IOException e) {
                     throw new MAPException("IOException while encoding " + _PrimitiveName + " parameter cancellationType", e);
                 } catch (AsnException e) {
