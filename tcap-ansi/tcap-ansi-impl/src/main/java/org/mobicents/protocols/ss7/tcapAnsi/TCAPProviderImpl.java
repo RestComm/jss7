@@ -548,8 +548,11 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                         if (tcUnidentified.isDialogPortionExists()) {
                             isDP = true;
                         } else {
-                            long dialogId = Utils.decodeTransactionId(tcUnidentified.getDestinationTransactionId());
-                            Dialog ddi = this.dialogs.get(dialogId);
+                            Dialog ddi = null;
+                            if (tcUnidentified.getDestinationTransactionId() != null) {
+                                long dialogId = Utils.decodeTransactionId(tcUnidentified.getDestinationTransactionId());
+                                ddi = this.dialogs.get(dialogId);
+                            }
                             if (ddi != null && ddi.getProtocolVersion() != null)
                                 isDP = true;
                         }
@@ -762,15 +765,18 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         }
     }
 
-    private void unrecognizedPackageType(SccpDataMessage message, SccpAddress localAddress, SccpAddress remoteAddress, AsnInputStream ais, int tag)
-            throws ParseException {
+    private void unrecognizedPackageType(SccpDataMessage message, SccpAddress localAddress, SccpAddress remoteAddress, AsnInputStream ais, int tag) {
         if (this.stack.getPreviewMode()) {
             return;
         }
 
         logger.error(String.format("Rx unidentified messageType=%s. SccpMessage=%s", tag, message));
         TCUnidentifiedMessage tcUnidentified = new TCUnidentifiedMessage();
-        tcUnidentified.decode(ais);
+        try {
+            tcUnidentified.decode(ais);
+        } catch (ParseException e) {
+            // we do nothing
+        }
 
         if (tcUnidentified.getOriginatingTransactionId() != null) {
             byte[] otid = tcUnidentified.getOriginatingTransactionId();
@@ -782,7 +788,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                 this.sendProviderAbort(PAbortCause.UnrecognizedPackageType, otid, remoteAddress, localAddress, message.getSls());
             }
         } else {
-            this.sendProviderAbort(PAbortCause.UnrecognizedPackageType, new byte[0], remoteAddress, localAddress, message.getSls());
+            this.sendProviderAbort(PAbortCause.UnrecognizedPackageType, new byte[4], remoteAddress, localAddress, message.getSls());
         }
     }
 

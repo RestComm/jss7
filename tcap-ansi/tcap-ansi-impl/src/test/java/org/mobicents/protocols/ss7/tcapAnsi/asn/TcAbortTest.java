@@ -50,7 +50,7 @@ public class TcAbortTest {
 
     private byte[] data2 = new byte[] { -10, 13, -57, 4, 20, 0, 0, 0, -7, 3, -37, 1, 111, -8, 0 };
 
-    private byte[] data3 = new byte[] { -10, 26, -57, 4, 20, 0, 0, 0, -8, 18, 6, 7, 4, 0, 0, 1, 1, 1, 1, -96, 7, 1, 2, 3, 4, 5, 6, 7 };
+    private byte[] data3 = new byte[] { -10, 28, -57, 4, 20, 0, 0, 0, -8, 20, 40, 18, 6, 7, 4, 0, 0, 1, 1, 1, 1, -96, 7, 1, 2, 3, 4, 5, 6, 7 };
 
     private byte[] trId = new byte[] { 20, 0, 0, 0 };
 

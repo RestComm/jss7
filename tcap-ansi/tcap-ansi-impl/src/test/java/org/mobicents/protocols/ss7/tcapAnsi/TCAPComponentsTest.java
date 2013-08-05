@@ -179,7 +179,7 @@ public class TCAPComponentsTest extends SccpHarness {
                         assertTrue(r.isLocalOriginated());
 
                         this.addNewInvoke(1L, 5L, false);
-                        this.sendContinue();
+                        this.sendContinue(false);
                         break;
 
                     case 2:
@@ -192,7 +192,7 @@ public class TCAPComponentsTest extends SccpHarness {
                         assertFalse(r.isLocalOriginated());
 
                         this.addNewInvoke(2L, 5L, false);
-                        this.sendContinue();
+                        this.sendContinue(false);
                         break;
 
                     case 3:
@@ -213,13 +213,13 @@ public class TCAPComponentsTest extends SccpHarness {
 
                         this.addNewInvoke(1L, 5L, false);
                         this.addNewInvoke(2L, 5L, false);
-                        this.sendContinue();
+                        this.sendContinue(false);
                         break;
 
                     case 4:
                         this.addNewInvoke(1L, 10000L, true);
                         this.addNewInvoke(2L, 10000L, true);
-                        this.sendContinue();
+                        this.sendContinue(false);
                         break;
                     }
                 } catch (Exception e) {
@@ -259,7 +259,7 @@ public class TCAPComponentsTest extends SccpHarness {
                 try {
 
                     this.addNewReturnResult(1L);
-                    this.sendContinue();
+                    this.sendContinue(false);
                 } catch (Exception e) {
                     fail("Exception when sendComponent / send message 1", e);
                     e.printStackTrace();
@@ -294,20 +294,20 @@ public class TCAPComponentsTest extends SccpHarness {
                         assertEquals(r.getProblem(), RejectProblem.invokeDuplicateInvocation);
                         assertTrue(r.isLocalOriginated());
 
-                        this.sendContinue();
+                        this.sendContinue(false);
                         break;
 
                     case 2:
                         this.addNewReturnResultLast(1L);
                         this.addNewReturnError(2L);
-                        this.sendContinue();
+                        this.sendContinue(false);
                         break;
 
                     case 3:
                         this.dialog.processInvokeWithoutAnswer(1L);
                         this.addNewReject();
 
-                        this.sendContinue();
+                        this.sendContinue(false);
                         break;
 
                     case 4:
@@ -320,7 +320,7 @@ public class TCAPComponentsTest extends SccpHarness {
                         assertEquals(r.getProblem(), RejectProblem.invokeDuplicateInvocation);
                         assertTrue(r.isLocalOriginated());
 
-                        this.sendEnd();
+                        this.sendEnd(false);
                         break;
                     }
                 } catch (Exception e) {
@@ -502,7 +502,7 @@ public class TCAPComponentsTest extends SccpHarness {
                 assertEquals(c.getType(), ComponentType.InvokeNotLast);
 
                 try {
-                    this.sendEnd();
+                    this.sendEnd(false);
                 } catch (Exception e) {
                     fail("Exception when sendComponent / send message 1", e);
                     e.printStackTrace();
@@ -591,7 +591,7 @@ public class TCAPComponentsTest extends SccpHarness {
                 assertTrue(r.isLocalOriginated());
 
                 try {
-                    this.sendEnd();
+                    this.sendEnd(false);
                 } catch (Exception e) {
                     fail("Exception when sendComponent / send message 1", e);
                     e.printStackTrace();
@@ -681,7 +681,7 @@ public class TCAPComponentsTest extends SccpHarness {
                 assertTrue(r.isLocalOriginated());
 
                 try {
-                    this.sendEnd();
+                    this.sendEnd(false);
                 } catch (Exception e) {
                     fail("Exception when sendComponent / send message 1", e);
                     e.printStackTrace();

@@ -26,6 +26,7 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.ComponentPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcapAnsi.api.DialogPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ApplicationContext;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformation;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformationElement;
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCQueryIndication;
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCQueryRequest;
@@ -218,6 +219,11 @@ public class DialogPrimitiveFactoryImpl implements DialogPrimitiveFactory {
      */
     public UserInformation createUserInformation() {
         return TcapFactory.createUserInformation();
+    }
+
+    @Override
+    public UserInformationElement createUserInformationElement() {
+        return TcapFactory.createUserInformationElement();
     }
 
 }

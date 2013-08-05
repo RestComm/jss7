@@ -169,9 +169,17 @@ public class TCAbortMessageImpl implements TCAbortMessage {
                             "Error decoding TCAbortMessage: bad tag or tagClass or is primitive for userAbortInformation, found tagClass="
                                     + localAis.getTagClass() + ", tag" + tag);
                 UserInformationElementImpl uai = new UserInformationElementImpl();
-                uai.decode(localAis);
-                if (uai.isOid())
-                    this.userAbortInformation = uai;
+                AsnInputStream localAis2 = localAis.readSequenceStream();
+                if (localAis2.available() > 0) {
+                    tag = localAis2.readTag();
+                    if (tag != Tag.EXTERNAL || localAis2.getTagClass() != Tag.CLASS_UNIVERSAL || localAis2.isTagPrimitive())
+                        throw new ParseException(PAbortCause.IncorrectTransactionPortion,
+                                "Error decoding TCAbortMessage: bad tag or tagClass or is primitive for userAbortInformation - External, found tagClass="
+                                        + localAis2.getTagClass() + ", tag" + tag);
+                    uai.decode(localAis2);
+                    if (uai.isOid())
+                        this.userAbortInformation = uai;
+                }
                 break;
 
             default:
@@ -213,7 +221,10 @@ public class TCAbortMessageImpl implements TCAbortMessage {
                 if (this.dp != null)
                     this.dp.encode(aos);
                 if (this.userAbortInformation != null) {
-                    ((UserInformationElementImpl) this.userAbortInformation).encode(aos, Tag.CLASS_PRIVATE, TCAbortMessage._TAG_USER_ABORT_INFORMATION);
+                    aos.writeTag(Tag.CLASS_PRIVATE, false, TCAbortMessage._TAG_USER_ABORT_INFORMATION);
+                    int pos2 = aos.StartContentDefiniteLength();
+                    ((UserInformationElementImpl) this.userAbortInformation).encode(aos);
+                    aos.FinalizeContent(pos2);
                 } else {
                     aos.writeTag(Tag.CLASS_PRIVATE, false, TCAbortMessage._TAG_USER_ABORT_INFORMATION);
                     aos.writeLength(0);

@@ -60,7 +60,7 @@ public class Server extends EventTestHarness {
     }
 
     @Override
-    public void sendContinue() throws TCAPSendException, TCAPException {
+    public void sendContinue(boolean addingInv) throws TCAPSendException, TCAPException {
 
         Component[] comps = components;
         if (comps == null || comps.length != 2) {
@@ -95,10 +95,10 @@ public class Server extends EventTestHarness {
         // no parameter
         this.dialog.sendComponent(invoke2);
 
-        super.sendContinue();
+        super.sendContinue(addingInv);
     }
 
     public void sendContinue2() throws TCAPSendException, TCAPException {
-        super.sendContinue();
+        super.sendContinue(false);
     }
 }

@@ -35,6 +35,7 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.asn.DialogPortion;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ParseException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ProtocolVersion;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformation;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformationElement;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ErrorCode;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Invoke;
@@ -114,6 +115,16 @@ public final class TcapFactory {
 
     public static UserInformation createUserInformation(AsnInputStream localAis) throws ParseException {
         UserInformationImpl ui = new UserInformationImpl();
+        ui.decode(localAis);
+        return ui;
+    }
+
+    public static UserInformationElement createUserInformationElement() {
+        return new UserInformationElementImpl();
+    }
+
+    public static UserInformationElement createUserInformationElement(AsnInputStream localAis) throws ParseException {
+        UserInformationElementImpl ui = new UserInformationElementImpl();
         ui.decode(localAis);
         return ui;
     }
@@ -323,7 +334,7 @@ public final class TcapFactory {
             }
         }
 
-        while (compAis.available() > 0) {
+        while (compAis != null && compAis.available() > 0) {
             try {
                 Component c = TcapFactory.createComponent(compAis);
                 if (c == null) {

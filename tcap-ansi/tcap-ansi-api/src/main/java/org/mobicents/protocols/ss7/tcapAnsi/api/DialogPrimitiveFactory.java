@@ -28,6 +28,7 @@ package org.mobicents.protocols.ss7.tcapAnsi.api;
 
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ApplicationContext;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformation;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformationElement;
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCQueryRequest;
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCConversationRequest;
@@ -59,5 +60,7 @@ public interface DialogPrimitiveFactory {
     ApplicationContext createApplicationContext(long val);
 
     UserInformation createUserInformation();
+
+    UserInformationElement createUserInformationElement();
 
 }
