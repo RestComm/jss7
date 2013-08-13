@@ -35,6 +35,8 @@ public interface TCAPStack {
      */
     TCAPProvider getProvider();
 
+    TCAPCounterProvider getCounterProvider();
+
     /**
      * Stops this stack and transport layer(SCCP)
      */

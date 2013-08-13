@@ -525,6 +525,7 @@ public class DialogImpl implements Dialog {
             try {
                 tcbm.encode(aos);
                 this.setState(TRPseudoState.InitialSent);
+                this.provider.getStack().getCounterProviderImpl().addTcBeginSentCount();
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
                         this.seqControl);
                 this.scheduledComponentList.clear();
@@ -602,6 +603,7 @@ public class DialogImpl implements Dialog {
                 AsnOutputStream aos = new AsnOutputStream();
                 try {
                     tcbm.encode(aos);
+                    this.provider.getStack().getCounterProviderImpl().addTcContinueSentCount();
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
                             this.localAddress, this.seqControl);
                     this.setState(TRPseudoState.Active);
@@ -632,6 +634,7 @@ public class DialogImpl implements Dialog {
                 AsnOutputStream aos = new AsnOutputStream();
                 try {
                     tcbm.encode(aos);
+                    this.provider.getStack().getCounterProviderImpl().addTcContinueSentCount();
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
                             this.localAddress, this.seqControl);
                     this.scheduledComponentList.clear();
@@ -752,6 +755,7 @@ public class DialogImpl implements Dialog {
             AsnOutputStream aos = new AsnOutputStream();
             try {
                 tcbm.encode(aos);
+                this.provider.getStack().getCounterProviderImpl().addTcEndSentCount();
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
                         this.seqControl);
 
@@ -814,6 +818,7 @@ public class DialogImpl implements Dialog {
             AsnOutputStream aos = new AsnOutputStream();
             try {
                 msg.encode(aos);
+                this.provider.getStack().getCounterProviderImpl().addTcUniSentCount();
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
                         this.seqControl);
                 this.scheduledComponentList.clear();
@@ -910,6 +915,7 @@ public class DialogImpl implements Dialog {
                 AsnOutputStream aos = new AsnOutputStream();
                 try {
                     msg.encode(aos);
+                    this.provider.getStack().getCounterProviderImpl().addTcUserAbortSentCount();
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
                             this.localAddress, this.seqControl);
 
@@ -1641,6 +1647,7 @@ public class DialogImpl implements Dialog {
                 AsnOutputStream aos = new AsnOutputStream();
                 try {
                     msg.encode(aos);
+                    this.provider.getStack().getCounterProviderImpl().addTcPAbortSentCount();
                     this.provider.send(aos.toByteArray(), false, this.remoteAddress, this.localAddress, this.seqControl);
                 } catch (Exception e) {
                     if (logger.isEnabledFor(Level.ERROR)) {

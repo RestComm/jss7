@@ -290,6 +290,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
     public void deliver(DialogImpl dialogImpl, TCBeginIndicationImpl msg) {
 
+        this.stack.getCounterProviderImpl().addTcBeginRecievedCount();
         try {
             for (TCListener lst : this.tcListeners) {
                 lst.onTCBegin(msg);
@@ -303,6 +304,8 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     }
 
     public void deliver(DialogImpl dialogImpl, TCContinueIndicationImpl tcContinueIndication) {
+
+        this.stack.getCounterProviderImpl().addTcContinueRecievedCount();
         try {
             for (TCListener lst : this.tcListeners) {
                 lst.onTCContinue(tcContinueIndication);
@@ -316,6 +319,8 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     }
 
     public void deliver(DialogImpl dialogImpl, TCEndIndicationImpl tcEndIndication) {
+
+        this.stack.getCounterProviderImpl().addTcEndRecievedCount();
         try {
             for (TCListener lst : this.tcListeners) {
                 lst.onTCEnd(tcEndIndication);
@@ -328,6 +333,8 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     }
 
     public void deliver(DialogImpl dialogImpl, TCPAbortIndicationImpl tcAbortIndication) {
+
+        this.stack.getCounterProviderImpl().addTcPAbortRecievedCount();
         try {
             for (TCListener lst : this.tcListeners) {
                 lst.onTCPAbort(tcAbortIndication);
@@ -341,6 +348,8 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     }
 
     public void deliver(DialogImpl dialogImpl, TCUserAbortIndicationImpl tcAbortIndication) {
+
+        this.stack.getCounterProviderImpl().addTcUserAbortRecievedCount();
         try {
             for (TCListener lst : this.tcListeners) {
                 lst.onTCUserAbort(tcAbortIndication);
@@ -354,6 +363,8 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     }
 
     public void deliver(DialogImpl dialogImpl, TCUniIndicationImpl tcUniIndication) {
+
+        this.stack.getCounterProviderImpl().addTcUniRecievedCount();
         try {
             for (TCListener lst : this.tcListeners) {
                 lst.onTCUni(tcUniIndication);
@@ -468,6 +479,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         AsnOutputStream aos = new AsnOutputStream();
         try {
             msg.encode(aos);
+            this.stack.getCounterProviderImpl().addTcPAbortSentCount();
             this.send(aos.toByteArray(), false, remoteAddress, localAddress, seqControl);
         } catch (Exception e) {
             if (logger.isEnabledFor(Level.ERROR)) {
@@ -503,6 +515,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         AsnOutputStream aos = new AsnOutputStream();
         try {
             msg.encode(aos);
+            this.stack.getCounterProviderImpl().addTcPAbortSentCount();
             this.send(aos.toByteArray(), false, remoteAddress, localAddress, seqControl);
         } catch (Exception e) {
             if (logger.isEnabledFor(Level.ERROR)) {
@@ -639,7 +652,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
                 } catch (TCAPException e) {
                     this.sendProviderAbort(PAbortCauseType.ResourceLimitation, tcb.getOriginatingTransactionId(), remoteAddress, localAddress, message.getSls());
-                    logger.error("Too many registered current dialogs when receiving TCBeginMessage");
+                    logger.error("Too many registered current dialogs when receiving TCBeginMessage: " + e.getMessage(), e);
                     return;
                 }
                 di.processBegin(tcb, localAddress, remoteAddress);

@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.tcap;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.api.TCAPCounterProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 
@@ -44,6 +45,7 @@ public class TCAPStackImpl implements TCAPStack {
     public static final long _EMPTY_INVOKE_TIMEOUT = -1;
     // TCAP state data, it is used ONLY on client side
     protected TCAPProviderImpl tcapProvider;
+    protected TCAPCounterProviderImpl tcapCounterProvider;
     private SccpProvider sccpProvider;
     private SccpAddress address;
 
@@ -68,6 +70,7 @@ public class TCAPStackImpl implements TCAPStack {
     public TCAPStackImpl(SccpProvider sccpProvider, int ssn) {
         this.sccpProvider = sccpProvider;
         this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, ssn);
+        this.tcapCounterProvider = new TCAPCounterProviderImpl();
     }
 
     public void start() throws Exception {
@@ -96,6 +99,7 @@ public class TCAPStackImpl implements TCAPStack {
             throw new IllegalArgumentException("InvokeTimeout value must be greater or equal to zero.");
         }
 
+        this.tcapCounterProvider = new TCAPCounterProviderImpl();
         tcapProvider.start();
 
         this.started = true;
@@ -121,6 +125,15 @@ public class TCAPStackImpl implements TCAPStack {
     public TCAPProvider getProvider() {
 
         return tcapProvider;
+    }
+
+    @Override
+    public TCAPCounterProvider getCounterProvider() {
+        return tcapCounterProvider;
+    }
+
+    public TCAPCounterProviderImpl getCounterProviderImpl() {
+        return tcapCounterProvider;
     }
 
     /*
