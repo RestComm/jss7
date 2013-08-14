@@ -393,14 +393,12 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
         try {
             this.isSctpConnectionUp = false;
             this.isM3uaConnectionActive = false;
-            this.initM3ua(this.testerHost.getConfigurationData().getM3uaConfigurationData().getStorePcapTrace(),
-                    this.testerHost.getConfigurationData().getM3uaConfigurationData().getIsSctpServer(), this.testerHost
-                            .getConfigurationData().getM3uaConfigurationData().getLocalHost(), this.testerHost
-                            .getConfigurationData().getM3uaConfigurationData().getLocalPort(), this.testerHost
-                            .getConfigurationData().getM3uaConfigurationData().getRemoteHost(), this.testerHost
-                            .getConfigurationData().getM3uaConfigurationData().getRemotePort(), this.testerHost
-                            .getConfigurationData().getM3uaConfigurationData().getIpChannelType(), this.testerHost
-                            .getConfigurationData().getM3uaConfigurationData().getSctpExtraHostAddressesArray());
+            this.initM3ua(this.testerHost.getConfigurationData().getM3uaConfigurationData().getStorePcapTrace(), this.testerHost.getConfigurationData()
+                    .getM3uaConfigurationData().getIsSctpServer(), this.testerHost.getConfigurationData().getM3uaConfigurationData().getLocalHost(),
+                    this.testerHost.getConfigurationData().getM3uaConfigurationData().getLocalPort(), this.testerHost.getConfigurationData()
+                            .getM3uaConfigurationData().getRemoteHost(), this.testerHost.getConfigurationData().getM3uaConfigurationData().getRemotePort(),
+                    this.testerHost.getConfigurationData().getM3uaConfigurationData().getIpChannelType(), this.testerHost.getConfigurationData()
+                            .getM3uaConfigurationData().getSctpExtraHostAddressesArray(), this.testerHost.getPersistDir());
             this.testerHost.sendNotif(SOURCE_NAME, "M3UA has been started", "", Level.INFO);
             return true;
         } catch (Throwable e) {
@@ -452,13 +450,14 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
     }
 
     private void initM3ua(boolean storePcapTrace, boolean isSctpServer, String localHost, int localPort, String remoteHost,
-            int remotePort, IpChannelType ipChannelType, String[] extraHostAddresses) throws Exception {
+            int remotePort, IpChannelType ipChannelType, String[] extraHostAddresses, String persistDir) throws Exception {
 
         this.stopM3ua();
 
         // init SCTP stack
         this.sctpManagement = new ManagementImpl("SimSCTPServer_" + name);
         // set 8 threads for delivering messages
+        this.sctpManagement.setPersistDir(persistDir);
         this.sctpManagement.setWorkerThreads(8);
         this.sctpManagement.setSingleThread(false);
         this.sctpManagement.setConnectDelay(10000);
@@ -469,6 +468,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 
         // init M3UA stack
         this.m3uaMgmt = new M3UAManagementProxyImpl("SimM3uaServer_" + name);
+        this.m3uaMgmt.setPersistDir(persistDir);
         this.m3uaMgmt.setTransportManagement(this.sctpManagement);
         this.m3uaMgmt.start();
         this.m3uaMgmt.removeAllResourses();

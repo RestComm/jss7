@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.tools.simulator;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.rmi.registry.LocateRegistry;
@@ -72,11 +73,11 @@ import com.sun.jdmk.comm.HtmlAdaptorServer;
  */
 public class MainCore {
 
-    public static TesterHost mainGui(String appName) throws Exception {
-        TesterHost host = new TesterHost(appName);
-
-        return host;
-    }
+//    public static TesterHost mainGui(String appName) throws Exception {
+//        TesterHost host = new TesterHost(appName);
+//
+//        return host;
+//    }
 
     public static void main(String[] args) throws Exception {
 
@@ -186,7 +187,10 @@ public class MainCore {
         }
 
         // Tester host initializing
-        TesterHost host = new TesterHost(appName);
+        String sim_home = System.getProperty(TesterHost.SIMULATOR_HOME_VAR);
+        if (sim_home != null)
+            sim_home += File.separator + "data";
+        TesterHost host = new TesterHost(appName, sim_home);
 
         JMXConnectorServer cs = null;
         Registry reg = null;

@@ -89,6 +89,8 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
     private static final String PERSIST_FILE_NAME = "simulator2.xml";
     private static final String CONFIGURATION_DATA = "configurationData";
 
+    public static String SIMULATOR_HOME_VAR = "SIMULATOR_HOME";
+
     private final String appName;
     private String persistDir = null;
     private final TextBuilder persistFile = TextBuilder.newInstance();
@@ -122,8 +124,9 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
     // testers
 
-    public TesterHost(String appName) {
+    public TesterHost(String appName, String persistDir) {
         this.appName = appName;
+        this.persistDir = persistDir;
 
         this.m3ua = new M3uaMan(appName);
         this.m3ua.setTesterHost(this);
@@ -694,9 +697,9 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
         return persistDir;
     }
 
-    public void setPersistDir(String persistDir) {
-        this.persistDir = persistDir;
-    }
+//    public void setPersistDir(String persistDir) {
+//        this.persistDir = persistDir;
+//    }
 
     public void markStore() {
         needStore = true;
