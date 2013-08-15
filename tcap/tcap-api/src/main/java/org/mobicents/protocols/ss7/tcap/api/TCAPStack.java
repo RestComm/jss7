@@ -129,4 +129,8 @@ public interface TCAPStack {
 
     boolean getDoNotSendProtocolVersion();
 
+    void setStatisticsEnabled(boolean val);
+
+    boolean getStatisticsEnabled();
+
 }

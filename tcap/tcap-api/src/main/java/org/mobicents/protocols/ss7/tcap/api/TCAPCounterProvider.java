@@ -42,7 +42,7 @@ public interface TCAPCounterProvider {
     /**
      * return a count of received since Stack restart TC-UNI messages
      */
-    long getTcUniRecievedCount();
+    long getTcUniReceivedCount();
 
     /**
      * return a count of sent since Stack restart TC-UNI messages
@@ -52,7 +52,7 @@ public interface TCAPCounterProvider {
     /**
      * return a count of received since Stack restart TC-BEGIN messages
      */
-    long getTcBeginRecievedCount();
+    long getTcBeginReceivedCount();
 
     /**
      * return a count of sent since Stack restart TC-BEGIN messages
@@ -62,7 +62,7 @@ public interface TCAPCounterProvider {
     /**
      * return a count of received since Stack restart TC-CONTINUE messages
      */
-    long getTcContinueRecievedCount();
+    long getTcContinueReceivedCount();
 
     /**
      * return a count of sent since Stack restart TC-CONTINUE messages
@@ -72,7 +72,7 @@ public interface TCAPCounterProvider {
     /**
      * return a count of received since Stack restart TC-END messages
      */
-    long getTcEndRecievedCount();
+    long getTcEndReceivedCount();
 
     /**
      * return a count of sent since Stack restart TC-END messages
@@ -82,7 +82,7 @@ public interface TCAPCounterProvider {
     /**
      * return a count of received since Stack restart TC-PROVIDER-ABORT messages
      */
-    long getTcPAbortRecievedCount();
+    long getTcPAbortReceivedCount();
 
     /**
      * return a count of sent since Stack restart TC-PROVIDER-ABORT messages
@@ -92,7 +92,7 @@ public interface TCAPCounterProvider {
     /**
      * return a count of received since Stack restart TC-USER-ABORT messages
      */
-    long getTcUserAbortRecievedCount();
+    long getTcUserAbortReceivedCount();
 
     /**
      * return a count of sent since Stack restart TC-USER-ABORT messages
@@ -102,7 +102,7 @@ public interface TCAPCounterProvider {
     /**
      * return a count of received since Stack restart Invoke components
      */
-    long getInvokeRecievedCount();
+    long getInvokeReceivedCount();
 
     /**
      * return a count of sent since Stack restart Invoke components
@@ -112,7 +112,7 @@ public interface TCAPCounterProvider {
     /**
      * return a count of received since Stack restart ReturtResult components
      */
-    long getReturnResultRecievedCount();
+    long getReturnResultReceivedCount();
 
     /**
      * return a count of sent since Stack restart ReturtResult components
@@ -122,7 +122,7 @@ public interface TCAPCounterProvider {
     /**
      * return a count of received since Stack restart ReturtResultLast components
      */
-    long getReturnResultLastRecievedCount();
+    long getReturnResultLastReceivedCount();
 
     /**
      * return a count of sent since Stack restart ReturtResultLast components
@@ -132,7 +132,7 @@ public interface TCAPCounterProvider {
     /**
      * return a count of received since Stack restart ReturnError components
      */
-    long getReturnErrorRecievedCount();
+    long getReturnErrorReceivedCount();
 
     /**
      * return a count of sent since Stack restart ReturnError components
@@ -142,17 +142,12 @@ public interface TCAPCounterProvider {
     /**
      * return a count of received since Stack restart Reject components
      */
-    long getRejectRecievedCount();
+    long getRejectReceivedCount();
 
     /**
      * return a count of sent since Stack restart Reject components
      */
     long getRejectSentCount();
-
-    /**
-     * return a count of received since Stack restart DialogRequests
-     */
-    long getDialogRequestCount();
 
     /**
      * return a count of received since Stack restart DialogTimeouts
@@ -173,7 +168,17 @@ public interface TCAPCounterProvider {
     /**
      * return a count of all established Dialogs since stack start
      */
-    long getAllDialogsCount();
+    long getAllEstablishedDialogsCount();
+
+    /**
+     * return a count of all established local originated Dialogs since stack start
+     */
+    long getAllLocalEstablishedDialogsCount();
+
+    /**
+     * return a count of all established remote originated Dialogs since stack start
+     */
+    long getAllRemoteEstablishedDialogsCount();
 
     /**
      * return a min count of established Dialogs

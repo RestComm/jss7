@@ -123,6 +123,29 @@ public class ProblemImpl implements Problem {
         this.setType(ProblemType.ReturnResult);
     }
 
+    public String getStringValue() {
+        StringBuilder sb = new StringBuilder();
+        switch (type) {
+        case General:
+            sb.append("generalProblemType=");
+            sb.append(this.generalProblemType);
+            break;
+        case Invoke:
+            sb.append("invokeProblemType=");
+            sb.append(this.invokeProblemType);
+            break;
+        case ReturnResult:
+            sb.append("returnResultProblemType=");
+            sb.append(this.returnResultProblemType);
+            break;
+        case ReturnError:
+            sb.append("returnErrorProblemType=");
+            sb.append(this.returnErrorProblemType);
+            break;
+        }
+        return sb.toString();
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Problem[type=");

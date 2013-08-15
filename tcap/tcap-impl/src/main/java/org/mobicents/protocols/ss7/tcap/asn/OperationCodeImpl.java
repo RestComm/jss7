@@ -81,6 +81,15 @@ public class OperationCodeImpl implements OperationCode {
         return this.globalOperationCode;
     }
 
+    public String getStringValue() {
+        if (this.localOperationCode != null)
+            return this.localOperationCode.toString();
+        else if (this.globalOperationCode != null)
+            return Arrays.toString(this.globalOperationCode);
+        else
+            return "empty";
+    }
+
     public String toString() {
         if (this.localOperationCode != null)
             return "OperationCode[OperationType=Local, data=" + this.localOperationCode.toString() + "]";
