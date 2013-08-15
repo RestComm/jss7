@@ -190,16 +190,18 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
         oc.setLocalOperationCode((long) MAPOperationCode.unstructuredSS_Notify);
         invoke.setOperationCode(oc);
 
-        UnstructuredSSRequestImpl req = new UnstructuredSSRequestImpl(ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
-        AsnOutputStream aos = new AsnOutputStream();
-        req.encodeData(aos);
+        if (ussdString != null) {
+            UnstructuredSSRequestImpl req = new UnstructuredSSRequestImpl(ussdDataCodingScheme, ussdString, alertingPatter, msisdn);
+            AsnOutputStream aos = new AsnOutputStream();
+            req.encodeData(aos);
 
-        Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-        p.setTagClass(req.getTagClass());
-        p.setPrimitive(req.getIsPrimitive());
-        p.setTag(req.getTag());
-        p.setData(aos.toByteArray());
-        invoke.setParameter(p);
+            Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+            p.setTagClass(req.getTagClass());
+            p.setPrimitive(req.getIsPrimitive());
+            p.setTag(req.getTag());
+            p.setData(aos.toByteArray());
+            invoke.setParameter(p);
+        }
 
         Long invokeId;
         try {
@@ -226,16 +228,18 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
         oc.setLocalOperationCode((long) MAPOperationCode.unstructuredSS_Request);
         returnResult.setOperationCode(oc);
 
-        UnstructuredSSResponseImpl req = new UnstructuredSSResponseImpl(ussdDataCodingScheme, ussdString);
-        AsnOutputStream aos = new AsnOutputStream();
-        req.encodeData(aos);
+        if (ussdString != null) {
+            UnstructuredSSResponseImpl req = new UnstructuredSSResponseImpl(ussdDataCodingScheme, ussdString);
+            AsnOutputStream aos = new AsnOutputStream();
+            req.encodeData(aos);
 
-        Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-        p.setTagClass(req.getTagClass());
-        p.setPrimitive(req.getIsPrimitive());
-        p.setTag(req.getTag());
-        p.setData(aos.toByteArray());
-        returnResult.setParameter(p);
+            Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+            p.setTagClass(req.getTagClass());
+            p.setPrimitive(req.getIsPrimitive());
+            p.setTag(req.getTag());
+            p.setData(aos.toByteArray());
+            returnResult.setParameter(p);
+        }
 
         this.sendReturnResultLastComponent((ReturnResultLast) returnResult);
     }

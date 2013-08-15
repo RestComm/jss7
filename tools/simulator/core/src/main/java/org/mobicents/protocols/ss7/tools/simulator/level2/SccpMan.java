@@ -275,7 +275,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
                             .getConfigurationData().getSccpConfigurationData().getRemoteSpc(), this.testerHost
                             .getConfigurationData().getSccpConfigurationData().getLocalSpc(), this.testerHost
                             .getConfigurationData().getSccpConfigurationData().getNi(), this.testerHost.getConfigurationData()
-                            .getSccpConfigurationData().getCallingPartyAddressDigits());
+                            .getSccpConfigurationData().getCallingPartyAddressDigits(), this.testerHost.getPersistDir());
             this.testerHost.sendNotif(SOURCE_NAME, "SCCP has been started", "", Level.INFO);
             return true;
         } catch (Throwable e) {
@@ -320,10 +320,11 @@ public class SccpMan implements SccpManMBean, Stoppable {
         }
     }
 
-    private void initSccp(Mtp3UserPart mtp3UserPart, int remoteSsn, int localSsn, int dpc, int opc, int ni,
-            String callingPartyAddressDigits) throws Exception {
+    private void initSccp(Mtp3UserPart mtp3UserPart, int remoteSsn, int localSsn, int dpc, int opc, int ni, String callingPartyAddressDigits, String persistDir)
+            throws Exception {
 
         this.sccpStack = new SccpStackImpl("TestingSccp");
+        this.sccpStack.setPersistDir(persistDir);
 
         this.sccpStack.setMtp3UserPart(1, mtp3UserPart);
         this.sccpStack.start();

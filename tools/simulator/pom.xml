@@ -36,6 +36,10 @@
 			<artifactId>asn</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+			<artifactId>statistics</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 			<artifactId>sccp-api</artifactId>
 		</dependency>

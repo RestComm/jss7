@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintWriter;
 
 import javax.management.JMX;
@@ -162,7 +163,11 @@ public class ConnectionForm extends JFrame {
 
     private void startLocal(String appName) {
         // creating a testerHost
-        TesterHost host = new TesterHost(appName);
+
+        String sim_home = System.getenv(TesterHost.SIMULATOR_HOME_VAR);
+        if (sim_home != null)
+            sim_home += File.separator + "data";
+        TesterHost host = new TesterHost(appName, sim_home);
 
         // starting the main form
         SimulatorGuiForm frame = new SimulatorGuiForm();

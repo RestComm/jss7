@@ -266,21 +266,20 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
     private void unstructuredSSResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId)
             throws MAPParsingComponentException {
 
-        if (parameter == null)
-            throw new MAPParsingComponentException(
-                    "Error while decoding UnstructuredSSResponseIndication: Parameter is mandatory but not found",
-                    MAPParsingComponentExceptionReason.MistypedParameter);
-
-        if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
-            throw new MAPParsingComponentException(
-                    "Error while decoding UnstructuredSSResponseIndication: Bad tag or tagClass or parameter is primitive, received tag="
-                            + parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
-
-        byte[] buf = parameter.getData();
-        AsnInputStream ais = new AsnInputStream(buf);
-
         UnstructuredSSResponseImpl ind = new UnstructuredSSResponseImpl();
-        ind.decodeData(ais, buf.length);
+
+        if (parameter != null) {
+            if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+                throw new MAPParsingComponentException(
+                        "Error while decoding UnstructuredSSResponseIndication: Bad tag or tagClass or parameter is primitive, received tag="
+                                + parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+
+            byte[] buf = parameter.getData();
+            AsnInputStream ais = new AsnInputStream(buf);
+
+            ind.decodeData(ais, buf.length);
+        }
+
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
 
