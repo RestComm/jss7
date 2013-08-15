@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.tcap;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,6 +52,7 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
 import org.mobicents.protocols.ss7.tcap.asn.AbortSource;
 import org.mobicents.protocols.ss7.tcap.asn.AbortSourceType;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextNameImpl;
 import org.mobicents.protocols.ss7.tcap.asn.DialogAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.DialogAPDUType;
 import org.mobicents.protocols.ss7.tcap.asn.DialogAbortAPDU;
@@ -61,7 +63,9 @@ import org.mobicents.protocols.ss7.tcap.asn.DialogServiceProviderType;
 import org.mobicents.protocols.ss7.tcap.asn.DialogServiceUserType;
 import org.mobicents.protocols.ss7.tcap.asn.DialogUniAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.EncodeException;
+import org.mobicents.protocols.ss7.tcap.asn.ErrorCodeImpl;
 import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
+import org.mobicents.protocols.ss7.tcap.asn.OperationCodeImpl;
 import org.mobicents.protocols.ss7.tcap.asn.ProblemImpl;
 import org.mobicents.protocols.ss7.tcap.asn.Result;
 import org.mobicents.protocols.ss7.tcap.asn.ResultSourceDiagnostic;
@@ -78,11 +82,13 @@ import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.Utils;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
+import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnErrorProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage;
@@ -164,6 +170,7 @@ public class DialogImpl implements Dialog {
 
     private boolean previewMode = false;
     protected PrevewDialogData prevewDialogData;
+    private Date startDialogTime = null;
 
     private static int getIndexFromInvokeId(Long l) {
         int tmp = l.intValue();
@@ -205,6 +212,8 @@ public class DialogImpl implements Dialog {
 
         TCAPStack stack = this.provider.getStack();
         this.idleTaskTimeout = stack.getDialogIdleTimeout();
+
+        startDialogTime = new Date();
 
         // start
         startIdleTimer();
@@ -269,6 +278,11 @@ public class DialogImpl implements Dialog {
                     // operationTimedOut(invokeImpl);
                 }
             }
+        }
+
+        if (this.provider.getStack().getStatisticsEnabled()) {
+            long lg = (new Date()).getTime() - this.startDialogTime.getTime();
+            this.provider.getStack().getCounterProviderImpl().updateAllDialogsDuration(lg);
         }
 
         this.setState(TRPseudoState.Expunged);
@@ -511,6 +525,15 @@ public class DialogImpl implements Dialog {
                     this.lastUI = event.getUserInformation();
                 }
                 tcbm.setDialogPortion(dp);
+
+                if (this.provider.getStack().getStatisticsEnabled()) {
+                    String acn = ((ApplicationContextNameImpl) event.getApplicationContextName()).getStringValue();
+                    this.provider.getStack().getCounterProviderImpl().updateOutgoingDialogsPerApplicatioContextName(acn);
+                }
+            } else {
+                if (this.provider.getStack().getStatisticsEnabled()) {
+                    this.provider.getStack().getCounterProviderImpl().updateOutgoingDialogsPerApplicatioContextName("");
+                }
             }
 
             // now comps
@@ -525,7 +548,9 @@ public class DialogImpl implements Dialog {
             try {
                 tcbm.encode(aos);
                 this.setState(TRPseudoState.InitialSent);
-                this.provider.getStack().getCounterProviderImpl().addTcBeginSentCount();
+                if (this.provider.getStack().getStatisticsEnabled()) {
+                    this.provider.getStack().getCounterProviderImpl().updateTcBeginSentCount();
+                }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
                         this.seqControl);
                 this.scheduledComponentList.clear();
@@ -603,7 +628,9 @@ public class DialogImpl implements Dialog {
                 AsnOutputStream aos = new AsnOutputStream();
                 try {
                     tcbm.encode(aos);
-                    this.provider.getStack().getCounterProviderImpl().addTcContinueSentCount();
+                    if (this.provider.getStack().getStatisticsEnabled()) {
+                        this.provider.getStack().getCounterProviderImpl().updateTcContinueSentCount();
+                    }
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
                             this.localAddress, this.seqControl);
                     this.setState(TRPseudoState.Active);
@@ -634,7 +661,7 @@ public class DialogImpl implements Dialog {
                 AsnOutputStream aos = new AsnOutputStream();
                 try {
                     tcbm.encode(aos);
-                    this.provider.getStack().getCounterProviderImpl().addTcContinueSentCount();
+                    this.provider.getStack().getCounterProviderImpl().updateTcContinueSentCount();
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
                             this.localAddress, this.seqControl);
                     this.scheduledComponentList.clear();
@@ -755,7 +782,9 @@ public class DialogImpl implements Dialog {
             AsnOutputStream aos = new AsnOutputStream();
             try {
                 tcbm.encode(aos);
-                this.provider.getStack().getCounterProviderImpl().addTcEndSentCount();
+                if (this.provider.getStack().getStatisticsEnabled()) {
+                    this.provider.getStack().getCounterProviderImpl().updateTcEndSentCount();
+                }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
                         this.seqControl);
 
@@ -818,7 +847,9 @@ public class DialogImpl implements Dialog {
             AsnOutputStream aos = new AsnOutputStream();
             try {
                 msg.encode(aos);
-                this.provider.getStack().getCounterProviderImpl().addTcUniSentCount();
+                if (this.provider.getStack().getStatisticsEnabled()) {
+                    this.provider.getStack().getCounterProviderImpl().updateTcUniSentCount();
+                }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
                         this.seqControl);
                 this.scheduledComponentList.clear();
@@ -915,7 +946,9 @@ public class DialogImpl implements Dialog {
                 AsnOutputStream aos = new AsnOutputStream();
                 try {
                     msg.encode(aos);
-                    this.provider.getStack().getCounterProviderImpl().addTcUserAbortSentCount();
+                    if (this.provider.getStack().getStatisticsEnabled()) {
+                        this.provider.getStack().getCounterProviderImpl().updateTcUserAbortSentCount();
+                    }
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
                             this.localAddress, this.seqControl);
 
@@ -946,6 +979,44 @@ public class DialogImpl implements Dialog {
 
         if (this.previewMode)
             return;
+
+        if (this.provider.getStack().getStatisticsEnabled()) {
+            switch (componentRequest.getType()) {
+            case Invoke:
+                this.provider.getStack().getCounterProviderImpl().updateInvokeSentCount();
+
+                Invoke inv = (Invoke) componentRequest;
+                OperationCodeImpl oc = (OperationCodeImpl) inv.getOperationCode();
+                if (oc != null) {
+                    this.provider.getStack().getCounterProviderImpl().updateOutgoingInvokesPerOperationCode(oc.getStringValue());
+                }
+                break;
+            case ReturnResult:
+                this.provider.getStack().getCounterProviderImpl().updateReturnResultSentCount();
+                break;
+            case ReturnResultLast:
+                this.provider.getStack().getCounterProviderImpl().updateReturnResultLastSentCount();
+                break;
+            case ReturnError:
+                this.provider.getStack().getCounterProviderImpl().updateReturnErrorSentCount();
+
+                ReturnError re = (ReturnError) componentRequest;
+                ErrorCodeImpl ec = (ErrorCodeImpl) re.getErrorCode();
+                if (ec != null) {
+                    this.provider.getStack().getCounterProviderImpl().updateOutgoingErrorsPerErrorCode(ec.getStringValue());
+                }
+                break;
+            case Reject:
+                this.provider.getStack().getCounterProviderImpl().updateRejectSentCount();
+
+                Reject rej = (Reject) componentRequest;
+                ProblemImpl prob = (ProblemImpl) rej.getProblem();
+                if (prob != null) {
+                    this.provider.getStack().getCounterProviderImpl().updateOutgoingRejectPerProblem(prob.getStringValue());
+                }
+                break;
+            }
+        }
 
         try {
             this.dialogLock.lock();
@@ -1309,12 +1380,23 @@ public class DialogImpl implements Dialog {
                 this.lastUI = requestAPDU.getUserInformation();
                 tcBeginIndication.setApplicationContextName(this.lastACN);
                 tcBeginIndication.setUserInformation(this.lastUI);
+
+                if (this.provider.getStack().getStatisticsEnabled()) {
+                    String acn = ((ApplicationContextNameImpl) tcBeginIndication.getApplicationContextName()).getStringValue();
+                    this.provider.getStack().getCounterProviderImpl().updateIncomingDialogsPerApplicatioContextName(acn);
+                }
+            } else {
+                if (this.provider.getStack().getStatisticsEnabled()) {
+                    this.provider.getStack().getCounterProviderImpl().updateIncomingDialogsPerApplicatioContextName("");
+                }
             }
+
             tcBeginIndication.setComponents(processOperationsState(msg.getComponent()));
             if (!this.previewMode) {
                 // change state - before we deliver
                 this.setState(TRPseudoState.InitialReceived);
             }
+
             // lets deliver to provider
             this.provider.deliver(this, tcBeginIndication);
 
@@ -1647,7 +1729,9 @@ public class DialogImpl implements Dialog {
                 AsnOutputStream aos = new AsnOutputStream();
                 try {
                     msg.encode(aos);
-                    this.provider.getStack().getCounterProviderImpl().addTcPAbortSentCount();
+                    if (this.provider.getStack().getStatisticsEnabled()) {
+                        this.provider.getStack().getCounterProviderImpl().updateTcPAbortSentCount();
+                    }
                     this.provider.send(aos.toByteArray(), false, this.remoteAddress, this.localAddress, this.seqControl);
                 } catch (Exception e) {
                     if (logger.isEnabledFor(Level.ERROR)) {
@@ -1670,36 +1754,6 @@ public class DialogImpl implements Dialog {
             this.dialogLock.unlock();
         }
     }
-
-    // protected void sendProviderAbort(PAbortCauseType pAbortCause) {
-    //
-    // if (this.previewMode)
-    // return;
-    //
-    // TCPAbortIndicationImpl tcAbortIndication = null;
-    // try {
-    // this.dialogLock.lock();
-    //
-    // try {
-    // // sending to the remote side
-    // this.provider.sendProviderAbort(pAbortCause, this.remoteTransactionId, this.remoteAddress,
-    // this.localAddress, this.seqControl);
-    //
-    // // sending to the local side
-    // tcAbortIndication = (TCPAbortIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider
-    // .getDialogPrimitiveFactory()).createPAbortIndication(this);
-    // tcAbortIndication.setPAbortCause(pAbortCause);
-    // tcAbortIndication.setLocalProviderOriginated(true);
-    //
-    // this.provider.deliver(this, tcAbortIndication);
-    // } finally {
-    // this.release();
-    // // this.scheduledComponentList.clear();
-    // }
-    // } finally {
-    // this.dialogLock.unlock();
-    // }
-    // }
 
     protected Component[] processOperationsState(Component[] components) {
         if (components == null) {
@@ -1848,13 +1902,54 @@ public class DialogImpl implements Dialog {
                     resultingIndications.add(ci);
                     break;
             }
-
         }
 
         components = new Component[resultingIndications.size()];
         components = resultingIndications.toArray(components);
-        return components;
 
+        if (this.provider.getStack().getStatisticsEnabled()) {
+            for (Component comp : components) {
+                switch (comp.getType()) {
+                case Invoke:
+                    this.provider.getStack().getCounterProviderImpl().updateInvokeReceivedCount();
+
+                    Invoke inv = (Invoke) comp;
+                    OperationCodeImpl oc = (OperationCodeImpl) inv.getOperationCode();
+                    if (oc != null) {
+                        this.provider.getStack().getCounterProviderImpl().updateIncomingInvokesPerOperationCode(oc.getStringValue());
+                    }
+                    break;
+                case ReturnResult:
+                    this.provider.getStack().getCounterProviderImpl().updateReturnResultReceivedCount();
+                    break;
+                case ReturnResultLast:
+                    this.provider.getStack().getCounterProviderImpl().updateReturnResultLastReceivedCount();
+                    break;
+                case ReturnError:
+                    this.provider.getStack().getCounterProviderImpl().updateReturnErrorReceivedCount();
+
+                    ReturnError re = (ReturnError) comp;
+                    ErrorCodeImpl ec = (ErrorCodeImpl) re.getErrorCode();
+                    if (ec != null) {
+                        this.provider.getStack().getCounterProviderImpl().updateIncomingErrorsPerErrorCode(ec.getStringValue());
+                    }
+                    break;
+                case Reject:
+                    Reject rej = (Reject) comp;
+                    if (!rej.isLocalOriginated()) {
+                        this.provider.getStack().getCounterProviderImpl().updateRejectReceivedCount();
+
+                        ProblemImpl prob = (ProblemImpl) rej.getProblem();
+                        if (prob != null) {
+                            this.provider.getStack().getCounterProviderImpl().updateIncomingRejectPerProblem(prob.getStringValue());
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        return components;
     }
 
     private void addReject(List<Component> resultingIndications, Long invokeId, Problem p) {

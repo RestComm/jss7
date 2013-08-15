@@ -25,28 +25,73 @@ package org.mobicents.protocols.ss7.tcap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
-
+import org.mobicents.protocols.ss7.statistics.StatDataCollection;
+import org.mobicents.protocols.ss7.statistics.StatDataCollectorType;
+import org.mobicents.protocols.ss7.statistics.StringLongMap;
 import org.mobicents.protocols.ss7.tcap.api.TCAPCounterProvider;
 
+/**
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class TCAPCounterProviderImpl implements TCAPCounterProvider {
 
     private UUID sessionId = UUID.randomUUID();
 
-    private AtomicLong tcUniRecievedCount = new AtomicLong();
+    private TCAPProviderImpl provider;
+    private StatDataCollection statDataCollection = new StatDataCollection();
+
+    private AtomicLong tcUniReceivedCount = new AtomicLong();
     private AtomicLong tcUniSentCount = new AtomicLong();
-    private AtomicLong tcBeginRecievedCount = new AtomicLong();
+    private AtomicLong tcBeginReceivedCount = new AtomicLong();
     private AtomicLong tcBeginSentCount = new AtomicLong();
-    private AtomicLong tcContinueRecievedCount = new AtomicLong();
+    private AtomicLong tcContinueReceivedCount = new AtomicLong();
     private AtomicLong tcContinueSentCount = new AtomicLong();
-    private AtomicLong tcEndRecievedCount = new AtomicLong();
+    private AtomicLong tcEndReceivedCount = new AtomicLong();
     private AtomicLong tcEndSentCount = new AtomicLong();
-    private AtomicLong tcPAbortRecievedCount = new AtomicLong();
+    private AtomicLong tcPAbortReceivedCount = new AtomicLong();
     private AtomicLong tcPAbortSentCount = new AtomicLong();
-    private AtomicLong tcUserAbortRecievedCount = new AtomicLong();
+    private AtomicLong tcUserAbortReceivedCount = new AtomicLong();
     private AtomicLong tcUserAbortSentCount = new AtomicLong();
 
+    private AtomicLong invokeReceivedCount = new AtomicLong();
+    private AtomicLong invokeSentCount = new AtomicLong();
+    private AtomicLong returnResultReceivedCount = new AtomicLong();
+    private AtomicLong returnResultSentCount = new AtomicLong();
+    private AtomicLong returnResultLastReceivedCount = new AtomicLong();
+    private AtomicLong returnResultLastSentCount = new AtomicLong();
+    private AtomicLong returnErrorReceivedCount = new AtomicLong();
+    private AtomicLong returnErrorSentCount = new AtomicLong();
+    private AtomicLong rejectReceivedCount = new AtomicLong();
+    private AtomicLong rejectSentCount = new AtomicLong();
 
-    public TCAPCounterProviderImpl() {
+    private AtomicLong dialogTimeoutCount = new AtomicLong();
+    private AtomicLong dialogReleaseCount = new AtomicLong();
+
+    private AtomicLong allEstablishedDialogsCount = new AtomicLong();
+    private AtomicLong allLocalEstablishedDialogsCount = new AtomicLong();
+    private AtomicLong allRemoteEstablishedDialogsCount = new AtomicLong();
+
+    private Double allDialogsDuration = 0.0;
+
+    private StringLongMap outgoingDialogsPerApplicatioContextName = new StringLongMap();
+    private StringLongMap incomingDialogsPerApplicatioContextName = new StringLongMap();
+    private StringLongMap outgoingInvokesPerOperationCode = new StringLongMap();
+    private StringLongMap incomingInvokesPerOperationCode = new StringLongMap();
+    private StringLongMap outgoingErrorsPerErrorCode = new StringLongMap();
+    private StringLongMap incomingErrorsPerErrorCode = new StringLongMap();
+    private StringLongMap outgoingRejectPerProblem = new StringLongMap();
+    private StringLongMap incomingRejectPerProblem = new StringLongMap();
+
+    private static String MIN_DIALOGS_COUNT = "MinDialogsCount";
+    private static String MAX_DIALOGS_COUNT = "MaxDialogsCount";
+
+    public TCAPCounterProviderImpl(TCAPProviderImpl provider) {
+        this.provider = provider;
+
+        this.statDataCollection.registerStatCounterCollector(MIN_DIALOGS_COUNT, StatDataCollectorType.MIN);
+        this.statDataCollection.registerStatCounterCollector(MAX_DIALOGS_COUNT, StatDataCollectorType.MAX);
     }
 
 
@@ -57,12 +102,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
 
 
     @Override
-    public long getTcUniRecievedCount() {
-        return tcUniRecievedCount.get();
+    public long getTcUniReceivedCount() {
+        return tcUniReceivedCount.get();
     }
 
-    public void addTcUniRecievedCount() {
-        tcUniRecievedCount.addAndGet(1);
+    public void updateTcUniReceivedCount() {
+        tcUniReceivedCount.addAndGet(1);
     }
 
     @Override
@@ -70,17 +115,17 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcUniSentCount.get();
     }
 
-    public void addTcUniSentCount() {
+    public void updateTcUniSentCount() {
         tcUniSentCount.addAndGet(1);
     }
 
     @Override
-    public long getTcBeginRecievedCount() {
-        return tcBeginRecievedCount.get();
+    public long getTcBeginReceivedCount() {
+        return tcBeginReceivedCount.get();
     }
 
-    public void addTcBeginRecievedCount() {
-        tcBeginRecievedCount.addAndGet(1);
+    public void updateTcBeginReceivedCount() {
+        tcBeginReceivedCount.addAndGet(1);
     }
 
     @Override
@@ -88,17 +133,17 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcBeginSentCount.get();
     }
 
-    public void addTcBeginSentCount() {
+    public void updateTcBeginSentCount() {
         tcBeginSentCount.addAndGet(1);
     }
 
     @Override
-    public long getTcContinueRecievedCount() {
-        return tcContinueRecievedCount.get();
+    public long getTcContinueReceivedCount() {
+        return tcContinueReceivedCount.get();
     }
 
-    public void addTcContinueRecievedCount() {
-        tcContinueRecievedCount.addAndGet(1);
+    public void updateTcContinueReceivedCount() {
+        tcContinueReceivedCount.addAndGet(1);
     }
 
     @Override
@@ -106,17 +151,17 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcContinueSentCount.get();
     }
 
-    public void addTcContinueSentCount() {
+    public void updateTcContinueSentCount() {
         tcContinueSentCount.addAndGet(1);
     }
 
     @Override
-    public long getTcEndRecievedCount() {
-        return tcEndRecievedCount.get();
+    public long getTcEndReceivedCount() {
+        return tcEndReceivedCount.get();
     }
 
-    public void addTcEndRecievedCount() {
-        tcEndRecievedCount.addAndGet(1);
+    public void updateTcEndReceivedCount() {
+        tcEndReceivedCount.addAndGet(1);
     }
 
     @Override
@@ -124,17 +169,17 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcEndSentCount.get();
     }
 
-    public void addTcEndSentCount() {
+    public void updateTcEndSentCount() {
         tcEndSentCount.addAndGet(1);
     }
 
     @Override
-    public long getTcPAbortRecievedCount() {
-        return tcPAbortRecievedCount.get();
+    public long getTcPAbortReceivedCount() {
+        return tcPAbortReceivedCount.get();
     }
 
-    public void addTcPAbortRecievedCount() {
-        tcPAbortRecievedCount.addAndGet(1);
+    public void updateTcPAbortReceivedCount() {
+        tcPAbortReceivedCount.addAndGet(1);
     }
 
     @Override
@@ -142,17 +187,17 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcPAbortSentCount.get();
     }
 
-    public void addTcPAbortSentCount() {
+    public void updateTcPAbortSentCount() {
         tcPAbortSentCount.addAndGet(1);
     }
 
     @Override
-    public long getTcUserAbortRecievedCount() {
-        return tcUserAbortRecievedCount.get();
+    public long getTcUserAbortReceivedCount() {
+        return tcUserAbortReceivedCount.get();
     }
 
-    public void addTcUserAbortRecievedCount() {
-        tcUserAbortRecievedCount.addAndGet(1);
+    public void updateTcUserAbortReceivedCount() {
+        tcUserAbortReceivedCount.addAndGet(1);
     }
 
     @Override
@@ -160,168 +205,258 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcUserAbortSentCount.get();
     }
 
-    public void addTcUserAbortSentCount() {
+    public void updateTcUserAbortSentCount() {
         tcUserAbortSentCount.addAndGet(1);
     }
 
-
-
-    //.............................
-
     @Override
-    public long getInvokeRecievedCount() {
-        // TODO Auto-generated method stub
-        return 0;
+    public long getInvokeReceivedCount() {
+        return invokeReceivedCount.get();
+    }
+
+    public void updateInvokeReceivedCount() {
+        invokeReceivedCount.addAndGet(1);
     }
 
     @Override
     public long getInvokeSentCount() {
-        // TODO Auto-generated method stub
-        return 0;
+        return invokeSentCount.get();
+    }
+
+    public void updateInvokeSentCount() {
+        invokeSentCount.addAndGet(1);
     }
 
     @Override
-    public long getReturnResultRecievedCount() {
-        // TODO Auto-generated method stub
-        return 0;
+    public long getReturnResultReceivedCount() {
+        return returnResultReceivedCount.get();
+    }
+
+    public void updateReturnResultReceivedCount() {
+        returnResultReceivedCount.addAndGet(1);
     }
 
     @Override
     public long getReturnResultSentCount() {
-        // TODO Auto-generated method stub
-        return 0;
+        return returnResultSentCount.get();
+    }
+
+    public void updateReturnResultSentCount() {
+        returnResultSentCount.addAndGet(1);
     }
 
     @Override
-    public long getReturnResultLastRecievedCount() {
-        // TODO Auto-generated method stub
-        return 0;
+    public long getReturnResultLastReceivedCount() {
+        return returnResultLastReceivedCount.get();
+    }
+
+    public void updateReturnResultLastReceivedCount() {
+        returnResultLastReceivedCount.addAndGet(1);
     }
 
     @Override
     public long getReturnResultLastSentCount() {
-        // TODO Auto-generated method stub
-        return 0;
+        return returnResultLastSentCount.get();
+    }
+
+    public void updateReturnResultLastSentCount() {
+        returnResultLastSentCount.addAndGet(1);
     }
 
     @Override
-    public long getReturnErrorRecievedCount() {
-        // TODO Auto-generated method stub
-        return 0;
+    public long getReturnErrorReceivedCount() {
+        return returnErrorReceivedCount.get();
+    }
+
+    public void updateReturnErrorReceivedCount() {
+        returnErrorReceivedCount.addAndGet(1);
     }
 
     @Override
     public long getReturnErrorSentCount() {
-        // TODO Auto-generated method stub
-        return 0;
+        return returnErrorSentCount.get();
+    }
+
+    public void updateReturnErrorSentCount() {
+        returnErrorSentCount.addAndGet(1);
     }
 
     @Override
-    public long getRejectRecievedCount() {
-        // TODO Auto-generated method stub
-        return 0;
+    public long getRejectReceivedCount() {
+        return rejectReceivedCount.get();
+    }
+
+    public void updateRejectReceivedCount() {
+        rejectReceivedCount.addAndGet(1);
     }
 
     @Override
     public long getRejectSentCount() {
-        // TODO Auto-generated method stub
-        return 0;
+        return rejectSentCount.get();
     }
 
-    @Override
-    public long getDialogRequestCount() {
-        // TODO Auto-generated method stub
-        return 0;
+    public void updateRejectSentCount() {
+        rejectSentCount.addAndGet(1);
     }
 
     @Override
     public long getDialogTimeoutCount() {
-        // TODO Auto-generated method stub
-        return 0;
+        return dialogTimeoutCount.get();
+    }
+
+    public void updateDialogTimeoutCount() {
+        dialogTimeoutCount.addAndGet(1);
     }
 
     @Override
     public long getDialogReleaseCount() {
-        // TODO Auto-generated method stub
-        return 0;
+        return dialogReleaseCount.get();
     }
+
+    public void updateDialogReleaseCount() {
+        dialogReleaseCount.addAndGet(1);
+    }
+
 
     @Override
     public long getCurrentDialogsCount() {
-        // TODO Auto-generated method stub
-        return 0;
+        return provider.getCurrentDialogsCount();
     }
 
     @Override
-    public long getAllDialogsCount() {
-        // TODO Auto-generated method stub
-        return 0;
+    public long getAllEstablishedDialogsCount() {
+        return allEstablishedDialogsCount.get();
+    }
+
+    public void updateAllEstablishedDialogsCount() {
+        allEstablishedDialogsCount.addAndGet(1);
+    }
+
+    @Override
+    public long getAllLocalEstablishedDialogsCount() {
+        return allLocalEstablishedDialogsCount.get();
+    }
+
+    public void updateAllLocalEstablishedDialogsCount() {
+        allLocalEstablishedDialogsCount.addAndGet(1);
+    }
+
+    @Override
+    public long getAllRemoteEstablishedDialogsCount() {
+        return allRemoteEstablishedDialogsCount.get();
+    }
+
+    public void updateAllRemoteEstablishedDialogsCount() {
+        allRemoteEstablishedDialogsCount.addAndGet(1);
     }
 
     @Override
     public Long getMinDialogsCount(String compainName) {
-        // TODO Auto-generated method stub
-        return null;
+        return this.statDataCollection.restartAndGet(MIN_DIALOGS_COUNT, compainName, provider.getCurrentDialogsCount());
+    }
+
+    public void updateMinDialogsCount(long newVal) {
+        this.statDataCollection.updateData(MIN_DIALOGS_COUNT, newVal);
     }
 
     @Override
     public Long getMaxDialogsCount(String compainName) {
-        // TODO Auto-generated method stub
-        return null;
+        return this.statDataCollection.restartAndGet(MAX_DIALOGS_COUNT, compainName, provider.getCurrentDialogsCount());
+    }
+
+    public void updateMaxDialogsCount(long newVal) {
+        this.statDataCollection.updateData(MAX_DIALOGS_COUNT, newVal);
     }
 
     @Override
     public double getAllDialogsDuration() {
-        // TODO Auto-generated method stub
-        return 0;
+        return allDialogsDuration;
+    }
+
+    public void updateAllDialogsDuration(double diff) {
+        synchronized (allDialogsDuration) {
+            allDialogsDuration += diff;
+        }
     }
 
     @Override
     public Map<String, Long> getOutgoingDialogsPerApplicatioContextName() {
-        // TODO Auto-generated method stub
-        return null;
+        Map<String, Long> res = outgoingDialogsPerApplicatioContextName.restartAndGet();
+        return res;
+    }
+
+    public void updateOutgoingDialogsPerApplicatioContextName(String name) {
+        outgoingDialogsPerApplicatioContextName.updateData(name);
     }
 
     @Override
     public Map<String, Long> getIncomingDialogsPerApplicatioContextName() {
-        // TODO Auto-generated method stub
-        return null;
+        Map<String, Long> res = incomingDialogsPerApplicatioContextName.restartAndGet();
+        return res;
+    }
+
+    public void updateIncomingDialogsPerApplicatioContextName(String name) {
+        incomingDialogsPerApplicatioContextName.updateData(name);
     }
 
     @Override
     public Map<String, Long> getOutgoingInvokesPerOperationCode() {
-        // TODO Auto-generated method stub
-        return null;
+        Map<String, Long> res = outgoingInvokesPerOperationCode.restartAndGet();
+        return res;
+    }
+
+    public void updateOutgoingInvokesPerOperationCode(String name) {
+        outgoingInvokesPerOperationCode.updateData(name);
     }
 
     @Override
     public Map<String, Long> getIncomingInvokesPerOperationCode() {
-        // TODO Auto-generated method stub
-        return null;
+        Map<String, Long> res = incomingInvokesPerOperationCode.restartAndGet();
+        return res;
+    }
+
+    public void updateIncomingInvokesPerOperationCode(String name) {
+        incomingInvokesPerOperationCode.updateData(name);
     }
 
     @Override
     public Map<String, Long> getOutgoingErrorsPerErrorCode() {
-        // TODO Auto-generated method stub
-        return null;
+        Map<String, Long> res = outgoingErrorsPerErrorCode.restartAndGet();
+        return res;
+    }
+
+    public void updateOutgoingErrorsPerErrorCode(String name) {
+        outgoingErrorsPerErrorCode.updateData(name);
     }
 
     @Override
     public Map<String, Long> getIncomingErrorsPerErrorCode() {
-        // TODO Auto-generated method stub
-        return null;
+        Map<String, Long> res = incomingErrorsPerErrorCode.restartAndGet();
+        return res;
+    }
+
+    public void updateIncomingErrorsPerErrorCode(String name) {
+        incomingErrorsPerErrorCode.updateData(name);
     }
 
     @Override
     public Map<String, Long> getOutgoingRejectPerProblem() {
-        // TODO Auto-generated method stub
-        return null;
+        Map<String, Long> res = outgoingRejectPerProblem.restartAndGet();
+        return res;
+    }
+
+    public void updateOutgoingRejectPerProblem(String name) {
+        outgoingRejectPerProblem.updateData(name);
     }
 
     @Override
     public Map<String, Long> getIncomingRejectPerProblem() {
-        // TODO Auto-generated method stub
-        return null;
+        Map<String, Long> res = incomingRejectPerProblem.restartAndGet();
+        return res;
+    }
+
+    public void updateIncomingRejectPerProblem(String name) {
+        incomingRejectPerProblem.updateData(name);
     }
 
 }

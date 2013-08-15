@@ -105,6 +105,10 @@ public class ApplicationContextNameImpl implements ApplicationContextName {
         this.oid = oid;
     }
 
+    public String getStringValue() {
+        return Arrays.toString(oid);
+    }
+
     public String toString() {
         return "ApplicationContextName[oid=" + Arrays.toString(oid) + "]";
     }

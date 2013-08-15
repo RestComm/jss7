@@ -70,6 +70,15 @@ public class ErrorCodeImpl implements ErrorCode {
         return type;
     }
 
+    public String getStringValue() {
+        if (this.localErrorCode != null)
+            return this.localErrorCode.toString();
+        else if (this.globalErrorCode != null)
+            return Arrays.toString(this.globalErrorCode);
+        else
+            return "empty";
+    }
+
     public String toString() {
         if (this.localErrorCode != null)
             return "ErrorCode[errorType=Local, data=" + this.localErrorCode.toString() + "]";

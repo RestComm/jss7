@@ -61,6 +61,7 @@ public class TCAPStackImpl implements TCAPStack {
     private long dialogIdRangeEnd = Integer.MAX_VALUE;
     private boolean previewMode = false;
     private boolean doNotSendProtocolVersion = false;
+    private boolean statisticsEnabled = false;
 
     public TCAPStackImpl() {
         super();
@@ -70,7 +71,7 @@ public class TCAPStackImpl implements TCAPStack {
     public TCAPStackImpl(SccpProvider sccpProvider, int ssn) {
         this.sccpProvider = sccpProvider;
         this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, ssn);
-        this.tcapCounterProvider = new TCAPCounterProviderImpl();
+        this.tcapCounterProvider = new TCAPCounterProviderImpl(this.tcapProvider);
     }
 
     public void start() throws Exception {
@@ -99,7 +100,7 @@ public class TCAPStackImpl implements TCAPStack {
             throw new IllegalArgumentException("InvokeTimeout value must be greater or equal to zero.");
         }
 
-        this.tcapCounterProvider = new TCAPCounterProviderImpl();
+        this.tcapCounterProvider = new TCAPCounterProviderImpl(this.tcapProvider);
         tcapProvider.start();
 
         this.started = true;
@@ -235,6 +236,19 @@ public class TCAPStackImpl implements TCAPStack {
     @Override
     public boolean getDoNotSendProtocolVersion() {
         return doNotSendProtocolVersion;
+    }
+
+    @Override
+    public void setStatisticsEnabled(boolean val) {
+        if (started) {
+            this.tcapCounterProvider = new TCAPCounterProviderImpl(this.tcapProvider);
+        }
+        statisticsEnabled = val;
+    }
+
+    @Override
+    public boolean getStatisticsEnabled() {
+        return statisticsEnabled;
     }
 
 }

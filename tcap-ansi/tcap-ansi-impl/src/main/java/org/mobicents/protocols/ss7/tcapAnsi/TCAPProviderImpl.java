@@ -661,7 +661,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                         this.sendRejectAsProviderAbort(PAbortCause.ResourceUnavailable, tcb.getOriginatingTransactionId(), remoteAddress, localAddress,
                                 message.getSls());
                     }
-                    logger.error("Too many registered current dialogs when receiving TCQueryMessage");
+                    logger.error("Can not add a new dialog when receiving TCBeginMessage: " + e.getMessage(), e);
                     return;
                 }
 
