@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.tcapAnsi;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPCounterProvider;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPStack;
 
@@ -44,6 +45,7 @@ public class TCAPStackImpl implements TCAPStack {
     public static final long _EMPTY_INVOKE_TIMEOUT = -1;
     // TCAP state data, it is used ONLY on client side
     protected TCAPProviderImpl tcapProvider;
+    protected TCAPCounterProviderImpl tcapCounterProvider;
     private SccpProvider sccpProvider;
     private SccpAddress address;
 
@@ -58,6 +60,7 @@ public class TCAPStackImpl implements TCAPStack {
     private long dialogIdRangeStart = 1;
     private long dialogIdRangeEnd = Integer.MAX_VALUE;
     private boolean previewMode = false;
+    private boolean statisticsEnabled = false;
 
     public TCAPStackImpl() {
         super();
@@ -67,6 +70,7 @@ public class TCAPStackImpl implements TCAPStack {
     public TCAPStackImpl(SccpProvider sccpProvider, int ssn) {
         this.sccpProvider = sccpProvider;
         this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, ssn);
+        this.tcapCounterProvider = new TCAPCounterProviderImpl(this.tcapProvider);
     }
 
     public void start() throws Exception {
@@ -95,6 +99,7 @@ public class TCAPStackImpl implements TCAPStack {
             throw new IllegalArgumentException("InvokeTimeout value must be greater or equal to zero.");
         }
 
+        this.tcapCounterProvider = new TCAPCounterProviderImpl(this.tcapProvider);
         tcapProvider.start();
 
         this.started = true;
@@ -120,6 +125,15 @@ public class TCAPStackImpl implements TCAPStack {
     public TCAPProvider getProvider() {
 
         return tcapProvider;
+    }
+
+    @Override
+    public TCAPCounterProvider getCounterProvider() {
+        return tcapCounterProvider;
+    }
+
+    public TCAPCounterProviderImpl getCounterProviderImpl() {
+        return tcapCounterProvider;
     }
 
     /*
@@ -211,6 +225,19 @@ public class TCAPStackImpl implements TCAPStack {
 
     public boolean getPreviewMode() {
         return previewMode;
+    }
+
+    @Override
+    public void setStatisticsEnabled(boolean val) {
+        if (started) {
+            this.tcapCounterProvider = new TCAPCounterProviderImpl(this.tcapProvider);
+        }
+        statisticsEnabled = val;
+    }
+
+    @Override
+    public boolean getStatisticsEnabled() {
+        return statisticsEnabled;
     }
 
 }

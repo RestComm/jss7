@@ -156,6 +156,16 @@ public class ApplicationContextImpl implements ApplicationContext {
         acType = ACType.Integer;
     }
 
+    public String getStringValue() {
+        StringBuilder sb = new StringBuilder();
+        if (this.isInteger()) {
+            sb.append(this.integerVal);
+        } else if (this.isObjectID()) {
+            sb.append(Arrays.toString(oidVal));
+        }
+        return sb.toString();
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("ApplicationContext[");

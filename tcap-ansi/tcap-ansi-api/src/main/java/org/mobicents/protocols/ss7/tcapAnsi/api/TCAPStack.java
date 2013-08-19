@@ -35,6 +35,8 @@ public interface TCAPStack {
      */
     TCAPProvider getProvider();
 
+    TCAPCounterProvider getCounterProvider();
+
     /**
      * Stops this stack and transport layer(SCCP)
      */
@@ -122,5 +124,9 @@ public interface TCAPStack {
      * @return if areviewMode is active
      */
     boolean getPreviewMode();
+
+    void setStatisticsEnabled(boolean val);
+
+    boolean getStatisticsEnabled();
 
 }

@@ -123,6 +123,18 @@ public class OperationCodeImpl implements OperationCode {
         }
     }
 
+    public String getStringValue() {
+        StringBuilder sb = new StringBuilder();
+        if (this.getNationalOperationCode() != null) {
+            sb.append("NOC=");
+            sb.append(this.getNationalOperationCode());
+        } else if (this.getPrivateOperationCode() != null) {
+            sb.append("POC=");
+            sb.append(this.getPrivateOperationCode());
+        }
+        return sb.toString();
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("OperationCode[");

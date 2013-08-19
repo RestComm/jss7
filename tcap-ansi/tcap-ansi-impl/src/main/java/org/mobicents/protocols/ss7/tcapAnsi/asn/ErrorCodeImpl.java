@@ -125,6 +125,18 @@ public class ErrorCodeImpl implements ErrorCode {
         }
     }
 
+    public String getStringValue() {
+        StringBuilder sb = new StringBuilder();
+        if (this.getNationalErrorCode() != null) {
+            sb.append("NEC=");
+            sb.append(this.getNationalErrorCode());
+        } else if (this.getPrivateErrorCode() != null) {
+            sb.append("PEC=");
+            sb.append(this.getPrivateErrorCode());
+        }
+        return sb.toString();
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("ErrorCode[");

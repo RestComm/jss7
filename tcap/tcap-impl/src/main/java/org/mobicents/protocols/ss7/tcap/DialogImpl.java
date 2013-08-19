@@ -1380,13 +1380,12 @@ public class DialogImpl implements Dialog {
                 this.lastUI = requestAPDU.getUserInformation();
                 tcBeginIndication.setApplicationContextName(this.lastACN);
                 tcBeginIndication.setUserInformation(this.lastUI);
-
-                if (this.provider.getStack().getStatisticsEnabled()) {
+            }
+            if (this.provider.getStack().getStatisticsEnabled()) {
+                if (tcBeginIndication.getApplicationContextName() != null) {
                     String acn = ((ApplicationContextNameImpl) tcBeginIndication.getApplicationContextName()).getStringValue();
                     this.provider.getStack().getCounterProviderImpl().updateIncomingDialogsPerApplicatioContextName(acn);
-                }
-            } else {
-                if (this.provider.getStack().getStatisticsEnabled()) {
+                } else {
                     this.provider.getStack().getCounterProviderImpl().updateIncomingDialogsPerApplicatioContextName("");
                 }
             }

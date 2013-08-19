@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javolution.util.FastMap;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -246,6 +248,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
     private long dialogEnumerator = 0;
     private long tcapLogMsg = 0;
     private ArrayList<String> msgDetailBuffer = new ArrayList<String>();
+    private FastMap<String, AddrData> addressLst = new FastMap<String, AddrData>();
 
     public MAPTraceParser(Ss7ParseParameters par) {
         this.par = par;
@@ -369,6 +372,34 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
         }
     }
 
+    public String getStatisticData() {
+
+        StringBuilder sb = new StringBuilder();
+        for (String key : addressLst.keySet()) {
+            AddrData ad = addressLst.get(key);
+            sb.append(key);
+            sb.append("\t");
+            sb.append(ad.cnt);
+
+            sb.append("\t");
+            sb.append(ad.opc);
+            sb.append("\t");
+            sb.append(ad.oSsn);
+            sb.append("\t");
+            sb.append(ad.oAddr);
+            sb.append("\t");
+            sb.append(ad.dpc);
+            sb.append("\t");
+            sb.append(ad.dSsn);
+            sb.append("\t");
+            sb.append(ad.dAddr);
+
+            sb.append("\n");
+        }
+
+        return sb.toString();
+    }
+
     private void setFinishedState(String errorMessage) {
         if (errorMessage != null)
             this.errorMessage = errorMessage;
@@ -480,7 +511,11 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
         }
     }
 
+    SccpDataMessageImpl sccpMessage;
+
     public void onMessage(SccpDataMessageImpl message, int seqControl) {
+        sccpMessage = message;
+
         try {
             this.msgDetailBuffer.clear();
             this.curTcapDialog = null;
@@ -1447,6 +1482,36 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
                 di.setAcnVersion(capDialog.getApplicationContext().getVersion().getVersion());
             }
         }
+        
+        // !!!!!!!!!!!!!!!!!!!! TODO - statistic
+        SccpAddress ao = capDialog.getRemoteAddress();
+        int opc = this.sccpMessage.getIncomingOpc();
+        int oSsn = ao.getSubsystemNumber();
+        String oAddr = "";
+        if (ao.getGlobalTitle() != null)
+            oAddr = ao.getGlobalTitle().getDigits();
+        SccpAddress ad = capDialog.getLocalAddress();
+        int dpc = this.sccpMessage.getIncomingDpc();
+        int dSsn = ad.getSubsystemNumber();
+        String dAddr = "";
+        if (ad.getGlobalTitle() != null)
+            dAddr = ad.getGlobalTitle().getDigits();
+
+        String key = opc + "_" + oSsn + "_" + oAddr + "_" + dpc + "_" + dSsn + "_" + dAddr;
+        AddrData res = addressLst.get(key);
+        if (res == null) {
+            res = new AddrData();
+            addressLst.put(key, res);
+
+            res.opc = opc;
+            res.oSsn = oSsn;
+            res.oAddr = oAddr;
+            res.dpc = dpc;
+            res.dSsn = dSsn;
+            res.dAddr = dAddr;
+        }
+        res.cnt++;
+        // !!!!!!!!!!!!!!!!!!!! TODO - statistic
     }
 
     @Override
@@ -2222,4 +2287,14 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
 
     }
 
+    public class AddrData {
+        long cnt;
+
+        int opc;
+        int oSsn;
+        String oAddr;
+        int dpc;
+        int dSsn;
+        String dAddr;
+    }
 }

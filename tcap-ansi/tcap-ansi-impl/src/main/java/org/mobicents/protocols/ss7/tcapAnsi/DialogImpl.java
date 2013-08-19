@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.tcapAnsi;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +50,7 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.PAbortCause;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Reject;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.RejectProblem;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ReturnError;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.TCAbortMessage;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.TCQueryMessage;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.TCConversationMessage;
@@ -63,7 +65,10 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCConversationR
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCResponseRequest;
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCUniRequest;
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCUserAbortRequest;
+import org.mobicents.protocols.ss7.tcapAnsi.asn.ApplicationContextImpl;
+import org.mobicents.protocols.ss7.tcapAnsi.asn.ErrorCodeImpl;
 import org.mobicents.protocols.ss7.tcapAnsi.asn.InvokeImpl;
+import org.mobicents.protocols.ss7.tcapAnsi.asn.OperationCodeImpl;
 import org.mobicents.protocols.ss7.tcapAnsi.asn.ReturnResultNotLastImpl;
 import org.mobicents.protocols.ss7.tcapAnsi.asn.ReturnResultLastImpl;
 import org.mobicents.protocols.ss7.tcapAnsi.asn.TCAbortMessageImpl;
@@ -148,6 +153,7 @@ public class DialogImpl implements Dialog {
 
     private boolean previewMode = false;
     protected PrevewDialogData prevewDialogData;
+    private Date startDialogTime = null;
 
     private static int getIndexFromInvokeId(Long l) {
         int tmp = l.intValue();
@@ -189,6 +195,8 @@ public class DialogImpl implements Dialog {
 
         TCAPStack stack = this.provider.getStack();
         this.idleTaskTimeout = stack.getDialogIdleTimeout();
+
+        startDialogTime = new Date();
 
         // start
         startIdleTimer();
@@ -253,6 +261,11 @@ public class DialogImpl implements Dialog {
                     // operationTimedOut(invokeImpl);
                 }
             }
+        }
+
+        if (this.provider.getStack().getStatisticsEnabled()) {
+            long lg = (new Date()).getTime() - this.startDialogTime.getTime();
+            this.provider.getStack().getCounterProviderImpl().updateAllDialogsDuration(lg);
         }
 
         this.setState(TRPseudoState.Expunged);
@@ -496,6 +509,15 @@ public class DialogImpl implements Dialog {
                 dp.setConfidentiality(event.getConfidentiality());
 
                 tcbm.setDialogPortion(dp);
+
+                if (this.provider.getStack().getStatisticsEnabled()) {
+                    if (event.getApplicationContextName() != null) {
+                        String acn = ((ApplicationContextImpl) event.getApplicationContextName()).getStringValue();
+                        this.provider.getStack().getCounterProviderImpl().updateOutgoingDialogsPerApplicatioContextName(acn);
+                    } else {
+                        this.provider.getStack().getCounterProviderImpl().updateOutgoingDialogsPerApplicatioContextName("");
+                    }
+                }
             }
 
             // now comps
@@ -509,6 +531,9 @@ public class DialogImpl implements Dialog {
             try {
                 tcbm.encode(aos);
                 this.setState(TRPseudoState.InitialSent);
+                if (this.provider.getStack().getStatisticsEnabled()) {
+                    this.provider.getStack().getCounterProviderImpl().updateTcQuerySentCount();
+                }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
                         this.seqControl);
                 this.scheduledComponentList.clear();
@@ -575,6 +600,9 @@ public class DialogImpl implements Dialog {
                 AsnOutputStream aos = new AsnOutputStream();
                 try {
                     tcbm.encode(aos);
+                    if (this.provider.getStack().getStatisticsEnabled()) {
+                        this.provider.getStack().getCounterProviderImpl().updateTcConversationSentCount();
+                    }
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
                             this.localAddress, this.seqControl);
                     this.setState(TRPseudoState.Active);
@@ -606,6 +634,9 @@ public class DialogImpl implements Dialog {
                 AsnOutputStream aos = new AsnOutputStream();
                 try {
                     tcbm.encode(aos);
+                    if (this.provider.getStack().getStatisticsEnabled()) {
+                        this.provider.getStack().getCounterProviderImpl().updateTcConversationSentCount();
+                    }
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
                             this.localAddress, this.seqControl);
                     this.scheduledComponentList.clear();
@@ -689,6 +720,9 @@ public class DialogImpl implements Dialog {
             AsnOutputStream aos = new AsnOutputStream();
             try {
                 tcbm.encode(aos);
+                if (this.provider.getStack().getStatisticsEnabled()) {
+                    this.provider.getStack().getCounterProviderImpl().updateTcResponseSentCount();
+                }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
                         this.seqControl);
 
@@ -750,6 +784,9 @@ public class DialogImpl implements Dialog {
             AsnOutputStream aos = new AsnOutputStream();
             try {
                 msg.encode(aos);
+                if (this.provider.getStack().getStatisticsEnabled()) {
+                    this.provider.getStack().getCounterProviderImpl().updateTcUniSentCount();
+                }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
                         this.seqControl);
                 this.scheduledComponentList.clear();
@@ -802,6 +839,9 @@ public class DialogImpl implements Dialog {
                 AsnOutputStream aos = new AsnOutputStream();
                 try {
                     msg.encode(aos);
+                    if (this.provider.getStack().getStatisticsEnabled()) {
+                        this.provider.getStack().getCounterProviderImpl().updateTcUserAbortSentCount();
+                    }
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
                             this.localAddress, this.seqControl);
 
@@ -832,6 +872,53 @@ public class DialogImpl implements Dialog {
 
         if (this.previewMode)
             return;
+
+        if (this.provider.getStack().getStatisticsEnabled()) {
+            switch (componentRequest.getType()) {
+            case InvokeNotLast:
+                this.provider.getStack().getCounterProviderImpl().updateInvokeNotLastSentCount();
+
+                Invoke inv = (Invoke) componentRequest;
+                OperationCodeImpl oc = (OperationCodeImpl) inv.getOperationCode();
+                if (oc != null) {
+                    this.provider.getStack().getCounterProviderImpl().updateOutgoingInvokesPerOperationCode(oc.getStringValue());
+                }
+                break;
+            case InvokeLast:
+                this.provider.getStack().getCounterProviderImpl().updateInvokeLastSentCount();
+
+                inv = (Invoke) componentRequest;
+                oc = (OperationCodeImpl) inv.getOperationCode();
+                if (oc != null) {
+                    this.provider.getStack().getCounterProviderImpl().updateOutgoingInvokesPerOperationCode(oc.getStringValue());
+                }
+                break;
+            case ReturnResultNotLast:
+                this.provider.getStack().getCounterProviderImpl().updateReturnResultNotLastSentCount();
+                break;
+            case ReturnResultLast:
+                this.provider.getStack().getCounterProviderImpl().updateReturnResultLastSentCount();
+                break;
+            case ReturnError:
+                this.provider.getStack().getCounterProviderImpl().updateReturnErrorSentCount();
+
+                ReturnError re = (ReturnError) componentRequest;
+                ErrorCodeImpl ec = (ErrorCodeImpl) re.getErrorCode();
+                if (ec != null) {
+                    this.provider.getStack().getCounterProviderImpl().updateOutgoingErrorsPerErrorCode(ec.getStringValue());
+                }
+                break;
+            case Reject:
+                this.provider.getStack().getCounterProviderImpl().updateRejectSentCount();
+
+                Reject rej = (Reject) componentRequest;
+                RejectProblem prob = (RejectProblem) rej.getProblem();
+                if (prob != null) {
+                    this.provider.getStack().getCounterProviderImpl().updateOutgoingRejectPerProblem(prob.toString());
+                }
+                break;
+            }
+        }
 
         try {
             this.dialogLock.lock();
@@ -1172,6 +1259,16 @@ public class DialogImpl implements Dialog {
                 tcBeginIndication.setConfidentiality(msg.getDialogPortion().getConfidentiality());
                 tcBeginIndication.setSecurityContext(msg.getDialogPortion().getSecurityContext());
             }
+
+            if (this.provider.getStack().getStatisticsEnabled()) {
+                if (tcBeginIndication.getApplicationContextName() != null) {
+                    String acn = ((ApplicationContextImpl) tcBeginIndication.getApplicationContextName()).getStringValue();
+                    this.provider.getStack().getCounterProviderImpl().updateIncomingDialogsPerApplicatioContextName(acn);
+                } else {
+                    this.provider.getStack().getCounterProviderImpl().updateIncomingDialogsPerApplicatioContextName("");
+                }
+            }
+
             tcBeginIndication.setComponents(processOperationsState(msg.getComponent()));
             if (!this.previewMode) {
                 // change state - before we deliver
@@ -1530,6 +1627,58 @@ public class DialogImpl implements Dialog {
 
         components = new Component[resultingIndications.size()];
         components = resultingIndications.toArray(components);
+
+        if (this.provider.getStack().getStatisticsEnabled()) {
+            for (Component comp : components) {
+                switch (comp.getType()) {
+                case InvokeLast:
+                    this.provider.getStack().getCounterProviderImpl().updateInvokeLastReceivedCount();
+
+                    Invoke inv = (Invoke) comp;
+                    OperationCodeImpl oc = (OperationCodeImpl) inv.getOperationCode();
+                    if (oc != null) {
+                        this.provider.getStack().getCounterProviderImpl().updateIncomingInvokesPerOperationCode(oc.getStringValue());
+                    }
+                    break;
+                case InvokeNotLast:
+                    this.provider.getStack().getCounterProviderImpl().updateInvokeNotLastReceivedCount();
+
+                    inv = (Invoke) comp;
+                    oc = (OperationCodeImpl) inv.getOperationCode();
+                    if (oc != null) {
+                        this.provider.getStack().getCounterProviderImpl().updateIncomingInvokesPerOperationCode(oc.getStringValue());
+                    }
+                    break;
+                case ReturnResultNotLast:
+                    this.provider.getStack().getCounterProviderImpl().updateReturnResultNotLastReceivedCount();
+                    break;
+                case ReturnResultLast:
+                    this.provider.getStack().getCounterProviderImpl().updateReturnResultLastReceivedCount();
+                    break;
+                case ReturnError:
+                    this.provider.getStack().getCounterProviderImpl().updateReturnErrorReceivedCount();
+
+                    ReturnError re = (ReturnError) comp;
+                    ErrorCodeImpl ec = (ErrorCodeImpl) re.getErrorCode();
+                    if (ec != null) {
+                        this.provider.getStack().getCounterProviderImpl().updateIncomingErrorsPerErrorCode(ec.getStringValue());
+                    }
+                    break;
+                case Reject:
+                    Reject rej = (Reject) comp;
+                    if (!rej.isLocalOriginated()) {
+                        this.provider.getStack().getCounterProviderImpl().updateRejectReceivedCount();
+
+                        RejectProblem prob = (RejectProblem) rej.getProblem();
+                        if (prob != null) {
+                            this.provider.getStack().getCounterProviderImpl().updateIncomingRejectPerProblem(prob.toString());
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
         return components;
 
     }

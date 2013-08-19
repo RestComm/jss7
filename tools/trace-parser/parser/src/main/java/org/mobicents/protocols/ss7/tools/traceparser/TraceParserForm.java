@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -61,6 +61,7 @@ import org.apache.log4j.BasicConfigurator;
 public class TraceParserForm {
 
     private MAPTraceParser task = null;
+    private String parseData = "";
 
     protected JFrame frmSsTraceParser;
     private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -94,6 +95,7 @@ public class TraceParserForm {
     private JLabel lblProtocol;
     private JRadioButton rdbtnCap;
     private final ButtonGroup buttonGroup_1 = new ButtonGroup();
+    private JButton btnGetStatisticInfo;
 
     public static void main(String[] args) {
 
@@ -231,6 +233,7 @@ public class TraceParserForm {
                 }
 
                 btnStart.setEnabled(false);
+                btnGetStatisticInfo.setEnabled(false);
                 btnStop.setEnabled(true);
 
                 // starting parsing
@@ -249,6 +252,14 @@ public class TraceParserForm {
         });
         btnStop.setEnabled(false);
         panel.add(btnStop);
+        
+        btnGetStatisticInfo = new JButton("Get statistic info");
+        btnGetStatisticInfo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                getStatisticInfo();
+            }
+        });
+        panel.add(btnGetStatisticInfo);
 
         JPanel panel_1 = new JPanel();
         frmSsTraceParser.getContentPane().add(panel_1, BorderLayout.CENTER);
@@ -397,7 +408,9 @@ public class TraceParserForm {
                     if (task.isFinished()) {
                         String errorMsg = task.getErrorMessage();
                         btnStart.setEnabled(true);
+                        btnGetStatisticInfo.setEnabled(true);
                         btnStop.setEnabled(false);
+                        parseData = task.getStatisticData();
                         task = null;
 
                         if (errorMsg != null)
@@ -483,6 +496,11 @@ public class TraceParserForm {
         buttonGroup_1.add(rdbtnCap);
         rdbtnCap.setBounds(137, 28, 146, 23);
         panel_3.add(rdbtnCap);
+    }
+
+    private void getStatisticInfo() {
+        StatisticResultFm fm = new StatisticResultFm(frmSsTraceParser, parseData);
+        fm.setVisible(true);
     }
 
     private void setParameters(Ss7ParseParameters par) {

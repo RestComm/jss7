@@ -212,7 +212,12 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
      * .protocols.ss7.sccp.parameter.SccpAddress, org.mobicents.protocols.ss7.sccp.parameter.SccpAddress)
      */
     public Dialog getNewDialog(SccpAddress localAddress, SccpAddress remoteAddress) throws TCAPException {
-        return getNewDialog(localAddress, remoteAddress, getNextSeqControl(), null);
+        Dialog res = getNewDialog(localAddress, remoteAddress, getNextSeqControl(), null);
+        if (this.stack.getStatisticsEnabled()) {
+            this.stack.getCounterProviderImpl().updateAllLocalEstablishedDialogsCount();
+            this.stack.getCounterProviderImpl().updateAllEstablishedDialogsCount();
+        }
+        return res;
     }
 
     /*
@@ -222,7 +227,12 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
      * .protocols.ss7.sccp.parameter.SccpAddress, org.mobicents.protocols.ss7.sccp.parameter.SccpAddress, Long id)
      */
     public Dialog getNewDialog(SccpAddress localAddress, SccpAddress remoteAddress, Long id) throws TCAPException {
-        return getNewDialog(localAddress, remoteAddress, getNextSeqControl(), id);
+        Dialog res = getNewDialog(localAddress, remoteAddress, getNextSeqControl(), id);
+        if (this.stack.getStatisticsEnabled()) {
+            this.stack.getCounterProviderImpl().updateAllLocalEstablishedDialogsCount();
+            this.stack.getCounterProviderImpl().updateAllEstablishedDialogsCount();
+        }
+        return res;
     }
 
     /*
@@ -262,6 +272,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                 DialogImpl di = new DialogImpl(localAddress, remoteAddress, id, structured, this._EXECUTOR, this, seqControl, this.stack.getPreviewMode());
 
                 this.dialogs.put(id, di);
+                if (this.stack.getStatisticsEnabled()) {
+                    this.stack.getCounterProviderImpl().updateMinDialogsCount(this.dialogs.size());
+                    this.stack.getCounterProviderImpl().updateMaxDialogsCount(this.dialogs.size());
+                }
 
                 return di;
             } else {
@@ -269,6 +283,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                 return di;
             }
         }
+    }
+
+    protected long getCurrentDialogsCount() {
+        return this.dialogs.size();
     }
 
     public void send(byte[] data, boolean returnMessageOnError, SccpAddress destinationAddress, SccpAddress originatingAddress,
@@ -287,6 +305,9 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
     public void deliver(DialogImpl dialogImpl, TCQueryIndicationImpl msg) {
 
+        if (this.stack.getStatisticsEnabled()) {
+            this.stack.getCounterProviderImpl().updateTcQueryReceivedCount();
+        }
         try {
             for (TCListener lst : this.tcListeners) {
                 lst.onTCQuery(msg);
@@ -300,6 +321,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     }
 
     public void deliver(DialogImpl dialogImpl, TCConversationIndicationImpl tcContinueIndication) {
+
+        if (this.stack.getStatisticsEnabled()) {
+            this.stack.getCounterProviderImpl().updateTcConversationReceivedCount();
+        }
         try {
             for (TCListener lst : this.tcListeners) {
                 lst.onTCConversation(tcContinueIndication);
@@ -313,6 +338,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     }
 
     public void deliver(DialogImpl dialogImpl, TCResponseIndicationImpl tcEndIndication) {
+
+        if (this.stack.getStatisticsEnabled()) {
+            this.stack.getCounterProviderImpl().updateTcResponseReceivedCount();
+        }
         try {
             for (TCListener lst : this.tcListeners) {
                 lst.onTCResponse(tcEndIndication);
@@ -325,6 +354,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     }
 
     public void deliver(DialogImpl dialogImpl, TCPAbortIndicationImpl tcAbortIndication) {
+
+        if (this.stack.getStatisticsEnabled()) {
+            this.stack.getCounterProviderImpl().updateTcPAbortReceivedCount();
+        }
         try {
             for (TCListener lst : this.tcListeners) {
                 lst.onTCPAbort(tcAbortIndication);
@@ -338,6 +371,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     }
 
     public void deliver(DialogImpl dialogImpl, TCUserAbortIndicationImpl tcAbortIndication) {
+
+        if (this.stack.getStatisticsEnabled()) {
+            this.stack.getCounterProviderImpl().updateTcUserAbortReceivedCount();
+        }
         try {
             for (TCListener lst : this.tcListeners) {
                 lst.onTCUserAbort(tcAbortIndication);
@@ -351,6 +388,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     }
 
     public void deliver(DialogImpl dialogImpl, TCUniIndicationImpl tcUniIndication) {
+
+        if (this.stack.getStatisticsEnabled()) {
+            this.stack.getCounterProviderImpl().updateTcUniReceivedCount();
+        }
         try {
             for (TCListener lst : this.tcListeners) {
                 lst.onTCUni(tcUniIndication);
@@ -380,6 +421,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         if (!d.getPreviewMode()) {
             synchronized (this.dialogs) {
                 this.dialogs.remove(did);
+                if (this.stack.getStatisticsEnabled()) {
+                    this.stack.getCounterProviderImpl().updateMinDialogsCount(this.dialogs.size());
+                    this.stack.getCounterProviderImpl().updateMaxDialogsCount(this.dialogs.size());
+                }
             }
 
             this.doRelease(d);
@@ -387,6 +432,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     }
 
     private void doRelease(DialogImpl d) {
+
+        if (this.stack.getStatisticsEnabled()) {
+            this.stack.getCounterProviderImpl().updateDialogReleaseCount();
+        }
         try {
             for (TCListener lst : this.tcListeners) {
                 lst.onDialogReleased(d);
@@ -402,6 +451,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
      * @param d
      */
     public void timeout(DialogImpl d) {
+
+        if (this.stack.getStatisticsEnabled()) {
+            this.stack.getCounterProviderImpl().updateDialogTimeoutCount();
+        }
         try {
             for (TCListener lst : this.tcListeners) {
                 lst.onDialogTimeout(d);
@@ -465,6 +518,9 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         AsnOutputStream aos = new AsnOutputStream();
         try {
             msg.encode(aos);
+            if (this.stack.getStatisticsEnabled()) {
+                this.stack.getCounterProviderImpl().updateTcPAbortSentCount();
+            }
             this.send(aos.toByteArray(), false, remoteAddress, localAddress, seqControl);
         } catch (Exception e) {
             if (logger.isEnabledFor(Level.ERROR)) {
@@ -493,6 +549,9 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         AsnOutputStream aos = new AsnOutputStream();
         try {
             msg.encode(aos);
+            if (this.stack.getStatisticsEnabled()) {
+                this.stack.getCounterProviderImpl().updateTcPAbortSentCount();
+            }
             this.send(aos.toByteArray(), false, remoteAddress, localAddress, seqControl);
         } catch (Exception e) {
             if (logger.isEnabledFor(Level.ERROR)) {
@@ -672,6 +731,11 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                         ProtocolVersion pv = TcapFactory.createProtocolVersionEmpty();
                         di.setProtocolVersion(pv);
                     }
+                }
+
+                if (this.stack.getStatisticsEnabled()) {
+                    this.stack.getCounterProviderImpl().updateAllRemoteEstablishedDialogsCount();
+                    this.stack.getCounterProviderImpl().updateAllEstablishedDialogsCount();
                 }
                 di.processQuery(tcb, localAddress, remoteAddress, tag == TCQueryMessage._TAG_QUERY_WITH_PERM);
 
