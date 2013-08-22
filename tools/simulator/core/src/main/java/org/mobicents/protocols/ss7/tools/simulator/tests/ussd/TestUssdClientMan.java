@@ -467,17 +467,17 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
             return "No pending unstructured request";
 
         MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
-        if (msg == null || msg.equals(""))
-            return "USSD message is empty";
+//        if (msg == null || msg.equals(""))
+//            return "USSD message is empty";
         USSDString ussdString = null;
-        try {
-            ussdString = mapProvider.getMAPParameterFactory().createUSSDString(
-                    msg,
-                    new CBSDataCodingSchemeImpl(this.testerHost.getConfigurationData().getTestUssdClientConfigurationData()
-                            .getDataCodingScheme()), null);
-        } catch (MAPException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        if (msg != null && !msg.equals("")) {
+            try {
+                ussdString = mapProvider.getMAPParameterFactory().createUSSDString(msg,
+                        new CBSDataCodingSchemeImpl(this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getDataCodingScheme()), null);
+            } catch (MAPException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
 
         try {

@@ -34,6 +34,7 @@ import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPMessage;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
+import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
@@ -660,8 +661,13 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
         if (dd == null)
             return;
 
+        String str = null;
         try {
-            dd.currentRequestDef += "unstrSsResp=\"" + ind.getUSSDString().getString(null) + "\";";
+//          dd.currentRequestDef += "unstrSsResp=\"" + ind.getUSSDString().getString(null) + "\";";
+            USSDString ussdString = ind.getUSSDString();
+            if (ussdString != null)
+                str = ind.getUSSDString().getString(null);
+            dd.currentRequestDef += "unstrSsResp=\"" + str + "\";";
         } catch (MAPException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -670,14 +676,12 @@ public class TestUssdServerMan extends TesterBase implements TestUssdServerManMB
             currentRequestDef = dd.currentRequestDef;
         String pref = "CurDialog: ";
         this.countUnstResp++;
-        String uData = this.createUssdMessageData(ind.getMAPDialog().getLocalDialogId(), ind.getDataCodingScheme().getCode(),
-                null, null);
-        try {
-            this.sendRcvdNotice("Rcvd: unstrSsResp: " + ind.getUSSDString().getString(null), pref, uData);
-        } catch (MAPException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        CBSDataCodingScheme dcs = ind.getDataCodingScheme();
+        int dstr = -1;
+        if (dcs != null)
+            dstr = dcs.getCode();
+        String uData = this.createUssdMessageData(ind.getMAPDialog().getLocalDialogId(), dstr, null, null);
+        this.sendRcvdNotice("Rcvd: unstrSsResp: " + str, pref, uData);
 
         switch (this.getProcessSsRequestAction().intValue()) {
             case ProcessSsRequestAction.VAL_MANUAL_RESPONSE: {

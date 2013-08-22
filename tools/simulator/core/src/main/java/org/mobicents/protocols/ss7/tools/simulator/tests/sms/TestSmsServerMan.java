@@ -281,6 +281,17 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
     }
 
     @Override
+    public boolean isGprsSupportIndicator() {
+        return this.testerHost.getConfigurationData().getTestSmsServerConfigurationData().isGprsSupportIndicator();
+    }
+
+    @Override
+    public void setGprsSupportIndicator(boolean val) {
+        this.testerHost.getConfigurationData().getTestSmsServerConfigurationData().setGprsSupportIndicator(val);
+        this.testerHost.markStore();
+    }
+
+    @Override
     public void putAddressNature(String val) {
         AddressNatureType x = AddressNatureType.createInstance(val);
         if (x != null)
@@ -460,7 +471,8 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
             hostMessageData.mtMessageData = messageData;
             curDialog.setUserObject(hostMessageData);
 
-            curDialog.addSendRoutingInfoForSMRequest(msisdn, true, serviceCentreAddress, null, false, null, null, null);
+            curDialog.addSendRoutingInfoForSMRequest(msisdn, true, serviceCentreAddress, null, this.testerHost.getConfigurationData()
+                    .getTestSmsServerConfigurationData().isGprsSupportIndicator(), null, null, null);
             curDialog.send();
 
             String sriData = createSriData(curDialog.getLocalDialogId(), destIsdnNumber, serviceCentreAddr);

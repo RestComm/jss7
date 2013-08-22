@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.tests.sms;
 
+import javolution.text.CharArray;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
@@ -48,6 +49,7 @@ public class TestSmsServerConfigurationData {
     protected static final String NUMBERING_PLAN_IDENTIFICATION = "numberingPlanIdentification";
     protected static final String SMS_CODING_TYPE = "smsCodingType";
     protected static final String SEND_SRSMDS_IF_ERROR = "sendSrsmdsIfError";
+    protected static final String GPRS_SUPPORT_INDICATOR = "gprsSupportIndicator";
 
     protected AddressNature addressNature = AddressNature.international_number;
     protected NumberingPlan numberingPlan = NumberingPlan.ISDN;
@@ -59,6 +61,7 @@ public class TestSmsServerConfigurationData {
     protected NumberingPlanIdentification numberingPlanIdentification = NumberingPlanIdentification.ISDNTelephoneNumberingPlan;
     protected SmsCodingType smsCodingType = new SmsCodingType(SmsCodingType.VAL_GSM7);
     protected boolean sendSrsmdsIfError = false;
+    protected boolean gprsSupportIndicator = false;
 
     public AddressNature getAddressNature() {
         return addressNature;
@@ -141,6 +144,15 @@ public class TestSmsServerConfigurationData {
 
     }
 
+    public boolean isGprsSupportIndicator() {
+        return gprsSupportIndicator;
+    }
+
+    public void setGprsSupportIndicator(boolean val) {
+        gprsSupportIndicator = val;
+
+    }
+
     protected static final XMLFormat<TestSmsServerConfigurationData> XML = new XMLFormat<TestSmsServerConfigurationData>(
             TestSmsServerConfigurationData.class) {
 
@@ -148,6 +160,7 @@ public class TestSmsServerConfigurationData {
             xml.setAttribute(HLR_SSN, srv.hlrSsn);
             xml.setAttribute(VLR_SSN, srv.vlrSsn);
             xml.setAttribute(SEND_SRSMDS_IF_ERROR, srv.sendSrsmdsIfError);
+            xml.setAttribute(GPRS_SUPPORT_INDICATOR, srv.gprsSupportIndicator);
 
             xml.add(srv.serviceCenterAddress, SERVICE_CENTER_ADDRESS, String.class);
 
@@ -163,6 +176,9 @@ public class TestSmsServerConfigurationData {
             srv.hlrSsn = xml.getAttribute(HLR_SSN).toInt();
             srv.vlrSsn = xml.getAttribute(VLR_SSN).toInt();
             srv.sendSrsmdsIfError = xml.getAttribute(SEND_SRSMDS_IF_ERROR).toBoolean();
+            CharArray car = xml.getAttribute(GPRS_SUPPORT_INDICATOR);
+            if (car != null)
+                srv.gprsSupportIndicator = car.toBoolean();
 
             srv.serviceCenterAddress = (String) xml.get(SERVICE_CENTER_ADDRESS, String.class);
 

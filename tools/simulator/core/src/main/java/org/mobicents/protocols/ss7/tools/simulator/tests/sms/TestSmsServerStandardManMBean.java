@@ -77,10 +77,9 @@ public class TestSmsServerStandardManMBean extends StandardMBean {
                         "NumberingPlanIdentification parameter for SMS tpdu origAddress", true, false, false),
                 new MBeanAttributeInfo("CurrentRequestDef", String.class.getName(), "Get information of the current request",
                         true, false, false),
-                new MBeanAttributeInfo("SmsCodingType", SmsCodingType.class.getName(), "Character set for SMS encoding", true,
-                        true, false),
-                new MBeanAttributeInfo("SendSrsmdsIfError", Boolean.class.getName(), "Send reportSM-DeliveryStatus if error",
-                        true, true, true), };
+                new MBeanAttributeInfo("SmsCodingType", SmsCodingType.class.getName(), "Character set for SMS encoding", true, true, false),
+                new MBeanAttributeInfo("SendSrsmdsIfError", Boolean.class.getName(), "Send reportSM-DeliveryStatus if error", true, true, true),
+                new MBeanAttributeInfo("GprsSupportIndicator", Boolean.class.getName(), "Sending GprsSupportIndicator in SRI request", true, true, true), };
 
         MBeanParameterInfo[] signString = new MBeanParameterInfo[] { new MBeanParameterInfo("val", String.class.getName(),
                 "Index number or value") };

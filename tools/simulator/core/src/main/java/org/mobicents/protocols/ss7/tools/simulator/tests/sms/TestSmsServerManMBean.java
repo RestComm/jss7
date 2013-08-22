@@ -85,6 +85,10 @@ public interface TestSmsServerManMBean {
 
     void setSendSrsmdsIfError(boolean val);
 
+    boolean isGprsSupportIndicator();
+
+    void setGprsSupportIndicator(boolean val);
+
     void putAddressNature(String val);
 
     void putNumberingPlan(String val);
