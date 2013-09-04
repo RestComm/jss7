@@ -353,32 +353,12 @@ public class SccpMan implements SccpManMBean, Stoppable {
             SccpAddress pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0,
                     this.createGlobalTitle("*"), 0);
             String mask = "K";
-            // ((RouterImpl)this.router).addRule(1, RuleType.Solitary, null, null, pattern, mask, 1, -1, null);
             ((RouterImpl) this.router).addRule(1, RuleType.Solitary, null, OriginationType.LocalOriginated, pattern, mask, 1,
                     -1, null);
-            // int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern,
-            // String mask,
-            // int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId
-
-            // pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0,
-            // this.createGlobalTitle(callingPartyAddressDigits), 0);
             pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, this.createGlobalTitle("*"), 0);
             mask = "R";
             ((RouterImpl) this.router).addRule(2, RuleType.Solitary, null, OriginationType.RemoteOriginated, pattern, mask, 2,
                     -1, null);
-
-            // if (extraLocalAddressDigits != null && !extraLocalAddressDigits.equals("")) {
-            // String[] ss = extraLocalAddressDigits.split(",");
-            //
-            // int ruleNum = 3;
-            // for (String s : ss) {
-            // s = s.trim();
-            // pattern = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, 0, this.createGlobalTitle(s), 0);
-            // mask = "R";
-            // ((RouterImpl)this.router).addRule(ruleNum, RuleType.Solitary, null, null, pattern, mask, 2, -1, null);
-            // ruleNum++;
-            // }
-            // }
         }
     }
 

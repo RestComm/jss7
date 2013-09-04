@@ -473,6 +473,10 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 
             curDialog.addSendRoutingInfoForSMRequest(msisdn, true, serviceCentreAddress, null, this.testerHost.getConfigurationData()
                     .getTestSmsServerConfigurationData().isGprsSupportIndicator(), null, null, null);
+
+            // this cap helps us give SCCP error if any
+            // curDialog.setReturnMessageOnError(true);
+
             curDialog.send();
 
             String sriData = createSriData(curDialog.getLocalDialogId(), destIsdnNumber, serviceCentreAddr);
@@ -1054,7 +1058,6 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
                             null,
                             this.mapMan.createDestAddress(curDestIsdnNumber, this.testerHost.getConfigurationData().getTestSmsServerConfigurationData()
                                     .getHlrSsn()), null);
-                    curDestIsdnNumber = null;
 
                     ISDNAddressString msisdn = mapProvider.getMAPParameterFactory().createISDNAddressString(
                             this.testerHost.getConfigurationData().getTestSmsServerConfigurationData().getAddressNature(),
@@ -1062,6 +1065,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
                     AddressString serviceCentreAddress = mapProvider.getMAPParameterFactory().createAddressString(
                             this.testerHost.getConfigurationData().getTestSmsServerConfigurationData().getAddressNature(),
                             this.testerHost.getConfigurationData().getTestSmsServerConfigurationData().getNumberingPlan(), this.getServiceCenterAddress());
+                    curDestIsdnNumber = null;
 
                     SMDeliveryOutcome sMDeliveryOutcome = null;
                     if (vers.getVersion() >= 2) {

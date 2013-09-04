@@ -61,12 +61,18 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
     private ParameterFactoryImpl factory = new ParameterFactoryImpl();
     private M3UAManagementProxyImpl m3uaMgmt;
     private boolean isSctpConnectionUp = false;
+    private boolean isSctpConnectionUp2 = false;
     private boolean isM3uaConnectionActive = false;
+    private boolean isM3uaConnectionActive2 = false;
     private Association assoc;
+    private Association assoc2;
 
     private As localAs;
+    private As localAs2;
     private AspFactory localAspFactory;
+    private AspFactory localAspFactory2;
     private Asp localAsp;
+    private Asp localAsp2;
 
     public M3uaMan() {
         this.name = "???";
@@ -92,6 +98,17 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
     }
 
     @Override
+    public String getSctpLocalHost2() {
+        return this.testerHost.getConfigurationData().getM3uaConfigurationData().getLocalHost2();
+    }
+
+    @Override
+    public void setSctpLocalHost2(String val) {
+        this.testerHost.getConfigurationData().getM3uaConfigurationData().setLocalHost2(val);
+        this.testerHost.markStore();
+    }
+
+    @Override
     public int getSctpLocalPort() {
         return this.testerHost.getConfigurationData().getM3uaConfigurationData().getLocalPort();
     }
@@ -99,6 +116,17 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
     @Override
     public void setSctpLocalPort(int val) {
         this.testerHost.getConfigurationData().getM3uaConfigurationData().setLocalPort(val);
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public int getSctpLocalPort2() {
+        return this.testerHost.getConfigurationData().getM3uaConfigurationData().getLocalPort2();
+    }
+
+    @Override
+    public void setSctpLocalPort2(int val) {
+        this.testerHost.getConfigurationData().getM3uaConfigurationData().setLocalPort2(val);
         this.testerHost.markStore();
     }
 
@@ -114,6 +142,17 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
     }
 
     @Override
+    public String getSctpRemoteHost2() {
+        return this.testerHost.getConfigurationData().getM3uaConfigurationData().getRemoteHost2();
+    }
+
+    @Override
+    public void setSctpRemoteHost2(String val) {
+        this.testerHost.getConfigurationData().getM3uaConfigurationData().setRemoteHost2(val);
+        this.testerHost.markStore();
+    }
+
+    @Override
     public int getSctpRemotePort() {
         return this.testerHost.getConfigurationData().getM3uaConfigurationData().getRemotePort();
     }
@@ -121,6 +160,17 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
     @Override
     public void setSctpRemotePort(int val) {
         this.testerHost.getConfigurationData().getM3uaConfigurationData().setRemotePort(val);
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public int getSctpRemotePort2() {
+        return this.testerHost.getConfigurationData().getM3uaConfigurationData().getRemotePort2();
+    }
+
+    @Override
+    public void setSctpRemotePort2(int val) {
+        this.testerHost.getConfigurationData().getM3uaConfigurationData().setRemotePort2(val);
         this.testerHost.markStore();
     }
 
@@ -268,6 +318,17 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
     }
 
     @Override
+    public int getM3uaDpc2() {
+        return this.testerHost.getConfigurationData().getM3uaConfigurationData().getDpc2();
+    }
+
+    @Override
+    public void setM3uaDpc2(int val) {
+        this.testerHost.getConfigurationData().getM3uaConfigurationData().setDpc2(val);
+        this.testerHost.markStore();
+    }
+
+    @Override
     public int getM3uaOpc() {
         return this.testerHost.getConfigurationData().getM3uaConfigurationData().getOpc();
     }
@@ -275,6 +336,17 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
     @Override
     public void setM3uaOpc(int val) {
         this.testerHost.getConfigurationData().getM3uaConfigurationData().setOpc(val);
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public int getM3uaOpc2() {
+        return this.testerHost.getConfigurationData().getM3uaConfigurationData().getOpc2();
+    }
+
+    @Override
+    public void setM3uaOpc2(int val) {
+        this.testerHost.getConfigurationData().getM3uaConfigurationData().setOpc2(val);
         this.testerHost.markStore();
     }
 
@@ -316,6 +388,8 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
         StringBuilder sb = new StringBuilder();
         sb.append("SCTP: ");
         sb.append(this.isSctpConnectionUp ? "Connected" : "Disconnected");
+        if (this.assoc2 != null)
+            sb.append(this.isSctpConnectionUp2 ? "/Connected" : "/Disconnected");
         sb.append("  M3UA:");
 
         this.m3uaMgmt.getAppServers();
@@ -392,13 +466,18 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
     public boolean start() {
         try {
             this.isSctpConnectionUp = false;
+            this.isSctpConnectionUp2 = false;
             this.isM3uaConnectionActive = false;
+            this.isM3uaConnectionActive2 = false;
             this.initM3ua(this.testerHost.getConfigurationData().getM3uaConfigurationData().getStorePcapTrace(), this.testerHost.getConfigurationData()
                     .getM3uaConfigurationData().getIsSctpServer(), this.testerHost.getConfigurationData().getM3uaConfigurationData().getLocalHost(),
                     this.testerHost.getConfigurationData().getM3uaConfigurationData().getLocalPort(), this.testerHost.getConfigurationData()
                             .getM3uaConfigurationData().getRemoteHost(), this.testerHost.getConfigurationData().getM3uaConfigurationData().getRemotePort(),
-                    this.testerHost.getConfigurationData().getM3uaConfigurationData().getIpChannelType(), this.testerHost.getConfigurationData()
-                            .getM3uaConfigurationData().getSctpExtraHostAddressesArray(), this.testerHost.getPersistDir());
+                    this.testerHost.getConfigurationData().getM3uaConfigurationData().getLocalHost2(), this.testerHost.getConfigurationData()
+                            .getM3uaConfigurationData().getLocalPort2(), this.testerHost.getConfigurationData().getM3uaConfigurationData().getRemoteHost2(),
+                    this.testerHost.getConfigurationData().getM3uaConfigurationData().getRemotePort2(), this.testerHost.getConfigurationData()
+                            .getM3uaConfigurationData().getIpChannelType(), this.testerHost.getConfigurationData().getM3uaConfigurationData()
+                            .getSctpExtraHostAddressesArray(), this.testerHost.getPersistDir());
             this.testerHost.sendNotif(SOURCE_NAME, "M3UA has been started", "", Level.INFO);
             return true;
         } catch (Throwable e) {
@@ -426,6 +505,14 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
                         Level.INFO);
             }
         }
+        if (this.assoc2 != null) {
+            boolean conn = this.assoc2.isConnected();
+            if (this.isSctpConnectionUp2 != conn) {
+                this.isSctpConnectionUp2 = conn;
+                this.testerHost.sendNotif(SOURCE_NAME, "Sctp2 connection is " + (conn ? "up" : "down"), this.assoc2.getName(),
+                        Level.INFO);
+            }
+        }
         if (this.m3uaMgmt != null) {
             boolean active = false;
             List<As> lstAs = this.m3uaMgmt.getAppServers();
@@ -446,11 +533,16 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
                 this.testerHost.sendNotif(SOURCE_NAME, "M3ua connection is " + (active ? "active" : "not active"),
                         this.assoc.getName(), Level.INFO);
             }
+            if (this.isM3uaConnectionActive2 != active) {
+                this.isM3uaConnectionActive2 = active;
+                this.testerHost.sendNotif(SOURCE_NAME, "M3ua connection2 is " + (active ? "active" : "not active"),
+                        this.assoc2.getName(), Level.INFO);
+            }
         }
     }
 
-    private void initM3ua(boolean storePcapTrace, boolean isSctpServer, String localHost, int localPort, String remoteHost,
-            int remotePort, IpChannelType ipChannelType, String[] extraHostAddresses, String persistDir) throws Exception {
+    private void initM3ua(boolean storePcapTrace, boolean isSctpServer, String localHost, int localPort, String remoteHost, int remotePort, String localHost2,
+            int localPort2, String remoteHost2, int remotePort2, IpChannelType ipChannelType, String[] extraHostAddresses, String persistDir) throws Exception {
 
         this.stopM3ua();
 
@@ -475,16 +567,25 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 
         // starting pcap trace storing if it is configured
         if (storePcapTrace) {
-            this.m3uaMgmt.startPcapTrace("MsgLog_" + name + ".pcap");
+            String s1 = "";
+            if (persistDir != null)
+                s1 = persistDir + "/";
+            this.m3uaMgmt.startPcapTrace(s1 + "MsgLog_" + name + ".pcap");
         }
 
         // configure SCTP stack
         String SERVER_NAME = "Server_" + name;
+        String SERVER_NAME_2 = "Server_" + name + "_2";
         String SERVER_ASSOCIATION_NAME = "ServerAss_" + name;
+        String SERVER_ASSOCIATION_NAME_2 = "ServerAss_" + name + "_2";
         String ASSOCIATION_NAME = "Ass_" + name;
+        String ASSOCIATION_NAME_2 = "Ass_" + name + "_2";
         String assName;
+        String assName2 = null;
 
         if (isSctpServer) {
+
+            // String localHost2, int localPort2, String remoteHost2, int remotePort2
 
             // 1. Create SCTP Server
             sctpManagement.addServer(SERVER_NAME, localHost, localPort, ipChannelType, extraHostAddresses);
@@ -496,6 +597,21 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 
             // 3. Start Server
             sctpManagement.startServer(SERVER_NAME);
+
+            if (localHost2 != null && !localHost2.equals("") && remoteHost2 != null && !remoteHost2.equals("")) {
+                // a second link is defined
+
+                // 1. Create SCTP Server
+                sctpManagement.addServer(SERVER_NAME_2, localHost2, localPort2, ipChannelType, null);
+
+                // 2. Create SCTP Server Association
+                sctpManagement.addServerAssociation(remoteHost2, remotePort2, SERVER_NAME_2, SERVER_ASSOCIATION_NAME_2, ipChannelType);
+                this.assoc2 = sctpManagement.getAssociation(SERVER_ASSOCIATION_NAME_2);
+                assName2 = SERVER_ASSOCIATION_NAME_2;
+
+                // 3. Start Server
+                sctpManagement.startServer(SERVER_NAME_2);
+            }
         } else {
 
             // 1. Create SCTP Association
@@ -503,6 +619,15 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
                     extraHostAddresses);
             this.assoc = sctpManagement.getAssociation(ASSOCIATION_NAME);
             assName = ASSOCIATION_NAME;
+
+            if (localHost2 != null && !localHost2.equals("") && remoteHost2 != null && !remoteHost2.equals("")) {
+                // a second link is defined
+
+                // 1. Create SCTP Association
+                sctpManagement.addAssociation(localHost2, localPort2, remoteHost2, remotePort2, ASSOCIATION_NAME_2, ipChannelType, null);
+                this.assoc2 = sctpManagement.getAssociation(ASSOCIATION_NAME_2);
+                assName2 = ASSOCIATION_NAME_2;
+            }
         }
 
         // configure M3UA stack
@@ -510,8 +635,9 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
         RoutingContext rc = factory.createRoutingContext(new long[] { this.testerHost.getConfigurationData()
                 .getM3uaConfigurationData().getRoutingContext() });
         TrafficModeType trafficModeType = factory.createTrafficModeType(TrafficModeType.Loadshare);
-        NetworkAppearance na = factory.createNetworkAppearance(this.testerHost.getConfigurationData()
-                .getM3uaConfigurationData().getNetworkAppearance());
+        NetworkAppearance na = null;
+        if (this.testerHost.getConfigurationData().getM3uaConfigurationData().getNetworkAppearance() != 0)
+            na = factory.createNetworkAppearance(this.testerHost.getConfigurationData().getM3uaConfigurationData().getNetworkAppearance());
         localAs = m3uaMgmt.createAs("testas", this.testerHost.getConfigurationData().getM3uaConfigurationData()
                 .getM3uaFunctionality(), this.testerHost.getConfigurationData().getM3uaConfigurationData()
                 .getM3uaExchangeType(), this.testerHost.getConfigurationData().getM3uaConfigurationData().getM3uaIPSPType(),
@@ -529,12 +655,30 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
                 .getConfigurationData().getM3uaConfigurationData().getOpc(), this.testerHost.getConfigurationData()
                 .getM3uaConfigurationData().getSi(), "testas");
 
-        // starting resources
-        // 1. Start Association
-        // sctpManagement.startAssociation(assName);
-
         // 2. Start ASP
         m3uaMgmt.startAsp("testasp");
+
+        if(assName2!=null){
+            // 1. Create AS
+            localAs2 = m3uaMgmt.createAs("testas2", this.testerHost.getConfigurationData().getM3uaConfigurationData().getM3uaFunctionality(), this.testerHost
+                    .getConfigurationData().getM3uaConfigurationData().getM3uaExchangeType(), this.testerHost.getConfigurationData().getM3uaConfigurationData()
+                    .getM3uaIPSPType(), rc, trafficModeType, 1, na);
+
+            // 2. Create ASP
+            localAspFactory2 = m3uaMgmt.createAspFactory("testasp2", assName2);
+
+            // 3. Assign ASP to AS
+            localAsp2 = m3uaMgmt.assignAspToAs("testas2", "testasp2");
+
+            // 4. Define Route
+            // Define Route
+            m3uaMgmt.addRoute(this.testerHost.getConfigurationData().getM3uaConfigurationData().getDpc2(), this.testerHost
+                    .getConfigurationData().getM3uaConfigurationData().getOpc2(), this.testerHost.getConfigurationData()
+                    .getM3uaConfigurationData().getSi(), "testas2");
+
+            // 2. Start ASP
+            m3uaMgmt.startAsp("testasp2");
+        }
 
     }
 

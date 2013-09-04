@@ -289,7 +289,9 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
         this.doSendNotif(source, msg, userData);
 
-        logger.log(logLevel, msg);
+        logger.log(Level.INFO, msg + "\n" + userData);
+//        logger.log(logLevel, msg + "\n" + userData);
+
         // if (showInConsole) {
         // logger.warn(msg);
         // } else {

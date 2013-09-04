@@ -230,7 +230,7 @@ public class TestSmsServerParamForm extends JDialog {
         cbSendSrsmdsIfError = new JCheckBox("Send reportSM-DeliveryStatus if error");
         cbSendSrsmdsIfError.setBounds(8, 367, 513, 25);
         panel.add(cbSendSrsmdsIfError);
-        
+
         cbGprsSupportIndicator = new JCheckBox("Send GprsSupportIndicator in SRI request");
         cbGprsSupportIndicator.setBounds(8, 397, 513, 25);
         panel.add(cbGprsSupportIndicator);

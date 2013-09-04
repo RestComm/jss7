@@ -70,13 +70,19 @@ public class M3uaForm extends JDialog {
     private JComboBox cbM3uaExchangeType;
     private JComboBox cbM3uaIPSPType;
     private JCheckBox cbStorePcapTrace;
+    private JTextField tbLocalHost2;
+    private JTextField tbRemoteHost2;
+    private JTextField tbLocalPort2;
+    private JTextField tbRemotePort2;
+    private JTextField tbM3uaDpc2;
+    private JTextField tbM3uaOpc2;
 
     public M3uaForm(JFrame owner) {
         super(owner, true);
 
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setResizable(false);
-        setBounds(100, 100, 534, 586);
+        setBounds(100, 100, 662, 586);
         setTitle("M3UA settings");
 
         JPanel panel = new JPanel();
@@ -263,6 +269,36 @@ public class M3uaForm extends JDialog {
         cbStorePcapTrace = new JCheckBox("Storing all transmitted/received data into MsgLog_*.pcap file");
         cbStorePcapTrace.setBounds(10, 444, 508, 25);
         panel.add(cbStorePcapTrace);
+
+        tbLocalHost2 = new JTextField();
+        tbLocalHost2.setColumns(10);
+        tbLocalHost2.setBounds(431, 72, 212, 20);
+        panel.add(tbLocalHost2);
+
+        tbRemoteHost2 = new JTextField();
+        tbRemoteHost2.setColumns(10);
+        tbRemoteHost2.setBounds(431, 134, 212, 20);
+        panel.add(tbRemoteHost2);
+
+        tbLocalPort2 = new JTextField();
+        tbLocalPort2.setColumns(10);
+        tbLocalPort2.setBounds(431, 103, 129, 20);
+        panel.add(tbLocalPort2);
+
+        tbRemotePort2 = new JTextField();
+        tbRemotePort2.setColumns(10);
+        tbRemotePort2.setBounds(431, 165, 129, 20);
+        panel.add(tbRemotePort2);
+
+        tbM3uaDpc2 = new JTextField();
+        tbM3uaDpc2.setColumns(10);
+        tbM3uaDpc2.setBounds(431, 305, 129, 20);
+        panel.add(tbM3uaDpc2);
+
+        tbM3uaOpc2 = new JTextField();
+        tbM3uaOpc2.setColumns(10);
+        tbM3uaOpc2.setBounds(431, 333, 129, 20);
+        panel.add(tbM3uaOpc2);
     }
 
     public void setData(M3uaManMBean m3ua) {
@@ -290,6 +326,10 @@ public class M3uaForm extends JDialog {
         tbLocalPort.setText(((Integer) this.m3ua.getSctpLocalPort()).toString());
         tbRemoteHost.setText(this.m3ua.getSctpRemoteHost());
         tbRemotePort.setText(((Integer) this.m3ua.getSctpRemotePort()).toString());
+        tbLocalHost2.setText(this.m3ua.getSctpLocalHost2());
+        tbLocalPort2.setText(((Integer) this.m3ua.getSctpLocalPort2()).toString());
+        tbRemoteHost2.setText(this.m3ua.getSctpRemoteHost2());
+        tbRemotePort2.setText(((Integer) this.m3ua.getSctpRemotePort2()).toString());
         tbSctpExtraHostAddresses.setText(this.m3ua.getSctpExtraHostAddresses());
 
         setEnumeratedBaseComboBox(cbM3uaFunctionality, this.m3ua.getM3uaFunctionality());
@@ -297,6 +337,8 @@ public class M3uaForm extends JDialog {
         setEnumeratedBaseComboBox(cbM3uaExchangeType, this.m3ua.getM3uaExchangeType());
         tbM3uaDpc.setText(((Integer) this.m3ua.getM3uaDpc()).toString());
         tbM3uaOpc.setText(((Integer) this.m3ua.getM3uaOpc()).toString());
+        tbM3uaDpc2.setText(((Integer) this.m3ua.getM3uaDpc2()).toString());
+        tbM3uaOpc2.setText(((Integer) this.m3ua.getM3uaOpc2()).toString());
         tbM3uaSi.setText(((Integer) this.m3ua.getM3uaSi()).toString());
         tbM3uaRoutingContext.setText(((Long) this.m3ua.getM3uaRoutingContext()).toString());
         tbM3uaNetworkAppearance.setText(((Long) this.m3ua.getM3uaNetworkAppearance()).toString());
@@ -316,6 +358,10 @@ public class M3uaForm extends JDialog {
         tbLocalPort.setText("8011");
         tbRemoteHost.setText("127.0.0.1");
         tbRemotePort.setText("8012");
+        tbLocalHost2.setText("");
+        tbLocalPort2.setText("0");
+        tbRemoteHost2.setText("");
+        tbRemotePort2.setText("0");
         tbSctpExtraHostAddresses.setText("");
 
         setEnumeratedBaseComboBox(cbM3uaFunctionality, new M3uaFunctionality(M3uaFunctionality.VAL_IPSP));
@@ -323,6 +369,8 @@ public class M3uaForm extends JDialog {
         setEnumeratedBaseComboBox(cbM3uaExchangeType, new M3uaExchangeType(M3uaExchangeType.VAL_SE));
         tbM3uaDpc.setText("2");
         tbM3uaOpc.setText("1");
+        tbM3uaDpc2.setText("0");
+        tbM3uaOpc2.setText("0");
         tbM3uaSi.setText("3");
         tbM3uaRoutingContext.setText("101");
         tbM3uaNetworkAppearance.setText("102");
@@ -342,6 +390,10 @@ public class M3uaForm extends JDialog {
         tbLocalPort.setText("8012");
         tbRemoteHost.setText("127.0.0.1");
         tbRemotePort.setText("8011");
+        tbLocalHost2.setText("");
+        tbLocalPort2.setText("0");
+        tbRemoteHost2.setText("");
+        tbRemotePort2.setText("0");
         tbSctpExtraHostAddresses.setText("");
 
         setEnumeratedBaseComboBox(cbM3uaFunctionality, new M3uaFunctionality(M3uaFunctionality.VAL_IPSP));
@@ -349,6 +401,8 @@ public class M3uaForm extends JDialog {
         setEnumeratedBaseComboBox(cbM3uaExchangeType, new M3uaExchangeType(M3uaExchangeType.VAL_SE));
         tbM3uaDpc.setText("1");
         tbM3uaOpc.setText("2");
+        tbM3uaDpc2.setText("0");
+        tbM3uaOpc2.setText("0");
         tbM3uaSi.setText("3");
         tbM3uaRoutingContext.setText("101");
         tbM3uaNetworkAppearance.setText("102");
@@ -360,8 +414,12 @@ public class M3uaForm extends JDialog {
 
         int localPort = 0;
         int remotePort = 0;
+        int localPort2 = 0;
+        int remotePort2 = 0;
         int dpc = 0;
         int opc = 0;
+        int dpc2 = 0;
+        int opc2 = 0;
         int si = 0;
         long routingContext = 0;
         long networkAppearance = 0;
@@ -372,9 +430,21 @@ public class M3uaForm extends JDialog {
             return false;
         }
         try {
+            localPort2 = Integer.parseInt(tbLocalPort2.getText());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Exception when parsing Local port 2 value: " + e.toString());
+            return false;
+        }
+        try {
             remotePort = Integer.parseInt(tbRemotePort.getText());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Exception when parsing Remote port value: " + e.toString());
+            return false;
+        }
+        try {
+            remotePort2 = Integer.parseInt(tbRemotePort2.getText());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Exception when parsing Remote port 2 value: " + e.toString());
             return false;
         }
         try {
@@ -384,9 +454,21 @@ public class M3uaForm extends JDialog {
             return false;
         }
         try {
+            dpc2 = Integer.parseInt(tbM3uaDpc2.getText());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Exception when parsing Dpc 2 value: " + e.toString());
+            return false;
+        }
+        try {
             opc = Integer.parseInt(tbM3uaOpc.getText());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Exception when parsing Opc value: " + e.toString());
+            return false;
+        }
+        try {
+            opc2 = Integer.parseInt(tbM3uaOpc2.getText());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Exception when parsing Opc 2 value: " + e.toString());
             return false;
         }
         try {
@@ -419,6 +501,10 @@ public class M3uaForm extends JDialog {
         this.m3ua.setSctpLocalPort(localPort);
         this.m3ua.setSctpRemoteHost(tbRemoteHost.getText());
         this.m3ua.setSctpRemotePort(remotePort);
+        this.m3ua.setSctpLocalHost2(tbLocalHost2.getText());
+        this.m3ua.setSctpLocalPort2(localPort2);
+        this.m3ua.setSctpRemoteHost2(tbRemoteHost2.getText());
+        this.m3ua.setSctpRemotePort2(remotePort2);
         this.m3ua.setSctpExtraHostAddresses(tbSctpExtraHostAddresses.getText());
 
         this.m3ua.setM3uaFunctionality((M3uaFunctionality) cbM3uaFunctionality.getSelectedItem());
@@ -427,6 +513,8 @@ public class M3uaForm extends JDialog {
 
         this.m3ua.setM3uaDpc(dpc);
         this.m3ua.setM3uaOpc(opc);
+        this.m3ua.setM3uaDpc2(dpc2);
+        this.m3ua.setM3uaOpc2(opc2);
         this.m3ua.setM3uaSi(si);
         this.m3ua.setM3uaRoutingContext(routingContext);
         this.m3ua.setM3uaNetworkAppearance(networkAppearance);

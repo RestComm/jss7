@@ -54,6 +54,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 
+import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHostMBean;
 
 /**
@@ -340,6 +341,11 @@ public class TestingForm extends JDialog {
     }
 
     public void refreshState() {
+
+        if (this.host instanceof TesterHost) {
+            TesterHost thost = (TesterHost)host;
+            thost.execute();
+        }
 
         tbL1State.setText(this.host.getL1State());
         tbL2State.setText(this.host.getL2State());

@@ -37,17 +37,33 @@ public interface M3uaManMBean {
 
     void setSctpLocalHost(String val);
 
+    String getSctpLocalHost2();
+
+    void setSctpLocalHost2(String val);
+
     int getSctpLocalPort();
 
     void setSctpLocalPort(int val);
+
+    int getSctpLocalPort2();
+
+    void setSctpLocalPort2(int val);
 
     String getSctpRemoteHost();
 
     void setSctpRemoteHost(String val);
 
+    String getSctpRemoteHost2();
+
+    void setSctpRemoteHost2(String val);
+
     int getSctpRemotePort();
 
     void setSctpRemotePort(int val);
+
+    int getSctpRemotePort2();
+
+    void setSctpRemotePort2(int val);
 
     String getSctpExtraHostAddresses();
 
@@ -85,9 +101,17 @@ public interface M3uaManMBean {
 
     void setM3uaDpc(int val);
 
+    int getM3uaDpc2();
+
+    void setM3uaDpc2(int val);
+
     int getM3uaOpc();
 
     void setM3uaOpc(int val);
+
+    int getM3uaOpc2();
+
+    void setM3uaOpc2(int val);
 
     int getM3uaSi();
 
