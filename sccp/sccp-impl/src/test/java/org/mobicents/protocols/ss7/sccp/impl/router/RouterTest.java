@@ -543,6 +543,48 @@ public class RouterTest {
             return false;
         }
 
+        @Override
+        public void setSstTimerDuration_Min(int sstTimerDuration_Min) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setSstTimerDuration_Max(int sstTimerDuration_Max) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setSstTimerDuration_IncreaseFactor(double sstTimerDuration_IncreaseFactor) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setZMarginXudtMessage(int zMarginXudtMessage) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setMaxDataMessage(int maxDataMessage) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setReassemblyTimerDelay(int reassemblyTimerDelay) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setMtp3UserParts(Map<Integer, Mtp3UserPart> mtp3UserPartsTemp) {
+            // TODO Auto-generated method stub
+            
+        }
+
     }
 
     private class Mtp3UserPartImpl implements Mtp3UserPart {

@@ -86,34 +86,154 @@ public interface SccpStack {
     void setRemoveSpc(boolean removeSpc);
 
     /**
-     * Get the remove siganling point code flag
+     * Get the remove signaling point code flag
      *
      * @return
      */
     boolean isRemoveSpc();
 
+    /**
+     * Stack only listens for incoming messages and does not send anything out of stack. Messages are silently dropped.
+     *
+     * @param previewMode
+     */
     void setPreviewMode(boolean previewMode);
 
+    /**
+     * Returns if previeMode is enabled
+     *
+     * @return
+     */
     boolean isPreviewMode();
 
+    /**
+     * Get reference to {@link SccpResource}
+     *
+     * @return
+     */
     SccpResource getSccpResource();
 
+    /**
+     * Returns min (starting) SST sending interval (in milliseconds) set
+     *
+     * @return
+     */
     int getSstTimerDuration_Min();
 
+    /**
+     * Set's min (starting) SST sending interval (in milliseconds). Value can be from 5000 to 10000.
+     * If value passed is less than 5000, it sets to 5000 and if value passed is greater than 10000, its set to 10000
+     *
+     * @param sstTimerDuration_Min
+     */
+    void setSstTimerDuration_Min(int sstTimerDuration_Min);
+
+    /**
+     * Returns Max (after increasing) SST sending interval.
+     *
+     * @return
+     */
     int getSstTimerDuration_Max();
 
+    /**
+     * Sets Max (after increasing) SST sending interval (in 600000 - 1200000 milliseconds). Value can be from 600000 to 1200000
+     * If value passed is less than 600000, it sets to 600000 and if value passed is greater than 1200000, it sets to 1200000
+     *
+     * @param sstTimerDuration_Max
+     */
+    void setSstTimerDuration_Max(int sstTimerDuration_Max);
+
+    /**
+     * Returns Multiplicator of SST sending interval
+     *
+     * @return
+     */
     double getSstTimerDuration_IncreaseFactor();
 
+    /**
+     * Set multiplicator of SST sending interval (next interval will be greater then the current by sstTimerDuration_IncreaseFactor).
+     * Range is 1 to 4. If passed value is less than 1, it sets to 1 and if passed value is greater than 4, it sets to 4
+     *
+     * @param sstTimerDuration_IncreaseFactor
+     */
+    void setSstTimerDuration_IncreaseFactor(double sstTimerDuration_IncreaseFactor);
+
+    /**
+     * Returns the segmentation length
+     *
+     * @return
+     */
     int getZMarginXudtMessage();
 
+    /**
+     * Sets segmentation length. If the XUDT message data length greater this value,
+     * segmentation is processed. Otherwise no segmentation.
+     * Range is 160 to 255. If passed value is less than 160, it sets to 160 and
+     * if passed value is greater than 255, it sets to 255.
+     *
+     * @param zMarginXudtMessage
+     */
+    void setZMarginXudtMessage(int zMarginXudtMessage);
+
+    /**
+     * Reurns Max available SCCP message data for all message types
+     *
+     * @return
+     */
     int getMaxDataMessage();
 
+    /**
+     * Sets Max available SCCP message data for all message types. Range is 2560 to 3952.
+     * If passed value is less than 2560, it sets to 2560 and if passed value is greater
+     * than 3952, it sets to 3952.
+     *
+     * @param maxDataMessage
+     */
+    void setMaxDataMessage(int maxDataMessage);
+
+    /**
+     * Returns SCCP segmented message reassembling timeout (in milliseconds).
+     *
+     * @return
+     */
     int getReassemblyTimerDelay();
 
+    /**
+     * Sets SCCP segmented message reassembling timeout (in milliseconds).
+     * Range is 10000 to 20000. If passed value is less than 10000, it sets to 10000 and
+     * if passed value is greater than 20000, it sets to 20000
+     *
+     * @param reassemblyTimerDelay
+     */
+    void setReassemblyTimerDelay(int reassemblyTimerDelay);
+
+    /**
+     * Set the underlying MTP3 layer
+     *
+     * @param mtp3UserPartsTemp
+     */
+    void setMtp3UserParts(Map<Integer, Mtp3UserPart> mtp3UserPartsTemp);
+
+    /**
+     * Retrieve the underlying MTP3 layer
+     *
+     * @return
+     */
     Map<Integer, Mtp3UserPart> getMtp3UserParts();
 
+    /**
+     * Retrieve specific underlying MTP3 layer
+     *
+     * @param id
+     * @return
+     */
     Mtp3UserPart getMtp3UserPart(int id);
 
+    /**
+     * Returns handle to {@link Router}
+     *
+     * @return
+     */
     Router getRouter();
 
 }
