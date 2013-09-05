@@ -524,6 +524,7 @@ public class Mtp2 {
 
     private void queueFISU() {
 
+        this.txFrame.len = 3;
         this.txFrame = this.stateFrame;
         this.txFrame.frame[0] = (byte) (this.sendBSN | (this.sendBIB << 7));
         this.txFrame.frame[1] = (byte) (this.retransmissionFSN_LastSent | (this.sendFIB << 7));
