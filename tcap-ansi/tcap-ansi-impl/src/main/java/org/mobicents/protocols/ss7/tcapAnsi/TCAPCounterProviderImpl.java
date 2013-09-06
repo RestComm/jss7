@@ -26,9 +26,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.mobicents.protocols.ss7.statistics.LongValue;
 import org.mobicents.protocols.ss7.statistics.StatDataCollection;
 import org.mobicents.protocols.ss7.statistics.StatDataCollectorType;
-import org.mobicents.protocols.ss7.statistics.StringLongMap;
+import org.mobicents.protocols.ss7.statistics.StatResult;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPCounterProvider;
 
 /**
@@ -76,16 +77,16 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
     private AtomicLong allLocalEstablishedDialogsCount = new AtomicLong();
     private AtomicLong allRemoteEstablishedDialogsCount = new AtomicLong();
 
-    private Double allDialogsDuration = 0.0;
+    private AtomicLong allDialogsDuration = new AtomicLong();
 
-    private StringLongMap outgoingDialogsPerApplicatioContextName = new StringLongMap();
-    private StringLongMap incomingDialogsPerApplicatioContextName = new StringLongMap();
-    private StringLongMap outgoingInvokesPerOperationCode = new StringLongMap();
-    private StringLongMap incomingInvokesPerOperationCode = new StringLongMap();
-    private StringLongMap outgoingErrorsPerErrorCode = new StringLongMap();
-    private StringLongMap incomingErrorsPerErrorCode = new StringLongMap();
-    private StringLongMap outgoingRejectPerProblem = new StringLongMap();
-    private StringLongMap incomingRejectPerProblem = new StringLongMap();
+    private static String OUTGOING_DIALOGS_PER_APPLICATION_CONTEXT_NAME = "outgoingDialogsPerApplicationContextName";
+    private static String INCOMING_DIALOGS_PER_APPLICATION_CONTEXT_NAME = "incomingDialogsPerApplicationContextName";
+    private static String OUTGOING_INVOKES_PER_OPERATION_CODE = "outgoingInvokesPerOperationCode";
+    private static String INCOMING_INVOKES_PER_OPERATION_CODE = "incomingInvokesPerOperationCode";
+    private static String OUTGOING_ERRORS_PER_ERROR_CODE = "outgoingErrorsPerErrorCode";
+    private static String INCOMING_ERRORS_PER_ERROR_CODE = "incomingErrorsPerErrorCode";
+    private static String OUTGOING_REJECT_PER_PROBLEM = "outgoingRejectPerProblem";
+    private static String INCOMING_REJECT_PER_PROBLEM = "incomingRejectPerProblem";
 
     private static String MIN_DIALOGS_COUNT = "MinDialogsCount";
     private static String MAX_DIALOGS_COUNT = "MaxDialogsCount";
@@ -95,6 +96,15 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
 
         this.statDataCollection.registerStatCounterCollector(MIN_DIALOGS_COUNT, StatDataCollectorType.MIN);
         this.statDataCollection.registerStatCounterCollector(MAX_DIALOGS_COUNT, StatDataCollectorType.MAX);
+
+        this.statDataCollection.registerStatCounterCollector(OUTGOING_DIALOGS_PER_APPLICATION_CONTEXT_NAME, StatDataCollectorType.StringLongMap);
+        this.statDataCollection.registerStatCounterCollector(INCOMING_DIALOGS_PER_APPLICATION_CONTEXT_NAME, StatDataCollectorType.StringLongMap);
+        this.statDataCollection.registerStatCounterCollector(OUTGOING_INVOKES_PER_OPERATION_CODE, StatDataCollectorType.StringLongMap);
+        this.statDataCollection.registerStatCounterCollector(INCOMING_INVOKES_PER_OPERATION_CODE, StatDataCollectorType.StringLongMap);
+        this.statDataCollection.registerStatCounterCollector(OUTGOING_ERRORS_PER_ERROR_CODE, StatDataCollectorType.StringLongMap);
+        this.statDataCollection.registerStatCounterCollector(INCOMING_ERRORS_PER_ERROR_CODE, StatDataCollectorType.StringLongMap);
+        this.statDataCollection.registerStatCounterCollector(OUTGOING_REJECT_PER_PROBLEM, StatDataCollectorType.StringLongMap);
+        this.statDataCollection.registerStatCounterCollector(INCOMING_REJECT_PER_PROBLEM, StatDataCollectorType.StringLongMap);
     }
 
 
@@ -373,7 +383,9 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
 
     @Override
     public Long getMinDialogsCount(String compainName) {
-        return this.statDataCollection.restartAndGet(MIN_DIALOGS_COUNT, compainName, provider.getCurrentDialogsCount());
+        StatResult res = this.statDataCollection.restartAndGet(MIN_DIALOGS_COUNT, compainName);
+        this.statDataCollection.updateData(MIN_DIALOGS_COUNT, provider.getCurrentDialogsCount());
+        return res.getLongValue();
     }
 
     public void updateMinDialogsCount(long newVal) {
@@ -382,7 +394,9 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
 
     @Override
     public Long getMaxDialogsCount(String compainName) {
-        return this.statDataCollection.restartAndGet(MAX_DIALOGS_COUNT, compainName, provider.getCurrentDialogsCount());
+        StatResult res = this.statDataCollection.restartAndGet(MAX_DIALOGS_COUNT, compainName);
+        this.statDataCollection.updateData(MAX_DIALOGS_COUNT, provider.getCurrentDialogsCount());
+        return res.getLongValue();
     }
 
     public void updateMaxDialogsCount(long newVal) {
@@ -390,94 +404,100 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
     }
 
     @Override
-    public double getAllDialogsDuration() {
-        return allDialogsDuration;
+    public long getAllDialogsDuration() {
+        return allDialogsDuration.get();
     }
 
-    public void updateAllDialogsDuration(double diff) {
-        synchronized (allDialogsDuration) {
-            allDialogsDuration += diff;
-        }
+    public void updateAllDialogsDuration(long diff) {
+        allDialogsDuration.addAndGet(diff);
     }
 
     @Override
-    public Map<String, Long> getOutgoingDialogsPerApplicatioContextName() {
-        Map<String, Long> res = outgoingDialogsPerApplicatioContextName.restartAndGet();
-        return res;
+    public Map<String, LongValue> getOutgoingDialogsPerApplicatioContextName(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(OUTGOING_DIALOGS_PER_APPLICATION_CONTEXT_NAME, compainName);
+        this.statDataCollection.updateData(OUTGOING_DIALOGS_PER_APPLICATION_CONTEXT_NAME, provider.getCurrentDialogsCount());
+        return res.getStringLongValue();
     }
 
     public void updateOutgoingDialogsPerApplicatioContextName(String name) {
-        outgoingDialogsPerApplicatioContextName.updateData(name);
+        this.statDataCollection.updateData(OUTGOING_DIALOGS_PER_APPLICATION_CONTEXT_NAME, name);
     }
 
     @Override
-    public Map<String, Long> getIncomingDialogsPerApplicatioContextName() {
-        Map<String, Long> res = incomingDialogsPerApplicatioContextName.restartAndGet();
-        return res;
+    public Map<String, LongValue> getIncomingDialogsPerApplicatioContextName(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(INCOMING_DIALOGS_PER_APPLICATION_CONTEXT_NAME, compainName);
+        this.statDataCollection.updateData(INCOMING_DIALOGS_PER_APPLICATION_CONTEXT_NAME, provider.getCurrentDialogsCount());
+        return res.getStringLongValue();
     }
 
     public void updateIncomingDialogsPerApplicatioContextName(String name) {
-        incomingDialogsPerApplicatioContextName.updateData(name);
+        this.statDataCollection.updateData(INCOMING_DIALOGS_PER_APPLICATION_CONTEXT_NAME, name);
     }
 
     @Override
-    public Map<String, Long> getOutgoingInvokesPerOperationCode() {
-        Map<String, Long> res = outgoingInvokesPerOperationCode.restartAndGet();
-        return res;
+    public Map<String, LongValue> getOutgoingInvokesPerOperationCode(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(OUTGOING_INVOKES_PER_OPERATION_CODE, compainName);
+        this.statDataCollection.updateData(OUTGOING_INVOKES_PER_OPERATION_CODE, provider.getCurrentDialogsCount());
+        return res.getStringLongValue();
     }
 
     public void updateOutgoingInvokesPerOperationCode(String name) {
-        outgoingInvokesPerOperationCode.updateData(name);
+        this.statDataCollection.updateData(OUTGOING_INVOKES_PER_OPERATION_CODE, name);
     }
 
     @Override
-    public Map<String, Long> getIncomingInvokesPerOperationCode() {
-        Map<String, Long> res = incomingInvokesPerOperationCode.restartAndGet();
-        return res;
+    public Map<String, LongValue> getIncomingInvokesPerOperationCode(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(INCOMING_INVOKES_PER_OPERATION_CODE, compainName);
+        this.statDataCollection.updateData(INCOMING_INVOKES_PER_OPERATION_CODE, provider.getCurrentDialogsCount());
+        return res.getStringLongValue();
     }
 
     public void updateIncomingInvokesPerOperationCode(String name) {
-        incomingInvokesPerOperationCode.updateData(name);
+        this.statDataCollection.updateData(INCOMING_INVOKES_PER_OPERATION_CODE, name);
     }
 
     @Override
-    public Map<String, Long> getOutgoingErrorsPerErrorCode() {
-        Map<String, Long> res = outgoingErrorsPerErrorCode.restartAndGet();
-        return res;
+    public Map<String, LongValue> getOutgoingErrorsPerErrorCode(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(OUTGOING_ERRORS_PER_ERROR_CODE, compainName);
+        this.statDataCollection.updateData(OUTGOING_ERRORS_PER_ERROR_CODE, provider.getCurrentDialogsCount());
+        return res.getStringLongValue();
     }
 
     public void updateOutgoingErrorsPerErrorCode(String name) {
-        outgoingErrorsPerErrorCode.updateData(name);
+        this.statDataCollection.updateData(OUTGOING_ERRORS_PER_ERROR_CODE, name);
     }
 
     @Override
-    public Map<String, Long> getIncomingErrorsPerErrorCode() {
-        Map<String, Long> res = incomingErrorsPerErrorCode.restartAndGet();
-        return res;
+    public Map<String, LongValue> getIncomingErrorsPerErrorCode(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(INCOMING_ERRORS_PER_ERROR_CODE, compainName);
+        this.statDataCollection.updateData(INCOMING_ERRORS_PER_ERROR_CODE, provider.getCurrentDialogsCount());
+        return res.getStringLongValue();
     }
 
     public void updateIncomingErrorsPerErrorCode(String name) {
-        incomingErrorsPerErrorCode.updateData(name);
+        this.statDataCollection.updateData(INCOMING_ERRORS_PER_ERROR_CODE, name);
     }
 
     @Override
-    public Map<String, Long> getOutgoingRejectPerProblem() {
-        Map<String, Long> res = outgoingRejectPerProblem.restartAndGet();
-        return res;
+    public Map<String, LongValue> getOutgoingRejectPerProblem(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(OUTGOING_REJECT_PER_PROBLEM, compainName);
+        this.statDataCollection.updateData(OUTGOING_REJECT_PER_PROBLEM, provider.getCurrentDialogsCount());
+        return res.getStringLongValue();
     }
 
     public void updateOutgoingRejectPerProblem(String name) {
-        outgoingRejectPerProblem.updateData(name);
+        this.statDataCollection.updateData(OUTGOING_REJECT_PER_PROBLEM, name);
     }
 
     @Override
-    public Map<String, Long> getIncomingRejectPerProblem() {
-        Map<String, Long> res = incomingRejectPerProblem.restartAndGet();
-        return res;
+    public Map<String, LongValue> getIncomingRejectPerProblem(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(INCOMING_REJECT_PER_PROBLEM, compainName);
+        this.statDataCollection.updateData(INCOMING_REJECT_PER_PROBLEM, provider.getCurrentDialogsCount());
+        return res.getStringLongValue();
     }
 
     public void updateIncomingRejectPerProblem(String name) {
-        incomingRejectPerProblem.updateData(name);
+        this.statDataCollection.updateData(INCOMING_REJECT_PER_PROBLEM, name);
     }
 
 }

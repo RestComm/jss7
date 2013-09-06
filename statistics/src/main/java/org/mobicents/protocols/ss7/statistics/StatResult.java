@@ -22,35 +22,17 @@
 
 package org.mobicents.protocols.ss7.statistics;
 
+import javolution.util.FastMap;
+
 /**
 *
 * @author sergey vetyutnev
 *
 */
-public class StatDataCollectorMax extends StatDataCollectorLongImpl {
+public interface StatResult {
 
-    public StatDataCollectorMax(String name) {
-        super(name);
-    }
+    long getLongValue();
 
-    @Override
-    protected void reset() {
-        val = Long.MIN_VALUE;
-    }
-
-    @Override
-    public void updateData(long newVal) {
-        if (val < newVal)
-            val = newVal;
-    }
-
-    @Override
-    public StatDataCollectorType getStatDataCollectorType() {
-        return StatDataCollectorType.MAX;
-    }
-
-    @Override
-    public void updateData(String newVal) {
-    }
+    FastMap<String, LongValue> getStringLongValue();
 
 }

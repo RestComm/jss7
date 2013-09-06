@@ -29,34 +29,19 @@ import java.util.Date;
 * @author sergey vetyutnev
 *
 */
-public abstract class StatDataCollector {
+public interface StatDataCollector {
 
-    private String name;
-    protected long val;
-    private Date sessionStartTime = new Date();
+    String getCampaignName();
 
-    public StatDataCollector(String name) {
-        this.name = name;
-    }
+    StatDataCollectorType getStatDataCollectorType();
 
-    public String getName() {
-        return name;
-    }
+    Date getSessionStartTime();
 
-    public Date getSessionStartTime() {
-        return sessionStartTime;
-    }
 
-    public long restartAndGet() {
-        long res = val;
-        this.sessionStartTime = new Date();
-        return res;
-    }
+    StatResult restartAndGet();
 
-    protected abstract void reset();
+    void updateData(long newVal);
 
-    public abstract void updateData(long newVal);
-
-    public abstract StatDataCollectorType getStatDataCollectorType();
+    void updateData(String newVal);
 
 }

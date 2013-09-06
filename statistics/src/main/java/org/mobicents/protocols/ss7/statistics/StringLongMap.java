@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.statistics;
 
-import java.util.Map;
-
 import javolution.util.FastMap;
 
 /**
@@ -31,27 +29,66 @@ import javolution.util.FastMap;
 * @author sergey vetyutnev
 *
 */
-public class StringLongMap {
+public class StringLongMap extends StatDataCollectorAbstractImpl {
 
-    private FastMap<String, Long> data = new FastMap<String, Long>();
+    private FastMap<String, LongValue> data = new FastMap<String, LongValue>();
 
-    public Map<String, Long> restartAndGet() {
+    public StringLongMap(String campaignName) {
+        super(campaignName);
+    }
+
+    public StatResult restartAndGet() {
         synchronized (this) {
-            FastMap<String, Long> res = this.data;
-            this.data = new FastMap<String, Long>();
+            StatResultStringLongMap res = new StatResultStringLongMap(this.data);
+            this.data = new FastMap<String, LongValue>();
             return res;
         }
     }
 
-    public void updateData(String name) {
+    protected void reset() {
         synchronized (this) {
-            Long val = data.get(name);
-            if (val == null) {
-                val = 0L;
-                data.put(name, val);
-            }
-            val++;
+            this.data.clear();
         }
     }
 
+    @Override
+    public void updateData(long newVal) {
+    }
+
+    @Override
+    public void updateData(String name) {
+        synchronized (this) {
+            LongValue val = data.get(name);
+            if (val == null) {
+                val = new LongValue();
+                data.put(name, val);
+            }
+            val.updateValue();
+        }
+    }
+
+    @Override
+    public StatDataCollectorType getStatDataCollectorType() {
+        return StatDataCollectorType.StringLongMap;
+    }
+
+    public class StatResultStringLongMap implements StatResult {
+
+        private FastMap<String, LongValue> data;
+
+        public StatResultStringLongMap(FastMap<String, LongValue> data) {
+            this.data = data;
+        }
+
+        @Override
+        public long getLongValue() {
+            return 0;
+        }
+
+        @Override
+        public FastMap<String, LongValue> getStringLongValue() {
+            return data;
+        }
+
+    }
 }
