@@ -22,71 +22,26 @@
 
 package org.mobicents.protocols.ss7.statistics;
 
-import java.util.ArrayList;
 import java.util.Date;
 
-import javolution.util.FastMap;
-
 /**
+*
+* Collection of data for a whole counter data
+* Contains StatDataCollector data depending on a campaign name
 *
 * @author sergey vetyutnev
 *
 */
-public class StatCounterCollection {
+public interface StatCounterCollection {
 
-    private String name;
-    private StatDataCollectorType type;
-    private FastMap<String, StatDataCollector> coll = new FastMap<String, StatDataCollector>();
+    String getCounterName();
 
-    public StatCounterCollection(String name, StatDataCollectorType type) {
-        this.name = name;
-        this.type = type;
-    }
+    void clearDeadCampaignes(Date lastTime);
 
-    public String getName() {
-        return name;
-    }
+    StatResult restartAndGet(String campaignName);
 
-    public void clearDeadCampaignes(Date lastTime) {
-        ArrayList<String> toDel = new ArrayList<String>();
-        for (String s : coll.keySet()) {
-            StatDataCollector d = coll.get(s);
-            if (d.getSessionStartTime().before(lastTime)) {
-                toDel.add(s);
-            }
-        }
-        for (String s : toDel) {
-            coll.remove(s);
-        }
-    }
+    void updateData(long newVal);
 
-    public Long restartAndGet(String campaignName, Long newVal) {
-        StatDataCollector sdc = coll.get(campaignName);
-        if (sdc != null) {
-            return sdc.restartAndGet();
-        } else {
-            switch (type) {
-            case MIN:
-                sdc = new StatDataCollectorMin(campaignName);
-                break;
-            case MAX:
-                sdc = new StatDataCollectorMax(campaignName);
-                break;
-            }
-            if (sdc != null) {
-                coll.put(campaignName, sdc);
-                if (newVal != null)
-                    sdc.updateData(newVal);
-            }
-            return null;
-        }
-    }
-
-    public void updateData(long newVal) {
-        for (String s : coll.keySet()) {
-            StatDataCollector d = coll.get(s);
-            d.updateData(newVal);
-        }
-    }
+    void updateData(String newVal);
 
 }

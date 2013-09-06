@@ -25,6 +25,8 @@ package org.mobicents.protocols.ss7.tcapAnsi.api;
 import java.util.Map;
 import java.util.UUID;
 
+import org.mobicents.protocols.ss7.statistics.LongValue;
+
 /**
 *
 * @author servey vetyutnev
@@ -204,48 +206,48 @@ public interface TCAPCounterProvider {
      * return a total durations of all released Dialogs since stack start (in seconds)
      * this value is updated when a dialog is released
      */
-    double getAllDialogsDuration();
+    long getAllDialogsDuration();
 
 
     /**
      * return an outgoing Dialogs count per ApplicationContextNames (in string form)
      * all MAP V1 operations will be assigned into empty string group ("")
      */
-    Map<String,Long> getOutgoingDialogsPerApplicatioContextName();
+    Map<String,LongValue> getOutgoingDialogsPerApplicatioContextName(String compainName);
 
     /**
      * return an incoming Dialogs count per ApplicationContextNames (in string form)
      */
-    Map<String,Long> getIncomingDialogsPerApplicatioContextName();
+    Map<String,LongValue> getIncomingDialogsPerApplicatioContextName(String compainName);
 
     /**
      * return an outgoing Invokes count per OperationCodes
      */
-    Map<String,Long> getOutgoingInvokesPerOperationCode();
+    Map<String,LongValue> getOutgoingInvokesPerOperationCode(String compainName);
 
     /**
      * return an incoming Invokes count per OperationCodes
      */
-    Map<String,Long> getIncomingInvokesPerOperationCode();
+    Map<String,LongValue> getIncomingInvokesPerOperationCode(String compainName);
 
     /**
      * return an outgoing ReturtError count per ErrorCodes
      */
-    Map<String,Long> getOutgoingErrorsPerErrorCode();
+    Map<String,LongValue> getOutgoingErrorsPerErrorCode(String compainName);
 
     /**
      * return an incoming ReturtError count per ErrorCodes
      */
-    Map<String,Long> getIncomingErrorsPerErrorCode();
+    Map<String,LongValue> getIncomingErrorsPerErrorCode(String compainName);
 
     /**
      * return an outgoing Reject count per Problem
      */
-    Map<String,Long> getOutgoingRejectPerProblem();
+    Map<String,LongValue> getOutgoingRejectPerProblem(String compainName);
 
     /**
      * return an incoming Reject count per Problem
      */
-    Map<String,Long> getIncomingRejectPerProblem();
+    Map<String,LongValue> getIncomingRejectPerProblem(String compainName);
 
 }

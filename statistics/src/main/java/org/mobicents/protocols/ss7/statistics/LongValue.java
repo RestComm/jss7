@@ -27,30 +27,16 @@ package org.mobicents.protocols.ss7.statistics;
 * @author sergey vetyutnev
 *
 */
-public class StatDataCollectorMax extends StatDataCollectorLongImpl {
+public class LongValue {
 
-    public StatDataCollectorMax(String name) {
-        super(name);
+    private long val;
+
+    public long getValue() {
+        return val;
     }
 
-    @Override
-    protected void reset() {
-        val = Long.MIN_VALUE;
-    }
-
-    @Override
-    public void updateData(long newVal) {
-        if (val < newVal)
-            val = newVal;
-    }
-
-    @Override
-    public StatDataCollectorType getStatDataCollectorType() {
-        return StatDataCollectorType.MAX;
-    }
-
-    @Override
-    public void updateData(String newVal) {
+    public void updateValue() {
+        val++;
     }
 
 }

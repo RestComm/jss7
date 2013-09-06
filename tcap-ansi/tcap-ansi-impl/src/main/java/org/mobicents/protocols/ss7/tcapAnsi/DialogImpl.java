@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.tcapAnsi;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -153,7 +152,7 @@ public class DialogImpl implements Dialog {
 
     private boolean previewMode = false;
     protected PrevewDialogData prevewDialogData;
-    private Date startDialogTime = null;
+    private long startDialogTime;
 
     private static int getIndexFromInvokeId(Long l) {
         int tmp = l.intValue();
@@ -196,7 +195,7 @@ public class DialogImpl implements Dialog {
         TCAPStack stack = this.provider.getStack();
         this.idleTaskTimeout = stack.getDialogIdleTimeout();
 
-        startDialogTime = new Date();
+        startDialogTime = System.currentTimeMillis();
 
         // start
         startIdleTimer();
@@ -264,7 +263,7 @@ public class DialogImpl implements Dialog {
         }
 
         if (this.provider.getStack().getStatisticsEnabled()) {
-            long lg = (new Date()).getTime() - this.startDialogTime.getTime();
+            long lg = System.currentTimeMillis() - this.startDialogTime;
             this.provider.getStack().getCounterProviderImpl().updateAllDialogsDuration(lg);
         }
 

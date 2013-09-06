@@ -28,6 +28,9 @@ import javolution.util.FastMap;
 
 /**
 *
+* Collection of data for all StatDataCollector-style counters
+* Contains StatCounterCollection data depending on a counter name
+*
 * @author sergey vetyutnev
 *
 */
@@ -37,28 +40,11 @@ public class StatDataCollection {
 
     public StatCounterCollection registerStatCounterCollector(String counterName, StatDataCollectorType type) {
         synchronized (this) {
-            StatCounterCollection c = new StatCounterCollection(counterName, type);
+            StatCounterCollectionImpl c = new StatCounterCollectionImpl(counterName, type);
             coll.put(counterName, c);
             return c;
         }
     }
-
-//    public StatCounterCollection getStatCounterCollection(String counterName) {
-//        synchronized (this) {
-//            StatCounterCollection scc = coll.get(counterName);
-//            return scc;
-//        }
-//    }
-
-//    public StatDataCollector getStatDateCollector(String counterName, String campaignName) {
-//        synchronized (this) {
-//            StatCounterCollection scc = coll.get(counterName);
-//            if (scc == null)
-//                return null;
-//
-//            return scc.getStatDataCollector(campaignName);
-//        }
-//    }
 
     public void clearDeadCampaignes(Date lastTime) {
         synchronized (this) {
@@ -69,11 +55,11 @@ public class StatDataCollection {
         }
     }
 
-    public Long restartAndGet(String counterName, String campaignName, Long newVal) {
+    public StatResult restartAndGet(String counterName, String campaignName) {
         synchronized (this) {
             StatCounterCollection scc = this.coll.get(counterName);
             if (scc != null) {
-                return scc.restartAndGet(campaignName, newVal);
+                return scc.restartAndGet(campaignName);
             } else {
                 return null;
             }
@@ -81,6 +67,15 @@ public class StatDataCollection {
     }
 
     public void updateData(String counterName, long newVal) {
+        synchronized (this) {
+            StatCounterCollection scc = this.coll.get(counterName);
+            if (scc != null) {
+                scc.updateData(newVal);
+            }
+        }
+    }
+
+    public void updateData(String counterName, String newVal) {
         synchronized (this) {
             StatCounterCollection scc = this.coll.get(counterName);
             if (scc != null) {
