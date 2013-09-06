@@ -246,7 +246,7 @@ public class RemSgFSMTest {
 
         // Check if MTP3 RESUME received
         // lets wait for 2second to receive the MTP3 primitive before giving up
-        semaphore.tryAcquire(2000, TimeUnit.MILLISECONDS);
+        semaphore.tryAcquire(5000, TimeUnit.MILLISECONDS);
         // RESUME for DPC 3
         Mtp3Primitive mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
         assertNotNull(mtp3Primitive);
@@ -254,7 +254,7 @@ public class RemSgFSMTest {
         assertEquals(3, mtp3Primitive.getAffectedDpc());
 
         // lets wait for 2second to receive the MTP3 primitive before giving up
-        semaphore.tryAcquire(2000, TimeUnit.MILLISECONDS);
+        semaphore.tryAcquire(5000, TimeUnit.MILLISECONDS);
         // RESUME for DPC 2
         mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
         assertNotNull(mtp3Primitive);
@@ -282,7 +282,7 @@ public class RemSgFSMTest {
 
         // lets wait for 3 seconds to receive the MTP3 primitive before giving
         // up. We know Pending timeout is 2 secs
-        semaphore.tryAcquire(3000, TimeUnit.MILLISECONDS);
+        semaphore.tryAcquire(5000, TimeUnit.MILLISECONDS);
         // PAUSE for DPC 3
         mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
         assertNotNull(mtp3Primitive);
@@ -291,7 +291,7 @@ public class RemSgFSMTest {
 
         // lets wait for 3 seconds to receive the MTP3 primitive before giving
         // up. We know Pending timeout is 2 secs
-        semaphore.tryAcquire(3000, TimeUnit.MILLISECONDS);
+        semaphore.tryAcquire(5000, TimeUnit.MILLISECONDS);
         // PAUSE for DPC 2
         mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
         assertNotNull(mtp3Primitive);
@@ -410,7 +410,7 @@ public class RemSgFSMTest {
 
         // Check if MTP3 RESUME received
         // lets wait for 2second to receive the MTP3 primitive before giving up
-        semaphore.tryAcquire(2000, TimeUnit.MILLISECONDS);
+        semaphore.tryAcquire(5000, TimeUnit.MILLISECONDS);
 
         Mtp3Primitive mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
         assertNotNull(mtp3Primitive);
@@ -445,7 +445,7 @@ public class RemSgFSMTest {
 
         // lets wait for 3 seconds to receive the MTP3 primitive before giving
         // up. We know Pending timeout is 2 secs
-        semaphore.tryAcquire(3000, TimeUnit.MILLISECONDS);
+        semaphore.tryAcquire(5000, TimeUnit.MILLISECONDS);
 
         mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
         assertNotNull(mtp3Primitive);
@@ -554,7 +554,7 @@ public class RemSgFSMTest {
 
         // Check if MTP3 RESUME received
         // lets wait for 2second to receive the MTP3 primitive before giving up
-        semaphore.tryAcquire(2000, TimeUnit.MILLISECONDS);
+        semaphore.tryAcquire(5000, TimeUnit.MILLISECONDS);
 
         // The route should be RESUME
         Mtp3Primitive mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
@@ -598,7 +598,7 @@ public class RemSgFSMTest {
 
         // lets wait for 3 seconds to receive the MTP3 primitive before giving
         // up. We know Pending timeout is 2 secs
-        semaphore.tryAcquire(3000, TimeUnit.MILLISECONDS);
+        semaphore.tryAcquire(5000, TimeUnit.MILLISECONDS);
         // PAUSE for DPC 2
         mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
         assertNull(mtp3Primitive);
@@ -627,7 +627,7 @@ public class RemSgFSMTest {
 
         // lets wait for 3 seconds to receive the MTP3 primitive before giving
         // up. We know Pending timeout is 2 secs
-        semaphore.tryAcquire(3000, TimeUnit.MILLISECONDS);
+        semaphore.tryAcquire(5000, TimeUnit.MILLISECONDS);
         // PAUSE for DPC 2
         mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
         assertNotNull(mtp3Primitive);
@@ -791,7 +791,7 @@ public class RemSgFSMTest {
 
         // Check if MTP3 RESUME received
         // lets wait for 2second to receive the MTP3 primitive before giving up
-        semaphore.tryAcquire(2000, TimeUnit.MILLISECONDS);
+        semaphore.tryAcquire(5000, TimeUnit.MILLISECONDS);
         // RESUME for DPC 2
         Mtp3Primitive mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
         assertNotNull(mtp3Primitive);
@@ -799,7 +799,7 @@ public class RemSgFSMTest {
         assertEquals(2, mtp3Primitive.getAffectedDpc());
 
         // lets wait for 2second to receive the MTP3 primitive before giving up
-        semaphore.tryAcquire(2000, TimeUnit.MILLISECONDS);
+        semaphore.tryAcquire(5000, TimeUnit.MILLISECONDS);
         // RESUME for DPC 3
         mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
         assertNotNull(mtp3Primitive);
@@ -861,7 +861,7 @@ public class RemSgFSMTest {
 
         // lets wait for 3 seconds to receive the MTP3 primitive before giving
         // up. We know Pending timeout is 2 secs
-        semaphore.tryAcquire(3000, TimeUnit.MILLISECONDS);
+        semaphore.tryAcquire(5000, TimeUnit.MILLISECONDS);
         // PAUSE for DPC 2
         mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
         assertNotNull(mtp3Primitive);
@@ -870,7 +870,7 @@ public class RemSgFSMTest {
 
         // lets wait for 3 seconds to receive the MTP3 primitive before giving
         // up. We know Pending timeout is 2 secs
-        semaphore.tryAcquire(3000, TimeUnit.MILLISECONDS);
+        semaphore.tryAcquire(5000, TimeUnit.MILLISECONDS);
         // PAUSE for DPC 3
         mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
         assertNotNull(mtp3Primitive);
@@ -1014,7 +1014,7 @@ public class RemSgFSMTest {
 
         // Check if MTP3 RESUME received
         // lets wait for 2second to receive the MTP3 primitive before giving up
-        semaphore.tryAcquire(2000, TimeUnit.MILLISECONDS);
+        semaphore.tryAcquire(5000, TimeUnit.MILLISECONDS);
 
         Mtp3Primitive mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
         assertNotNull(mtp3Primitive);
@@ -1169,7 +1169,7 @@ public class RemSgFSMTest {
 
         // Check if MTP3 RESUME received
         // lets wait for 2second to receive the MTP3 primitive before giving up
-        semaphore.tryAcquire(2000, TimeUnit.MILLISECONDS);
+        semaphore.tryAcquire(5000, TimeUnit.MILLISECONDS);
 
         Mtp3Primitive mtp3Primitive = this.mtp3UserPartListener.rxMtp3PrimitivePoll();
         assertNotNull(mtp3Primitive);
