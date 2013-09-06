@@ -29,6 +29,6 @@ package org.mobicents.protocols.ss7.statistics;
 */
 public enum StatDataCollectorType {
 
-    MIN, MAX;
+    MIN, MAX, StringLongMap;
 
 }

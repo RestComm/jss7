@@ -27,7 +27,7 @@ package org.mobicents.protocols.ss7.statistics;
 * @author sergey vetyutnev
 *
 */
-public class StatDataCollectorMin extends StatDataCollector {
+public class StatDataCollectorMin extends StatDataCollectorLongImpl {
 
     public StatDataCollectorMin(String name) {
         super(name);
@@ -47,6 +47,10 @@ public class StatDataCollectorMin extends StatDataCollector {
     @Override
     public StatDataCollectorType getStatDataCollectorType() {
         return StatDataCollectorType.MIN;
+    }
+
+    @Override
+    public void updateData(String newVal) {
     }
 
 }
