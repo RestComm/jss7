@@ -106,11 +106,9 @@ public abstract class SupplementaryMessageImpl extends MessageImpl implements Su
         public void read(javolution.xml.XMLFormat.InputElement xml, SupplementaryMessageImpl ussdMessage)
                 throws XMLStreamException {
             MAP_MESSAGE_XML.read(xml, ussdMessage);
-            
-            // TODO: this is wrong, if no CBS, this will set default.
-            
+
             int cbs = xml.getAttribute(DATA_CODING_SCHEME,-1);
-            if(cbs != -1){        
+            if(cbs != -1){
                 ussdMessage.ussdDataCodingSch = new CBSDataCodingSchemeImpl(cbs);
             }
 
