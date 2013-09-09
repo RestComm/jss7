@@ -533,10 +533,11 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
                 this.testerHost.sendNotif(SOURCE_NAME, "M3ua connection is " + (active ? "active" : "not active"),
                         this.assoc.getName(), Level.INFO);
             }
-            if (this.isM3uaConnectionActive2 != active) {
-                this.isM3uaConnectionActive2 = active;
-                this.testerHost.sendNotif(SOURCE_NAME, "M3ua connection2 is " + (active ? "active" : "not active"),
-                        this.assoc2.getName(), Level.INFO);
+            if (this.assoc2 != null) {
+                if (this.isM3uaConnectionActive2 != active) {
+                    this.isM3uaConnectionActive2 = active;
+                    this.testerHost.sendNotif(SOURCE_NAME, "M3ua connection2 is " + (active ? "active" : "not active"), this.assoc2.getName(), Level.INFO);
+                }
             }
         }
     }
