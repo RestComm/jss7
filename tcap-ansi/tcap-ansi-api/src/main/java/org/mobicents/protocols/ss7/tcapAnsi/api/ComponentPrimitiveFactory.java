@@ -70,7 +70,7 @@ public interface ComponentPrimitiveFactory {
 
     ReturnResultLast createTCResultLastRequest();
 
-    ReturnResultNotLast createTCResultRequest();
+    ReturnResultNotLast createTCResultNotLastRequest();
 
     ReturnError createTCReturnErrorRequest();
 

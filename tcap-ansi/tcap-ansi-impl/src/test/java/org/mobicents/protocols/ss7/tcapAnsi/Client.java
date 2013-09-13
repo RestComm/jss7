@@ -83,6 +83,10 @@ public class Client extends EventTestHarness {
         super.sendBegin();
     }
 
+    public void sendBegin2() throws TCAPException, TCAPSendException {
+        super.sendBegin();
+    }
+
     public void sendBeginUnreachableAddress(boolean returnMessageOnError) throws TCAPException, TCAPSendException {
         System.err.println(this + " T[" + System.currentTimeMillis() + "]send BEGIN");
         ApplicationContext acn = this.tcapProvider.getDialogPrimitiveFactory().createApplicationContext(_ACN_);

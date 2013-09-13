@@ -20,9 +20,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.tcap;
+package org.mobicents.protocols.ss7.tcapAnsi;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.util.Map;
 
@@ -32,30 +33,27 @@ import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.statistics.LongValue;
-import org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory;
-import org.mobicents.protocols.ss7.tcap.api.TCAPCounterProvider;
-import org.mobicents.protocols.ss7.tcap.api.TCListener;
-import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCNoticeIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCPAbortIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
-import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
-import org.mobicents.protocols.ss7.tcap.asn.comp.ErrorCode;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
-import org.mobicents.protocols.ss7.tcap.asn.comp.InvokeProblemType;
-import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
-import org.mobicents.protocols.ss7.tcap.asn.comp.ProblemType;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Reject;
-import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError;
-import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
+import org.mobicents.protocols.ss7.tcapAnsi.api.ComponentPrimitiveFactory;
+import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPCounterProvider;
+import org.mobicents.protocols.ss7.tcapAnsi.api.TCListener;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.UserInformationElement;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ErrorCode;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.OperationCode;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Reject;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.RejectProblem;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ReturnError;
+import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.ReturnResultNotLast;
+import org.mobicents.protocols.ss7.tcapAnsi.api.tc.component.InvokeClass;
+import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCConversationIndication;
+import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCNoticeIndication;
+import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCPAbortIndication;
+import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCQueryIndication;
+import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCResponseIndication;
+import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCUniIndication;
+import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCUserAbortIndication;
+import org.mobicents.protocols.ss7.tcapAnsi.asn.TcapFactory;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -111,9 +109,7 @@ public class TCAPStatTest extends SccpHarness {
         peer2Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
 
         this.tcapStack1 = new TCAPStackImpl(this.sccpProvider1, 8);
-        this.tcapStack1.setDoNotSendProtocolVersion(false);
         this.tcapStack2 = new TCAPStackImpl(this.sccpProvider2, 8);
-        this.tcapStack2.setDoNotSendProtocolVersion(false);
 
         this.tcapListenerWrapper = new TCAPListenerWrapper();
         this.tcapStack1.getProvider().addTCListener(tcapListenerWrapper);
@@ -167,36 +163,38 @@ public class TCAPStatTest extends SccpHarness {
         check2.AllEstablishedDialogsCount++;
         check1.TcBeginSentCount++;
         check2.TcBeginReceivedCount++;
-        check1.InvokeSentCount += 2;
-        check2.InvokeReceivedCount += 2;
+        check1.InvokeNotLastSentCount += 1;
+        check2.InvokeNotLastReceivedCount += 1;
+        check1.InvokeLastSentCount += 1;
+        check2.InvokeLastReceivedCount += 1;
         check1.check(this.tcapStack1.getCounterProvider());
         check2.check(this.tcapStack2.getCounterProvider());
 
-        server.sendContinue();
+        server.sendContinue(false);
         client.waitFor(WAIT_TIME);
 
         check2.TcContinueSentCount++;
         check1.TcContinueReceivedCount++;
-        check2.InvokeSentCount += 1;
-        check1.InvokeReceivedCount += 1;
+        check2.InvokeNotLastSentCount += 1;
+        check1.InvokeNotLastReceivedCount += 1;
         check2.ReturnResultLastSentCount += 1;
         check1.ReturnResultLastReceivedCount += 1;
         check1.check(this.tcapStack1.getCounterProvider());
         check2.check(this.tcapStack2.getCounterProvider());
 
-        server.sendContinue();
+        server.sendContinue(false);
         client.waitFor(WAIT_TIME);
 
         check2.TcContinueSentCount++;
         check1.TcContinueReceivedCount++;
-        check2.InvokeSentCount += 1;
+        check2.InvokeNotLastSentCount += 1;
         check2.ReturnResultLastSentCount += 1;
-        check1.InvokeReceivedCount += 1;
+        check1.InvokeNotLastReceivedCount += 1;
         check1.RejectSentCount += 1;
         check1.check(this.tcapStack1.getCounterProvider());
         check2.check(this.tcapStack2.getCounterProvider());
 
-        client.sendEnd(TerminationType.Basic);
+        client.sendEnd(false);
         client.waitFor(WAIT_TIME);
 
         check1.TcEndSentCount++;
@@ -226,8 +224,8 @@ public class TCAPStatTest extends SccpHarness {
 
         check1.TcUniSentCount++;
         check2.TcUniReceivedCount++;
-        check1.InvokeSentCount += 1;
-        check2.InvokeReceivedCount += 1;
+        check1.InvokeNotLastSentCount += 1;
+        check2.InvokeNotLastReceivedCount += 1;
 
         check1.check(this.tcapStack1.getCounterProvider());
         check2.check(this.tcapStack2.getCounterProvider());
@@ -261,8 +259,10 @@ public class TCAPStatTest extends SccpHarness {
         check2.AllEstablishedDialogsCount++;
         check1.TcBeginSentCount++;
         check2.TcBeginReceivedCount++;
-        check1.InvokeSentCount += 2;
-        check2.InvokeReceivedCount += 2;
+        check1.InvokeNotLastSentCount += 1;
+        check1.InvokeLastSentCount += 1;
+        check2.InvokeNotLastReceivedCount += 1;
+        check2.InvokeLastReceivedCount += 1;
         check1.check(this.tcapStack1.getCounterProvider());
         check2.check(this.tcapStack2.getCounterProvider());
 
@@ -285,7 +285,8 @@ public class TCAPStatTest extends SccpHarness {
         Thread.sleep(WAIT_TIME);
 
         check1.TcBeginSentCount++;
-        check1.InvokeSentCount += 2;
+        check1.InvokeNotLastSentCount += 1;
+        check1.InvokeLastSentCount += 1;
         check2.TcPAbortSentCount += 1;
         check1.TcPAbortReceivedCount += 1;
         check1.DialogReleaseCount += 1;
@@ -340,17 +341,17 @@ public class TCAPStatTest extends SccpHarness {
         // sending TC-BEGIN + invoke(12) + invoke(13)
         ComponentPrimitiveFactory cpFactory = this.tcapStack1.getProvider().getComponentPrimitiveFactory();
 
-        Invoke invoke = cpFactory.createTCInvokeRequest(InvokeClass.Class1);
+        Invoke invoke = cpFactory.createTCInvokeRequestNotLast();
         invoke.setInvokeId(client.dialog.getNewInvokeId());
         OperationCode oc = cpFactory.createOperationCode();
-        oc.setLocalOperationCode(new Long(12));
+        oc.setPrivateOperationCode(new Long(12));
         invoke.setOperationCode(oc);
         client.dialog.sendComponent(invoke);
 
-        invoke = cpFactory.createTCInvokeRequest(InvokeClass.Class1);
+        invoke = cpFactory.createTCInvokeRequestNotLast(InvokeClass.Class1);
         invoke.setInvokeId(client.dialog.getNewInvokeId());
         oc = cpFactory.createOperationCode();
-        oc.setLocalOperationCode(new Long(13));
+        oc.setPrivateOperationCode(new Long(13));
         invoke.setOperationCode(oc);
         client.dialog.sendComponent(invoke);
 
@@ -358,7 +359,7 @@ public class TCAPStatTest extends SccpHarness {
         client.waitFor(WAIT_TIME);
 
         check1.TcBeginSentCount++;
-        check1.InvokeSentCount += 2;
+        check1.InvokeNotLastSentCount += 2;
         LongValue v = new LongValue();
         v.updateValue();
         check1.OutgoingDialogsPerApplicatioContextName.put("[0, 4, 0, 0, 1, 0, 19, 2]", v);
@@ -367,21 +368,21 @@ public class TCAPStatTest extends SccpHarness {
         check2.IncomingDialogsPerApplicatioContextName.put("[0, 4, 0, 0, 1, 0, 19, 2]", v);
         v = new LongValue();
         v.updateValue();
-        check1.OutgoingInvokesPerOperationCode.put("12", v);
+        check1.OutgoingInvokesPerOperationCode.put("POC=12", v);
         v = new LongValue();
         v.updateValue();
-        check1.OutgoingInvokesPerOperationCode.put("13", v);
+        check1.OutgoingInvokesPerOperationCode.put("POC=13", v);
         v = new LongValue();
         v.updateValue();
-        check2.IncomingInvokesPerOperationCode.put("12", v);
+        check2.IncomingInvokesPerOperationCode.put("POC=12", v);
         v = new LongValue();
         v.updateValue();
-        check2.IncomingInvokesPerOperationCode.put("13", v);
+        check2.IncomingInvokesPerOperationCode.put("POC=13", v);
 
         check2.AllRemoteEstablishedDialogsCount++;
         check2.AllEstablishedDialogsCount++;
         check2.TcBeginReceivedCount++;
-        check2.InvokeReceivedCount += 2;
+        check2.InvokeNotLastReceivedCount += 2;
         check2.MaxDialogsCount = 1;
 
         check1.check(this.tcapStack1.getCounterProvider());
@@ -400,18 +401,18 @@ public class TCAPStatTest extends SccpHarness {
         check2.check(this.tcapStack2.getCounterProvider());
 
         // sending TC-BEGIN + invoke(12) + invoke(14)
-        invoke = cpFactory.createTCInvokeRequest(InvokeClass.Class1);
+        invoke = cpFactory.createTCInvokeRequestNotLast();
         invoke.setInvokeId(client.dialog.getNewInvokeId());
         oc = cpFactory.createOperationCode();
-        oc.setLocalOperationCode(new Long(12));
+        oc.setPrivateOperationCode(new Long(12));
         invoke.setOperationCode(oc);
         client.dialog.sendComponent(invoke);
         long invokeId1 = invoke.getInvokeId();
 
-        invoke = cpFactory.createTCInvokeRequest(InvokeClass.Class1);
+        invoke = cpFactory.createTCInvokeRequestNotLast(InvokeClass.Class1);
         invoke.setInvokeId(client.dialog.getNewInvokeId());
         oc = cpFactory.createOperationCode();
-        oc.setLocalOperationCode(new Long(14));
+        oc.setPrivateOperationCode(new Long(14));
         invoke.setOperationCode(oc);
         client.dialog.sendComponent(invoke);
         long invokeId2 = invoke.getInvokeId();
@@ -420,26 +421,26 @@ public class TCAPStatTest extends SccpHarness {
         client.waitFor(WAIT_TIME);
 
         check1.TcBeginSentCount++;
-        check1.InvokeSentCount += 2;
+        check1.InvokeNotLastSentCount += 2;
         v = check1.OutgoingDialogsPerApplicatioContextName.get("[0, 4, 0, 0, 1, 0, 19, 2]");
         v.updateValue();
         v = check2.IncomingDialogsPerApplicatioContextName.get("[0, 4, 0, 0, 1, 0, 19, 2]");
         v.updateValue();
-        v = check1.OutgoingInvokesPerOperationCode.get("12");
+        v = check1.OutgoingInvokesPerOperationCode.get("POC=12");
         v.updateValue();
         v = new LongValue();
         v.updateValue();
-        check1.OutgoingInvokesPerOperationCode.put("14", v);
-        v = check2.IncomingInvokesPerOperationCode.get("12");
+        check1.OutgoingInvokesPerOperationCode.put("POC=14", v);
+        v = check2.IncomingInvokesPerOperationCode.get("POC=12");
         v.updateValue();
         v = new LongValue();
         v.updateValue();
-        check2.IncomingInvokesPerOperationCode.put("14", v);
+        check2.IncomingInvokesPerOperationCode.put("POC=14", v);
 
         check2.AllRemoteEstablishedDialogsCount++;
         check2.AllEstablishedDialogsCount++;
         check2.TcBeginReceivedCount++;
-        check2.InvokeReceivedCount += 2;
+        check2.InvokeNotLastReceivedCount += 2;
         check1.MaxDialogsCount = 2;
         check2.MaxDialogsCount = 2;
 
@@ -451,61 +452,59 @@ public class TCAPStatTest extends SccpHarness {
 
         // sending error & reject server->client in dialog2
 
-        // sending TC-CONTINUE + returResult + errorCode(8) + reject(DuplicateInvokeID)
-        ReturnResult rr = cpFactory.createTCResultRequest();
-        rr.setInvokeId(invokeId1);
+        // sending TC-CONTINUE + returnResultNotLast + errorCode(8) + reject(DuplicateInvokeID)
+        ReturnResultNotLast rr = cpFactory.createTCResultNotLastRequest();
+        rr.setCorrelationId(invokeId1);
+//        rr.setOperationCode(i);
         server.dialog.sendComponent(rr);
 
         ReturnError re = cpFactory.createTCReturnErrorRequest();
-        re.setInvokeId(invokeId1);
+        re.setCorrelationId(invokeId1);
         ErrorCode ec = cpFactory.createErrorCode();
-        ec.setLocalErrorCode(8L);
+        ec.setNationalErrorCode(8L);
         re.setErrorCode(ec);
         server.dialog.sendComponent(re);
 
         Reject rej = cpFactory.createTCRejectRequest();
-        rej.setInvokeId(invokeId2);
-        Problem p = cpFactory.createProblem(ProblemType.Invoke);
-        p.setInvokeProblemType(InvokeProblemType.DuplicateInvokeID);
-        rej.setProblem(p);
+        rej.setProblem(RejectProblem.invokeDuplicateInvocation);
         server.dialog.sendComponent(rej);
 
         server.sendContinue2();
         server.waitFor(WAIT_TIME);
 
         check2.TcContinueSentCount++;
-        check2.ReturnResultSentCount += 1;
         check2.ReturnErrorSentCount += 1;
+        check2.ReturnResultNotLastSentCount += 1;
         check2.RejectSentCount += 1;
         v = new LongValue();
         v.updateValue();
-        check2.OutgoingErrorsPerErrorCode.put("8", v);
+        check2.OutgoingErrorsPerErrorCode.put("NEC=8", v);
         v = new LongValue();
         v.updateValue();
-        check2.OutgoingRejectPerProblem.put("invokeProblemType=DuplicateInvokeID", v);
+        check2.OutgoingRejectPerProblem.put("invokeDuplicateInvocation", v);
 
         check1.TcContinueReceivedCount++;
-        check1.ReturnResultReceivedCount += 1;
+        check1.ReturnResultNotLastReceivedCount += 1;
         check1.ReturnErrorReceivedCount += 1;
         check1.RejectReceivedCount += 1;
         v = new LongValue();
         v.updateValue();
-        check1.IncomingErrorsPerErrorCode.put("8", v);
+        check1.IncomingErrorsPerErrorCode.put("NEC=8", v);
         v = new LongValue();
         v.updateValue();
-        check1.IncomingRejectPerProblem.put("invokeProblemType=DuplicateInvokeID", v);
+        check1.IncomingRejectPerProblem.put("invokeDuplicateInvocation", v);
 
         check1.check(this.tcapStack1.getCounterProvider());
         check2.check(this.tcapStack2.getCounterProvider());
         check1.check(this.tcapStack1.getCounterProvider(), "a5");
         check2.check(this.tcapStack2.getCounterProvider(), "a5");
 
-        UserInformation userInformation = TcapFactory.createUserInformation();
-        userInformation.setOid(true);
-        userInformation.setOidValue(new long[] { 1, 2, 3 });
-        userInformation.setAsn(true);
-        userInformation.setEncodeType(new byte[] { 11, 22, 33 });
-        client.sendAbort(null, userInformation, null);
+        UserInformationElement userInformationElement = TcapFactory.createUserInformationElement();
+        userInformationElement.setOid(true);
+        userInformationElement.setOidValue(new long[] { 1, 2, 3 });
+        userInformationElement.setAsn(true);
+        userInformationElement.setEncodeType(new byte[] { 11, 22, 33 });
+        client.sendAbort(null, userInformationElement);
         client.waitFor(WAIT_TIME);
 
         check1.TcUserAbortSentCount += 1;
@@ -556,10 +555,12 @@ public class TCAPStatTest extends SccpHarness {
         public long TcUserAbortReceivedCount;
         public long TcUserAbortSentCount;
 
-        public long InvokeReceivedCount;
-        public long InvokeSentCount;
-        public long ReturnResultReceivedCount;
-        public long ReturnResultSentCount;
+        public long InvokeNotLastReceivedCount;
+        public long InvokeNotLastSentCount;
+        public long InvokeLastReceivedCount;
+        public long InvokeLastSentCount;
+        public long ReturnResultNotLastReceivedCount;
+        public long ReturnResultNotLastSentCount;
         public long ReturnResultLastReceivedCount;
         public long ReturnResultLastSentCount;
         public long ReturnErrorReceivedCount;
@@ -590,21 +591,23 @@ public class TCAPStatTest extends SccpHarness {
         public void check(TCAPCounterProvider prov) {
             assertEquals(TcUniReceivedCount, prov.getTcUniReceivedCount());
             assertEquals(TcUniSentCount, prov.getTcUniSentCount());
-            assertEquals(TcBeginSentCount, prov.getTcBeginSentCount());
-            assertEquals(TcBeginReceivedCount, prov.getTcBeginReceivedCount());
-            assertEquals(TcContinueReceivedCount, prov.getTcContinueReceivedCount());
-            assertEquals(TcContinueSentCount, prov.getTcContinueSentCount());
-            assertEquals(TcEndReceivedCount, prov.getTcEndReceivedCount());
-            assertEquals(TcEndSentCount, prov.getTcEndSentCount());
+            assertEquals(TcBeginSentCount, prov.getTcQuerySentCount());
+            assertEquals(TcBeginReceivedCount, prov.getTcQueryReceivedCount());
+            assertEquals(TcContinueReceivedCount, prov.getTcConversationReceivedCount());
+            assertEquals(TcContinueSentCount, prov.getTcConversationSentCount());
+            assertEquals(TcEndReceivedCount, prov.getTcResponseReceivedCount());
+            assertEquals(TcEndSentCount, prov.getTcResponseSentCount());
             assertEquals(TcPAbortReceivedCount, prov.getTcPAbortReceivedCount());
             assertEquals(TcPAbortSentCount, prov.getTcPAbortSentCount());
             assertEquals(TcUserAbortReceivedCount, prov.getTcUserAbortReceivedCount());
             assertEquals(TcUserAbortSentCount, prov.getTcUserAbortSentCount());
 
-            assertEquals(InvokeReceivedCount, prov.getInvokeReceivedCount());
-            assertEquals(InvokeSentCount, prov.getInvokeSentCount());
-            assertEquals(ReturnResultReceivedCount, prov.getReturnResultReceivedCount());
-            assertEquals(ReturnResultSentCount, prov.getReturnResultSentCount());
+            assertEquals(InvokeNotLastReceivedCount, prov.getInvokeNotLastReceivedCount());
+            assertEquals(InvokeNotLastSentCount, prov.getInvokeNotLastSentCount());
+            assertEquals(InvokeLastReceivedCount, prov.getInvokeLastReceivedCount());
+            assertEquals(InvokeLastSentCount, prov.getInvokeLastSentCount());
+            assertEquals(ReturnResultNotLastReceivedCount, prov.getReturnResultNotLastReceivedCount());
+            assertEquals(ReturnResultNotLastSentCount, prov.getReturnResultNotLastSentCount());
             assertEquals(ReturnResultLastReceivedCount, prov.getReturnResultLastReceivedCount());
             assertEquals(ReturnResultLastSentCount, prov.getReturnResultLastSentCount());
             assertEquals(ReturnErrorReceivedCount, prov.getReturnErrorReceivedCount());
@@ -661,72 +664,57 @@ public class TCAPStatTest extends SccpHarness {
         }
 
         @Override
-        public void onTCBegin(TCBeginIndication ind) {
+        public void onTCQuery(TCQueryIndication ind) {
             // TODO Auto-generated method stub
 
         }
 
         @Override
-        public void onTCContinue(TCContinueIndication ind) {
-//            assertEquals(ind.getComponents().length, 2);
-//            ReturnResultLast rrl = (ReturnResultLast) ind.getComponents()[0];
-//            Invoke inv = (Invoke) ind.getComponents()[1];
-//
-//            // operationCode is not sent via ReturnResultLast because it does not contain a Parameter
-//            // so operationCode is taken from a sent Invoke
-//            assertEquals((long) rrl.getInvokeId(), 1);
-//            assertEquals((long) rrl.getOperationCode().getLocalOperationCode(), 12);
-//
-//            // second Invoke has its own operationCode and it has linkedId to the second sent Invoke
-//            assertEquals((long) inv.getInvokeId(), 1);
-//            assertEquals((long) inv.getOperationCode().getLocalOperationCode(), 14);
-//            assertEquals((long) inv.getLinkedId(), 2);
-//
-//            // we should see operationCode of the second sent Invoke
-//            Invoke linkedInv = inv.getLinkedInvoke();
-//            assertEquals((long) linkedInv.getOperationCode().getLocalOperationCode(), 13);
+        public void onTCConversation(TCConversationIndication ind) {
+            // TODO Auto-generated method stub
+            
         }
 
         @Override
-        public void onTCEnd(TCEndIndication ind) {
+        public void onTCResponse(TCResponseIndication ind) {
             // TODO Auto-generated method stub
-
+            
         }
 
         @Override
         public void onTCUserAbort(TCUserAbortIndication ind) {
             // TODO Auto-generated method stub
-
+            
         }
 
         @Override
         public void onTCPAbort(TCPAbortIndication ind) {
             // TODO Auto-generated method stub
-
+            
         }
 
         @Override
         public void onTCNotice(TCNoticeIndication ind) {
             // TODO Auto-generated method stub
-
+            
         }
 
         @Override
         public void onDialogReleased(Dialog d) {
             // TODO Auto-generated method stub
-
+            
         }
 
         @Override
         public void onInvokeTimeout(Invoke tcInvokeRequest) {
             // TODO Auto-generated method stub
-
+            
         }
 
         @Override
         public void onDialogTimeout(Dialog d) {
             // TODO Auto-generated method stub
-
+            
         }
 
     }

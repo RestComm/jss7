@@ -385,7 +385,10 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
     public Long getMinDialogsCount(String compainName) {
         StatResult res = this.statDataCollection.restartAndGet(MIN_DIALOGS_COUNT, compainName);
         this.statDataCollection.updateData(MIN_DIALOGS_COUNT, provider.getCurrentDialogsCount());
-        return res.getLongValue();
+        if (res != null)
+            return res.getLongValue();
+        else
+            return null;
     }
 
     public void updateMinDialogsCount(long newVal) {
@@ -396,7 +399,10 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
     public Long getMaxDialogsCount(String compainName) {
         StatResult res = this.statDataCollection.restartAndGet(MAX_DIALOGS_COUNT, compainName);
         this.statDataCollection.updateData(MAX_DIALOGS_COUNT, provider.getCurrentDialogsCount());
-        return res.getLongValue();
+        if (res != null)
+            return res.getLongValue();
+        else
+            return null;
     }
 
     public void updateMaxDialogsCount(long newVal) {
@@ -416,7 +422,10 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
     public Map<String, LongValue> getOutgoingDialogsPerApplicatioContextName(String compainName) {
         StatResult res = this.statDataCollection.restartAndGet(OUTGOING_DIALOGS_PER_APPLICATION_CONTEXT_NAME, compainName);
         this.statDataCollection.updateData(OUTGOING_DIALOGS_PER_APPLICATION_CONTEXT_NAME, provider.getCurrentDialogsCount());
-        return res.getStringLongValue();
+        if (res != null)
+            return res.getStringLongValue();
+        else
+            return null;
     }
 
     public void updateOutgoingDialogsPerApplicatioContextName(String name) {
@@ -427,7 +436,10 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
     public Map<String, LongValue> getIncomingDialogsPerApplicatioContextName(String compainName) {
         StatResult res = this.statDataCollection.restartAndGet(INCOMING_DIALOGS_PER_APPLICATION_CONTEXT_NAME, compainName);
         this.statDataCollection.updateData(INCOMING_DIALOGS_PER_APPLICATION_CONTEXT_NAME, provider.getCurrentDialogsCount());
-        return res.getStringLongValue();
+        if (res != null)
+            return res.getStringLongValue();
+        else
+            return null;
     }
 
     public void updateIncomingDialogsPerApplicatioContextName(String name) {
@@ -438,7 +450,10 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
     public Map<String, LongValue> getOutgoingInvokesPerOperationCode(String compainName) {
         StatResult res = this.statDataCollection.restartAndGet(OUTGOING_INVOKES_PER_OPERATION_CODE, compainName);
         this.statDataCollection.updateData(OUTGOING_INVOKES_PER_OPERATION_CODE, provider.getCurrentDialogsCount());
-        return res.getStringLongValue();
+        if (res != null)
+            return res.getStringLongValue();
+        else
+            return null;
     }
 
     public void updateOutgoingInvokesPerOperationCode(String name) {
@@ -449,7 +464,10 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
     public Map<String, LongValue> getIncomingInvokesPerOperationCode(String compainName) {
         StatResult res = this.statDataCollection.restartAndGet(INCOMING_INVOKES_PER_OPERATION_CODE, compainName);
         this.statDataCollection.updateData(INCOMING_INVOKES_PER_OPERATION_CODE, provider.getCurrentDialogsCount());
-        return res.getStringLongValue();
+        if (res != null)
+            return res.getStringLongValue();
+        else
+            return null;
     }
 
     public void updateIncomingInvokesPerOperationCode(String name) {
@@ -460,7 +478,10 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
     public Map<String, LongValue> getOutgoingErrorsPerErrorCode(String compainName) {
         StatResult res = this.statDataCollection.restartAndGet(OUTGOING_ERRORS_PER_ERROR_CODE, compainName);
         this.statDataCollection.updateData(OUTGOING_ERRORS_PER_ERROR_CODE, provider.getCurrentDialogsCount());
-        return res.getStringLongValue();
+        if (res != null)
+            return res.getStringLongValue();
+        else
+            return null;
     }
 
     public void updateOutgoingErrorsPerErrorCode(String name) {
@@ -471,7 +492,10 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
     public Map<String, LongValue> getIncomingErrorsPerErrorCode(String compainName) {
         StatResult res = this.statDataCollection.restartAndGet(INCOMING_ERRORS_PER_ERROR_CODE, compainName);
         this.statDataCollection.updateData(INCOMING_ERRORS_PER_ERROR_CODE, provider.getCurrentDialogsCount());
-        return res.getStringLongValue();
+        if (res != null)
+            return res.getStringLongValue();
+        else
+            return null;
     }
 
     public void updateIncomingErrorsPerErrorCode(String name) {
@@ -482,7 +506,10 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
     public Map<String, LongValue> getOutgoingRejectPerProblem(String compainName) {
         StatResult res = this.statDataCollection.restartAndGet(OUTGOING_REJECT_PER_PROBLEM, compainName);
         this.statDataCollection.updateData(OUTGOING_REJECT_PER_PROBLEM, provider.getCurrentDialogsCount());
-        return res.getStringLongValue();
+        if (res != null)
+            return res.getStringLongValue();
+        else
+            return null;
     }
 
     public void updateOutgoingRejectPerProblem(String name) {
@@ -493,7 +520,10 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
     public Map<String, LongValue> getIncomingRejectPerProblem(String compainName) {
         StatResult res = this.statDataCollection.restartAndGet(INCOMING_REJECT_PER_PROBLEM, compainName);
         this.statDataCollection.updateData(INCOMING_REJECT_PER_PROBLEM, provider.getCurrentDialogsCount());
-        return res.getStringLongValue();
+        if (res != null)
+            return res.getStringLongValue();
+        else
+            return null;
     }
 
     public void updateIncomingRejectPerProblem(String name) {

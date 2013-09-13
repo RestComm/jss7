@@ -262,7 +262,7 @@ public class DialogImpl implements Dialog {
             }
         }
 
-        if (this.provider.getStack().getStatisticsEnabled()) {
+        if (this.isStructured() && this.provider.getStack().getStatisticsEnabled()) {
             long lg = System.currentTimeMillis() - this.startDialogTime;
             this.provider.getStack().getCounterProviderImpl().updateAllDialogsDuration(lg);
         }
@@ -1196,6 +1196,8 @@ public class DialogImpl implements Dialog {
                 Component[] comps = msg.getComponent();
                 tcUniIndication.setComponents(comps);
 
+                processRcvdComp(comps);
+
                 if (msg.getDialogPortion() != null) {
                     DialogPortion dp = msg.getDialogPortion();
                     this.lastACN = dp.getApplicationContext();
@@ -1627,6 +1629,13 @@ public class DialogImpl implements Dialog {
         components = new Component[resultingIndications.size()];
         components = resultingIndications.toArray(components);
 
+        processRcvdComp(components);
+
+        return components;
+
+    }
+
+    private void processRcvdComp(Component[] components) {
         if (this.provider.getStack().getStatisticsEnabled()) {
             for (Component comp : components) {
                 switch (comp.getType()) {
@@ -1677,9 +1686,6 @@ public class DialogImpl implements Dialog {
                 }
             }
         }
-
-        return components;
-
     }
 
     private void addReject(List<Component> resultingIndications, Long invokeId, RejectProblem p) {

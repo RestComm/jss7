@@ -433,7 +433,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
     private void doRelease(DialogImpl d) {
 
-        if (this.stack.getStatisticsEnabled()) {
+        if (d.isStructured() && this.stack.getStatisticsEnabled()) {
             this.stack.getCounterProviderImpl().updateDialogReleaseCount();
         }
         try {
