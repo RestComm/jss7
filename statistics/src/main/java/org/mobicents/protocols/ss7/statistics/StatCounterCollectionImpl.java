@@ -50,54 +50,66 @@ public class StatCounterCollectionImpl implements StatCounterCollection {
 
     @Override
     public void clearDeadCampaignes(Date lastTime) {
-        ArrayList<String> toDel = new ArrayList<String>();
-        for (String s : coll.keySet()) {
-            StatDataCollectorAbstractImpl d = coll.get(s);
-            if (d.getSessionStartTime().before(lastTime)) {
-                toDel.add(s);
+        synchronized (this) {
+            ArrayList<String> toDel = new ArrayList<String>();
+            for (String s : coll.keySet()) {
+                StatDataCollectorAbstractImpl d = coll.get(s);
+                if (d.getSessionStartTime().before(lastTime)) {
+                    toDel.add(s);
+                }
             }
-        }
-        for (String s : toDel) {
-            coll.remove(s);
+            for (String s : toDel) {
+                coll.remove(s);
+            }
         }
     }
 
     @Override
     public StatResult restartAndGet(String campaignName) {
-        StatDataCollectorAbstractImpl sdc = coll.get(campaignName);
-        if (sdc != null) {
-            return sdc.restartAndGet();
-        } else {
-            switch (type) {
-            case MIN:
-                sdc = new StatDataCollectorMin(campaignName);
-                break;
-            case MAX:
-                sdc = new StatDataCollectorMax(campaignName);
-                break;
-            }
+        synchronized (this) {
+            StatDataCollectorAbstractImpl sdc = coll.get(campaignName);
             if (sdc != null) {
-                coll.put(campaignName, sdc);
-//                if (newVal != null)
-//                    sdc.updateData(newVal);
+                return sdc.restartAndGet();
+            } else {
+                switch (type) {
+                case MIN:
+                    sdc = new StatDataCollectorMin(campaignName);
+                    sdc.reset();
+                    break;
+                case MAX:
+                    sdc = new StatDataCollectorMax(campaignName);
+                    sdc.reset();
+                    break;
+                case StringLongMap:
+                    sdc = new StringLongMap(campaignName);
+                    sdc.reset();
+                    break;
+                }
+                if (sdc != null) {
+                    coll.put(campaignName, sdc);
+                }
+                return null;
             }
-            return null;
         }
     }
 
     @Override
     public void updateData(long newVal) {
-        for (String s : coll.keySet()) {
-            StatDataCollectorAbstractImpl d = coll.get(s);
-            d.updateData(newVal);
+        synchronized (this) {
+            for (String s : coll.keySet()) {
+                StatDataCollectorAbstractImpl d = coll.get(s);
+                d.updateData(newVal);
+            }
         }
     }
 
     @Override
     public void updateData(String newVal) {
-        for (String s : coll.keySet()) {
-            StatDataCollectorAbstractImpl d = coll.get(s);
-            d.updateData(newVal);
+        synchronized (this) {
+            for (String s : coll.keySet()) {
+                StatDataCollectorAbstractImpl d = coll.get(s);
+                d.updateData(newVal);
+            }
         }
     }
 

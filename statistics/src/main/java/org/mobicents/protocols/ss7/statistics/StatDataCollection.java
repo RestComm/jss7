@@ -46,6 +46,20 @@ public class StatDataCollection {
         }
     }
 
+    public StatCounterCollection unregisterStatCounterCollector(String counterName) {
+        synchronized (this) {
+            StatCounterCollection c = coll.remove(counterName);
+            return c;
+        }
+    }
+
+    public StatCounterCollection getStatCounterCollector(String counterName) {
+        synchronized (this) {
+            StatCounterCollection c = coll.get(counterName);
+            return c;
+        }
+    }
+
     public void clearDeadCampaignes(Date lastTime) {
         synchronized (this) {
             for (String s : coll.keySet()) {
@@ -56,31 +70,34 @@ public class StatDataCollection {
     }
 
     public StatResult restartAndGet(String counterName, String campaignName) {
+        StatCounterCollection scc;
         synchronized (this) {
-            StatCounterCollection scc = this.coll.get(counterName);
-            if (scc != null) {
-                return scc.restartAndGet(campaignName);
-            } else {
-                return null;
-            }
+            scc = this.coll.get(counterName);
+        }
+        if (scc != null) {
+            return scc.restartAndGet(campaignName);
+        } else {
+            return null;
         }
     }
 
     public void updateData(String counterName, long newVal) {
+        StatCounterCollection scc;
         synchronized (this) {
-            StatCounterCollection scc = this.coll.get(counterName);
-            if (scc != null) {
-                scc.updateData(newVal);
-            }
+            scc = this.coll.get(counterName);
+        }
+        if (scc != null) {
+            scc.updateData(newVal);
         }
     }
 
     public void updateData(String counterName, String newVal) {
+        StatCounterCollection scc;
         synchronized (this) {
-            StatCounterCollection scc = this.coll.get(counterName);
-            if (scc != null) {
-                scc.updateData(newVal);
-            }
+            scc = this.coll.get(counterName);
+        }
+        if (scc != null) {
+            scc.updateData(newVal);
         }
     }
 }

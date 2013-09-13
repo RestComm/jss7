@@ -41,6 +41,7 @@ public class StringLongMap extends StatDataCollectorAbstractImpl {
         synchronized (this) {
             StatResultStringLongMap res = new StatResultStringLongMap(this.data);
             this.data = new FastMap<String, LongValue>();
+            this.reset();
             return res;
         }
     }
