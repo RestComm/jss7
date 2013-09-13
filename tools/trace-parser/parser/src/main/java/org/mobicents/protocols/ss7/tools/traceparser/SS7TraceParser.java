@@ -32,8 +32,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javolution.util.FastMap;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -185,7 +183,9 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
+import org.mobicents.protocols.ss7.statistics.LongValue;
 import org.mobicents.protocols.ss7.tcap.DialogImpl;
+import org.mobicents.protocols.ss7.tcap.api.TCAPCounterProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
@@ -221,7 +221,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
  * @author sergey vetyutnev
  *
  */
-public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, CAPDialogListener, TCListener, Runnable,
+public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, CAPDialogListener, TCListener, Runnable,
         ProcessControl, MAPServiceMobilityListener, MAPServiceCallHandlingListener, MAPServiceOamListener,
         MAPServicePdpContextActivationListener, MAPServiceSupplementaryListener, MAPServiceSmsListener, MAPServiceLsmListener,
         CAPServiceCircuitSwitchedCallListener, CAPServiceGprsListener, CAPServiceSmsListener {
@@ -238,6 +238,7 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
     private TraceReaderDriver driver;
     private TCAPProviderImplWrapper tcapProvider;
     private TCAPStackImplWrapper tcapStack;
+    private TCAPCounterProvider tcapCntProv;
     private SccpProviderWrapper sccpProvider;
     private SccpStackImpl sccpStack = new SccpStackImpl("TraceParserSccpStack");
     private MAPProviderImpl mapProvider;
@@ -248,9 +249,9 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
     private long dialogEnumerator = 0;
     private long tcapLogMsg = 0;
     private ArrayList<String> msgDetailBuffer = new ArrayList<String>();
-    private FastMap<String, AddrData> addressLst = new FastMap<String, AddrData>();
+//    private FastMap<String, AddrData> addressLst = new FastMap<String, AddrData>();
 
-    public MAPTraceParser(Ss7ParseParameters par) {
+    public SS7TraceParser(Ss7ParseParameters par) {
         this.par = par;
     }
 
@@ -310,6 +311,19 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
             this.tcapProvider.addTCListener(this);
 
             this.tcapStack.start();
+
+            // starting TCAP statistic counters
+            this.tcapStack.setStatisticsEnabled(true);
+            tcapCntProv = this.tcapStack.getCounterProvider();
+            tcapCntProv.getOutgoingDialogsPerApplicatioContextName("a1");
+            tcapCntProv.getIncomingDialogsPerApplicatioContextName("a1");
+            tcapCntProv.getOutgoingInvokesPerOperationCode("a1");
+            tcapCntProv.getIncomingInvokesPerOperationCode("a1");
+            tcapCntProv.getOutgoingErrorsPerErrorCode("a1");
+            tcapCntProv.getIncomingErrorsPerErrorCode("a1");
+            tcapCntProv.getOutgoingRejectPerProblem("a1");
+            tcapCntProv.getIncomingRejectPerProblem("a1");
+
             if (this.par.getParseProtocol() == ParseProtocol.Map) {
                 this.mapProvider = new MAPProviderImpl(this.tcapProvider);
 
@@ -372,30 +386,82 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
         }
     }
 
+    public void uppendStringLongPull(StringBuilder sb, Map<String, LongValue> data, String title) {
+        sb.append("\n");
+        sb.append(title);
+        sb.append("\n");
+        for (String s : data.keySet()) {
+            LongValue lv = data.get(s);
+            sb.append(s);
+            sb.append("\t");
+            sb.append(lv.getValue());
+            sb.append("\n");
+        }
+    }
+
     public String getStatisticData() {
 
         StringBuilder sb = new StringBuilder();
-        for (String key : addressLst.keySet()) {
-            AddrData ad = addressLst.get(key);
-            sb.append(key);
-            sb.append("\t");
-            sb.append(ad.cnt);
 
-            sb.append("\t");
-            sb.append(ad.opc);
-            sb.append("\t");
-            sb.append(ad.oSsn);
-            sb.append("\t");
-            sb.append(ad.oAddr);
-            sb.append("\t");
-            sb.append(ad.dpc);
-            sb.append("\t");
-            sb.append(ad.dSsn);
-            sb.append("\t");
-            sb.append(ad.dAddr);
-
+        if (this.tcapCntProv != null) {
+            sb.append("TCAP counters --------");
             sb.append("\n");
+            sb.append("\n");
+            sb.append("TcUniReceivedCount : \t" + this.tcapCntProv.getTcUniReceivedCount());
+            sb.append("\n");
+            sb.append("TcBeginReceivedCount : \t" + this.tcapCntProv.getTcBeginReceivedCount());
+            sb.append("\n");
+            sb.append("TcContinueReceivedCount : \t" + this.tcapCntProv.getTcContinueReceivedCount());
+            sb.append("\n");
+            sb.append("TcEndReceivedCount : \t" + this.tcapCntProv.getTcEndReceivedCount());
+            sb.append("\n");
+            sb.append("TcPAbortReceivedCount : \t" + this.tcapCntProv.getTcPAbortReceivedCount());
+            sb.append("\n");
+            sb.append("TcUserAbortReceivedCount : \t" + this.tcapCntProv.getTcUserAbortReceivedCount());
+            sb.append("\n");
+
+            sb.append("InvokeReceivedCount : \t" + this.tcapCntProv.getInvokeReceivedCount());
+            sb.append("\n");
+            sb.append("ReturnResultReceivedCount : \t" + this.tcapCntProv.getReturnResultReceivedCount());
+            sb.append("\n");
+            sb.append("ReturnResultLastReceivedCount : \t" + this.tcapCntProv.getReturnResultLastReceivedCount());
+            sb.append("\n");
+            sb.append("ReturnErrorReceivedCount : \t" + this.tcapCntProv.getReturnErrorReceivedCount());
+            sb.append("\n");
+            sb.append("RejectReceivedCount : \t" + this.tcapCntProv.getRejectReceivedCount());
+            sb.append("\n");
+
+            sb.append("AllEstablishedDialogsCount : \t" + this.tcapCntProv.getAllEstablishedDialogsCount());
+            sb.append("\n");
+
+            this.uppendStringLongPull(sb, this.tcapCntProv.getIncomingDialogsPerApplicatioContextName("a1"), "IncomingDialogsPerApplicatioContextName");
+            this.uppendStringLongPull(sb, this.tcapCntProv.getIncomingInvokesPerOperationCode("a1"), "IncomingInvokesPerOperationCode");
+            this.uppendStringLongPull(sb, this.tcapCntProv.getIncomingErrorsPerErrorCode("a1"), "IncomingErrorsPerErrorCode");
+            this.uppendStringLongPull(sb, this.tcapCntProv.getIncomingRejectPerProblem("a1"), "IncomingRejectPerProblem");
         }
+
+//        for (String key : addressLst.keySet()) {
+//            AddrData ad = addressLst.get(key);
+//            sb.append(key);
+            
+//            sb.append("\t");
+//            sb.append(ad.cnt);
+//
+//            sb.append("\t");
+//            sb.append(ad.opc);
+//            sb.append("\t");
+//            sb.append(ad.oSsn);
+//            sb.append("\t");
+//            sb.append(ad.oAddr);
+//            sb.append("\t");
+//            sb.append(ad.dpc);
+//            sb.append("\t");
+//            sb.append(ad.dSsn);
+//            sb.append("\t");
+//            sb.append(ad.dAddr);
+
+//            sb.append("\n");
+//        }
 
         return sb.toString();
     }
@@ -1484,33 +1550,33 @@ public class MAPTraceParser implements TraceReaderListener, MAPDialogListener, C
         }
         
         // !!!!!!!!!!!!!!!!!!!! TODO - statistic
-        SccpAddress ao = capDialog.getRemoteAddress();
-        int opc = this.sccpMessage.getIncomingOpc();
-        int oSsn = ao.getSubsystemNumber();
-        String oAddr = "";
-        if (ao.getGlobalTitle() != null)
-            oAddr = ao.getGlobalTitle().getDigits();
-        SccpAddress ad = capDialog.getLocalAddress();
-        int dpc = this.sccpMessage.getIncomingDpc();
-        int dSsn = ad.getSubsystemNumber();
-        String dAddr = "";
-        if (ad.getGlobalTitle() != null)
-            dAddr = ad.getGlobalTitle().getDigits();
-
-        String key = opc + "_" + oSsn + "_" + oAddr + "_" + dpc + "_" + dSsn + "_" + dAddr;
-        AddrData res = addressLst.get(key);
-        if (res == null) {
-            res = new AddrData();
-            addressLst.put(key, res);
-
-            res.opc = opc;
-            res.oSsn = oSsn;
-            res.oAddr = oAddr;
-            res.dpc = dpc;
-            res.dSsn = dSsn;
-            res.dAddr = dAddr;
-        }
-        res.cnt++;
+//        SccpAddress ao = capDialog.getRemoteAddress();
+//        int opc = this.sccpMessage.getIncomingOpc();
+//        int oSsn = ao.getSubsystemNumber();
+//        String oAddr = "";
+//        if (ao.getGlobalTitle() != null)
+//            oAddr = ao.getGlobalTitle().getDigits();
+//        SccpAddress ad = capDialog.getLocalAddress();
+//        int dpc = this.sccpMessage.getIncomingDpc();
+//        int dSsn = ad.getSubsystemNumber();
+//        String dAddr = "";
+//        if (ad.getGlobalTitle() != null)
+//            dAddr = ad.getGlobalTitle().getDigits();
+//
+//        String key = opc + "_" + oSsn + "_" + oAddr + "_" + dpc + "_" + dSsn + "_" + dAddr;
+//        AddrData res = addressLst.get(key);
+//        if (res == null) {
+//            res = new AddrData();
+//            addressLst.put(key, res);
+//
+//            res.opc = opc;
+//            res.oSsn = oSsn;
+//            res.oAddr = oAddr;
+//            res.dpc = dpc;
+//            res.dSsn = dSsn;
+//            res.dAddr = dAddr;
+//        }
+//        res.cnt++;
         // !!!!!!!!!!!!!!!!!!!! TODO - statistic
     }
 

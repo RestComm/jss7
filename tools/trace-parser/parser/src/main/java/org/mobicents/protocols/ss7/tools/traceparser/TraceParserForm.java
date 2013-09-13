@@ -52,6 +52,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.log4j.BasicConfigurator;
+import org.mobicents.protocols.ss7.tcap.api.TCAPCounterProvider;
 
 /**
  *
@@ -60,7 +61,7 @@ import org.apache.log4j.BasicConfigurator;
  */
 public class TraceParserForm {
 
-    private MAPTraceParser task = null;
+    private SS7TraceParser task = null;
     private String parseData = "";
 
     protected JFrame frmSsTraceParser;
@@ -237,7 +238,7 @@ public class TraceParserForm {
                 btnStop.setEnabled(true);
 
                 // starting parsing
-                task = new MAPTraceParser(newPar);
+                task = new SS7TraceParser(newPar);
                 task.parse();
             }
         });
