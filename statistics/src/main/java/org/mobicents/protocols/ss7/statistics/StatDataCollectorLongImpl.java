@@ -42,6 +42,7 @@ public abstract class StatDataCollectorLongImpl extends StatDataCollectorAbstrac
     public StatResult restartAndGet() {
         StatResultLong res = new StatResultLong(val);
         this.sessionStartTime = new Date();
+        this.reset();
         return res;
     }
 
