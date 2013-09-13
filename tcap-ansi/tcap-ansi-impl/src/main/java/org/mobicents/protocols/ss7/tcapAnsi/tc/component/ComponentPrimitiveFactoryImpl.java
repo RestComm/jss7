@@ -116,7 +116,7 @@ public class ComponentPrimitiveFactoryImpl implements ComponentPrimitiveFactory 
 
     }
 
-    public ReturnResultNotLast createTCResultRequest() {
+    public ReturnResultNotLast createTCResultNotLastRequest() {
 
         return TcapFactory.createComponentReturnResultNotLast();
     }

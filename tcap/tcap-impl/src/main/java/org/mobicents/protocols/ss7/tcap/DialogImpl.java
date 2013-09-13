@@ -279,7 +279,7 @@ public class DialogImpl implements Dialog {
             }
         }
 
-        if (this.provider.getStack().getStatisticsEnabled()) {
+        if (this.isStructured() && this.provider.getStack().getStatisticsEnabled()) {
             long lg = System.currentTimeMillis() - this.startDialogTime;
             this.provider.getStack().getCounterProviderImpl().updateAllDialogsDuration(lg);
         }
@@ -1310,6 +1310,8 @@ public class DialogImpl implements Dialog {
                 Component[] comps = msg.getComponent();
                 tcUniIndication.setComponents(comps);
 
+                processRcvdComp(comps);
+
                 if (msg.getDialogPortion() != null) {
                     // it should be dialog req?
                     DialogPortion dp = msg.getDialogPortion();
@@ -1328,6 +1330,50 @@ public class DialogImpl implements Dialog {
             }
         } finally {
             this.dialogLock.unlock();
+        }
+    }
+
+    private void processRcvdComp(Component[] comps) {
+        if (this.provider.getStack().getStatisticsEnabled()) {
+            for (Component comp : comps) {
+                switch (comp.getType()) {
+                case Invoke:
+                    this.provider.getStack().getCounterProviderImpl().updateInvokeReceivedCount();
+
+                    Invoke inv = (Invoke) comp;
+                    OperationCodeImpl oc = (OperationCodeImpl) inv.getOperationCode();
+                    if (oc != null) {
+                        this.provider.getStack().getCounterProviderImpl().updateIncomingInvokesPerOperationCode(oc.getStringValue());
+                    }
+                    break;
+                case ReturnResult:
+                    this.provider.getStack().getCounterProviderImpl().updateReturnResultReceivedCount();
+                    break;
+                case ReturnResultLast:
+                    this.provider.getStack().getCounterProviderImpl().updateReturnResultLastReceivedCount();
+                    break;
+                case ReturnError:
+                    this.provider.getStack().getCounterProviderImpl().updateReturnErrorReceivedCount();
+
+                    ReturnError re = (ReturnError) comp;
+                    ErrorCodeImpl ec = (ErrorCodeImpl) re.getErrorCode();
+                    if (ec != null) {
+                        this.provider.getStack().getCounterProviderImpl().updateIncomingErrorsPerErrorCode(ec.getStringValue());
+                    }
+                    break;
+                case Reject:
+                    Reject rej = (Reject) comp;
+                    if (!rej.isLocalOriginated()) {
+                        this.provider.getStack().getCounterProviderImpl().updateRejectReceivedCount();
+
+                        ProblemImpl prob = (ProblemImpl) rej.getProblem();
+                        if (prob != null) {
+                            this.provider.getStack().getCounterProviderImpl().updateIncomingRejectPerProblem(prob.getStringValue());
+                        }
+                    }
+                    break;
+                }
+            }
         }
     }
 
@@ -1905,47 +1951,7 @@ public class DialogImpl implements Dialog {
         components = new Component[resultingIndications.size()];
         components = resultingIndications.toArray(components);
 
-        if (this.provider.getStack().getStatisticsEnabled()) {
-            for (Component comp : components) {
-                switch (comp.getType()) {
-                case Invoke:
-                    this.provider.getStack().getCounterProviderImpl().updateInvokeReceivedCount();
-
-                    Invoke inv = (Invoke) comp;
-                    OperationCodeImpl oc = (OperationCodeImpl) inv.getOperationCode();
-                    if (oc != null) {
-                        this.provider.getStack().getCounterProviderImpl().updateIncomingInvokesPerOperationCode(oc.getStringValue());
-                    }
-                    break;
-                case ReturnResult:
-                    this.provider.getStack().getCounterProviderImpl().updateReturnResultReceivedCount();
-                    break;
-                case ReturnResultLast:
-                    this.provider.getStack().getCounterProviderImpl().updateReturnResultLastReceivedCount();
-                    break;
-                case ReturnError:
-                    this.provider.getStack().getCounterProviderImpl().updateReturnErrorReceivedCount();
-
-                    ReturnError re = (ReturnError) comp;
-                    ErrorCodeImpl ec = (ErrorCodeImpl) re.getErrorCode();
-                    if (ec != null) {
-                        this.provider.getStack().getCounterProviderImpl().updateIncomingErrorsPerErrorCode(ec.getStringValue());
-                    }
-                    break;
-                case Reject:
-                    Reject rej = (Reject) comp;
-                    if (!rej.isLocalOriginated()) {
-                        this.provider.getStack().getCounterProviderImpl().updateRejectReceivedCount();
-
-                        ProblemImpl prob = (ProblemImpl) rej.getProblem();
-                        if (prob != null) {
-                            this.provider.getStack().getCounterProviderImpl().updateIncomingRejectPerProblem(prob.getStringValue());
-                        }
-                    }
-                    break;
-                }
-            }
-        }
+        processRcvdComp(components);
 
         return components;
     }

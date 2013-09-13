@@ -874,7 +874,7 @@ public class TCAPComponentsTest extends SccpHarness {
 
         public void addNewReturnResult(Long invokeId) throws Exception {
 
-            ReturnResultNotLast rr = this.tcapProvider.getComponentPrimitiveFactory().createTCResultRequest();
+            ReturnResultNotLast rr = this.tcapProvider.getComponentPrimitiveFactory().createTCResultNotLastRequest();
             rr.setCorrelationId(invokeId);
 
             OperationCode oc = TcapFactory.createOperationCode();
