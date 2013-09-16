@@ -52,7 +52,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.log4j.BasicConfigurator;
-import org.mobicents.protocols.ss7.tcap.api.TCAPCounterProvider;
 
 /**
  *
@@ -253,7 +252,7 @@ public class TraceParserForm {
         });
         btnStop.setEnabled(false);
         panel.add(btnStop);
-        
+
         btnGetStatisticInfo = new JButton("Get statistic info");
         btnGetStatisticInfo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {

@@ -40,14 +40,14 @@ public class StatisticResultFm extends JDialog {
         super(owner, true);
 
         setBounds(new Rectangle(150, 150, 450, 350));
-        
+
         JScrollPane scrollPane = new JScrollPane();
         getContentPane().add(scrollPane, BorderLayout.CENTER);
-        
+
         JTextArea textArea = new JTextArea();
         textArea.setEditable(false);
         scrollPane.setViewportView(textArea);
-        
+
         textArea.setText(data);
     }
 

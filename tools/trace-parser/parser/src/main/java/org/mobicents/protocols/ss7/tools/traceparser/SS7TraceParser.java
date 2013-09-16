@@ -440,29 +440,6 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
             this.uppendStringLongPull(sb, this.tcapCntProv.getIncomingRejectPerProblem("a1"), "IncomingRejectPerProblem");
         }
 
-//        for (String key : addressLst.keySet()) {
-//            AddrData ad = addressLst.get(key);
-//            sb.append(key);
-            
-//            sb.append("\t");
-//            sb.append(ad.cnt);
-//
-//            sb.append("\t");
-//            sb.append(ad.opc);
-//            sb.append("\t");
-//            sb.append(ad.oSsn);
-//            sb.append("\t");
-//            sb.append(ad.oAddr);
-//            sb.append("\t");
-//            sb.append(ad.dpc);
-//            sb.append("\t");
-//            sb.append(ad.dSsn);
-//            sb.append("\t");
-//            sb.append(ad.dAddr);
-
-//            sb.append("\n");
-//        }
-
         return sb.toString();
     }
 
@@ -1548,7 +1525,7 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
                 di.setAcnVersion(capDialog.getApplicationContext().getVersion().getVersion());
             }
         }
-        
+
         // !!!!!!!!!!!!!!!!!!!! TODO - statistic
 //        SccpAddress ao = capDialog.getRemoteAddress();
 //        int opc = this.sccpMessage.getIncomingOpc();
