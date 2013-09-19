@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -25,25 +25,23 @@ package org.mobicents.protocols.ss7.inap.api.isup;
 import java.io.Serializable;
 
 import org.mobicents.protocols.ss7.inap.api.INAPException;
-import org.mobicents.protocols.ss7.isup.message.parameter.UserTeleserviceInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumRequirement;
 
 /**
- *
- ISUP HighLayerCompatibility wrapper
- *
- * HighLayerCompatibility::= OCTET STRING (SIZE(highLayerCompatibilityLength)) -- Indicates the teleservice. For encoding, DSS1
- * (ETS 300 403-1 [8]) is used.
- *
- * highLayerCompatibilityLength ::= 2
- *
- *
- * @author sergey vetyutnev
- *
- */
-public interface HighLayerCompatibilityInap extends Serializable {
+*
+
+- tmr:
+The tmr is encoded as the Transmission Medium Requirement parameter of the ISUP according to
+ITU-T Recommendation Q.763 [20].
+
+*
+* @author sergey vetyutnev
+*
+*/
+public interface TmrInap extends Serializable {
 
     byte[] getData();
 
-    UserTeleserviceInformation getHighLayerCompatibility() throws INAPException;
+    TransmissionMediumRequirement getTransmissionMediumRequirement() throws INAPException;
 
 }

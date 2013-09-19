@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.inap.api.primitives;
 
+import java.io.Serializable;
+
 /**
  *
  LegID::= CHOICE { sendingSideID[0] LegType, -- used in operations sent from SCF to SSF receivingSideID[1] LegType -- used in
@@ -45,7 +47,7 @@ package org.mobicents.protocols.ss7.inap.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface LegID {
+public interface LegID extends Serializable {
 
     LegType getSendingSideID();
 

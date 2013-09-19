@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,30 +20,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.inap.api.isup;
+package org.mobicents.protocols.ss7.inap.api.service.circuitSwitchedCall.primitive;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
-import org.mobicents.protocols.ss7.inap.api.INAPException;
-import org.mobicents.protocols.ss7.isup.message.parameter.UserTeleserviceInformation;
+import org.mobicents.protocols.ss7.inap.api.isup.GenericNumberInap;
 
 /**
- *
- ISUP HighLayerCompatibility wrapper
- *
- * HighLayerCompatibility::= OCTET STRING (SIZE(highLayerCompatibilityLength)) -- Indicates the teleservice. For encoding, DSS1
- * (ETS 300 403-1 [8]) is used.
- *
- * highLayerCompatibilityLength ::= 2
- *
- *
- * @author sergey vetyutnev
- *
- */
-public interface HighLayerCompatibilityInap extends Serializable {
+*
+GenericNumbers {PARAMETERS-BOUND : bound} ::= SET SIZE(1..bound.&numOfGenericNumbers) OF
+    GenericNumber {bound}
+*
+* @author sergey vetyutnev
+*
+*/
+public interface GenericNumbers extends Serializable {
 
-    byte[] getData();
-
-    UserTeleserviceInformation getHighLayerCompatibility() throws INAPException;
+    ArrayList<GenericNumberInap> getGenericNumbers();
 
 }

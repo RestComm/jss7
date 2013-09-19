@@ -20,25 +20,42 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
-
-import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
+package org.mobicents.protocols.ss7.inap.api.service.circuitSwitchedCall.primitive;
 
 /**
- *
-BearerCapability {PARAMETERS-BOUND : bound} ::= CHOICE {
-     bearerCap [0] OCTET STRING (SIZE(2..bound.&maxBearerCapabilityLength))
-}
--- Indicates the type of bearer capability connection to the user. For bearerCap, the ISUP User
--- Service Information, ETSI EN 300 356-1 [23] -- encoding shall be used.
- *
- * MAXIMUM-FOR-BEARER-CAPABILITY ::= 11
- *
- * @author sergey vetyutnev
- *
- */
-public interface BearerCapability {
+*
+conferenceTreatmentIndicator [1] OCTET STRING (SIZE(1)) OPTIONAL,
+-- acceptConferenceRequest 'xxxx xx01'B
+-- rejectConferenceRequest 'xxxx xx10'B
+-- network default is accept conference request
 
-    BearerCap getBearerCap();
+*
+* @author sergey vetyutnev
+*
+*/
+public enum ConferenceTreatmentIndicator {
+
+    acceptConferenceRequest(1), rejectConferenceRequest(2);
+
+    private int code;
+
+    private ConferenceTreatmentIndicator(int code) {
+        this.code = code;
+    }
+
+    public static ConferenceTreatmentIndicator getInstance(int code) {
+        switch (code & 0x03) {
+            case 1:
+                return ConferenceTreatmentIndicator.acceptConferenceRequest;
+            case 2:
+                return ConferenceTreatmentIndicator.rejectConferenceRequest;
+            default:
+                return null;
+        }
+    }
+
+    public int getCode() {
+        return this.code;
+    }
 
 }

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.inap.api.isup;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.inap.api.INAPException;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation;
 
@@ -36,7 +38,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation
  * @author sergey vetyutnev
  *
  */
-public interface RedirectionInformationInap {
+public interface RedirectionInformationInap extends Serializable {
 
     byte[] getData();
 

@@ -72,6 +72,14 @@
 			<groupId>org.mobicents.protocols.ss7.isup</groupId>
 			<artifactId>isup-impl</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.map</groupId>
+			<artifactId>map-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.map</groupId>
+			<artifactId>map-impl</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

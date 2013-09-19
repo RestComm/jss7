@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.inap.api.primitives;
 
+import java.io.Serializable;
+
 /**
  *
  MiscCallInfo ::= SEQUENCE { messageType [0] ENUMERATED {request(0), notification(1)}, dpAssignment [1] ENUMERATED
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.inap.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface MiscCallInfo {
+public interface MiscCallInfo extends Serializable {
 
     MiscCallInfoMessageType getMessageType();
 

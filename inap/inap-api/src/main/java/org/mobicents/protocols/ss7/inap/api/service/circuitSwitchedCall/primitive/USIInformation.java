@@ -20,25 +20,28 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
+package org.mobicents.protocols.ss7.inap.api.service.circuitSwitchedCall.primitive;
 
-import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
+import java.io.Serializable;
 
 /**
- *
-BearerCapability {PARAMETERS-BOUND : bound} ::= CHOICE {
-     bearerCap [0] OCTET STRING (SIZE(2..bound.&maxBearerCapabilityLength))
-}
--- Indicates the type of bearer capability connection to the user. For bearerCap, the ISUP User
--- Service Information, ETSI EN 300 356-1 [23] -- encoding shall be used.
- *
- * MAXIMUM-FOR-BEARER-CAPABILITY ::= 11
- *
- * @author sergey vetyutnev
- *
- */
-public interface BearerCapability {
+*
+USIInformation {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE (
+bound.&minUSIInformationLength..bound.&maxUSIInformationLength))
+-- Indicates the length of the USIInformation element, maxUSIInformationlength will depend on
+-- the constraints imposed by the network signalling used to transport the USI information.
+-- Its content is network signalling/operator specific.
+-- The internal structure of this parameter can be defined using ASN.1 and the related Basic
+-- Encoding Rules (BER). In such a case the value of this paramter (after the first tag and length
+-- information) is the BER encoding of the defined ASN.1 internal structure.
+-- The tag of this parameter as defined by ETSI is never replaced.
 
-    BearerCap getBearerCap();
+*
+* @author sergey vetyutnev
+*
+*/
+public interface USIInformation extends Serializable {
+
+    byte[] getData();
 
 }

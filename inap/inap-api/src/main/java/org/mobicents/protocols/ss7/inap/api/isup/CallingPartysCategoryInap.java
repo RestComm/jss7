@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.inap.api.isup;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.inap.api.INAPException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
 
@@ -38,7 +40,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
  * @author sergey vetyutnev
  *
  */
-public interface CallingPartysCategoryInap {
+public interface CallingPartysCategoryInap extends Serializable {
 
     byte[] getData();
 

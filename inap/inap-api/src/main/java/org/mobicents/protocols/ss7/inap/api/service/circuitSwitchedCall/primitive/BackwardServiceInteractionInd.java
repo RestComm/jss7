@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,30 +20,31 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.inap.api.isup;
+package org.mobicents.protocols.ss7.inap.api.service.circuitSwitchedCall.primitive;
 
 import java.io.Serializable;
 
-import org.mobicents.protocols.ss7.inap.api.INAPException;
-import org.mobicents.protocols.ss7.isup.message.parameter.UserTeleserviceInformation;
-
 /**
- *
- ISUP HighLayerCompatibility wrapper
- *
- * HighLayerCompatibility::= OCTET STRING (SIZE(highLayerCompatibilityLength)) -- Indicates the teleservice. For encoding, DSS1
- * (ETS 300 403-1 [8]) is used.
- *
- * highLayerCompatibilityLength ::= 2
- *
- *
- * @author sergey vetyutnev
- *
- */
-public interface HighLayerCompatibilityInap extends Serializable {
+*
+BackwardServiceInteractionInd ::= SEQUENCE {
+conferenceTreatmentIndicator [1] OCTET STRING (SIZE(1)) OPTIONAL,
+-- acceptConferenceRequest 'xxxx xx01'B
+-- rejectConferenceRequest 'xxxx xx10'B
+-- network default is accept conference request,
+callCompletionTreatmentIndicator [2] OCTET STRING (SIZE(1)) OPTIONAL
+-- acceptCallCompletionServiceRequest 'xxxx xx01'B,
+-- rejectCallCompletionServiceRequest 'xxxx xx10'B
+-- network default is accept call completion service request
+...
+}
+*
+* @author sergey vetyutnev
+*
+*/
+public interface BackwardServiceInteractionInd extends Serializable {
 
-    byte[] getData();
+    ConferenceTreatmentIndicator getConferenceTreatmentIndicator();
 
-    UserTeleserviceInformation getHighLayerCompatibility() throws INAPException;
+    CallCompletionTreatmentIndicator getCallCompletionTreatmentIndicator();
 
 }

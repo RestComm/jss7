@@ -20,25 +20,30 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
+package org.mobicents.protocols.ss7.inap.api.service.circuitSwitchedCall.primitive;
 
-import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
+import java.io.Serializable;
 
 /**
- *
-BearerCapability {PARAMETERS-BOUND : bound} ::= CHOICE {
-     bearerCap [0] OCTET STRING (SIZE(2..bound.&maxBearerCapabilityLength))
-}
--- Indicates the type of bearer capability connection to the user. For bearerCap, the ISUP User
--- Service Information, ETSI EN 300 356-1 [23] -- encoding shall be used.
- *
- * MAXIMUM-FOR-BEARER-CAPABILITY ::= 11
- *
- * @author sergey vetyutnev
- *
- */
-public interface BearerCapability {
+*
+IPSSPCapabilities {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE (
+bound.&minIPSSPCapabilitiesLength..bound.&maxIPSSPCapabilitiesLength))
+-- Its content is network operator specific.
+-- The internal structure of this parameter can be defined using ASN.1 and the related Basic
+-- Encoding Rules (BER). In such a case the value of this parameter (after the first tag and length
+-- information) is the BER encoding of the defined ASN.1 internal structure.
+-- The tag of this parameter as defined by ETSI is never replaced.
+-- Indicates the SRF resources available at the SSP.
 
-    BearerCap getBearerCap();
+minIPSSPCapabilitiesLength=1
+maxIPSSPCapabilitiesLength=5
+
+*
+* @author sergey vetyutnev
+*
+*/
+public interface IPSSPCapabilities extends Serializable {
+
+    byte[] getData();
 
 }

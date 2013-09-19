@@ -20,25 +20,41 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
-
-import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
+package org.mobicents.protocols.ss7.inap.api.service.circuitSwitchedCall.primitive;
 
 /**
- *
-BearerCapability {PARAMETERS-BOUND : bound} ::= CHOICE {
-     bearerCap [0] OCTET STRING (SIZE(2..bound.&maxBearerCapabilityLength))
-}
--- Indicates the type of bearer capability connection to the user. For bearerCap, the ISUP User
--- Service Information, ETSI EN 300 356-1 [23] -- encoding shall be used.
- *
- * MAXIMUM-FOR-BEARER-CAPABILITY ::= 11
- *
- * @author sergey vetyutnev
- *
- */
-public interface BearerCapability {
+*
+callingPartyRestrictionIndicator [4] OCTET STRING (SIZE(1)) OPTIONAL,
+-- noINImpact 'xxxx xx01'B,
+-- presentationRestricted 'xxxx xx10'B
+-- network default is noINImpact
 
-    BearerCap getBearerCap();
+*
+* @author sergey vetyutnev
+*
+*/
+public enum CallingPartyRestrictionIndicator {
+    noINImpact(1), presentationRestricted(2);
+
+    private int code;
+
+    private CallingPartyRestrictionIndicator(int code) {
+        this.code = code;
+    }
+
+    public static CallingPartyRestrictionIndicator getInstance(int code) {
+        switch (code & 0x03) {
+            case 1:
+                return CallingPartyRestrictionIndicator.noINImpact;
+            case 2:
+                return CallingPartyRestrictionIndicator.presentationRestricted;
+            default:
+                return null;
+        }
+    }
+
+    public int getCode() {
+        return this.code;
+    }
 
 }
