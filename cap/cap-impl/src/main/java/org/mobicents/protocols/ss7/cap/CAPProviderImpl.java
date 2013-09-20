@@ -117,7 +117,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
  */
 public class CAPProviderImpl implements CAPProvider, TCListener {
 
-    protected static final Logger loger = Logger.getLogger(CAPProviderImpl.class);
+    protected final Logger loger;
 
     private transient List<CAPDialogListener> dialogListeners = new CopyOnWriteArrayList<CAPDialogListener>();
 
@@ -137,8 +137,10 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
     private final transient CAPServiceGprs capServiceGprs = new CAPServiceGprsImpl(this);
     private final transient CAPServiceSms capServiceSms = new CAPServiceSmsImpl(this);
 
-    public CAPProviderImpl(TCAPProvider tcapProvider) {
+    public CAPProviderImpl(String name, TCAPProvider tcapProvider) {
         this.tcapProvider = tcapProvider;
+
+        this.loger = Logger.getLogger(CAPStackImpl.class.getCanonicalName() + "-" + name);
 
         this.capServices.add(this.capServiceCircuitSwitchedCall);
         this.capServices.add(this.capServiceGprs);

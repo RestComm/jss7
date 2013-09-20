@@ -149,7 +149,7 @@ public class ClientDialogic implements MAPDialogListener, MAPServiceSmsListener 
 
         System.out.println("initMAP");
 
-        this.mapStack = new MAPStackImpl(this.sccpStack.getSccpProvider(), SSN);
+        this.mapStack = new MAPStackImpl("Test", this.sccpStack.getSccpProvider(), SSN);
         this.mapProvider = this.mapStack.getMAPProvider();
 
         System.out.println("this.mapProvider = " + this.mapProvider);

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -43,18 +43,26 @@ public class MAPStackImpl implements MAPStack, CongestionListener {
 
     private State state = State.IDLE;
 
-    public MAPStackImpl(SccpProvider sccpPprovider, int ssn) {
-        this.tcapStack = new TCAPStackImpl(sccpPprovider, ssn);
+    private final String name;
+
+    public MAPStackImpl(String name, SccpProvider sccpPprovider, int ssn) {
+        this.name = name;
+        this.tcapStack = new TCAPStackImpl(name, sccpPprovider, ssn);
         TCAPProvider tcapProvider = tcapStack.getProvider();
-        mapProvider = new MAPProviderImpl(tcapProvider);
+        mapProvider = new MAPProviderImpl(name, tcapProvider);
 
         this.state = State.CONFIGURED;
     }
 
-    public MAPStackImpl(TCAPProvider tcapProvider) {
-
-        mapProvider = new MAPProviderImpl(tcapProvider);
+    public MAPStackImpl(String name, TCAPProvider tcapProvider) {
+        this.name = name;
+        mapProvider = new MAPProviderImpl(name, tcapProvider);
         this.state = State.CONFIGURED;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     public MAPProvider getMAPProvider() {

@@ -46,7 +46,7 @@ public class MAPProviderImplWrapper extends MAPProviderImpl {
     private final MAPServiceSupplementary mapServiceSupplementaryTest = new MAPServiceSupplementaryImplWrapper(this);
 
     public MAPProviderImplWrapper(TCAPProvider tcapProvider) {
-        super(tcapProvider);
+        super("Test", tcapProvider);
 
         for (MAPServiceBase serv : this.mapServices) {
             if (serv instanceof MAPServiceSupplementary) {

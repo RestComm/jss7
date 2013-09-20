@@ -42,18 +42,26 @@ public class CAPStackImpl implements CAPStack {
 
     private State state = State.IDLE;
 
-    public CAPStackImpl(SccpProvider sccpPprovider, int ssn) {
-        this.tcapStack = new TCAPStackImpl(sccpPprovider, ssn);
+    private final String name;
+
+    public CAPStackImpl(String name, SccpProvider sccpPprovider, int ssn) {
+        this.name = name;
+        this.tcapStack = new TCAPStackImpl(name, sccpPprovider, ssn);
         TCAPProvider tcapProvider = tcapStack.getProvider();
-        capProvider = new CAPProviderImpl(tcapProvider);
+        capProvider = new CAPProviderImpl(name, tcapProvider);
 
         this.state = State.CONFIGURED;
     }
 
-    public CAPStackImpl(TCAPProvider tcapProvider) {
-
-        capProvider = new CAPProviderImpl(tcapProvider);
+    public CAPStackImpl(String name, TCAPProvider tcapProvider) {
+        this.name = name;
+        capProvider = new CAPProviderImpl(name, tcapProvider);
         this.state = State.CONFIGURED;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override

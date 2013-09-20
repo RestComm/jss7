@@ -36,7 +36,7 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPStack;
  */
 public class TCAPStackImpl implements TCAPStack {
 
-    private static final Logger logger = Logger.getLogger(TCAPStackImpl.class);
+    private final Logger logger;
 
     // default value of idle timeout and after TC_END remove of task.
     public static final long _DIALOG_TIMEOUT = 60000;
@@ -48,6 +48,8 @@ public class TCAPStackImpl implements TCAPStack {
     protected TCAPCounterProviderImpl tcapCounterProvider;
     private SccpProvider sccpProvider;
     private SccpAddress address;
+
+    private final String name;
 
     private volatile boolean started = false;
 
@@ -62,15 +64,25 @@ public class TCAPStackImpl implements TCAPStack {
     private boolean previewMode = false;
     private boolean statisticsEnabled = false;
 
-    public TCAPStackImpl() {
+    public TCAPStackImpl(String name) {
         super();
+        this.name = name;
 
+        this.logger = Logger.getLogger(TCAPStackImpl.class.getCanonicalName() + "-" + this.name);
     }
 
-    public TCAPStackImpl(SccpProvider sccpProvider, int ssn) {
+    public TCAPStackImpl(String name, SccpProvider sccpProvider, int ssn) {
+        this.name = name;
         this.sccpProvider = sccpProvider;
         this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, ssn);
         this.tcapCounterProvider = new TCAPCounterProviderImpl(this.tcapProvider);
+
+        this.logger = Logger.getLogger(TCAPStackImpl.class.getCanonicalName() + "-" + this.name);
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     public void start() throws Exception {

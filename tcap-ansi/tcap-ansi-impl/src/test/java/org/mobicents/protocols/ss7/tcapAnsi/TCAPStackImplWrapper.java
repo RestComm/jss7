@@ -37,7 +37,7 @@ import org.mobicents.protocols.ss7.tcapAnsi.TCAPProviderImpl.PrevewDialogDataKey
 public class TCAPStackImplWrapper extends TCAPStackImpl {
 
     public TCAPStackImplWrapper(SccpProvider sccpProvider, int ssn) {
-        super();
+        super("Test");
 
         this.tcapProvider = new TCAPProviderImplWrapper(sccpProvider, this, ssn);
     }

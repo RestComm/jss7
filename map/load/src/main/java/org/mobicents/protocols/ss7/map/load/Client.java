@@ -172,7 +172,7 @@ public class Client extends TestHarness {
     }
 
     private void initTCAP() throws Exception {
-        this.tcapStack = new TCAPStackImpl(this.sccpStack.getSccpProvider(), SSN);
+        this.tcapStack = new TCAPStackImpl("Test", this.sccpStack.getSccpProvider(), SSN);
         this.tcapStack.setDialogIdleTimeout(60000);
         this.tcapStack.setInvokeTimeout(30000);
         this.tcapStack.setMaxDialogs(2000);
@@ -184,7 +184,7 @@ public class Client extends TestHarness {
         System.out.println("initMAP");
 
         // this.mapStack = new MAPStackImpl(this.sccpStack.getSccpProvider(), SSN);
-        this.mapStack = new MAPStackImpl(this.tcapStack.getProvider());
+        this.mapStack = new MAPStackImpl("Test", this.tcapStack.getProvider());
         this.mapProvider = this.mapStack.getMAPProvider();
 
         System.out.println("this.mapProvider = " + this.mapProvider);

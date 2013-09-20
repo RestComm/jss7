@@ -29,6 +29,13 @@ package org.mobicents.protocols.ss7.tcap.api;
 public interface TCAPStack {
 
     /**
+     * Returns the name of this stack
+     *
+     * @return
+     */
+    String getName();
+
+    /**
      * Returns stack provider.
      *
      * @return

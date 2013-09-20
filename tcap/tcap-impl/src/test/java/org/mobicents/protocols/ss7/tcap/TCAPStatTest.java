@@ -110,9 +110,9 @@ public class TCAPStatTest extends SccpHarness {
         peer1Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 8);
         peer2Address = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 8);
 
-        this.tcapStack1 = new TCAPStackImpl(this.sccpProvider1, 8);
+        this.tcapStack1 = new TCAPStackImpl("Test", this.sccpProvider1, 8);
         this.tcapStack1.setDoNotSendProtocolVersion(false);
-        this.tcapStack2 = new TCAPStackImpl(this.sccpProvider2, 8);
+        this.tcapStack2 = new TCAPStackImpl("Test", this.sccpProvider2, 8);
         this.tcapStack2.setDoNotSendProtocolVersion(false);
 
         this.tcapListenerWrapper = new TCAPListenerWrapper();

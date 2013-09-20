@@ -64,7 +64,7 @@ public class DialogIdRangeTest extends SccpHarness {
     public void setUp() throws Exception {
         super.setUp();
 
-        this.tcapStack1 = new TCAPStackImpl(this.sccpProvider1, 8);
+        this.tcapStack1 = new TCAPStackImpl("Test", this.sccpProvider1, 8);
 
         this.tcapStack1.start();
     }

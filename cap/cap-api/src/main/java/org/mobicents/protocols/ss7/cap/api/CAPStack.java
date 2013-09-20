@@ -31,6 +31,13 @@ import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
  */
 public interface CAPStack {
 
+    /**
+     * Returns the name of this stack
+     *
+     * @return
+     */
+    String getName();
+
     CAPProvider getCAPProvider();
 
     void stop();

@@ -159,7 +159,7 @@ public class Server extends TestHarness {
     }
 
     private void initMAP() throws Exception {
-        this.mapStack = new MAPStackImpl(this.sccpStack.getSccpProvider(), SSN);
+        this.mapStack = new MAPStackImpl("Test", this.sccpStack.getSccpProvider(), SSN);
         this.mapProvider = this.mapStack.getMAPProvider();
 
         this.mapProvider.addMAPDialogListener(this);
