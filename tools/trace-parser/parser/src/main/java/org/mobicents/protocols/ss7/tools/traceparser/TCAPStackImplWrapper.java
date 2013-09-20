@@ -34,7 +34,7 @@ public class TCAPStackImplWrapper extends TCAPStackImpl {
 
     // for tests only
     public TCAPStackImplWrapper(SccpProvider sccpProvider, int ssn) {
-        super(sccpProvider, ssn);
+        super("Trace-Parser", sccpProvider, ssn);
 
         this.tcapProvider = new TCAPProviderImplWrapper(sccpProvider, this, ssn);
     }

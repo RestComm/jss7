@@ -325,7 +325,7 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
             tcapCntProv.getIncomingRejectPerProblem("a1");
 
             if (this.par.getParseProtocol() == ParseProtocol.Map) {
-                this.mapProvider = new MAPProviderImpl(this.tcapProvider);
+                this.mapProvider = new MAPProviderImpl("Trace-Parser", this.tcapProvider);
 
                 this.mapProvider.getMAPServiceMobility().acivate();
                 this.mapProvider.getMAPServiceCallHandling().acivate();
@@ -346,7 +346,7 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
 
                 this.mapProvider.start();
             } else {
-                this.capProvider = new CAPProviderImpl(this.tcapProvider);
+                this.capProvider = new CAPProviderImpl("Trace-Parser", this.tcapProvider);
 
                 this.capProvider.getCAPServiceCircuitSwitchedCall().acivate();
                 this.capProvider.getCAPServiceGprs().acivate();
