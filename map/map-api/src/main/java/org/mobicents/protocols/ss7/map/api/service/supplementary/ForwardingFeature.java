@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.FTNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
@@ -39,7 +41,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  * @author sergey vetyutnev
  *
  */
-public interface ForwardingFeature {
+public interface ForwardingFeature extends Serializable {
 
     BasicServiceCode getBasicService();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  PDP-Address ::= OCTET STRING (SIZE (1..16)) -- Octets are coded according to TS 3GPP TS 29.060 [105]
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface PDPAddress {
+public interface PDPAddress extends Serializable {
 
     byte[] getData();
 

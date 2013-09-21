@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
+import java.io.Serializable;
+
 /**
  *
  ChosenIntegrityProtectionAlgorithm ::= OCTET STRING (SIZE (1)) -- Octet contains a complete IntegrityProtectionAlgorithm data
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
  * @author sergey vetyutnev
  *
  */
-public interface ChosenIntegrityProtectionAlgorithm {
+public interface ChosenIntegrityProtectionAlgorithm extends Serializable {
 
     int getData();
 

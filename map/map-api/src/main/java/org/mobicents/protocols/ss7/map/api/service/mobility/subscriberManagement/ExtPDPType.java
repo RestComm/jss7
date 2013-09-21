@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  Ext-PDP-Type ::= OCTET STRING (SIZE (2)) -- Octets are coded, similarly to PDP-Type, according to TS 3GPP TS 29.060 [105]. --
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface ExtPDPType {
+public interface ExtPDPType extends Serializable {
 
     byte[] getData();
 

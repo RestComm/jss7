@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
+import java.io.Serializable;
+
 /**
  *
  RNCId ::= OCTET STRING (SIZE (7)) -- The internal structure is defined as follows: -- octet 1 bits 4321 Mobile Country Code
@@ -35,7 +37,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
  * @author sergey vetyutnev
  *
  */
-public interface RNCId {
+public interface RNCId extends Serializable {
 
     byte[] getData();
 

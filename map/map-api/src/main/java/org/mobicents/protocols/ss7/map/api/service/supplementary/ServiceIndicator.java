@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
+import java.io.Serializable;
+
 /**
  *
  ServiceIndicator ::= BIT STRING { clir-invoked (0), camel-invoked (1)} (SIZE(2..32)) -- exception handling: -- bits 2 to 31
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
  * @author sergey vetyutnev
  *
  */
-public interface ServiceIndicator {
+public interface ServiceIndicator extends Serializable {
 
     boolean getClirInvoked();
 

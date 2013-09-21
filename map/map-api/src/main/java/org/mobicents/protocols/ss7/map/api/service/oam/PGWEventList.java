@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
+import java.io.Serializable;
+
 /**
  *
  PGW-EventList ::= BIT STRING { pdn-connectionCreation (0), pdn-connectionTermination (1),
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
  * @author sergey vetyutnev
  *
  */
-public interface PGWEventList {
+public interface PGWEventList extends Serializable {
 
     boolean getPdnConnectionCreation();
 

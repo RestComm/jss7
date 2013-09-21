@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 /**
  * ExternalSignalInfo ::= SEQUENCE { protocolId ProtocolId, signalInfo SignalInfo, extensionContainer ExtensionContainer
  * OPTIONAL, -- extensionContainer must not be used in version 2 ...}
@@ -29,7 +31,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author cristian veliscu
  *
  */
-public interface ExternalSignalInfo {
+public interface ExternalSignalInfo extends Serializable {
 
     ProtocolId getProtocolId();
 

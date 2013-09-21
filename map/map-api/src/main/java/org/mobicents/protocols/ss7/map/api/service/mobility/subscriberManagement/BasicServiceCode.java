@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  BasicServiceCode ::= CHOICE { bearerService [2] BearerServiceCode, teleservice [3] TeleserviceCode}
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface BasicServiceCode {
+public interface BasicServiceCode extends Serializable {
 
     BearerServiceCode getBearerService();
 

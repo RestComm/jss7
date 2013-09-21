@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.GlobalCellId;
 
@@ -36,7 +38,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.GlobalCellId;
  * @author sergey vetyutnev
  *
  */
-public interface NoteInternalHandoverRequest {
+public interface NoteInternalHandoverRequest extends Serializable {
 
     HandoverType getHandoverType();
 

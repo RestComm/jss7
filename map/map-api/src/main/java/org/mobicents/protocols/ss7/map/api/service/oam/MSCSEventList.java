@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
+import java.io.Serializable;
+
 /**
  *
  MSC-S-EventList ::= BIT STRING { mo-mtCall (0), mo-mt-sms (1), lu-imsiAttach-imsiDetach (2), handovers (3), ss (4)} (SIZE
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
  * @author sergey vetyutnev
  *
  */
-public interface MSCSEventList {
+public interface MSCSEventList extends Serializable {
 
     boolean getMoMtCall();
 

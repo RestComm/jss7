@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -34,7 +35,7 @@ import java.util.ArrayList;
  * @author sergey vetyutnev
  *
  */
-public interface ReportingPLMNList {
+public interface ReportingPLMNList extends Serializable {
 
     boolean getPlmnListPrioritized();
 

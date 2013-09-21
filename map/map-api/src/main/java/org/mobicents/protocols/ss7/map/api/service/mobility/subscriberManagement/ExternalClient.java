@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientExternalID;
 
@@ -36,7 +38,7 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientExternalID;
  * @author sergey vetyutnev
  *
  */
-public interface ExternalClient {
+public interface ExternalClient extends Serializable {
 
     LCSClientExternalID getClientIdentity();
 

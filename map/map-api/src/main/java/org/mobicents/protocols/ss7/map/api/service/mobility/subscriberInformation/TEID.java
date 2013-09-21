@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.io.Serializable;
+
 /**
  *
  TEID ::= OCTET STRING (SIZE (4)) -- This type carries the value part of the Tunnel Endpoint Identifier which is used to --
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
  * @author sergey vetyutnev
  *
  */
-public interface TEID {
+public interface TEID extends Serializable {
 
     byte[] getData();
 

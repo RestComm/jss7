@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
+import java.io.Serializable;
+
 /**
  * V 3: AuthenticationSetList ::= CHOICE { tripletList [0] TripletList, quintupletList [1] QuintupletList }
  *
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
  * @author sergey vetyutnev
  *
  */
-public interface AuthenticationSetList {
+public interface AuthenticationSetList extends Serializable {
 
     TripletList getTripletList();
 

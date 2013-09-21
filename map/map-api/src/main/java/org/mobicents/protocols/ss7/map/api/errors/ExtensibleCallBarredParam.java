@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.errors;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
@@ -34,7 +36,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  * @author sergey vetyutnev
  *
  */
-public interface ExtensibleCallBarredParam {
+public interface ExtensibleCallBarredParam extends Serializable {
 
     CallBarringCause getCallBarringCause();
 

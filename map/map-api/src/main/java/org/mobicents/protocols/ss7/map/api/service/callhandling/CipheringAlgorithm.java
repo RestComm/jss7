@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
+import java.io.Serializable;
+
 /**
  *
  CipheringAlgorithm ::= OCTET STRING (SIZE (1)) -- Refers to 'permitted algorithms' in 'encryption information' -- coded
@@ -34,7 +36,7 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
  * @author sergey vetyutnev
  *
  */
-public interface CipheringAlgorithm {
+public interface CipheringAlgorithm extends Serializable {
 
     int getData();
 

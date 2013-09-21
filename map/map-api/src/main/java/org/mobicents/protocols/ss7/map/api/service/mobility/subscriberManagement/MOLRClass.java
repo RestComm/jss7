@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 
@@ -34,7 +36,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
  * @author sergey vetyutnev
  *
  */
-public interface MOLRClass {
+public interface MOLRClass extends Serializable {
 
     SSCode getSsCode();
 

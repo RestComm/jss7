@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.io.Serializable;
+
 /**
  *
  ServingNode ::= BIT STRING { mme (0), sgsn (1)} (SIZE (2..8)) -- Other bits than listed above shall be discarded.
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
  * @author sergey vetyutnev
  *
  */
-public interface ServingNode {
+public interface ServingNode extends Serializable {
 
     boolean getMme();
 

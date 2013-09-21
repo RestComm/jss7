@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
+import java.io.Serializable;
+
 /**
  *
  AllowedGSM-Algorithms ::= OCTET STRING (SIZE (1)) -- internal structure is coded as Algorithm identifier octet from --
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
  * @author sergey vetyutnev
  *
  */
-public interface AllowedGSMAlgorithms {
+public interface AllowedGSMAlgorithms extends Serializable {
 
     int getData();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 /**
  * SignalInfo ::= OCTET STRING (SIZE (1..maxSignalInfoLength)) maxSignalInfoLength INTEGER ::= 200 -- This NamedValue represents
  * the theoretical maximum number of octets which is -- available to carry a single instance of the SignalInfo data type, --
@@ -32,6 +34,6 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author cristian veliscu
  *
  */
-public interface SignalInfo {
+public interface SignalInfo extends Serializable {
     byte[] getData();
 }

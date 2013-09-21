@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
+import java.io.Serializable;
+
 /**
  * ForwardingOptions ::= OCTET STRING (SIZE (1)) -- bit 8: notification to forwarding party -- 0 no notification -- 1
  * notification -- bit 7: redirecting presentation -- 0 no presentation -- 1 presentation -- bit 6: notification to calling
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
  * @author cristian veliscu
  *
  */
-public interface ForwardingOptions {
+public interface ForwardingOptions extends Serializable {
     int getData();
 
     boolean isNotificationToForwardingParty();

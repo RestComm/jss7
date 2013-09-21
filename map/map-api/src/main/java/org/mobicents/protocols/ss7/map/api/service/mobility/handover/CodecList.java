@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
@@ -35,7 +37,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  * @author sergey vetyutnev
  *
  */
-public interface CodecList {
+public interface CodecList extends Serializable {
 
     Codec getCodec1();
 

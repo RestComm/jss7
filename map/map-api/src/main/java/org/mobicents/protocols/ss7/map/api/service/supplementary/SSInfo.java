@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
+import java.io.Serializable;
+
 /**
  *
  SS-Info ::= CHOICE { forwardingInfo [0] ForwardingInfo, callBarringInfo [1] CallBarringInfo, ss-Data [3] SS-Data}
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
  * @author sergey vetyutnev
  *
  */
-public interface SSInfo {
+public interface SSInfo extends Serializable {
 
     ForwardingInfo getForwardingInfo();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.io.Serializable;
+
 /**
  *
  GeographicalInformation ::= OCTET STRING (SIZE (8))
@@ -36,7 +38,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
  * @author sergey vetyutnev
  *
  */
-public interface GeographicalInformation {
+public interface GeographicalInformation extends Serializable {
 
     byte[] getData();
 

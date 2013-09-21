@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.imei;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.asn.BitSetStrictLength;
 
 /**
@@ -32,7 +34,7 @@ import org.mobicents.protocols.asn.BitSetStrictLength;
  * @author sergey vetyutnev
  *
  */
-public interface UESBIIuA {
+public interface UESBIIuA extends Serializable {
 
     BitSetStrictLength getData();
 

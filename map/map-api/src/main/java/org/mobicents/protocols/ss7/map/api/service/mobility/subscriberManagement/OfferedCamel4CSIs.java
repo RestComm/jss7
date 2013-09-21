@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  * OfferedCamel4CSIs ::= BIT STRING { o-csi (0), d-csi (1), vt-csi (2), t-csi (3), mt-sms-csi (4), mg-csi (5), psi-enhancements
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface OfferedCamel4CSIs {
+public interface OfferedCamel4CSIs extends Serializable {
 
     boolean getOCsi();
 

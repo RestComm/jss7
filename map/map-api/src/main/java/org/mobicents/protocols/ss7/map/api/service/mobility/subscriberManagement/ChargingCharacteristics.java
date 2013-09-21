@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  ChargingCharacteristics ::= OCTET STRING (SIZE (2)) -- Octets are coded according to 3GPP TS 32.215.
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface ChargingCharacteristics {
+public interface ChargingCharacteristics extends Serializable {
 
     byte[] getData();
 

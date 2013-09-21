@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
+import java.io.Serializable;
+
 /**
  *
  TraceNE-TypeList ::= BIT STRING { msc-s (0), mgw (1), sgsn (2), ggsn (3), rnc (4), bm-sc (5) , mme (6), sgw (7), pgw (8), eNB
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
  * @author sergey vetyutnev
  *
  */
-public interface TraceNETypeList {
+public interface TraceNETypeList extends Serializable {
 
     boolean getMscS();
 

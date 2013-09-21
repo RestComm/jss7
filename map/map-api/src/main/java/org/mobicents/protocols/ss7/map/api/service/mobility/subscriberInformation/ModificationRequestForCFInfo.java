@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNSubaddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
@@ -43,7 +45,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
  * @author sergey vetyutnev
  *
  */
-public interface ModificationRequestForCFInfo {
+public interface ModificationRequestForCFInfo extends Serializable {
 
     SSCode getSsCode();
 

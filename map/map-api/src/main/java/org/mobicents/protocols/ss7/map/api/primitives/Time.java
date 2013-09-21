@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 /**
  *
  Time ::= OCTET STRING (SIZE (4)) -- Octets are coded according to IETF RFC 3588 [139]
@@ -41,7 +43,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface Time {
+public interface Time extends Serializable {
 
     byte[] getData();
 

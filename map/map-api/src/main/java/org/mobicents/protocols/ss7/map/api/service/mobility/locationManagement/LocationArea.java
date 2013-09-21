@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
 
 /**
@@ -33,7 +35,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.LAIFixedLength;
  * @author sergey vetyutnev
  *
  */
-public interface LocationArea {
+public interface LocationArea extends Serializable {
 
     LAIFixedLength getLAIFixedLength();
 

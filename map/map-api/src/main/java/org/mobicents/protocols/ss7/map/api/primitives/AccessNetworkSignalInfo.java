@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 /**
  *
  AccessNetworkSignalInfo ::= SEQUENCE { accessNetworkProtocolId AccessNetworkProtocolId, signalInfo LongSignalInfo, --
@@ -41,7 +43,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface AccessNetworkSignalInfo {
+public interface AccessNetworkSignalInfo extends Serializable {
 
     AccessNetworkProtocolId getAccessNetworkProtocolId();
 

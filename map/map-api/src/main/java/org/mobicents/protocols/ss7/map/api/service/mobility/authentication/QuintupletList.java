@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -32,7 +33,7 @@ import java.util.ArrayList;
  * @author sergey vetyutnev
  *
  */
-public interface QuintupletList {
+public interface QuintupletList extends Serializable {
 
     ArrayList<AuthenticationQuintuplet> getAuthenticationQuintuplets();
 

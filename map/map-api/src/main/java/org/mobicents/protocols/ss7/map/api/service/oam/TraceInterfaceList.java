@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
+import java.io.Serializable;
+
 /**
  *
  TraceInterfaceList ::= SEQUENCE { msc-s-List [0] MSC-S-InterfaceList OPTIONAL, mgw-List [1] MGW-InterfaceList OPTIONAL,
@@ -33,7 +35,7 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
  * @author sergey vetyutnev
  *
  */
-public interface TraceInterfaceList {
+public interface TraceInterfaceList extends Serializable {
 
     MSCSInterfaceList getMscSList();
 

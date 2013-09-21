@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.api.smstpdu;
 
 import java.io.OutputStream;
+import java.io.Serializable;
 
 import org.mobicents.protocols.ss7.map.api.MAPException;
 
@@ -57,7 +58,7 @@ Bits 3 2 1 0
  * @author sergey vetyutnev
  *
  */
-public interface AddressField {
+public interface AddressField extends Serializable {
 
     TypeOfNumber getTypeOfNumber();
 

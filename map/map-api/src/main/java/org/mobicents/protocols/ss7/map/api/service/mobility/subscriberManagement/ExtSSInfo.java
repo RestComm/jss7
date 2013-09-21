@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  Ext-SS-Info ::= CHOICE { forwardingInfo [0] Ext-ForwInfo, callBarringInfo [1] Ext-CallBarInfo, cug-Info [2] CUG-Info, ss-Data
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface ExtSSInfo {
+public interface ExtSSInfo extends Serializable {
 
     ExtForwInfo getForwardingInfo();
 

@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
@@ -53,7 +54,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.SSInfo;
  * @author sergey vetyutnev
  *
  */
-public interface SubscriberData {
+public interface SubscriberData extends Serializable {
 
     ISDNAddressString getMsisdn();
 

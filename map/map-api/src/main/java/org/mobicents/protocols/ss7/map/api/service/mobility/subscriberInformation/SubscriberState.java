@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.io.Serializable;
+
 /**
  *
  SubscriberState ::= CHOICE { assumedIdle [0] NULL, camelBusy [1] NULL, netDetNotReachable NotReachableReason,
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
  * @author sergey vetyutnev
  *
  */
-public interface SubscriberState {
+public interface SubscriberState extends Serializable {
 
     SubscriberStateChoice getSubscriberStateChoice();
 

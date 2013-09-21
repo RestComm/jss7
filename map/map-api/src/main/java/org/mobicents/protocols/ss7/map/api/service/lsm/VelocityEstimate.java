@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 /**
  *
  VelocityEstimate ::= OCTET STRING (SIZE (4..7)) -- Refers to Velocity description defined in 3GPP TS 23.032. -- This is
@@ -40,7 +42,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author sergey vetyutnev
  *
  */
-public interface VelocityEstimate {
+public interface VelocityEstimate extends Serializable {
 
     byte[] getData();
 

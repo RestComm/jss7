@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.PlmnId;
 
 /**
@@ -33,7 +35,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.PlmnId;
  * @author sergey vetyutnev
  *
  */
-public interface ReportingPLMN {
+public interface ReportingPLMN extends Serializable {
 
     PlmnId getPlmnId();
 

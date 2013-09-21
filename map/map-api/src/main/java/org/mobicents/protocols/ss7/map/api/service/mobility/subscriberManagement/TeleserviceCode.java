@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  TeleserviceCode ::= OCTET STRING (SIZE (1)) -- This type is used to represent the code identifying a single -- teleservice, a
@@ -35,7 +37,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface TeleserviceCode {
+public interface TeleserviceCode extends Serializable {
 
     int getData();
 

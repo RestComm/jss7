@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
+import java.io.Serializable;
+
 /**
  *
  AuthenticationSet ::= SEQUENCE { rand RAND, sres SRES, kc Kc, ...}
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
  * @author sergey vetyutnev
  *
  */
-public interface AuthenticationSet {
+public interface AuthenticationSet extends Serializable {
 
     byte[] getRand();
 

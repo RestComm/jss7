@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.io.Serializable;
+
 /**
  *
  MS-Classmark2 ::= OCTET STRING (SIZE (3)) -- This parameter carries the value part of the MS Classmark 2 IE defined in --
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
  * @author sergey vetyutnev
  *
  */
-public interface MSClassmark2 {
+public interface MSClassmark2 extends Serializable {
 
     byte[] getData();
 

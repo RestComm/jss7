@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
+import java.io.Serializable;
+
 /**
  *
  TraceType ::= INTEGER (0..255) -- Trace types are fully defined in 3GPP TS 52.008. [61]
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
  * @author sergey vetyutnev
  *
  */
-public interface TraceType {
+public interface TraceType extends Serializable {
 
     int getData();
 

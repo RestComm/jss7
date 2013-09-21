@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
@@ -39,7 +40,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  * @author sergey vetyutnev
  *
  */
-public interface CallForwardingData {
+public interface CallForwardingData extends Serializable {
 
     ArrayList<ExtForwFeature> getForwardingFeatureList();
 

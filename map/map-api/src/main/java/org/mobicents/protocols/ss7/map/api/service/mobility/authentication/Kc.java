@@ -21,6 +21,8 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
+import java.io.Serializable;
+
 /**
  *
  Kc ::= OCTET STRING (SIZE (8))
@@ -29,6 +31,6 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
  * @author Lasith Waruna Perera
  *
  */
-public interface Kc {
+public interface Kc extends Serializable {
     byte[] getData();
 }

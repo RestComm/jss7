@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 /**
  *
  ISDN-SubaddressString ::= OCTET STRING (SIZE (1..21)) -- This type is used to represent ISDN subaddresses. -- It is composed
@@ -51,7 +53,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface ISDNSubaddressString {
+public interface ISDNSubaddressString extends Serializable {
 
     byte[] getData();
 

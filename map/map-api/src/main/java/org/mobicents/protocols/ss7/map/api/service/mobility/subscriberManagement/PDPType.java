@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  PDP-Type ::= OCTET STRING (SIZE (2)) -- Octets are coded according to TS 3GPP TS 29.060 [105] -- Only the values PPP, IPv4
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface PDPType {
+public interface PDPType extends Serializable {
 
     byte[] getData();
 

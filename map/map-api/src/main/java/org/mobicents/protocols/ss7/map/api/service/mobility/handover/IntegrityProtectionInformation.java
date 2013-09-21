@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
+import java.io.Serializable;
+
 /**
  *
  IntegrityProtectionInformation ::= OCTET STRING (SIZE (18..maxNumOfIntegrityInfo)) -- Octets contain a complete
@@ -33,7 +35,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
  * @author sergey vetyutnev
  *
  */
-public interface IntegrityProtectionInformation {
+public interface IntegrityProtectionInformation extends Serializable {
 
     byte[] getData();
 

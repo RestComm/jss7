@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsTpdu;
 
@@ -31,7 +33,7 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.SmsTpdu;
  * @author sergey vetyutnev
  *
  */
-public interface SmsSignalInfo {
+public interface SmsSignalInfo extends Serializable {
 
     byte[] getData();
 

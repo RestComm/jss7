@@ -22,10 +22,12 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 /**
  * @author sergey vetyutnev
  */
-public interface MAPPrivateExtension {
+public interface MAPPrivateExtension extends Serializable {
 
     /**
      * Get the PrivateExtension element Object identifier

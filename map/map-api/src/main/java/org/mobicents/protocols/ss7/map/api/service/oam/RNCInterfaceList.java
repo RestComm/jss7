@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
+import java.io.Serializable;
+
 /**
  *
  RNC-InterfaceList ::= BIT STRING { iu (0), iur (1), iub (2), uu (3)} (SIZE (4..8)) -- Other bits than listed above shall be
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
  * @author sergey vetyutnev
  *
  */
-public interface RNCInterfaceList {
+public interface RNCInterfaceList extends Serializable {
 
     boolean getIu();
 

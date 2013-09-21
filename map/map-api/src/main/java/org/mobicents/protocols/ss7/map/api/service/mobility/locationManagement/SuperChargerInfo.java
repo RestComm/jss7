@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 
+import java.io.Serializable;
+
 /**
  *
  * SuperChargerInfo ::= CHOICE { sendSubscriberData [0] NULL, subscriberDataStored [1] AgeIndicator }
@@ -33,7 +35,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
  * @author sergey vetyutnev
  *
  */
-public interface SuperChargerInfo {
+public interface SuperChargerInfo extends Serializable {
 
     Boolean getSendSubscriberData();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
+import java.io.Serializable;
+
 /**
  *
  Codec ::= OCTET STRING (SIZE (1..4))
@@ -33,7 +35,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
  * @author sergey vetyutnev
  *
  */
-public interface Codec {
+public interface Codec extends Serializable {
 
     byte[] getData();
 

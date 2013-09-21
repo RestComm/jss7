@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 
+import java.io.Serializable;
+
 /**
  *
  SupportedFeatures::= BIT STRING { odb-all-apn (0), odb-HPLMN-APN (1), odb-VPLMN-APN (2), odb-all-og (3),
@@ -36,7 +38,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
  * @author sergey vetyutnev
  *
  */
-public interface SupportedFeatures {
+public interface SupportedFeatures extends Serializable {
 
     boolean getOdbAllApn();
 

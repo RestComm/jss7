@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 /**
  *
  PeriodicLDRInfo ::= SEQUENCE { reportingAmount ReportingAmount, reportingInterval ReportingInterval, ...} --
@@ -36,7 +38,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author sergey vetyutnev
  *
  */
-public interface PeriodicLDRInfo {
+public interface PeriodicLDRInfo extends Serializable {
 
     int getReportingAmount();
 

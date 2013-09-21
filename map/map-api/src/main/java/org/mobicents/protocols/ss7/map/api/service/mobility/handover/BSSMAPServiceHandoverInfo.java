@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
+import java.io.Serializable;
+
 /**
  *
  BSSMAP-ServiceHandoverInfo ::= SEQUENCE { bssmap-ServiceHandover BSSMAP-ServiceHandover, rab-Id RAB-Id, -- RAB Identity is
@@ -33,7 +35,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
  * @author sergey vetyutnev
  *
  */
-public interface BSSMAPServiceHandoverInfo {
+public interface BSSMAPServiceHandoverInfo extends Serializable {
 
     BSSMAPServiceHandover getBSSMAPServiceHandover();
 

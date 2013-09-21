@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdOrLAI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
@@ -51,7 +53,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  * @author sergey vetyutnev
  *
  */
-public interface LocationInformation {
+public interface LocationInformation extends Serializable {
 
     Integer getAgeOfLocationInformation();
 

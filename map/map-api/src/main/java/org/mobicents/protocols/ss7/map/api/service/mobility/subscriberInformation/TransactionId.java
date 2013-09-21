@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.io.Serializable;
+
 /**
  *
  TransactionId ::= OCTET STRING (SIZE (1..2)) -- This type carries the value part of the transaction identifier which is used
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
  * @author sergey vetyutnev
  *
  */
-public interface TransactionId {
+public interface TransactionId extends Serializable {
 
     byte[] getData();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 /**
  *
  PLMN-Id ::= OCTET STRING (SIZE (3)) -- The internal structure is defined as follows: -- octet 1 bits 4321 Mobile Country Code
@@ -33,7 +35,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface PlmnId {
+public interface PlmnId extends Serializable {
 
     byte[] getData();
 

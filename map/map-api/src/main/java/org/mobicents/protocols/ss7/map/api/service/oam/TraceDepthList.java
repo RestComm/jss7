@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
+import java.io.Serializable;
+
 /**
  *
  TraceDepthList ::= SEQUENCE { msc-s-TraceDepth [0] TraceDepth OPTIONAL, mgw-TraceDepth [1] TraceDepth OPTIONAL,
@@ -33,7 +35,7 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
  * @author sergey vetyutnev
  *
  */
-public interface TraceDepthList {
+public interface TraceDepthList extends Serializable {
 
     TraceDepth getMscSTraceDepth();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 /**
  * DeferredLocationEventType ::= BIT STRING { msAvailable (0) , enteringIntoArea (1), leavingFromArea (2), beingInsideArea (3) }
  * (SIZE (1..16)) -- beingInsideArea is always treated as oneTimeEvent regardless of the possible value -- of occurrenceInfo
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.lsm;
  * @author amit bhayani
  *
  */
-public interface DeferredLocationEventType {
+public interface DeferredLocationEventType extends Serializable {
 
     boolean getMsAvailable();
 

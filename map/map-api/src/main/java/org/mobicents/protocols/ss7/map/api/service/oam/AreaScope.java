@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.mobicents.protocols.ss7.map.api.primitives.GlobalCellId;
@@ -47,7 +48,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
  * @author sergey vetyutnev
  *
  */
-public interface AreaScope {
+public interface AreaScope extends Serializable {
 
     ArrayList<GlobalCellId> getCgiList();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APN;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.PDNGWIdentity;
@@ -40,7 +42,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  * @author sergey vetyutnev
  *
  */
-public interface PDNGWUpdate {
+public interface PDNGWUpdate extends Serializable {
 
     APN getAPN();
 

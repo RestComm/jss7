@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.FTNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNSubaddressString;
@@ -36,7 +38,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingOptio
  * @author cristian veliscu
  *
  */
-public interface ForwardingData {
+public interface ForwardingData extends Serializable {
      ISDNAddressString getForwardedToNumber();
 
      ISDNSubaddressString getForwardedToSubaddress(); // TODO: ISDNSubaddressString

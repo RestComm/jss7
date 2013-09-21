@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  LSAAttributes ::= OCTET STRING (SIZE (1)) -- Octets are coded according to TS 3GPP TS 48.008 [49]
@@ -39,7 +41,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface LSAAttributes {
+public interface LSAAttributes extends Serializable {
 
     int getData();
 

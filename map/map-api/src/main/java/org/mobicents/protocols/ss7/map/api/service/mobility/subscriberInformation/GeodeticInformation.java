@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.io.Serializable;
+
 /**
  *
  GeodeticInformation ::= OCTET STRING (SIZE (10)) -- Refers to Calling Geodetic Location defined in Q.763 (1999). -- Only the
@@ -34,7 +36,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
  * @author sergey vetyutnev
  *
  */
-public interface GeodeticInformation {
+public interface GeodeticInformation extends Serializable {
 
     byte[] getData();
 

@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
@@ -42,7 +43,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
  * @author sergey vetyutnev
  *
  */
-public interface DestinationNumberCriteria {
+public interface DestinationNumberCriteria extends Serializable {
 
     MatchType getMatchType();
 

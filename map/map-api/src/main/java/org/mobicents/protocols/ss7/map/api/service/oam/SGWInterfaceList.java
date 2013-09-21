@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
+import java.io.Serializable;
+
 /**
  *
  SGW-InterfaceList ::= BIT STRING { s4 (0), s5 (1), s8b (2), s11 (3), gxc (4)} (SIZE (5..8)) -- Other bits than listed above
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
  * @author sergey vetyutnev
  *
  */
-public interface SGWInterfaceList {
+public interface SGWInterfaceList extends Serializable {
 
     boolean gets4();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
+import java.io.Serializable;
+
 /**
  *
  ChannelType ::= octet STRING (SIZE (1..10)) -- concatenation of -- speech data indicator -- channel rate -- speech encoding
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
  * @author sergey vetyutnev
  *
  */
-public interface ChannelType {
+public interface ChannelType extends Serializable {
 
     byte[] getData();
 

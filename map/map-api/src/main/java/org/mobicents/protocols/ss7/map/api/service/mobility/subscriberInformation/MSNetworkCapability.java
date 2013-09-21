@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.io.Serializable;
+
 /**
  * MSNetworkCapability ::= OCTET STRING (SIZE (1..8)) -- This parameter carries the value part of the MS Network Capability IE
  * defined in -- 3GPP TS 24.008 [35].
@@ -29,6 +31,6 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
  * @author amit bhayani
  *
  */
-public interface MSNetworkCapability {
+public interface MSNetworkCapability extends Serializable {
     byte[] getData();
 }

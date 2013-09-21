@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  Ext-QoS-Subscribed ::= OCTET STRING (SIZE (1..9)) -- OCTET 1: -- Allocation/Retention Priority (This octet encodes each
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface ExtQoSSubscribed {
+public interface ExtQoSSubscribed extends Serializable {
 
     byte[] getData();
 

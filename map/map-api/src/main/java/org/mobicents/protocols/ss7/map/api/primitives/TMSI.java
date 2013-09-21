@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 /**
  *
  TMSI ::= OCTET STRING (SIZE (1..4))
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface TMSI {
+public interface TMSI extends Serializable {
 
     byte[] getData();
 

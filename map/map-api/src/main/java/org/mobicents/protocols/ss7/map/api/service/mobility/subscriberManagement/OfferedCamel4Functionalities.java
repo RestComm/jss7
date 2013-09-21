@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.asn.BitSetStrictLength;
 
 /**
@@ -37,7 +39,7 @@ import org.mobicents.protocols.asn.BitSetStrictLength;
  * @author sergey vetyutnev
  *
  */
-public interface OfferedCamel4Functionalities {
+public interface OfferedCamel4Functionalities extends Serializable {
 
     BitSetStrictLength getData();
 

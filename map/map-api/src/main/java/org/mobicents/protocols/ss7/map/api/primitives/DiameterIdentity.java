@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 /**
  *
  DiameterIdentity ::= OCTET STRING (SIZE(9..55)) -- content of DiameterIdentity is defined in IETF RFC 3588 [139]
@@ -43,7 +45,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface DiameterIdentity {
+public interface DiameterIdentity extends Serializable {
 
     byte[] getData();
 

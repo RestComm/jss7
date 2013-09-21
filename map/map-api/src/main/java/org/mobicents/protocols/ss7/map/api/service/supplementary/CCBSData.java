@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.ExternalSignalInfo;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 
@@ -34,7 +36,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
  * @author sergey vetyutnev
  *
  */
-public interface CCBSData {
+public interface CCBSData extends Serializable {
 
     CCBSFeature getCcbsFeature();
 

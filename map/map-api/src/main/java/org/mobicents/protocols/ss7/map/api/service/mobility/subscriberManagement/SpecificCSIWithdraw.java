@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  SpecificCSI-Withdraw ::= BIT STRING { o-csi (0), ss-csi (1), tif-csi (2), d-csi (3), vt-csi (4), mo-sms-csi (5), m-csi (6),
@@ -34,7 +36,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface SpecificCSIWithdraw {
+public interface SpecificCSIWithdraw extends Serializable {
 
     boolean getOCsi();
 

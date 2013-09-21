@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 
+import java.io.Serializable;
+
 /**
  *
  SupportedRAT-Types::= BIT STRING { utran (0), geran (1), gan (2), i-hspa-evolution (3), e-utran (4)} (SIZE (2..8)) --
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
  * @author sergey vetyutnev
  *
  */
-public interface SupportedRATTypes {
+public interface SupportedRATTypes extends Serializable {
 
     boolean getUtran();
 

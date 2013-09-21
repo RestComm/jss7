@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
+import java.io.Serializable;
+
 /**
  *
  PermittedEncryptionAlgorithms ::= OCTET STRING (SIZE (1..8)) -- Octets contain a complete PermittedEncryptionAlgorithms data
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
  * @author sergey vetyutnev
  *
  */
-public interface PermittedEncryptionAlgorithms {
+public interface PermittedEncryptionAlgorithms extends Serializable {
 
     byte[] getData();
 

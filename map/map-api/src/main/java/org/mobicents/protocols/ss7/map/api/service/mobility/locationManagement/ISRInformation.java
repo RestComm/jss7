@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 
+import java.io.Serializable;
+
 /**
  *
  ISR-Information::= BIT STRING { updateMME (0), cancelSGSN (1), initialAttachIndicator (2)} (SIZE (3..8)) -- exception
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
  * @author sergey vetyutnev
  *
  */
-public interface ISRInformation {
+public interface ISRInformation extends Serializable {
 
     boolean getUpdateMME();
 

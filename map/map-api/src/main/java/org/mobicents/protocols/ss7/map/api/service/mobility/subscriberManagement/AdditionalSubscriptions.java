@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  AdditionalSubscriptions ::= BIT STRING { privilegedUplinkRequest (0), emergencyUplinkRequest (1), emergencyReset (2)} (SIZE
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface AdditionalSubscriptions {
+public interface AdditionalSubscriptions extends Serializable {
 
     boolean getPrivilegedUplinkRequest();
 

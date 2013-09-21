@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  ODB-HPLMN-Data ::= BIT STRING { plmn-SpecificBarringType1 (0), plmn-SpecificBarringType2 (1), plmn-SpecificBarringType3 (2),
@@ -34,7 +36,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface ODBHPLMNData {
+public interface ODBHPLMNData extends Serializable {
 
     boolean getPlmnSpecificBarringType1();
 

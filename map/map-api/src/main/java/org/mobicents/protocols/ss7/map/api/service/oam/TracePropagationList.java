@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
+import java.io.Serializable;
+
 /**
  *
  TracePropagationList ::= SEQUENCE { traceReference [0] TraceReference OPTIONAL, traceType [1] TraceType OPTIONAL,
@@ -34,7 +36,7 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
  * @author sergey vetyutnev
  *
  */
-public interface TracePropagationList {
+public interface TracePropagationList extends Serializable {
 
     TraceReference getTraceReference();
 

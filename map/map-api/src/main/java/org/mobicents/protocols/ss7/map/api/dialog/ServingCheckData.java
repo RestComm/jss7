@@ -22,13 +22,15 @@
 
 package org.mobicents.protocols.ss7.map.api.dialog;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 
 /**
  * @author sergey vetyutnev
  *
  */
-public interface ServingCheckData {
+public interface ServingCheckData extends Serializable {
 
     ServingCheckResult getResult();
 

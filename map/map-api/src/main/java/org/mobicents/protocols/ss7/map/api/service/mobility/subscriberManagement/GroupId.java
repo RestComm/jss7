@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  GroupId ::= TBCD-STRING (SIZE (3)) -- When Group-Id is less than six characters in length, the TBCD filler (1111) -- is used
@@ -34,7 +36,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface GroupId {
+public interface GroupId extends Serializable {
 
     String getGroupId();
 

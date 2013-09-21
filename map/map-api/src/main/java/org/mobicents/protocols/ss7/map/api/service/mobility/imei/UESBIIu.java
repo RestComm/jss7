@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.imei;
 
+import java.io.Serializable;
+
 /**
  *
  UESBI-Iu ::= SEQUENCE { uesbi-IuA [0] UESBI-IuA OPTIONAL, uesbi-IuB [1] UESBI-IuB OPTIONAL, ...}
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.imei;
  * @author sergey vetyutnev
  *
  */
-public interface UESBIIu {
+public interface UESBIIu extends Serializable {
 
     UESBIIuA getUESBI_IuA();
 

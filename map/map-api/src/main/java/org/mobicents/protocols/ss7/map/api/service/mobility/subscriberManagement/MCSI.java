@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
@@ -43,7 +44,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  * @author sergey vetyutnev
  *
  */
-public interface MCSI {
+public interface MCSI extends Serializable {
 
     ArrayList<MMCode> getMobilityTriggers();
 

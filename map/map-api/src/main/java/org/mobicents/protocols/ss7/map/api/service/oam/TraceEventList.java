@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
+import java.io.Serializable;
+
 /**
  *
  TraceEventList ::= SEQUENCE { msc-s-List [0] MSC-S-EventList OPTIONAL, mgw-List [1] MGW-EventList OPTIONAL, sgsn-List [2]
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
  * @author sergey vetyutnev
  *
  */
-public interface TraceEventList {
+public interface TraceEventList extends Serializable {
 
     MSCSEventList getMscSList();
 

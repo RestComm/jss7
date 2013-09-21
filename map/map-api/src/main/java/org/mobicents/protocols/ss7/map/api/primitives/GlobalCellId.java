@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 /**
  *
  GlobalCellId ::= OCTET STRING (SIZE (5..7)) -- Refers to Cell Global Identification defined in TS 3GPP TS 23.003 [17]. -- The
@@ -36,7 +38,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface GlobalCellId {
+public interface GlobalCellId extends Serializable {
 
     byte[] getData();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 /**
  * ASCI-CallReference ::= TBCD-STRING (SIZE (1..8)) -- digits of VGCS/VBS-area,Group-ID are concatenated in this order if there
  * is a -- VGCS/VBS-area.
@@ -35,7 +37,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface ASCICallReference {
+public interface ASCICallReference extends Serializable {
 
     String getData();
 

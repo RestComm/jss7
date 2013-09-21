@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
+import java.io.Serializable;
+
 /**
  *
  * Re-synchronisationInfo ::= SEQUENCE { rand RAND, auts AUTS, ...}
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
  * @author sergey vetyutnev
  *
  */
-public interface ReSynchronisationInfo {
+public interface ReSynchronisationInfo extends Serializable {
 
     byte[] getRand();
 

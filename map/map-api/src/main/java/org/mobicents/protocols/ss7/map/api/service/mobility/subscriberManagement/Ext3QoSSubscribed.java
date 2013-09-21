@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  Ext3-QoS-Subscribed ::= OCTET STRING (SIZE (1..2)) -- Octets 1-2 are coded according to 3GPP TS 24.008 [35] Quality of
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface Ext3QoSSubscribed {
+public interface Ext3QoSSubscribed extends Serializable {
 
     byte[] getData();
 

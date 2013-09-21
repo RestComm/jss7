@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
@@ -39,7 +40,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  * @author sergey vetyutnev
  *
  */
-public interface SGSNCAMELSubscriptionInfo {
+public interface SGSNCAMELSubscriptionInfo extends Serializable {
 
     GPRSCSI getGprsCsi();
 

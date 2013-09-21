@@ -21,6 +21,8 @@
  */
 package org.mobicents.protocols.ss7.map.api.smstpdu;
 
+import java.io.Serializable;
+
 /**
  * <p>
  * The TP-Status field indicates the status of a previously submitted SMS-SUBMIT and certain SMS COMMANDS for which a Status
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.smstpdu;
  * @author amit bhayani
  *
  */
-public interface Status {
+public interface Status extends Serializable {
 
     /**
      * Short message transaction completed

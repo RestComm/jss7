@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
+import java.io.Serializable;
+
 /**
  *
  GGSN-EventList ::= BIT STRING { pdpContext (0), mbmsContext (1)} (SIZE (2..8)) -- Other bits than listed above shall be
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
  * @author sergey vetyutnev
  *
  */
-public interface GGSNEventList {
+public interface GGSNEventList extends Serializable {
 
     boolean getPdpContext();
 

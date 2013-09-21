@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 
 /**
@@ -33,7 +35,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
  * @author sergey vetyutnev
  *
  */
-public interface ADDInfo {
+public interface ADDInfo extends Serializable {
 
     IMEI getImeisv();
 

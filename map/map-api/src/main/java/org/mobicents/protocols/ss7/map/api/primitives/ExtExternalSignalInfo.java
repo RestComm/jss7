@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 /**
  * <pre>
  *  Ext-ExternalSignalInfo ::= SEQUENCE {
@@ -37,7 +39,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author cristian veliscu
  *
  */
-public interface ExtExternalSignalInfo {
+public interface ExtExternalSignalInfo extends Serializable {
 
     ExtProtocolId getExtProtocolId();
 

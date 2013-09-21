@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  FQDN ::= OCTET STRING (SIZE (9..255))
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface FQDN {
+public interface FQDN extends Serializable {
 
     byte[] getData();
 

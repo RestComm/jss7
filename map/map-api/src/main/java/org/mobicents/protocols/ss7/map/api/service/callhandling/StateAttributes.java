@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
+import java.io.Serializable;
+
 /**
  *
  StateAttributes ::= SEQUENCE { downlinkAttached [5] NULL OPTIONAL, uplinkAttached [6] NULL OPTIONAL, dualCommunication [7]
@@ -33,7 +35,7 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
  * @author sergey vetyutnev
  *
  */
-public interface StateAttributes {
+public interface StateAttributes extends Serializable {
 
     boolean getDownlinkAttached();
 

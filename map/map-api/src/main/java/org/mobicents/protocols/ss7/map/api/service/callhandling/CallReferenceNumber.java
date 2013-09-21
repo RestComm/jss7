@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
+import java.io.Serializable;
+
 /**
  *
  CallReferenceNumber ::= OCTET STRING (SIZE (1..8))
@@ -39,7 +41,7 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
  * @author sergey vetyutnev
  *
  */
-public interface CallReferenceNumber {
+public interface CallReferenceNumber extends Serializable {
 
     byte[] getData();
 

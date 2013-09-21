@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.supplementary;
 
+import java.io.Serializable;
+
 /**
  *
  SS-Code ::= OCTET STRING (SIZE (1)) -- This type is used to represent the code identifying a single -- supplementary service,
@@ -34,7 +36,7 @@ package org.mobicents.protocols.ss7.map.api.service.supplementary;
  * @author sergey vetyutnev
  *
  */
-public interface SSCode {
+public interface SSCode extends Serializable {
 
     int getData();
 

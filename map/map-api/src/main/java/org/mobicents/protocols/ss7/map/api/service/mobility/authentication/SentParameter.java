@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 
 /**
@@ -35,7 +37,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
  * @author sergey vetyutnev
  *
  */
-public interface SentParameter {
+public interface SentParameter extends Serializable {
 
     IMSI getImsu();
 

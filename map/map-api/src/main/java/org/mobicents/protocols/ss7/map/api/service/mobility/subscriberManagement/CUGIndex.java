@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  CUG-Index ::= INTEGER (0..32767) -- The internal structure is defined in ETS 300 138.
@@ -29,7 +31,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface CUGIndex {
+public interface CUGIndex extends Serializable {
 
     int getData();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.io.Serializable;
+
 /**
  *
  E-UTRAN-CGI ::= OCTET STRING (SIZE (7)) -- Octets are coded as described in 3GPP TS 29.118.
@@ -41,7 +43,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformati
  * @author sergey vetyutnev
  *
  */
-public interface EUtranCgi {
+public interface EUtranCgi extends Serializable {
 
     byte[] getData();
 

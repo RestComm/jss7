@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
+import java.io.Serializable;
+
 /**
  *
  MME-EventList ::= BIT STRING { ue-initiatedPDNconectivityRequest (0), serviceRequestts (1),
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
  * @author sergey vetyutnev
  *
  */
-public interface MMEEventList {
+public interface MMEEventList extends Serializable {
 
     boolean getUeInitiatedPDNconectivityRequest();
 

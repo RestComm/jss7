@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
+import java.io.Serializable;
+
 /**
  *
  ReportingTrigger ::= OCTET STRING (SIZE (1)) -- Octet is coded as described in 3GPP TS 32.422.
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
  * @author sergey vetyutnev
  *
  */
-public interface ReportingTrigger {
+public interface ReportingTrigger extends Serializable {
 
     int getData();
 

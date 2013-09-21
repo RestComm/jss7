@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
+import java.io.Serializable;
+
 /**
  *
  MME-InterfaceList ::= BIT STRING { s1-mme (0), s3 (1), s6a (2), s10 (3), s11 (4)} (SIZE (5..8)) -- Other bits than listed
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
  * @author sergey vetyutnev
  *
  */
-public interface MMEInterfaceList {
+public interface MMEInterfaceList extends Serializable {
 
     boolean getS1Mme();
 

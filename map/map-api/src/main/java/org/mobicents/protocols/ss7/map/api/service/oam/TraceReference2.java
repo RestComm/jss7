@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
+import java.io.Serializable;
+
 /**
  *
  TraceReference2 ::= OCTET STRING (SIZE (3))
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
  * @author sergey vetyutnev
  *
  */
-public interface TraceReference2 {
+public interface TraceReference2 extends Serializable {
 
     byte[] getData();
 

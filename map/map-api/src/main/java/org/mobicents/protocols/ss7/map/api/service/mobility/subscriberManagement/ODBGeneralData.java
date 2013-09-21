@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  ODB-GeneralData ::= BIT STRING { allOG-CallsBarred (0), internationalOGCallsBarred (1),
@@ -43,7 +45,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface ODBGeneralData {
+public interface ODBGeneralData extends Serializable {
 
     boolean getAllOGCallsBarred();
 

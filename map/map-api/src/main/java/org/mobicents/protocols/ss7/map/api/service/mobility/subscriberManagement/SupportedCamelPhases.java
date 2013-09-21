@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  * SupportedCamelPhases ::= BIT STRING { phase1 (0), phase2 (1), phase3 (2), phase4 (3)} (SIZE (1..16)) -- A node shall mark in
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface SupportedCamelPhases {
+public interface SupportedCamelPhases extends Serializable {
 
     boolean getPhase1Supported();
 

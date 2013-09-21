@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
+import java.io.Serializable;
+
 /**
  *
  AoIPCodec ::= OCTET STRING (SIZE (1..3))
@@ -34,7 +36,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
  * @author sergey vetyutnev
  *
  */
-public interface AoIPCodec {
+public interface AoIPCodec extends Serializable {
 
     byte[] getData();
 

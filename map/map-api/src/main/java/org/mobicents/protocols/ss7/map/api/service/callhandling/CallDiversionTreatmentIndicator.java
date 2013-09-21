@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
+import java.io.Serializable;
+
 /**
  * CallDiversionTreatmentIndicator ::= OCTET STRING (SIZE(1)) -- callDiversionAllowed (xxxx xx01) -- callDiversionNotAllowed
  * (xxxx xx10) -- network default is call diversion allowed
@@ -29,7 +31,7 @@ package org.mobicents.protocols.ss7.map.api.service.callhandling;
  * @author cristian veliscu
  *
  */
-public interface CallDiversionTreatmentIndicator {
+public interface CallDiversionTreatmentIndicator extends Serializable {
 
     int getData();
 

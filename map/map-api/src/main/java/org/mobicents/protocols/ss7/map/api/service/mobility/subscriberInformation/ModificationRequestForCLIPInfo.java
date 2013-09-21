@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSStatus;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.OverrideCategory;
@@ -36,7 +38,7 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.OverrideCategor
  * @author sergey vetyutnev
  *
  */
-public interface ModificationRequestForCLIPInfo {
+public interface ModificationRequestForCLIPInfo extends Serializable {
 
     ExtSSStatus getSsStatus();
 

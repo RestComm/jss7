@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  AccessRestrictionData ::= BIT STRING { utranNotAllowed (0), geranNotAllowed (1), ganNotAllowed (2),
@@ -34,7 +36,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface AccessRestrictionData {
+public interface AccessRestrictionData extends Serializable {
 
     boolean getUtranNotAllowed();
 

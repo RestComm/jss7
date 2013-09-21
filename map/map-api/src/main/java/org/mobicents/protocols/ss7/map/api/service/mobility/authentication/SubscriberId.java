@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.TMSI;
 
@@ -33,7 +35,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.TMSI;
  * @author sergey vetyutnev
  *
  */
-public interface SubscriberId {
+public interface SubscriberId extends Serializable {
 
     IMSI getImsi();
 

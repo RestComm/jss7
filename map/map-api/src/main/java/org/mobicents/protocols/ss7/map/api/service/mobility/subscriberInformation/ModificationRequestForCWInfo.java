@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSStatus;
@@ -36,7 +38,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  * @author sergey vetyutnev
  *
  */
-public interface ModificationRequestForCWInfo {
+public interface ModificationRequestForCWInfo extends Serializable {
 
     ExtBasicServiceCode getBasicService();
 

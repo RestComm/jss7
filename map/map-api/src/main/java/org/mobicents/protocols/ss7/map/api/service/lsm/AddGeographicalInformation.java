@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TypeOfShape;
 
 /**
@@ -43,7 +45,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
  * @author sergey vetyutnev
  *
  */
-public interface AddGeographicalInformation {
+public interface AddGeographicalInformation extends Serializable {
 
     byte[] getData();
 

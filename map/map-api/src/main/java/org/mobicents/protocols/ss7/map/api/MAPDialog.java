@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.dialog.MAPDialogState;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.Reason;
@@ -41,7 +43,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
  * @author amit bhayani
  *
  */
-public interface MAPDialog {
+public interface MAPDialog extends Serializable {
 
     int _Timer_s = 10000;
     int _Timer_m = 30000;

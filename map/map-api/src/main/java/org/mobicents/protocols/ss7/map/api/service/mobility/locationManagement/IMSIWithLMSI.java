@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 
@@ -33,7 +35,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
  * @author sergey vetyutnev
  *
  */
-public interface IMSIWithLMSI {
+public interface IMSIWithLMSI extends Serializable {
 
     IMSI getImsi();
 

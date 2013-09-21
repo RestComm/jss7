@@ -21,6 +21,8 @@
  */
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
+import java.io.Serializable;
+
 /**
  *
  Cksn ::= OCTET STRING (SIZE (1)) -- The internal structure is defined in 3GPP TS 24.008
@@ -29,6 +31,6 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
  * @author Lasith Waruna Perera
  *
  */
-public interface Cksn {
+public interface Cksn extends Serializable {
     int getData();
 }

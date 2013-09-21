@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
 
+import java.io.Serializable;
+
 /**
  *
  EPS-Info ::= CHOICE{ pdn-gw-update [0] PDN-GW-Update, isr-Information [1] ISR-Information }
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement;
  * @author sergey vetyutnev
  *
  */
-public interface EPSInfo {
+public interface EPSInfo extends Serializable {
 
     PDNGWUpdate getPndGwUpdate();
 

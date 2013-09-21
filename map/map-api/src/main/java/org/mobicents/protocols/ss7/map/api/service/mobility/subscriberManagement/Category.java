@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  Category ::= OCTET STRING (SIZE (1)) -- The internal structure is defined in ITU-T Rec Q.763.
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface Category {
+public interface Category extends Serializable {
 
     int getData();
 

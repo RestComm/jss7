@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
+import java.io.Serializable;
+
 /**
  *
  RadioResource ::= SEQUENCE { radioResourceInformation RadioResourceInformation, rab-Id RAB-Id, -- RAB Identity is needed to
@@ -33,7 +35,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
  * @author sergey vetyutnev
  *
  */
-public interface RadioResource {
+public interface RadioResource extends Serializable {
 
     RadioResourceInformation getRadioResourceInformation();
 

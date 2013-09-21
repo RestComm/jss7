@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  * CUG-Interlock ::= OCTET STRING (SIZE (4))
  *
@@ -35,6 +37,6 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author cristian veliscu
  *
  */
-public interface CUGInterlock {
+public interface CUGInterlock extends Serializable {
     byte[] getData();
 }

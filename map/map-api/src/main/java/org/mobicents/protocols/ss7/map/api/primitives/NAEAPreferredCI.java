@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 /**
  *
  NAEA-PreferredCI ::= SEQUENCE { naea-PreferredCIC [0] NAEA-CIC, extensionContainer [1] ExtensionContainer OPTIONAL, ...}
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface NAEAPreferredCI {
+public interface NAEAPreferredCI extends Serializable {
 
     NAEACIC getNaeaPreferredCIC();
 

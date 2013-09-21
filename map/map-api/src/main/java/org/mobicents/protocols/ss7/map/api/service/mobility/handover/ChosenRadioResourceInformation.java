@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
+import java.io.Serializable;
+
 /**
  *
  ChosenRadioResourceInformation ::= SEQUENCE { chosenChannelInfo [0] ChosenChannelInfo OPTIONAL, chosenSpeechVersion [1]
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
  * @author sergey vetyutnev
  *
  */
-public interface ChosenRadioResourceInformation {
+public interface ChosenRadioResourceInformation extends Serializable {
 
     ChosenChannelInfo getChosenChannelInfo();
 

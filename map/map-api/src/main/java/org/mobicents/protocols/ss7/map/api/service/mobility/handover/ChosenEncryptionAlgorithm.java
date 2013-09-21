@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
+import java.io.Serializable;
+
 /**
  *
  ChosenEncryptionAlgorithm ::= OCTET STRING (SIZE (1)) -- Octet contains a complete EncryptionAlgorithm data type -- as
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
  * @author sergey vetyutnev
  *
  */
-public interface ChosenEncryptionAlgorithm {
+public interface ChosenEncryptionAlgorithm extends Serializable {
 
     int getData();
 

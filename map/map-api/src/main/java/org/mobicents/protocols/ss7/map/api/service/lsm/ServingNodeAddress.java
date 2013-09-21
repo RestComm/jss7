@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.DiameterIdentity;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 
@@ -34,7 +36,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
  * @author sergey vetyutnev
  *
  */
-public interface ServingNodeAddress {
+public interface ServingNodeAddress extends Serializable {
 
     ISDNAddressString getMscNumber();
 

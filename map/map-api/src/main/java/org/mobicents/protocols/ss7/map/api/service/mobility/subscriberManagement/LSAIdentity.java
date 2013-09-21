@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  * <pre>
  * LSAIdentity ::= OCTET STRING (SIZE (3))
@@ -47,7 +49,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface LSAIdentity {
+public interface LSAIdentity extends Serializable {
 
     byte[] getData();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.primitives;
 
+import java.io.Serializable;
+
 /**
  *
  NAEA-CIC ::= OCTET STRING (SIZE (3)) -- The internal structure is defined by the Carrier Identification -- parameter in ANSI
@@ -33,7 +35,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface NAEACIC {
+public interface NAEACIC extends Serializable {
 
     byte[] getData();
 

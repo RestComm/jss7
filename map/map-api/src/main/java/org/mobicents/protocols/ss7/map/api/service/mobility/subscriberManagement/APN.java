@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement;
 
+import java.io.Serializable;
+
 /**
  *
  APN ::= OCTET STRING (SIZE (2..63)) -- Octets are coded according to TS 3GPP TS 23.003 [17]
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagemen
  * @author sergey vetyutnev
  *
  */
-public interface APN {
+public interface APN extends Serializable {
 
     byte[] getData();
 

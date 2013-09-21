@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.lsm;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.MAPException;
 
 /**
@@ -37,7 +39,7 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
  * @author sergey vetyutnev
  *
  */
-public interface AreaIdentification {
+public interface AreaIdentification extends Serializable {
 
     byte[] getData();
 

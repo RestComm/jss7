@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -36,7 +37,7 @@ import java.util.ArrayList;
  * @author sergey vetyutnev
  *
  */
-public interface PSSubscriberState {
+public interface PSSubscriberState extends Serializable {
 
     PSSubscriberStateChoice getChoice();
 

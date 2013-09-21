@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.oam;
 
+import java.io.Serializable;
+
 /**
  *
  SGSN-InterfaceList ::= BIT STRING { gb (0), iu (1), gn (2), map-gr (3), map-gd (4), map-gf (5), gs (6), ge (7), s3 (8), s4
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.oam;
  * @author sergey vetyutnev
  *
  */
-public interface SGSNInterfaceList {
+public interface SGSNInterfaceList extends Serializable {
 
     boolean getGb();
 

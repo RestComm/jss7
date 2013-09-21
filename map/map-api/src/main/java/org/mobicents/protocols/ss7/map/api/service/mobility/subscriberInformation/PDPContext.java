@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APN;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APNOIReplacement;
@@ -71,7 +73,7 @@ PDP-Context ::= SEQUENCE {
  * @author sergey vetyutnev
  *
  */
-public interface PDPContext {
+public interface PDPContext extends Serializable {
 
     int getPDPContextId();
 

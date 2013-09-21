@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
 
+import java.io.Serializable;
+
 /**
  *
  UMTS-SecurityContextData ::= SEQUENCE { ck CK, ik IK, ksi KSI, ... }
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.authentication;
  * @author sergey vetyutnev
  *
  */
-public interface UMTSSecurityContextData {
+public interface UMTSSecurityContextData extends Serializable {
 
     CK getCK();
 

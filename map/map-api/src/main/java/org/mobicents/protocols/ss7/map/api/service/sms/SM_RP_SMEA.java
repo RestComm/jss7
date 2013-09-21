@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.smstpdu.AddressField;
 
@@ -33,7 +35,7 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.AddressField;
  * @author sergey vetyutnev
  *
  */
-public interface SM_RP_SMEA {
+public interface SM_RP_SMEA extends Serializable {
 
     byte[] getData();
 

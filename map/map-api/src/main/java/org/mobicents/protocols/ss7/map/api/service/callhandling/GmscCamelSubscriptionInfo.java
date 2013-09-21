@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
@@ -45,7 +46,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  * @author sergey vetyutnev
  *
  */
-public interface GmscCamelSubscriptionInfo {
+public interface GmscCamelSubscriptionInfo extends Serializable {
 
      TCSI getTCsi();
 

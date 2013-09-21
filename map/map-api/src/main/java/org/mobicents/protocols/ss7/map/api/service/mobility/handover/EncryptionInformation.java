@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
+import java.io.Serializable;
+
 /**
  *
  EncryptionInformation ::= OCTET STRING (SIZE (18..maxNumOfEncryptionInfo)) -- Octets contain a complete EncryptionInformation
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
  * @author sergey vetyutnev
  *
  */
-public interface EncryptionInformation {
+public interface EncryptionInformation extends Serializable {
 
     byte[] getData();
 

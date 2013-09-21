@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
 
+import java.io.Serializable;
+
 /**
  *
  RadioResourceInformation ::= OCTET STRING (SIZE (3..13)) -- Octets are coded according the Channel Type information element
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.map.api.service.mobility.handover;
  * @author sergey vetyutnev
  *
  */
-public interface RadioResourceInformation {
+public interface RadioResourceInformation extends Serializable {
 
     byte[] getData();
 
