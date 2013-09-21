@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.gap;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InformationToSend;
 
@@ -34,7 +36,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
  * @author sergey vetyutnev
  *
  */
-public interface GapTreatment {
+public interface GapTreatment extends Serializable {
 
     InformationToSend getInformationToSend();
 

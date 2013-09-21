@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  AccessPointName {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE( bound.&minAccessPointNameLength ..
@@ -37,7 +39,7 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface AccessPointName {
+public interface AccessPointName extends Serializable {
 
     byte[] getData();
 

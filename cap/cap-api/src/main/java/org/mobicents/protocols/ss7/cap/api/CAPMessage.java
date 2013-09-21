@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api;
 
+import java.io.Serializable;
+
 
 /**
  * This is super interface for all service message in CAP
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.cap.api;
  * @author sergey vetyutnev
  *
  */
-public interface CAPMessage {
+public interface CAPMessage extends Serializable {
 
      long getInvokeId();
 

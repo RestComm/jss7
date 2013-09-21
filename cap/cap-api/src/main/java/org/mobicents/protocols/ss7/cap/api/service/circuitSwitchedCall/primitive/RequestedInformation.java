@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 import org.mobicents.protocols.ss7.cap.api.primitives.DateAndTime;
 
@@ -40,7 +42,7 @@ import org.mobicents.protocols.ss7.cap.api.primitives.DateAndTime;
  * @author sergey vetyutnev
  *
  */
-public interface RequestedInformation {
+public interface RequestedInformation extends Serializable {
 
     RequestedInformationType getRequestedInformationType();
 

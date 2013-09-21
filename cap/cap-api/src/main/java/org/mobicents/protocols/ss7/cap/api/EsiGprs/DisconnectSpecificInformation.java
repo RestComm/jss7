@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiGprs;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.InitiatingEntity;
 
 /**
@@ -33,7 +35,7 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.InitiatingEnti
  * @author sergey vetyutnev
  *
  */
-public interface DisconnectSpecificInformation {
+public interface DisconnectSpecificInformation extends Serializable {
 
     InitiatingEntity getInitiatingEntity();
 

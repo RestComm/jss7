@@ -22,13 +22,15 @@
 
 package org.mobicents.protocols.ss7.cap.api.errors;
 
+import java.io.Serializable;
+
 /**
  * Base class of MAP ReturnError messages
  *
  * @author sergey vetyutnev
  *
  */
-public interface CAPErrorMessage {
+public interface CAPErrorMessage extends Serializable {
 
     Long getErrorCode();
 

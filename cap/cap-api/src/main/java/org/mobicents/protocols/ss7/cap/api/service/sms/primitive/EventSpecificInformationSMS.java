@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.EsiSms.OSmsFailureSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiSms.OSmsSubmissionSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiSms.TSmsDeliverySpecificInfo;
@@ -37,7 +39,7 @@ import org.mobicents.protocols.ss7.cap.api.EsiSms.TSmsFailureSpecificInfo;
  * @author sergey vetyutnev
  *
  */
-public interface EventSpecificInformationSMS {
+public interface EventSpecificInformationSMS extends Serializable {
 
     OSmsFailureSpecificInfo getOSmsFailureSpecificInfo();
 

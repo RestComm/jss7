@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  ElapsedTime ::= CHOICE { timeGPRSIfNoTariffSwitch [0] INTEGER (0..86400), timeGPRSIfTariffSwitch [1] SEQUENCE {
@@ -33,7 +35,7 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface ElapsedTime {
+public interface ElapsedTime extends Serializable {
 
     Integer getTimeGPRSIfNoTariffSwitch();
 

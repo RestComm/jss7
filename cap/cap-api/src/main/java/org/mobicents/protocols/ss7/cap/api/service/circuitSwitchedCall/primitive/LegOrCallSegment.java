@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 
 /**
@@ -34,7 +36,7 @@ import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
  * @author sergey vetyutnev
  *
  */
-public interface LegOrCallSegment {
+public interface LegOrCallSegment extends Serializable {
 
     Integer getCallSegmentID();
 

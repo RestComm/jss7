@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.primitives;
 
+import java.io.Serializable;
+
 /**
  *
  BurstList ::= SEQUENCE { warningPeriod [0] INTEGER (1..1200) DEFAULT 30, bursts [1] Burst, ... } -- warningPeriod is measured
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.cap.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface BurstList {
+public interface BurstList extends Serializable {
 
     int getWarningPeriod();
 

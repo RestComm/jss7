@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  date [3] OCTET STRING (SIZE(4)), -- YYYYMMDD, BCD coded
@@ -37,7 +39,7 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * @author sergey vetyutnev
  *
  */
-public interface VariablePartDate {
+public interface VariablePartDate extends Serializable {
 
     byte[] getData();
 

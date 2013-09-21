@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
+import java.io.Serializable;
+
 /**
  *
  MetDPCriterionAlt {PARAMETERS-BOUND : bound} ::= SEQUENCE { ... }
@@ -30,6 +32,6 @@ package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
  * @author sergey vetyutnev
  *
  */
-public interface MetDPCriterionAlt {
+public interface MetDPCriterionAlt extends Serializable {
 
 }

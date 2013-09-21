@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
+import java.io.Serializable;
+
 /**
  *
  ChargeIndicator ::= OCTET STRING (SIZE (1)) -- As specified in ITU-T Recommendation Q.763 as follows: -- no indication 'xxxx
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
  * @author sergey vetyutnev
  *
  */
-public interface ChargeIndicator {
+public interface ChargeIndicator extends Serializable {
 
     ChargeIndicatorValue getData();
 

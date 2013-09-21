@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  Tone ::= SEQUENCE { toneID [0] Integer4, duration [1] Integer4 OPTIONAL, ... } -- The duration specifies the length of the
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * @author sergey vetyutnev
  *
  */
-public interface Tone {
+public interface Tone extends Serializable {
 
     int getToneID();
 

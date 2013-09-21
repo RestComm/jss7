@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  DpSpecificCriteriaAlt {PARAMETERS-BOUND : bound} ::= SEQUENCE { ..., changeOfPositionControlInfo [0]
@@ -33,7 +35,7 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * @author sergey vetyutnev
  *
  */
-public interface DpSpecificCriteriaAlt {
+public interface DpSpecificCriteriaAlt extends Serializable {
 
     ChangeOfLocation[] getChangeOfPositionControlInfo();
 

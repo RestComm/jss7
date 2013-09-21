@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.isup;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 
@@ -40,7 +42,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
  * @author sergey vetyutnev
  *
  */
-public interface GenericNumberCap {
+public interface GenericNumberCap extends Serializable {
 
     byte[] getData();
 

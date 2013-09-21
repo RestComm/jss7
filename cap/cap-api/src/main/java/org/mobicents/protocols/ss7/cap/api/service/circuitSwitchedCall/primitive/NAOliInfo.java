@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  NAOliInfo ::= OCTET STRING (SIZE (1)) -- NA Oli information takes the same value as defined in ANSI T1.113-1995 [92] -- e.g.
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * @author sergey vetyutnev
  *
  */
-public interface NAOliInfo {
+public interface NAOliInfo extends Serializable {
 
     int getData();
 

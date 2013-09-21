@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.primitives;
 
+import java.io.Serializable;
+
 /**
  *
  ExtensionField ::= SEQUENCE {
@@ -37,7 +39,7 @@ package org.mobicents.protocols.ss7.cap.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface ExtensionField {
+public interface ExtensionField extends Serializable {
 
     Integer getLocalCode();
 

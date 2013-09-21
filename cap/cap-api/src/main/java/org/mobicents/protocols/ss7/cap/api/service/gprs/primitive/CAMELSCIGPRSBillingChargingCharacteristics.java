@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  CAMEL-SCIGPRSBillingChargingCharacteristics ::= SEQUENCE { aOCGPRS [0] AOCGPRS, pDPID [1] PDPID OPTIONAL, ... }
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface CAMELSCIGPRSBillingChargingCharacteristics {
+public interface CAMELSCIGPRSBillingChargingCharacteristics extends Serializable {
 
     AOCGPRS getAOCGPRS();
 

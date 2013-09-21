@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  EndUserAddress {PARAMETERS-BOUND: bound} ::= SEQUENCE { pDPTypeOrganization [0] PDPTypeOrganization, pDPTypeNumber [1]
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface EndUserAddress {
+public interface EndUserAddress extends Serializable {
 
     PDPTypeOrganization getPDPTypeOrganization();
 

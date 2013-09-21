@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
+import java.io.Serializable;
+
 /**
  *
  oMidCallSpecificInfo [6] SEQUENCE { midCallEvents [1] CHOICE { dTMFDigitsCompleted [3] Digits {bound}, dTMFDigitsTimeOut [4]
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
  * @author sergey vetyutnev
  *
  */
-public interface OMidCallSpecificInfo {
+public interface OMidCallSpecificInfo extends Serializable {
 
     MidCallEvents getMidCallEvents();
 

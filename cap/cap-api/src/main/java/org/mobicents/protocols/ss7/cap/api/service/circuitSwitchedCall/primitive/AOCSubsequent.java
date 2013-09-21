@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  AOCSubsequent ::= SEQUENCE { cAI-GSM0224 [0] CAI-GSM0224 , tariffSwitchInterval [1] INTEGER (1..86400) OPTIONAL } --
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * @author sergey vetyutnev
  *
  */
-public interface AOCSubsequent {
+public interface AOCSubsequent extends Serializable {
 
     CAI_GSM0224 getCAI_GSM0224();
 

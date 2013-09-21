@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.cap.api.primitives;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -31,7 +32,7 @@ import java.util.ArrayList;
  * @author sergey vetyutnev
  *
  */
-public interface CAPExtensions {
+public interface CAPExtensions extends Serializable {
 
     ArrayList<ExtensionField> getExtensionFields();
 

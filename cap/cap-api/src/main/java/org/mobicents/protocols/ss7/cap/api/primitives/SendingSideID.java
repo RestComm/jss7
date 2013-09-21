@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.primitives;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 
 /**
@@ -34,7 +36,7 @@ import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
  * @author sergey vetyutnev
  *
  */
-public interface SendingSideID {
+public interface SendingSideID extends Serializable {
 
     LegType getSendingSideID();
 

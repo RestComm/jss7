@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  DpSpecificCriteria {PARAMETERS-BOUND : bound}::= CHOICE { applicationTimer [1] ApplicationTimer, midCallControlInfo [2]
@@ -37,7 +39,7 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * @author sergey vetyutnev
  *
  */
-public interface DpSpecificCriteria {
+public interface DpSpecificCriteria extends Serializable {
 
     Integer getApplicationTimer();
 

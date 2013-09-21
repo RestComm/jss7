@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.primitives;
 
+import java.io.Serializable;
+
 /**
  *
  ScfID {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE( bound.&minScfIDLength .. bound.&maxScfIDLength)) -- defined by
@@ -33,7 +35,7 @@ package org.mobicents.protocols.ss7.cap.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface ScfID {
+public interface ScfID extends Serializable {
 
     byte[] getData();
 

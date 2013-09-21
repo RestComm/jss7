@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.primitives;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DpSpecificCriteria;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 
@@ -34,7 +36,7 @@ import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
  * @author sergey vetyutnev
  *
  */
-public interface BCSMEvent {
+public interface BCSMEvent extends Serializable {
 
     EventTypeBCSM getEventTypeBCSM();
 

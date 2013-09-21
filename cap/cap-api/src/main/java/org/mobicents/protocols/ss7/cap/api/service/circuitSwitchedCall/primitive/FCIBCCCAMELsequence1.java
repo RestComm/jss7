@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
 import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
 
@@ -37,7 +39,7 @@ import org.mobicents.protocols.ss7.cap.api.primitives.SendingSideID;
  * @author sergey vetyutnev
  *
  */
-public interface FCIBCCCAMELsequence1 {
+public interface FCIBCCCAMELsequence1 extends Serializable {
 
     FreeFormatData getFreeFormatData();
 

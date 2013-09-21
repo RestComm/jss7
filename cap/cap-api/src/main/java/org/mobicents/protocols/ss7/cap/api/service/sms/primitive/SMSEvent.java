@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
 
 /**
@@ -35,7 +37,7 @@ import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
  * @author sergey vetyutnev
  *
  */
-public interface SMSEvent {
+public interface SMSEvent extends Serializable {
 
     EventTypeSMS getEventTypeSMS();
 

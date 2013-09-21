@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  price [4] OCTET STRING (SIZE(4))
@@ -39,7 +41,7 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * @author sergey vetyutnev
  *
  */
-public interface VariablePartPrice {
+public interface VariablePartPrice extends Serializable {
 
     byte[] getData();
 

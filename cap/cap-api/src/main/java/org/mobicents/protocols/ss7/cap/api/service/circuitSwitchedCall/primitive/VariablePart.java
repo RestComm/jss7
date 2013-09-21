@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.isup.Digits;
 
 /**
@@ -49,7 +51,7 @@ import org.mobicents.protocols.ss7.cap.api.isup.Digits;
  * @author sergey vetyutnev
  *
  */
-public interface VariablePart {
+public interface VariablePart extends Serializable {
 
     Integer getInteger();
 

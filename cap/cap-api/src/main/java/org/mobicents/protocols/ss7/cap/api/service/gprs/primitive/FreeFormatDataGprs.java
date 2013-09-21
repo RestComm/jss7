@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  FreeFormatData ::= OCTET STRING (SIZE (1..160))
@@ -36,6 +38,6 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * @author Lasith Waruna Perera
  *
  */
-public interface FreeFormatDataGprs {
+public interface FreeFormatDataGprs extends Serializable {
     byte[] getData();
 }

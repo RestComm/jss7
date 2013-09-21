@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  ChargingRollOver ::= CHOICE { transferredVolumeRollOver [0] TransferredVolumeRollOver, elapsedTimeRollOver [1]
@@ -34,7 +36,7 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface ChargingRollOver {
+public interface ChargingRollOver extends Serializable {
 
     TransferredVolumeRollOver getTransferredVolumeRollOver();
 

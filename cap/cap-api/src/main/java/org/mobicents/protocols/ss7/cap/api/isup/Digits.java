@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.isup;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
@@ -49,7 +51,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
  * @author sergey vetyutnev
  *
  */
-public interface Digits {
+public interface Digits extends Serializable {
 
     byte[] getData();
 

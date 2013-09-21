@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.inap.api.primitives.BothwayThroughConnectionInd;
 
 /**
@@ -48,7 +50,7 @@ import org.mobicents.protocols.ss7.inap.api.primitives.BothwayThroughConnectionI
  * @author sergey vetyutnev
  *
  */
-public interface ServiceInteractionIndicatorsTwo {
+public interface ServiceInteractionIndicatorsTwo extends Serializable {
 
     ForwardServiceInteractionInd getForwardServiceInteractionInd();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
+import java.io.Serializable;
+
 /**
  *
  oAbandonSpecificInfo [21] SEQUENCE { routeNotPermitted [50] NULL OPTIONAL, ... },
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
  * @author sergey vetyutnev
  *
  */
-public interface OAbandonSpecificInfo {
+public interface OAbandonSpecificInfo extends Serializable {
 
     boolean getRouteNotPermitted();
 

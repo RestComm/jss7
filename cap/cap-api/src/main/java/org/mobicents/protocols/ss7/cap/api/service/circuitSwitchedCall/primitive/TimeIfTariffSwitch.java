@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  TimeIfTariffSwitch ::= SEQUENCE { timeSinceTariffSwitch [0] INTEGER(0..864000), tariffSwitchInterval [1] INTEGER(1..864000)
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * @author sergey vetyutnev
  *
  */
-public interface TimeIfTariffSwitch {
+public interface TimeIfTariffSwitch extends Serializable {
 
     int getTimeSinceTariffSwitch();
 

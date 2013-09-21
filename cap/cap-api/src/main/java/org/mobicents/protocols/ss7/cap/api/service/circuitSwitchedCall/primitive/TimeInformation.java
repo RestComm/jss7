@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  TimeInformation ::= CHOICE { timeIfNoTariffSwitch [0] TimeIfNoTariffSwitch, timeIfTariffSwitch [1] TimeIfTariffSwitch } --
@@ -33,7 +35,7 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * @author sergey vetyutnev
  *
  */
-public interface TimeInformation {
+public interface TimeInformation extends Serializable {
 
     Integer getTimeIfNoTariffSwitch();
 

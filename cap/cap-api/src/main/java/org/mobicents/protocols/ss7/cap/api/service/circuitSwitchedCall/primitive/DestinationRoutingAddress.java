@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
@@ -35,7 +36,7 @@ import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
  * @author sergey vetyutnev
  *
  */
-public interface DestinationRoutingAddress {
+public interface DestinationRoutingAddress extends Serializable {
 
     ArrayList<CalledPartyNumberCap> getCalledPartyNumber();
 

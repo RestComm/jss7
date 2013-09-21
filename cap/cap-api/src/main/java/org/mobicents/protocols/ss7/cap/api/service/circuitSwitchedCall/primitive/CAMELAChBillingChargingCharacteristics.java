@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 
 /**
@@ -44,7 +46,7 @@ import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
  * @author sergey vetyutnev
  *
  */
-public interface CAMELAChBillingChargingCharacteristics {
+public interface CAMELAChBillingChargingCharacteristics extends Serializable {
 
     byte[] getData();
 

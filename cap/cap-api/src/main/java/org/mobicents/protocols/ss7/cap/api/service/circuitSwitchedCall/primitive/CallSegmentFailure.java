@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 
 /**
@@ -35,7 +37,7 @@ import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
  * @author sergey vetyutnev
  *
  */
-public interface CallSegmentFailure {
+public interface CallSegmentFailure extends Serializable {
 
     Integer getCallSegmentID();
 

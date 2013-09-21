@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  GPRSCause {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE (1 .. 1)) -- Shall only include the cause value. -- 00000000
@@ -34,7 +36,7 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface GPRSCause {
+public interface GPRSCause extends Serializable {
 
     int getData();
 

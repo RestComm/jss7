@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  volumeIfTariffSwitch [1] SEQUENCE { volumeSinceLastTariffSwitch [0] INTEGER (0..4294967295), volumeTariffSwitchInterval [1]
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface VolumeIfTariffSwitch {
+public interface VolumeIfTariffSwitch extends Serializable {
 
     long getVolumeSinceLastTariffSwitch();
 

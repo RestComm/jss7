@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.primitives.AChChargingAddress;
 import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
@@ -36,7 +38,7 @@ import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
  * @author sergey vetyutnev
  *
  */
-public interface TimeDurationChargingResult {
+public interface TimeDurationChargingResult extends Serializable {
 
     ReceivingSideID getPartyToCharge();
 

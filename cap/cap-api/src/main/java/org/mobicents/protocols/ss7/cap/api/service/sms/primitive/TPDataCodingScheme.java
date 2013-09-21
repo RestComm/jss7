@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  TPDataCodingScheme ::= OCTET STRING (SIZE (1)) -- TP Data Coding Scheme according to 3GPP TS 23.040 [6]
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface TPDataCodingScheme {
+public interface TPDataCodingScheme extends Serializable {
 
     int getData();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  InbandInfo {PARAMETERS-BOUND : bound} ::= SEQUENCE { messageID [0] MessageID {bound}, numberOfRepetitions [1] INTEGER
@@ -34,7 +36,7 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * @author sergey vetyutnev
  *
  */
-public interface InbandInfo {
+public interface InbandInfo extends Serializable {
 
     MessageID getMessageID();
 

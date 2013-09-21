@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPDialogState;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
@@ -38,7 +40,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
  * @author sergey vetyutnev
  *
  */
-public interface CAPDialog {
+public interface CAPDialog extends Serializable {
 
     // Invoke timers
     int _Timer_CircuitSwitchedCallControl_Short = 6000; // 1 - 10 sec

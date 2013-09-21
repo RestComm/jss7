@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiGprs;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.primitives.TimeAndTimezone;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.AccessPointName;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.EndUserAddress;
@@ -40,7 +42,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
  * @author sergey vetyutnev
  *
  */
-public interface PDPContextEstablishmentSpecificInformation {
+public interface PDPContextEstablishmentSpecificInformation extends Serializable {
 
     AccessPointName getAccessPointName();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.dialog;
 
+import java.io.Serializable;
+
 /**
  *
  * @author sergey vetyutnev
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.cap.api.dialog;
  *
  *         Integer4::= INTEGER (0..2147483647)
  */
-public interface CAPGprsReferenceNumber {
+public interface CAPGprsReferenceNumber extends Serializable {
 
     Integer getDestinationReference();
 

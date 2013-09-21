@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
 
 /**
@@ -33,7 +35,7 @@ import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
  * @author sergey vetyutnev
  *
  */
-public interface FCIBCCCAMELsequence1Gprs {
+public interface FCIBCCCAMELsequence1Gprs extends Serializable {
 
     FreeFormatDataGprs getFreeFormatData();
 

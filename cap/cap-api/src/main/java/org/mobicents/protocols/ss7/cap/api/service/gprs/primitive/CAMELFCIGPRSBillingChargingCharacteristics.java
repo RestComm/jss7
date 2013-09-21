@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  CAMEL-FCIGPRSBillingChargingCharacteristics {PARAMETERS-BOUND : bound} ::= SEQUENCE{ fCIBCCCAMELsequence1 [0] SEQUENCE {
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface CAMELFCIGPRSBillingChargingCharacteristics {
+public interface CAMELFCIGPRSBillingChargingCharacteristics extends Serializable {
 
     FCIBCCCAMELsequence1Gprs getFCIBCCCAMELsequence1();
 

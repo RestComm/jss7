@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  ContinueWithArgumentArgExtension {PARAMETERS-BOUND : bound} ::= SEQUENCE { suppress-D-CSI [0] NULL OPTIONAL, suppress-N-CSI
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * @author sergey vetyutnev
  *
  */
-public interface ContinueWithArgumentArgExtension {
+public interface ContinueWithArgumentArgExtension extends Serializable {
 
     boolean getSuppressDCsi();
 

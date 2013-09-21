@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  TransferredVolumeRollOver ::= CHOICE { rO-VolumeIfNoTariffSwitch [0] INTEGER (0..255), rO-VolumeIfTariffSwitch [1] SEQUENCE {
@@ -33,7 +35,7 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface TransferredVolumeRollOver {
+public interface TransferredVolumeRollOver extends Serializable {
 
     Integer getROVolumeIfNoTariffSwitch();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  MT-SMSCause ::= OCTET STRING (SIZE (1)) -- This variable is sent to the gsmSCF for a Short Message delivery failure --
@@ -34,7 +36,7 @@ package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface MTSMSCause {
+public interface MTSMSCause extends Serializable {
 
     int getData();
 

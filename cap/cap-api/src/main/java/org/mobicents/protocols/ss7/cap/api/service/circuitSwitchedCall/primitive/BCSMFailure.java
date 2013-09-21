@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 
@@ -33,7 +35,7 @@ import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
  * @author sergey vetyutnev
  *
  */
-public interface BCSMFailure {
+public interface BCSMFailure extends Serializable {
 
     LegID getLegID();
 

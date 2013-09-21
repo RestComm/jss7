@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.primitives;
 
+import java.io.Serializable;
+
 /**
  *
  Burst ::= SEQUENCE { numberOfBursts [0] INTEGER (1..3) DEFAULT 1, 3GPP Release 7 32 3GPP TS 29.078 7.0.0 (2005-06)
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.cap.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface Burst {
+public interface Burst extends Serializable {
 
     int getNumberOfBursts();
 

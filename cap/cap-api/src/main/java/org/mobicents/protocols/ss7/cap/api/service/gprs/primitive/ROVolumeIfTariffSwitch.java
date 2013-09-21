@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  rO-VolumeIfTariffSwitch [1] SEQUENCE { rO-VolumeSinceLastTariffSwitch [0] INTEGER (0..255) OPTIONAL,
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface ROVolumeIfTariffSwitch {
+public interface ROVolumeIfTariffSwitch extends Serializable {
 
     Integer getROVolumeSinceLastTariffSwitch();
 

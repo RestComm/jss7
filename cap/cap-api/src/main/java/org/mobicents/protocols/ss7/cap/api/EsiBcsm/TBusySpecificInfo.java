@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 
@@ -34,7 +36,7 @@ import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
  * @author sergey vetyutnev
  *
  */
-public interface TBusySpecificInfo {
+public interface TBusySpecificInfo extends Serializable {
 
     CauseCap getBusyCause();
 

@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -33,7 +34,7 @@ import java.util.ArrayList;
  * @author sergey vetyutnev
  *
  */
-public interface VariableMessage {
+public interface VariableMessage extends Serializable {
 
     int getElementaryMessageID();
 

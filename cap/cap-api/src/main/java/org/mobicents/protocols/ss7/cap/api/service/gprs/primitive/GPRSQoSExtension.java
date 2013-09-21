@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Ext2QoSSubscribed;
 
 /**
@@ -32,7 +34,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  * @author sergey vetyutnev
  *
  */
-public interface GPRSQoSExtension {
+public interface GPRSQoSExtension extends Serializable {
 
     Ext2QoSSubscribed getSupplementToLongQoSFormat();
 

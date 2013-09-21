@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AOCSubsequent;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAI_GSM0224;
 
@@ -35,7 +37,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
  * @author sergey vetyutnev
  *
  */
-public interface AOCGPRS {
+public interface AOCGPRS extends Serializable {
 
     CAI_GSM0224 getAOCInitial();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.primitives;
 
+import java.io.Serializable;
+
 /**
  *
  TimeAndTimezone {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE( bound.&minTimeAndTimezoneLength ..
@@ -47,7 +49,7 @@ package org.mobicents.protocols.ss7.cap.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface TimeAndTimezone {
+public interface TimeAndTimezone extends Serializable {
 
     byte[] getData();
 

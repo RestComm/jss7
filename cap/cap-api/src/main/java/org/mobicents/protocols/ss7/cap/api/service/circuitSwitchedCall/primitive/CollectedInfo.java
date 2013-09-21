@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  CollectedInfo ::= CHOICE { collectedDigits [0] CollectedDigits }
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * @author sergey vetyutnev
  *
  */
-public interface CollectedInfo {
+public interface CollectedInfo extends Serializable {
 
     CollectedDigits getCollectedDigits();
 

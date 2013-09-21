@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
 *
 FreeFormatData ::= OCTET STRING (SIZE (1..160))
@@ -36,6 +38,6 @@ FreeFormatData ::= OCTET STRING (SIZE (1..160))
 * @author Lasith Waruna Perera
 *
 */
-public interface FreeFormatData {
+public interface FreeFormatData extends Serializable {
     byte[] getData();
 }

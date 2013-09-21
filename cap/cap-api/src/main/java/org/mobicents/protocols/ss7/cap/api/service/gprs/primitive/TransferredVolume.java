@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  TransferredVolume ::= CHOICE { volumeIfNoTariffSwitch [0] INTEGER (0..4294967295), volumeIfTariffSwitch [1] SEQUENCE {
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface TransferredVolume {
+public interface TransferredVolume extends Serializable {
 
     Long getVolumeIfNoTariffSwitch();
 

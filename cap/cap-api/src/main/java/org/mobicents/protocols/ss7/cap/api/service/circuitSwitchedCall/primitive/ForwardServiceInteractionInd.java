@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  ForwardServiceInteractionInd ::= SEQUENCE { conferenceTreatmentIndicator [1] OCTET STRING (SIZE(1)) OPTIONAL, --
@@ -36,7 +38,7 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * @author sergey vetyutnev
  *
  */
-public interface ForwardServiceInteractionInd {
+public interface ForwardServiceInteractionInd extends Serializable {
 
     ConferenceTreatmentIndicator getConferenceTreatmentIndicator();
 

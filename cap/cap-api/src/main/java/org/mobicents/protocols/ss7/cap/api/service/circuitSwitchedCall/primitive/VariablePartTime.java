@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  time [2] OCTET STRING (SIZE(2)), -- HH: MM, BCD coded
@@ -34,7 +36,7 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * @author sergey vetyutnev
  *
  */
-public interface VariablePartTime {
+public interface VariablePartTime extends Serializable {
 
     byte[] getData();
 

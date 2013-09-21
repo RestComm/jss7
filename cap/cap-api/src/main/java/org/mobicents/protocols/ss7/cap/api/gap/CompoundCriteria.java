@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.gap;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.primitives.ScfID;
 
 /**
@@ -33,7 +35,7 @@ import org.mobicents.protocols.ss7.cap.api.primitives.ScfID;
  * @author sergey vetyutnev
  *
  */
-public interface CompoundCriteria {
+public interface CompoundCriteria extends Serializable {
 
     BasicGapCriteria getBasicGapCriteria();
 

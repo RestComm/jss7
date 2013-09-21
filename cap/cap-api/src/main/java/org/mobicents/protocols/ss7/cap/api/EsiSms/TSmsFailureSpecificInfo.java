@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiSms;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.MTSMSCause;
 
 /**
@@ -32,7 +34,7 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.MTSMSCause;
  * @author sergey vetyutnev
  *
  */
-public interface TSmsFailureSpecificInfo {
+public interface TSmsFailureSpecificInfo extends Serializable {
 
     MTSMSCause GetFailureCause();
 

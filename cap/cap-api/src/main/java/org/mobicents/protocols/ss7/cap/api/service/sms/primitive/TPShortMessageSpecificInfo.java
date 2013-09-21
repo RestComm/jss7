@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  TPShortMessageSpecificInfo ::= OCTET STRING (SIZE (1)) -- contains the 1st octect of the applicable TPDU or the SMS-COMMAND
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface TPShortMessageSpecificInfo {
+public interface TPShortMessageSpecificInfo extends Serializable {
 
     int getData();
 

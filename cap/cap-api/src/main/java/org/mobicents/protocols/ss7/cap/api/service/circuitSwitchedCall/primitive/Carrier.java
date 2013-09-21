@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
  *
 ISUP Carrier wrapper
@@ -51,7 +53,7 @@ Carrier {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE( bound.&minCarrierLeng
  * @author sergey vetyutnev
  *
  */
-public interface Carrier {
+public interface Carrier extends Serializable {
 
     byte[] getData();
 

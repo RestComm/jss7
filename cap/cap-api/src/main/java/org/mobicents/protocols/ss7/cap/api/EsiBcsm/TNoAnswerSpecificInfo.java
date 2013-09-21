@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 
 /**
@@ -33,7 +35,7 @@ import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
  * @author sergey vetyutnev
  *
  */
-public interface TNoAnswerSpecificInfo {
+public interface TNoAnswerSpecificInfo extends Serializable {
 
     boolean getCallForwarded();
 

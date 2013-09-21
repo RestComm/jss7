@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  TPProtocolIdentifier ::= OCTET STRING (SIZE (1)) -- indicates the protocol used above the SM-Transfer Layer as specified in
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface TPProtocolIdentifier {
+public interface TPProtocolIdentifier extends Serializable {
 
     int getData();
 

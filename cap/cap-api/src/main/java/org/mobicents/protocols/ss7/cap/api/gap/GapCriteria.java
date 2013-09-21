@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.gap;
 
+import java.io.Serializable;
+
 /**
  *
  GapCriteria {PARAMETERS-BOUND : bound}::= CHOICE { basicGapCriteria BasicGapCriteria {bound}, compoundGapCriteria
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.cap.api.gap;
  * @author sergey vetyutnev
  *
  */
-public interface GapCriteria {
+public interface GapCriteria extends Serializable {
 
     BasicGapCriteria getBasicGapCriteria();
 

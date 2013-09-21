@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.EsiGprs.DetachSpecificInformation;
 import org.mobicents.protocols.ss7.cap.api.EsiGprs.DisconnectSpecificInformation;
 import org.mobicents.protocols.ss7.cap.api.EsiGprs.PDPContextEstablishmentAcknowledgementSpecificInformation;
@@ -51,7 +53,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
  * @author sergey vetyutnev
  *
  */
-public interface GPRSEventSpecificInformation {
+public interface GPRSEventSpecificInformation extends Serializable {
 
     LocationInformationGPRS getLocationInformationGPRS();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiSms;
 
+import java.io.Serializable;
+
 /**
  *
  t-smsDeliverySpecificInfo [3] SEQUENCE { -- no specific info defined ... }
@@ -30,6 +32,6 @@ package org.mobicents.protocols.ss7.cap.api.EsiSms;
  * @author sergey vetyutnev
  *
  */
-public interface TSmsDeliverySpecificInfo {
+public interface TSmsDeliverySpecificInfo extends Serializable {
 
 }

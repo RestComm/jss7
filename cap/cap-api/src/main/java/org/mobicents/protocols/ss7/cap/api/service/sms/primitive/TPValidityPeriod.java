@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.map.api.smstpdu.ValidityPeriod;
 
@@ -36,7 +38,7 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.ValidityPeriod;
  * @author sergey vetyutnev
  *
  */
-public interface TPValidityPeriod {
+public interface TPValidityPeriod extends Serializable {
 
     byte[] getData();
 

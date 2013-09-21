@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiGprs;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
 
 /**
@@ -32,7 +34,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
  * @author sergey vetyutnev
  *
  */
-public interface AttachChangeOfPositionSpecificInformation {
+public interface AttachChangeOfPositionSpecificInformation extends Serializable {
 
     LocationInformationGPRS getLocationInformationGPRS();
 

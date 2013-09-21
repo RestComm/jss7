@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  QualityOfService ::= SEQUENCE { requested-QoS [0] GPRS-QoS OPTIONAL, subscribed-QoS [1] GPRS-QoS OPTIONAL, negotiated-QoS [2]
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface QualityOfService {
+public interface QualityOfService extends Serializable {
 
     GPRSQoS getRequestedQoS();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  MidCallControlInfo ::= SEQUENCE { minimumNumberOfDigits [0] INTEGER (1..30) DEFAULT 1, maximumNumberOfDigits [1] INTEGER
@@ -40,7 +42,7 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * @author sergey vetyutnev
  *
  */
-public interface MidCallControlInfo {
+public interface MidCallControlInfo extends Serializable {
 
     int getMinimumNumberOfDigits();
 

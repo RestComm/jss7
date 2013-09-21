@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.CallAcceptedSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAbandonSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
@@ -68,7 +70,7 @@ import org.mobicents.protocols.ss7.cap.api.EsiBcsm.TNoAnswerSpecificInfo;
  * @author sergey vetyutnev
  *
  */
-public interface EventSpecificInformationBCSM {
+public interface EventSpecificInformationBCSM extends Serializable {
 
     RouteSelectFailureSpecificInfo getRouteSelectFailureSpecificInfo();
 

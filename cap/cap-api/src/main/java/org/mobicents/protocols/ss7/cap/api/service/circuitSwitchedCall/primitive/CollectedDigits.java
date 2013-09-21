@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.primitives.ErrorTreatment;
 
 /**
@@ -40,7 +42,7 @@ import org.mobicents.protocols.ss7.cap.api.primitives.ErrorTreatment;
  * @author sergey vetyutnev
  *
  */
-public interface CollectedDigits {
+public interface CollectedDigits extends Serializable {
 
     Integer getMinimumNbOfDigits();
 

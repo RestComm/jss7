@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
+import java.io.Serializable;
+
 /**
  *
  oNoAnswerSpecificInfo [4] SEQUENCE { -- no specific info defined -- ... },
@@ -30,6 +32,6 @@ package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
  * @author sergey vetyutnev
  *
  */
-public interface ONoAnswerSpecificInfo {
+public interface ONoAnswerSpecificInfo extends Serializable {
 
 }

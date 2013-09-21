@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.isup;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
 
@@ -50,7 +52,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation
  * @author sergey vetyutnev
  *
  */
-public interface BearerCap {
+public interface BearerCap extends Serializable {
 
     byte[] getData();
 

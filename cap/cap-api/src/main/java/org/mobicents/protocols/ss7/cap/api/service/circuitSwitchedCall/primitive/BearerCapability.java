@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
 
 /**
@@ -37,7 +39,7 @@ BearerCapability {PARAMETERS-BOUND : bound} ::= CHOICE {
  * @author sergey vetyutnev
  *
  */
-public interface BearerCapability {
+public interface BearerCapability extends Serializable {
 
     BearerCap getBearerCap();
 

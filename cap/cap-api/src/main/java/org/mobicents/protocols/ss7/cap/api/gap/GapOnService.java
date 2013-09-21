@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.gap;
 
+import java.io.Serializable;
+
 /**
  *
  GapOnService ::= SEQUENCE { serviceKey [0] ServiceKey, ... }
@@ -32,7 +34,7 @@ package org.mobicents.protocols.ss7.cap.api.gap;
  * @author sergey vetyutnev
  *
  */
-public interface GapOnService {
+public interface GapOnService extends Serializable {
 
     int getServiceKey();
 

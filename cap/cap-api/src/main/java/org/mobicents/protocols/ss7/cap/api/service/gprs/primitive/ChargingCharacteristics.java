@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  ChargingCharacteristics ::= CHOICE { maxTransferredVolume [0] INTEGER (1..4294967295), maxElapsedTime [1] INTEGER (1..86400)
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface ChargingCharacteristics {
+public interface ChargingCharacteristics extends Serializable {
 
     long getMaxTransferredVolume();
 

@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.primitives;
 
+import java.io.Serializable;
+
 /**
  *
  DateAndTime ::= OCTET STRING (SIZE(7)) -- DateAndTime is BCD encoded. The year digit indicating millenium occupies bits --
@@ -40,7 +42,7 @@ package org.mobicents.protocols.ss7.cap.api.primitives;
  * @author sergey vetyutnev
  *
  */
-public interface DateAndTime {
+public interface DateAndTime extends Serializable {
 
     byte[] getData();
 

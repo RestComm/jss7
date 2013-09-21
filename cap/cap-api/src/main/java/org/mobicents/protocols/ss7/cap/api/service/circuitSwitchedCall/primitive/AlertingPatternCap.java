@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 
 /**
@@ -35,7 +37,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
  * @author sergey vetyutnev
  *
  */
-public interface AlertingPatternCap {
+public interface AlertingPatternCap extends Serializable {
 
     byte[] getData();
 

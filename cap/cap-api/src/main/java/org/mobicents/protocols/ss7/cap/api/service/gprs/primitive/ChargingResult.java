@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  ChargingResult ::= CHOICE { transferredVolume [0] TransferredVolume, elapsedTime [1] ElapsedTime }
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface ChargingResult {
+public interface ChargingResult extends Serializable {
 
     TransferredVolume getTransferredVolume();
 

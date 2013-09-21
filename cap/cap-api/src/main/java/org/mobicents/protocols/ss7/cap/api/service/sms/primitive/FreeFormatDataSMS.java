@@ -21,6 +21,8 @@
  */
 package org.mobicents.protocols.ss7.cap.api.service.sms.primitive;
 
+import java.io.Serializable;
+
 /**
 *
 
@@ -30,7 +32,7 @@ freeFormatData      [0] OCTET STRING (SIZE(1 .. 160))
 * @author Lasith Waruna Perera
 *
 */
-public interface FreeFormatDataSMS {
+public interface FreeFormatDataSMS extends Serializable {
     byte[] getData();
 }
 

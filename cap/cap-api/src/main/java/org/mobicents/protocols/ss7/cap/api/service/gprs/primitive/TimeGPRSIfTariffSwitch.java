@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  timeGPRSIfTariffSwitch [1] SEQUENCE { timeGPRSSinceLastTariffSwitch [0] INTEGER (0..86400), timeGPRSTariffSwitchInterval [1]
@@ -31,7 +33,7 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface TimeGPRSIfTariffSwitch {
+public interface TimeGPRSIfTariffSwitch extends Serializable {
 
     int getTimeGPRSSinceLastTariffSwitch();
 

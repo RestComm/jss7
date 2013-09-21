@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.gap;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.isup.Digits;
 
 /**
@@ -34,7 +36,7 @@ import org.mobicents.protocols.ss7.cap.api.isup.Digits;
  * @author sergey vetyutnev
  *
  */
-public interface CallingAddressAndService {
+public interface CallingAddressAndService extends Serializable {
 
     Digits getCallingAddressValue();
 

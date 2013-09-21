@@ -21,6 +21,8 @@
  */
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  PDPTypeOrganization ::= OCTET STRING (1) -- refer to 3GPP TS 29.060 [12] for the encoding. -- The pDPTypeOrganization shall
@@ -30,7 +32,7 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * @author Lasith Waruna Perera
  *
  */
-public interface PDPTypeOrganization {
+public interface PDPTypeOrganization extends Serializable {
     int getData();
 
     PDPTypeOrganizationValue getPDPTypeOrganizationValue();

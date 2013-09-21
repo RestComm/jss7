@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.gap;
 
+import java.io.Serializable;
+
 /**
  *
  GapIndicators ::= SEQUENCE { duration [0] Duration, gapInterval [1] Interval, ... } -- Indicates the call gapping
@@ -34,7 +36,7 @@ package org.mobicents.protocols.ss7.cap.api.gap;
  * @author sergey vetyutnev
  *
  */
-public interface GapIndicators {
+public interface GapIndicators extends Serializable {
 
     int getDuration();
 

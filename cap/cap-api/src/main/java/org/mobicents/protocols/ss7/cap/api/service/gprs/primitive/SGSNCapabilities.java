@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  SGSNCapabilities ::= OCTET STRING (SIZE (1)) -- Indicates the SGSN capabilities. The coding of the parameter is as follows:
@@ -33,7 +35,7 @@ package org.mobicents.protocols.ss7.cap.api.service.gprs.primitive;
  * @author sergey vetyutnev
  *
  */
-public interface SGSNCapabilities {
+public interface SGSNCapabilities extends Serializable {
 
     int getData();
 

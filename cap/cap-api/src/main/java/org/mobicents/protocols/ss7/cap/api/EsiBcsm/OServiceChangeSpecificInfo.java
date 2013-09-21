@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 
 /**
@@ -32,7 +34,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  * @author sergey vetyutnev
  *
  */
-public interface OServiceChangeSpecificInfo {
+public interface OServiceChangeSpecificInfo extends Serializable {
 
     ExtBasicServiceCode getExtBasicServiceCode();
 

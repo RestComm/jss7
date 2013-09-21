@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.primitives.BurstList;
 
 /**
@@ -32,7 +34,7 @@ import org.mobicents.protocols.ss7.cap.api.primitives.BurstList;
  * @author sergey vetyutnev
  *
  */
-public interface AudibleIndicator {
+public interface AudibleIndicator extends Serializable {
 
     Boolean getTone();
 

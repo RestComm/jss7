@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.isup;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 
@@ -45,7 +47,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
  * @author sergey vetyutnev
  *
  */
-public interface CalledPartyNumberCap {
+public interface CalledPartyNumberCap extends Serializable {
 
     byte[] getData();
 

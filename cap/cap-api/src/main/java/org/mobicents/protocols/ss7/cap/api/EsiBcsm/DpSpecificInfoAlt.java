@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
 
+import java.io.Serializable;
+
 /**
  *
  DpSpecificInfoAlt {PARAMETERS-BOUND : bound} ::= SEQUENCE { ..., oServiceChangeSpecificInfo [0] SEQUENCE {
@@ -33,7 +35,7 @@ package org.mobicents.protocols.ss7.cap.api.EsiBcsm;
  * @author sergey vetyutnev
  *
  */
-public interface DpSpecificInfoAlt {
+public interface DpSpecificInfoAlt extends Serializable {
 
     OServiceChangeSpecificInfo getOServiceChangeSpecificInfo();
 

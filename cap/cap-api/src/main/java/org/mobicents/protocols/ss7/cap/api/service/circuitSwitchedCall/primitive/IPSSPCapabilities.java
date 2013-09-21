@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
  *
 IPSSPCapabilities {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE( bound.&minIPSSPCapabilitiesLength ..bound.&maxIPSSPCapabilitiesLength)) (SIZE = 1..4)
@@ -54,7 +56,7 @@ IPSSPCapabilities {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE( bound.&minI
  * @author sergey vetyutnev
  *
  */
-public interface IPSSPCapabilities {
+public interface IPSSPCapabilities extends Serializable {
 
     byte[] getData();
 

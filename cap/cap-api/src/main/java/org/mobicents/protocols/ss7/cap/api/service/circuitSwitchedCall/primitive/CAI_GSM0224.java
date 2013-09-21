@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
 
+import java.io.Serializable;
+
 /**
  *
  CAI-GSM0224 ::= SEQUENCE { e1 [0] INTEGER (0..8191) OPTIONAL, e2 [1] INTEGER (0..8191) OPTIONAL, e3 [2] INTEGER (0..8191)
@@ -33,7 +35,7 @@ package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitiv
  * @author sergey vetyutnev
  *
  */
-public interface CAI_GSM0224 {
+public interface CAI_GSM0224 extends Serializable {
 
     Integer getE1();
 
