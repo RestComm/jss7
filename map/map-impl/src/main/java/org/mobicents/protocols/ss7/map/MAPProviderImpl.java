@@ -135,7 +135,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
  */
 public class MAPProviderImpl implements MAPProvider, TCListener {
 
-    protected final Logger loger;
+    protected transient final Logger loger;
 
     private transient List<MAPDialogListener> dialogListeners = new CopyOnWriteArrayList<MAPDialogListener>();
 
