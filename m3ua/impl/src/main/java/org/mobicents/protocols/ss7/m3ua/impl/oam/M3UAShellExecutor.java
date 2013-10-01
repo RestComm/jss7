@@ -454,7 +454,10 @@ public class M3UAShellExecutor implements ShellExecutor {
             return M3UAOAMMessages.INVALID_COMMAND;
         } catch (Exception e) {
             logger.error(String.format("Error while executing comand %s", Arrays.toString(args)), e);
-            return e.getMessage();
+            return e.toString();
+        } catch (Throwable t) {
+            logger.error(String.format("Error while executing comand %s", Arrays.toString(args)), t);
+            return t.toString();
         }
     }
 

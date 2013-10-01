@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.oam;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
@@ -110,9 +111,10 @@ public class SccpExecutor implements ShellExecutor {
                 return this.manageGet(options);
             }
         } catch (Exception e) {
-            logger.error("Error while executing command ", e);
-            return e.getMessage();
+            logger.error(String.format("Error while executing comand %s", Arrays.toString(options)), e);
+            return e.toString();
         } catch (Throwable t) {
+            logger.error(String.format("Error while executing comand %s", Arrays.toString(options)), t);
             return t.toString();
         }
 
