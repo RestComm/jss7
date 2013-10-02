@@ -31,7 +31,7 @@ import javolution.util.FastMap;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.statistics.LongValue;
+import org.mobicents.protocols.ss7.statistics.api.LongValue;
 import org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcap.api.TCAPCounterProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;

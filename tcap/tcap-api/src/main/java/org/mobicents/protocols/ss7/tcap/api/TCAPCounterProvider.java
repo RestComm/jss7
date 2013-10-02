@@ -193,7 +193,7 @@ public interface TCAPCounterProvider {
     Long getMaxDialogsCount(String compainName);
 
     /**
-     * return a total durations of all released Dialogs since stack start (in seconds)
+     * return a total durations of all released Dialogs since stack start (in milliseconds)
      * this value is updated when a dialog is released
      */
     long getAllDialogsDuration();

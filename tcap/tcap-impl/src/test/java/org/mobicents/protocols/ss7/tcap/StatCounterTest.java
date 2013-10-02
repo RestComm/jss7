@@ -28,11 +28,12 @@ import java.util.Date;
 
 import javolution.util.FastMap;
 
-import org.mobicents.protocols.ss7.statistics.LongValue;
-import org.mobicents.protocols.ss7.statistics.StatCounterCollection;
-import org.mobicents.protocols.ss7.statistics.StatDataCollection;
-import org.mobicents.protocols.ss7.statistics.StatDataCollectorType;
-import org.mobicents.protocols.ss7.statistics.StatResult;
+import org.mobicents.protocols.ss7.statistics.StatDataCollectionImpl;
+import org.mobicents.protocols.ss7.statistics.api.LongValue;
+import org.mobicents.protocols.ss7.statistics.api.StatCounterCollection;
+import org.mobicents.protocols.ss7.statistics.api.StatDataCollection;
+import org.mobicents.protocols.ss7.statistics.api.StatDataCollectorType;
+import org.mobicents.protocols.ss7.statistics.api.StatResult;
 import org.testng.annotations.Test;
 
 /**
@@ -46,7 +47,7 @@ public class StatCounterTest {
     @Test(groups = { "statistic" })
     public void countersManagementTest() throws Exception {
 
-        StatDataCollection sdc = new StatDataCollection();
+        StatDataCollection sdc = new StatDataCollectionImpl();
 
         StatCounterCollection scc1_old = sdc.registerStatCounterCollector("counter1", StatDataCollectorType.MIN);
         StatCounterCollection scc1 = sdc.registerStatCounterCollector("counter1", StatDataCollectorType.MIN);
@@ -89,7 +90,7 @@ public class StatCounterTest {
     @Test(groups = { "statistic" })
     public void countersMinTest() throws Exception {
 
-        StatDataCollection sdc = new StatDataCollection();
+        StatDataCollection sdc = new StatDataCollectionImpl();
 
         StatCounterCollection scc1 = sdc.registerStatCounterCollector("counter1", StatDataCollectorType.MIN);
         StatCounterCollection scc2 = sdc.registerStatCounterCollector("counter2", StatDataCollectorType.MIN);
@@ -132,7 +133,7 @@ public class StatCounterTest {
     @Test(groups = { "statistic" })
     public void countersMaxTest() throws Exception {
 
-        StatDataCollection sdc = new StatDataCollection();
+        StatDataCollection sdc = new StatDataCollectionImpl();
 
         StatCounterCollection scc1 = sdc.registerStatCounterCollector("counter1", StatDataCollectorType.MAX);
         StatCounterCollection scc2 = sdc.registerStatCounterCollector("counter2", StatDataCollectorType.MAX);
@@ -175,7 +176,7 @@ public class StatCounterTest {
     @Test(groups = { "statistic" })
     public void countersStringTextTest() throws Exception {
 
-        StatDataCollection sdc = new StatDataCollection();
+        StatDataCollection sdc = new StatDataCollectionImpl();
 
         StatCounterCollection scc1 = sdc.registerStatCounterCollector("counter1", StatDataCollectorType.StringLongMap);
         StatCounterCollection scc2 = sdc.registerStatCounterCollector("counter2", StatDataCollectorType.StringLongMap);

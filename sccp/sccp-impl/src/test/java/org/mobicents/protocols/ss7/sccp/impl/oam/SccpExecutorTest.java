@@ -113,8 +113,11 @@ public class SccpExecutorTest {
     @Test(groups = { "oam", "functional.mgmt" })
     public void testManageRule() {
 
-        String addressCmd = "sccp address create 1 71 2 8 0 0 3 123456789";
+        String addressCmd = "sccp rule modify 3 K 18 0 146 0 1 4 * loadshared 2 3 bit0";
         String result = this.sccpExecutor.execute(addressCmd.split(" "));
+
+        addressCmd = "sccp address create 1 71 2 8 0 0 3 123456789";
+        result = this.sccpExecutor.execute(addressCmd.split(" "));
         assertEquals(result, SccpOAMMessage.ADDRESS_SUCCESSFULLY_ADDED);
         assertEquals(this.router.getRoutingAddresses().size(), 1);
 
