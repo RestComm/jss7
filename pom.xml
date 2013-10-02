@@ -37,7 +37,6 @@
 	</properties>
 
 	<modules>
-		<module>docs</module>
 		<module>scheduler</module>
 		<module>congestion</module>
 		<module>statistics</module>
@@ -247,6 +246,18 @@
 				<version>${pom.version}</version>
 			</dependency>
 
+			<!-- Statistics -->
+			<dependency>
+				<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+				<artifactId>statistics-api</artifactId>
+				<version>${pom.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+				<artifactId>statistics-impl</artifactId>
+				<version>${pom.version}</version>
+			</dependency>
+
 
 			<!-- 3rd PARTY -->
 			<dependency>
@@ -280,11 +291,6 @@
 			<dependency>
 				<groupId>org.mobicents.protocols.ss7.congestion</groupId>
 				<artifactId>congestion</artifactId>
-				<version>${pom.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.mobicents.protocols.ss7.statistics</groupId>
-				<artifactId>statistics</artifactId>
 				<version>${pom.version}</version>
 			</dependency>
 		</dependencies>

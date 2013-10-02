@@ -26,6 +26,11 @@ import java.util.Date;
 
 import javolution.util.FastMap;
 
+import org.mobicents.protocols.ss7.statistics.api.StatCounterCollection;
+import org.mobicents.protocols.ss7.statistics.api.StatDataCollection;
+import org.mobicents.protocols.ss7.statistics.api.StatDataCollectorType;
+import org.mobicents.protocols.ss7.statistics.api.StatResult;
+
 /**
 *
 * Collection of data for all StatDataCollector-style counters
@@ -34,7 +39,7 @@ import javolution.util.FastMap;
 * @author sergey vetyutnev
 *
 */
-public class StatDataCollection {
+public class StatDataCollectionImpl implements StatDataCollection {
 
     private FastMap<String, StatCounterCollection> coll = new FastMap<String, StatCounterCollection>();
 

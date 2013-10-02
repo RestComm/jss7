@@ -24,6 +24,10 @@ package org.mobicents.protocols.ss7.statistics;
 
 import javolution.util.FastMap;
 
+import org.mobicents.protocols.ss7.statistics.api.LongValue;
+import org.mobicents.protocols.ss7.statistics.api.StatDataCollectorType;
+import org.mobicents.protocols.ss7.statistics.api.StatResult;
+
 /**
 *
 * @author sergey vetyutnev

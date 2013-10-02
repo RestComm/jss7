@@ -26,10 +26,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.mobicents.protocols.ss7.statistics.LongValue;
-import org.mobicents.protocols.ss7.statistics.StatDataCollection;
-import org.mobicents.protocols.ss7.statistics.StatDataCollectorType;
-import org.mobicents.protocols.ss7.statistics.StatResult;
+import org.mobicents.protocols.ss7.statistics.StatDataCollectionImpl;
+import org.mobicents.protocols.ss7.statistics.api.LongValue;
+import org.mobicents.protocols.ss7.statistics.api.StatDataCollection;
+import org.mobicents.protocols.ss7.statistics.api.StatDataCollectorType;
+import org.mobicents.protocols.ss7.statistics.api.StatResult;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPCounterProvider;
 
 /**
@@ -42,7 +43,7 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
     private UUID sessionId = UUID.randomUUID();
 
     private TCAPProviderImpl provider;
-    private StatDataCollection statDataCollection = new StatDataCollection();
+    private StatDataCollection statDataCollection = new StatDataCollectionImpl();
 
     private AtomicLong tcUniReceivedCount = new AtomicLong();
     private AtomicLong tcUniSentCount = new AtomicLong();

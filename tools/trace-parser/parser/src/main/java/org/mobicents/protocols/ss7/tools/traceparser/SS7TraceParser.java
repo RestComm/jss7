@@ -183,7 +183,7 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
-import org.mobicents.protocols.ss7.statistics.LongValue;
+import org.mobicents.protocols.ss7.statistics.api.LongValue;
 import org.mobicents.protocols.ss7.tcap.DialogImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPCounterProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;

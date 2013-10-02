@@ -20,37 +20,28 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.statistics;
+package org.mobicents.protocols.ss7.statistics.api;
+
+import java.util.Date;
 
 /**
+*
+* Collection of data for a whole counter data
+* Contains StatDataCollector data depending on a campaign name
 *
 * @author sergey vetyutnev
 *
 */
-public class StatDataCollectorMin extends StatDataCollectorLongImpl {
+public interface StatCounterCollection {
 
-    public StatDataCollectorMin(String name) {
-        super(name);
-    }
+    String getCounterName();
 
-    @Override
-    protected void reset() {
-        val = Long.MAX_VALUE;
-    }
+    void clearDeadCampaignes(Date lastTime);
 
-    @Override
-    public void updateData(long newVal) {
-        if (val > newVal)
-            val = newVal;
-    }
+    StatResult restartAndGet(String campaignName);
 
-    @Override
-    public StatDataCollectorType getStatDataCollectorType() {
-        return StatDataCollectorType.MIN;
-    }
+    void updateData(long newVal);
 
-    @Override
-    public void updateData(String newVal) {
-    }
+    void updateData(String newVal);
 
 }

@@ -20,49 +20,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.statistics;
-
-import java.util.Date;
-
-import javolution.util.FastMap;
+package org.mobicents.protocols.ss7.statistics.api;
 
 /**
 *
 * @author sergey vetyutnev
 *
 */
-public abstract class StatDataCollectorLongImpl extends StatDataCollectorAbstractImpl {
+public class LongValue {
 
-    protected long val;
+    private long val;
 
-    public StatDataCollectorLongImpl(String campaignName) {
-        super(campaignName);
+    public long getValue() {
+        return val;
     }
 
-    public StatResult restartAndGet() {
-        StatResultLong res = new StatResultLong(val);
-        this.sessionStartTime = new Date();
-        this.reset();
-        return res;
+    public void updateValue() {
+        val++;
     }
 
-    public class StatResultLong implements StatResult {
-
-        private long val;
-
-        public StatResultLong(long val) {
-            this.val = val;
-        }
-
-        @Override
-        public long getLongValue() {
-            return val;
-        }
-
-        @Override
-        public FastMap<String, LongValue> getStringLongValue() {
-            return null;
-        }
-
-    }
 }

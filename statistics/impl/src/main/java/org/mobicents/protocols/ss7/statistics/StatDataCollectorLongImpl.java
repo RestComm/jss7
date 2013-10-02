@@ -22,13 +22,50 @@
 
 package org.mobicents.protocols.ss7.statistics;
 
+import java.util.Date;
+
+import javolution.util.FastMap;
+
+import org.mobicents.protocols.ss7.statistics.api.LongValue;
+import org.mobicents.protocols.ss7.statistics.api.StatResult;
+
 /**
 *
 * @author sergey vetyutnev
 *
 */
-public enum StatDataCollectorType {
+public abstract class StatDataCollectorLongImpl extends StatDataCollectorAbstractImpl {
 
-    MIN, MAX, StringLongMap;
+    protected long val;
 
+    public StatDataCollectorLongImpl(String campaignName) {
+        super(campaignName);
+    }
+
+    public StatResult restartAndGet() {
+        StatResultLong res = new StatResultLong(val);
+        this.sessionStartTime = new Date();
+        this.reset();
+        return res;
+    }
+
+    public class StatResultLong implements StatResult {
+
+        private long val;
+
+        public StatResultLong(long val) {
+            this.val = val;
+        }
+
+        @Override
+        public long getLongValue() {
+            return val;
+        }
+
+        @Override
+        public FastMap<String, LongValue> getStringLongValue() {
+            return null;
+        }
+
+    }
 }

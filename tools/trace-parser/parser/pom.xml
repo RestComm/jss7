@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<artifactId>ss7-trace-parser-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7.tools.traceparser</groupId>
@@ -70,6 +71,17 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.inap</groupId>
 			<artifactId>inap-impl</artifactId>
+		</dependency>
+		<!-- Statistics -->
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+			<artifactId>statistics-api</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+			<artifactId>statistics-impl</artifactId>
+			<version>${pom.version}</version>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>

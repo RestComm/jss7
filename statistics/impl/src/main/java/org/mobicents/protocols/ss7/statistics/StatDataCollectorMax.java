@@ -22,26 +22,37 @@
 
 package org.mobicents.protocols.ss7.statistics;
 
-import java.util.Date;
+import org.mobicents.protocols.ss7.statistics.api.StatDataCollectorType;
 
 /**
 *
 * @author sergey vetyutnev
 *
 */
-public interface StatDataCollector {
+public class StatDataCollectorMax extends StatDataCollectorLongImpl {
 
-    String getCampaignName();
+    public StatDataCollectorMax(String name) {
+        super(name);
+    }
 
-    StatDataCollectorType getStatDataCollectorType();
+    @Override
+    protected void reset() {
+        val = Long.MIN_VALUE;
+    }
 
-    Date getSessionStartTime();
+    @Override
+    public void updateData(long newVal) {
+        if (val < newVal)
+            val = newVal;
+    }
 
+    @Override
+    public StatDataCollectorType getStatDataCollectorType() {
+        return StatDataCollectorType.MAX;
+    }
 
-    StatResult restartAndGet();
-
-    void updateData(long newVal);
-
-    void updateData(String newVal);
+    @Override
+    public void updateData(String newVal) {
+    }
 
 }

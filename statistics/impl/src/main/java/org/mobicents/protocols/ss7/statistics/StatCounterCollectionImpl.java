@@ -27,6 +27,10 @@ import java.util.Date;
 
 import javolution.util.FastMap;
 
+import org.mobicents.protocols.ss7.statistics.api.StatCounterCollection;
+import org.mobicents.protocols.ss7.statistics.api.StatDataCollectorType;
+import org.mobicents.protocols.ss7.statistics.api.StatResult;
+
 /**
 *
 * @author sergey vetyutnev

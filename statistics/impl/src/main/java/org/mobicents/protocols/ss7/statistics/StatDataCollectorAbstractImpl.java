@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.statistics;
 
 import java.util.Date;
 
+import org.mobicents.protocols.ss7.statistics.api.StatDataCollectorType;
+import org.mobicents.protocols.ss7.statistics.api.StatResult;
+
 /**
 *
 * @author sergey vetyutnev

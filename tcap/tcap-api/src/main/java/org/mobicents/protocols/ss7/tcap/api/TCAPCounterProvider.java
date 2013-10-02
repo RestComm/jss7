@@ -25,7 +25,7 @@ package org.mobicents.protocols.ss7.tcap.api;
 import java.util.Map;
 import java.util.UUID;
 
-import org.mobicents.protocols.ss7.statistics.LongValue;
+import org.mobicents.protocols.ss7.statistics.api.LongValue;
 
 /**
  *

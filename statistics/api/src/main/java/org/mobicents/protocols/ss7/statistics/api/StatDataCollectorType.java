@@ -20,37 +20,15 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.statistics;
+package org.mobicents.protocols.ss7.statistics.api;
 
 /**
 *
 * @author sergey vetyutnev
 *
 */
-public class StatDataCollectorMax extends StatDataCollectorLongImpl {
+public enum StatDataCollectorType {
 
-    public StatDataCollectorMax(String name) {
-        super(name);
-    }
-
-    @Override
-    protected void reset() {
-        val = Long.MIN_VALUE;
-    }
-
-    @Override
-    public void updateData(long newVal) {
-        if (val < newVal)
-            val = newVal;
-    }
-
-    @Override
-    public StatDataCollectorType getStatDataCollectorType() {
-        return StatDataCollectorType.MAX;
-    }
-
-    @Override
-    public void updateData(String newVal) {
-    }
+    MIN, MAX, StringLongMap;
 
 }
