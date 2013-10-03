@@ -68,17 +68,16 @@ public class TCAPStackImpl implements TCAPStack {
     public TCAPStackImpl(String name) {
         super();
         this.name = name;
-
         this.logger = Logger.getLogger(TCAPStackImpl.class.getCanonicalName() + "-" + this.name);
     }
 
     public TCAPStackImpl(String name, SccpProvider sccpProvider, int ssn) {
         this.name = name;
+        this.logger = Logger.getLogger(TCAPStackImpl.class.getCanonicalName() + "-" + this.name);
+
         this.sccpProvider = sccpProvider;
         this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, ssn);
         this.tcapCounterProvider = new TCAPCounterProviderImpl(this.tcapProvider);
-
-        this.logger = Logger.getLogger(TCAPStackImpl.class.getCanonicalName() + "-" + this.name);
     }
 
     @Override
