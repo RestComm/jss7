@@ -25,6 +25,8 @@
  */
 package org.mobicents.protocols.ss7.isup.message.parameter;
 
+import java.io.Serializable;
+
 /**
  * This class embeds Parameter/Parameters. It can be either primtive or constructed. It supports two types of encoding -
  * content as byte[] - either simple or complex - depends on how TC-User sets parameters, or content as Parameter[] - in this
@@ -74,7 +76,7 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  * @author baranowb
  *
  */
-public interface Parameter {
+public interface Parameter extends Serializable{
     // public static final int _TAG = 0x02;
     // public static final boolean _TAG_PRIMITIVE = true;
 

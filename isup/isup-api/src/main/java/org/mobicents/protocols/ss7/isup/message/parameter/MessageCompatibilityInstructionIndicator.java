@@ -21,11 +21,13 @@
 
 package org.mobicents.protocols.ss7.isup.message.parameter;
 
+import java.io.Serializable;
+
 /**
  * @author baranowb
  *
  */
-public interface MessageCompatibilityInstructionIndicator {
+public interface MessageCompatibilityInstructionIndicator extends Serializable{
     /**
      * See Q.763 3.33 Transit at intermediate exchange indicator : transit interpretation
      */

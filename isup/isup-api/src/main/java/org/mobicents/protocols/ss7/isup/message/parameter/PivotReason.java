@@ -21,11 +21,13 @@
 
 package org.mobicents.protocols.ss7.isup.message.parameter;
 
+import java.io.Serializable;
+
 /**
  * @author baranowb
  *
  */
-public interface PivotReason {
+public interface PivotReason extends Serializable{
 
     byte REASON_UKNOWN = 0;
     byte REASON_SERVICE_PROVIDER_PORTABILITY = 0x01;

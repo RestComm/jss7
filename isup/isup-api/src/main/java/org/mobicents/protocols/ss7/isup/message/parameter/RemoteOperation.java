@@ -20,6 +20,8 @@
  */
 package org.mobicents.protocols.ss7.isup.message.parameter;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.asn.Tag;
 
 /**
@@ -27,7 +29,7 @@ import org.mobicents.protocols.asn.Tag;
  * @author baranowb
  *
  */
-public interface RemoteOperation {
+public interface RemoteOperation extends Serializable{
     //I wonder why this is different then regular ops from TCAP...
     int _COMPONENT_TAG = 0x0C;
     boolean _COMPONENT_TAG_PC_PRIMITIVE = false;

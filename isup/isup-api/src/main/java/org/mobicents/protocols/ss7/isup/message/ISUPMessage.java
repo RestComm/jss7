@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.isup.message;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
@@ -33,7 +35,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
  *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public interface ISUPMessage {
+public interface ISUPMessage extends Serializable{
 
     /**
      * Sets sls to be used when this message is send. If message is received, it contians sls of link on which it has been

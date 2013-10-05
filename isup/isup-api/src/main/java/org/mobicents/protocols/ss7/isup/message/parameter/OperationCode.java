@@ -25,13 +25,15 @@
  */
 package org.mobicents.protocols.ss7.isup.message.parameter;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.asn.Tag;
 
 /**
  * @author baranowb
  *
  */
-public interface OperationCode {
+public interface OperationCode extends Serializable{
 
     int _TAG_LOCAL = Tag.INTEGER;
     int _TAG_GLOBAL = Tag.OBJECT_IDENTIFIER;

@@ -21,13 +21,15 @@
 
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.isup.ParameterException;
 
 /**
  * @author baranowb
  *
  */
-public interface Encodable {
+public interface Encodable extends Serializable {
     /**
      * Decodes this element from passed byte[] array. This array must contain only element data. however in case of constructor
      * elements it may contain more information elements that consist of tag, length and contents elements, this has to be
