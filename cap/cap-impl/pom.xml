@@ -120,6 +120,10 @@
 					<artifactId>mtp-api</artifactId>
 					<scope>test</scope>
 				</dependency>
+				<dependency>
+					<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+					<artifactId>statistics-api</artifactId>
+				</dependency>
 			</dependencies>
 		</profile>
 		<profile>

@@ -28,9 +28,12 @@ import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 
 /**
  *
- LegOrCallSegment {PARAMETERS-BOUND : bound} ::= CHOICE { callSegmentID [0] CallSegmentID {bound}, legID [1] LegID }
- *
- * CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..bound.&numOfCSs)
+LegOrCallSegment {PARAMETERS-BOUND : bound} ::= CHOICE {
+   callSegmentID [0] CallSegmentID {bound},
+   legID         [1] LegID
+}
+
+CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..bound.&numOfCSs)
  *
  *
  * @author sergey vetyutnev

@@ -102,6 +102,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InbandInfo;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InformationToSend;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InitialDPArgExtension;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.LegOrCallSegment;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.LowLayerCompatibility;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.MessageID;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.MessageIDText;
@@ -632,5 +633,9 @@ public interface CAPParameterFactory {
     TSmsFailureSpecificInfo createTSmsFailureSpecificInfo(MTSMSCause failureCause);
 
     TSmsDeliverySpecificInfo createTSmsDeliverySpecificInfo();
+
+    LegOrCallSegment createLegOrCallSegment(Integer callSegmentID);
+
+    LegOrCallSegment createLegOrCallSegment(LegID legID);
 
 }

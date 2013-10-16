@@ -51,6 +51,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDP
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CollectedDigits;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CollectedInfo;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.IPSSPCapabilities;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InformationToSend;
@@ -71,6 +72,7 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSAddressStrin
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.primitives.TimeAndTimezoneImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.InitialDPRequestImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.DestinationRoutingAddressImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.InitialDpGprsRequestImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.ChargingResultImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.ElapsedTimeImpl;
@@ -85,6 +87,7 @@ import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
 import org.mobicents.protocols.ss7.inap.primitives.MiscCallInfoImpl;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledPartyNumberImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
@@ -804,6 +807,24 @@ public class Client extends EventTestHarness {
         this.observerdEvents.add(TestEvent.createSentEvent(EventType.InitialDPSMSRequest, null, sequence++));
 
         clientSmsDialog.send();
+    }
+
+    public void sendInitiateCallAttemptRequest() throws CAPException {
+
+        clientCscDialog = this.capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(CAPApplicationContext.CapV4_scf_gsmSSFGeneric, this.thisAddress,
+                this.remoteAddress);
+
+        ArrayList<CalledPartyNumberCap> calledPartyNumberArr = new ArrayList<CalledPartyNumberCap>();
+        CalledPartyNumber cpn = this.isupParameterFactory.createCalledPartyNumber();
+        cpn.setNatureOfAddresIndicator(3);
+        cpn.setAddress("1113330");
+        CalledPartyNumberCap cpnCap = this.capParameterFactory.createCalledPartyNumberCap(cpn);
+        calledPartyNumberArr.add(cpnCap);
+        DestinationRoutingAddress destinationRoutingAddress = this.capParameterFactory.createDestinationRoutingAddress(calledPartyNumberArr);
+        clientCscDialog.addInitiateCallAttemptRequest(destinationRoutingAddress, null, null, null, null, null, null, false);
+
+        this.observerdEvents.add(TestEvent.createSentEvent(EventType.InitiateCallAttemptRequest, null, sequence++));
+        clientCscDialog.send();
     }
 
 //    public void sendReleaseSmsRequest(CAPApplicationContext appCnt) throws CAPException {

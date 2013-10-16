@@ -55,11 +55,19 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CancelReq
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectToResourceRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueWithArgumentRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionWithArgumentRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectLegRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectLegResponse;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EstablishTemporaryConnectionRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.FurnishChargingInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitiateCallAttemptRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitiateCallAttemptResponse;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.MoveLegRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.MoveLegResponse;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PlayAnnouncementRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationResponse;
@@ -680,6 +688,54 @@ public class TestCapScfMan extends TesterBase implements TestCapScfManMBean, Sto
     @Override
     public void onDialogUserAbort(CAPDialog dlg, CAPGeneralAbortReason reason, CAPUserAbortReason userAbort) {
         this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: DlgProviderAbort", reason + " - " + userAbort, Level.DEBUG);
+    }
+
+    @Override
+    public void onContinueWithArgumentRequest(ContinueWithArgumentRequest ind) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onDisconnectLegRequest(DisconnectLegRequest ind) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onDisconnectLegResponse(DisconnectLegResponse ind) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onDisconnectForwardConnectionWithArgumentRequest(DisconnectForwardConnectionWithArgumentRequest ind) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onInitiateCallAttemptRequest(InitiateCallAttemptRequest initiateCallAttemptRequest) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onInitiateCallAttemptResponse(InitiateCallAttemptResponse initiateCallAttemptResponse) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onMoveLegRequest(MoveLegRequest ind) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onMoveLegResponse(MoveLegResponse ind) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

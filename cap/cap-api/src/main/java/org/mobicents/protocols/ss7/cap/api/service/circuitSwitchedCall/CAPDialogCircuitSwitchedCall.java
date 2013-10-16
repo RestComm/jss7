@@ -51,6 +51,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CallSegmentToCancel;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Carrier;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CollectedInfo;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ContinueWithArgumentArgExtension;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FCIBCCCAMELsequence1;
@@ -76,6 +77,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGIndex;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4Functionalities;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 
 /**
  *
@@ -203,6 +206,23 @@ public interface CAPDialogCircuitSwitchedCall extends CAPDialog {
 
     Long addDisconnectForwardConnectionRequest(int customInvokeTimeout) throws CAPException;
 
+    Long addDisconnectForwardConnectionWithArgumentRequest(
+            Integer callSegmentID, CAPExtensions extensions)
+            throws CAPException;
+
+    Long addDisconnectForwardConnectionWithArgumentRequest(
+            int customInvokeTimeout, Integer callSegmentID,
+            CAPExtensions extensions) throws CAPException;
+
+    Long addDisconnectLegRequest(LegID logToBeReleased, CauseCap releaseCause,
+            CAPExtensions extensions) throws CAPException;
+
+    Long addDisconnectLegRequest(int customInvokeTimeout,
+            LegID logToBeReleased, CauseCap releaseCause,
+            CAPExtensions extensions) throws CAPException;
+
+    void addDisconnectLegResponse(long invokeId) throws CAPException;
+
     Long addConnectToResourceRequest(CalledPartyNumberCap resourceAddress_IPRoutingAddress,
             boolean resourceAddress_Null, CAPExtensions extensions,
             ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, Integer callSegmentID) throws CAPException;
@@ -270,5 +290,59 @@ public interface CAPDialogCircuitSwitchedCall extends CAPDialog {
 
     Long addCancelRequest_CallSegmentToCancel(int customInvokeTimeout, CallSegmentToCancel callSegmentToCancel)
             throws CAPException;
+
+    Long addInitiateCallAttemptRequest(
+            DestinationRoutingAddress destinationRoutingAddress,
+            CAPExtensions extensions, LegID legToBeCreated,
+            Integer newCallSegment, CallingPartyNumberCap callingPartyNumber,
+            CallReferenceNumber callReferenceNumber,
+            ISDNAddressString gsmSCFAddress, boolean suppressTCsi)
+            throws CAPException;
+
+    Long addInitiateCallAttemptRequest(int customInvokeTimeout,
+            DestinationRoutingAddress destinationRoutingAddress,
+            CAPExtensions extensions, LegID legToBeCreated,
+            Integer newCallSegment, CallingPartyNumberCap callingPartyNumber,
+            CallReferenceNumber callReferenceNumber,
+            ISDNAddressString gsmSCFAddress, boolean suppressTCsi)
+            throws CAPException;
+
+    void addInitiateCallAttemptResponse(long invokeId,
+            SupportedCamelPhases supportedCamelPhases,
+            OfferedCamel4Functionalities offeredCamel4Functionalities,
+            CAPExtensions extensions, boolean releaseCallArgExtensionAllowed)
+            throws CAPException;
+
+    Long addContinueWithArgumentRequest(AlertingPatternCap alertingPattern,
+            CAPExtensions extensions,
+            ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo,
+            CallingPartysCategoryInap callingPartysCategory,
+            ArrayList<GenericNumberCap> genericNumbers,
+            CUGInterlock cugInterlock, boolean cugOutgoingAccess,
+            LocationNumberCap chargeNumber, Carrier carrier,
+            boolean suppressionOfAnnouncement, NAOliInfo naOliInfo,
+            boolean borInterrogationRequested, boolean suppressOCsi,
+            ContinueWithArgumentArgExtension continueWithArgumentArgExtension)
+            throws CAPException;
+
+    Long addContinueWithArgumentRequest(int customInvokeTimeout,
+            AlertingPatternCap alertingPattern, CAPExtensions extensions,
+            ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo,
+            CallingPartysCategoryInap callingPartysCategory,
+            ArrayList<GenericNumberCap> genericNumbers,
+            CUGInterlock cugInterlock, boolean cugOutgoingAccess,
+            LocationNumberCap chargeNumber, Carrier carrier,
+            boolean suppressionOfAnnouncement, NAOliInfo naOliInfo,
+            boolean borInterrogationRequested, boolean suppressOCsi,
+            ContinueWithArgumentArgExtension continueWithArgumentArgExtension)
+            throws CAPException;
+
+    Long addMoveLegRequest(LegID logIDToMove, CAPExtensions extensions)
+            throws CAPException;
+
+    Long addMoveLegRequest(int customInvokeTimeout, LegID logIDToMove,
+            CAPExtensions extensions) throws CAPException;
+
+    void addMoveLegResponse(long invokeId) throws CAPException;
 
 }

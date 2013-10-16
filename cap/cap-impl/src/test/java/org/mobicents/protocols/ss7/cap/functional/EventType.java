@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.functional;
 
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionWithArgumentRequest;
+
 
 /**
  *
@@ -37,7 +39,7 @@ public enum EventType {
     ErrorComponent, ProviderErrorComponent, RejectComponent, InvokeTimeout,
 
     // CircuitSwitchedCall EventType
-    InitialDpRequest, ApplyChargingReportRequest, ApplyChargingRequest, CallInformationReportRequest, CallInformationRequestRequest, ConnectRequest, ContinueRequest, EventReportBCSMRequest, RequestReportBCSMEventRequest, ReleaseCallRequest, ActivityTestRequest, ActivityTestResponse, AssistRequestInstructionsRequest, EstablishTemporaryConnectionRequest, DisconnectForwardConnectionRequest, ConnectToResourceRequest, ResetTimerRequest, FurnishChargingInformationRequest, SendChargingInformationRequest, SpecializedResourceReportRequest, PlayAnnouncementRequest, PromptAndCollectUserInformationRequest, PromptAndCollectUserInformationResponse, CancelRequest,
+    InitialDpRequest, ApplyChargingReportRequest, ApplyChargingRequest, CallInformationReportRequest, CallInformationRequestRequest, ConnectRequest, ContinueRequest, ContinueWithArgumentRequest, EventReportBCSMRequest, RequestReportBCSMEventRequest, ReleaseCallRequest, ActivityTestRequest, ActivityTestResponse, AssistRequestInstructionsRequest, EstablishTemporaryConnectionRequest, DisconnectForwardConnectionRequest, ConnectToResourceRequest, ResetTimerRequest, FurnishChargingInformationRequest, SendChargingInformationRequest, SpecializedResourceReportRequest, PlayAnnouncementRequest, PromptAndCollectUserInformationRequest, PromptAndCollectUserInformationResponse, CancelRequest, DisconnectLegRequest, DisconnectLegResponse, DisconnectForwardConnectionWithArgumentRequest, InitiateCallAttemptRequest, InitiateCallAttemptResponse, MoveLegRequest, MoveLegResponse,
 
     // gprs EventType
     InitialDpGprsRequest, RequestReportGPRSEventRequest, ApplyChargingGPRSRequest, EntityReleasedGPRSRequest, ConnectGPRSRequest, ContinueGPRSRequest, ReleaseGPRSRequest, ResetTimerGPRSRequest, FurnishChargingInformationGPRSRequest, CancelGPRSRequest, SendChargingInformationGPRSRequest, applyChargingReportGPRS, EventReportGPRSRequest, EventReportGPRSResponse, ApplyChargingReportGPRSResponse, ApplyChargingReportGPRSRequest, EntityReleasedGPRSResponse, ActivityTestGPRSRequest, ActivityTestGPRSResponse,

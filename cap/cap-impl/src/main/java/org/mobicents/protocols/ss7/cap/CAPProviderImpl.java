@@ -117,7 +117,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
  */
 public class CAPProviderImpl implements CAPProvider, TCListener {
 
-    protected transient final Logger loger;
+    protected transient Logger loger;
 
     private transient List<CAPDialogListener> dialogListeners = new CopyOnWriteArrayList<CAPDialogListener>();
 

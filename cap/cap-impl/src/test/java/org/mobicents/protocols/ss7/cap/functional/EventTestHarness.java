@@ -49,11 +49,19 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CancelReq
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectToResourceRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueWithArgumentRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionWithArgumentRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectLegRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectLegResponse;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EstablishTemporaryConnectionRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.FurnishChargingInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitiateCallAttemptRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitiateCallAttemptResponse;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.MoveLegRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.MoveLegResponse;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PlayAnnouncementRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationResponse;
@@ -402,6 +410,62 @@ public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwi
     public void onCancelRequest(CancelRequest ind) {
         this.logger.debug("CancelRequest");
         TestEvent te = TestEvent.createReceivedEvent(EventType.CancelRequest, ind, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onContinueWithArgumentRequest(ContinueWithArgumentRequest ind) {
+        this.logger.debug("ContinueWithArgumentRequest");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.ContinueWithArgumentRequest, ind, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onDisconnectLegRequest(DisconnectLegRequest ind) {
+        this.logger.debug("DisconnectLegRequest");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.DisconnectLegRequest, ind, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onDisconnectLegResponse(DisconnectLegResponse ind) {
+        this.logger.debug("DisconnectLegResponse");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.DisconnectLegResponse, ind, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onDisconnectForwardConnectionWithArgumentRequest(DisconnectForwardConnectionWithArgumentRequest ind) {
+        this.logger.debug("DisconnectForwardConnectionWithArgumentRequest");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.DisconnectForwardConnectionWithArgumentRequest, ind, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onInitiateCallAttemptRequest(InitiateCallAttemptRequest ind) {
+        this.logger.debug("InitiateCallAttemptRequest");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.InitiateCallAttemptRequest, ind, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onInitiateCallAttemptResponse(InitiateCallAttemptResponse ind) {
+        this.logger.debug("InitiateCallAttemptResponse");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.InitiateCallAttemptResponse, ind, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onMoveLegRequest(MoveLegRequest ind) {
+        this.logger.debug("MoveLegRequest");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.MoveLegRequest, ind, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onMoveLegResponse(MoveLegResponse ind) {
+        this.logger.debug("MoveLegResponse");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.MoveLegResponse, ind, sequence++);
         this.observerdEvents.add(te);
     }
 

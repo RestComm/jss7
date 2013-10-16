@@ -41,6 +41,8 @@ public interface CAPServiceCircuitSwitchedCallListener extends CAPServiceListene
 
     void onContinueRequest(ContinueRequest ind);
 
+    void onContinueWithArgumentRequest(ContinueWithArgumentRequest ind);
+
     void onApplyChargingReportRequest(ApplyChargingReportRequest ind);
 
     void onReleaseCallRequest(ReleaseCallRequest ind);
@@ -61,6 +63,12 @@ public interface CAPServiceCircuitSwitchedCallListener extends CAPServiceListene
 
     void onDisconnectForwardConnectionRequest(DisconnectForwardConnectionRequest ind);
 
+    void onDisconnectLegRequest(DisconnectLegRequest ind);
+
+    void onDisconnectLegResponse(DisconnectLegResponse ind);
+
+    void onDisconnectForwardConnectionWithArgumentRequest(DisconnectForwardConnectionWithArgumentRequest ind);
+
     void onConnectToResourceRequest(ConnectToResourceRequest ind);
 
     void onResetTimerRequest(ResetTimerRequest ind);
@@ -78,5 +86,13 @@ public interface CAPServiceCircuitSwitchedCallListener extends CAPServiceListene
     void onPromptAndCollectUserInformationResponse(PromptAndCollectUserInformationResponse ind);
 
     void onCancelRequest(CancelRequest ind);
+
+    void onInitiateCallAttemptRequest(InitiateCallAttemptRequest initiateCallAttemptRequest);
+
+    void onInitiateCallAttemptResponse(InitiateCallAttemptResponse initiateCallAttemptResponse);
+
+    void onMoveLegRequest(MoveLegRequest ind);
+
+    void onMoveLegResponse(MoveLegResponse ind);
 
 }

@@ -123,6 +123,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InbandInfo;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InformationToSend;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InitialDPArgExtension;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.LegOrCallSegment;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.LowLayerCompatibility;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.MessageID;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.MessageIDText;
@@ -223,6 +224,7 @@ import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.IPS
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.InbandInfoImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.InformationToSendImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.InitialDPArgExtensionImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.LegOrCallSegmentImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.MessageIDImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.MessageIDTextImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.NAOliInfoImpl;
@@ -1334,5 +1336,15 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
     @Override
     public TSmsDeliverySpecificInfo createTSmsDeliverySpecificInfo() {
         return new TSmsDeliverySpecificInfoImpl();
+    }
+
+    @Override
+    public LegOrCallSegment createLegOrCallSegment(Integer callSegmentID) {
+        return new LegOrCallSegmentImpl(callSegmentID);
+    }
+
+    @Override
+    public LegOrCallSegment createLegOrCallSegment(LegID legID) {
+        return new LegOrCallSegmentImpl(legID);
     }
 }

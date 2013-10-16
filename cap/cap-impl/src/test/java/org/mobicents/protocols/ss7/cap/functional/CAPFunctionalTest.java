@@ -47,7 +47,6 @@ import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.EsiSms.OSmsFailureSpecificInfo;
-import org.mobicents.protocols.ss7.cap.api.EsiSms.OSmsSubmissionSpecificInfo;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
@@ -77,11 +76,19 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CancelReq
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectToResourceRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueWithArgumentRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionWithArgumentRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectLegRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectLegResponse;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EstablishTemporaryConnectionRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.FurnishChargingInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitiateCallAttemptRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitiateCallAttemptResponse;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.MoveLegRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.MoveLegResponse;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PlayAnnouncementRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationResponse;
@@ -92,6 +99,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendCharg
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AOCBeforeAnswer;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AOCSubsequent;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AlertingPatternCap;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAI_GSM0224;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CollectedDigits;
@@ -165,6 +173,7 @@ import org.mobicents.protocols.ss7.cap.service.gprs.primitive.FCIBCCCAMELsequenc
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.FreeFormatDataGprsImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.GPRSEventSpecificInformationImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.PDPIDImpl;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
@@ -176,10 +185,13 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
-import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.AlertingLevel;
+import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
+import org.mobicents.protocols.ss7.map.primitives.AlertingPatternImpl;
 import org.mobicents.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.LAIFixedLengthImpl;
@@ -879,9 +891,13 @@ public class CAPFunctionalTest extends SccpHarness {
     /**
      * Circuit switch call play announcement and disconnect ACN = capssf-scfGenericAC V3
      *
-     * TC-BEGIN + InitialDPRequest TC-CONTINUE + RequestReportBCSMEventRequest TC-CONTINUE + ConnectToResourceRequest
-     * TC-CONTINUE + PlayAnnouncementRequest TC-CONTINUE + SpecializedResourceReportRequest TC-CONTINUE +
-     * DisconnectForwardConnectionRequest TC-END + ReleaseCallRequest
+     * TC-BEGIN + InitialDPRequest
+     *   TC-CONTINUE + RequestReportBCSMEventRequest
+     *   TC-CONTINUE + ConnectToResourceRequest
+     *   TC-CONTINUE + PlayAnnouncementRequest
+     * TC-CONTINUE + SpecializedResourceReportRequest
+     *   TC-CONTINUE + DisconnectForwardConnectionRequest
+     *   TC-END + ReleaseCallRequest
      */
     @Test(groups = { "functional.flow", "dialog" })
     public void testPlayAnnouncment() throws Exception {
@@ -4476,10 +4492,6 @@ public class CAPFunctionalTest extends SccpHarness {
                 (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
         serverExpectedEvents.add(te);
 
-        // ..................
-        this.saveTrafficInFile();
-        // ..................
-
         client.suppressInvokeTimeout();
         client.sendInitialDpSmsRequest(CAPApplicationContext.CapV3_cap3_sms);
 
@@ -4735,6 +4747,403 @@ public class CAPFunctionalTest extends SccpHarness {
         client.compareEvents(clientExpectedEvents);
         server.compareEvents(serverExpectedEvents);
 
+    }
+
+    /**
+     * ACN = capscf-ssfGenericAC V4
+     *
+     * TC-BEGIN + InitiateCallAttemptRequest
+     *   TC-CONTINUE + InitiateCallAttemptResponse
+     * TC-CONTINUE + MoveLegRequest
+     *   TC-CONTINUE + MoveLegResponse
+     * TC-CONTINUE + DisconnectLegRequest 
+     *   TC-CONTINUE + DisconnectLegResponse
+     * TC-END + DisconnectForwardConnectionWithArgumentRequest 
+     */
+    @Test(groups = { "functional.flow", "dialog" })
+    public void testInitiateCallAttempt() throws Exception {
+
+        Client client = new Client(stack1, this, peer1Address, peer2Address) {
+            private int dialogStep;
+
+            @Override
+            public void onInitiateCallAttemptResponse(InitiateCallAttemptResponse ind) {
+                super.onInitiateCallAttemptResponse(ind);
+
+                assertTrue(ind.getSupportedCamelPhases().getPhase1Supported());
+                assertTrue(ind.getSupportedCamelPhases().getPhase2Supported());
+                assertTrue(ind.getSupportedCamelPhases().getPhase3Supported());
+                assertFalse(ind.getSupportedCamelPhases().getPhase4Supported());
+
+                dialogStep = 1;
+            }
+
+            @Override
+            public void onMoveLegResponse(MoveLegResponse ind) {
+                super.onMoveLegResponse(ind);
+
+                dialogStep = 2;
+            }
+
+            @Override
+            public void onDisconnectLegResponse(DisconnectLegResponse ind) {
+                super.onDisconnectLegResponse(ind);
+
+                dialogStep = 3;
+            }
+
+            public void onDialogDelimiter(CAPDialog capDialog) {
+                super.onDialogDelimiter(capDialog);
+
+                CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall) capDialog;
+
+                try {
+                    switch (dialogStep) {
+                    case 1: // after InitiateCallAttemptResponse
+                        LegID logIDToMove = this.inapParameterFactory.createLegID(false, LegType.leg1);
+                        dlg.addMoveLegRequest(logIDToMove, null);
+                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.MoveLegRequest, null, sequence++));
+                        dlg.send();
+                        break;
+
+                    case 2: // after MoveLegResponse
+                        LegID logToBeReleased = this.inapParameterFactory.createLegID(false, LegType.leg2);
+                        CauseIndicators causeIndicators = this.isupParameterFactory.createCauseIndicators();
+                        causeIndicators.setCauseValue(3);
+                        CauseCap causeCap = this.capParameterFactory.createCauseCap(causeIndicators);
+                        dlg.addDisconnectLegRequest(logToBeReleased, causeCap, null);
+                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.DisconnectLegRequest, null, sequence++));
+                        dlg.send();
+                        break;
+
+                    case 3: // after MoveLegResponse
+                        dlg.addDisconnectForwardConnectionWithArgumentRequest(15, null);
+                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.DisconnectForwardConnectionWithArgumentRequest, null, sequence++));
+                        dlg.close(false);
+                        break;
+                    }
+                } catch (CAPException e) {
+                    this.error("Error while trying to close() Dialog", e);
+                }
+            }
+        };
+
+        Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+            private int dialogStep = 0;
+            private long invokeIdInitiateCallAttempt;
+            private long invokeIdMoveLeg;
+            private long invokeIdDisconnectLeg;
+
+            @Override
+            public void onInitiateCallAttemptRequest(InitiateCallAttemptRequest ind) {
+                super.onInitiateCallAttemptRequest(ind);
+
+                invokeIdInitiateCallAttempt = ind.getInvokeId();
+                try {
+                    assertEquals(ind.getDestinationRoutingAddress().getCalledPartyNumber().size(), 1);
+                    assertEquals(ind.getDestinationRoutingAddress().getCalledPartyNumber().get(0).getCalledPartyNumber().getAddress(), "1113330");
+                } catch (CAPException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                dialogStep = 1;
+            }
+
+            @Override
+            public void onMoveLegRequest(MoveLegRequest ind) {
+                super.onMoveLegRequest(ind);
+
+                invokeIdMoveLeg = ind.getInvokeId();
+                assertEquals(ind.getLegIDToMove().getReceivingSideID(), LegType.leg1);
+
+                dialogStep = 2;
+            }
+
+            @Override
+            public void onDisconnectLegRequest(DisconnectLegRequest ind) {
+                super.onDisconnectLegRequest(ind);
+
+                try {
+                    invokeIdDisconnectLeg = ind.getInvokeId();
+                    assertEquals(ind.getLegToBeReleased().getReceivingSideID(), LegType.leg2);
+                    assertEquals(ind.getReleaseCause().getCauseIndicators().getCauseValue(), 3);
+                } catch (CAPException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                dialogStep = 3;
+            }
+
+            @Override
+            public void onDisconnectForwardConnectionWithArgumentRequest(DisconnectForwardConnectionWithArgumentRequest ind) {
+                super.onDisconnectForwardConnectionWithArgumentRequest(ind);
+
+                invokeIdDisconnectLeg = ind.getInvokeId();
+                assertEquals((int) ind.getCallSegmentID(), 15);
+
+                ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+
+                dialogStep = 4;
+            }
+
+            @Override
+            public void onDialogDelimiter(CAPDialog capDialog) {
+                super.onDialogDelimiter(capDialog);
+
+                CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall) capDialog;
+
+                try {
+                    switch (dialogStep) {
+                    case 1: // after InitiateCallAttempt
+                        SupportedCamelPhases supportedCamelPhases = this.mapParameterFactory.createSupportedCamelPhases(true, true, true, false);
+                        dlg.addInitiateCallAttemptResponse(invokeIdInitiateCallAttempt, supportedCamelPhases, null, null, false);
+                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.InitiateCallAttemptResponse, null, sequence++));
+                        dlg.send();
+
+                        dialogStep = 0;
+                        break;
+
+                    case 2: // after MoveLegRequest
+                        dlg.addMoveLegResponse(invokeIdMoveLeg);
+                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.MoveLegResponse, null, sequence++));
+                        dlg.send();
+
+                        dialogStep = 0;
+                        break;
+
+                    case 3: // after DisconnectLegRequest
+                        dlg.addDisconnectLegResponse(invokeIdDisconnectLeg);
+                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.DisconnectLegResponse, null, sequence++));
+                        dlg.send();
+
+                        dialogStep = 0;
+                        break;
+                    }
+                } catch (CAPException e) {
+                    this.error("Error while trying to close() Dialog", e);
+                }
+            }
+        };
+
+        long stamp = System.currentTimeMillis();
+        int count = 0;
+        // Client side events
+        List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+        TestEvent te = TestEvent.createSentEvent(EventType.InitiateCallAttemptRequest, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.InitiateCallAttemptResponse, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.MoveLegRequest, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.MoveLegResponse, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.DisconnectLegRequest, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DisconnectLegResponse, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.DisconnectForwardConnectionWithArgumentRequest, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        count = 0;
+        // Server side events
+        List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+        te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.InitiateCallAttemptRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.InitiateCallAttemptResponse, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.MoveLegRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.MoveLegResponse, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DisconnectLegRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.DisconnectLegResponse, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DisconnectForwardConnectionWithArgumentRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+        
+        client.sendInitiateCallAttemptRequest();
+
+        waitForEnd();
+
+        client.compareEvents(clientExpectedEvents);
+        server.compareEvents(serverExpectedEvents);
+    }
+
+    /**
+     * ACN = capscf-ssfGenericAC V4
+     *
+     * TC-BEGIN + InitiateDPRequest
+     *   TC-CONTINUE + ContinueWithArgumentRequest
+     * TC-END 
+     */
+    @Test(groups = { "functional.flow", "dialog" })
+    public void testContinueWithArgument() throws Exception {
+
+        Client client = new Client(stack1, this, peer1Address, peer2Address) {
+            private int dialogStep;
+
+            @Override
+            public void onContinueWithArgumentRequest(ContinueWithArgumentRequest ind) {
+                super.onContinueWithArgumentRequest(ind);
+
+                assertEquals(ind.getAlertingPattern().getAlertingPattern().getAlertingLevel(), AlertingLevel.Level1);
+                ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+
+                dialogStep = 1;
+            }
+
+            public void onDialogDelimiter(CAPDialog capDialog) {
+                super.onDialogDelimiter(capDialog);
+
+                CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall) capDialog;
+
+                try {
+                    switch (dialogStep) {
+                        case 1: // after ContinueWithArgumentRequest
+                            dlg.close(false);
+
+                            dialogStep = 0;
+
+                            break;
+                    }
+                } catch (CAPException e) {
+                    this.error("Error while trying to close() Dialog", e);
+                }
+            }
+        };
+
+        Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+            private int dialogStep = 0;
+
+            @Override
+            public void onInitialDPRequest(InitialDPRequest ind) {
+                super.onInitialDPRequest(ind);
+
+                assertTrue(Client.checkTestInitialDp(ind));
+
+                dialogStep = 1;
+                ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+            }
+
+            @Override
+            public void onDialogDelimiter(CAPDialog capDialog) {
+                super.onDialogDelimiter(capDialog);
+
+                CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall) capDialog;
+
+                try {
+                    switch (dialogStep) {
+                    case 1: // after InitialDp
+                        AlertingPattern ap = new AlertingPatternImpl(AlertingLevel.Level1);
+                        AlertingPatternCap alertingPattern = this.capParameterFactory.createAlertingPatternCap(ap);
+                        dlg.addContinueWithArgumentRequest(alertingPattern, null, null, null, null, null, false, null, null, false, null, false, false, null);
+                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.ContinueWithArgumentRequest, null, sequence++));
+                        dlg.send();
+
+                        dialogStep = 0;
+
+                        break;
+                    }
+                } catch (CAPException e) {
+                    this.error("Error while trying to close() Dialog", e);
+                }
+            }
+        };
+
+        long stamp = System.currentTimeMillis();
+        int count = 0;
+        // Client side events
+        List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+        TestEvent te = TestEvent.createSentEvent(EventType.InitialDpRequest, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.ContinueWithArgumentRequest, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        count = 0;
+        // Server side events
+        List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+        te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.InitialDpRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.ContinueWithArgumentRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        client.sendInitialDp(CAPApplicationContext.CapV3_gsmSSF_scfGeneric);
+
+        waitForEnd();
+
+        client.compareEvents(clientExpectedEvents);
+        server.compareEvents(serverExpectedEvents);
     }
     
     

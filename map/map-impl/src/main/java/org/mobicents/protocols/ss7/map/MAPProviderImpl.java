@@ -135,7 +135,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
  */
 public class MAPProviderImpl implements MAPProvider, TCListener {
 
-    protected transient final Logger loger;
+    protected transient Logger loger;
 
     private transient List<MAPDialogListener> dialogListeners = new CopyOnWriteArrayList<MAPDialogListener>();
 
@@ -167,9 +167,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
      */
 
     public MAPProviderImpl(String name, TCAPProvider tcapProvider) {
-        this.tcapProvider = tcapProvider;
-
         this.loger = Logger.getLogger(MAPStackImpl.class.getCanonicalName() + "-" + name);
+
+        this.tcapProvider = tcapProvider;
 
         this.mapServices.add(this.mapServiceMobility);
         this.mapServices.add(this.mapServiceCallHandling);

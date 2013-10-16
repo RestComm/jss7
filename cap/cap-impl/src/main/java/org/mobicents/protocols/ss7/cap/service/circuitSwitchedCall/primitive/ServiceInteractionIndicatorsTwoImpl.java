@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -56,6 +59,10 @@ public class ServiceInteractionIndicatorsTwoImpl implements ServiceInteractionIn
     public static final int _ID_holdTreatmentIndicator = 50;
     public static final int _ID_cwTreatmentIndicator = 51;
     public static final int _ID_ectTreatmentIndicator = 52;
+
+    private static final String FORWARD_SERVICE_INTERACTION_IND = "forwardServiceInteractionInd";
+    private static final String BACKWARD_SERVICE_INTERACTION_IND = "backwardServiceInteractionInd";
+    private static final String BOTHWAY_THROUGH_CONNECTION_IND = "bothwayThroughConnectionInd";
 
     public static final String _PrimitiveName = "ServiceInteractionIndicatorsTwo";
 
@@ -280,6 +287,36 @@ public class ServiceInteractionIndicatorsTwoImpl implements ServiceInteractionIn
             throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<ServiceInteractionIndicatorsTwoImpl> SERVICE_INTERACTION_INDICATORS_TWO_XML = new XMLFormat<ServiceInteractionIndicatorsTwoImpl>(
+            ServiceInteractionIndicatorsTwoImpl.class) {
+
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                ServiceInteractionIndicatorsTwoImpl serviceInteractionIndicatorsTwo) throws XMLStreamException {
+
+            String vals = xml.get(BOTHWAY_THROUGH_CONNECTION_IND, String.class);
+            if (vals != null) {
+                try {
+                    serviceInteractionIndicatorsTwo.bothwayThroughConnectionInd = Enum.valueOf(BothwayThroughConnectionInd.class, vals);
+                } catch (Exception e) {
+                }
+            }
+
+            // TODO: implement all methods
+        }
+
+        public void write(ServiceInteractionIndicatorsTwoImpl serviceInteractionIndicatorsTwo,
+                javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+
+            if (serviceInteractionIndicatorsTwo.bothwayThroughConnectionInd != null)
+                xml.add(serviceInteractionIndicatorsTwo.bothwayThroughConnectionInd.toString(), BOTHWAY_THROUGH_CONNECTION_IND, String.class);
+
+            // TODO: implement all methods
+        }
+    };
 
     @Override
     public String toString() {

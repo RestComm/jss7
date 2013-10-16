@@ -20,26 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive;
+package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
-import java.io.Serializable;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Carrier;
+import org.mobicents.protocols.ss7.cap.primitives.OctetStringBase;
 
 /**
- *
- NAOliInfo ::= OCTET STRING (SIZE (1))
- -- NA Oli information takes the same value as defined in ANSI T1.113-1995 [92]
- -- e.g. '3D'H Decimal value 61 - Cellular Service (Type 1)
- -- '3E'H Decimal value 62 - Cellular Service (Type 2)
- -- '3F'H Decimal value 63 - Cellular Service (roaming)
- *
- *
- * @author sergey vetyutnev
- *
- */
-public interface NAOliInfo extends Serializable {
+*
+* @author sergey vetyutnev
+*
+*/
+public class CarrierImpl extends OctetStringBase implements Carrier {
 
-    int getData();
+    public CarrierImpl() {
+        super(4, 4, "Carrier");
+    }
 
-    // TODO: implement getting info according to ANSI T1.113-1995
+    public CarrierImpl(byte[] data) {
+        super(4, 4, "Carrier", data);
+    }
+
+    @Override
+    public byte[] getData() {
+        return data;
+    }
 
 }
