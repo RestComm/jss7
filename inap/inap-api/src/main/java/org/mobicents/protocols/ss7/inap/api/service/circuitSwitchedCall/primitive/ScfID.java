@@ -20,30 +20,32 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.inap.api.isup;
+package org.mobicents.protocols.ss7.inap.api.service.circuitSwitchedCall.primitive;
 
 import java.io.Serializable;
 
-import org.mobicents.protocols.ss7.inap.api.INAPException;
-import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
-
 /**
 *
-OriginalCalledPartyID {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE(
-bound.&minOriginalCalledPartyIDLength..bound.&maxOriginalCalledPartyIDLength))
--- Indicates the original called number.
--- Refer to the ITU-T Recommendation Q.763 Original Called Number for encoding.
 
-minOriginalCalledPartyIDLength=1
-maxOriginalCalledPartyIDLength=5
+ScfID {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE(bound.&minScfIDLength..bound.&maxScfIDLength))
+-- defined by network operator.
+-- Indicates the SCF identity.
+-- Used to derive the INAP address of the SCF to establish a connection between a requesting FE
+-- and the specified SCF.
+-- When ScfID is used in an operation which may cross an internetwork boundary, its encoding must
+-- be understood in both networks; this requires bilateral agreement on the encoding.
+-- Refer to 3.5/ETS 300 009-1 "calling party address" parameter for encoding. It indicates the SCCP
+address of the SCF.
+-- Other encoding schemes are also possible as an operator specific option.
+
 *
 * @author sergey vetyutnev
 *
 */
-public interface OriginalCalledNumberInap extends Serializable {
+public interface ScfID extends Serializable {
 
     byte[] getData();
 
-    OriginalCalledNumber getOriginalCalledNumber() throws INAPException;
+    // TODO: add "calling party address" parameter for encoding
 
 }
