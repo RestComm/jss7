@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.tcap.asn;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 
@@ -31,7 +33,7 @@ import org.mobicents.protocols.asn.AsnOutputStream;
  * @author baranowb
  *
  */
-public interface Encodable {
+public interface Encodable extends Serializable {
 
     void encode(AsnOutputStream aos) throws EncodeException;
 

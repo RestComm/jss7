@@ -22,10 +22,12 @@
 
 package org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Component;
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.Dialog;
 
-public interface DialogIndication {
+public interface DialogIndication extends Serializable {
 
     /**
      * Return dialog for this indication

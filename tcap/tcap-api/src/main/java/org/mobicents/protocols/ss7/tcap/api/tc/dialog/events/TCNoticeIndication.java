@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
@@ -32,7 +34,7 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
  * @author sergey vetyutnev
  *
  */
-public interface TCNoticeIndication {
+public interface TCNoticeIndication extends Serializable {
 
     SccpAddress getLocalAddress();
 
