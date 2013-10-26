@@ -28,13 +28,15 @@
  */
 package org.mobicents.protocols.ss7.isup.message.parameter;
 
+import java.io.Serializable;
+
 /**
  * Start time:13:18:50 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
  *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public interface ParameterCompatibilityInstructionIndicators {
+public interface ParameterCompatibilityInstructionIndicators extends Serializable{
 
     /**
      * See Q.763 3.41 Transit at intermediate exchange indicator : transit interpretation

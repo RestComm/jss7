@@ -21,13 +21,15 @@
 
 package org.mobicents.protocols.ss7.isup.message.parameter;
 
+import java.io.Serializable;
+
 /**
  * Status holder for {@link PivotStatus}
  *
  * @author baranowb
  *
  */
-public interface Status {
+public interface Status extends Serializable{
 
     int STATUS_NOT_USED = 0x00;
     int STATUS_ACK_OF_PIVOT_ROUTING = 0x01;

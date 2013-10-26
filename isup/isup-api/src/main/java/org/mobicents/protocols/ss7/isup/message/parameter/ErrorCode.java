@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.isup.message.parameter;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.asn.Tag;
 
 /**
@@ -29,7 +31,7 @@ import org.mobicents.protocols.asn.Tag;
  * @author sergey netyutnev
  *
  */
-public interface ErrorCode {
+public interface ErrorCode extends Serializable {
 
     // it contains valid params for error....
 

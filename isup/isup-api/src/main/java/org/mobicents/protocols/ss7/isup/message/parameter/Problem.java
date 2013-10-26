@@ -22,12 +22,14 @@
 
 package org.mobicents.protocols.ss7.isup.message.parameter;
 
+import java.io.Serializable;
+
 
 /**
  * @author baranowb
  *
  */
-public interface Problem {
+public interface Problem extends Serializable{
 
     // this is a hell of a combo
     ProblemType getType();

@@ -28,6 +28,9 @@
  */
 package org.mobicents.protocols.ss7.isup.message.parameter;
 
+import java.io.Serializable;
+
+
 /**
  * Start time:14:43:22 2009-09-18<br>
  * Project: mobicents-isup-stack<br>
@@ -35,7 +38,7 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public interface CircuitIdentificationCode extends ISUPParameter {
+public interface CircuitIdentificationCode extends Serializable {
 
     int getCIC();
 
