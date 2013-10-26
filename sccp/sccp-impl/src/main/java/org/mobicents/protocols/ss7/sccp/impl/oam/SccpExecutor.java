@@ -591,15 +591,15 @@ public class SccpExecutor implements ShellExecutor {
         AddressIndicator aiObj = new AddressIndicator((byte) ai);
         pc = Integer.parseInt(options[index++]);
         ssn = Integer.parseInt(options[index++]);
-        
+
         if(aiObj.ssnPresent() && ssn == 0){
             throw new Exception(String.format("Address Indicator %d indicates that SSN is present, however SSN passed is 0", ai));
         }
-        
+
         if(aiObj.pcPresent() && pc == 0){
             throw new Exception(String.format("Address Indicator %d indicates that PointCode is present, however PointCode passed is 0", ai));
-        }        
-        
+        }
+
         int tt = Integer.parseInt(options[index++]);
         NumberingPlan np = NumberingPlan.valueOf(Integer.parseInt(options[index++]));
         NatureOfAddress nai = NatureOfAddress.valueOf(Integer.parseInt(options[index++]));
