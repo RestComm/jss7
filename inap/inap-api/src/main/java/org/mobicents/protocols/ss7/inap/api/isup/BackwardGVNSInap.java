@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,30 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
+package org.mobicents.protocols.ss7.inap.api.isup;
 
 import java.io.Serializable;
 
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
+import org.mobicents.protocols.ss7.isup.message.parameter.BackwardGVNS;
 
-public interface DialogIndication extends Serializable {
+/**
+*
 
-    /**
-     * Return dialog for this indication
-     *
-     * @return
-     */
-    Dialog getDialog();
+BackwardGVNS {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE(
+bound.&minBackwardGVNSLength..bound.&maxBackwardGVNSLength))
+-- Indicats the GVNS Backward information. Refer to Q.735, §6 for encoding.
 
-    /**
-     * get components if present, if there are none, it will return null;
-     *
-     * @return
-     */
-    Component[] getComponents();
+*
+* @author sergey vetyutnev
+*
+*/
+public interface BackwardGVNSInap extends Serializable {
 
-    EventType getType();
+    byte[] getData();
 
-    Byte getQos();
+    BackwardGVNS getBackwardGVNS();
+
+    // TODO: Spec refers to "Q.735, §6", we refer to ISUP, what is correct ?
+
 }

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,30 +20,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
+package org.mobicents.protocols.ss7.inap.api.service.circuitSwitchedCall.primitive;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
+/**
+*
+RouteList {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE(1..3) OF OCTET STRING (
+SIZE (bound.&minRouteListLength..bound.&maxRouteListLength))
+-- Indicates a list of trunk groups or a route index. See Q.1224 for additional information on this item.
 
-public interface DialogIndication extends Serializable {
+*
+* @author sergey vetyutnev
+*
+*/
+public interface RouteList extends Serializable {
 
-    /**
-     * Return dialog for this indication
-     *
-     * @return
-     */
-    Dialog getDialog();
+    ArrayList<byte[]> getDataList();
 
-    /**
-     * get components if present, if there are none, it will return null;
-     *
-     * @return
-     */
-    Component[] getComponents();
-
-    EventType getType();
-
-    Byte getQos();
 }

@@ -22,13 +22,15 @@
 
 package org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events;
 
+import java.io.Serializable;
+
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.Dialog;
 
 /**
  * @author baranowb
  *
  */
-public interface DialogRequest {
+public interface DialogRequest extends Serializable {
 
     Dialog getDialog();
 

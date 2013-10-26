@@ -32,7 +32,7 @@ import org.mobicents.protocols.ss7.inap.api.isup.ForwardGVNSInap;
 import org.mobicents.protocols.ss7.inap.api.isup.HighLayerCompatibilityInap;
 import org.mobicents.protocols.ss7.inap.api.isup.ISDNAccessRelatedInformationInap;
 import org.mobicents.protocols.ss7.inap.api.isup.LocationNumberInap;
-import org.mobicents.protocols.ss7.inap.api.isup.OriginalCalledNumberInap;
+import org.mobicents.protocols.ss7.inap.api.isup.OriginalCalledPartyIDInap;
 import org.mobicents.protocols.ss7.inap.api.isup.RedirectingPartyIDInap;
 import org.mobicents.protocols.ss7.inap.api.isup.RedirectionInformationInap;
 import org.mobicents.protocols.ss7.inap.api.primitives.BearerCapability;
@@ -203,7 +203,7 @@ public interface InitialDPRequest {
 
     LocationNumberInap getLocationNumber();
 
-    OriginalCalledNumberInap getOriginalCalledPartyID();
+    OriginalCalledPartyIDInap getOriginalCalledPartyID();
 
     TerminalType getTerminalType();
 

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,30 +20,30 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.tcap.api.tc.dialog.events;
+package org.mobicents.protocols.ss7.inap.api.isup;
 
 import java.io.Serializable;
 
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
+import org.mobicents.protocols.ss7.inap.api.INAPException;
+import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
 
-public interface DialogIndication extends Serializable {
+/**
+*
+OriginalCalledPartyID {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE(
+bound.&minOriginalCalledPartyIDLength..bound.&maxOriginalCalledPartyIDLength))
+-- Indicates the original called number.
+-- Refer to the ITU-T Recommendation Q.763 Original Called Number for encoding.
 
-    /**
-     * Return dialog for this indication
-     *
-     * @return
-     */
-    Dialog getDialog();
+minOriginalCalledPartyIDLength=1
+maxOriginalCalledPartyIDLength=5
+*
+* @author sergey vetyutnev
+*
+*/
+public interface OriginalCalledPartyIDInap extends Serializable {
 
-    /**
-     * get components if present, if there are none, it will return null;
-     *
-     * @return
-     */
-    Component[] getComponents();
+    byte[] getData();
 
-    EventType getType();
+    OriginalCalledNumber getOriginalCalledNumber() throws INAPException;
 
-    Byte getQos();
 }

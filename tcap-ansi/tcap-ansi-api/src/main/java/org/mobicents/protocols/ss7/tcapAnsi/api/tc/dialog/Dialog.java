@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog;
 
+import java.io.Serializable;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -44,7 +45,7 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCUserAbortRequ
  * @author sergey vetyutnev
  *
  */
-public interface Dialog {
+public interface Dialog extends Serializable {
 
     /**
      * returns this dialog ID. It MUST be unique at any given time in local stack.
