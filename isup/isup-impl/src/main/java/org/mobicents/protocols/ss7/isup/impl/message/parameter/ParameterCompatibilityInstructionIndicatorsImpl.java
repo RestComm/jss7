@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -31,7 +31,7 @@
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
-import org.mobicents.protocols.ss7.isup.message.parameter.InstructionIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInstructionIndicators;
 
 /**
  * Start time:12:42:55 2009-04-02<br>
@@ -39,11 +39,12 @@ import org.mobicents.protocols.ss7.isup.message.parameter.InstructionIndicators;
  *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class InstructionIndicatorsImpl extends AbstractISUPParameter implements InstructionIndicators {
+public class ParameterCompatibilityInstructionIndicatorsImpl implements ParameterCompatibilityInstructionIndicators, Encodable {
 
     private static final int _TURN_ON = 1;
     private static final int _TURN_OFF = 0;
 
+    private byte parameterCode;
     // FIXME: decide how to use this.
     private boolean transitAtIntermediateExchangeIndicator;
     private boolean releaseCallindicator;
@@ -58,12 +59,13 @@ public class InstructionIndicatorsImpl extends AbstractISUPParameter implements 
     private byte[] raw;
     private boolean useAsRaw;
 
-    public InstructionIndicatorsImpl(byte[] b) throws ParameterException {
+    public ParameterCompatibilityInstructionIndicatorsImpl(final byte code, final byte[] b) throws ParameterException {
         super();
+        this.parameterCode = code;
         decode(b);
     }
 
-    public InstructionIndicatorsImpl() {
+    public ParameterCompatibilityInstructionIndicatorsImpl() {
         super();
 
     }
@@ -75,15 +77,16 @@ public class InstructionIndicatorsImpl extends AbstractISUPParameter implements 
      * @param userAsRaw
      * @throws ParameterException
      */
-    public InstructionIndicatorsImpl(byte[] b, boolean userAsRaw) throws ParameterException {
+    public ParameterCompatibilityInstructionIndicatorsImpl(final byte code, final byte[] b, final boolean userAsRaw) throws ParameterException {
         super();
+        this.parameterCode = code;
         this.raw = b;
         this.useAsRaw = userAsRaw;
         if (!userAsRaw)
             decode(b);
     }
 
-    public InstructionIndicatorsImpl(boolean transitAtIntermediateExchangeIndicator, boolean releaseCallindicator,
+    public ParameterCompatibilityInstructionIndicatorsImpl(boolean transitAtIntermediateExchangeIndicator, boolean releaseCallindicator,
             boolean sendNotificationIndicator, boolean discardMessageIndicator, boolean discardParameterIndicator,
             int passOnNotPossibleIndicator, boolean secondOctetPresenet) {
         super();
@@ -97,7 +100,7 @@ public class InstructionIndicatorsImpl extends AbstractISUPParameter implements 
 
     }
 
-    public InstructionIndicatorsImpl(boolean transitAtIntermediateExchangeIndicator, boolean releaseCallindicator,
+    public ParameterCompatibilityInstructionIndicatorsImpl(boolean transitAtIntermediateExchangeIndicator, boolean releaseCallindicator,
             boolean sendNotificationIndicator, boolean discardMessageIndicator, boolean discardParameterIndicator,
             int passOnNotPossibleIndicator, int bandInterworkingIndicator) {
         super();
@@ -173,6 +176,16 @@ public class InstructionIndicatorsImpl extends AbstractISUPParameter implements 
         return b;
     }
 
+    @Override
+    public void setParamerterCode(byte code) {
+        this.parameterCode = code;
+    }
+
+    @Override
+    public byte getParameterCode() {
+        return this.parameterCode;
+    }
+
     public boolean isTransitAtIntermediateExchangeIndicator() {
         return transitAtIntermediateExchangeIndicator;
     }
@@ -181,11 +194,11 @@ public class InstructionIndicatorsImpl extends AbstractISUPParameter implements 
         this.transitAtIntermediateExchangeIndicator = transitAtIntermediateExchangeIndicator;
     }
 
-    public boolean isReleaseCallindicator() {
+    public boolean isReleaseCallIndicator() {
         return releaseCallindicator;
     }
 
-    public void setReleaseCallindicator(boolean releaseCallindicator) {
+    public void setReleaseCallIndicator(boolean releaseCallindicator) {
         this.releaseCallindicator = releaseCallindicator;
     }
 
@@ -230,11 +243,11 @@ public class InstructionIndicatorsImpl extends AbstractISUPParameter implements 
         this.secondOctetPresenet = true;
     }
 
-    public boolean isSecondOctetPresenet() {
+    public boolean isSecondOctetPresent() {
         return secondOctetPresenet;
     }
 
-    public void setSecondOctetPresenet(boolean secondOctetPresenet) {
+    public void setSecondOctetPresent(boolean secondOctetPresenet) {
         this.secondOctetPresenet = secondOctetPresenet;
     }
 
@@ -253,9 +266,9 @@ public class InstructionIndicatorsImpl extends AbstractISUPParameter implements 
     public void setUseAsRaw(boolean useAsRaw) {
         this.useAsRaw = useAsRaw;
     }
-
-    public int getCode() {
-
-        return _PARAMETER_CODE;
-    }
+//
+//    public int getCode() {
+//
+//        return _PARAMETER_CODE;
+//    }
 }

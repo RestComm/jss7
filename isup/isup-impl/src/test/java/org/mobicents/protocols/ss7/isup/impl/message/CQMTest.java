@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -56,7 +56,7 @@ public class CQMTest extends MessageHarness {
 
         // CircuitGroupQueryMessage grs=new CircuitGroupQueryMessageImpl(this,message);
         CircuitGroupQueryMessage grs = super.messageFactory.createCQM(0);
-        ((AbstractISUPMessage) grs).decode(message, parameterFactory);
+        ((AbstractISUPMessage) grs).decode(message, messageFactory,parameterFactory);
 
         try {
             RangeAndStatus RS = (RangeAndStatus) grs.getParameter(RangeAndStatus._PARAMETER_CODE);

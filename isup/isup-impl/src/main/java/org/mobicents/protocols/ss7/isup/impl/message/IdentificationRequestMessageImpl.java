@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -28,10 +28,18 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.AbstractISUPParameter;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.IdentificationRequestMessage;
+import org.mobicents.protocols.ss7.isup.message.parameter.MCIDRequestIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.MessageCompatibilityInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
+import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
 
 /**
  * Start time:00:11:29 2009-09-07<br>
@@ -40,33 +48,30 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public class IdentificationRequestMessageImpl extends ISUPMessageImpl implements IdentificationRequestMessage {
+    public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
+    private static final int _MANDATORY_VAR_COUNT = 0;
+    private static final boolean _HAS_MANDATORY = true;
+    private static final boolean _OPTIONAL_POSSIBLE = true;
 
+    static final int _INDEX_F_MessageType = 0;
+
+    static final int _INDEX_O_MCIDRequestIndicators = 0;
+    static final int _INDEX_O_MessageCompatibilityInformation = 1;
+    static final int _INDEX_O_ParameterCompatibilityInformation = 2;
+    static final int _INDEX_O_EndOfOptionalParameters = 3;
     /**
      *
      * @param source
      * @throws ParameterException
      */
-    public IdentificationRequestMessageImpl() {
-
+    public IdentificationRequestMessageImpl(Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes,
+            Map<Integer, Integer> mandatoryCode2Index, Map<Integer, Integer> mandatoryVariableCode2Index,
+            Map<Integer, Integer> optionalCode2Index) {
+        super(mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index,
+                optionalCode2Index);
+        super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
+        super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryParameters(byte[], int)
-     */
-
-    protected int decodeMandatoryParameters(ISUPParameterFactory parameterFactory, byte[] b, int index)
-            throws ParameterException {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryVariableBody(byte[], int)
-     */
 
     protected void decodeMandatoryVariableBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, int parameterIndex)
             throws ParameterException {
@@ -74,53 +79,74 @@ public class IdentificationRequestMessageImpl extends ISUPMessageImpl implements
 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeOptionalBody(byte[], byte)
-     */
-
     protected void decodeOptionalBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, byte parameterCode)
             throws ParameterException {
-        // TODO Auto-generated method stub
+        switch (parameterCode & 0xFF) {
+            case MessageCompatibilityInformation._PARAMETER_CODE:
+                MessageCompatibilityInformation mci = parameterFactory.createMessageCompatibilityInformation();
+                ((AbstractISUPParameter) mci).decode(parameterBody);
+                this.setMessageCompatibilityInformation(mci);
+                break;
+            case ParameterCompatibilityInformation._PARAMETER_CODE:
+                ParameterCompatibilityInformation pci = parameterFactory.createParameterCompatibilityInformation();
+                ((AbstractISUPParameter) pci).decode(parameterBody);
+                this.setParameterCompatibilityInformation(pci);
+                break;
+            case MCIDRequestIndicators._PARAMETER_CODE:
+                MCIDRequestIndicators ro = parameterFactory.createMCIDRequestIndicators();
+                ((AbstractISUPParameter) ro).decode(parameterBody);
+                this.setMCIDRequestIndicators(ro);
+                break;
+            default:
+                throw new ParameterException("Unrecognized parameter code for optional part: " + parameterCode);
+        }
 
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getMessageType()
-     */
 
     public MessageType getMessageType() {
-        // TODO Auto-generated method stub
-        return null;
+        return _MESSAGE_TYPE;
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getNumberOfMandatoryVariableLengthParameters()
-     */
 
     protected int getNumberOfMandatoryVariableLengthParameters() {
-        // TODO Auto-generated method stub
-        return 0;
+        return _MANDATORY_VAR_COUNT;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#hasAllMandatoryParameters()
-     */
-
     public boolean hasAllMandatoryParameters() {
-        throw new UnsupportedOperationException();
+        return _HAS_MANDATORY;
     }
 
     protected boolean optionalPartIsPossible() {
+        return _OPTIONAL_POSSIBLE;
+    }
 
-        throw new UnsupportedOperationException();
+    @Override
+    public void setMCIDRequestIndicators(MCIDRequestIndicators mcid) {
+        super.o_Parameters.put(_INDEX_O_MCIDRequestIndicators, mcid);
+    }
+
+    @Override
+    public MCIDRequestIndicators getMCIDRequestIndicators() {
+        return (MCIDRequestIndicators) super.o_Parameters.get(_INDEX_O_MCIDRequestIndicators);
+    }
+
+    @Override
+    public void setMessageCompatibilityInformation(MessageCompatibilityInformation mci) {
+        super.o_Parameters.put(_INDEX_O_MessageCompatibilityInformation, mci);
+    }
+
+    @Override
+    public MessageCompatibilityInformation getMessageCompatibilityInformation() {
+        return (MessageCompatibilityInformation) super.o_Parameters.get(_INDEX_O_MessageCompatibilityInformation);
+    }
+
+    @Override
+    public void setParameterCompatibilityInformation(ParameterCompatibilityInformation pci) {
+        super.o_Parameters.put(_INDEX_O_ParameterCompatibilityInformation, pci);
+    }
+
+    @Override
+    public ParameterCompatibilityInformation getParameterCompatibilityInformation() {
+        return (ParameterCompatibilityInformation) super.o_Parameters.get(_INDEX_O_ParameterCompatibilityInformation);
     }
 
 }

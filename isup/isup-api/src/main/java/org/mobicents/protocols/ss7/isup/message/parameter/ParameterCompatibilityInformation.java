@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -35,17 +35,10 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public interface ParameterCompatibilityInformation extends ISUPParameter {
+    //TODO: this is not 100% correct, there might be more indicators than 1-2b...
     int _PARAMETER_CODE = 0x39;
 
-    void addInstructions(Byte parameterCode, InstructionIndicators instructionIndicators);
+    void setParameterCompatibilityInstructionIndicators(ParameterCompatibilityInstructionIndicators... compatibilityInstructionIndicators);
 
-    // FIXME: Crude API
-    InstructionIndicators getInstructionIndicators(int index);
-
-    Byte getParameterCode(int index);
-
-    int size();
-
-    void remove(int index);
-
+    ParameterCompatibilityInstructionIndicators[] getParameterCompatibilityInstructionIndicators();
 }

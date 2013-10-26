@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -28,8 +28,13 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message;
 
+import java.io.ByteArrayOutputStream;
+
+import org.mobicents.protocols.ss7.isup.ISUPMessageFactory;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
+import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
 import org.mobicents.protocols.ss7.isup.message.PassAlongMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
 
@@ -40,45 +45,73 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public class PassAlongMessageImpl extends ISUPMessageImpl implements PassAlongMessage {
+    public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
 
+    static final int _INDEX_F_MessageType = 0;
+    private ISUPMessage embedded;
     /**
      *
      * @param source
      * @throws ParameterException
      */
     public PassAlongMessageImpl() {
-
+        super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryParameters(byte[], int)
-     */
 
-    protected int decodeMandatoryParameters(ISUPParameterFactory parameterFactory, byte[] b, int index)
-            throws ParameterException {
-        // TODO Auto-generated method stub
-        return 0;
+    public MessageType getMessageType() {
+        return _MESSAGE_TYPE;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryVariableBody(byte[], int)
-     */
+    @Override
+    public void setEmbeddedMessage(ISUPMessage msg) {
+        this.embedded = msg;
+    }
 
+    @Override
+    public ISUPMessage getEmbeddedMessage() {
+        return embedded;
+    }
+
+    public boolean hasAllMandatoryParameters() {
+        return this.embedded == null ? false: this.embedded.hasAllMandatoryParameters();
+    }
+
+    @Override
+    public int encode(ByteArrayOutputStream bos) throws ParameterException {
+        if(this.embedded!=null){
+            throw new ParameterException("No embedded message");
+        }
+
+        //encode CIC and message type
+        this.encodeMandatoryParameters(f_Parameters, bos);
+        final byte[] embeddedBody = ((AbstractISUPMessage)this.embedded).encode();
+        // 2 - for CIC
+        bos.write(embeddedBody, 2, embeddedBody.length - 2);
+        return bos.size();
+    }
+
+    @Override
+    public int decode(byte[] b, ISUPMessageFactory messageFactory,ISUPParameterFactory parameterFactory) throws ParameterException {
+        int index = 0;
+        //decode CIC and PAM message type.
+        index += this.decodeMandatoryParameters(parameterFactory, b, index);
+        byte targetMessageType = b[index];
+        this.embedded = messageFactory.createCommand(targetMessageType, this.getCircuitIdentificationCode().getCIC());
+        //create fake msg body
+        byte[] fakeBody = new byte[b.length-1];
+        System.arraycopy(b, 1, fakeBody, 0, fakeBody.length);
+        index+=((AbstractISUPMessage)this.embedded).decode(fakeBody, messageFactory, parameterFactory)-2;
+        return index;
+    }
+
+
+    // Not used, PAM contains body of another message. Since it overrides decode, those methods are not called.
     protected void decodeMandatoryVariableBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, int parameterIndex)
             throws ParameterException {
         // TODO Auto-generated method stub
 
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeOptionalBody(byte[], byte)
-     */
 
     protected void decodeOptionalBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, byte parameterCode)
             throws ParameterException {
@@ -86,36 +119,9 @@ public class PassAlongMessageImpl extends ISUPMessageImpl implements PassAlongMe
 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getMessageType()
-     */
-
-    public MessageType getMessageType() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getNumberOfMandatoryVariableLengthParameters()
-     */
-
     protected int getNumberOfMandatoryVariableLengthParameters() {
         // TODO Auto-generated method stub
         return 0;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#hasAllMandatoryParameters()
-     */
-
-    public boolean hasAllMandatoryParameters() {
-        throw new UnsupportedOperationException();
     }
 
     protected boolean optionalPartIsPossible() {

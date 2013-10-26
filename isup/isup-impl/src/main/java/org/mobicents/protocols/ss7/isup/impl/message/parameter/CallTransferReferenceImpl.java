@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -62,7 +62,7 @@ public class CallTransferReferenceImpl extends AbstractISUPParameter implements 
         if (b == null || b.length != 1) {
             throw new ParameterException("byte[] must  not be null and length must  be 1");
         }
-        this.callTransferReference = b[0];
+        this.callTransferReference = b[0] & 0xFF;
         return 1;
     }
 
@@ -75,7 +75,7 @@ public class CallTransferReferenceImpl extends AbstractISUPParameter implements 
     }
 
     public void setCallTransferReference(int callTransferReference) {
-        this.callTransferReference = callTransferReference;
+        this.callTransferReference = callTransferReference  & 0xFF;
     }
 
     public int getCode() {

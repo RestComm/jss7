@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -34,6 +34,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 import org.mobicents.protocols.ss7.isup.ISUPMessageFactory;
@@ -94,7 +95,78 @@ public abstract class MessageHarness {
 
         return out;
     }
+    protected String dumpData(byte[] b) {
+        String s = "\n";
+        for (byte bb : b) {
+            s += Integer.toHexString(bb & 0xFF)+"\n";
+        }
 
+        return s;
+    }
+
+    public String makeCompare(int[] hardcodedBody, int[] elementEncoded) {
+
+        int totalLength = 0;
+        if (hardcodedBody == null || elementEncoded == null) {
+            return "One arg is null";
+        }
+        if (hardcodedBody.length >= elementEncoded.length) {
+            totalLength = hardcodedBody.length;
+        } else {
+            totalLength = elementEncoded.length;
+        }
+
+        String out = "";
+
+        for (int index = 0; index < totalLength; index++) {
+            if (hardcodedBody.length > index) {
+                out += "hardcodedBody[" + Integer.toHexString(hardcodedBody[index]) + "]";
+            } else {
+                out += "hardcodedBody[NOP]";
+            }
+
+            if (elementEncoded.length > index) {
+                out += "elementEncoded[" + Integer.toHexString(elementEncoded[index]) + "]";
+            } else {
+                out += "elementEncoded[NOP]";
+            }
+            out += "\n";
+        }
+
+        return out;
+    }
+
+    protected String makeCompare(Object hardcodedBody, Object elementEncoded) {
+        int totalLength = 0;
+        if (hardcodedBody == null || elementEncoded == null) {
+            return "One arg is null";
+        }
+
+        if (Array.getLength(hardcodedBody) >= Array.getLength(elementEncoded)) {
+            totalLength = Array.getLength(hardcodedBody);
+        } else {
+            totalLength = Array.getLength(elementEncoded);
+        }
+
+        String out = "";
+
+        for (int index = 0; index < totalLength; index++) {
+            if (Array.getLength(hardcodedBody) > index) {
+                out += "hardcodedBody[" + Array.get(hardcodedBody, index) + "]";
+            } else {
+                out += "hardcodedBody[NOP]";
+            }
+            
+            if (Array.getLength(elementEncoded) > index) {
+                out += "elementEncoded[" + Array.get(elementEncoded, index) + "]";
+            } else {
+                out += "elementEncoded[NOP]";
+            }
+            out += "\n";
+        }
+
+        return out;
+    }
     protected abstract byte[] getDefaultBody();
 
     protected abstract ISUPMessage getDefaultMessage();
@@ -104,7 +176,7 @@ public abstract class MessageHarness {
 
         final byte[] defaultBody = getDefaultBody();
         final AbstractISUPMessage msg = (AbstractISUPMessage) getDefaultMessage();
-        msg.decode(defaultBody, parameterFactory);
+        msg.decode(defaultBody,messageFactory, parameterFactory);
         final byte[] encodedBody = msg.encode();
         final boolean equal = Arrays.equals(defaultBody, encodedBody);
         assertTrue(equal, makeStringCompare(defaultBody, encodedBody));

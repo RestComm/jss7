@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -56,7 +56,7 @@ public class CGUATest extends MessageHarness {
 
         // CircuitGroupUnblockingAckMessage cgb=new CircuitGroupUnblockingAckMessageImpl(this,message);
         CircuitGroupUnblockingAckMessage cgb = super.messageFactory.createCGUA();
-        ((AbstractISUPMessage) cgb).decode(message, parameterFactory);
+        ((AbstractISUPMessage) cgb).decode(message, messageFactory,parameterFactory);
 
         try {
             RangeAndStatus RS = (RangeAndStatus) cgb.getParameter(RangeAndStatus._PARAMETER_CODE);

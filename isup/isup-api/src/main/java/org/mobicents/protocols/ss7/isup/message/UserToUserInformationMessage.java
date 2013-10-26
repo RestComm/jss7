@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -21,6 +21,9 @@
  */
 
 package org.mobicents.protocols.ss7.isup.message;
+
+import org.mobicents.protocols.ss7.isup.message.parameter.UserToUserInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.AccessTransport;
 
 /**
  * Start time:09:54:07 2009-07-23<br>
@@ -75,10 +78,18 @@ package org.mobicents.protocols.ss7.isup.message;
  *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public interface User2UserInformationMessage extends ISUPMessage {
+public interface UserToUserInformationMessage extends ISUPMessage {
     /**
      * User To User Information Message, Q.763 reference table 36 <br>
-     * {@link User2UserInformationMessage}
+     * {@link UserToUserInformationMessage}
      */
     int MESSAGE_CODE = 0x2D;
+
+    UserToUserInformation getUserToUserInformation();
+
+    void setUserToUserInformation(UserToUserInformation u2ui);
+
+    AccessTransport getAccessTransport();
+
+    void setAccessTransport(AccessTransport at);
 }

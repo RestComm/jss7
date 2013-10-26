@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -200,17 +200,6 @@ public class ISUPStackImpl implements ISUPStack, Mtp3UserPartListener {
 
     @Override
     public void onMtp3TransferMessage(Mtp3TransferPrimitive mtpMsg) {
-        // int commandCode = msu[7];
-        // http://pt.com/page/tutorials/ss7-tutorial/mtp
-        // byte[] payload = new byte[msu.length - 5];
-        // System.arraycopy(msu, 5, payload, 0, payload.length);
-        // byte sls = msu[5];
-        // for post processing
-        // AbstractISUPMessage msg = (AbstractISUPMessage)
-        // messageFactory.createCommand(commandCode);
-        // msg.decode(payload, parameterFactory);
-        // msg.setSls(sls); // store SLS...
-        // return msg;
 
         if (this.state != State.RUNNING)
             return;
@@ -219,13 +208,13 @@ public class ISUPStackImpl implements ISUPStack, Mtp3UserPartListener {
         if (mtpMsg.getSi() != Mtp3._SI_SERVICE_ISUP)
             return;
 
-        // 1(SIO) + 3(RL) + 1(SLS) + 2(CIC) + 1(CODE)
+        // 2(CIC) + 1(CODE)
         byte[] payload = mtpMsg.getData();
         int commandCode = payload[2];
 
         AbstractISUPMessage msg = (AbstractISUPMessage) messageFactory.createCommand(commandCode);
         try {
-            msg.decode(payload, parameterFactory);
+            msg.decode(payload,messageFactory, parameterFactory);
         } catch (ParameterException e) {
             logger.error("Error decoding of incoming Mtp3TransferPrimitive" + e.getMessage(), e);
             e.printStackTrace();

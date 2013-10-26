@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -37,7 +37,7 @@ import org.mobicents.protocols.ss7.isup.impl.message.parameter.AbstractISUPParam
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.AnswerMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformation;
-import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransportParameter;
+import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransport;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardCallIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardGVNS;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallHistoryInformation;
@@ -136,8 +136,8 @@ class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage {
      *
      * @see org.mobicents.protocols.ss7.isup.message.AnswerMessage# getApplicationTransportParameter()
      */
-    public ApplicationTransportParameter getApplicationTransportParameter() {
-        return (ApplicationTransportParameter) super.o_Parameters.get(this._INDEX_O_ApplicationTransportParameter);
+    public ApplicationTransport getApplicationTransportParameter() {
+        return (ApplicationTransport) super.o_Parameters.get(this._INDEX_O_ApplicationTransportParameter);
     }
 
     /*
@@ -366,7 +366,7 @@ class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage {
      * @see org.mobicents.protocols.ss7.isup.message.AnswerMessage# setApplicationTransportParameter
      * (org.mobicents.protocols.ss7.isup.message. parameter.ApplicationTransportParameter)
      */
-    public void setApplicationTransportParameter(ApplicationTransportParameter value) {
+    public void setApplicationTransportParameter(ApplicationTransport value) {
         super.o_Parameters.put(this._INDEX_O_ApplicationTransportParameter, value);
 
     }
@@ -752,8 +752,8 @@ class AnswerMessageImpl extends ISUPMessageImpl implements AnswerMessage {
                 ((AbstractISUPParameter) CTI).decode(parameterBody);
                 this.setConferenceTreatmentIndicators(CTI);
                 break;
-            case ApplicationTransportParameter._PARAMETER_CODE:
-                ApplicationTransportParameter ATP = parameterFactory.createApplicationTransportParameter();
+            case ApplicationTransport._PARAMETER_CODE:
+                ApplicationTransport ATP = parameterFactory.createApplicationTransport();
                 ((AbstractISUPParameter) ATP).decode(parameterBody);
                 this.setApplicationTransportParameter(ATP);
                 break;

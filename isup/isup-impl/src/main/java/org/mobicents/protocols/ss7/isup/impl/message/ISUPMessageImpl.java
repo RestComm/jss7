@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.mobicents.protocols.ss7.isup.ISUPMessageFactory;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.AbstractISUPParameter;
@@ -153,7 +154,7 @@ public abstract class ISUPMessageImpl extends AbstractISUPMessage {
 
         // bos.write(this.circuitIdentificationCode);
 
-        boolean optionalPresent = this.o_Parameters.size() > 1;
+        final boolean optionalPresent = this.o_Parameters.size() > 1;
         this.encodeMandatoryParameters(f_Parameters, bos);
         this.encodeMandatoryVariableParameters(v_Parameters, bos, optionalPresent);
         if (optionalPresent) {
@@ -307,7 +308,7 @@ public abstract class ISUPMessageImpl extends AbstractISUPMessage {
 
     }
 
-    public int decode(byte[] b, ISUPParameterFactory parameterFactory) throws ParameterException {
+    public int decode(byte[] b, ISUPMessageFactory messageFactory,ISUPParameterFactory parameterFactory) throws ParameterException {
         int index = 0;
         index += this.decodeMandatoryParameters(parameterFactory, b, index);
 
@@ -487,8 +488,6 @@ public abstract class ISUPMessageImpl extends AbstractISUPMessage {
     // ////////////////////////
     // PARAM HANDLE SECTION //
     // ////////////////////////
-    // TODO: define set/get methods here, just like diameter does and expose them ONLY via interface?
-    // Some thing Oleg wants :)
     public void addParameter(ISUPParameter param) throws ParameterException {
         if (param == null) {
             throw new IllegalArgumentException("Argument must not be null");

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -28,10 +28,18 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.ParameterException;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.AbstractISUPParameter;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.ApplicationTransportMessage;
+import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransport;
+import org.mobicents.protocols.ss7.isup.message.parameter.MessageCompatibilityInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
+import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
 
 /**
  * Start time:23:54:13 2009-09-06<br>
@@ -41,85 +49,102 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
  */
 public class ApplicationTransportMessageImpl extends ISUPMessageImpl implements ApplicationTransportMessage {
 
+    private static final int _MANDATORY_VAR_COUNT = 0;
+
+    static final int _INDEX_F_MessageType = 0;
+    static final int _INDEX_O_MessageCompatibilityInformation = 0;
+    static final int _INDEX_O_ParameterCompatibilityInformation = 1;
+    static final int _INDEX_O_ApplicationTransportParameter = 2;
+    static final int _INDEX_O_EndOfOptionalParameters = 3;
+
+    public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
+
     /**
      *
      * @param source
      * @throws ParameterException
      */
-    public ApplicationTransportMessageImpl() {
+    public ApplicationTransportMessageImpl(Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes,
+            Set<Integer> optionalCodes, Map<Integer, Integer> mandatoryCode2Index,
+            Map<Integer, Integer> mandatoryVariableCode2Index, Map<Integer, Integer> optionalCode2Index) {
+        super(mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index,
+                optionalCode2Index);
 
+        super.f_Parameters.put(_INDEX_F_MessageType, this.getMessageType());
+        super.o_Parameters.put(_INDEX_O_EndOfOptionalParameters, _END_OF_OPTIONAL_PARAMETERS);
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryParameters(byte[], int)
-     */
-
-    protected int decodeMandatoryParameters(ISUPParameterFactory parameterFactory, byte[] b, int index)
-            throws ParameterException {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryVariableBody(byte[], int)
-     */
 
     protected void decodeMandatoryVariableBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, int parameterIndex)
             throws ParameterException {
-        // TODO Auto-generated method stub
-
+        return;
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeOptionalBody(byte[], byte)
-     */
 
     protected void decodeOptionalBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, byte parameterCode)
             throws ParameterException {
-        // TODO Auto-generated method stub
-
+        switch (parameterCode & 0xFF) {
+            case MessageCompatibilityInformation._PARAMETER_CODE:
+                MessageCompatibilityInformation mci = parameterFactory.createMessageCompatibilityInformation();
+                ((AbstractISUPParameter) mci).decode(parameterBody);
+                this.setMessageCompatibilityInformation(mci);
+                break;
+            case ParameterCompatibilityInformation._PARAMETER_CODE:
+                ParameterCompatibilityInformation pci = parameterFactory.createParameterCompatibilityInformation();
+                ((AbstractISUPParameter) pci).decode(parameterBody);
+                this.setParameterCompatibilityInformation(pci);
+                break;
+            case ApplicationTransport._PARAMETER_CODE:
+                ApplicationTransport apt = parameterFactory.createApplicationTransport();
+                ((AbstractISUPParameter) apt).decode(parameterBody);
+                this.setApplicationTransport(apt);
+                break;
+            default:
+                throw new ParameterException("Unrecognized parameter code for optional part: " + parameterCode);
+        }
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getMessageType()
-     */
 
     public MessageType getMessageType() {
-        // TODO Auto-generated method stub
-        return null;
+        return _MESSAGE_TYPE;
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getNumberOfMandatoryVariableLengthParameters()
-     */
 
     protected int getNumberOfMandatoryVariableLengthParameters() {
-        // TODO Auto-generated method stub
-        return 0;
+        return _MANDATORY_VAR_COUNT;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#hasAllMandatoryParameters()
-     */
-
     public boolean hasAllMandatoryParameters() {
-        throw new UnsupportedOperationException();
+        return true;
     }
 
     protected boolean optionalPartIsPossible() {
+        return true;
+    }
 
-        throw new UnsupportedOperationException();
+    @Override
+    public void setMessageCompatibilityInformation(MessageCompatibilityInformation mci) {
+        super.o_Parameters.put(_INDEX_O_MessageCompatibilityInformation, mci);
+    }
+
+    @Override
+    public MessageCompatibilityInformation getMessageCompatibilityInformation() {
+        return (MessageCompatibilityInformation) super.o_Parameters.get(_INDEX_O_MessageCompatibilityInformation);
+    }
+
+    @Override
+    public void setParameterCompatibilityInformation(ParameterCompatibilityInformation pci) {
+        super.o_Parameters.put(_INDEX_O_ParameterCompatibilityInformation, pci);
+    }
+
+    @Override
+    public ParameterCompatibilityInformation getParameterCompatibilityInformation() {
+        return (ParameterCompatibilityInformation) super.o_Parameters.get(_INDEX_O_ParameterCompatibilityInformation);
+    }
+
+    @Override
+    public void setApplicationTransport(ApplicationTransport atp) {
+        super.o_Parameters.put(_INDEX_O_ApplicationTransportParameter, atp);
+    }
+
+    @Override
+    public ApplicationTransport getApplicationTransport() {
+        return (ApplicationTransport) super.o_Parameters.get(_INDEX_O_ApplicationTransportParameter);
     }
 }

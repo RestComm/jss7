@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -90,8 +90,7 @@ public class CallTransferNumberImpl extends AbstractNAINumber implements CallTra
      * makes checks on APRI - see NOTE to APRI in Q.763, p 23
      */
     protected void doAddressPresentationRestricted() {
-
-        // FIXME: Oleg?
+        //FIXME XXX
         //
         // if (this.addressRepresentationREstrictedIndicator == _)
         // return;

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -31,19 +31,20 @@
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
-import org.mobicents.protocols.ss7.isup.message.parameter.InstructionIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInstructionIndicators;
 import org.testng.annotations.Test;
 
 /**
  * Start time:17:28:44 2009-04-26<br>
  * Project: mobicents-isup-stack<br>
- *
+ * 
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
 public class ParameterCompatibilityInformationTest extends ParameterHarness {
@@ -117,40 +118,27 @@ public class ParameterCompatibilityInformationTest extends ParameterHarness {
             IllegalAccessException, InvocationTargetException, IOException, ParameterException {
         ParameterCompatibilityInformationImpl bci = new ParameterCompatibilityInformationImpl(getBody1());
 
-        assertEquals(bci.size(), 4, "Wrong number of instructions. ");
+        assertNotNull(bci.getParameterCompatibilityInstructionIndicators());
+        assertEquals(bci.getParameterCompatibilityInstructionIndicators().length, 4, "Wrong number of instructions. ");
 
         // Yeah this is different
-
-        for (int index = 0; index < bci.size(); index++) {
+        ParameterCompatibilityInstructionIndicators[] indicators = bci.getParameterCompatibilityInstructionIndicators();
+        for (int index = 0; index < indicators.length; index++) {
             // this is raw, we dotn validate
             if (index == 1)
                 continue;
 
-            InstructionIndicators ii = bci.getInstructionIndicators(index);
+            ParameterCompatibilityInstructionIndicators ii = indicators[index];
 
-            String[] methodNames = { "getBandInterworkingIndicator", "getPassOnNotPossibleIndicator",
-                    "isDiscardParameterIndicator", "isDiscardMessageIndicator", "isSendNotificationIndicator",
-                    "isReleaseCallindicator", "isTransitAtIntermediateExchangeIndicator" };
-
-            Object[] expectedValues = { intFlags[index][_BAND_INTERWORKING_INDEX],
-                    // 1
-                    intFlags[index][_PASS_NOT_POSSIBLE_INDEX],
-                    // 0
-                    flags[index][_DISCARD_PARAMETER_INDEX],
-                    // 1
-                    flags[index][_DICARD_MESSAGE_INDEX],
-                    // 0
-                    flags[index][_SEND_NOTIFICATION_INDEX],
-                    // 1
-                    flags[index][_RLEASE_CALL_INDEX],
-                    // 1
-                    flags[index][_TRANSIT_EXCHANGE_INDEX] };
-            super.testValues((AbstractISUPParameter) ii, methodNames, expectedValues);
+            assertEquals(ii.getBandInterworkingIndicator(), intFlags[index][_BAND_INTERWORKING_INDEX]);
+            assertEquals(ii.getPassOnNotPossibleIndicator(), intFlags[index][_PASS_NOT_POSSIBLE_INDEX]);
+            assertEquals(ii.isDiscardParameterIndicator(), flags[index][_DISCARD_PARAMETER_INDEX]);
+            assertEquals(ii.isDiscardMessageIndicator(), flags[index][_DICARD_MESSAGE_INDEX]);
+            assertEquals(ii.isSendNotificationIndicator(), flags[index][_SEND_NOTIFICATION_INDEX]);
+            assertEquals(ii.isReleaseCallIndicator(), flags[index][_RLEASE_CALL_INDEX]);
+            assertEquals(ii.isTransitAtIntermediateExchangeIndicator(), flags[index][_TRANSIT_EXCHANGE_INDEX]);
 
         }
-
-        byte parameterCode = bci.getParameterCode(0);
-        assertEquals(parameterCode, 1, "Wrong parameter code");
 
     }
 
@@ -173,6 +161,7 @@ public class ParameterCompatibilityInformationTest extends ParameterHarness {
         bos.write(4);
         bos.write(0x80 | 0x3B);
         bos.write(2);
+
         return bos.toByteArray();
     }
 

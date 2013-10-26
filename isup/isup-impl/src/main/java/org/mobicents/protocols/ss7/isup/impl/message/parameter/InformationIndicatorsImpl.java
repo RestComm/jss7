@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -96,7 +96,7 @@ public class InformationIndicatorsImpl extends AbstractISUPParameter implements 
         b1 |= (this.chargeInformationResponseIndicator ? _TURN_ON : _TURN_OFF) << 6;
         b1 |= (this.solicitedInformationIndicator ? _TURN_ON : _TURN_OFF) << 7;
 
-        int b2 = this.reserved & 0x0F;
+        int b2 = (this.reserved & 0x0F) << 4;
         byte[] b = new byte[] { (byte) b1, (byte) b2 };
         return b;
     }

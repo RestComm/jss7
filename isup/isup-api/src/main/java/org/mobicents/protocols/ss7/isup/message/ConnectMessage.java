@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,7 +23,7 @@
 package org.mobicents.protocols.ss7.isup.message;
 
 import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformation;
-import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransportParameter;
+import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransport;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardCallIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardGVNS;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallHistoryInformation;
@@ -289,9 +289,9 @@ public interface ConnectMessage extends ISUPMessage {
 
     ConferenceTreatmentIndicators getConferenceTreatmentIndicators();
 
-    void setApplicationTransportParameter(ApplicationTransportParameter value);
+    void setApplicationTransportParameter(ApplicationTransport value);
 
-    ApplicationTransportParameter getApplicationTransportParameter();
+    ApplicationTransport getApplicationTransportParameter();
 
     void setHTRInformation(HTRInformation value);
 

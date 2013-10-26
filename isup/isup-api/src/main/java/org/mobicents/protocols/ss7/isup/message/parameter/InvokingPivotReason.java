@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -34,30 +34,8 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public interface InvokingPivotReason extends ISUPParameter {
-    // FIXME: fill this!
-    int _PARAMETER_CODE = 0;
-    // FIXME: add C defs
-    /**
-     * See Q.763 3.94.4 Pivot Reason : unknown/ not available
-     */
-    int _PR_UNKNOWN = 0;
-    /**
-     * See Q.763 3.94.4 Pivot Reason : service provider portability (national use)
-     */
-    int _PR_SPP = 1;
-    /**
-     * See Q.763 3.94.4 Pivot Reason : reserved for location portability
-     */
-    int _PR_RFLP = 2;
-    /**
-     * See Q.763 3.94.4 Pivot Reason : reserved for service portability
-     */
-    int _PR_RFSP = 3;
+public interface InvokingPivotReason extends Information {
+    void setReason(PivotReason... reasons);
 
-    byte[] getReasons();
-
-    void setReasons(byte[] reasons) throws IllegalArgumentException;
-
-    int getReason(byte b);
+    PivotReason[] getReason();
 }

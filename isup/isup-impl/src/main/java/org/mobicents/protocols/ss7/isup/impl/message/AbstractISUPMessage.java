@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.isup.impl.message;
 
 import java.io.ByteArrayOutputStream;
 
+import org.mobicents.protocols.ss7.isup.ISUPMessageFactory;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.ISUPMessage;
@@ -42,10 +43,11 @@ public abstract class AbstractISUPMessage implements ISUPMessage {
      * handled by specific implementation of this method.
      *
      * @param b - array containing body of parameter.
+     * @param isupMessageFactory
      * @param parameterFactory - factory which will be used to create specific params.
      * @return
      */
-    public abstract int decode(byte[] b, ISUPParameterFactory parameterFactory) throws ParameterException;
+    public abstract int decode(byte[] b, ISUPMessageFactory isupMessageFactory, ISUPParameterFactory parameterFactory) throws ParameterException;
 
     /**
      * Encodes message as byte[]. See B.4/Q.763 - page 119)

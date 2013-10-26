@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -34,7 +34,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ISUPParameter;
  * @author baranowb
  *
  */
-public abstract class AbstractISUPParameter implements ISUPParameter {
+public abstract class AbstractISUPParameter implements ISUPParameter,Encodable {
 
     // protected Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -49,24 +49,24 @@ public abstract class AbstractISUPParameter implements ISUPParameter {
         }
         return b.length;
     }
-
-    /**
-     * Decodes this element from passed byte[] array. This array must contain only element data. however in case of constructor
-     * elements it may contain more information elements that consist of tag, length and contents elements, this has to be
-     * handled by specific implementation of this method.
-     *
-     * @param b - array containing body of parameter.
-     * @return
-     */
-    public abstract int decode(byte[] b) throws ParameterException;
-
-    /**
-     * Encodes elements as byte[].It contains body, tag and length should be added by enclosing element. ( See B.4/Q.763 - page
-     * 119)
-     *
-     * @return byte[] with encoded element.
-     * @throws IOException
-     */
-    public abstract byte[] encode() throws ParameterException;
+//
+//    /**
+//     * Decodes this element from passed byte[] array. This array must contain only element data. however in case of constructor
+//     * elements it may contain more information elements that consist of tag, length and contents elements, this has to be
+//     * handled by specific implementation of this method.
+//     *
+//     * @param b - array containing body of parameter.
+//     * @return
+//     */
+//    public abstract int decode(byte[] b) throws ParameterException;
+//
+//    /**
+//     * Encodes elements as byte[].It contains body, tag and length should be added by enclosing element. ( See B.4/Q.763 - page
+//     * 119)
+//     *
+//     * @return byte[] with encoded element.
+//     * @throws IOException
+//     */
+//    public abstract byte[] encode() throws ParameterException;
 
 }

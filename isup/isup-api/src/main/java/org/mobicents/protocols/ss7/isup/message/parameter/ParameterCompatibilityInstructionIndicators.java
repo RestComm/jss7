@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -34,9 +34,7 @@ package org.mobicents.protocols.ss7.isup.message.parameter;
  *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public interface InstructionIndicators extends ISUPParameter {
-    // FIXME: fill this!
-    int _PARAMETER_CODE = 0;
+public interface ParameterCompatibilityInstructionIndicators {
 
     /**
      * See Q.763 3.41 Transit at intermediate exchange indicator : transit interpretation
@@ -54,7 +52,14 @@ public interface InstructionIndicators extends ISUPParameter {
      * See Q.763 3.41 Release call indicator : reelase call
      */
     boolean _RCI_RELEASE = true;
-
+    /**
+     * See Q.763 3.41 Send notification indicator: do not send notification
+     */
+    boolean _SNDI_DO_NOT_SEND_NOTIFIACTION = false;
+    /**
+     * See Q.763 3.41 Send notification indicator: send notification
+     */
+    boolean _SNDI_SEND_NOTIFIACTION = true;
     /**
      * See Q.763 3.41 Discard message indicator : do not discard message (pass on)
      */
@@ -108,13 +113,17 @@ public interface InstructionIndicators extends ISUPParameter {
      */
     int _BII_DISCARD_PARAMETER = 3;
 
+    void setParamerterCode(byte code);
+
+    byte getParameterCode();
+
     boolean isTransitAtIntermediateExchangeIndicator();
 
     void setTransitAtIntermediateExchangeIndicator(boolean transitAtIntermediateExchangeIndicator);
 
-    boolean isReleaseCallindicator();
+    boolean isReleaseCallIndicator();
 
-    void setReleaseCallindicator(boolean releaseCallindicator);
+    void setReleaseCallIndicator(boolean releaseCallindicator);
 
     boolean isSendNotificationIndicator();
 
@@ -136,9 +145,9 @@ public interface InstructionIndicators extends ISUPParameter {
 
     void setBandInterworkingIndicator(int bandInterworkingIndicator);
 
-    boolean isSecondOctetPresenet();
+    boolean isSecondOctetPresent();
 
-    void setSecondOctetPresenet(boolean secondOctetPresenet);
+    void setSecondOctetPresent(boolean secondOctetPresenet);
 
     byte[] getRaw();
 

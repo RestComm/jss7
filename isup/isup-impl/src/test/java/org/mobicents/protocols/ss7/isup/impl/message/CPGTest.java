@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -54,7 +54,7 @@ public class CPGTest extends MessageHarness {
 
         // CallProgressMessage cpg=new CallProgressMessageImpl(this,message);
         CallProgressMessage cpg = super.messageFactory.createCPG(0);
-        ((AbstractISUPMessage) cpg).decode(message, parameterFactory);
+        ((AbstractISUPMessage) cpg).decode(message, messageFactory,parameterFactory);
         assertNotNull(cpg.getParameter(EventInformation._PARAMETER_CODE));
         assertNotNull(cpg.getParameter(BackwardCallIndicators._PARAMETER_CODE));
         assertNotNull(cpg.getParameter(TransmissionMediumUsed._PARAMETER_CODE));

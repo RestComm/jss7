@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -49,7 +49,7 @@ public class IAMTest extends MessageHarness {
 
         // InitialAddressMessageImpl iam=new InitialAddressMessageImpl(this,message);
         InitialAddressMessage iam = super.messageFactory.createIAM(0);
-        ((AbstractISUPMessage) iam).decode(message, parameterFactory);
+        ((AbstractISUPMessage) iam).decode(message, messageFactory,parameterFactory);
         assertNotNull(iam.getNatureOfConnectionIndicators());
         assertNotNull(iam.getForwardCallIndicators());
         assertNotNull(iam.getCallingPartCategory());
@@ -84,7 +84,7 @@ public class IAMTest extends MessageHarness {
          * ,0x1b, 0x1d
          */};
         InitialAddressMessage iam = super.messageFactory.createIAM(0);
-        ((AbstractISUPMessage) iam).decode(message, parameterFactory);
+        ((AbstractISUPMessage) iam).decode(message, messageFactory,parameterFactory);
     }
 
     protected byte[] getDefaultBody() {

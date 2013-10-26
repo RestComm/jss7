@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -59,7 +59,7 @@ public class AutomaticCongestionLevelImpl extends AbstractISUPParameter implemen
         if (b == null || b.length != 1) {
             throw new ParameterException("byte[] must not be null or have different size than 1");
         }
-        this.automaticCongestionLevel = b[0] & 0x01;
+        this.automaticCongestionLevel = b[0];
         return 1;
     }
 

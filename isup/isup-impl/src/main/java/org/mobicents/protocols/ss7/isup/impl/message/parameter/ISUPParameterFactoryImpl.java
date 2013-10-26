@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -28,7 +28,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.accessTransport.AccessTransportImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.AccessDeliveryInformation;
-import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransportParameter;
+import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransport;
 import org.mobicents.protocols.ss7.isup.message.parameter.AutomaticCongestionLevel;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardCallIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.BackwardGVNS;
@@ -47,6 +47,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.ChargedPartyIdentification;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitAssigmentMap;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitGroupSuperVisionMessageType;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
@@ -72,10 +73,10 @@ import org.mobicents.protocols.ss7.isup.message.parameter.HTRInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.HopCounter;
 import org.mobicents.protocols.ss7.isup.message.parameter.InformationIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.InformationRequestIndicators;
-import org.mobicents.protocols.ss7.isup.message.parameter.InstructionIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.InvokingPivotReason;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.LoopPreventionIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.MessageCompatibilityInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.MCIDRequestIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.MCIDResponseIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.MLPPPrecedence;
@@ -90,12 +91,14 @@ import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginatingISCPointCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginatingParticipatingServiceProvider;
 import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInstructionIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.PerformingPivotIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotCapability;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotCounter;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingBackwardInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingForwardInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotStatus;
 import org.mobicents.protocols.ss7.isup.message.parameter.PropagationDelayCounter;
 import org.mobicents.protocols.ss7.isup.message.parameter.QueryOnReleaseCapability;
 import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
@@ -116,6 +119,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.ServiceActivation;
 import org.mobicents.protocols.ss7.isup.message.parameter.SignalingPointCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.SubsequentNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.SuspendResumeIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.Status;
 import org.mobicents.protocols.ss7.isup.message.parameter.TerminatingNetworkRoutingNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransimissionMediumRequierementPrime;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransitNetworkSelection;
@@ -130,6 +134,23 @@ import org.mobicents.protocols.ss7.isup.message.parameter.UserToUserIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserToUserInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
 import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.AccessTransport;
+import org.mobicents.protocols.ss7.isup.message.parameter.PerformingRedirectIndicator;
+import org.mobicents.protocols.ss7.isup.message.parameter.ErrorCode;
+import org.mobicents.protocols.ss7.isup.message.parameter.Problem;
+import org.mobicents.protocols.ss7.isup.message.parameter.Parameter;
+import org.mobicents.protocols.ss7.isup.message.parameter.Reject;
+import org.mobicents.protocols.ss7.isup.message.parameter.ReturnResult;
+import org.mobicents.protocols.ss7.isup.message.parameter.OperationCode;
+import org.mobicents.protocols.ss7.isup.message.parameter.Invoke;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectForwardInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.MessageCompatibilityInstructionIndicator;
+import org.mobicents.protocols.ss7.isup.message.parameter.InvokingRedirectReason;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectReason;
+import org.mobicents.protocols.ss7.isup.message.parameter.ReturnToInvokingExchangeDuration;
+import org.mobicents.protocols.ss7.isup.message.parameter.ReturnError;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotReason;
+import org.mobicents.protocols.ss7.isup.message.parameter.InvokingPivotReasonType;
+import org.mobicents.protocols.ss7.isup.message.parameter.InvokingRedirectReasonType;
 
 /**
  * Simple factory.
@@ -149,9 +170,9 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
         return new AccessTransportImpl();
     }
 
-    public ApplicationTransportParameter createApplicationTransportParameter() {
+    public ApplicationTransport createApplicationTransport() {
 
-        return new ApplicationTransportParameterImpl();
+        return new ApplicationTransportImpl();
     }
 
     public AutomaticCongestionLevel createAutomaticCongestionLevel() {
@@ -169,16 +190,6 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
         return new BackwardGVNSImpl();
     }
 
-    public CCNRPossibleIndicator createCCNRPossibleIndicator() {
-
-        return new CCNRPossibleIndicatorImpl();
-    }
-
-    public CCSS createCCSS() {
-
-        return new CCSSImpl();
-    }
-
     public CallDiversionInformation createCallDiversionInformation() {
 
         return new CallDiversionInformationImpl();
@@ -189,9 +200,34 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
         return new CallDiversionTreatmentIndicatorsImpl();
     }
 
+    public CalledDirectoryNumber createCalledDirectoryNumber() {
+
+        return new CalledDirectoryNumberImpl();
+    }
+
+    public CalledINNumber createCalledINNumber() {
+
+        return new CalledINNumberImpl();
+    }
+
+    public CalledPartyNumber createCalledPartyNumber() {
+
+        return new CalledPartyNumberImpl();
+    }
+
     public CallHistoryInformation createCallHistoryInformation() {
 
         return new CallHistoryInformationImpl();
+    }
+
+    public CallingPartyCategory createCallingPartyCategory() {
+
+        return new CallingPartyCategoryImpl();
+    }
+
+    public CallingPartyNumber createCallingPartyNumber() {
+
+        return new CallingPartyNumberImpl();
     }
 
     public CallOfferingTreatmentIndicators createCallOfferingTreatmentIndicators() {
@@ -214,34 +250,23 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
         return new CallTransferReferenceImpl();
     }
 
-    public CalledDirectoryNumber createCalledDirectoryNumber() {
-
-        return new CalledDirectoryNumberImpl();
-    }
-
-    public CalledINNumber createCalledINNumber() {
-
-        return new CalledINNumberImpl();
-    }
-
-    public CalledPartyNumber createCalledPartyNumber() {
-
-        return new CalledPartyNumberImpl();
-    }
-
-    public CallingPartyCategory createCallingPartyCategory() {
-
-        return new CallingPartyCategoryImpl();
-    }
-
-    public CallingPartyNumber createCallingPartyNumber() {
-
-        return new CallingPartyNumberImpl();
-    }
-
     public CauseIndicators createCauseIndicators() {
 
         return new CauseIndicatorsImpl();
+    }
+
+    public CCNRPossibleIndicator createCCNRPossibleIndicator() {
+
+        return new CCNRPossibleIndicatorImpl();
+    }
+
+    public CCSS createCCSS() {
+
+        return new CCSSImpl();
+    }
+
+    public ChargedPartyIdentification createChargedPartyIdentification() {
+        return new ChargedPartyIdentificationImpl();
     }
 
     public CircuitAssigmentMap createCircuitAssigmentMap() {
@@ -309,6 +334,11 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
         return new EchoControlInformationImpl();
     }
 
+    @Override
+    public ErrorCode createErrorCode() {
+        return new ErrorCodeImpl();
+    }
+
     public EventInformation createEventInformation() {
 
         return new EventInformationImpl();
@@ -329,9 +359,8 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
         return new ForwardGVNSImpl();
     }
 
-    public GVNSUserGroup createGVNSUserGroup() {
-
-        return new GVNSUserGroupImpl();
+    public GenericDigits createGenericDigits() {
+        return new GenericDigitsImpl();
     }
 
     public GenericNotificationIndicator createGenericNotificationIndicator() {
@@ -349,14 +378,19 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
         return new GenericReferenceImpl();
     }
 
-    public HTRInformation createHTRInformation() {
+    public GVNSUserGroup createGVNSUserGroup() {
 
-        return new HTRInformationImpl();
+        return new GVNSUserGroupImpl();
     }
 
     public HopCounter createHopCounter() {
 
         return new HopCounterImpl();
+    }
+
+    public HTRInformation createHTRInformation() {
+
+        return new HTRInformationImpl();
     }
 
     public InformationIndicators createInformationIndicators() {
@@ -369,14 +403,44 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
         return new InformationRequestIndicatorsImpl();
     }
 
-    public InstructionIndicators createInstructionIndicators() {
-
-        return new InstructionIndicatorsImpl();
+    @Override
+    public Invoke createInvoke() {
+        return new InvokeImpl();
     }
 
-    public InvokingPivotReason createInvokingPivotReason() {
+    public InvokingPivotReason createInvokingPivotReason(InvokingPivotReasonType type) {
+        int tag = -1;
+        switch(type){
+            case PivotRoutingBackwardInformation:
+                tag = PivotRoutingBackwardInformation.INFORMATION_INVOKING_PIVOT_REASON;
+                break;
+            case PivotRoutingForwardInformation:
+                tag = PivotRoutingForwardInformation.INFORMATION_INVOKING_PIVOT_REASON;
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+        InvokingPivotReasonImpl reason = new InvokingPivotReasonImpl();
+        reason.setTag(tag);
+        return reason;
+    }
 
-        return new InvokingPivotReasonImpl();
+    @Override
+    public InvokingRedirectReason createInvokingRedirectReason(InvokingRedirectReasonType type) {
+        int tag = -1;
+        switch(type){
+            case RedirectBackwardInformation:
+                tag = RedirectBackwardInformation.INFORMATION_INVOKING_REDIRECT_REASON;
+                break;
+            case RedirectForwardInformation:
+                tag = RedirectForwardInformation.INFORMATION_INVOKING_REDIRECT_REASON;
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+        InvokingRedirectReasonImpl reason = new InvokingRedirectReasonImpl();
+        reason.setTag(tag);
+        return reason;
     }
 
     public LocationNumber createLocationNumber() {
@@ -397,6 +461,15 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
     public MCIDResponseIndicators createMCIDResponseIndicators() {
 
         return new MCIDResponseIndicatorsImpl();
+    }
+
+    public MessageCompatibilityInformation createMessageCompatibilityInformation() {
+        return new MessageCompatibilityInformationImpl();
+    }
+
+    @Override
+    public MessageCompatibilityInstructionIndicator createMessageCompatibilityInstructionIndicator() {
+        return new MessageCompatibilityInstructionIndicatorImpl();
     }
 
     public MLPPPrecedence createMLPPPrecedence() {
@@ -422,6 +495,11 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
     public NetworkSpecificFacility createNetworkSpecificFacility() {
 
         return new NetworkSpecificFacilityImpl();
+    }
+
+    @Override
+    public OperationCode createOperationCode() {
+        return new OperationCodeImpl();
     }
 
     public OptionalBackwardCallIndicators createOptionalBackwardCallIndicators() {
@@ -454,14 +532,32 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
         return new OriginatingParticipatingServiceProviderImpl();
     }
 
+    @Override
+    public Parameter createParameter() {
+        return new ParameterImpl();
+    }
+
     public ParameterCompatibilityInformation createParameterCompatibilityInformation() {
 
         return new ParameterCompatibilityInformationImpl();
     }
 
-    public PerformingPivotIndicator createPerformingPivotIndicator() {
+    public ParameterCompatibilityInstructionIndicators createParameterCompatibilityInstructionIndicators() {
 
-        return new PerformingPivotIndicatorImpl();
+        return new ParameterCompatibilityInstructionIndicatorsImpl();
+    }
+
+    public PerformingPivotIndicator createPerformingPivotIndicator() {
+        PerformingPivotIndicatorImpl indicator = new PerformingPivotIndicatorImpl();
+        indicator.setTag(PivotRoutingForwardInformation.INFORMATION_PERFORMING_PIVOT_INDICATOR);
+        return indicator;
+    }
+
+    @Override
+    public PerformingRedirectIndicator createPerformingRedirectIndicator() {
+        PerformingRedirectIndicatorImpl indicator = new PerformingRedirectIndicatorImpl();
+        indicator.setTag(RedirectForwardInformation.INFORMATION_PERFORMING_REDIRECT_INDICATOR);
+        return indicator;
     }
 
     public PivotCapability createPivotCapability() {
@@ -472,6 +568,11 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
     public PivotCounter createPivotCounter() {
 
         return new PivotCounterImpl();
+    }
+
+    @Override
+    public PivotReason createPivotReason() {
+        return new PivotReasonImpl();
     }
 
     public PivotRoutingBackwardInformation createPivotRoutingBackwardInformation() {
@@ -487,6 +588,15 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
     public PivotRoutingIndicators createPivotRoutingIndicators() {
 
         return new PivotRoutingIndicatorsImpl();
+    }
+
+    public PivotStatus createPivotStatus() {
+        return new PivotStatusImpl();
+    }
+
+    @Override
+    public Problem createProblem() {
+        return new ProblemImpl();
     }
 
     public PropagationDelayCounter createPropagationDelayCounter() {
@@ -519,9 +629,9 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
         return new RedirectCounterImpl();
     }
 
-    public RedirectStatus createRedirectStatus() {
-
-        return new RedirectStatusImpl();
+    @Override
+    public RedirectForwardInformation createRedirectForwardformation() {
+        return new RedirectForwardInformationImpl();
     }
 
     public RedirectingNumber createRedirectingNumber() {
@@ -544,6 +654,21 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
         return new RedirectionNumberRestrictionImpl();
     }
 
+    @Override
+    public RedirectReason createRedirectReason() {
+        return new RedirectReasonImpl();
+    }
+
+    public RedirectStatus createRedirectStatus() {
+
+        return new RedirectStatusImpl();
+    }
+
+    @Override
+    public Reject createReject() {
+        return new RejectImpl();
+    }
+
     public RemoteOperations createRemoteOperations() {
 
         return new RemoteOperationsImpl();
@@ -554,13 +679,32 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
         return new ReservedImpl();
     }
 
-    public ReturnToInvokingExchangeCallIdentifier createReturnToInvokingExchangeCallIdentifier() {
+    @Override
+    public ReturnError createReturnError() {
+        return new ReturnErrorImpl();
+    }
 
-        return new ReturnToInvokingExchangeCallIdentifierImpl();
+    @Override
+    public ReturnResult createReturnResult() {
+        return new ReturnResultImpl();
+    }
+
+    public ReturnToInvokingExchangeCallIdentifier createReturnToInvokingExchangeCallIdentifier() {
+        ReturnToInvokingExchangeCallIdentifierImpl cid = new ReturnToInvokingExchangeCallIdentifierImpl();
+        cid.setTag(PivotRoutingForwardInformation.INFORMATION_RETURN_TO_INVOKING_EXCHANGE_CALL_ID);
+        return cid;
+    }
+
+    @Override
+    public ReturnToInvokingExchangeDuration createReturnToInvokingExchangeDuration() {
+        ReturnToInvokingExchangeDurationImpl duration = new ReturnToInvokingExchangeDurationImpl();
+        duration.setTag(PivotRoutingBackwardInformation.INFORMATION_RETURN_TO_INVOKING_EXCHANGE_DURATION);
+        return duration;
     }
 
     public ReturnToInvokingExchangePossible createReturnToInvokingExchangePossible() {
-
+        ReturnToInvokingExchangePossibleImpl iWonderWhenSomeoneWillNoticeThisLongishName = new ReturnToInvokingExchangePossibleImpl();
+        iWonderWhenSomeoneWillNoticeThisLongishName.setTag(PivotRoutingForwardInformation.INFORMATION_RETURN_TO_INVOKING_EXCHANGE_POSSIBLE);
         return new ReturnToInvokingExchangePossibleImpl();
     }
 
@@ -577,6 +721,10 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
     public SignalingPointCode createSignalingPointCode() {
 
         return new SignalingPointCodeImpl();
+    }
+
+    public Status createStatus() {
+        return new StatusImpl();
     }
 
     public SubsequentNumber createSubsequentNumber() {
@@ -648,9 +796,4 @@ public class ISUPParameterFactoryImpl implements ISUPParameterFactory {
 
         return new UserToUserInformationImpl();
     }
-
-    public GenericDigits createGenericDigits() {
-        return new GenericDigitsImpl();
-    }
-
 }

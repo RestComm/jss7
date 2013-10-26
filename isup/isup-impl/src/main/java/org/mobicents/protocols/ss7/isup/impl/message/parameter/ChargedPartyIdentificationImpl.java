@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,50 +20,42 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * Start time:15:10:58 2009-04-05<br>
- * Project: mobicents-isup-stack<br>
- *
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski
- *         </a>
- *
- */
 package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import org.mobicents.protocols.ss7.isup.ParameterException;
-import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransportParameter;
+import org.mobicents.protocols.ss7.isup.message.parameter.ChargedPartyIdentification;
 
 /**
- * Start time:15:10:58 2009-04-05<br>
+ *
  * Project: mobicents-isup-stack<br>
  *
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
-public class ApplicationTransportParameterImpl extends AbstractISUPParameter implements ApplicationTransportParameter {
+public class ChargedPartyIdentificationImpl extends AbstractISUPParameter implements ChargedPartyIdentification {
 
-    // FIXME: Oleg ? how can we do that ? Q.763 3.82
-    public ApplicationTransportParameterImpl() {
-        super();
-
+  //FIXME: XXX
+    @Override
+    public int getCode() {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
-    public ApplicationTransportParameterImpl(byte[] b) throws ParameterException {
-        super();
-        decode(b);
-    }
-
+    @Override
     public int decode(byte[] b) throws ParameterException {
         // TODO Auto-generated method stub
         return 0;
     }
 
+    @Override
     public byte[] encode() throws ParameterException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public int getCode() {
+//    3.75
+//    Charged party identification (national use)
+//   The format of the charged party identification parameter is national network specific. The format is
+//   similar to the format of the corresponding INAP parameter in the "FurnishChargingInformation"
+//   operation (see ITU-T Recommendations Q.1218 [11] and Q.1228 [12]).
 
-        return _PARAMETER_CODE;
-    }
 }

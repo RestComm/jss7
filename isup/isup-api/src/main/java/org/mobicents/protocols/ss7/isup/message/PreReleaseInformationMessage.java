@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,6 +22,12 @@
 
 package org.mobicents.protocols.ss7.isup.message;
 
+import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransport;
+import org.mobicents.protocols.ss7.isup.message.parameter.MessageCompatibilityInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.OptionalBackwardCallIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.OptionalForwardCallIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
+
 /**
  * Start time:09:54:07 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
@@ -34,4 +40,24 @@ public interface PreReleaseInformationMessage extends ISUPMessage {
      * {@link PreReleaseInformationMessage}
      */
     int MESSAGE_CODE = 0x42;
+
+    MessageCompatibilityInformation getMessageCompatibilityInformation();
+
+    void setMessageCompatibilityInformation(MessageCompatibilityInformation mci);
+
+    ParameterCompatibilityInformation getParameterCompatibilityInformation();
+
+    void setParameterCompatibilityInformation(ParameterCompatibilityInformation pci);
+
+    OptionalForwardCallIndicators getOptionalForwardCallIndicators();
+
+    void setOptionalForwardCallIndicators(OptionalForwardCallIndicators obci);
+
+    OptionalBackwardCallIndicators getOptionalBackwardCallIndicators();
+
+    void setOptionalBackwardCallIndicators(OptionalBackwardCallIndicators obci);
+
+    ApplicationTransport getApplicationTransport();
+
+    void setApplicationTransport(ApplicationTransport at);
 }

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -28,8 +28,10 @@
  */
 package org.mobicents.protocols.ss7.isup.impl.message;
 
-import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
-import org.mobicents.protocols.ss7.isup.ParameterException;
+import java.util.Map;
+import java.util.Set;
+
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.FacilityAcceptedMessage;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
 
@@ -39,88 +41,20 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
  *
  * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
  */
-public class FacilityAcceptedMessageImpl extends ISUPMessageImpl implements FacilityAcceptedMessage {
+public class FacilityAcceptedMessageImpl extends AbstractFacilityMessageImpl implements FacilityAcceptedMessage {
 
-    /**
-     *
-     * @param source
-     * @throws ParameterException
-     */
-    public FacilityAcceptedMessageImpl() {
+    public static final MessageTypeImpl _MESSAGE_TYPE = new MessageTypeImpl(MESSAGE_CODE);
 
+    FacilityAcceptedMessageImpl(Set<Integer> mandatoryCodes, Set<Integer> mandatoryVariableCodes, Set<Integer> optionalCodes,
+            Map<Integer, Integer> mandatoryCode2Index, Map<Integer, Integer> mandatoryVariableCode2Index,
+            Map<Integer, Integer> optionalCode2Index) {
+        super(mandatoryCodes, mandatoryVariableCodes, optionalCodes, mandatoryCode2Index, mandatoryVariableCode2Index,
+                optionalCode2Index);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryParameters(byte[], int)
-     */
-
-    protected int decodeMandatoryParameters(ISUPParameterFactory parameterFactory, byte[] b, int index)
-            throws ParameterException {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeMandatoryVariableBody(byte[], int)
-     */
-
-    protected void decodeMandatoryVariableBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, int parameterIndex)
-            throws ParameterException {
-        // TODO Auto-generated method stub
-
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#decodeOptionalBody(byte[], byte)
-     */
-
-    protected void decodeOptionalBody(ISUPParameterFactory parameterFactory, byte[] parameterBody, byte parameterCode)
-            throws ParameterException {
-        // TODO Auto-generated method stub
-
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getMessageType()
-     */
-
+    @Override
     public MessageType getMessageType() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#getNumberOfMandatoryVariableLengthParameters()
-     */
-
-    protected int getNumberOfMandatoryVariableLengthParameters() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.mobicents.protocols.ss7.isup.ISUPMessageImpl#hasAllMandatoryParameters()
-     */
-
-    public boolean hasAllMandatoryParameters() {
-        throw new UnsupportedOperationException();
-    }
-
-    protected boolean optionalPartIsPossible() {
-
-        throw new UnsupportedOperationException();
+        return _MESSAGE_TYPE;
     }
 
 }

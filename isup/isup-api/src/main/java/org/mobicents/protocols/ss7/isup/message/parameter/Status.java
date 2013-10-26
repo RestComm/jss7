@@ -1,8 +1,7 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2011-2013, Telestax Inc and individual contributors
+ * by the @authors tag.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -20,21 +19,22 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-/**
- * Start time:10:55:57 2009-07-23<br>
- * Project: mobicents-isup-stack<br>
- *
- * @author <a href="mailto:baranowb@gmail.com">Bartosz Baranowski </a>
- */
 package org.mobicents.protocols.ss7.isup.message.parameter;
 
 /**
- * Start time:10:55:57 2009-07-23<br>
- * Project: mobicents-isup-stack<br>
+ * Status holder for {@link PivotStatus}
  *
- * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
+ * @author baranowb
+ *
  */
-public interface ApplicationTransportParameter extends ISUPParameter {
-    // FIXME: fill this!
-    int _PARAMETER_CODE = 0x78;
+public interface Status {
+
+    int STATUS_NOT_USED = 0x00;
+    int STATUS_ACK_OF_PIVOT_ROUTING = 0x01;
+    int STATUS_WILL_NOT_BE_INVOKED = 0x02;
+    int STATUS_SPARE = 0x03;
+
+    byte getStatus();
+
+    void setStatus(byte b);
 }

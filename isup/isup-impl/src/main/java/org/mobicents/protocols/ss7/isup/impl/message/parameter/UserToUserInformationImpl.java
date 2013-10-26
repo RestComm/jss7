@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -42,6 +42,12 @@ import org.mobicents.protocols.ss7.isup.message.parameter.UserToUserInformation;
 public class UserToUserInformationImpl extends AbstractISUPParameter implements UserToUserInformation {
 
     // FIXME: add Q.931
+    // FIXME: XXX
+    // The format of the user-to-user information parameter field is coded identically to the protocol
+    // discriminator plus user information field described in ITU-T Recommendation Q.931.
+    // This makes no sense...
+
+    private byte[] information;
 
     public UserToUserInformationImpl() {
         super();
@@ -54,17 +60,24 @@ public class UserToUserInformationImpl extends AbstractISUPParameter implements 
     }
 
     public int decode(byte[] b) throws ParameterException {
-        // TODO Auto-generated method stub
-        return 0;
+        this.information = b;
+        return b.length;
     }
 
     public byte[] encode() throws ParameterException {
-        // TODO Auto-generated method stub
-        return null;
+        return this.information;
     }
 
     public int getCode() {
 
         return _PARAMETER_CODE;
+    }
+
+    public byte[] getInformation() {
+        return this.information;
+    }
+
+    public void setInformation(byte[] b) {
+        this.information = b;
     }
 }
