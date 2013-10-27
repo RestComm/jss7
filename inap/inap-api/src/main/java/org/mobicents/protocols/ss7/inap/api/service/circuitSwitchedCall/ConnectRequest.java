@@ -137,7 +137,7 @@ INServiceCompatibilityResponse ::= Entry
 CallSegmentID {PARAMETERS-BOUND : bound} ::= INTEGER (1..bound.&numOfCSs)
 
 SuppressionOfAnnouncement ::= NULL
-OCSIApplicable ::= NULL 
+OCSIApplicable ::= NULL
 *
 *
 * @author sergey vetyutnev

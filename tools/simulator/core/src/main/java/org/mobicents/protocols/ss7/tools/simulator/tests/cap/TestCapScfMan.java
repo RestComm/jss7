@@ -693,49 +693,49 @@ public class TestCapScfMan extends TesterBase implements TestCapScfManMBean, Sto
     @Override
     public void onContinueWithArgumentRequest(ContinueWithArgumentRequest ind) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void onDisconnectLegRequest(DisconnectLegRequest ind) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void onDisconnectLegResponse(DisconnectLegResponse ind) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void onDisconnectForwardConnectionWithArgumentRequest(DisconnectForwardConnectionWithArgumentRequest ind) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void onInitiateCallAttemptRequest(InitiateCallAttemptRequest initiateCallAttemptRequest) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void onInitiateCallAttemptResponse(InitiateCallAttemptResponse initiateCallAttemptResponse) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void onMoveLegRequest(MoveLegRequest ind) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void onMoveLegResponse(MoveLegResponse ind) {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

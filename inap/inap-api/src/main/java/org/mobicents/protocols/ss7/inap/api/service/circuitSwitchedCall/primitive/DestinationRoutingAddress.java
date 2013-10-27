@@ -37,6 +37,6 @@ DestinationRoutingAddress {PARAMETERS-BOUND : bound} ::= SEQUENCE SIZE(1) OF Cal
 */
 public interface DestinationRoutingAddress extends Serializable {
 
-    public CalledPartyNumberInap getCalledPartyNumber();
+    CalledPartyNumberInap getCalledPartyNumber();
 
 }
