@@ -1,23 +1,20 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012.
- * and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2011-2013, Telestax Inc and individual contributors
+ * by the @authors tag.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
+ * This program is free software: you can redistribute it and/or modify
+ * under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation; either version 3 of
  * the License, or (at your option) any later version.
  *
- * This software is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 package org.mobicents.ss7.management.console;
 
@@ -115,9 +112,8 @@ public class ShellServer extends Task {
 
         try {
             skey.cancel();
-            if (this.channel != null) {
-                this.channel.close();
-                this.channel = null;
+            if (channel != null) {
+                channel.close();
             }
             serverChannel.close();
             selector.close();
@@ -158,8 +154,8 @@ public class ShellServer extends Task {
                         } else {
                             String[] options = rxMessage.split(" ");
                             ShellExecutor shellExecutor = null;
-                            for (FastList.Node<ShellExecutor> n = this.shellExecutors.head(), end1 = this.shellExecutors.tail(); (n = n
-                                    .getNext()) != end1;) {
+                            for (FastList.Node<ShellExecutor> n = this.shellExecutors.head(), end1 = this.shellExecutors
+                                    .tail(); (n = n.getNext()) != end1;) {
                                 ShellExecutor value = n.getValue();
                                 if (value.handles(options[0])) {
                                     shellExecutor = value;
@@ -168,8 +164,8 @@ public class ShellServer extends Task {
                             }
 
                             if (shellExecutor == null) {
-                                logger.warn(String.format("Received command=\"%s\" for which no ShellExecutor is configured ",
-                                        rxMessage));
+                                logger.warn(String.format(
+                                        "Received command=\"%s\" for which no ShellExecutor is configured ", rxMessage));
                                 chan.send(messageFactory.createMessage("Invalid command"));
                             } else {
                                 this.txMessage = shellExecutor.execute(options);
@@ -192,14 +188,16 @@ public class ShellServer extends Task {
                 }
             }
         } catch (IOException e) {
-            logger.error("IO Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now", e);
+            logger.error(
+                    "IO Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now", e);
             try {
                 this.closeChannel();
             } catch (IOException e1) {
                 logger.error("IO Exception while closing Channel", e);
             }
         } catch (Exception e) {
-            logger.error("Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now", e);
+            logger.error("Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now",
+                    e);
             try {
                 this.closeChannel();
             } catch (IOException e1) {
@@ -214,57 +212,23 @@ public class ShellServer extends Task {
     }
 
     private void accept() throws IOException {
-        ShellChannel channelTmp = serverChannel.accept();
+        channel = serverChannel.accept();
+        skey.cancel();
+        skey = channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Accepting client connection. Remote Address= " + channelTmp.getRemoteAddress());
-        }
-
-        if (this.channel != null) {
-            String exitmessage = "Already client from " + this.channel.getRemoteAddress()
-                    + " is connected. Closing this connection";
-
-            logger.warn(exitmessage);
-
-            channelTmp.sendImmediate(messageFactory.createMessage(exitmessage));
-
-            channelTmp.close();
-            return;
-        }
-
-        this.channel = channelTmp;
-
-        // skey.cancel();
-        // skey = this.channel.register(selector, SelectionKey.OP_READ |
-        // SelectionKey.OP_WRITE);
-        this.channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
-
-        String messageToSend = String.format(CONNECTED_MESSAGE, this.version.getProperty("name"),
-                this.version.getProperty("version"), this.version.getProperty("vendor"));
-        this.channel.send(messageFactory.createMessage(messageToSend));
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Sent message to remote client= " + messageToSend);
-        }
-
+        channel.send(messageFactory.createMessage(String.format(CONNECTED_MESSAGE, this.version.getProperty("name"),
+                this.version.getProperty("version"), this.version.getProperty("vendor"))));
     }
 
     private void closeChannel() throws IOException {
-        if (this.channel != null) {
+        if (channel != null) {
             try {
                 this.channel.close();
             } catch (IOException e) {
                 logger.error("Error closing channel", e);
             }
-
-            if (logger.isDebugEnabled()) {
-                logger.debug("Closed client connection. Remote Address= " + this.channel.getRemoteAddress());
-            }
-
-            this.channel = null;
         }
-
-        // skey.cancel();
-        // skey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+        skey.cancel();
+        skey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
     }
 }

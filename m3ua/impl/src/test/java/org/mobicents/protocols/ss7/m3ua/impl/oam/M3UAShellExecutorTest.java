@@ -1,23 +1,20 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012.
- * and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2011-2013, Telestax Inc and individual contributors
+ * by the @authors tag.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
+ * This program is free software: you can redistribute it and/or modify
+ * under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation; either version 3 of
  * the License, or (at your option) any later version.
  *
- * This software is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 package org.mobicents.protocols.ss7.m3ua.impl.oam;
 
@@ -101,7 +98,7 @@ public class M3UAShellExecutorTest {
 
         // Try adding same again
         result = m3uaExec.execute("m3ua as create testas AS mode SE rc 100 traffic-mode loadshare".split(" "));
-        assertEquals(String.format(M3UAOAMMessages.CREATE_AS_FAIL_NAME_EXIST, "testas"), result);
+        assertEquals(result, "java.lang.Exception: "+String.format(M3UAOAMMessages.CREATE_AS_FAIL_NAME_EXIST, "testas"));
 
         // Create AS with only mandatory params
         result = m3uaExec.execute("m3ua as create testas1 AS".split(" "));
@@ -123,7 +120,7 @@ public class M3UAShellExecutorTest {
 
         // create ASP with all params but with same aspid
         result = m3uaExec.execute("m3ua asp create testasp2 testAssoc2 aspid 2".split(" "));
-        assertEquals(result, String.format(M3UAOAMMessages.ASP_ID_TAKEN, 2));
+        assertEquals(result, "java.lang.Exception: "+String.format(M3UAOAMMessages.ASP_ID_TAKEN, 2));
 
         // create ASP with all params but with unique aspid
         result = m3uaExec.execute("m3ua asp create testasp2 testAssoc2 aspid 3".split(" "));
@@ -131,11 +128,11 @@ public class M3UAShellExecutorTest {
 
         // Error for same name
         result = m3uaExec.execute("m3ua asp create testasp1 testAssoc1".split(" "));
-        assertEquals(String.format(M3UAOAMMessages.CREATE_ASP_FAIL_NAME_EXIST, "testasp1"), result);
+        assertEquals(result, "java.lang.Exception: "+String.format(M3UAOAMMessages.CREATE_ASP_FAIL_NAME_EXIST, "testasp1"));
 
         // Error : Try to start Asp without assiging to any As
         result = m3uaExec.execute("m3ua asp start testasp1".split(" "));
-        assertEquals(String.format(M3UAOAMMessages.ASP_NOT_ASSIGNED_TO_AS, "testasp1"), result);
+        assertEquals(result, "java.lang.Exception: "+String.format(M3UAOAMMessages.ASP_NOT_ASSIGNED_TO_AS, "testasp1"));
 
         // assign ASP to AS
         result = m3uaExec.execute("m3ua as add testas testasp1".split(" "));
@@ -143,8 +140,7 @@ public class M3UAShellExecutorTest {
 
         // add again
         result = m3uaExec.execute("m3ua as add testas testasp1".split(" "));
-        assertEquals(String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_THIS_AS, "testasp1", "testas"),
-                result);
+        assertEquals(result, "java.lang.Exception: "+String.format(M3UAOAMMessages.ADD_ASP_TO_AS_FAIL_ALREADY_ASSIGNED_TO_THIS_AS, "testasp1", "testas"));
 
         // Test Routes
         result = m3uaExec.execute("m3ua route add testas 2 -1 -1".split(" "));
@@ -160,7 +156,7 @@ public class M3UAShellExecutorTest {
 
         // Error : starting Asp again
         result = m3uaExec.execute("m3ua asp start testasp1".split(" "));
-        assertEquals(String.format(M3UAOAMMessages.ASP_ALREADY_STARTED, "testasp1"), result);
+        assertEquals(result, "java.lang.Exception: "+String.format(M3UAOAMMessages.ASP_ALREADY_STARTED, "testasp1"));
 
         // Stop Asp
         result = m3uaExec.execute("m3ua asp stop testasp1".split(" "));
@@ -184,7 +180,7 @@ public class M3UAShellExecutorTest {
 
         // Error : Destroy As
         result = m3uaExec.execute("m3ua as destroy testas".split(" "));
-        assertEquals(result, String.format(M3UAOAMMessages.AS_USED_IN_ROUTE_ERROR, "testas", "2:-1:-1"));
+        assertEquals(result, "java.lang.Exception: "+String.format(M3UAOAMMessages.AS_USED_IN_ROUTE_ERROR, "testas", "2:-1:-1"));
 
         // Remove route
         result = m3uaExec.execute("m3ua route remove testas 2 -1 -1".split(" "));

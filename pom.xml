@@ -46,8 +46,8 @@
 		<module>hardware</module>
 		<module>isup</module>
 		<module>sccp</module>
-        <module>tcap</module>
-        <module>tcap-ansi</module>
+        	<module>tcap</module>
+        	<module>tcap-ansi</module>
 		<module>map</module>
 		<module>inap</module>
 		<module>cap</module>

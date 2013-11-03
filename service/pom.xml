@@ -166,7 +166,17 @@
 		<dependency>
 			<artifactId>tcap-impl</artifactId>
 			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
-		</dependency>				
+		</dependency>		
+		<!-- Statistics part -->
+		<dependency>
+			<artifactId>statistics-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+		</dependency>	
+		<dependency>
+			<artifactId>statistics-impl</artifactId>
+			<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+		</dependency>							
+				
 	</dependencies>
 	<build>
 		<finalName>${pom.artifactId}-${pom.version}</finalName>

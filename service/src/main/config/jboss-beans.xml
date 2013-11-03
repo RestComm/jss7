@@ -131,44 +131,32 @@
 	<!-- ==================================================================== -->
 	<bean name="TcapStackMap" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
 		<constructor>
+			<parameter>TcapStackMap</parameter>
 			<parameter>
 				<inject bean="SccpStack" property="sccpProvider" />
 			</parameter>
 			<parameter>8</parameter>
 		</constructor>
-		<property name="dialogIdleTimeout">60000</property>
-		<property name="invokeTimeout">30000</property>
-		<property name="dialogIdRangeStart">1</property>
-		<property name="dialogIdRangeEnd">30000</property>		
-		<property name="maxDialogs">25000</property>
 	</bean>
 
 	<bean name="TcapStackCap" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
 		<constructor>
+			<parameter>TcapStackCap</parameter>
 			<parameter>
 				<inject bean="SccpStack" property="sccpProvider" />
 			</parameter>
 			<parameter>146</parameter>
 		</constructor>
-		<property name="dialogIdleTimeout">60000</property>
-		<property name="invokeTimeout">30000</property>
-		<property name="dialogIdRangeStart">1</property>
-		<property name="dialogIdRangeEnd">30000</property>
-		<property name="maxDialogs">25000</property>
 	</bean>
 
 	<bean name="TcapStack" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
 		<constructor>
+			<parameter>TcapStack</parameter>
 			<parameter>
 				<inject bean="SccpStack" property="sccpProvider" />
 			</parameter>
 			<parameter>9</parameter>
 		</constructor>
-		<property name="dialogIdleTimeout">60000</property>
-		<property name="invokeTimeout">30000</property>
-		<property name="dialogIdRangeStart">1</property>
-		<property name="dialogIdRangeEnd">30000</property>		
-		<property name="maxDialogs">25000</property>
 	</bean>
 
 	<!-- ==================================================================== -->
@@ -176,6 +164,7 @@
 	<!-- ==================================================================== -->
 	<bean name="CapStack" class="org.mobicents.protocols.ss7.cap.CAPStackImpl">
 		<constructor>
+			<parameter>CapStack</parameter>
 			<parameter>
 				<inject bean="TcapStackCap" property="provider" />
 			</parameter>
@@ -188,6 +177,7 @@
 	<!-- ==================================================================== -->
 	<bean name="MapStack" class="org.mobicents.protocols.ss7.map.MAPStackImpl">
 		<constructor>
+			<parameter>MapStack</parameter>
 			<parameter>
 				<inject bean="TcapStackMap" property="provider" />
 			</parameter>
