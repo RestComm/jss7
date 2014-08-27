@@ -125,6 +125,18 @@
 			<artifactId>javolution</artifactId>
 			<version>${javolution.version}</version>
 		</dependency>
+		
+		<!-- SS7 stats -->
+		<dependency>
+			<artifactId>statistics-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+			<!-- <version>${pom.version}</version> -->
+		</dependency>	
+		<dependency>
+			<artifactId>statistics-impl</artifactId>
+			<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+			<!-- <version>${pom.version}</version> -->
+		</dependency>		
 	</dependencies>
 
 	<profiles>
@@ -422,6 +434,34 @@
 												log4j.jar
 											</destFileName>
 										</artifactItem>
+										
+										
+										<!-- Stats jars -->	
+										<artifactItem>
+											<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+											<artifactId>statistics-api</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+											</outputDirectory>
+											<destFileName>
+												statistics-api.jar
+											</destFileName>
+										</artifactItem>	
+										
+										<artifactItem>
+											<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+											<artifactId>statistics-impl</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+											</outputDirectory>
+											<destFileName>
+												statistics-impl.jar
+											</destFileName>
+										</artifactItem>											
 										<!-- <artifactItem> <groupId>org.mobicents.external.appframework</groupId> 
 											<artifactId>appframework</artifactId> <type>jar</type> <overWrite>true</overWrite> 
 											<outputDirectory> ${assemble.dir}/lib </outputDirectory> <destFileName> appframework.jar 

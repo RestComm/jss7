@@ -39,6 +39,9 @@
 		<pathelement location="${assemble.dir}/javolution.jar" />
 		<pathelement location="${assemble.dir}/concurrent.jar" />
 		<pathelement location="src/main/resources" />
+		<!-- Stats -->
+		<pathelement location="${assemble.dir}/statistics-api.jar" />
+		<pathelement location="${assemble.dir}/statistics-impl.jar" />		
 		
 	</path>
 
@@ -100,7 +103,7 @@
 		<java classname="${packageprefix}.Client" fork="true" maxmemory="2048m" classpathref="project.class.path" dir="client">
 			<jvmarg value="-Dlog.file.name=log4j-client.log" />
 			<arg value="10000000" />
-			<arg value="10" />
+			<arg value="1000" />
 			<arg value="sctp" /> <!-- socket type -->
 			<arg value="127.0.0.1" /> <!-- Client IP -->
 			<arg value="2345" /> <!-- Client Port -->
