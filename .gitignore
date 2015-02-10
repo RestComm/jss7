@@ -47,3 +47,8 @@ debuglog.txt.*
 
 #generated doc src
 docs/sources-*/src
+
+# Ignore AppNGIN-generated build.xml and ivy.xml
+build.xml
+ivy.xml
+

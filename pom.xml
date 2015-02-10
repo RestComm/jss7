@@ -32,7 +32,7 @@
 		<!-- mobicents but not strictly ss7 -->
 		<asn.version>2.0.2.FINAL</asn.version>
 		<stream.version>1.0.0.CR1</stream.version>
-		<sctp.version>1.4.0.FINAL</sctp.version>
+		<sctp.version>1.6.0-SNAPSHOT</sctp.version>
 		<commons.version>1.0.0.CR1</commons.version>
 	</properties>
 
@@ -52,8 +52,9 @@
 		<module>inap</module>
 		<module>cap</module>
 		<module>service</module>
-		<module>sgw</module>
-		<module>tools</module>
+<!--		<module>sgw</module>  -->
+<!--		<module>tools</module> -->
+		<module>docs</module>
 	</modules>
 
 	<!-- declare our babies -->
