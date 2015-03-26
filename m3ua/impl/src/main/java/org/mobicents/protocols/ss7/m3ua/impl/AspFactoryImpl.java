@@ -578,7 +578,8 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
         long now = System.currentTimeMillis();
         if ((now - aspupSentTime) > 2000) {
             ASPUp aspUp = (ASPUp) this.messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP);
-            aspUp.setASPIdentifier(this.aspid);
+            //ASC specific modification, we dont send the optiona ASP ID parameter in ASP_UP messages
+            //aspUp.setASPIdentifier(this.aspid);
             this.write(aspUp);
             aspupSentTime = now;
         }
