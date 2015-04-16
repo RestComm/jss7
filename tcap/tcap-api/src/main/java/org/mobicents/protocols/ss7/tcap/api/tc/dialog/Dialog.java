@@ -23,7 +23,6 @@
 package org.mobicents.protocols.ss7.tcap.api.tc.dialog;
 
 import java.io.Serializable;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
@@ -302,6 +301,7 @@ public interface Dialog extends Serializable {
     /**
      * @return This ReentrantLock object should for synchronizing of Dialog using in multithread environment
      */
-    ReentrantLock getDialogLock();
+    ActionableReentrantLock getDialogLock();
 
 }
+
