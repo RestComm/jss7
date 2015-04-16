@@ -29,7 +29,6 @@ import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -40,6 +39,7 @@ import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.OperationState;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.ActionableReentrantLock;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.TRPseudoState;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
@@ -119,7 +119,7 @@ public class DialogImpl implements Dialog {
     private Object userObject;
 
     // lock... ech
-    protected ReentrantLock dialogLock = new ReentrantLock();
+    protected ActionableReentrantLock dialogLock = new ActionableReentrantLock();
 
     // values for timer timeouts
     private long removeTaskTimeout = _REMOVE_TIMEOUT;
@@ -452,7 +452,7 @@ public class DialogImpl implements Dialog {
     }
 
     @Override
-    public ReentrantLock getDialogLock() {
+    public ActionableReentrantLock getDialogLock() {
         return this.dialogLock;
     }
 
@@ -2073,7 +2073,7 @@ public class DialogImpl implements Dialog {
 
         public void run() {
             try {
-                dialogLock.lock();
+                dialogLock.lockAndTriggerActions();
                 d.idleTimerFuture = null;
 
                 d.idleTimerActionTaken = false;
@@ -2088,7 +2088,7 @@ public class DialogImpl implements Dialog {
 
             } finally {
                 d.idleTimerInvoked = false;
-                dialogLock.unlock();
+                dialogLock.unlockAndTriggerActions();
             }
         }
 
@@ -2179,4 +2179,5 @@ public class DialogImpl implements Dialog {
         return super.toString() + ": Local[" + this.getLocalDialogId() + "] Remote[" + this.getRemoteDialogId()
                 + "], LocalAddress[" + localAddress + "] RemoteAddress[" + this.remoteAddress + "]";
     }
+
 }
