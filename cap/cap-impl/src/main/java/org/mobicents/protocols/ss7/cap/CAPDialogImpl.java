@@ -39,6 +39,7 @@ import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.LockAction;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
@@ -581,6 +582,14 @@ public abstract class CAPDialogImpl implements CAPDialog {
         }
 
         throw new CAPException("Bad TCAP Dialog state: " + this.tcapDialog.getState());
+    }
+
+    public void setDialogLockAction(LockAction action) {
+        this.tcapDialog.getDialogLock().setLockAction(action);
+    }
+
+    public LockAction getDialogLockAction() {
+        return this.tcapDialog.getDialogLock().getLockAction();
     }
 
     @Override
