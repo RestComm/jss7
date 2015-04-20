@@ -79,6 +79,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
     boolean returnMessageOnError = false;
     protected MessageType tcapMessageType;
     protected DelayedAreaState delayedAreaState;
+    private final CAPTimerDefault capTimerDefault;
 
     protected CAPDialogImpl(CAPApplicationContext appCntx, Dialog tcapDialog, CAPProviderImpl capProviderImpl,
             CAPServiceBase capService) {
@@ -86,6 +87,27 @@ public abstract class CAPDialogImpl implements CAPDialog {
         this.tcapDialog = tcapDialog;
         this.capProviderImpl = capProviderImpl;
         this.capService = capService;
+        if (capProviderImpl.getCAPTimerDefault() != null) {
+            capTimerDefault = capProviderImpl.getCAPTimerDefault();
+        } else {
+            capTimerDefault = CAPTimerDefault.getDefaultInstance();
+        }
+    }
+
+    public int getTimerCircuitSwitchedCallControlShort() {
+        return capTimerDefault.getTimerCircuitSwitchedCallControlShort();
+    }
+    public int getTimerCircuitSwitchedCallControlMedium() {
+        return capTimerDefault.getTimerCircuitSwitchedCallControlMedium();
+    }
+    public int getTimerCircuitSwitchedCallControlLong() {
+        return capTimerDefault.getTimerCircuitSwitchedCallControlShort();
+    }
+    public int getTimerSmsShort() {
+        return capTimerDefault.getTimerSmsShort();
+    }
+    public int getTimerGprsShort() {
+        return capTimerDefault.getTimerGprsShort();
     }
 
     public SccpAddress getLocalAddress() {

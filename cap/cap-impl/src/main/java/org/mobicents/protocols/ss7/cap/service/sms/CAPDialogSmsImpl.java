@@ -94,7 +94,7 @@ public class CAPDialogSmsImpl extends CAPDialogImpl implements CAPDialogSms {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Sms_Short);
+            invoke.setTimeout(getTimerSmsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -147,7 +147,7 @@ public class CAPDialogSmsImpl extends CAPDialogImpl implements CAPDialogSms {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class4);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Sms_Short);
+            invoke.setTimeout(getTimerSmsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -195,7 +195,7 @@ public class CAPDialogSmsImpl extends CAPDialogImpl implements CAPDialogSms {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Sms_Short);
+            invoke.setTimeout(getTimerSmsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -260,7 +260,7 @@ public class CAPDialogSmsImpl extends CAPDialogImpl implements CAPDialogSms {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Sms_Short);
+            invoke.setTimeout(getTimerSmsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -311,7 +311,7 @@ public class CAPDialogSmsImpl extends CAPDialogImpl implements CAPDialogSms {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class4);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Sms_Short);
+            invoke.setTimeout(getTimerSmsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -360,7 +360,7 @@ public class CAPDialogSmsImpl extends CAPDialogImpl implements CAPDialogSms {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Sms_Short);
+            invoke.setTimeout(getTimerSmsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -408,7 +408,7 @@ public class CAPDialogSmsImpl extends CAPDialogImpl implements CAPDialogSms {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Sms_Short);
+            invoke.setTimeout(getTimerSmsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -455,7 +455,7 @@ public class CAPDialogSmsImpl extends CAPDialogImpl implements CAPDialogSms {
 
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class4);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Sms_Short);
+            invoke.setTimeout(getTimerSmsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 

@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javolution.util.FastList;
@@ -73,7 +75,7 @@ import org.mobicents.protocols.ss7.tcap.DialogImpl;
 import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
-import org.mobicents.protocols.ss7.tcap.api.TCListener;
+import org.mobicents.protocols.ss7.tcap.api.NamedTCListener;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
@@ -115,10 +117,10 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
  * @author sergey vetyutnev
  *
  */
-public class CAPProviderImpl implements CAPProvider, TCListener {
+public class CAPProviderImpl implements CAPProvider, NamedTCListener {
 
     protected final transient Logger loger;
-
+    
 
     private transient Collection<CAPDialogListener> dialogListeners = new FastList<CAPDialogListener>().shared();
 
@@ -138,14 +140,35 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
     private final transient CAPServiceGprs capServiceGprs = new CAPServiceGprsImpl(this);
     private final transient CAPServiceSms capServiceSms = new CAPServiceSmsImpl(this);
 
+    protected transient CAPTimerDefault timerDefault=null;
+
+    protected String name;
+
+    protected CAPProviderImpl() {
+        this.loger = Logger.getLogger(CAPStackImpl.class.getCanonicalName());
+    }
+
     public CAPProviderImpl(String name, TCAPProvider tcapProvider) {
         this.tcapProvider = tcapProvider;
+        this.name = name;
 
         this.loger = Logger.getLogger(CAPStackImpl.class.getCanonicalName() + "-" + name);
 
         this.capServices.add(this.capServiceCircuitSwitchedCall);
         this.capServices.add(this.capServiceGprs);
         this.capServices.add(this.capServiceSms);
+    }
+
+    public CAPTimerDefault getCAPTimerDefault() {
+        return this.timerDefault;
+    }
+
+    public void setCAPTimerDefault(CAPTimerDefault timerDefault) {
+        this.timerDefault = timerDefault;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     public TCAPProvider getTCAPProvider() {

@@ -102,6 +102,10 @@ public class CAPStackImpl implements CAPStack {
         return this.tcapStack;
     }
 
+    public void setCAPTimerDefault(CAPTimerDefault timerDefault) {
+        this.capProvider.setCAPTimerDefault(timerDefault);
+    }
+
     private enum State {
         IDLE, CONFIGURED, RUNNING;
     }
