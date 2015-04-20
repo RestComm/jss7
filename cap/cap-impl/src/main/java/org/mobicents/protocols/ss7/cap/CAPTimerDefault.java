@@ -1,4 +1,4 @@
-package org.mobitcents.protocols.ss7.cap;
+package org.mobicents.protocols.ss7.cap;
 
 public class CAPTimerDefault {
 
