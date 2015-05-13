@@ -44,7 +44,10 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.primitives.AChChargingAddressImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 import org.mobicents.protocols.ss7.cap.primitives.SendingSideIDImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.AChChargingAddressImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristicsImpl;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
+import org.mobicents.protocols.ss7.inap.primitives.LegIDImpl;
 
 /**
  *
@@ -160,10 +163,9 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
 
         this.aChBillingChargingCharacteristics = null;
         this.partyToCharge = null;
-        // this.partyToCharge = new SendingSideIDImpl(LegType.leg1);
+        this.partyToCharge = new SendingSideIDImpl(LegType.leg1);
         this.extensions = null;
-        this.aChChargingAddress = null;
-        // TODO: DEFAULT legID:sendingSideID:leg1
+        this.aChChargingAddress = new AChChargingAddressImpl(new LegIDImpl(true, LegType.leg1));
 
         AsnInputStream ais = ansIS.readSequenceStreamData(length);
         while (true) {
@@ -174,30 +176,29 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
 
             if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
                 switch (tag) {
-                case _ID_aChBillingChargingCharacteristics:
-                    this.aChBillingChargingCharacteristics = new CAMELAChBillingChargingCharacteristicsImpl();
-                    ((CAMELAChBillingChargingCharacteristicsImpl) this.aChBillingChargingCharacteristics).decodeAll(ais);
-                    break;
-                case _ID_partyToCharge:
-                    AsnInputStream ais2 = ais.readSequenceStream();
-                    ais2.readTag();
-                    this.partyToCharge = new SendingSideIDImpl();
-                    ((SendingSideIDImpl) this.partyToCharge).decodeAll(ais2);
-                    break;
-                case _ID_extensions:
-                    this.extensions = new CAPExtensionsImpl();
-                    ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
-                    break;
-                case _ID_aChChargingAddress:
-                    ais2 = ais.readSequenceStream();
-                    ais2.readTag();
-                    this.aChChargingAddress = new AChChargingAddressImpl();
-                    ((AChChargingAddressImpl) this.aChChargingAddress).decodeAll(ais2);
-                    break;
+                    case _ID_aChBillingChargingCharacteristics:
+                        this.aChBillingChargingCharacteristics = new CAMELAChBillingChargingCharacteristicsImpl();
+                        ((CAMELAChBillingChargingCharacteristicsImpl) this.aChBillingChargingCharacteristics).decodeAll(ais);
+                        break;
+                    case _ID_partyToCharge:
+                        AsnInputStream ais2 = ais.readSequenceStream();
+                        ais2.readTag();
+                        this.partyToCharge = new SendingSideIDImpl();
+                        ((SendingSideIDImpl) this.partyToCharge).decodeAll(ais2);
+                        break;
+                    case _ID_extensions:
+                        this.extensions = new CAPExtensionsImpl();
+                        ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
+                        break;
+                    case _ID_aChChargingAddress:
+                        this.aChChargingAddress = new AChChargingAddressImpl();
+                        ((AChChargingAddressImpl) this.aChChargingAddress)
+                                .decodeAll(ais);
+                        break;
 
-                default:
-                    ais.advanceElement();
-                    break;
+                    default:
+                        ais.advanceElement();
+                        break;
                 }
             } else {
                 ais.advanceElement();

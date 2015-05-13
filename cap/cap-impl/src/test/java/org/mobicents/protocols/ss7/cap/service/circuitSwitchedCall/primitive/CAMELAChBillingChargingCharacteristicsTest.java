@@ -36,6 +36,7 @@ import javolution.xml.XMLObjectWriter;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AudibleIndicator;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsTest;
 import org.testng.annotations.Test;
@@ -93,7 +94,6 @@ public class CAMELAChBillingChargingCharacteristicsTest {
         assertNull(elem.getAudibleIndicator());
         assertTrue(CAPExtensionsTest.checkTestCAPExtensions(elem.getExtensions()));
 
-
         data = this.getData3();
         ais = new AsnInputStream(data);
         elem = new CAMELAChBillingChargingCharacteristicsImpl();
@@ -122,21 +122,19 @@ public class CAMELAChBillingChargingCharacteristicsTest {
     public void testEncode() throws Exception {
 
         CAMELAChBillingChargingCharacteristicsImpl elem = new CAMELAChBillingChargingCharacteristicsImpl(12000, true, null,
-                null, null, false);
+                null, null, CAPApplicationContextVersion.version2);
         AsnOutputStream aos = new AsnOutputStream();
         elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 
-
         elem = new CAMELAChBillingChargingCharacteristicsImpl(10000, true, 1000L, null,
-                CAPExtensionsTest.createTestCAPExtensions(), false);
+                CAPExtensionsTest.createTestCAPExtensions(), CAPApplicationContextVersion.version2);
         aos = new AsnOutputStream();
         elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
 
-
         elem = new CAMELAChBillingChargingCharacteristicsImpl(10000, true, 1000L, null,
-                CAPExtensionsTest.createTestCAPExtensions(), true);
+                CAPExtensionsTest.createTestCAPExtensions(), CAPApplicationContextVersion.version3);
         aos = new AsnOutputStream();
         elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData3()));
@@ -156,7 +154,7 @@ public class CAMELAChBillingChargingCharacteristicsTest {
     @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall.primitive" })
     public void testXMLSerializaion() throws Exception {
         CAMELAChBillingChargingCharacteristicsImpl original = new CAMELAChBillingChargingCharacteristicsImpl(12000, true,
-                8000L, null, CAPExtensionsTest.createTestCAPExtensions(), false);
+                8000L, null, CAPExtensionsTest.createTestCAPExtensions(), CAPApplicationContextVersion.version2);
 
         // Writes the area to a file.
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

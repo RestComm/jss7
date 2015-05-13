@@ -42,6 +42,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.mobicents.protocols.ss7.cap.CAPProviderImpl;
 import org.mobicents.protocols.ss7.cap.CAPStackImpl;
 import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
@@ -677,7 +678,7 @@ TC-CONTINUE + EventReportBCSMRequest (ODisconnect)
                                     null, sequence++));
 
                             CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics = this.capParameterFactory
-                                    .createCAMELAChBillingChargingCharacteristics(1000, true, null, null, null, false);
+                                    .createCAMELAChBillingChargingCharacteristics(1000, true, null, null, null, CAPApplicationContextVersion.version2);
                             SendingSideID partyToCharge = this.capParameterFactory.createSendingSideID(LegType.leg1);
                             dlg.addApplyChargingRequest(aChBillingChargingCharacteristics, partyToCharge, null, null);
                             this.observerdEvents.add(TestEvent

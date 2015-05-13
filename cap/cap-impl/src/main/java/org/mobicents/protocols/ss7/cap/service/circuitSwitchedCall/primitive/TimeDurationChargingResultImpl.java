@@ -39,16 +39,18 @@ import org.mobicents.protocols.ss7.cap.api.primitives.CAPExtensions;
 import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeDurationChargingResult;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeInformation;
-import org.mobicents.protocols.ss7.cap.primitives.AChChargingAddressImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 import org.mobicents.protocols.ss7.cap.primitives.ReceivingSideIDImpl;
 import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
+import org.mobicents.protocols.ss7.inap.primitives.LegIDImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 
 /**
  *
  * @author sergey vetyutnev
  * @author Amit Bhayani
+ * @author alerant appngin
  *
  */
 public class TimeDurationChargingResultImpl extends SequenceBase implements TimeDurationChargingResult {
@@ -127,8 +129,7 @@ public class TimeDurationChargingResultImpl extends SequenceBase implements Time
         this.legActive = true;
         this.callLegReleasedAtTcpExpiry = false;
         this.extensions = null;
-        this.aChChargingAddress = null; // TODO: DEFAULT
-                                        // legID:receivingSideID:leg1
+        this.aChChargingAddress = new AChChargingAddressImpl(new LegIDImpl(false, LegType.leg1));
 
         AsnInputStream ais = ansIS.readSequenceStreamData(length);
         while (true) {
@@ -163,10 +164,8 @@ public class TimeDurationChargingResultImpl extends SequenceBase implements Time
                         ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
                         break;
                     case _ID_aChChargingAddress:
-                        ais2 = ais.readSequenceStream();
-                        ais2.readTag();
                         this.aChChargingAddress = new AChChargingAddressImpl();
-                        ((AChChargingAddressImpl) this.aChChargingAddress).decodeAll(ais2);
+                        ((AChChargingAddressImpl) this.aChChargingAddress).decodeAll(ais);
                         break;
 
                     default:
@@ -212,10 +211,7 @@ public class TimeDurationChargingResultImpl extends SequenceBase implements Time
                 ((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
 
             if (this.aChChargingAddress != null) {
-                aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_aChChargingAddress);
-                pos = aos.StartContentDefiniteLength();
-                ((AChChargingAddressImpl) this.aChChargingAddress).encodeAll(aos);
-                aos.FinalizeContent(pos);
+                ((AChChargingAddressImpl) this.aChChargingAddress).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,_ID_aChChargingAddress);
             }
         } catch (IOException e) {
             throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
@@ -278,10 +274,10 @@ public class TimeDurationChargingResultImpl extends SequenceBase implements Time
             if (bval != null)
                 timeDurationChargingResult.callLegReleasedAtTcpExpiry = bval;
 
-            timeDurationChargingResult.aChChargingAddress = xml.get(A_CH_CHARGING_ADDRESS, AChChargingAddressImpl.class);
 
             timeDurationChargingResult.extensions = xml.get(EXTENSIONS, CAPExtensionsImpl.class);
 
+            timeDurationChargingResult.aChChargingAddress = xml.get(A_CH_CHARGING_ADDRESS, AChChargingAddressImpl.class);
         }
 
         @Override
@@ -301,12 +297,14 @@ public class TimeDurationChargingResultImpl extends SequenceBase implements Time
             if (timeDurationChargingResult.callLegReleasedAtTcpExpiry)
                 xml.add(timeDurationChargingResult.callLegReleasedAtTcpExpiry, CALL_LEG_RELEASED_AT_TCP_EXPIRY, Boolean.class);
 
-            if (timeDurationChargingResult.aChChargingAddress != null)
-                xml.add((AChChargingAddressImpl) timeDurationChargingResult.aChChargingAddress, A_CH_CHARGING_ADDRESS, AChChargingAddressImpl.class);
 
             if (timeDurationChargingResult.extensions != null)
                 xml.add((CAPExtensionsImpl) timeDurationChargingResult.extensions, EXTENSIONS, CAPExtensionsImpl.class);
 
+            if (timeDurationChargingResult.aChChargingAddress != null) {
+                xml.add((AChChargingAddressImpl) timeDurationChargingResult.aChChargingAddress,
+                        A_CH_CHARGING_ADDRESS, AChChargingAddressImpl.class);
+            }
         }
     };
 }

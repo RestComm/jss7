@@ -260,7 +260,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
                 && this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric
                 && this.appCntx != CAPApplicationContext.CapV4_scf_gsmSSFGeneric)
             throw new CAPException(
-                    "Bad application context name for addApplyChargingRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_gsmSSF_scfGeneric");
+                    "Bad application context name for addApplyChargingRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_scf_gsmSSFGeneric");
 
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);

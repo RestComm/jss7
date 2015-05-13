@@ -40,6 +40,7 @@ import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 /**
  *
  * @author sergey vetyutnev
+ * @author alerant appngin
  *
  */
 public class LegIDImpl implements LegID, INAPAsnPrimitive {
@@ -213,6 +214,33 @@ public class LegIDImpl implements LegID, INAPAsnPrimitive {
         sb.append("]");
 
         return sb.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((receivingSideID == null) ? 0 : receivingSideID.hashCode());
+        result = prime * result
+                + ((sendingSideID == null) ? 0 : sendingSideID.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LegIDImpl other = (LegIDImpl) obj;
+        if (receivingSideID != other.receivingSideID)
+            return false;
+        if (sendingSideID != other.sendingSideID)
+            return false;
+        return true;
     }
 
     /**
