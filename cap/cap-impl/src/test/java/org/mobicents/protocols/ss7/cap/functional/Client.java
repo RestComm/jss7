@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.cap.CAPDialogImpl;
 import org.mobicents.protocols.ss7.cap.CAPProviderImpl;
 import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
@@ -67,19 +68,16 @@ import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.GPRSEventType;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.primitive.PDPID;
 import org.mobicents.protocols.ss7.cap.api.service.sms.CAPDialogSms;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.EventTypeSMS;
-import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.RPCause;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSAddressString;
 import org.mobicents.protocols.ss7.cap.isup.CalledPartyNumberCapImpl;
 import org.mobicents.protocols.ss7.cap.primitives.TimeAndTimezoneImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.InitialDPRequestImpl;
-import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.DestinationRoutingAddressImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.InitialDpGprsRequestImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.ChargingResultImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.ElapsedTimeImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.GPRSCauseImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.GPRSEventSpecificInformationImpl;
 import org.mobicents.protocols.ss7.cap.service.gprs.primitive.PDPIDImpl;
-import org.mobicents.protocols.ss7.cap.service.sms.primitive.RPCauseImpl;
 import org.mobicents.protocols.ss7.inap.api.INAPParameterFactory;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
@@ -87,7 +85,6 @@ import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
 import org.mobicents.protocols.ss7.inap.primitives.MiscCallInfoImpl;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
-import org.mobicents.protocols.ss7.isup.impl.message.parameter.CalledPartyNumberImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
@@ -117,7 +114,7 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
 /**
  *
  * @author sergey vetyutnev
- *
+ * @author alerant appngin
  */
 public class Client extends EventTestHarness {
 
@@ -417,7 +414,7 @@ public class Client extends EventTestHarness {
 
             InitialDPRequestImpl res = new InitialDPRequestImpl(321, calledPartyNumberCap, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null, null, null, null, false, null, null, null, null,
-                    null, null, null, null, false, null, false);
+                    null, null, null, null, false, null, CAPApplicationContextVersion.version2);
 
             return res;
         } catch (CAPException e) {

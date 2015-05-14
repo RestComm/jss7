@@ -8,6 +8,8 @@ target
 .classpath
 .settings
 .metadata
+cap/cap-impl/.checkstyle
+inap/inap-impl/.checkstyle
 # ignore IDEA files
 *.iml
 *.ipr

@@ -96,7 +96,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 /**
  *
  * @author sergey vetyutnev
- *
+ * @author alerant appngin
  */
 public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements CAPDialogCircuitSwitchedCall {
 
@@ -167,7 +167,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
                 redirectionInformation, cause, serviceInteractionIndicatorsTwo, carrier, cugIndex, cugInterlock,
                 cugOutgoingAccess, imsi, subscriberState, locationInformation, extBasicServiceCode, callReferenceNumber,
                 mscAddress, calledPartyBCDNumber, timeAndTimezone, callForwardingSSPending, initialDPArgExtension, this.appCntx
-                        .getVersion().getVersion() >= 3);
+                        .getVersion());
         AsnOutputStream aos = new AsnOutputStream();
         req.encodeData(aos);
 

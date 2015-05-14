@@ -210,8 +210,10 @@ public class AChChargingAddressImpl implements AChChargingAddress,
 
         try {
             if (this.legID != null) {
-                ((LegIDImpl) this.legID).encodeAll(asnOs,
-                        Tag.CLASS_CONTEXT_SPECIFIC, _ID_legID);
+                asnOs.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_legID);
+                int pos = asnOs.StartContentDefiniteLength();
+                ((LegIDImpl) this.legID).encodeAll(asnOs);
+                asnOs.FinalizeContent(pos);
             } else if (this.srfConnection != null) {
                 asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC,
                         _ID_srfConnection, this.srfConnection);
