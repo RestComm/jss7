@@ -22,6 +22,7 @@
  */
 package org.mobicents.protocols.ss7.tcap.tc.dialog.events;
 
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.EventType;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
@@ -41,6 +42,8 @@ public class TCEndRequestImpl extends DialogRequestImpl implements TCEndRequest 
     // fields
     private ApplicationContextName applicationContextName;
     private UserInformation userInformation;
+
+    private SccpAddress originatingAddress;
 
     TCEndRequestImpl() {
         super(EventType.End);
@@ -106,4 +109,11 @@ public class TCEndRequestImpl extends DialogRequestImpl implements TCEndRequest 
         return returnMessageOnError;
     }
 
+    public SccpAddress getOriginatingAddress() {
+        return this.originatingAddress;
+    }
+
+    public void setOriginatingAddress(SccpAddress dest) {
+        this.originatingAddress = dest;
+    }
 }
