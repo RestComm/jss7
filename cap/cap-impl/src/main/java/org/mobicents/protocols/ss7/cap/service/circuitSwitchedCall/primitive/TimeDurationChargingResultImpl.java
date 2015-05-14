@@ -235,9 +235,9 @@ public class TimeDurationChargingResultImpl extends SequenceBase implements Time
             sb.append(", timeInformation=");
             sb.append(timeInformation.toString());
         }
-        if (this.legActive) {
-            sb.append(", legActive");
-        }
+
+        sb.append(", legActive=").append(legActive);
+
         if (this.callLegReleasedAtTcpExpiry) {
             sb.append(", callLegReleasedAtTcpExpiry");
         }
@@ -267,6 +267,7 @@ public class TimeDurationChargingResultImpl extends SequenceBase implements Time
             timeDurationChargingResult.partyToCharge = xml.get(PARTY_TO_CHARGE, ReceivingSideIDImpl.class);
             timeDurationChargingResult.timeInformation = xml.get(TIME_INFORMATION, TimeInformationImpl.class);
 
+            timeDurationChargingResult.legActive = true; // default
             Boolean bval = xml.get(LEG_ACTIVE, Boolean.class);
             if (bval != null)
                 timeDurationChargingResult.legActive = bval;
@@ -292,8 +293,10 @@ public class TimeDurationChargingResultImpl extends SequenceBase implements Time
                 xml.add((TimeInformationImpl) timeDurationChargingResult.timeInformation, TIME_INFORMATION,
                         TimeInformationImpl.class);
 
-            if (timeDurationChargingResult.legActive)
+            // default true is not serialized
+            if (timeDurationChargingResult.legActive == false)
                 xml.add(timeDurationChargingResult.legActive, LEG_ACTIVE, Boolean.class);
+
             if (timeDurationChargingResult.callLegReleasedAtTcpExpiry)
                 xml.add(timeDurationChargingResult.callLegReleasedAtTcpExpiry, CALL_LEG_RELEASED_AT_TCP_EXPIRY, Boolean.class);
 
