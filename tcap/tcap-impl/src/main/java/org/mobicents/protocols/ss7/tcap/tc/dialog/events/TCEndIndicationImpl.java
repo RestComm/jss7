@@ -22,6 +22,7 @@
  */
 package org.mobicents.protocols.ss7.tcap.tc.dialog.events;
 
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.EventType;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndIndication;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
@@ -37,6 +38,9 @@ public class TCEndIndicationImpl extends DialogIndicationImpl implements TCEndIn
     private TerminationType terminationType;
 
     // fields
+    private SccpAddress originatingAddress;
+
+
     private ApplicationContextName applicationContextName;
     private UserInformation userInformation;
 
@@ -86,4 +90,12 @@ public class TCEndIndicationImpl extends DialogIndicationImpl implements TCEndIn
 
     }
 
+    public SccpAddress getOriginatingAddress() {
+        return this.originatingAddress;
+    }
+
+    public void setOriginatingAddress(SccpAddress dest) {
+        this.originatingAddress = dest;
+
+    }
 }
