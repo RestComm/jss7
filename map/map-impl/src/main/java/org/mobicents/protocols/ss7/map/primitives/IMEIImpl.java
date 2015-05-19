@@ -19,6 +19,9 @@
 
 package org.mobicents.protocols.ss7.map.primitives;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
@@ -26,9 +29,13 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 /**
  *
  * @author sergey vetyutnev
+ * @author alerant appngin
  *
  */
+@SuppressWarnings("serial")
 public class IMEIImpl extends TbcdString implements IMEI {
+
+    private static final String DATA = "data";
 
     public IMEIImpl() {
         // There are some fake mobiles that IMEI length != 15
@@ -51,4 +58,23 @@ public class IMEIImpl extends TbcdString implements IMEI {
 
         super.encodeData(asnOs);
     }
+
+    /** XML serialization */
+    protected static final XMLFormat<IMEIImpl> MS_CLASSMARK2_XML = new XMLFormat<IMEIImpl>(
+            IMEIImpl.class) {
+
+        @Override
+        public void write(IMEIImpl obj,
+                javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            xml.setAttribute(DATA, obj.data);
+        }
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, IMEIImpl obj)
+                throws XMLStreamException {
+            obj.data = xml.getAttribute(DATA, (String) null);
+        }
+
+    };
 }

@@ -19,15 +19,22 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSClassmark2;
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
  * @author amit bhayani
  * @author sergey vetyutnev
+ * @author alerant appngin
  *
  */
+@SuppressWarnings("serial")
 public class MSClassmark2Impl extends OctetStringBase implements MSClassmark2 {
+
+    private static final String DATA = "data";
 
     public MSClassmark2Impl() {
         super(3, 3, "MSClassmark2");
@@ -40,4 +47,26 @@ public class MSClassmark2Impl extends OctetStringBase implements MSClassmark2 {
     public byte[] getData() {
         return data;
     }
+
+    /** XML serialization */
+    protected static final XMLFormat<MSClassmark2Impl> MS_CLASSMARK2_XML = new XMLFormat<MSClassmark2Impl>(
+            MSClassmark2Impl.class) {
+
+        @Override
+        public void write(MSClassmark2Impl obj,
+                javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+
+            xml.setAttribute(DATA, OctetStringBase.bytesToHex(obj.data));
+        }
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                MSClassmark2Impl obj) throws XMLStreamException {
+            obj.data = OctetStringBase.hexToBytes(xml.getAttribute(DATA,
+                    (String) null));
+        }
+
+    };
+
 }

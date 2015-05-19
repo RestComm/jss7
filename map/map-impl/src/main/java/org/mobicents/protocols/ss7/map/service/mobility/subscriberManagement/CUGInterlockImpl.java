@@ -19,15 +19,21 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CUGInterlock;
 import org.mobicents.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
  *
  * @author sergey vetyutnev
+ * @author alerant appngin
  *
  */
+@SuppressWarnings("serial")
 public class CUGInterlockImpl extends OctetStringBase implements CUGInterlock {
+    private static final String DATA = "data";
 
     public CUGInterlockImpl() {
         super(4, 4, "CUGInterlock");
@@ -41,4 +47,24 @@ public class CUGInterlockImpl extends OctetStringBase implements CUGInterlock {
         return data;
     }
 
+    /**
+     * XML serialization
+     */
+    protected static final XMLFormat<CUGInterlockImpl> CUG_INTERLOCK_XML = new XMLFormat<CUGInterlockImpl>(
+            CUGInterlockImpl.class) {
+
+        @Override
+        public void write(CUGInterlockImpl obj,
+                javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            xml.setAttribute(DATA, OctetStringBase.bytesToHex(obj.data));
+        }
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                CUGInterlockImpl obj) throws XMLStreamException {
+            obj.data = OctetStringBase.hexToBytes(xml.getAttribute(DATA, (String) null));
+        }
+
+    };
 }

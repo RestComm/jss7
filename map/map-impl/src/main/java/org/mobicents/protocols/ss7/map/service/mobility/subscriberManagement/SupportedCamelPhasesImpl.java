@@ -19,14 +19,18 @@
 
 package org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 import org.mobicents.protocols.ss7.map.primitives.BitStringBase;
 
 /**
  * @author amit bhayani
  * @author sergey vetyutnev
- *
+ * @author alerant appngin
  */
+@SuppressWarnings("serial")
 public class SupportedCamelPhasesImpl extends BitStringBase implements SupportedCamelPhases {
 
     private static final int _INDEX_Phase1 = 0;
@@ -105,4 +109,23 @@ public class SupportedCamelPhasesImpl extends BitStringBase implements Supported
 
         return sb.toString();
     }
+
+    /** XML serialization */
+    protected static final XMLFormat<SupportedCamelPhasesImpl> SUPPORTED_CAMEL_PHASES_XML = new XMLFormat<SupportedCamelPhasesImpl>(
+            SupportedCamelPhasesImpl.class) {
+
+        @Override
+        public void write(SupportedCamelPhasesImpl obj,
+                javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            SupportedCamelPhasesImpl.BIT_STRING_BASE_XML.write(obj, xml);
+        }
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml,
+                SupportedCamelPhasesImpl obj) throws XMLStreamException {
+            SupportedCamelPhasesImpl.BIT_STRING_BASE_XML.read(xml, obj);
+        }
+
+    };
 }
