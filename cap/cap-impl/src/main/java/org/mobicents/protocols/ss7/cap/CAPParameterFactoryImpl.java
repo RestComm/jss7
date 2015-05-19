@@ -796,12 +796,27 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
             SupportedCamelPhases supportedCamelPhases, OfferedCamel4Functionalities offeredCamel4Functionalities,
             BearerCapability bearerCapability2, ExtBasicServiceCode extBasicServiceCode2,
             HighLayerCompatibilityInap highLayerCompatibility2, LowLayerCompatibility lowLayerCompatibility,
-            LowLayerCompatibility lowLayerCompatibility2, boolean enhancedDialledServicesAllowed, UUData uuData,
-            boolean isCAPVersion3orLater) {
+            LowLayerCompatibility lowLayerCompatibility2, boolean enhancedDialledServicesAllowed, UUData uuData, boolean collectInformationAllowed, boolean releaseCallArgExtensionAllowed,
+            CAPApplicationContextVersion capVersion) {
         return new InitialDPArgExtensionImpl(gmscAddress, forwardingDestinationNumber, msClassmark2, imei,
                 supportedCamelPhases, offeredCamel4Functionalities, bearerCapability2, extBasicServiceCode2,
-                highLayerCompatibility2, lowLayerCompatibility, lowLayerCompatibility2, enhancedDialledServicesAllowed, uuData,
-                isCAPVersion3orLater);
+                highLayerCompatibility2, lowLayerCompatibility, lowLayerCompatibility2, enhancedDialledServicesAllowed,
+                uuData, collectInformationAllowed, releaseCallArgExtensionAllowed, capVersion);
+    }
+
+    @Override
+    public InitialDPArgExtension createInitialDPArgExtension(ISDNAddressString gmscAddress,
+            CalledPartyNumberCap forwardingDestinationNumber, MSClassmark2 msClassmark2, IMEI imei,
+            SupportedCamelPhases supportedCamelPhases, OfferedCamel4Functionalities offeredCamel4Functionalities,
+            BearerCapability bearerCapability2, ExtBasicServiceCode extBasicServiceCode2,
+            HighLayerCompatibilityInap highLayerCompatibility2, LowLayerCompatibility lowLayerCompatibility,
+            LowLayerCompatibility lowLayerCompatibility2, boolean enhancedDialledServicesAllowed, UUData uuData,
+            boolean isCAPVersion3orLater) {
+        return createInitialDPArgExtension(gmscAddress, forwardingDestinationNumber, msClassmark2, imei,
+                supportedCamelPhases, offeredCamel4Functionalities, bearerCapability2, extBasicServiceCode2,
+                highLayerCompatibility2, lowLayerCompatibility, lowLayerCompatibility2, enhancedDialledServicesAllowed,
+                uuData, false, false, isCAPVersion3orLater ? CAPApplicationContextVersion.version3
+                        : CAPApplicationContextVersion.version2);
     }
 
     @Override
