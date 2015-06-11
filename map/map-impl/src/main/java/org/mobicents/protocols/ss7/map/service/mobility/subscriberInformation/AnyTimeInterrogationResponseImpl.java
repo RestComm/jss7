@@ -21,6 +21,9 @@ package org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -41,10 +44,12 @@ import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
  * @author amit bhayani
  *
  */
-public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implements AnyTimeInterrogationResponse,
-        MAPAsnPrimitive {
+public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implements AnyTimeInterrogationResponse, MAPAsnPrimitive {
 
     public static final String _PrimitiveName = "AnyTimeInterrogationResponse";
+
+    private static final String SUBSCRIBER_INFO = "subscriberInfo";
+    private static final String EXTENSION_CONTAINER = "extensionContainer";
 
     private SubscriberInfo subscriberInfo;
     private MAPExtensionContainer extensionContainer;
@@ -95,7 +100,8 @@ public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implem
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getTagClass()
      */
     public int getTagClass() {
         return Tag.CLASS_UNIVERSAL;
@@ -104,7 +110,9 @@ public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implem
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive ()
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#getIsPrimitive
+     * ()
      */
     public boolean getIsPrimitive() {
         return false;
@@ -113,7 +121,9 @@ public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implem
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll( org.mobicents.protocols.asn.AsnInputStream)
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeAll(
+     * org.mobicents.protocols.asn.AsnInputStream)
      */
     public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
         try {
@@ -131,8 +141,9 @@ public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implem
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData (org.mobicents.protocols.asn.AsnInputStream,
-     * int)
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#decodeData
+     * (org.mobicents.protocols.asn.AsnInputStream, int)
      */
     public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
         try {
@@ -168,17 +179,16 @@ public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implem
             // optional parameters
             if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
                 switch (tag) {
-                    case Tag.SEQUENCE:
-                        if (ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + ": Parameter extensionContainer is not primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-                        extensionContainer = new MAPExtensionContainerImpl();
-                        ((MAPExtensionContainerImpl) extensionContainer).decodeAll(ais);
-                        break;
-                    default:
-                        ais.advanceElement();
-                        break;
+                case Tag.SEQUENCE:
+                    if (ais.isTagPrimitive())
+                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ": Parameter extensionContainer is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+                    extensionContainer = new MAPExtensionContainerImpl();
+                    ((MAPExtensionContainerImpl) extensionContainer).decodeAll(ais);
+                    break;
+                default:
+                    ais.advanceElement();
+                    break;
                 }
             } else {
                 ais.advanceElement();
@@ -189,7 +199,9 @@ public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implem
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll( org.mobicents.protocols.asn.AsnOutputStream)
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
+     * org.mobicents.protocols.asn.AsnOutputStream)
      */
     public void encodeAll(AsnOutputStream asnOs) throws MAPException {
         this.encodeAll(asnOs, this.getTagClass(), this.getTag());
@@ -198,8 +210,9 @@ public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implem
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll( org.mobicents.protocols.asn.AsnOutputStream,
-     * int, int)
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeAll(
+     * org.mobicents.protocols.asn.AsnOutputStream, int, int)
      */
     public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
         try {
@@ -215,7 +228,9 @@ public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implem
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData (org.mobicents.protocols.asn.AsnOutputStream)
+     * @see
+     * org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive#encodeData
+     * (org.mobicents.protocols.asn.AsnOutputStream)
      */
     public void encodeData(AsnOutputStream asnOs) throws MAPException {
         if (this.subscriberInfo == null)
@@ -247,6 +262,7 @@ public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implem
         return this.extensionContainer;
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(_PrimitiveName);
@@ -264,4 +280,23 @@ public class AnyTimeInterrogationResponseImpl extends MobilityMessageImpl implem
         sb.append("]");
         return sb.toString();
     }
+
+    protected static final XMLFormat<AnyTimeInterrogationResponseImpl> ANY_TIME_INTERROGATION_RESPONSE_XML = new XMLFormat<AnyTimeInterrogationResponseImpl>(
+            AnyTimeInterrogationResponseImpl.class) {
+
+        @Override
+        public void write(AnyTimeInterrogationResponseImpl obj, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            xml.add((SubscriberInfoImpl) obj.subscriberInfo, SUBSCRIBER_INFO, SubscriberInfoImpl.class);
+            if (obj.extensionContainer != null) {
+                xml.add((MAPExtensionContainerImpl) obj.extensionContainer, EXTENSION_CONTAINER, MAPExtensionContainerImpl.class);
+            }
+        }
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, AnyTimeInterrogationResponseImpl obj) throws XMLStreamException {
+            obj.subscriberInfo = xml.get(SUBSCRIBER_INFO, SubscriberInfoImpl.class);
+            obj.extensionContainer = xml.get(EXTENSION_CONTAINER, MAPExtensionContainerImpl.class);
+        }
+
+    };
 }
