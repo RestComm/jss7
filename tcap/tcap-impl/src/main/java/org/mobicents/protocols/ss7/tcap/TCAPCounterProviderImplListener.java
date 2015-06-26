@@ -2,6 +2,7 @@ package org.mobicents.protocols.ss7.tcap;
 
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 
 /**
  * Listener interface to allow library users to implement their own statistics counters.
@@ -26,9 +27,9 @@ public interface TCAPCounterProviderImplListener {
 
     void updateTcEndSentCount(Dialog dialog);
 
-    void updateTcPAbortReceivedCount(Dialog dialog);
+    void updateTcPAbortReceivedCount(Dialog dialog, PAbortCauseType cause);
 
-    void updateTcPAbortSentCount(byte[] originatingTransactionId);
+    void updateTcPAbortSentCount(byte[] originatingTransactionId, PAbortCauseType cause);
 
     void updateTcUserAbortReceivedCount(Dialog dialog);
 

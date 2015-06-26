@@ -36,6 +36,7 @@ import org.mobicents.protocols.ss7.statistics.api.StatResult;
 import org.mobicents.protocols.ss7.tcap.api.TCAPCounterProvider;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 
 /**
  *
@@ -236,10 +237,10 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcPAbortReceivedCount.get();
     }
 
-    public void updateTcPAbortReceivedCount(Dialog dialog) {
+    public void updateTcPAbortReceivedCount(Dialog dialog, PAbortCauseType cause) {
         tcPAbortReceivedCount.addAndGet(1);
         for (TCAPCounterProviderImplListener listener : listeners) {
-            listener.updateTcPAbortReceivedCount(dialog);
+            listener.updateTcPAbortReceivedCount(dialog, cause);
         }
     }
 
@@ -248,10 +249,10 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcPAbortSentCount.get();
     }
 
-    public void updateTcPAbortSentCount(byte[] originatingTransactionId) {
+    public void updateTcPAbortSentCount(byte[] originatingTransactionId, PAbortCauseType cause) {
         tcPAbortSentCount.addAndGet(1);
         for (TCAPCounterProviderImplListener listener : listeners) {
-            listener.updateTcPAbortSentCount(originatingTransactionId);
+            listener.updateTcPAbortSentCount(originatingTransactionId, cause);
         }
     }
 

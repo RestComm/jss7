@@ -1810,7 +1810,7 @@ public class DialogImpl implements Dialog {
                 try {
                     msg.encode(aos);
                     if (this.provider.getStack().getStatisticsEnabled()) {
-                        this.provider.getStack().getCounterProviderImpl().updateTcPAbortSentCount(this.remoteTransactionId);
+                        this.provider.getStack().getCounterProviderImpl().updateTcPAbortSentCount(this.remoteTransactionId, PAbortCauseType.NoReasonGiven);
                     }
                     this.provider.send(aos.toByteArray(), false, this.remoteAddress, this.localAddress, this.seqControl, this.networkId);
                 } catch (Exception e) {

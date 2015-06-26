@@ -360,7 +360,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     public void deliver(DialogImpl dialogImpl, TCPAbortIndicationImpl tcAbortIndication) {
 
         if (this.stack.getStatisticsEnabled()) {
-            this.stack.getCounterProviderImpl().updateTcPAbortReceivedCount(dialogImpl);
+            this.stack.getCounterProviderImpl().updateTcPAbortReceivedCount(dialogImpl, tcAbortIndication.getPAbortCause());
         }
         try {
             for (TCListener lst : this.tcListeners) {
@@ -523,7 +523,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         try {
             msg.encode(aos);
             if (this.stack.getStatisticsEnabled()) {
-                this.stack.getCounterProviderImpl().updateTcPAbortSentCount(remoteTransactionId);
+                this.stack.getCounterProviderImpl().updateTcPAbortSentCount(remoteTransactionId, pAbortCause);
             }
             this.send(aos.toByteArray(), false, remoteAddress, localAddress, seqControl, networkId);
         } catch (Exception e) {
@@ -561,7 +561,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         try {
             msg.encode(aos);
             if (this.stack.getStatisticsEnabled()) {
-                this.stack.getCounterProviderImpl().updateTcPAbortSentCount(remoteTransactionId);
+                this.stack.getCounterProviderImpl().updateTcPAbortSentCount(remoteTransactionId, PAbortCauseType.NoReasonGiven);
             }
             this.send(aos.toByteArray(), false, remoteAddress, localAddress, seqControl, networkId);
         } catch (Exception e) {
