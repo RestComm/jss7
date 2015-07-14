@@ -69,6 +69,7 @@ import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartBaseImpl;
+import org.mobicents.protocols.ss7.mtp.NamingThreadFactory;
 
 /**
  * @author amit bhayani
@@ -223,7 +224,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 
         this.routeManagement.reset();
 
-        fsmTicker = Executors.newSingleThreadScheduledExecutor();
+        fsmTicker = Executors.newSingleThreadScheduledExecutor( new NamingThreadFactory("M3UA-FSMTicker"));
         fsmTicker.scheduleAtFixedRate(m3uaScheduler, 500, 500, TimeUnit.MILLISECONDS);
 
         for (FastList.Node<M3UAManagementEventListener> n = this.managementEventListeners.head(), end = this.managementEventListeners

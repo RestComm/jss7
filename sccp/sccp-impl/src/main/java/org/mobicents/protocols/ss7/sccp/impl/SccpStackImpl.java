@@ -49,6 +49,7 @@ import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
+import org.mobicents.protocols.ss7.mtp.NamingThreadFactory;
 import org.mobicents.protocols.ss7.sccp.LongMessageRule;
 import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
@@ -400,7 +401,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         this.sccpManagement.start();
         logger.info("Starting MSU handler...");
 
-        this.timerExecutors = Executors.newScheduledThreadPool(1);
+        this.timerExecutors = Executors.newScheduledThreadPool(1, new NamingThreadFactory("SCCP-TIMER"));
 
         for (FastMap.Entry<Integer, Mtp3UserPart> e = this.mtp3UserParts.head(), end = this.mtp3UserParts.tail(); (e = e
                 .getNext()) != end;) {
