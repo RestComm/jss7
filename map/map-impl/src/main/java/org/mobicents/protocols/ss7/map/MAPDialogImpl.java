@@ -60,6 +60,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
  * @author amit bhayani
  * @author baranowb
  * @author sergey vetyutnev
+ * @author tamas gyorgyey
  */
 public abstract class MAPDialogImpl implements MAPDialog {
     private static final Logger logger = Logger.getLogger(MAPDialogImpl.class);
@@ -638,6 +639,14 @@ public abstract class MAPDialogImpl implements MAPDialog {
         this.eriStyle = true;
         this.eriImsi = imsi;
         this.eriVlrNo = vlrNo;
+    }
+
+    public void setIdleTaskTimeout(long idleTaskTimeoutMs) {
+        tcapDialog.setIdleTaskTimeout(idleTaskTimeoutMs);
+    }
+
+    public long getIdleTaskTimeout() {
+        return tcapDialog.getIdleTaskTimeout();
     }
 
     protected enum DelayedAreaState {

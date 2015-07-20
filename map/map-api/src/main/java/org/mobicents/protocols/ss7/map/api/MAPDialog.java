@@ -38,7 +38,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 /**
  *
  * @author amit bhayani
- *
+ * @author tamas gyorgyey
  */
 public interface MAPDialog extends Serializable {
 
@@ -340,4 +340,15 @@ public interface MAPDialog extends Serializable {
      * @param vlrNo
      */
     void addEricssonData(IMSI imsi, AddressString vlrNo);
+
+    /**
+     * Set TCAP IdleTaskTimeout in milliseconds.
+     */
+    void setIdleTaskTimeout(long idleTaskTimeoutMs);
+
+    /**
+     *
+     * @return TCAP IdleTaskTimeout value in milliseconds
+     */
+    long getIdleTaskTimeout();
 }
