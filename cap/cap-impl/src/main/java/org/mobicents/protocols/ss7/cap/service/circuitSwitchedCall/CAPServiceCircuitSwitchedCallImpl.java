@@ -194,14 +194,14 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
                 }
                 break;
 
-        case CAPOperationCode.continueWithArgument:
-            if (acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric
-                    || acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
-                if (compType == ComponentType.Invoke) {
-                    continueWithArgumentRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+            case CAPOperationCode.continueWithArgument:
+                if (acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric
+                        || acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
+                    if (compType == ComponentType.Invoke) {
+                        continueWithArgumentRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+                    }
                 }
-            }
-            break;
+                break;
 
             case CAPOperationCode.applyChargingReport:
                 if (acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric
@@ -466,6 +466,19 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
                     }
                     if (compType == ComponentType.ReturnResultLast) {
                         moveLegResponse(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+                    }
+                }
+                break;
+
+            case CAPOperationCode.splitLeg:
+                if (acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric
+                        || acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
+
+                    if (compType == ComponentType.Invoke) {
+                        splitLegRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+                    }
+                    if (compType == ComponentType.ReturnResultLast) {
+                        splitLegResponse(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
                     }
                 }
                 break;
@@ -1378,6 +1391,55 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
                 ((CAPServiceCircuitSwitchedCallListener) serLis).onMoveLegResponse(ind);
             } catch (Exception e) {
                 loger.error("Error processing moveLegResponse: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    private void splitLegRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId)
+            throws CAPParsingComponentException {
+
+        if (parameter == null)
+            throw new CAPParsingComponentException(
+                    "Error while decoding splitLegRequest: Parameter is mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+
+        if (parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.getTag() != Tag.SEQUENCE || parameter.isPrimitive())
+            throw new CAPParsingComponentException("Error while decoding splitLegRequest: bad tagClass or tag",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+
+        SplitLegRequestImpl ind = new SplitLegRequestImpl();
+
+        byte[] buf = parameter.getData();
+        AsnInputStream ais = new AsnInputStream(buf);
+        ind.decodeData(ais, buf.length);
+
+        ind.setInvokeId(invokeId);
+        ind.setCAPDialog(capDialogImpl);
+
+        for (CAPServiceListener serLis : this.serviceListeners) {
+            try {
+                serLis.onCAPMessage(ind);
+                ((CAPServiceCircuitSwitchedCallListener) serLis).onSplitLegRequest(ind);
+            } catch (Exception e) {
+                loger.error("Error processing splitLegRequest: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    private void splitLegResponse(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl, Long invokeId)
+            throws CAPParsingComponentException {
+
+        SplitLegResponseImpl ind = new SplitLegResponseImpl();
+
+        ind.setInvokeId(invokeId);
+        ind.setCAPDialog(capDialogImpl);
+
+        for (CAPServiceListener serLis : this.serviceListeners) {
+            try {
+                serLis.onCAPMessage(ind);
+                ((CAPServiceCircuitSwitchedCallListener) serLis).onSplitLegResponse(ind);
+            } catch (Exception e) {
+                loger.error("Error processing splitLegResponse: " + e.getMessage(), e);
             }
         }
     }
