@@ -1877,4 +1877,71 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
 
         this.sendReturnResultLastComponent(resultLast);
     }
+
+    public Long addSplitLegRequest(LegID legIDToSplit, Integer newCallSegmentId, CAPExtensions extensions)
+            throws CAPException {
+        return addSplitLegRequest(_Timer_Default, legIDToSplit, newCallSegmentId, extensions);
+    }
+
+    public Long addSplitLegRequest(int customInvokeTimeout, LegID legIDToSplit, Integer newCallSegmentId,
+            CAPExtensions extensions) throws CAPException {
+        if (this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric
+                && this.appCntx != CAPApplicationContext.CapV4_scf_gsmSSFGeneric)
+            throw new CAPException(
+                    "Bad application context for addSplitLegRequest: must be CapV4_gsmSSF_scfGeneric or CapV4_scf_gsmSSFGeneric");
+
+        Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
+                .createTCInvokeRequest(InvokeClass.Class1);
+        if (customInvokeTimeout == _Timer_Default)
+            invoke.setTimeout(getTimerCircuitSwitchedCallControlShort());
+        else
+            invoke.setTimeout(customInvokeTimeout);
+
+        OperationCode oc = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+        oc.setLocalOperationCode((long) CAPOperationCode.splitLeg);
+        invoke.setOperationCode(oc);
+
+        SplitLegRequestImpl req = new SplitLegRequestImpl(legIDToSplit, newCallSegmentId, extensions);
+        AsnOutputStream aos = new AsnOutputStream();
+        req.encodeData(aos);
+
+        Parameter p = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+        p.setTagClass(req.getTagClass());
+        p.setPrimitive(req.getIsPrimitive());
+        p.setTag(req.getTag());
+        p.setData(aos.toByteArray());
+        invoke.setParameter(p);
+
+        Long invokeId;
+        try {
+            invokeId = this.tcapDialog.getNewInvokeId();
+            invoke.setInvokeId(invokeId);
+        } catch (TCAPException e) {
+            throw new CAPException(e.getMessage(), e);
+        }
+
+        this.sendInvokeComponent(invoke);
+
+        return invokeId;
+    }
+
+    public void addSplitLegResponse(long invokeId) throws CAPException {
+
+        if (this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric
+                && this.appCntx != CAPApplicationContext.CapV4_scf_gsmSSFGeneric)
+            throw new CAPException(
+                    "Bad application context for addSplitLegResponse: must be CapV4_gsmSSF_scfGeneric or CapV4_scf_gsmSSFGeneric");
+
+        ReturnResultLast resultLast = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
+                .createTCResultLastRequest();
+
+        resultLast.setInvokeId(invokeId);
+
+        // Operation Code
+        OperationCode oc = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+        oc.setLocalOperationCode((long) CAPOperationCode.splitLeg);
+        resultLast.setOperationCode(oc);
+
+        this.sendReturnResultLastComponent(resultLast);
+    }
 }

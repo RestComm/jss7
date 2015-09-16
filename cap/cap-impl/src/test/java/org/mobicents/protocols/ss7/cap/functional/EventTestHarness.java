@@ -67,6 +67,8 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestRe
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SplitLegRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SplitLegResponse;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.ActivityTestGPRSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.ActivityTestGPRSResponse;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.ApplyChargingGPRSRequest;
@@ -463,6 +465,20 @@ public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwi
     public void onMoveLegResponse(MoveLegResponse ind) {
         this.logger.debug("MoveLegResponse");
         TestEvent te = TestEvent.createReceivedEvent(EventType.MoveLegResponse, ind, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onSplitLegRequest(SplitLegRequest ind) {
+        this.logger.debug("SplitLegRequest");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.SplitLegRequest, ind, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onSplitLegResponse(SplitLegResponse ind) {
+        this.logger.debug("SplitLegResponse");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.SplitLegResponse, ind, sequence++);
         this.observerdEvents.add(te);
     }
 
