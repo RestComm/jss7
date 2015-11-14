@@ -1,0 +1,18 @@
+<component>
+	<files>
+		<file>
+			<source>target/run.jar</source>
+			<destName>bin/run.jar</destName>
+		</file>
+
+		<!-- Conf -->
+		<file>
+			<source>src/main/config/log4j.xml</source>
+			<destName>conf/log4j.xml</destName>
+		</file>
+		<file>
+			<source>src/main/config/data.txt</source>
+			<destName>data/data.txt</destName>
+		</file>		
+	</files>
+</component>

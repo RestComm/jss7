@@ -1,0 +1,74 @@
+<assembly>
+	<id>ss7</id>
+	<formats>
+		<format>dir</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+
+	<files>
+		<file>
+			<source>src/main/config/run.bat</source>
+			<destName>bin/run.bat</destName>
+		</file>
+		<file>
+			<source>src/main/config/run.sh</source>
+			<destName>bin/run.sh</destName>
+		</file>
+	</files>
+	<dependencySets>
+		<dependencySet>
+			<outputDirectory>/lib</outputDirectory>
+			<unpack>false</unpack>
+			<scope>runtime</scope>
+			<includes>
+				<!-- simulator libraris -->
+				<include>org.mobicents.protocols.ss7.tools.simulator:simulator-core</include>
+				<include>org.mobicents.protocols.ss7.tools.simulator:simulator-gui</include>
+
+				<!-- Common libraries -->
+				<include>log4j:log4j</include>
+				<include>urbanophile:java-getopt</include>
+				<include>com.sun.jdmk:jmxtools</include>
+
+
+				<!-- Not strictly SS7, But needed by SS7 -->
+				<include>javolution:javolution</include>
+				<include>org.mobicents.protocols.sctp:sctp-api</include>
+				<include>org.mobicents.protocols.sctp:sctp-impl</include>
+				<include>org.mobicents.commons:commons</include>
+				<include>org.mobicents.protocols.stream:stream</include>
+				<include>org.mobicents.protocols.asn:asn</include>
+
+				<!-- SS7 Libraries -->
+                <include>org.mobicents.protocols.ss7.sccp:sccp-api</include>
+				<include>org.mobicents.protocols.ss7.sccp:sccp-impl</include>
+				<include>org.mobicents.protocols.ss7.tcap:tcap-api</include>
+				<include>org.mobicents.protocols.ss7.tcap:tcap-impl</include>
+				<include>org.mobicents.protocols.ss7.isup:isup-api</include>
+				<include>org.mobicents.protocols.ss7.isup:isup-impl</include>				
+				<include>org.mobicents.protocols.ss7.map:map-api</include>
+				<include>org.mobicents.protocols.ss7.map:map-impl</include>
+				<include>org.mobicents.protocols.ss7.cap:cap-api</include>
+				<include>org.mobicents.protocols.ss7.cap:cap-impl</include>
+				<include>org.mobicents.protocols.ss7.inap:inap-api</include>
+				<include>org.mobicents.protocols.ss7.inap:inap-impl</include>				
+				<include>org.mobicents.protocols.ss7.m3ua:m3ua-api</include>
+				<include>org.mobicents.protocols.ss7.m3ua:m3ua-impl</include>
+				<include>org.mobicents.protocols.ss7.mtp:mtp</include>
+				<include>org.mobicents.protocols.ss7.mtp:mtp-api</include>
+				<!-- <include>org.mobicents.protocols.ss7.hardware:mobicents-dahdi</include> -->
+				<include>org.mobicents.protocols.ss7.hardware:mobicents-dialogic</include>
+				<include>org.mobicents.protocols.ss7.congestion:congestion</include>
+              	<include>org.mobicents.protocols.ss7.statistics:statistics-api</include>
+              	<include>org.mobicents.protocols.ss7.statistics:statistics-impl</include>
+			    <include>org.apache.commons:commons-email</include>				
+
+			</includes>
+		</dependencySet>
+	</dependencySets>
+	<componentDescriptors>
+		<componentDescriptor>
+			src/main/assembly/common.xml
+		</componentDescriptor>
+	</componentDescriptors>
+</assembly>

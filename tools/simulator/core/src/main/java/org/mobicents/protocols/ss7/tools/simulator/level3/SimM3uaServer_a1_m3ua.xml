@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<aspFactoryList>
+	<aspFactory name="testasp" assocName="Ass_a1" started="true" maxseqnumber="256" aspid="2"/>
+</aspFactoryList>
+<asList>
+	<as name="testas" minAspActiveForLb="1" functionality="IPSP" exchangeType="SE" ipspType="CLIENT">
+		<routingContext size="1">
+			<rc value="101"/>
+		</routingContext>
+		<networkAppearance value="102"/>
+		<trafficMode mode="2"/>
+		<defTrafficMode mode="2"/>
+		<asps>
+			<asp name="testasp"/>
+		</asps>
+	</as>
+</asList>
+<route>
+	<key value="2:1:3"/>
+	<value value="testas"/>
+</route>
