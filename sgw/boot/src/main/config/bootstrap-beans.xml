@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:jboss:bean-deployer:2.0 bean-deployer_2_0.xsd"
+	xmlns="urn:jboss:bean-deployer:2.0">
+	<!-- Timer definition -->
+        
+	<!-- File Filter -->
+    <bean name="FileFilter"
+		class="org.mobicents.ss7.sgw.boot.FileFilterImpl">
+		<!-- Unless specified the default list of suffixes is , -beans.xml, -conf.xml -->
+        <constructor>
+            <parameter>
+                <set elementClass="java.lang.String">
+                    <value>.xml</value>
+                </set>
+            </parameter>
+        </constructor>
+    </bean>
+
+	<!-- The MainDeployer -->
+    <bean name="MainDeployer"
+		class="org.mobicents.ss7.sgw.boot.MainDeployer">
+        <property name="path">${sgw.home.dir}/deploy</property>
+        <property name="fileFilter"><inject bean="FileFilter"/></property>
+    </bean>
+
+</deployment>

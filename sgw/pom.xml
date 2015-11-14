@@ -1,0 +1,59 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<packaging>pom</packaging>
+	<parent>
+		<artifactId>ss7-parent</artifactId>
+		<groupId>org.mobicents.protocols.ss7</groupId>
+		<version>2.2.0-SNAPSHOT</version>
+	</parent>
+
+	<groupId>org.mobicents.protocols.ss7.sgw</groupId>
+	<artifactId>mobicents-sgw</artifactId>
+
+	<name>Mobicents SS7 :: SGW :: Parent :: ${pom.artifactId}</name>
+
+	<modules>
+		<module>gateway</module>
+		<module>boot</module>
+	</modules>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.mobicents.protocols.sctp</groupId>
+				<artifactId>sctp-api</artifactId>
+				<version>${sctp.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.mobicents.protocols.sctp</groupId>
+				<artifactId>sctp-impl</artifactId>
+				<version>${sctp.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<groupId>org.mobicents.tools</groupId>
+				<version>
+					${mobicents.tools.mavenplugin.eclipse.version}
+				</version>
+				<inherited>false</inherited>
+				<executions />
+				<configuration>
+					<classpathExcludes>
+						<exclude>xml-apis:xml-apis</exclude>
+						<exclude>jtidy:jtidy</exclude>
+					</classpathExcludes>
+					<resolveTransitiveDependencies>
+						true
+					</resolveTransitiveDependencies>
+					<eclipseProjectName>
+						sgw
+					</eclipseProjectName>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

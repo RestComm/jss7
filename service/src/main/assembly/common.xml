@@ -1,0 +1,20 @@
+<component>
+	<dependencySets>
+		<dependencySet>
+			<outputDirectory>/lib</outputDirectory>
+			<unpack>false</unpack>
+			<scope>runtime</scope>
+			<excludes>
+				<exclude>org.jboss.jbossas:jboss-as-system-jmx</exclude>
+			</excludes>
+		</dependencySet>
+		<dependencySet>
+			<outputDirectory>/lib</outputDirectory>
+			<unpack>false</unpack>
+			<scope>compile</scope>
+			<excludes>
+				<exclude>org.jboss.jbossas:jboss-as-system-jmx</exclude>
+			</excludes>
+		</dependencySet>
+	</dependencySets>
+</component>

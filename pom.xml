@@ -52,9 +52,9 @@
 		<module>map</module>
 		<module>inap</module>
 		<module>cap</module>
-<!--
 		<module>service</module>
 		<module>sgw</module>
+<!--
 		<module>tools</module>
 -->
 	</modules>
