@@ -52,6 +52,9 @@
 		<module>map</module>
 		<module>inap</module>
 		<module>cap</module>
+
+		<module>oam</module>
+
 		<module>service</module>
 		<module>sgw</module>
 <!--
