@@ -1,0 +1,172 @@
+Steps to implement a new MAP service (a service like supplemantary,
+sms or lsm services).
+
+1. Creating a template for a new service
+
+- Look at a list of MAP protocol services
+(MAPMessagesImplemented.ods), select a service and
+ an ACN and am operation code there
+
+- Create 3 packages. Imagine that the service name is "xxx". New
+packages will be:
+ - map-api/scr/main/java: org.mobicents.protocols.ss7.map.api.service.xxx
+ - map-impl/scr/main/java: org.mobicents.protocols.ss7.map.service.xxx
+ - map-impl/scr/test/java: org.mobicents.protocols.ss7.map.service.xxx
+
+- Creating the following several interfaces and classes:
+- interface org.mobicents.protocols.ss7.map.api.service.xxx.MAPDialogXxx
+extends MAPDialog
+ class org.mobicents.protocols.ss7.map.service.xxx.MAPDialogXxxImpl
+extends MAPDialogImpl implements MAPDialogXxx
+ Now we are implementing a constructor like current sms implementation.
+ Here we will implement methods to send operation requests and responses later
+
+- interface org.mobicents.protocols.ss7.map.api.service.xxx.XxxMessage
+ class org.mobicents.protocols.ss7.map.service.xxx.XxxMessageImpl
+extends MessageImpl implements SmsMessage, MAPAsnPrimitive
+ The only method to implement is: MAPDialogXxx getMAPDialog(); like
+current sms implementation.
+
+- interface org.mobicents.protocols.ss7.map.api.service.xxx.MAPServiceXxxListener
+extends MAPServiceListener
+ Now we are leaving it empty.
+
+- interface org.mobicents.protocols.ss7.map.api.service.xxx.MAPServiceXxx
+extends MAPServiceBase
+ class org.mobicents.protocols.ss7.map.service.xxx.MAPServiceXxxImpl
+extends MAPServiceBaseImpl implements MAPServiceXxx
+ Into the interface we are adding methods createNewDialog(),
+addMAPServiceListener()
+ and removeMAPServiceListener() like current sms implementation.
+ Into the class we are adding a "loger" property, a constructor and methods
+ createNewDialog(), createNewDialogIncoming(), addMAPServiceListener() and
+ removeMAPServiceListener() like current sms implementation.
+ Other methods we will add later.
+
+- in the class org.mobicents.protocols.ss7.map.MAPProviderImpl:
+ - adding a property: private final MAPServiceXxx mapServiceXxx = new
+MAPServiceXxxImpl(this);
+ - adding a method:
+       public MAPServiceXxx getMAPServiceXxx(){
+               return this.mapServiceXxx;
+       }
+ - adding into the constructor:
+               this.mapServices.add(this.mapServiceXxx);
+
+- into the enum org.mobicents.protocols.ss7.map.api.MAPApplicationContextName:
+ - adding new application context names for the new service
+
+- into the interface org.mobicents.protocols.ss7.map.api.MAPOperationCode:
+ - adding new operation codes for the new service
+
+2. Implementing a service
+
+- MAPServiceXxxImpl.isServingService() method:
+ checking if an incoming application context is for the implementing service.
+ Returns AC_Serving if the application context is for this service,
+ AC_VersionIncorrect if the application context name is good, but
+version is incorrect
+ or unsupported and AC_NotServing if not supported.
+
+- MAPServiceXxxImpl.getMAPv1ApplicationContext() method:
+ if the serviñe supports MAP V1, then this method should return
+ the application context name depending on the operation code for MAP V1
+
+- creating interfaces for requests (Invoke) and responses
+(ReturnResultLast) messages
+ org.mobicents.protocols.ss7.map.api.service.xxx.MessageNameRequestIndication
+extends XxxMessage
+ org.mobicents.protocols.ss7.map.api.service.xxx.MessageNameResponseIndication
+extends XxxMessage
+ These interfaces contain getting parameters from messages
+
+- implementing classes for requests (Invoke) and responses
+(ReturnResultLast) messages
+ org.mobicents.protocols.ss7.map.service.xxx.MessageNameRequestIndicationImpl
+   extends XxxMessageImpl implements MessageNameRequestIndication
+ org.mobicents.protocols.ss7.map.service.xxx.MessageNameResponseIndicationImpl
+   extends XxxMessageImpl implements MessageNameResponseIndication
+ These classes should implement MAPAsnPrimitive interface for encoding and
+ decoding ASN.1 MAP message. Methods getTag(), getTagClass() and
+getIsPrimitive()
+ will return tag, tag class and primitive/constracted state of a
+message for ASN.1 encoding.
+ Methods decodeAll() (decoding when a length field has not read),
+decodeData() (decoding
+ when a length field has read) and _decode() (internal parameters decoding)
+ are using for decoding.
+ Methods encodeAll(1 parameter) (encoding with the default tag/tag class),
+ encodeAll(3 parameter) (encoding with the custom tag/tag class) and
+encodeData()
+ (internal parameters encoding) are using for encoding.
+
+- Messages can contain some constructed parameters. For all of them we
+should create
+ interface org.mobicents.protocols.ss7.map.api.service.xxx.ParameterName
+ class org.mobicents.protocols.ss7.map.service.xxx.ParameterNameImpl
+implements ParameterNameIMSI, MAPAsnPrimitive
+ Implementing of these classes is like MAP message requests and responses.
+ If a parameter is used in more then one MAP service we should implement it in
+ "map.primitives" section.
+
+- interface MAPServiceXxxListener:
+ We are adding here events that will be invoked when MAP requests and
+responses come.
+ Names for them like:
+       public void onMessageNameIndication(MessageNameRequestIndication ind);
+       public void onMessageNameRespIndication(MessageNameResponseIndication ind);
+
+- into MAPServiceXxxImpl we adding methods:
+       private void messageNameRequest(Parameter parameter, MAPDialogXxxImpl
+mapDialogImpl, Long invokeId) throws MAPParsingComponentException
+       private void messageNameResponse(Parameter parameter,
+MAPDialogXxxImpl mapDialogImpl, Long invokeId) throws
+MAPParsingComponentException
+ Here we are implementing request/response incoming message decoding
+and delivering
+ to MAPServiceListener's.
+
+- MAPServiceXxxImpl.processComponent(...) method:
+ Here we are implementing operation code and application context name analysis
+ and invoking methods like messageNameRequest() or messageNameResponse()
+ for parsing incoming messages.
+
+- into MAPDialogXxxImpl we are adding methods for encoding and sending
+ request and response messages to a peer. For request messages we
+should implement
+ two methods. The second method will have one extra invoking parameter -
+ "int customInvokeTimeout" (custom invoke timeout in milliseconds)
+
+- in the section "map.errors" we should check if all of service errors
+have been implementing.
+ If no we will implement missed error messages.
+
+3. Testing
+
+- For all implemented request/repsonse messages and parameters we
+should implement
+ unit tests for ASN.1 encoding / decoding testing. The best way is to
+take encoded
+ parameters from a live traces. There is a tool (trace-parser) that
+can be used for
+ trace file parsing
+
+- For some request/repsonse messages (usually for the most popular) we
+should implement
+ functional tests. Examples for functional tests are in
+"map.functional" section.
+ New functional tests are also implemented here.
+
+
+Services:
+- Mobility
+- OperationAndMaintenance
+- CallHandling
+- Supplementary
+- Sms
+- Network-Requested PDP Context Activation
+- Lsm
+
+- subscriberInformation -> Mobility !!!
+- subscriberManagement -> Mobility
+

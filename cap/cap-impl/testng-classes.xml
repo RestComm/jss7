@@ -1,0 +1,27 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<!-- on my machine with higher thread count tests fail due to race and MTP issues it seems -->
+<suite name="Classes" parallel="classes" thread-count="2"  verbose="1">
+	<test name="simple">
+		<!-- 
+		 <groups>
+		    <run>
+		      <include name="functional.flow"  />
+		    </run>
+	  	</groups>
+	  	 -->
+	  	<packages>
+      	 	<package name="org.mobicents.protocols.ss7.cap" />
+      		<package name="org.mobicents.protocols.ss7.cap.dialog" />
+      		<package name="org.mobicents.protocols.ss7.cap.errors" />
+      		<package name="org.mobicents.protocols.ss7.cap.EsiBcsm" />
+      		<package name="org.mobicents.protocols.ss7.cap.functional" /> 
+      		<package name="org.mobicents.protocols.ss7.cap.isup" />
+      		<package name="org.mobicents.protocols.ss7.cap.primitives" />
+      		<package name="org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall" />
+      		<package name="org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive" /> 
+      		<package name="org.mobicents.protocols.ss7.cap.service.gprs" />
+      		<package name="org.mobicents.protocols.ss7.cap.service.gprs.primitive" />
+  		 </packages>
+	</test>
+	
+</suite>

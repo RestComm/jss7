@@ -1,0 +1,26 @@
+Name
+	sccp set zmarginxudtmessage 
+
+SYNOPSIS
+	sccp set zmarginxudtmessage <zmarginxudtmessage> stackname <stack-name>
+
+DESCRIPTION
+	Sets segmentation length. If the XUDT message data length greater this value,
+    segmentation is processed. Otherwise no segmentation.
+    Range is 160 to 255. If passed value is less than 160, it sets to 160 and
+    if passed value is greater than 255, it sets to 255.
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<zmarginxudtmessage>	-	values from 160 to 255.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp set zmarginxudtmessage 255

@@ -45,7 +45,6 @@
 		<module>mtp</module>
 		<module>m3ua</module>
 		<module>hardware</module>
-<!--
 		<module>isup</module>
 		<module>sccp</module>
 		<module>tcap</module>
@@ -53,6 +52,7 @@
 		<module>map</module>
 		<module>inap</module>
 		<module>cap</module>
+<!--
 		<module>service</module>
 		<module>sgw</module>
 		<module>tools</module>
@@ -416,7 +416,6 @@
 		</developer>
 	</developers>
 
-<!-- !!!!! license version !!!!! -->
 	<licenses>
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>

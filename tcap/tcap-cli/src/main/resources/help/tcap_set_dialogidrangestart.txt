@@ -1,0 +1,24 @@
+Name
+	tcap set dialogidrangestart 
+
+SYNOPSIS
+	tcap set dialogidrangestart <dialogidrangestart> stackname <stack-name>
+
+DESCRIPTION
+	Start of the range of the generated dialog ids. The id's used will be
+	between dialogidrangestart and dialogidrangeend.
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<dialogidrangestart>	-	Dialog id range start.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap set dialogidrangestart 1

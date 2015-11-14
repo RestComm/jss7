@@ -1,0 +1,25 @@
+Name
+	sccp set reassemblytimerdelay 
+
+SYNOPSIS
+	sccp set reassemblytimerdelay <reassemblytimerdelay> stackname <stack-name>
+
+DESCRIPTION
+	Sets SCCP segmented message reassembling timeout (in milliseconds).
+    Range is 10000 to 20000. If passed value is less than 10000, it sets to 10000 and
+    if passed value is greater than 20000, it sets to 20000
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<reassemblytimerdelay>	-	Re-assembly time delay in milliseconds
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp set reassemblytimerdelay 20000

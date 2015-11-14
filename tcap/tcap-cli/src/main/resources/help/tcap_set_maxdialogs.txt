@@ -1,0 +1,28 @@
+Name
+	tcap set maxdialogs 
+
+SYNOPSIS
+	tcap set maxdialogs <maxdialogs> stackname <stack-name>
+
+DESCRIPTION
+	Sets the maximum number of dialogs allowed to be alive at a given 
+	time. If not set, a default value of 5000 dialogs will be used.
+    If stack ranges provided, maximum number dialogs naturally cannot 
+    be greater than the provided range, thus, it will be normalized to 
+    range delta (end - start).
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<maxdialogs>	-	Sets the maximum concurrent dialogs alive at any given
+						point in time.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap set maxdialogs 30000000

@@ -1,0 +1,17 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<!-- on my machine with higher thread count tests fail due to race and MTP 
+	issues it seems -->
+<suite name="Classes" parallel="classes" thread-count="2" verbose="1">
+	<!-- -->
+	<test name="mgmt">
+		<packages>
+			<package name="org.mobicents.protocols.ss7.sccp.impl.mgmt.mtp" />
+			<package name="org.mobicents.protocols.ss7.sccp.impl.mgmt.ssp" />
+			<package name="org.mobicents.protocols.ss7.sccp.impl.oam" />
+			<package name="org.mobicents.protocols.ss7.sccp.impl.router" />
+			<package name="org.mobicents.protocols.ss7.sccp.impl.translation" />
+			<package name="org.mobicents.protocols.ss7.sccp.impl.messageflow" />
+		</packages>
+	</test>
+
+</suite>

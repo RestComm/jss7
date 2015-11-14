@@ -1,0 +1,25 @@
+Name
+	sccp set ssttimerduration_min 
+
+SYNOPSIS
+	sccp set ssttimerduration_min <ssttimerduration_min> stackname <stack-name>
+
+DESCRIPTION
+	Set's min (starting) SST sending interval (in milliseconds). Value can be 
+	from 5000 to 10000.If value passed is less than 5000, it sets to 5000 and 
+	if value passed is greater than 10000, its set to 10000
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<ssttimerduration_min>	-	values from 5000 to 10000.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp set ssttimerduration_min 10000

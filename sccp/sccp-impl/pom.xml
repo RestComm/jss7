@@ -1,0 +1,93 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>sccp-parent</artifactId>
+		<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+		<version>2.2.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>sccp-impl</artifactId>
+
+	<name>Mobicents SS7 :: SCCP :: Impl :: ${pom.artifactId}</name>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>sccp-api</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.management</groupId>
+			<artifactId>shell-server-api</artifactId>
+			<version>${pom.version}</version>
+		</dependency>		
+		<dependency>
+			<artifactId>mtp-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>concurrent</groupId>
+			<artifactId>concurrent</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javolution</groupId>
+			<artifactId>javolution</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+			<artifactId>mtp</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>${pom.artifactId}-${pom.version}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+
+				<configuration>
+					<suiteXmlFiles>
+						<suiteXmlFile>testng-methods.xml</suiteXmlFile>
+						<suiteXmlFile>testng-classes.xml</suiteXmlFile>
+					</suiteXmlFiles>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- plugin> <artifactId>maven-assembly-plugin</artifactId> <configuration> 
+				<descriptors> <descriptor> src/main/assembly/pojo.xml </descriptor> </descriptors> 
+				<finalName>a${pom.artifactId}</finalName> </configuration> <executions> <execution> 
+				<phase>package</phase> <goals> <goal>directory-inline</goal> </goals> </execution> 
+				</executions> </plugin -->
+		</plugins>
+	</build>
+</project>

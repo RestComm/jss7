@@ -1,0 +1,32 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<!-- on my machine with higher thread count tests fail due to race and MTP issues it seems -->
+<suite name="Classes" parallel="classes" thread-count="2"  verbose="1">
+	<test name="simple">
+		<!-- 
+		 <groups>
+		    <run>
+		      <include name="functional.flow"  />
+		    </run>
+	  	</groups>
+	  	 -->
+	  	<packages>
+            <package name="org.mobicents.protocols.ss7.map" />
+      		<package name="org.mobicents.protocols.ss7.map.datacoding" />
+      		<package name="org.mobicents.protocols.ss7.map.dialog" />
+      		<package name="org.mobicents.protocols.ss7.map.errors" />
+      		<package name="org.mobicents.protocols.ss7.map.functional" />	
+      		<package name="org.mobicents.protocols.ss7.map.primitives" />
+	  		<package name="org.mobicents.protocols.ss7.map.service.callhandling" />  
+      		<package name="org.mobicents.protocols.ss7.map.service.lsm" />
+			<package name="org.mobicents.protocols.ss7.map.service.mobility.authentication" />
+			<package name="org.mobicents.protocols.ss7.map.service.mobility.imei" />
+			<package name="org.mobicents.protocols.ss7.map.service.mobility.locationManagement" />
+			<package name="org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation" />
+			<package name="org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement" />
+      		<package name="org.mobicents.protocols.ss7.map.service.sms" />
+      		<package name="org.mobicents.protocols.ss7.map.service.supplementary" />
+      		<package name="org.mobicents.protocols.ss7.map.smstpdu" />
+  		 </packages>
+	</test>
+	
+</suite>

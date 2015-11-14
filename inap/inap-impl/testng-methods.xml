@@ -1,0 +1,26 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Methods" parallel="methods" thread-count="5"  verbose="1">
+	<test name="simple">
+	
+		<!-- 
+		 <groups>
+		    <run>
+		      <include name=".*code.*"  />
+		      <include name="dialog*.*"  />
+		      
+		    </run>
+	  	</groups>
+	  	<packages>
+      		<package name="org.mobicents.protocols.ss7.map" />
+      		<package name="org.mobicents.protocols.ss7.map.dialog" />
+      		<package name="org.mobicents.protocols.ss7.map.errors" />
+      		<package name="org.mobicents.protocols.ss7.map.primitives" />
+      		<package name="org.mobicents.protocols.ss7.map.service.lsm" />
+      		<package name="org.mobicents.protocols.ss7.map.service.sms" />
+      		<package name="org.mobicents.protocols.ss7.map.service.supplementary" />
+      		<package name="org.mobicents.protocols.ss7.map.functional" />	
+      		<package name="org.mobicents.protocols.ss7.map.smstpdu" />
+  		 </packages>
+	  	 -->
+	</test>
+</suite>

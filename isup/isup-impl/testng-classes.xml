@@ -1,0 +1,11 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<!-- on my machine with higher thread count tests fail due to race and MTP issues it seems -->
+<suite name="Classes" parallel="classes" thread-count="8"  verbose="1">
+	<test name="simple">
+		
+	  	<packages>
+      		<package name="org.mobicents.protocols.ss7.isup.impl.stack.timers" />
+  		 </packages>
+	</test>
+	
+</suite>

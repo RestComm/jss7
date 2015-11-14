@@ -1,0 +1,19 @@
+Name
+	sccp get zmarginxudtmessage 
+
+SYNOPSIS
+	sccp get zmarginxudtmessage stackname <stack-name>
+
+DESCRIPTION
+	Gets the value for zmarginxudtmessage property.
+	
+PARAMETERS
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp get zmarginxudtmessage

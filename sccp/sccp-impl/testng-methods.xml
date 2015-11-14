@@ -1,0 +1,28 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Methods" parallel="classes" thread-count="3"  verbose="1">
+	<test name="simple">
+		<!-- 
+	    <groups>
+		    <run>
+		      <include name="encode"  />
+		      <include name="asn"  />
+		    </run>
+	  	</groups>
+	  	 -->
+	  	<packages>
+	  		<package name="org.mobicents.protocols.ss7.sccp.impl" />
+      		<package name="org.mobicents.protocols.ss7.sccp.impl.parameter" />
+      		<package name="org.mobicents.protocols.ss7.sccp.impl.gtt" />
+      		<package name="org.mobicents.protocols.ss7.indicator" />
+      		<package name="org.mobicents.protocols.ss7.sccp.impl.message" />
+  		 </packages>
+  		 <classes>
+  		 <!-- 
+  		 	<class name="org.mobicents.protocols.ss7.sccp.UnitDataTest"></class>
+  		 	<class name="org.mobicents.protocols.ss7.sccp.XUnitDataTest"></class>
+  		 	
+  		 	<class name="org.mobicents.protocols.ss7.sccp.UnitDataServiceTest"></class>
+  		 	 -->
+  		 </classes>
+	</test>
+</suite>

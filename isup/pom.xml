@@ -1,0 +1,60 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<parent>
+		<artifactId>ss7-parent</artifactId>
+		<groupId>org.mobicents.protocols.ss7</groupId>
+		<version>2.2.0-SNAPSHOT</version>
+	</parent>
+
+
+	<artifactId>isup-parent</artifactId>
+	<groupId>org.mobicents.protocols.ss7.isup</groupId>
+
+	<packaging>pom</packaging>
+
+	<name>Mobicents SS7 :: ISUP :: Parent :: ${pom.artifactId}</name>
+
+	<modules>
+		<module>isup-api</module>
+		<module>isup-impl</module>
+	</modules>
+
+
+
+	<!--  -->
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<groupId>org.mobicents.tools</groupId>
+				<version>
+					${mobicents.tools.mavenplugin.eclipse.version}
+				</version>
+				<inherited>false</inherited>
+				<executions />
+				<configuration>
+					<classpathExcludes>
+						<exclude>xml-apis:xml-apis</exclude>
+						<exclude>jtidy:jtidy</exclude>
+					</classpathExcludes>
+					<resolveTransitiveDependencies>
+						true
+					</resolveTransitiveDependencies>
+					<eclipseProjectName>
+						isup
+					</eclipseProjectName>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
+			<id>release</id>
+			<modules>
+				<module>release</module>
+			</modules>
+		</profile>
+	</profiles>
+</project>

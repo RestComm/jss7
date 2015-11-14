@@ -1,0 +1,44 @@
+Name
+	sccp rsp create
+
+SYNOPSIS
+	sccp rsp create <id> <remote-spc> <rspc-flag> <mask>
+	stackname <stack-name>
+
+DESCRIPTION
+	This command is used to define a new Remote Signaling Point. Each remote signaling
+	point that SCCP can communicate with must be configured using this command.
+
+PARAMETERS
+
+	Standard Parameters
+                                              
+	<id>			-	A unique number to identify this 
+					Remote Signaling Point.
+
+	<remote-spc>		-	The Remote Signaling Point
+
+	<rspc-flag>		-	32 bit value. Not used for now. 
+					Reserved for future
+
+	<mask>			-	32 bit value. Not used for now. 
+					Reserved for future
+					
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.					
+	
+EXAMPLES
+	sccp rsp create 1 6477 0 0
+
+SEE ALSO
+	sccp sap create, sccp sap modify, sccp sap delete, sccp sap show, 
+	sccp dest create, sccp dest modify, sccp dest delete, sccp dest show, 
+	sccp rule create, sccp rule modify, sccp rule delete, sccp rule show, 
+	sccp address create, sccp address modify, sccp address delete,
+	sccp address show, sccp rsp modify, sccp rsp delete, 
+	sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete, sccp rss show, 
+	sccp lmr create, sccp lmr modify, sccp lmr delete, sccp lmr show, sccp csp create,
+	sccp csp modify, sccp csp delete, sccp csp show, sccp get, sccp set

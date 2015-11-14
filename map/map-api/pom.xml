@@ -1,0 +1,48 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>map-parent</artifactId>
+		<groupId>org.mobicents.protocols.ss7.map</groupId>
+		<version>2.2.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>map-api</artifactId>
+
+	<name>Mobicents SS7 :: MAP :: Api :: ${pom.artifactId}</name>
+
+	<dependencies>
+		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 
+			<version>${log4j.version}</version> </dependency> -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>provided</scope>
+			<version>${junit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+			<artifactId>tcap-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+			<artifactId>sccp-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.asn</groupId>
+			<artifactId>asn</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.congestion</groupId>
+			<artifactId>congestion</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.isup</groupId>
+			<artifactId>isup-api</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>${pom.artifactId}-${pom.version}</finalName>
+	</build>
+</project>

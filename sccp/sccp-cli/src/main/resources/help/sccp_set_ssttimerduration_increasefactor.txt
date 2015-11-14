@@ -1,0 +1,28 @@
+Name
+	sccp set ssttimerduration_increasefactor 
+
+SYNOPSIS
+	sccp set ssttimerduration_increasefactor <ssttimerduration_increasefactor> 
+	stackname <stack-name>
+
+DESCRIPTION
+	Set multiplicator of SST sending interval (next interval will be greater then 
+	the current by sstTimerDuration_IncreaseFactor). Range is 1 to 4. If passed 
+	value is less than 1, it sets to 1 and if passed value is greater than 4, 
+	it sets to 4
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<ssttimerduration_increasefactor>	-	values from 1 to 4 for SST duration increase
+										factor.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp set ssttimerduration_increasefactor 1

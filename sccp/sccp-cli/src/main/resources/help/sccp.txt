@@ -1,0 +1,51 @@
+Name
+	sccp
+	Manage SCCP
+
+SYNOPSIS
+	sccp sap [create | modify | delete | show]  [parameters]
+
+	sccp dest [create | modify | delete | show]  [parameters]
+
+	sccp rule [create | modify | delete | show]  [parameters]
+
+	sccp primary_add [create | modify | delete | show]  [parameters]
+
+	sccp backup_add [create | modify | delete | show]  [parameters]
+
+	sccp rsp [create | modify | delete | show]  [parameters]
+
+	sccp rss [create | modify | delete | show]  [parameters]
+
+	sccp lmr [create | modify | delete | show]  [parameters]
+
+	sccp csp [create | modify | delete | show]  [parameters]
+
+	sccp set [parameters]
+
+	sccp get [parameters]
+         
+	parameters 
+		Command Line parameters.
+
+DESCRIPTION
+	This command is used to manage SCCP. You can create, modify, delete and view 
+	SCCP Service Access Points (sap) and Destinations (dest),
+	Remote Signaling Point Codes (rsp), Remote Sub Systems (rss), 
+	Concerned Signaling Point Codes (csp), 
+	Routing information (rules, primary and backup addresses) and
+	Long Message Rules (lmr). 
+
+	You can also set and get values for general parameters using the command.  
+
+SEE ALSO
+	sccp sap create, sccp sap modify, sccp sap delete, sccp sap show, 
+	sccp dest create, sccp dest modify, sccp dest delete, sccp dest show,
+	sccp rule create, sccp rule modify, sccp rule delete, sccp rule show,
+	sccp address create, sccp address modify, sccp address delete, sccp address show, 
+	sccp rsp create, sccp rsp modify, 
+	sccp rsp delete, sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete,
+	sccp rss show, sccp lmr create, sccp lmr modify, sccp lmr delete, sccp lmr show, 
+	sccp csp create, sccp csp modify, sccp csp delete, sccp csp show, sccp get,
+	sccp set
+

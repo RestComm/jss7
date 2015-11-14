@@ -1,0 +1,25 @@
+Name
+	sccp set ssttimerduration_max 
+
+SYNOPSIS
+	sccp set ssttimerduration_max <ssttimerduration_max> stackname <stack-name>
+
+DESCRIPTION
+	Sets Max (after increasing) SST sending interval (in 600000 - 1200000 milliseconds). 
+	Value can be from 600000 to 1200000. If value passed is less than 600000, it sets to 
+	600000 and if value passed is greater than 1200000, it sets to 1200000
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<ssttimerduration_max>	-	values from 600000 - 1200000 milliseconds.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp set ssttimerduration_max 600000

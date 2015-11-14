@@ -1,0 +1,23 @@
+Name
+	tcap set donotsendprotocolversion 
+
+SYNOPSIS
+	tcap set donotsendprotocolversion <true | false> stackname <stack-name>
+
+DESCRIPTION
+	If set to true Protocol Version is not send in User Data part of Dialog
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<donotsendprotocolversion>	-	If true doesn't send the protocol version
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap set donotsendprotocolversion false

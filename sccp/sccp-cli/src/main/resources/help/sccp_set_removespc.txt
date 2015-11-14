@@ -1,0 +1,24 @@
+Name
+	sccp set removespc 
+
+SYNOPSIS
+	sccp set removespc <true | false> stackname <stack-name>
+
+DESCRIPTION
+	If set, the signaling point code from SCCP called/calling address will 
+	be removed if corresponding routing is based on GT
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<removespc>	-	true or false value.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp set removespc true

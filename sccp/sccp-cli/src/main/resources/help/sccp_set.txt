@@ -1,0 +1,31 @@
+Name
+	sccp set
+
+SYNOPSIS
+	sccp set <parameter-name> <parameter-value>
+
+DESCRIPTION
+	This command is used to set values for general parameters that influence the 
+	entire SCCP Stack.
+
+PARAMETERS
+
+	<parameter-name>	-	Mnemonic name of a parameter.
+
+	<parameter-value>	-	Value to be set for the parameter.
+
+EXAMPLES
+	sccp set zMarginXudtMessage 230
+
+	sccp set removeSpc false
+
+SEE ALSO
+	sccp sap create, sccp sap modify, sccp sap delete, sccp dest show, 
+	sccp dest create, sccp dest modify, sccp dest delete, sccp dest show,
+	sccp rule create, sccp rule modify, sccp rule delete, sccp rule show, 
+	sccp address create, sccp address modify, sccp address delete, 
+	sccp address show, sccp rsp create, sccp rsp modify, 
+	sccp rsp delete, sccp rsp show, sccp rss create, sccp rss modify, sccp rss delete, 
+	sccp rss show, sccp lmr create, sccp lmr modify, sccp lmr delete, sccp lmr show, 
+	sccp csp create, sccp csp modify, sccp csp delete, sccp csp show, sccp get
+
