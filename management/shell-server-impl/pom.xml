@@ -37,5 +37,13 @@
 			<artifactId>scheduler</artifactId>
 			<groupId>org.mobicents.protocols.ss7.scheduler</groupId>
 		</dependency>
+
+		<!-- JBoss AS Security -->
+		<dependency>
+			<groupId>org.jboss.jbossas</groupId>
+			<artifactId>jboss-as-security</artifactId>
+			<version>${jboss.version}</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 </project>

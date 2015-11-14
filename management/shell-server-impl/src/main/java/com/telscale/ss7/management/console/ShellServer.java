@@ -19,19 +19,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.mobicents.ss7.management.console;
+package com.telscale.ss7.management.console;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import javolution.util.FastList;
 import javolution.util.FastSet;
 
 import org.apache.log4j.Logger;
+import org.jboss.security.SecurityContext;
+import org.jboss.security.SecurityContextFactory;
+import org.jboss.security.audit.AuditEvent;
+import org.jboss.security.audit.AuditLevel;
+import org.jboss.security.plugins.JaasSecurityManager;
 import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.mobicents.protocols.ss7.scheduler.Task;
+import org.mobicents.ss7.management.console.ShellExecutor;
+import org.mobicents.ss7.management.console.Version;
 import org.mobicents.ss7.management.transceiver.ChannelProvider;
 import org.mobicents.ss7.management.transceiver.ChannelSelectionKey;
 import org.mobicents.ss7.management.transceiver.ChannelSelector;
@@ -48,6 +60,12 @@ public class ShellServer extends Task {
     Logger logger = Logger.getLogger(ShellServer.class);
 
     public static final String CONNECTED_MESSAGE = "Connected to %s %s %s";
+    public static final String CONNECTED_AUTHENTICATING_MESSAGE = "Authenticating against configured security realm";
+    public static final String CONNECTED_AUTHENTICATION_FAILED = "Authentication failed";
+
+    public static final String AUDIT_MESSAGE = "message";
+    public static final String AUDIT_COMMAND = "command";
+    public static final String AUDIT_COMMAND_RESPONSE = "response";
 
     Version version = Version.instance;
 
@@ -67,6 +85,13 @@ public class ShellServer extends Task {
     private String address;
 
     private int port;
+
+    private org.jboss.security.plugins.JaasSecurityManager jaasSecurityManager = null;
+    private String securityDomain = null;
+    private String userName = null;
+    private String password = null;
+    private SecurityContext securityContext = null;
+    private SimplePrincipal principal = null;
 
     private final FastList<ShellExecutor> shellExecutors = new FastList<ShellExecutor>();
 
@@ -91,7 +116,21 @@ public class ShellServer extends Task {
         this.port = port;
     }
 
-    public void start() throws IOException {
+    /**
+     * @return the securityDomain
+     */
+    public String getSecurityDomain() {
+        return securityDomain;
+    }
+
+    /**
+     * @param securityDomain the securityDomain to set
+     */
+    public void setSecurityDomain(String securityDomain) {
+        this.securityDomain = securityDomain;
+    }
+
+    public void start() throws IOException, NamingException {
         logger.info("Starting SS7 management shell environment");
         provider = ChannelProvider.provider();
         serverChannel = provider.openServerChannel();
@@ -108,10 +147,17 @@ public class ShellServer extends Task {
         this.started = true;
         this.activate(false);
         scheduler.submit(this, scheduler.MANAGEMENT_QUEUE);
+
+        if (this.securityDomain != null) {
+            InitialContext initialContext = new InitialContext();
+            this.jaasSecurityManager = (JaasSecurityManager) initialContext.lookup(this.securityDomain);
+        }
     }
 
     public void stop() {
         this.started = false;
+
+        this.resetSecurity();
 
         try {
             skey.cancel();
@@ -153,8 +199,46 @@ public class ShellServer extends Task {
                         logger.info("received command : " + rxMessage);
                         if (rxMessage.compareTo("disconnect") == 0) {
                             this.txMessage = "Bye";
-                            chan.send(messageFactory.createMessage(txMessage));
 
+                            if (this.securityDomain != null) {
+                                Map map = new HashMap();
+                                map.put(AUDIT_MESSAGE, "logout success");
+                                map.put("principal", this.jaasSecurityManager.getPrincipal(principal));
+                                this.securityContext.getAuditManager().audit(new AuditEvent(AuditLevel.SUCCESS, map));
+                            }
+
+                            chan.send(messageFactory.createMessage(txMessage));
+                        } else if (this.securityDomain != null && this.userName == null) {
+                            // The first incoming message should be username
+                            this.userName = rxMessage;
+                            this.txMessage = " ";
+                            chan.send(messageFactory.createMessage(txMessage));
+                            // TODO Authentication
+                        } else if (this.securityDomain != null && this.password == null) {
+                            // The second incoming message should be password
+                            this.password = rxMessage;
+                            this.txMessage = "";
+
+                            this.principal = new SimplePrincipal(this.userName);
+                            boolean isValid = this.jaasSecurityManager.isValid(principal, this.password);
+                            if (!isValid) {
+                                chan.send(messageFactory.createMessage(CONNECTED_AUTHENTICATION_FAILED));
+                                logger.warn(String.format("Authentication to CLI fialed for username=%s", this.userName));
+                                this.txMessage = "Bye";
+                            } else {
+
+                                // Audit Stuff
+                                this.securityContext = SecurityContextFactory.createSecurityContext(this.jaasSecurityManager
+                                        .getSecurityDomain());
+
+                                Map map = new HashMap();
+                                map.put(AUDIT_MESSAGE, "login success");
+                                map.put("principal", this.jaasSecurityManager.getPrincipal(principal));
+                                this.securityContext.getAuditManager().audit(new AuditEvent(AuditLevel.SUCCESS, map));
+
+                                this.txMessage = " ";
+                                chan.send(messageFactory.createMessage(txMessage));
+                            }
                         } else {
                             String[] options = rxMessage.split(" ");
                             ShellExecutor shellExecutor = null;
@@ -170,9 +254,27 @@ public class ShellServer extends Task {
                             if (shellExecutor == null) {
                                 logger.warn(String.format("Received command=\"%s\" for which no ShellExecutor is configured ",
                                         rxMessage));
+
+                                if (this.securityDomain != null) {
+                                    Map map = new HashMap();
+                                    map.put(AUDIT_COMMAND, rxMessage);
+                                    map.put(AUDIT_COMMAND_RESPONSE, "Invalid command");
+                                    map.put("principal", this.jaasSecurityManager.getPrincipal(principal));
+                                    this.securityContext.getAuditManager().audit(new AuditEvent(AuditLevel.INFO, map));
+                                }
+
                                 chan.send(messageFactory.createMessage("Invalid command"));
                             } else {
                                 this.txMessage = shellExecutor.execute(options);
+
+                                if (this.securityDomain != null) {
+                                    Map map = new HashMap();
+                                    map.put(AUDIT_COMMAND, rxMessage);
+                                    map.put(AUDIT_COMMAND_RESPONSE, this.txMessage);
+                                    map.put("principal", this.jaasSecurityManager.getPrincipal(principal));
+                                    this.securityContext.getAuditManager().audit(new AuditEvent(AuditLevel.INFO, map));
+                                }
+
                                 chan.send(messageFactory.createMessage(this.txMessage));
                             }
 
@@ -234,23 +336,22 @@ public class ShellServer extends Task {
 
         this.channel = channelTmp;
 
-        // skey.cancel();
-        // skey = this.channel.register(selector, SelectionKey.OP_READ |
-        // SelectionKey.OP_WRITE);
-        this.channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+        skey = channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
 
-        String messageToSend = String.format(CONNECTED_MESSAGE, this.version.getProperty("name"),
-                this.version.getProperty("version"), this.version.getProperty("vendor"));
-        this.channel.send(messageFactory.createMessage(messageToSend));
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Sent message to remote client= " + messageToSend);
+        if (this.securityDomain == null) {
+            channel.send(messageFactory.createMessage(String.format(CONNECTED_MESSAGE, this.version.getProperty("name"),
+                    this.version.getProperty("version"), this.version.getProperty("vendor"))));
+        } else {
+            String tmp = String.format(CONNECTED_MESSAGE, this.version.getProperty("name"),
+                    this.version.getProperty("version"), this.version.getProperty("vendor"));
+            tmp = tmp + " " + CONNECTED_AUTHENTICATING_MESSAGE;
+            channel.send(messageFactory.createMessage(tmp));
         }
-
     }
 
     private void closeChannel() throws IOException {
-        if (this.channel != null) {
+        this.resetSecurity();
+        if (channel != null) {
             try {
                 this.channel.close();
             } catch (IOException e) {
@@ -263,8 +364,13 @@ public class ShellServer extends Task {
 
             this.channel = null;
         }
-
         // skey.cancel();
         // skey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+    }
+
+    private void resetSecurity() {
+        this.userName = null;
+        this.password = null;
+        this.principal = null;
     }
 }
