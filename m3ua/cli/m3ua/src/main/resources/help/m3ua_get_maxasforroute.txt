@@ -1,0 +1,19 @@
+Name
+	m3ua get maxasforroute 
+
+SYNOPSIS
+	m3ua get maxasforroute stackname <stack-name>
+
+DESCRIPTION
+	Returns the maximum AS set for any destination point code
+	
+PARAMETERS
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.		
+
+EXAMPLES
+	m3ua get maxasforroute

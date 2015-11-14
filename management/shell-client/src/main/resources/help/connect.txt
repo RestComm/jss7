@@ -1,0 +1,30 @@
+Name
+	connect
+
+SYNOPSIS
+	connect <host-ip> <host-port> 
+
+DESCRIPTION
+	This command is used to connect the Shell to a managed instance. The parameters 
+	host-ip and host-port are optional. If you do not specify them, the shell will
+	attempt connecting to 127.0.0.1:3435.
+
+PARAMETERS
+
+	Optional Parameters
+
+	<host-ip>		-	The host IP address of the system the Shell will 
+					connect to. 
+
+	<host-port>		-	The host port of the managed instance, which the 
+					Shell will bind to.
+
+EXAMPLES
+	connect 10.65.208.215 3435
+	
+	The above command will connect the Shell to the IP address 10.65.208.215 and
+	port 3435.
+
+SEE ALSO
+	disconnect
+

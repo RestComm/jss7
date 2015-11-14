@@ -1,0 +1,32 @@
+Name
+	sctp server destroy
+
+SYNOPSIS
+	sctp server destroy <sever-name> stackname <stack-name>
+
+DESCRIPTION
+	This command is used to delete an existing SCTP Server instance. You must ensure
+	that the Server is stopped prior to deletion.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<server-name>		-	Name of the Server instance to be deleted.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.		
+
+EXAMPLES
+	sctp server destroy TestServer
+
+	The above command will destroy the Server identified by the name TestServer. 
+
+SEE ALSO
+	sctp, sctp server create, sctp server start, sctp server stop, sctp server show, 
+	sctp association create, sctp association destroy, sctp association show
+
+

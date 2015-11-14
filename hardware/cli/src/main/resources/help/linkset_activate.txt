@@ -1,0 +1,22 @@
+Name
+	linkset activate
+
+SYNOPSIS
+	linkset activate <linkset-name>
+
+DESCRIPTION
+	This command is used to activate an existing Linkset.
+
+PARAMETERS
+	<linkset-name>		-	Name of the Linkset to be activated.
+
+EXAMPLE
+	linkset activate dahdilinkset1
+	
+	The above command will activate the Linkset identified by the name dahdilinkset1.
+
+SEE ALSO
+	linkset, linkset create, linkset delete, linkset deactivate, linkset show, 
+	linkset link create, linkset link delete, linkset link activate, 
+	linkset link deactivate.
+

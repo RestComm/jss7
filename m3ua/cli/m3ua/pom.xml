@@ -1,0 +1,82 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>m3ua</artifactId>
+		<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+		<version>2.2.0-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>m3ua-cli-m3ua</artifactId>
+	<name>Mobicents SS7 :: M3UA :: CLI :: ${pom.artifactId}</name>
+
+	<dependencies>
+		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 
+			<version>${log4j.version}</version> </dependency> -->
+		<!-- MTP3 -->
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.management</groupId>
+			<artifactId>shell-client</artifactId>
+			<version>${pom.version}</version>
+		</dependency>		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>${pom.artifactId}</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources/archive-files</directory>
+				<targetPath>META-INF/services</targetPath>
+			</resource>
+			<resource>
+				<directory>src/main/resources/help</directory>
+				<targetPath>help</targetPath>
+			</resource>
+		</resources>
+	</build>
+	<profiles>
+		<profile>
+			<!-- Adds the files to JBoss AS -->
+			<id>jboss</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<copy todir="${jboss.home}/lib" file="${project.build.directory}/${build.finalName}.jar" />
+									</tasks>
+								</configuration>
+							</execution>
+							<execution>
+								<id>undeploy</id>
+								<phase>clean</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<delete failonerror="fals" file="${jboss.home}/lib/${build.finalName}.jar" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

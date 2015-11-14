@@ -1,0 +1,38 @@
+<assembly>
+	<id>cli</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<files>
+		<file>
+			<source>src/main/config/ss7-cli.sh</source>
+			<fileMode>0744</fileMode>
+			<filtered>true</filtered>
+			<destName>bin/ss7-cli.sh</destName>
+		</file>
+		<file>
+			<source>src/main/config/ss7-cli.bat</source>
+			<fileMode>0744</fileMode>
+			<filtered>true</filtered>
+			<destName>bin/ss7-cli.bat</destName>
+		</file>
+		<file>
+			<source>target/mobicents-ss7-shell.jar</source>
+			<fileMode>0744</fileMode>
+			<filtered>true</filtered>
+			<destName>lib/mobicents-ss7-shell.jar</destName>
+		</file>
+
+	</files>
+	<dependencySets>
+		<dependencySet>
+			<outputDirectory>/lib</outputDirectory>
+			<unpack>false</unpack>
+			<scope>runtime</scope>
+			<excludes>
+				<exclude>org.mobicents.protocols.ss7.management:shell-client</exclude>
+			</excludes>
+		</dependencySet>
+	</dependencySets>
+</assembly>

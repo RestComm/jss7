@@ -1,0 +1,25 @@
+Name
+	linkset
+	Manage links and linksets
+
+SYNOPSIS
+	linkset [create | remove | activate | deactivate | show]  [options] [parameters]
+
+        linkset link [create | remove | activate | deactivate] [parameters]
+         
+        options
+ 		Command Line options.
+	parameters 
+		Command Line parameters.
+
+DESCRIPTION
+	This command is used to manage linksets and links within a linkset. You can 
+create, remove, activate, deactivate and view the status of linksets and links using this 
+command. You can manage dahdi linksets using the linkset command by using appropriate 
+values for the parameters passed.
+
+SEE ALSO
+	linkset create, linkset delete, linkset activate, linkset deactivate, 
+	linkset show, linkset link create, linkset link delete, linkset link activate, 
+	linkset link deactivate.
+

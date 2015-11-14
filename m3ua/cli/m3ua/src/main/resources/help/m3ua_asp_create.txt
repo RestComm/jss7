@@ -1,0 +1,57 @@
+Name
+	m3ua asp create
+
+SYNOPSIS
+	m3ua asp create <asp-name> <sctp-association> aspid <aspid> heartbeat <true|false> 
+	stackname <stack-name>
+
+DESCRIPTION
+	This command is used to create a new Application Server Process. 
+
+PARAMETERS
+
+	Standard Parameters
+
+	<asp-name>			-	Name of the new Application Server Process 
+						created. This must be unique and takes any
+						String value.
+
+	<sctp-association>		-	Name of the SCTP Association
+	
+	Optional Parameters
+
+	<aspid>				-	Identifier for this newly created
+						Application Server Process. If this is 
+						not passed, next available aspid will be
+						used.
+
+	heartbeat <true|false>		-	If this parameter is enabled (value set to
+						true), then heartbeat mechanism is enabled
+						between M3UA peers. When this is enabled,
+						it sends a Heartbeat message every 10
+						seconds. If there is no response for the 
+						third heartbeat then it assumes that the 
+						underlying network is dead. So it closes 
+						the connection and attempts to connect 
+						again. The M3UA peers are brought back to 
+						the same state as they were prior to 
+						dying.
+
+						This is an optional parameter and if 
+						unspecified, heartbeat mechanism is 
+						disabled.  	
+						
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					    If not passed, the first stack configured in ShellExecutor
+					    will be used. 						
+
+EXAMPLES
+	m3ua asp create ASP1 Assoc1 aspid 12 heartbeat true
+	
+	The above command will create a new M3UA Application Server Process with name ASP1
+	and id 12. Heartbeat mechanism is enabled.
+
+SEE ALSO
+	m3ua, m3ua as create, m3ua as destroy, m3ua as show, m3ua asp destroy, 
+	m3ua asp show, m3ua asp start, m3ua asp stop, m3ua as add, m3ua as remove, 
+	m3ua route add, m3ua route remove, m3ua route show.

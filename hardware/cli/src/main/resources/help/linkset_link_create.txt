@@ -1,0 +1,38 @@
+Name
+	linkset link create
+
+SYNOPSIS
+	linkset link create span <span-num> code <code-num> channel <channel-num> 
+	<linkset-name> <link-name>
+
+DESCRIPTION
+	This command is used to create a new Link within a Linkset. The Linkset must be 
+	created prior to executing this command.
+
+PARAMETERS
+	span <span-num> 	-	Port number in the Card (indexed from 0). 
+					Takes an Integer Value.
+
+	code <code-num>		-	Signaling Link code
+					SLS (Signaling link selection) assigned to this 
+					Link. Takes an Integer Value.
+
+	channel <channel-num> 	-	Time Slot number (TDM time slot).
+					Takes an Integer Value.
+
+	<linkset-name>		-	Name of the Linkset within which the new Link is
+					being created. 
+	
+	<link-name>		- 	Name of the Link to be created. This will be used 
+					to identify the Link. Takes a String value.
+
+EXAMPLES
+	linkset link create span 1 code 1 channel 1 linkset1 link1
+	
+	The above command will create a new Link identified as link1 within an existing 
+	Linkset identified as linkset1. 
+	
+SEE ALSO
+	linkset, linkset create, linkset delete, linkset activate, linkset deactivate, 
+	linkset show, linkset link delete, linkset link activate, linkset link deactivate.
+

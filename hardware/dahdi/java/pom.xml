@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<packaging>jar</packaging>
+
+	<parent>
+		<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+		<artifactId>mobicents-dahdi-parent</artifactId>
+		<version>2.2.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>mobicents-dahdi</artifactId>
+	
+	<name>
+		Mobicents SS7 :: Hardware :: ${pom.artifactId}
+	</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>javolution</groupId>
+			<artifactId>javolution</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.stream</groupId>
+			<artifactId>stream</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+			<artifactId>linkset</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+			<artifactId>mtp-api</artifactId>
+		</dependency>		
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+			<artifactId>mtp</artifactId>
+		</dependency>
+
+	</dependencies>
+	<build>
+		<finalName>mobicents-dahdi</finalName>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.4.2</version>
+				<configuration>
+					<forkMode>pertest</forkMode>
+					<!-- So we dont have to juse xxxTest.java.bak "_" -->
+					<!--
+						<excludes> <exclude>**/TestCircle.java</exclude>
+						<exclude>**/TestSquare.java</exclude> </excludes> <includes>
+						<include>Sample.java</include> </includes>
+					-->
+				</configuration>
+
+			</plugin>
+		</plugins>
+	</build>
+</project>

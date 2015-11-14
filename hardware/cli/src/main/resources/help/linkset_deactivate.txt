@@ -1,0 +1,22 @@
+Name
+	linkset deactivate
+
+SYNOPSIS
+	linkset deactivate <linkset-name>
+
+DESCRIPTION
+	This command is used to deactivate an existing Linkset.
+
+PARAMETERS
+	<linkset-name>		-	Name of the Linkset to be deactivated.
+
+EXAMPLE
+	linkset deactivate dahdilinkset1
+	
+	The above command will deactivate the Linkset identified by the name dahdilinkset1.
+
+SEE ALSO
+	linkset, linkset create, linkset delete, linkset activate, linkset show, 
+	linkset link create, linkset link delete, linkset link activate, 
+	linkset link deactivate.
+

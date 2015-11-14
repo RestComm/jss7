@@ -1,0 +1,82 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>ss7-parent</artifactId>
+		<groupId>org.mobicents.protocols.ss7</groupId>
+		<version>2.2.0-SNAPSHOT</version>
+	</parent>
+
+	<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+	<artifactId>mobicents-hardware</artifactId>
+
+	<name>
+		Mobicents SS7 :: Hardware :: Parent :: ${pom.artifactId}
+	</name>
+	<packaging>pom</packaging>
+
+
+	<properties>
+
+	</properties>
+
+	<modules>
+		<module>linkset</module>
+		<module>cli</module>
+		<module>dahdi</module>
+		<module>dialogic</module>
+	</modules>
+
+	<profiles>
+		<profile>
+			<id>maven-release</id>
+			<modules>
+				<!-- -->
+				<module>dahdi</module>
+				<module>dialogic</module>
+			</modules>
+		</profile>
+	</profiles>
+
+	<build>
+		<finalName>${pom.artifactId}-${pom.version}</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<groupId>org.mobicents.tools</groupId>
+				<version>
+					${mobicents.tools.mavenplugin.eclipse.version}
+				</version>
+				<inherited>false</inherited>
+				<executions />
+				<configuration>
+					<classpathExcludes>
+						<exclude>xml-apis:xml-apis</exclude>
+						<exclude>jtidy:jtidy</exclude>
+					</classpathExcludes>
+					<resolveTransitiveDependencies>
+						true
+					</resolveTransitiveDependencies>
+					<eclipseProjectName>
+						hardware
+					</eclipseProjectName>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<systemProperties>
+						<property>
+							<name>file.name</name>
+							<value>target/log4j.log</value>
+						</property>
+					</systemProperties>
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

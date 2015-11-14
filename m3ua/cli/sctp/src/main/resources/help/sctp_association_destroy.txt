@@ -1,0 +1,31 @@
+Name
+	sctp association destroy
+
+SYNOPSIS
+	sctp association destroy <assoc-name> stackname <stack-name>
+
+DESCRIPTION
+	This command is used to delete an existing SCTP Association identified by the 
+	name assoc-name. 
+
+PARAMETERS
+
+	Standard Parameters
+
+	<assoc-name>	-	Name of the Association to be deleted.
+	
+	Optional Parameters
+	
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.
+
+EXAMPLES
+	sctp association destroy Assoc1
+
+	The above command will destroy the Association identified by the name Assoc1. 
+
+SEE ALSO
+	sctp, sctp server create, sctp server destroy, sctp server start, 
+	sctp server stop, sctp server show, sctp association create, sctp association show
+

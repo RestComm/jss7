@@ -1,0 +1,164 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+		<artifactId>mobicents-dahdi-native</artifactId>
+		<version>2.2.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>libmobicents-dahdi-linux</artifactId>
+
+	<name>
+		Mobicents SS7 :: Hardware :: ${pom.artifactId}
+	</name>
+	
+	<properties>
+		<include.zap>/usr/include/dahdi</include.zap>
+	</properties>
+
+	<packaging>so</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+			<artifactId>mobicents-dahdi</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>${artifactId}</finalName>
+
+		<testSourceDirectory>../src/test/java</testSourceDirectory>
+
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>native-maven-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+
+					<compilerProvider>generic</compilerProvider>
+					<compilerStartOptions>
+						<compilerStartOption>
+							-fPIC -O
+						</compilerStartOption>
+					</compilerStartOptions>
+
+					<javahClassNames>
+						<javahClassName>org.mobicents.ss7.hardware.dahdi.Channel</javahClassName>
+						<javahClassName>org.mobicents.ss7.hardware.dahdi.Selector</javahClassName>
+					</javahClassNames>
+					<javahOS>linux</javahOS>
+
+					<sources>
+						<source>
+							<directory>../src/main/native</directory>
+							<fileNames>
+								<fileName>schannel.c</fileName>
+							</fileNames>
+						</source>
+
+						<source>
+
+							<directory>${include.zap}</directory>
+
+						</source>
+
+					</sources>
+
+					<linkerStartOptions>
+						<linkerStartOption>
+							-shared -lc -ldl
+						</linkerStartOption>
+					</linkerStartOptions>
+
+				</configuration>
+
+				<executions>
+					<execution>
+						<id>javah</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<classNames>
+								<className>
+									org.mobicents.ss7.hardware.dahdi.Channel
+								</className>
+							</classNames>
+						</configuration>
+						<goals>
+							<goal>javah</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>javah-1</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<classNames>
+								<className>
+									org.mobicents.ss7.hardware.dahdi.Selector
+								</className>
+							</classNames>
+						</configuration>
+						<goals>
+							<goal>javah</goal>
+						</goals>
+					</execution>
+
+
+				</executions>
+
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<forkMode>once</forkMode>
+					<environmentVariables>
+						<LD_LIBRARY_PATH>
+							${project.build.directory}
+						</LD_LIBRARY_PATH>
+						<systemProperties>
+							<property>
+								<name>lib_schannel</name>
+								<value>
+									${project.build.directory}
+								</value>
+							</property>
+						</systemProperties>
+					</environmentVariables>
+				</configuration>
+			</plugin>
+		</plugins>
+
+	</build>
+
+	<profiles>
+		<!-- to build debug artifact, run maven install -Ddebug -->
+		<profile>
+			<id>debug</id>
+			<activation>
+				<property>
+					<name>debug</name>
+				</property>
+			</activation>
+			<properties>
+				<compiler.debug.options>-MDd</compiler.debug.options>
+				<linker.debug.options>/DEBUG</linker.debug.options>
+				<classifier>debug</classifier>
+			</properties>
+		</profile>
+		<profile>
+			<id>release</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<compiler.debug.options>-MD</compiler.debug.options>
+				<linker.debug.options />
+				<classifier />
+			</properties>
+		</profile>
+	</profiles>
+</project>

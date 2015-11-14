@@ -1,0 +1,33 @@
+Name
+	m3ua asp start
+
+SYNOPSIS
+	m3ua asp start <asp-name> stackname <stack-name>
+
+DESCRIPTION
+	This command is used to start an existing ASP. You must ensure that the ASP is 
+	assigned to at least one AS prior to starting it.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<asp-name>		-	Name of the ASP to be started.
+	
+	Optional Parameters
+						
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	m3ua asp start ASP1
+	
+	The above command will start the ASP identified by the name ASP1. 
+
+SEE ALSO
+	m3ua, m3ua as create, m3ua as destroy, m3ua as show, m3ua asp create, 
+	m3ua asp destroy, m3ua asp show, m3ua asp stop, m3ua as add, m3ua as remove, 
+	m3ua route add, m3ua route remove, m3ua route show.
+
+

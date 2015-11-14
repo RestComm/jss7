@@ -1,0 +1,29 @@
+Name
+	sctp set connectdelay 
+
+SYNOPSIS
+	sctp set connectdelay <connectdelay> stackname <stack-name>
+
+DESCRIPTION
+	If the SCTP Socket is client-side, connectDelay specifies 
+	the delay time in milliseconds after which a connection 
+	with the server will be attempted. This delay is necessary 
+	when there is network disruption and the connection between 
+	the client and the server breaks, so that the SCTP stack 
+	doesn't continuously attempt to reconnect. 
+	Defalut is 30000 milliseconds.
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<connectdelay>	-	Connect delay in milliseconds.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sctp set connectdelay 40000

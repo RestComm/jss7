@@ -1,0 +1,34 @@
+Name
+	m3ua asp destroy
+
+SYNOPSIS
+	m3ua asp destroy <asp-name> stackname <stack-name>
+
+DESCRIPTION
+	This command is used to delete an existing M3UA Application Server Process
+	identified by the name 'asp-name'. You must ensure that the ASP is stopped prior 
+	to issuing the command.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<asp-name>		-	Name of the ASP to be deleted.
+	
+	Optional Parameters
+						
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	m3ua asp destroy ASP1
+	
+	The above command will destroy the ASP identified by the name ASP1. 
+
+SEE ALSO
+	m3ua, m3ua as create, m3ua as destroy, m3ua as show, m3ua asp create, 
+	m3ua asp show, m3ua asp start, m3ua asp stop, m3ua as add, m3ua as remove, 
+	m3ua route add, m3ua route remove, m3ua route show.
+
+

@@ -1,0 +1,19 @@
+Name
+	sctp get connectdelay 
+
+SYNOPSIS
+	sctp get connectdelay stackname <stack-name>
+
+DESCRIPTION
+	Returns the connect delay value
+	
+PARAMETERS
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.		
+
+EXAMPLES
+	sctp get connectdelay

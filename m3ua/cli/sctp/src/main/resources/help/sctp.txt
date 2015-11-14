@@ -1,0 +1,23 @@
+Name
+	sctp
+	Manage M3UA - SCTP
+
+SYNOPSIS
+	sctp server [create | destroy | start | stop | show]  [parameters]
+
+	sctp association [create | destroy | show]  [parameters]
+         
+	parameters 
+		Command Line parameters.
+
+DESCRIPTION
+	This command is used to manage M3UA - SCTP. You can create, destroy, start and 
+	stop a SCTP Server and view the Server configuration using the sctp server 
+	command. You can create, destroy and view SCTP Associations using the 
+	sctp association command.
+
+SEE ALSO
+	sctp server create, sctp server destroy, sctp server start, sctp server stop, 
+	sctp server show, sctp association create, sctp association destroy,
+	sctp association show
+
