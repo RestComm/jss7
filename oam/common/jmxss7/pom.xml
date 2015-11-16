@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>jmxss7</artifactId>
-	<name>TelScale SS7 :: Management-jmx-ss7 :: ${pom.artifactId}</name>
+	<name>Mobicents SS7 :: Management-jmx-ss7 :: ${pom.artifactId}</name>
 
 	<properties>
 		<tool.directory>

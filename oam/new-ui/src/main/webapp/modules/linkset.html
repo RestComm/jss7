@@ -1,0 +1,811 @@
+					<h3 style="margin: 0px;"><i class="icon-copy"></i> Linkset </h3>
+					<hr style="margin: 10 0px;"/> 
+					<button id="apply-server-settings" class="btn btn-small" onclick="applyServerSettings()" style="display:none;"><i class="icon-save" style="color: #000000;"></i>  Apply Changes</button>
+
+					<p>
+					        <ol id="breadcrumbs">
+					       </ol>
+					</p>
+
+					<p>
+						<br/>
+					</p> 
+					
+ 					<p>
+					<table id="linkset-list-table" class="table table-hover">
+						<thead>
+							<tr>
+								<th style="width: 30px;">&nbsp;</th>
+								<th>Name</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table> 					
+					
+					<table id="no-linkset-list-table" class="table table-hover"  style="display: none;">
+						<tr>
+							<td>
+								<div class="alert alert-warning fade in text-center" >
+									<h2>No Units has been defined yet.</h2>
+									<input type="hidden" value="0" id="linksetTableVisibility"/>
+								</div>
+							</td>
+						</tr>
+					</table>
+ 					
+ 					
+ 					
+ 					<div id="div-ss7-linkset-settings">
+					
+					</div>				 
+				</p>	
+				<script type="text/javascript">
+					var crumbList;
+					$(document).ready(function () {
+						crumbList = new CrumbList('setMenu(this, \'linkset\')','Linkset Managemen Unit');
+						crumbList.output();
+						refreshLinksetList();
+						
+	    			});
+		            
+					
+					function showInternalPageDetails(linksetName,title){
+						generateMenu(linksetName,title);
+						$("#linkset-list-table").hide();
+						$("#no-linkset-list-table").hide();
+						$('#div-ss7-linkset-settings').children('span').hide();
+						$("#ss7-linkset-settings-"+linksetName).show();
+					}	
+					
+					function addLinkset(name){
+						var formInvalid = false;
+
+						var linkseteType = $("#linkseteType"+name).val();
+						var opc = $("#opc"+name).val();
+						var dpc = $("#dpc"+name).val();
+						var ni = $("#ni"+name).val();
+					//	var sourceMode = $("#sourceMode"+name).val();
+					//	var destMode = $("#destMode"+name).val();
+					//	var asName = $("#asName"+name).val();
+						var linksetName = $("#linksetName"+name).val();
+						var commandString = "";
+						
+						
+						if(linkseteType == "dahdi"){
+							
+							
+						    if($("#opc"+name).val().length === 0) {
+						    	formInvalid = true;
+							    $("#opc"+name).parent().parent().addClass("error");
+							    $("#opc"+name).siblings(".help-inline").show();
+							}
+						    
+						    if($("#dpc"+name).val().length === 0) {
+						    	formInvalid = true;
+							    $("#dpc"+name).parent().parent().addClass("error");
+							    $("#dpc"+name).siblings(".help-inline").show();
+							}
+						    
+						    if($("#ni"+name).val().length === 0) {
+						    	formInvalid = true;
+							    $("#ni"+name).parent().parent().addClass("error");
+							    $("#ni"+name).siblings(".help-inline").show();
+							}
+						    
+						    if($("#linksetName"+name).val().length === 0) {
+						    	formInvalid = true;
+							    $("#linksetName"+name).parent().parent().addClass("error");
+							    $("#linksetName"+name).siblings(".help-inline").show();
+							}
+							
+							if(!formInvalid){
+								commandString = "linkset,create,dahdi,opc,"+opc+",apc,"+dpc+",ni,"+ni+","+linksetName+"";
+							}
+						}
+						
+					//	if(linkseteType == "dialogic"){
+					//		if(opc == "" || dpc == "" || ni == "" || linksetName == "" || sourceMode == "" || destMode == "" ) {
+					//			formInvalid = true;
+					//		}
+					//	}
+						
+					//	if(linkseteType == "m3ua"){
+					//		if(opc == "" || dpc == "" || ni == "" || linksetName == "" || asName == "" ) {
+					//			formInvalid = true;
+					//		}
+					//	}
+
+						
+						if(formInvalid) {
+							$("#create-linkset-error"+name).show();
+							logToConsole("ERROR", "Some Fields are not correctly filled out, please double check!");
+							return false;
+						} else {
+							$("#create-linkset-error"+name).hide();
+							
+						}
+						
+						mbeanSearch="com.telscale.ss7:layer=LINKSET,type=Management,name="+name;
+						jolokia.execute(mbeanSearch,"createLinkset",commandString,
+								{
+									success: function(value) {
+										$('#entities-modal-linksets'+name).modal('hide');
+										refreshLinksetList();
+										logToConsole('INFO', 'Successfully added linkset for ' + name );
+									},
+									error: function(value){
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									}
+								});	
+					}
+					
+					function deleteLinkset(name,linksetName){
+						
+						var commandString = "linkset,delete," + linksetName;
+						
+						mbeanSearch="com.telscale.ss7:layer=LINKSET,type=Management,name="+name;
+						jolokia.execute(mbeanSearch,"deleteLinkset",commandString,
+								{
+									success: function(value) {
+										refreshLinksetList();
+										logToConsole('INFO', 'Successfully removed linkset  ' + linksetName );
+									},
+									error: function(value){
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									}
+								});	
+					}
+					
+					function activateLinkset(name,linksetName){
+						var commandString = "linkset,activate," + linksetName;
+						
+						mbeanSearch="com.telscale.ss7:layer=LINKSET,type=Management,name="+name;
+						jolokia.execute(mbeanSearch,"activateLinkset",commandString,
+								{
+									success: function(value) {
+										refreshLinksetList();
+										logToConsole('INFO', 'Successfully activated linkset ' + linksetName );
+									},
+									error: function(value){
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									}
+								});	
+					}  
+					
+					function deactivateLinkset(name,linksetName){
+						var commandString = "linkset,deactivate," + linksetName;
+						
+						mbeanSearch="com.telscale.ss7:layer=LINKSET,type=Management,name="+name;
+						jolokia.execute(mbeanSearch,"deactivateLinkset",commandString,
+								{
+									success: function(value) {
+										refreshLinksetList();
+										logToConsole('INFO', 'Successfully deactivated linkset ' +linksetName);
+									},
+									error: function(value){
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									}
+								});	
+					}
+					
+					function addLink(name,linksetName){
+						var formInvalid = false;
+						
+						var linkname = $("#linkname"+name+"-"+linksetName).val();
+						var span = $("#span"+name+"-"+linksetName).val();
+						var code = $("#code"+name+"-"+linksetName).val();
+						var channel = $("#channel"+name+"-"+linksetName).val();
+						
+					    if($("#linkname"+name+"-"+linksetName).val().length === 0) {
+					    	formInvalid = true;
+						    $("#linkname"+name+"-"+linksetName).parent().parent().addClass("error");
+						    $("#linkname"+name+"-"+linksetName).siblings(".help-inline").show();
+						}
+					    if($("#span"+name+"-"+linksetName).val().length === 0) {
+					    	formInvalid = true;
+						    $("#span"+name+"-"+linksetName).parent().parent().addClass("error");
+						    $("#span"+name+"-"+linksetName).siblings(".help-inline").show();
+						}
+					    if($("#code"+name+"-"+linksetName).val().length === 0) {
+					    	formInvalid = true;
+						    $("#code"+name+"-"+linksetName).parent().parent().addClass("error");
+						    $("#code"+name+"-"+linksetName).siblings(".help-inline").show();
+						}
+					    if($("#channel"+name+"-"+linksetName).val().length === 0) {
+					    	formInvalid = true;
+						    $("#channel"+name+"-"+linksetName).parent().parent().addClass("error");
+						    $("#channel"+name+"-"+linksetName).siblings(".help-inline").show();
+						}
+						
+						if(formInvalid) {
+							$("#create-link-error"+name+'-'+linksetName).show();
+							logToConsole("ERROR", "Some Fields are not correctly filled out, please double check!");
+							return false;
+						} else {
+							$("#create-link-error"+name).hide();
+						}
+						
+						var commandString  ="linkset,link,create,span,"+span+",code,"+code+",channel,"+channel+","+linksetName+","+linkname+"";
+						
+						
+						mbeanSearch="com.telscale.ss7:layer=LINKSET,type=Management,name="+name;
+						jolokia.execute(mbeanSearch,"createLink",commandString,
+								{
+									success: function(value) {
+										$('#entities-modal-link'+name+ '-'+linksetName).modal('hide');
+										refreshLinksetList();
+										logToConsole('INFO', 'Successfully added linkset for ' + name );
+									},
+									error: function(value){
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									}
+								});	
+					}
+					
+					
+					function deleteLink(name,linkname,linksetName){
+						
+						var commandString = "linkset,link,delete,"+linksetName+","+linkname+"";
+						
+						mbeanSearch="com.telscale.ss7:layer=LINKSET,type=Management,name="+name;
+						jolokia.execute(mbeanSearch,"deleteLink",commandString,
+								{
+									success: function(value) {
+										refreshLinksetList();
+										logToConsole('INFO', 'Successfully removed link  ' + linkname );
+									},
+									error: function(value){
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									}
+								});	
+					}
+					
+					
+					
+					function activateLink(name,linkname,linksetName){
+						
+						var commandString = "linkset,link,activate,"+linksetName+","+linkname+"";
+						
+						mbeanSearch="com.telscale.ss7:layer=LINKSET,type=Management,name="+name;
+						jolokia.execute(mbeanSearch,"activateLink",commandString,
+								{
+									success: function(value) {
+										refreshLinksetList();
+										logToConsole('INFO', 'Successfully activated link  ' + linkname );
+									},
+									error: function(value){
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									}
+								});	
+					}
+
+					
+					function deactivateLink(name,linkname,linksetName){
+						
+						var commandString = "linkset,link,deactivate,"+linksetName+","+linkname+"";
+						
+						mbeanSearch="com.telscale.ss7:layer=LINKSET,type=Management,name="+name;
+						jolokia.execute(mbeanSearch,"deactivateLink",commandString,
+								{
+									success: function(value) {
+										refreshLinksetList();
+										logToConsole('INFO', 'Successfully deactivated link  ' + linkname );
+									},
+									error: function(value){
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									}
+								});	
+					}
+					
+					function refreshLinksetList(){
+						mbeanSearch="com.telscale.ss7:layer=LINKSET,type=Management,name=*";
+						var mbean;
+						$.ajax({
+							dataType: "json",
+							url: window.jolokiaProtocol + "//" + window.jolokiaAddress + ":" + window.jolokiaPort + "/jolokia/search/" + mbeanSearch
+						})
+						.done(function(html) {
+							if (html.error) {
+								logToConsole("ERROR", html.error);
+							}
+							else {		
+								
+								var noOfLinksetsDefined = 0;
+								jQuery.each(html.value, function() {
+									noOfLinksetsDefined = noOfLinksetsDefined +1;
+									mbean = this;
+									var j4p = new Jolokia({url: window.jolokiaProtocol+ "//" + window.jolokiaAddress + ":" + window.jolokiaPort + "/jolokia/" });
+									
+									var name = j4p.getAttribute(mbean, "Name",{method: "post"});
+									
+									var isLinksetStarted = true;
+									
+									$('#linkset-list-table').children('tbody').append('<tr class="service-row" onclick="showInternalPageDetails(\'' + name + '-super\',\'' + name + '\')"><td style="vertical-align: middle; text-align: center;"><i style="color: ' + (isLinksetStarted ? '#51A351' : '#BD362F') + ';" class="' + (isLinksetStarted ? 'icon-play-circle' : 'icon-remove-circle') + '"></i></td>'+
+											'<td style="cursor: pointer;">' + name + '</a></td>' +
+											'</tr>' );
+									
+
+									
+									
+									var linksets = j4p.getAttribute(mbean, "Linksets",{method: "post"});
+									var persistDir = j4p.getAttribute(mbean, "PersistDir",{method: "post"});
+									var linksetFactoryFactory = j4p.getAttribute(mbean, "LinksetFactoryFactory",{method: "post"});
+									
+									
+									var linksetFactoryFactorySelectOption = '';
+					
+									jQuery.each(linksetFactoryFactory.linksetFactories, function() {
+										var linksetFactoryFactory = this;
+										linksetFactoryFactorySelectOption += '<option value="'+linksetFactoryFactory.name+'">'+linksetFactoryFactory.name+'</option>';											
+									});	
+									
+									$('#div-ss7-linkset-settings').append('<span id="ss7-linkset-settings-'+name+'-super" style="display:none;">'+
+											'	<ul class="nav nav-tabs" id="myTab">'+
+											'		<li class="active"><a href="#linksetDetail'+name+'" data-toggle="tab"><i style="color: #CC9522;" class="icon-copy"></i> Details</a></li>'+
+											'		<li><a href="#linksets'+name+'" data-toggle="tab"><i style="color: #CC9522;" class="icon-map-marker"></i> Linksets</a></li>'+
+											'	</ul>	'+
+											''+
+											'	<div class="tab-content">'+
+											'		<div class="tab-pane active" id="linksetDetail'+name+'">'+
+											'			<table id="linksetDetail-list-table'+name+'" class="table table-hover">'+
+											'				<thead>'+
+											'					<tr>'+
+											'					<th style="width: 30px;">&nbsp;</th>'+
+											'					<th>Property</th>'+
+											'					<th>Value</th>'+
+											'					</tr>'+
+											'				</thead>'+
+											'				<tbody>'+
+											'					<tr class="component-row">'+
+											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-copy"></i></td>'+
+											'					<td>Name</td>'+
+											'					<td>' + name + '</td>'+
+											'					</tr>'+
+											'					<tr class="component-row">'+
+											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-copy"></i></td>'+
+											'					<td>Persis Dir</td>'+
+											'					<td>' + persistDir + '</td>'+
+											'					</tr>'+
+											'				</tbody>'+
+											'			</table>'+ 											
+											'		</div>'+
+											
+											
+											'		<div class="tab-pane" id="linksets'+name+'">'+
+											'			<table id="no-linksets-list-table'+name+'" class="table" style="display: none;">'+
+											'				<tr>'+
+											'					<td>'+
+											'						<div class="alert alert-warning fade in text-center" >'+
+											'							<h2>No Linksets has been defined yet.</h2>'+
+											'						</div>'+
+											'					</td>'+
+											'				</tr>'+
+											'			</table>'+	
+											'			<table id="linksets-list-table'+name+'" class="table table-hover">'+
+											'				<thead>'+
+											'					<tr>'+
+											'					<th style="width: 30px;">&nbsp;</th>'+
+											'					<th>Name</th>'+
+											'					<th>State</th>'+
+											'					<th>Mode</th>'+
+											'					<th>Actions</th>'+
+											'					<th>Delete</th>'+
+											'					</tr>'+
+											'				</thead>'+
+											'				<tbody>'+
+											'				</tbody>'+	
+											'			</table>'+ 	
+											'			<a href="#entities-modal-linksets'+name+'" role="button" class="btn btn-info btn-small" data-toggle="modal" ><i class="icon-external-link"></i> Create Linkset</a>'+
+											'			<div id="entities-modal-linksets'+name+'" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">'+
+											'				<div class="modal-header">'+
+											'					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
+											'					<h3><i class="icon-map-marker" style="color: #CC9522;"></i> Create Linkset</h3>'+
+											'				</div>'+
+											'				<div id="entities-modal-body" class="modal-body">'+
+											'					<div class="alert alert-error" id="create-linksets-error'+name+'" style="display:none;">'+
+											'					  <button type="button" class="close">&times;</button>'+
+											'					  Some Fields are not correctly filled out, please double check the settings below !'+
+											'					</div>'+
+											'					<p>'+                        
+											'						<span>'+
+											'							<label>Linkset Type : </label>'+
+											'                            <select id="linkseteType'+name+'" style="width: 300px;">'+linksetFactoryFactorySelectOption+'</select></br>'+
+											
+											'							<div class="control-group">'+
+											'  								<label class="control-label" for="opc'+name+'">Originating Point Code : </label>'+
+											' 								<div class="controls">'+
+											'      								<input id="opc'+name+'" type="text" placeholder="Originating Point Code"  onkeyup="removeError(\'opc'+name+'\');" />'+
+											'    								<span class="help-inline" style="display: none;">Missing Originating Point Code</span>'+
+											'  								</div>'+
+											'							</div>'+
+											
+									//		'							<label>Originating Point Code : </label><input id="opc'+name+'" type="text" placeholder="OPC"></input></br>'+
+									
+											'							<div class="control-group">'+
+											'  								<label class="control-label" for="dpc'+name+'">Destination Point Code : </label>'+
+											' 								<div class="controls">'+
+											'      								<input id="dpc'+name+'" type="text" placeholder="Destination Point Code"  onkeyup="removeError(\'dpc'+name+'\');" />'+
+											'    								<span class="help-inline" style="display: none;">Missing Destination Point Code</span>'+
+											'  								</div>'+
+											'							</div>'+
+											
+										//	'							<label>Destination Point Code : </label><input id="dpc'+name+'" type="text" class="input-large" placeholder="DPC"></input></br>'+
+										
+											'							<div class="control-group">'+
+											'  								<label class="control-label" for="ni'+name+'">Network Indicator : </label>'+
+											' 								<div class="controls">'+
+											'      								<input id="ni'+name+'" type="text" placeholder="Network Indicator"  onkeyup="removeError(\'ni'+name+'\');" />'+
+											'    								<span class="help-inline" style="display: none;">Missing Network Indicator</span>'+
+											'  								</div>'+
+											'							</div>'+
+										
+										//	'							<label>Network Indicator : </label><input id="ni'+name+'" type="text" class="input-large" placeholder="NI"></input></br>'+
+											
+										//	'							<label>Source Mode : </label><input id="sourceMode'+name+'" type="text" placeholder="Source Mode"></input></br>'+
+										//	'							<label>Destination Mode : </label><input id="destMode'+name+'" type="text" class="input-large" placeholder="Destination Mode"></input></br>'+
+										//	'							<label>Application Service Name : </label><input id="asName'+name+'" type="text" class="input-large" placeholder="AS Name"></input></br>'+
+										
+											'							<div class="control-group">'+
+											'  								<label class="control-label" for="linksetName'+name+'">Linkset Name : </label>'+
+											' 								<div class="controls">'+
+											'      								<input id="linksetName'+name+'" type="text" placeholder="Linkset Name"  onkeyup="removeError(\'linksetName'+name+'\');" />'+
+											'    								<span class="help-inline" style="display: none;">Missing Linkset Name</span>'+
+											'  								</div>'+
+											'							</div>'+
+										
+										//	'							<label>Linkset Name : </label><input id="linksetName'+name+'" type="text" class="input-large" placeholder="Linkset Name"></input></br>'+
+											
+											
+											'							<button id="add-rsp-btn'+name+'" onclick="addLinkset(\'' + name + '\');" class="btn btn btn-primary" >Create</button> '+
+											'						</span>'+					
+											'					</p>'+
+											'				</div>'+					
+											'				<div class="modal-footer">'+
+											'					<a href="#" onclick="$(\'#entities-modal-linksets'+name+'\').modal(\'hide\'); return false;" class="btn">Close</a>'+
+										    '				</div>'+
+											'			</div>'+
+											'		</div>'+	
+											
+										
+											'	</div>	'+
+											'</span>');
+									
+									$('.linksets-row'+name).remove();
+									
+									var noOfLinksets = 0 ;
+									
+									jQuery.each(linksets, function() {
+										var linksetTmp = this;
+										var linksetName = linksetTmp.name;
+										var linksetState = linksetTmp.state;
+										var linksetMode = linksetTmp.mode;
+										var links = linksetTmp.links;
+										
+										var opc = linksetTmp.opc;
+										var apc = linksetTmp.apc;
+										var ni = linksetTmp.ni;
+										
+										noOfLinksets = noOfLinksets + 1;
+										
+										var color = "#CC9522";
+										var aspAction = "Start";
+										var aspButtonStyle = "warning";
+										
+									
+					
+										$('#linksets-list-table'+name).children('tbody').append('<tr class="linksets-row'+name+'">'+
+												'<td style="vertical-align: middle; text-align: center;"><i style="color: '+color+';" class="icon-map-marker"></i></td>'+
+												'<td><a href="#" onclick="showInternalPageDetails(\''+name+'-linkset-'+linksetName+'\',\''+linksetName+'\')">' + linksetName + '</a></td>' + 
+												'<td>' +  ((linksetState == 1)? "Unavailable" : ((linksetState == 2)?"Shutdown":"Available"))  + '</td>' + 
+												'<td>' + ((linksetMode == 1) ? "Not Configured" : "Configured")  + '</td>' +                 
+												'<td style="font-size: 16px; vertical-align: middle; text-align: center; width: 100px;">' + 
+												'<button class="btn btn-small btn-'+((linksetState == 3)?"warning":"success")+'" data-toggle="tooltip" title="Start ASP" data-placement="bottom" onclick="'+((linksetState == 3)?"deactivateLinkset":"activateLinkset")+'(\'' + name +  '\',\'' + linksetName +  '\')">'+((linksetState == 3)?"Deactivate":"Activate")+'</i></button> ' +
+											    '</td>' +
+												'<td style="font-size: 16px; vertical-align: middle; text-align: center; width: 100px;">' + 
+												'<button class="btn btn-small btn-danger" data-toggle="tooltip" title="Delete ASP" data-placement="bottom" onclick="deleteLinkset(\'' + name +  '\',\'' + linksetName +  '\')"><i class="icon-remove"> </i></button> ' +
+											    '</td></tr>' 
+										);
+										
+										//start LINK DISPLAY segment
+										
+										$('#div-ss7-linkset-settings').append('<span id="ss7-linkset-settings-'+name+'-linkset-'+linksetName+'" style="display:none;">'+
+												'	<ul class="nav nav-tabs" id="myTab">'+
+												'		<li class="active"><a href="#linksetDetail'+name+'-'+linksetName+'" data-toggle="tab"><i style="color: #CC9522;" class="icon-signin"></i> Details</a></li>'+
+												'		<li><a href="#links'+name+'-'+linksetName+'" data-toggle="tab"><i style="color: #CC9522;" class="icon-cog"></i> Links</a></li>'+
+												'	</ul>	'+
+												''+
+												'	<div class="tab-content">'+
+												'		<div class="tab-pane active" id="linksetDetail'+name+'-'+linksetName+'">'+
+												'			<table id="linksetDetail-list-table'+name+'-'+linksetName+'" class="table table-hover">'+
+												'				<thead>'+
+												'					<tr>'+
+												'					<th style="width: 30px;">&nbsp;</th>'+
+												'					<th>Property</th>'+
+												'					<th>Value</th>'+
+												'					</tr>'+
+												'				</thead>'+
+												'				<tbody>'+
+												'					<tr class="linksetDetail-row">'+
+												'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+												'					<td>Name</td>'+
+												'					<td>' + linksetName + '</td>'+
+												'					</tr>'+
+												'					<tr class="linksetDetail-row">'+
+												'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+												'					<td>State</td>'+
+												'					<td>' + ((linksetState == 1)? "Unavailable" : ((linksetState == 2)?"Shutdown":"Available")) + '</td>'+
+												'					</tr>'+
+												'					<tr class="linksetDetail-row">'+
+												'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+												'					<td>Mode</td>'+
+												'					<td>' + ((linksetMode == 1) ? "Not Configured" : "Configured")   + '</td>'+
+												'					</tr>'+
+												'					<tr class="linksetDetail-row">'+
+												'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+												'					<td>OPC</td>'+
+												'					<td>' + opc + '</td>'+
+												'					</tr>'+
+												'					<tr class="linksetDetail-row">'+
+												'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+												'					<td>APC</td>'+
+												'					<td>' + apc + '</td>'+
+												'					</tr>'+
+												'					<tr class="linksetDetail-row">'+
+												'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+												'					<td>NI</td>'+
+												'					<td>' + ni + '</td>'+
+												'					</tr>'+
+												'				</tbody>'+
+												'			</table>'+ 											
+												'		</div>'+
+												
+												'		<div class="tab-pane" id="links'+name+'-'+linksetName+'">'+
+												'			<table id="no-links-list-table'+name+'-'+linksetName+'" class="table" style="display: none;">'+
+												'				<tr>'+
+												'					<td>'+
+												'						<div class="alert alert-warning fade in text-center" >'+
+												'							<h2>No Links has been defined yet.</h2>'+
+												'						</div>'+
+												'					</td>'+
+												'				</tr>'+
+												'			</table>'+	
+												'			<table id="links-list-table'+name+'-'+linksetName+'" class="table table-hover">'+
+												'				<thead>'+
+												'					<tr>'+
+												'					<th style="width: 30px;">&nbsp;</th>'+
+												'					<th>Name</th>'+
+												'					<th>State</th>'+
+												'					<th>Mode</th>'+
+												'					<th>Action</th>'+
+												'					<th>Delete</th>'+
+												'					</tr>'+
+												'				</thead>'+
+												'				<tbody>'+
+												'				</tbody>'+	
+												'			</table>'+ 
+												
+												
+												'			<a href="#entities-modal-link'+name+'-'+linksetName+'" role="button" class="btn btn-info btn-small" data-toggle="modal" ><i class="icon-external-link"></i> Create Link</a>'+
+												'			<div id="entities-modal-link'+name+'-'+linksetName+'" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">'+
+												'				<div class="modal-header">'+
+												'					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
+												'					<h3><i class="icon-map-marker" style="color: #CC9522;"></i> Create Link in Linkset '+linksetName+'</h3>'+
+												'				</div>'+
+												'				<div id="entities-modal-body" class="modal-body">'+
+												'					<div class="alert alert-error" id="create-link-error'+name+'-'+linksetName+'" style="display:none;">'+
+												'					  <button type="button" class="close">&times;</button>'+
+												'					  Some Fields are not correctly filled out, please double check the settings below !'+
+												'					</div>'+
+												'					<p>'+                         
+												'						<span>'+
+												
+												
+												'							<div class="control-group">'+
+												'  								<label class="control-label" for="linkname'+name+'-'+linksetName+'">Link Name : </label>'+
+												' 								<div class="controls">'+
+												'      								<input id="linkname'+name+'-'+linksetName+'" type="text" placeholder="Link Name"  onkeyup="removeError(\'linkname'+name+'-'+linksetName+'\');" />'+
+												'    								<span class="help-inline" style="display: none;">Missing Link Name</span>'+
+												'  								</div>'+
+												'							</div>'+
+												
+										//		'							<label>Link Name : </label><input id="linkname'+name+'-'+linksetName+'" type="text" class="input-large" placeholder="LInk Name"></input></br>'+
+										
+												'							<div class="control-group">'+
+												'  								<label class="control-label" for="span'+name+'-'+linksetName+'">Span : </label>'+
+												' 								<div class="controls">'+
+												'      								<input id="span'+name+'-'+linksetName+'" type="text" placeholder="Span"  onkeyup="removeError(\'span'+name+'-'+linksetName+'\');" />'+
+												'    								<span class="help-inline" style="display: none;">Missing Span</span>'+
+												'  								</div>'+
+												'							</div>'+
+										
+										//		'							<label>Span : </label><input id="span'+name+'-'+linksetName+'" type="text" class="input-large" placeholder="Span"></input></br>'+
+										
+												'							<div class="control-group">'+
+												'  								<label class="control-label" for="code'+name+'-'+linksetName+'">Code : </label>'+
+												' 								<div class="controls">'+
+												'      								<input id="code'+name+'-'+linksetName+'" type="text" placeholder="Code"  onkeyup="removeError(\'code'+name+'-'+linksetName+'\');" />'+
+												'    								<span class="help-inline" style="display: none;">Missing Code</span>'+
+												'  								</div>'+
+												'							</div>'+
+										
+											//	'							<label>Code : </label><input id="code'+name+'-'+linksetName+'" type="text" placeholder="Code"></input></br>'+
+											
+												'							<div class="control-group">'+
+												'  								<label class="control-label" for="channel'+name+'-'+linksetName+'">Channel : </label>'+
+												' 								<div class="controls">'+
+												'      								<input id="channel'+name+'-'+linksetName+'" type="text" placeholder="Channel"  onkeyup="removeError(\'channel'+name+'-'+linksetName+'\');" />'+
+												'    								<span class="help-inline" style="display: none;">Missing Channel</span>'+
+												'  								</div>'+
+												'							</div>'+
+											
+											//	'							<label>Channel : </label><input id="channel'+name+'-'+linksetName+'" type="text" class="input-large" placeholder="Channel"></input></br>'+
+												
+												
+												'							<button id="add-rsp-btn'+name+'" onclick="addLink(\'' + name +  '\',\'' + linksetName +  '\');" class="btn btn btn-primary" >Create</button> '+
+												'						</span>'+					
+												'					</p>'+
+												'				</div>'+					
+												'				<div class="modal-footer">'+
+												'					<a href="#" onclick="$(\'#entities-modal-link'+name+'-'+linksetName+'\').modal(\'hide\'); return false;" class="btn">Close</a>'+
+											    '				</div>'+
+												'			</div>'+
+								
+												'		</div>'+
+												
+												
+												'	</div>	'+
+												'</span>');
+										
+											$('.links-row'+name+'-'+linksetName).remove();
+											var noOfLinksForLinkset = 0;
+											jQuery.each(links, function() {
+												noOfLinksForLinkset = noOfLinksForLinkset + 1;
+												var linkTmp = this;
+												var linkNameTmp = linkTmp.name;
+												var linkStateTmp = linkTmp.state;
+												var linkModeTmp = linkTmp.mode;
+												
+												var linkSpanTmp = linkTmp.span;
+												var linkCodeTmp = linkTmp.code;
+												var linkChannelTmp = linkTmp.channelID;
+												
+												
+												$('#links-list-table'+name+'-'+linksetName).children('tbody').append('<tr class="links-row'+name+'-'+linksetName+'"><td style="vertical-align: middle; text-align: center;"><i style="color: #CC9522;" class="icon-map-marker"></i></td>'+
+														'<td><a href="#" onclick="showInternalPageDetails(\''+name+'-linksof-'+linksetName+'-'+linkNameTmp+'\',\''+linkNameTmp+'\')">' + linkNameTmp + '</a></td>' + 
+														'<td>' + ((linksetState == 1)? "Unavailable" : ((linksetState == 2)?"Shutdown":  ((linksetState == 3)?"Available":"Failed") )) + '</td>' + 
+														'<td>' + ((linkModeTmp == 1) ? "Not Configured" : "Configured") + '</td>' + 
+														'<td style="font-size: 16px; vertical-align: middle; text-align: center; width: 100px;">' + 
+														'<button class="btn btn-small btn-'+((linkStateTmp == 3)?"warning":"success")+'" data-toggle="tooltip" title="Start ASP" data-placement="bottom" onclick="'+((linkStateTmp == 3)?"deactivateLink":"activateLink")+'(\'' + name +  '\',\'' + linkNameTmp +  '\',\'' + linksetName +  '\')">'+((linkStateTmp == 3)?"Deactivate":"Activate")+'</i></button> ' +
+													    '</td>' +
+														'<td style="font-size: 16px; vertical-align: middle; text-align: center; width: 100px;">' + 
+														'<button class="btn btn-small btn-danger" data-toggle="tooltip" title="Remove Link" data-placement="bottom" onclick="deleteLink(\'' + name +  '\',\'' + linkNameTmp +  '\',\'' + linksetName +  '\')"><i class="icon-remove"> </i></button> ' +
+													    '</td>' + 
+													    '</tr>' 
+												);	
+												
+												
+												
+												//START LINK DISPLAY SEGMENT
+											    $('#div-ss7-linkset-settings').append('<span id="ss7-linkset-settings-'+name+'-linksof-'+linksetName+'-'+linkNameTmp+'" style="display:none;">'+
+													'	<ul class="nav nav-tabs" id="myTab">'+
+													'		<li class="active"><a href="#linksoftDetail'+name+'-'+linksetName+'" data-toggle="tab"><i style="color: #CC9522;" class="icon-signin"></i> Details</a></li>'+
+													'	</ul>	'+
+													''+
+													'	<div class="tab-content">'+
+													'		<div class="tab-pane active" id="linksetDetail'+name+'-'+linksetName+'-'+linkNameTmp+'">'+
+													'			<table id="linksetDetail-list-table'+name+'-'+linksetName+'-'+linkNameTmp+'" class="table table-hover">'+
+													'				<thead>'+
+													'					<tr>'+
+													'					<th style="width: 30px;">&nbsp;</th>'+
+													'					<th>Property</th>'+
+													'					<th>Value</th>'+
+													'					</tr>'+
+													'				</thead>'+
+													'				<tbody>'+
+													'					<tr class="linksetDetail-row">'+
+													'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+													'					<td>Name</td>'+
+													'					<td>' + linkNameTmp + '</td>'+
+													'					</tr>'+
+													'					<tr class="linksetDetail-row">'+
+													'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+													'					<td>State</td>'+
+													'					<td>' + ((linksetState == 1)? "Unavailable" : ((linksetState == 2)?"Shutdown":  ((linksetState == 3)?"Available":"Failed") )) + '</td>'+
+													'					</tr>'+
+													'					<tr class="linksetDetail-row">'+
+													'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+													'					<td>Mode</td>'+
+													'					<td>' + ((linkModeTmp == 1) ? "Not Configured" : "Configured")   + '</td>'+
+													'					</tr>'+
+													'					<tr class="linksetDetail-row">'+
+													'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+													'					<td>Span</td>'+
+													'					<td>' + linkSpanTmp + '</td>'+
+													'					</tr>'+
+													'					<tr class="linksetDetail-row">'+
+													'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+													'					<td>Code</td>'+
+													'					<td>' + linkCodeTmp + '</td>'+
+													'					</tr>'+
+													'					<tr class="linksetDetail-row">'+
+													'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+													'					<td>Channel</td>'+
+													'					<td>' + linkChannelTmp + '</td>'+
+													'					</tr>'+
+													'				</tbody>'+
+													'			</table>'+ 											
+													'		</div>'+
+													'	</div>	'+
+													'</span>');
+												
+												//END LINK DISPLAY SEGMENT								
+												
+												
+												
+											});	
+											
+											if(noOfLinksForLinkset == 0){
+												$('#no-links-list-table'+name+'-'+linksetName).show();
+												$('#links-list-table'+name+'-'+linksetName).hide();
+											}else {
+												$('#no-links-list-table'+name+'-'+linksetName).hide();
+												$('#links-list-table'+name+'-'+linksetName).show();
+											}	
+
+										//end LINK DISPLAY segment
+										
+										
+									});	
+									
+									
+									if(noOfLinksets == 0){
+										$('#no-linksets-list-table'+name).show();
+										$('#linksets-list-table'+name).hide();
+									}else {
+										$('#no-linksets-list-table'+name).hide();
+										$('#linksets-list-table'+name).show();
+									}	
+									
+									
+								});
+								
+								var linksetTableVisibilityValue = $("#linksetTableVisibility").val();
+								linksetTableVisibilityValue = linksetTableVisibilityValue +1;
+								$("#linksetTableVisibility").val(linksetTableVisibilityValue);
+								
+								if(linksetTableVisibilityValue==1){
+									if(noOfLinksetsDefined == 0 ){
+										$('#no-linkset-list-table').show();
+										$('#linkset-list-table').hide();
+									}else{
+										$('#no-linkset-list-table').hide();
+										$('#linkset-list-table').show();
+									}
+								}
+								
+
+							}
+						})
+						.fail(function() {
+							logToConsole("ERROR", "Failure trying to communicate with the jSS7. Please try again later.");
+						})
+											
+					}
+					</script>

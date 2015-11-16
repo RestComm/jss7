@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>tcap-oam</artifactId>
-	<name>TelScale SS7 :: Management-jmx :: ${pom.artifactId}</name>
+	<name>Mobicents SS7 :: Management-jmx :: ${pom.artifactId}</name>
 
 	<properties>
 		<tool.directory>

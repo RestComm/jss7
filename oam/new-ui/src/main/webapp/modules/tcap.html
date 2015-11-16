@@ -1,0 +1,325 @@
+					<h3 style="margin: 0px;"><i class="icon-cloud"></i> Transaction Capabilities Application Part (TCAP)</h3>
+					<hr style="margin: 10 0px;"/>
+					<button id="apply-server-settings" class="btn btn-small" onclick="applyServerSettings()" style="display:none;"><i class="icon-save" style="color: #000000;"></i>  Apply Changes</button>
+					
+					<p>
+					        <ol id="breadcrumbs">
+					       </ol>
+					</p>
+					
+					<p>
+						<br/>
+					</p> 
+					
+ 					<p>
+					<table id="tcap-list-table" class="table table-hover">
+						<thead>
+							<tr>
+								<th style="width: 30px;">&nbsp;</th>
+								<th>Name</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table> 					
+ 					
+ 					<div id="div-ss7-tcap-settings">
+					
+					</div>					 
+				</p>	
+				<script type="text/javascript">
+					$(document).ready(function () {
+						crumbList = new CrumbList('setMenu(this, \'tcap\')','TCAP management units');
+						crumbList.output();
+						refreshTcapList();
+	    			});
+					
+					function onSipServrConfigOk(mbeanName, propertyName, spanId){
+						var formInvalid = false;
+						
+						var spanElement = document.getElementById(spanId + "-input");
+						var eleChild = spanElement.childNodes;
+						var inputTextEle = eleChild[0];
+						var spanElementTxt = document.getElementById(spanId + "-text");
+						
+						var propvalue = inputTextEle.value;
+						
+						if(propvalue.trim() == "") {
+							$("#div-"+spanId + "-input").addClass("error");					    			
+							formInvalid = true;
+						} else if($("#div-"+spanId + "-input").hasClass("error")) {
+							$("#div-"+spanId + "-input").removeClass("error");		
+						}	
+						
+						if(formInvalid) {
+							$("#login-settings-error").show();
+							logToConsole("ERROR", "Some Fields are not correctly filled out, please double check the settings !");
+							return false;
+						} else {
+							$("#login-settings-error").hide();
+						}					
+						
+						var mbeanSearch="com.telscale.ss7:layer=TCAP,type=Management,name="+mbeanName;
+						jolokia.request(
+								[
+									{ type: "write", mbean: mbeanSearch, attribute: propertyName, value: inputTextEle.value },
+								],
+								{
+									success: function(response) {
+										
+										logToConsole("INFO", "TCAP property "+ propertyName +"  successfully updated.");
+										
+										spanElementTxt.innerHTML= inputTextEle.value;
+									},
+									error: function(value) {
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									} 
+								}
+							);		
+						
+						spanElement.style.display = 'none';
+						spanElementTxt.style.display = '';
+						
+						
+					}					
+					
+					
+					function showTcapDetails(sccpName){
+						generateMenu(sccpName,sccpName);
+						$("#tcap-list-table").hide();
+						$("#ss7-tcap-settings-"+sccpName).show();
+					}					
+					
+					function refreshTcapList(){
+						mbeanSearch="com.telscale.ss7:layer=TCAP,type=Management,name=*";
+						var mbean;
+						$.ajax({
+							dataType: "json",
+							url: window.jolokiaProtocol + "//" + window.jolokiaAddress + ":" + window.jolokiaPort + "/jolokia/search/" + mbeanSearch
+						})
+						.done(function(html) {
+							if (html.error) {
+								logToConsole("ERROR", html.error);
+							} else {
+								jQuery.each(html.value, function() {
+									mbean = this;
+									jolokia.request(
+										[
+										 	{ type: "read", mbean: mbean },
+										],
+										{ success: [
+											function(response) {
+												var name = response.value.Name;
+												var persistDir = response.value.PersistDir;
+												var dialogIdleTimeout = response.value.DialogIdleTimeout;
+												var invokeTimeout = response.value.InvokeTimeout;
+												var dialogIdRangeStart = response.value.DialogIdRangeStart;
+												var dialogIdRangeEnd = response.value.DialogIdRangeEnd;
+												
+												var maxDialogs = response.value.MaxDialogs;
+												var previewMode = response.value.PreviewMode;
+												var doNotSendProtocolVersion = response.value.DoNotSendProtocolVersion;
+												var statisticsEnabled = response.value.StatisticsEnabled;
+												var ssn = response.value.SubSystemNumber;
+												
+												var isTcapStarted = response.value.Started;
+												
+												$('#tcap-list-table').children('tbody').append('<tr class="service-row" onclick="showTcapDetails(\'' + name + '\')"><td style="vertical-align: middle; text-align: center;"><i style="color: ' + (isTcapStarted ? '#51A351' : '#BD362F') + ';" class="' + (isTcapStarted ? 'icon-play-circle' : 'icon-remove-circle') + '"></i></td>'+
+														'<td style="cursor: pointer;">' + name + '</a></td>' +
+														'</tr>' );
+												
+												$('#div-ss7-tcap-settings').append('<span id="ss7-tcap-settings-'+name+'" style="display:none;">'+
+														'	<ul class="nav nav-tabs" id="myTab">'+
+														'		<li class="active"><a href="#tcapDetail'+name+'" data-toggle="tab"><i style="color: #CC9522;" class="icon-resize-small"></i> Details</a></li>'+
+														'	</ul>	'+
+														'	<div class="tab-content">'+
+														'		<div class="tab-pane active" id="tcapDetail'+name+'">'+
+														'			<table id="tcapDetail-list-table'+name+'" class="table table-hover">'+
+														'				<thead>'+
+														'					<tr>'+
+														'					<th style="width: 30px;">&nbsp;</th>'+
+														'					<th>Property</th>'+
+														'					<th>Value</th>'+
+														'					<th>&nbsp;</th>'+
+														'					</tr>'+
+														'				</thead>'+
+														'				<tbody>'+
+														'					<tr data-toggle="tooltip" title="name of this TCAP stack">'+
+														'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+														'					<td style="font-size: 0.9em;">Name</td>'+
+														'					<td style="font-size: 0.9em; padding: 0;">' + name + '</td>'+
+														'					<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
+														'					</tr>'+
+														
+														'					<tr data-toggle="tooltip" title="directory where this stack persists properties. This property cannot be updated while stack is running. Set this value in jboss-beans.xml">'+
+														'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+														'					<td style="font-size: 0.9em;">Persist Dir</td>'+
+														'					<td style="font-size: 0.9em; padding: 0;">' + persistDir + '</td>'+
+														'					<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
+														'					</tr>'+
+														
+														'					<tr data-toggle="tooltip" title="Sub System Number for which this stack is listening. This property cannot be updated while stack is running. Set this value in jboss-beans.xml">'+
+														'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+														'					<td style="font-size: 0.9em;">Sub System Number</td>'+
+														'					<td style="font-size: 0.9em; padding: 0;">' + ssn + '</td>'+
+														'					<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
+														'					</tr>'+														
+														
+														'<tr data-toggle="tooltip" title="previewMode is needed for special processing mode. When PreviewMode is true: - stack only listens incoming messages and sends nothing. send(), close(), sendComponent() and other such methods do nothing. - A TCAP Dialog is temporary. TCAP Dialog is discarded after any incoming message like TC-BEGIN or TC-CONTINUE has been processed - for any incoming messages (including TC-CONTINUE, TC-END, TC-ABORT) a new TCAP Dialog is created (end then deleted). - no timers and timeouts. This property cannot be updated while stack is running. Set this value in jboss-beans.xml">'+
+														'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+														'<td style="font-size: 0.9em;">Preview Mode</td>'+
+														'<td style="font-size: 0.9em; padding: 0;">'+ previewMode + '</td>'+
+														'<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
+													    '</tr>'+															
+														
+																			'<tr data-toggle="tooltip" title="millisecond value for dialog timeout. It specifies how long dialog can be idle - not receive/send any messages">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">Dialog Idle Timeout</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'SystemId-input" class="control-group">'+
+																				'<span id="' + name +'SystemId-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + dialogIdleTimeout + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'DialogIdleTimeout\', \'' + name+"SystemId" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"SystemId"+']\').toggle(); $(\'input[id^='+name+"SystemId"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'SystemId-text">' + dialogIdleTimeout + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"SystemId"+']\').toggle(); $(\'input[id^='+name+"SystemId"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+	
+																		    
+																			'<tr data-toggle="tooltip" title="sets the Invoke timeout for this invoke. Peer should respond back within invoke timeout, else stack will callback TCListener for application to take corrective. invoketimeout should always be less than dialogidletimeout">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">Invoke Timeout</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'InvokeTimeout-input" class="control-group">'+
+																				'<span id="' + name +'InvokeTimeout-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + invokeTimeout + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'InvokeTimeout\', \'' + name+"InvokeTimeout" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"InvokeTimeout"+']\').toggle(); $(\'input[id^='+name+"InvokeTimeout"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'InvokeTimeout-text">' + invokeTimeout + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"InvokeTimeout"+']\').toggle(); $(\'input[id^='+name+"InvokeTimeout"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+
+																		    
+																			'<tr data-toggle="tooltip" title="start of the range of the generated dialog ids. The ids used will be between dialogidrangestart and dialogidrangeend.">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">Dialog Id Range Start</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'dialogIdRangeStart-input" class="control-group">'+
+																				'<span id="' + name +'dialogIdRangeStart-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + dialogIdRangeStart + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'DialogIdRangeStart\', \'' + name+"dialogIdRangeStart" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"dialogIdRangeStart"+']\').toggle(); $(\'input[id^='+name+"dialogIdRangeStart"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'dialogIdRangeStart-text">' + dialogIdRangeStart + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"dialogIdRangeStart"+']\').toggle(); $(\'input[id^='+name+"dialogIdRangeStart"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+	
+																		    
+																			'<tr data-toggle="tooltip" title="end of the range of the generated dialog ids. The ids used will be between dialogidrangestart and dialogidrangeend.">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">Dialog Id Range End</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'dialogIdRangeEnd-input" class="control-group">'+
+																				'<span id="' + name +'dialogIdRangeEnd-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + dialogIdRangeEnd + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'DialogIdRangeEnd\', \'' + name+"dialogIdRangeEnd" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"dialogIdRangeEnd"+']\').toggle(); $(\'input[id^='+name+"dialogIdRangeEnd"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'dialogIdRangeEnd-text">' + dialogIdRangeEnd + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"dialogIdRangeEnd"+']\').toggle(); $(\'input[id^='+name+"dialogIdRangeEnd"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+	
+																		    
+																			'<tr data-toggle="tooltip" title="sets the maximum number of dialogs allowed to be alive at a given time. If not set, a default value of 5000 dialogs will be used. If stack ranges provided, maximum number dialogs naturally cannot be greater than the provided range, thus, it will be normalized to range delta (end - start).">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">Max Dialogs</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'maxDialogs-input" class="control-group">'+
+																				'<span id="' + name +'maxDialogs-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + maxDialogs + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'MaxDialogs\', \'' + name+"maxDialogs" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"maxDialogs"+']\').toggle(); $(\'input[id^='+name+"maxDialogs"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'maxDialogs-text">' + maxDialogs + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"maxDialogs"+']\').toggle(); $(\'input[id^='+name+"maxDialogs"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+	
+																		    
+																			'<tr data-toggle="tooltip" title="if set to true Protocol Version is not send in User Data part of Dialog">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">Do Not Send Protocol Version</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'doNotSendProtocolVersion-input" class="control-group">'+
+																				'<span id="' + name +'doNotSendProtocolVersion-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + doNotSendProtocolVersion + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'DoNotSendProtocolVersion\', \'' + name+"doNotSendProtocolVersion" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"doNotSendProtocolVersion"+']\').toggle(); $(\'input[id^='+name+"doNotSendProtocolVersion"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'doNotSendProtocolVersion-text">' + doNotSendProtocolVersion + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"doNotSendProtocolVersion"+']\').toggle(); $(\'input[id^='+name+"doNotSendProtocolVersion"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+	
+																		    
+																			'<tr data-toggle="tooltip" title="if set to true, statistics is enabled. Its recommended to keep this off for better performance and enabled statistics only when needed.">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">Statistics Enabled</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'statisticsEnabled-input" class="control-group">'+
+																				'<span id="' + name +'statisticsEnabled-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + statisticsEnabled + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'StatisticsEnabled\', \'' + name+"statisticsEnabled" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"statisticsEnabled"+']\').toggle(); $(\'input[id^='+name+"statisticsEnabled"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'statisticsEnabled-text">' + statisticsEnabled + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"statisticsEnabled"+']\').toggle(); $(\'input[id^='+name+"statisticsEnabled"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+																		    
+														
+														
+																														
+														'				</tbody>'+
+														'			</table>'+ 												
+														'		</div>'+
+														'	</div>	'+
+														'</span>');												
+												
+											}
+										            
+											],
+											error: function(value){
+												errorUID = ("st" + new Date().getTime()).hashCode();
+												createStackTrace(errorUID, value.stacktrace);
+												logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+											}        
+										}
+									);
+								});
+								
+							}
+							
+						})
+						.fail(function() {
+							logToConsole("ERROR", "Failure trying to communicate with the jSS7. Please try again later.");
+						})
+											
+					}					
+					
+					</script>

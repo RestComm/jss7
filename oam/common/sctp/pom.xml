@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>sctp-oam</artifactId>
-	<name>TelScale SS7 :: Management-sctp-oam :: ${pom.artifactId}</name>
+	<name>Mobicents SS7 :: Management-sctp-oam :: ${pom.artifactId}</name>
 
 	<properties>
 		<tool.directory>

@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>statistics-oam-api</artifactId>
-	<name>TelScale SS7 :: Statistic-oam :: API :: ${pom.artifactId}</name>
+	<name>Mobicents SS7 :: Statistic-oam :: API :: ${pom.artifactId}</name>
 
 	<properties>
 		<tool.directory>

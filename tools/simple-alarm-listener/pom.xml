@@ -11,7 +11,7 @@
   <groupId>org.mobicents.protocols.ss7.tools.alarmlistener</groupId>
 
   <packaging>pom</packaging>
-  <name>Simple alarm listener :: ${pom.artifactId}</name>
+  <name>Mobicents Simple alarm listener :: Parent</name>
 
   <modules>
   	<module>alarmlistener</module>

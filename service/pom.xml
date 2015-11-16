@@ -8,7 +8,7 @@
 
 	<artifactId>mobicents-ss7</artifactId>
 
-	<name>TelScale SS7 :: ${pom.artifactId}</name>
+	<name>Mobicents SS7 :: ${pom.artifactId}</name>
 
 	<properties>
 		<telscale.name>mobicents-ss7</telscale.name>

@@ -1,0 +1,275 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<link rel="icon" type="image/png" href="resources/images/favicon.png">
+		<!-- remotes -->
+		<!--
+		<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+		<link href="http://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
+		-->
+		<!-- locals -->
+		<link href="resources/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+		<link href="resources/css/bootstrap-switch.css" rel="stylesheet">
+
+		<style type="text/css">
+
+			.sidebar-nav {
+				padding: 9px 0;
+			}
+
+			/* Sticky footer styles
+			-------------------------------------------------- */
+
+			html,
+			body {
+				height: 100%;
+				/* The html and body elements cannot have any padding or margin. */
+			}
+
+			/* Wrapper for page content to push down footer */
+			#wrap {
+				min-height: 100%;
+				height: auto !important;
+				height: 100%;
+				/* Negative indent footer by it's height */
+				margin: 0 auto -75px;
+			}
+
+			/* Set the fixed height of the footer here */
+			#push,
+			#footer {
+				height: 75px;
+			}
+			#footer {
+			}
+
+			/* Custom page CSS
+			-------------------------------------------------- */
+			/* Not required for template or sticky footer method. */
+
+			.container {
+				width: auto;
+				max-width: 680px;
+			}
+
+			#wrap > .container-fluid {
+				padding-top: 60px;
+			}
+			.container .credit {
+				margin: 20px 0;
+			}
+
+			/* Lastly, apply responsive CSS fixes as necessary */
+			@media (max-width: 767px) {
+				#footer {
+					margin-left: -20px;
+					margin-right: -20px;
+					padding-left: 20px;
+					padding-right: 20px;
+				}
+				#wrap > .container-fluid {
+					padding-top: 0px;
+				}
+			}
+
+			@media (max-width: 980px) {
+				/* Enable use of floated navbar text */
+				.navbar-text.pull-right {
+					float: none;
+					padding-left: 5px;
+					padding-right: 5px;
+				}
+				#wrap > .container-fluid {
+					padding-top: 0px;
+				}
+			}
+
+
+		</style>
+
+		<link href="resources/css/font-awesome.css" rel="stylesheet">
+		<!-- custom -->
+		<link href="resources/css/main.css" rel="stylesheet" />
+		<link href="resources/css/docs.css" rel="stylesheet" />
+		<link href="resources/css/breadcrumbs.css" rel="stylesheet" />
+
+		<!-- remotes -->
+		<!--
+		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
+		<script src="http://code.highcharts.com/highcharts.js"></script>
+		<script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+		<script src="http://www.jolokia.org/dist/1.1.0/js/jolokia.js"></script>
+		<script src="http://www.jolokia.org/dist/1.1.0/js/jolokia-simple.js"></script>
+		-->
+		<!-- locals -->
+		<script src="resources/js/jquery-1.9.1.js"></script>
+		<script src='resources/js/google-jsapi.js'></script>
+		<script src="resources/js/jquery-ui.min.js"></script>
+		<script src="resources/js/highcharts.js"></script>
+		<script src="resources/js/bootstrap.js"></script>
+		<script src="resources/js/bootstrap-switch.js"></script>
+		<script src="resources/js/jolokia.js"></script>
+		<script src="resources/js/jolokia-simple.js"></script>
+		<!-- custom -->
+		<script src="resources/js/jainslee.js"></script>
+		<script src="resources/js/breadcrumbs.js"></script>
+		
+		
+		<title>TelScale jSS7 Management Console</title>
+	</head>
+	<body>
+		<div id="wrap">
+			<div class="navbar navbar-inverse navbar-fixed-top">
+				<div class="navbar-inner">
+					<div class="container-fluid">
+						<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<span class="brand" style="vertical-align: bottom;"><img src="http://telestax.wpengine.netdna-cdn.com/wp-content/uploads/2012/11/telestax_logo_dark1.png" /> jSS7 MANAGEMENT CONSOLE</span>
+						<div class="nav-collapse collapse">
+							<p class="navbar-text pull-right" style="font-size: 1.2em;">
+								<span style="margin-top: 15px; vertical-align: sub;">
+									<i class="icon-user"></i> <a href="#" class="navbar-link">Administrator</a>
+								</span>
+								 &nbsp; <a href="#"  onclick="setMenu(this, 'welcome')" class="btn btn-danger btn-small"><i class="icon-off"></i> Sign Out</a>
+							</p>
+						</div><!--/.nav-collapse -->
+					</div>
+				</div>
+			</div>
+			<!-- <div class="header">
+				<img src="resources/images/header.png" />
+			</div> -->
+			<div class="container-fluid">
+				<div class="row-fluid">
+					<div id="left-sidebar" class="span3">
+					</div><!--/span-->
+					<div id="content" class="span9"> <!-- BEGIN OF MAIN CONTENT -->
+
+
+
+					</div> <!-- END OF MAIN CONTENT -->
+						<script type="text/javascript">
+						google.load('visualization', '1', {packages:['corechart']});
+						$(document).ready(function () {
+							window.jolokiaProtocol = window.location.protocol;
+							window.jolokiaAddress = window.location.hostname;
+							window.jolokiaPort = window.location.port;
+							jolokia = new Jolokia({url: window.jolokiaProtocol + "//" + window.jolokiaAddress + ":" + window.jolokiaPort + "/jolokia"});
+
+							// Load modules
+							$('#left-sidebar').load('modules/sidebar-menu.html', function() {
+								$('#connected-security').addClass(window.jolokiaProtocol == "https" ? 'icon-lock' : 'icon-unlock' );
+								$('#connected-to').text(window.jolokiaAddress + ":" + window.jolokiaPort);
+								$('#content').load('modules/welcome.html');
+								$('#footer').load('modules/console.html', function() {
+									$("#btn-min-console").click();
+									logToConsole('INFO', 'Telscale jSS7 Management Console ready!');
+									$("[data-toggle='tooltip']").tooltip();
+									$("[data-toggle='popover']").popover();
+								});
+							});
+						});
+						</script>
+				</div>
+				<div id="push"></div>
+			</div>
+		</div>
+		<div id="footer">
+		</div>
+	<!-- Template for Stacktrace Modal -->
+	<div id="st-template-modal" class="modal modal-large hide fade" tabindex="-1" role="dialog">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3>Full Stacktrace</h3>
+		</div>
+		<div class="modal-body">
+			<pre style="font-size: 0.7em;"></pre>
+		</div>
+		<div class="modal-footer">
+			<a href="#" onclick="$(this).parent('div').parent('div').modal('hide'); return false;" class="btn">Close</a>
+		</div>
+	</div>
+
+	<!-- Loader Modal -->
+	<div id="loader-modal" class="modal fade hide" tabindex="-1" role="dialog">
+		<div class="modal-header">
+			<h2><i class="icon-spinner icon-spin"></i> Loading . . .</h2>
+		</div>
+		<div class="modal-body">
+			<h3>Did you know?</h3>
+			<div class="well">
+				<h4 class="advertisement">
+					<strong>TelScale RestComm</strong> is a communications platform that empowers developers to rapidly create Fax, Voice, (Video), SMS, and MMS enabled applications.
+				</h4>
+				<h4 class="advertisement">
+					<strong>TelScale RestComm</strong> is a next generation Cloud Communications Platform to rapidly build voice and text messaging applications, using mainstream web development skills.
+				</h4>
+				<h4 class="advertisement">
+					<strong>TelScale SMSC</strong> is a robust and carrier proven SMSC build on a modern extensible middleware platform.
+				</h4>
+				<h4 class="advertisement">
+					<strong>TelScale USSD</strong> enables operators to rapidly create and deliver new value-added, dialogue-based services by providing an intermediary platform that links content providers to end users.
+				</h4>
+				<h4 class="advertisement">
+					<strong>TelScale USSD</strong> is a robust and carrier proven USSD Gateway build on a modern extensible middleware platform.
+				</h4>
+				<h4 class="advertisement">
+					<strong>TelScale USSD</strong> has been deployed at telco operators around the world and is processing billions of USSD transactions each day.
+				</h4>
+				<h4 class="advertisement">
+					<strong>TelScale SLEE</strong> is a highly scalable event-driven application server with a robust component model and fault tolerant execution environment.
+				</h4>
+				<h4 class="advertisement">
+					<strong>TelScale SLEE</strong> is fully compliant with JSR 240 (JSLEE 1.1) and provides a set of connectors to a variety of networks elements: SIP, DIAMETER, SS7 MAP, TCAP, INAP, ISUP, SMPP, USSD, XMPP, MGCP, HTTP, XDM, XCAP and many others.
+				</h4>
+				<h4 class="advertisement">
+					<strong>TelScale SIP Servlets</strong> is an application container extending Java EE to enables rapid development and deployment of SIP and Converged applications.
+				</h4>
+				<h4 class="advertisement">
+					<strong>TelScale SIP Servlets</strong> is fully compliant with JSR 289 (SIP Servlets 1.1) and runs on top of Tomcat, JBoss AS/EAP and other Java EE containers.
+				</h4>
+				<h4 class="advertisement">
+					<strong>TelScale Media Server</strong> is a full featured Java based Media Server that can be controlled via MGCP (JSR-23, RFC 3435) and JSR-309 (Media Server Control API).
+				</h4>
+				<h4 class="advertisement">
+					<strong>TelScale Media Server</strong> aims to meet the demands of converged wireless, wireline, cable broadband access and fixed-mobile converged VoIP networks from a single media gateway platform.
+				</h4>
+				<h4 class="advertisement">
+					<strong>TelScale Diameter Suite</strong> is a suite of client and server side services and tools for the Diameter family of protocols.
+				</h4>
+				<h4 class="advertisement">
+					<strong>TelScale Diameter Suite</strong> implements the most important and widely used Diameter applications, allowing a fast development of LTE/4G and IMS components, such as Application Server (AS), Home Subscriber Server (HSS), Call Session Control Function (CSCF), Subscriber Location Function (SLF), and others.
+				</h4>
+				<h4 class="advertisement">
+					<strong>TelScale SIP Presence Server</strong> provides client and server presence services for SIP networks.
+				</h4>
+				<h4 class="advertisement">
+					<strong>TelScale SIP Presence Server</strong> implements RCS and other standards from IETF, GSMA, OMA, 3GPP and ETSI. Includes an XDM Server, a Presence Server and a Resource Lists Server (TBA).
+				</h4>
+				<h4 class="advertisement">
+					<strong>TelScale jSIP</strong> provides a SIP/SDP/IMS fully compliant stack as well as fault tolerant capabilities for carrier grade production environments.
+				</h4>
+				<div class="text-right"><h3><a href="http://www.telestax.com/products" target="_blank">Learn More</a></h3></div>
+			</div>
+
+		</div>
+		<div class="modal-footer">
+			<div class="pull-right"><img src="resources/images/telestax-logo.png" /></div>
+		</div>
+	</div>
+
+<script type="text/javascript">
+	$(document).ajaxComplete(function() {
+			setTimeout(function(event,request, settings) {		
+		if($("#loader-modal:visible").size() > 0) {
+				$("#loader-modal").modal("hide");
+		}
+			}, 500);
+	});
+</script>		
+	</body>
+</html>

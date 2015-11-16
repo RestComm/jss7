@@ -11,7 +11,7 @@
 
 	<groupId>com.telscale.protocols.ss7.oam.common</groupId>
 	<artifactId>telscale-ss7-oam-common</artifactId>
-	<name>TelScale SS7 :: ${pom.artifactId}</name>
+	<name>Mobicents SS7 :: ${pom.artifactId}</name>
 
 	<modules>
 		<module>jmx</module>

@@ -9,6 +9,8 @@
 
 	<artifactId>alarm-listener</artifactId>
 
+	<name>Mobicents Simple alarm listener :: SimpleAlarmListener-core</name>
+
 	<properties>
 		<tool.directory>
 			${project.build.directory}/release

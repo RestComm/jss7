@@ -11,16 +11,10 @@
 
 	<groupId>com.telscale.protocols.ss7.oam</groupId>
 	<artifactId>telscale-ss7-oam</artifactId>
-	<name>TelScale SS7 :: ${pom.artifactId}</name>
+	<name>Mobicents SS7 :: ${pom.artifactId}</name>
 
 	<modules>
-<!--
-		<module>shell-server-impl</module>
--->
 		<module>common</module>
-<!--
 		<module>new-ui</module>
-		<module>tools</module>
--->
 	</modules>
 </project>

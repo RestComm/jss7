@@ -1,0 +1,1352 @@
+					<h3 style="margin: 0px;"><i class="icon-copy"></i> SIGTRAN - MTP3 User Part</h3>
+					<hr style="margin: 10 0px;"/> 
+					<button id="apply-server-settings" class="btn btn-small" onclick="applyServerSettings()" style="display:none;"><i class="icon-save" style="color: #000000;"></i>  Apply Changes</button>
+
+					<p>
+					        <ol id="breadcrumbs">
+					       </ol>
+					</p>
+
+					<p>
+						<br/>
+					</p> 
+					
+ 					<p>
+					<table id="m3ua-list-table" class="table table-hover">
+						<thead>
+							<tr>
+								<th style="width: 30px;">&nbsp;</th>
+								<th>Name</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table> 					
+ 					
+ 					<div id="div-ss7-m3ua-settings">
+					
+					</div>				 
+				</p>	
+				<script type="text/javascript">
+					var crumbList;
+					$(document).ready(function () {
+						crumbList = new CrumbList('setMenu(this, \'m3ua\')','M3UA management units');
+						crumbList.output();
+						refreshM3uaList();
+						
+	    			});
+					
+					function onSipServrConfigOk(mbeanName, propertyName, spanId){
+						var formInvalid = false;
+						
+						var spanElement = document.getElementById(spanId + "-input");
+						var eleChild = spanElement.childNodes;
+						var inputTextEle = eleChild[0];
+						var spanElementTxt = document.getElementById(spanId + "-text");
+						
+						var propvalue = inputTextEle.value;
+						
+						if(propvalue.trim() == "") {
+							$("#div-"+spanId + "-input").addClass("error");					    			
+							formInvalid = true;
+						} else if($("#div-"+spanId + "-input").hasClass("error")) {
+							$("#div-"+spanId + "-input").removeClass("error");		
+						}	
+						
+						if(formInvalid) {
+							$("#login-settings-error").show();
+							logToConsole("ERROR", "Some Fields are not correctly filled out, please double check the settings !");
+							return false;
+						} else {
+							$("#login-settings-error").hide();
+						}					
+						
+						var mbeanSearch="com.telscale.ss7:layer=M3UA,type=Management,name="+mbeanName;
+						jolokia.request(
+								[
+									{ type: "write", mbean: mbeanSearch, attribute: propertyName, value: inputTextEle.value },
+								],
+								{
+									success: function(response) {
+										
+										logToConsole("INFO", "TCAP property "+ propertyName +"  successfully updated.");
+										
+										spanElementTxt.innerHTML= inputTextEle.value;
+									},
+									error: function(value) {
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									} 
+								}
+							);		
+						
+						spanElement.style.display = 'none';
+						spanElementTxt.style.display = '';
+						
+						
+					}						
+					
+					function showInternalPageDetails(m3uaName,title){
+						generateMenu(m3uaName,title);
+						$("#m3ua-list-table").hide();
+						$('#div-ss7-m3ua-settings').children('span').hide();
+						$("#ss7-m3ua-settings-"+m3uaName).show();
+					}	
+					
+					function assignAspToAs(m3uaName,asName){
+						var aspName = $("#asp-"+m3uaName+"-"+asName).val();
+						mbeanSearch="com.telscale.ss7:layer=M3UA,type=Management,name="+m3uaName;
+						jolokia.execute(mbeanSearch,"assignAspToAs",asName,aspName,
+								{
+									success: function(value) {
+										$('#entities-modal-addAspToAs'+m3uaName+'-'+asName).modal('hide');
+										refreshM3uaList();
+										logToConsole('INFO', 'Successfully added ASP (' + aspName +') to AS (' +asName+')');
+									},
+									error: function(value){
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									}
+								});	
+					}
+					
+					
+					function unassignAspFromAs(m3uaName,asName,aspName){
+						mbeanSearch="com.telscale.ss7:layer=M3UA,type=Management,name="+m3uaName;
+						jolokia.execute(mbeanSearch,"unassignAspFromAs",asName,aspName,
+								{
+									success: function(value) {
+										refreshM3uaList();
+										logToConsole('INFO', 'Successfully removed ASP (' + aspName +') from AS (' +asName +')');
+									},
+									error: function(value){
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									}
+								});	
+					}
+					
+					
+					function changeAspState(m3uaName,aspName,aspFacState){
+						
+						var method = "startAsp";
+						var msg = "started";
+						if(aspFacState == "true"){
+							method = "stopAsp";
+							msg = "stopped";
+						}
+						mbeanSearch="com.telscale.ss7:layer=M3UA,type=Management,name="+m3uaName;
+						jolokia.execute(mbeanSearch,method,aspName,
+								{
+									success: function(value) {
+										refreshM3uaList();
+										logToConsole('INFO', 'Successfully '+ msg +'  ' + aspName );
+									},
+									error: function(value){
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									}
+						
+								});	
+					}	
+					
+					function destroyAs(m3uaName,asName){
+						mbeanSearch="com.telscale.ss7:layer=M3UA,type=Management,name="+m3uaName;
+						jolokia.execute(mbeanSearch,"destroyAs",asName,
+								{
+									success: function(value) {
+										refreshM3uaList();
+										logToConsole('INFO', 'Successfully destroyed ' + asName );
+									},
+									error: function(value){
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									}
+								});	
+					}
+					
+					function destroyAsp(m3uaName,aspName){
+						mbeanSearch="com.telscale.ss7:layer=M3UA,type=Management,name="+m3uaName;
+						jolokia.execute(mbeanSearch,"destroyAspFactory",aspName,
+								{
+									success: function(value) {
+										refreshM3uaList();
+										logToConsole('INFO', 'Successfully destroyed ' + aspName );
+									},
+									error: function(value){
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									}
+								});	
+					}
+					
+					function addASP(name){
+						var formInvalid = false;
+						
+						var aspName = $("#aspName"+name).val();
+						var associationName = $("#sctpAssocName"+name).val();
+						var aspid = $("#aspIdName"+name).val();
+						var isHeartBeatEnabled = $("#heartbeat"+name).prop('checked');
+						
+						
+					    if($("#aspName"+name).val().length === 0) {
+					    	formInvalid = true;
+						    $("#aspName"+name).parent().parent().addClass("error");
+						} else {
+							$("#aspName"+name).parent().parent().removeClass("error");
+						}
+					    
+					    if($("#sctpAssocName"+name).val().length === 0) {
+					    	formInvalid = true;
+						    $("#sctpAssocName"+name).parent().parent().addClass("error");
+						} else {
+							$("#sctpAssocName"+name).parent().parent().removeClass("error");
+						}
+						
+						if(formInvalid) {
+							$("#create-aspFactories-error"+name).show();
+							logToConsole("ERROR", "Some Fields are not correctly filled out, please double check!");
+							return false;
+						} else {
+							$("#create-aspFactories-error"+name).hide();
+						}
+						
+						mbeanSearch="com.telscale.ss7:layer=M3UA,type=Management,name="+name;
+						
+						if(aspid == ""){
+							jolokia.execute(mbeanSearch,"createAspFactory(java.lang.String,java.lang.String,boolean)",aspName,associationName,isHeartBeatEnabled,
+									{
+										success: function(value) {
+											$('#entities-modal-aspFactories'+name).modal('hide');
+											refreshM3uaList();
+											logToConsole('INFO', 'Successfully added Service Accesspoint for ' + name );
+										},
+										error: function(value){
+											errorUID = ("st" + new Date().getTime()).hashCode();
+											createStackTrace(errorUID, value.stacktrace);
+											logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+										}
+									});	
+						}else{
+							jolokia.execute(mbeanSearch,"createAspFactory(java.lang.String,java.lang.String,long,boolean)",aspName,associationName,aspid,isHeartBeatEnabled,
+									{
+										success: function(value) {
+											$('#entities-modal-aspFactories'+name).modal('hide');
+											refreshM3uaList();
+											logToConsole('INFO', 'Successfully added Service Accesspoint for ' + name );
+										},
+										error: function(value){
+											errorUID = ("st" + new Date().getTime()).hashCode();
+											createStackTrace(errorUID, value.stacktrace);
+											logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+										}
+									});	
+						}
+						
+						
+
+					}
+					
+					function addRoute(name){
+						var formInvalid = false;
+	
+						var routeDPC = $("#routeDPC"+name).val();
+						var routeOPC = $("#routeOPC"+name).val();
+						var routeSI = $("#routeSI"+name).val();
+						var routeAppServerName = $("#routeAppServerName"+name).val();
+						
+					    if($("#routeDPC"+name).val().length === 0) {
+					    	formInvalid = true;
+						    $("#routeDPC"+name).parent().parent().addClass("error");
+						} else {
+							$("#routeDPC"+name).parent().parent().removeClass("error");
+						}
+					    
+					    if($("#routeOPC"+name).val().length === 0) {
+					    	formInvalid = true;
+						    $("#routeOPC"+name).parent().parent().addClass("error");
+						} else {
+							$("#routeOPC"+name).parent().parent().removeClass("error");
+						}
+					    
+					    if($("#routeSI"+name).val().length === 0) {
+					    	formInvalid = true;
+						    $("#routeSI"+name).parent().parent().addClass("error");
+						    $("#routeSI"+name).siblings(".help-inline").show();
+						}
+					    
+					    var e = document.getElementById("trafficMode"+name);
+						var trafficMode = e.options[e.selectedIndex].value;
+					    
+					    if($("#routeAppServerName"+name).val().length === 0) {
+					    	formInvalid = true;
+						    $("#routeAppServerName"+name).parent().parent().addClass("error");
+						} else {
+							$("#routeAppServerName"+name).parent().parent().removeClass("error");
+						}
+												
+						if(formInvalid) {
+							$("#create-routes-error"+name).show();
+							logToConsole("ERROR", "Some Fields are not correctly filled out, please double check!");
+							return false;
+						} else {
+							$("#create-routes-error"+name).hide();
+						}
+						
+						mbeanSearch="com.telscale.ss7:layer=M3UA,type=Management,name="+name;
+						jolokia.execute(mbeanSearch,"addRoute(int,int,int,java.lang.String,int)",routeDPC,routeOPC,routeSI,routeAppServerName,trafficMode,
+								{
+									success: function(value) {
+										$('#entities-modal-routes'+name).modal('hide');
+										refreshM3uaList();
+										logToConsole('INFO', 'Successfully added route for ' + name );
+									},
+									error: function(value){
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									}
+								});	
+					}
+					
+					function deleteRoute(name, key, routeAppServerName){
+						var keys = key.split(":");
+						mbeanSearch="com.telscale.ss7:layer=M3UA,type=Management,name="+name;
+						jolokia.execute(mbeanSearch,"removeRoute",keys[0],keys[1],keys[2],routeAppServerName,
+								{
+									success: function(value) {
+										$('#entities-modal-routes'+name).modal('hide');
+										refreshM3uaList();
+										logToConsole('INFO', 'Successfully removed route from ' + name );
+									},
+									error: function(value){
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									}
+								});		
+					}
+					
+					
+					function addAS(name){
+						var formInvalid = false;
+										
+						var asName = $("#asName"+name).val();
+						
+						var e = document.getElementById("asFunctionality"+name);
+						var functionality;
+						if(e.selectedIndex != -1){
+							functionality = e.options[e.selectedIndex].text;
+						} 
+						
+						e = document.getElementById("asExchange"+name);
+						var exchangeType = e.options[e.selectedIndex].text;
+						
+						e = document.getElementById("asIPSP"+name);
+						var ipspType = e.options[e.selectedIndex].text;
+						
+						var rc = $("#asRoutingContext"+name).val();
+						
+						e = document.getElementById("asTrafficMode"+name);
+						var trafficMode = e.options[e.selectedIndex].value;
+
+						var minAspActive = $("#asMinASPActive"+name).val();
+						var na = $("#asNetworkAppearance"+name).val();
+						
+						if(typeof exchangeType == "undefined"){
+							exchangeType =  "SE" ;
+						}
+						
+						if ( (typeof functionality != "undefined" && functionality == "IPSP") && (typeof ipspType == "undefined") ) {
+							ipspType = "CLIENT";
+						}
+						
+						if(minAspActive == ""){
+							minAspActive =  "0";
+						}
+						
+					    if($("#asName"+name).val().length === 0) {
+					    	formInvalid = true;
+						    $("#asName"+name).parent().parent().addClass("error");
+						} else {
+							$("#asName"+name).parent().parent().removeClass("error");
+						}
+			
+					    if($("#asFunctionality"+name).val() == null) {
+							formInvalid = true;
+						    $("#asFunctionalityError"+name).parent().parent().addClass("error");
+						} else {
+							$("#asFunctionalityError"+name).parent().parent().removeClass("error");
+						}
+						
+						if(typeof trafficMode == "undefined")  {
+							formInvalid = true;
+						    $("#asTrafficModeError"+name).parent().parent().addClass("error");
+						    $("#asTrafficModeError"+name).siblings(".help-inline").show();
+						}
+						
+						if((!(typeof functionality == "undefined"))  && functionality != "AS" ){
+							if(typeof ipspType == "undefined")  {
+								formInvalid = true;
+							    $("#asIPSPError"+name).parent().parent().addClass("error");
+							    $("#asIPSPError"+name).siblings(".help-inline").show();
+							}
+						}
+								
+						if(formInvalid) {
+							$("#create-applicationServers-error"+name).show();
+							logToConsole("ERROR", "Some Fields are not correctly filled out, please double check!");
+							return false;
+						} else {
+							$("#create-applicationServers-error"+name).hide();
+						}
+						
+						mbeanSearch="com.telscale.ss7:layer=M3UA,type=Management,name="+name;
+						jolokia.execute(mbeanSearch,"createAppServer",asName, functionality, exchangeType, ipspType,
+								 rc, trafficMode, minAspActive, na,
+								{
+									success: function(value) {
+										$('#entities-modal-applicationServers'+name).modal('hide');
+										refreshM3uaList();
+										logToConsole('INFO', 'Successfully added Application Server for ' + name );
+									},
+									error: function(value){
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									}
+								});	
+					}
+					
+					
+					function refreshM3uaList(){
+						mbeanSearch="com.telscale.ss7:layer=M3UA,type=Management,name=*";
+						var mbean;
+						$.ajax({
+							dataType: "json",
+							url: window.jolokiaProtocol + "//" + window.jolokiaAddress + ":" + window.jolokiaPort + "/jolokia/search/" + mbeanSearch
+						})
+						.done(function(html) {
+							if (html.error) {
+								logToConsole("ERROR", html.error);
+							}
+							else {		
+								jQuery.each(html.value, function() {
+									mbean = this;
+									
+									
+									jolokia.request(
+											[
+											 	{ type: "read", mbean: mbean },
+											],
+											{ success: [
+														function(response) {
+															var name = response.value.Name;
+															var persistDir = response.value.PersistDir;
+															var started = response.value.Started;
+															var maxSequenceNumber = response.value.MaxSequenceNumber;
+															var maxAsForRoute = response.value.MaxAsForRoute;
+															var heartbeatTime = response.value.HeartbeatTime;
+															
+															var isM3uaStarted = true;
+															
+															$('#m3ua-list-table').children('tbody').append('<tr class="service-row" onclick="showInternalPageDetails(\'' + name + '-super\',\'' + name + '\')"><td style="vertical-align: middle; text-align: center;"><i style="color: ' + (isM3uaStarted ? '#51A351' : '#BD362F') + ';" class="' + (isM3uaStarted ? 'icon-play-circle' : 'icon-remove-circle') + '"></i></td>'+
+																	'<td style="cursor: pointer;">' + name + '</a></td>' +
+																	'</tr>' );
+															
+															
+															var aspfactories = response.value.Aspfactories;
+															var appServers = response.value.AppServers;
+															var routes = response.value.Route;
+															
+															
+															
+															$('#div-ss7-m3ua-settings').append('<span id="ss7-m3ua-settings-'+name+'-super" style="display:none;">'+
+																	'	<ul class="nav nav-tabs" id="myTab">'+
+																	'		<li class="active"><a href="#m3uaDetail'+name+'" data-toggle="tab"><i style="color: #CC9522;" class="icon-copy"></i> Details</a></li>'+
+																	'		<li><a href="#aspFactories'+name+'" data-toggle="tab"><i style="color: #CC9522;" class="icon-map-marker"></i> AspFactories</a></li>'+
+																	'		<li><a href="#applicationServers'+name+'" data-toggle="tab"><i style="color: #CC9522;" class="icon-cog"></i> ApplicationServers</a></li>'+
+																	'		<li><a href="#routes'+name+'" data-toggle="tab"><i style="color: #CC9522;" class="icon-list-alt"></i> Routers</a></li>'+
+																	'	</ul>	'+
+																	''+
+																	'	<div class="tab-content">'+
+																	'		<div class="tab-pane active" id="m3uaDetail'+name+'">'+
+																	'			<table id="m3uaDetail-list-table'+name+'" class="table table-hover">'+
+																	'				<thead>'+
+																	'					<tr>'+
+																	'					<th style="width: 30px;">&nbsp;</th>'+
+																	'					<th>Property</th>'+
+																	'					<th>Value</th>'+
+																	'					<th>&nbsp;</th>'+
+																	'					</tr>'+
+																	'				</thead>'+
+																	'				<tbody>'+
+																	
+																	'					<tr data-toggle="tooltip" title="name of this M3UA stack">'+
+																	'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																	'					<td style="font-size: 0.9em;">Name</td>'+
+																	'					<td style="font-size: 0.9em; padding: 0;">' + name + '</td>'+
+																	'					<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
+																	'					</tr>'+
+																	
+																	'					<tr data-toggle="tooltip" title="directory where this stack persists properties. This property cannot be updated while stack is running. Set this value in jboss-beans.xml">'+
+																	'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																	'					<td style="font-size: 0.9em;">Persist Dir</td>'+
+																	'					<td style="font-size: 0.9em; padding: 0;">' + persistDir + '</td>'+
+																	'					<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
+																	'					</tr>'+
+																	
+																	'					<tr data-toggle="tooltip" title="true if M3UA stack is started">'+
+																	'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																	'					<td style="font-size: 0.9em;">Started</td>'+
+																	'					<td style="font-size: 0.9em; padding: 0;">' + started + '</td>'+
+																	'					<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
+																	'					</tr>'+																	
+																	
+																	'<tr data-toggle="tooltip" title="Sequence number or Signalling Link Selection (SLS) is used for load-balancing between ASPs in AS and also between various AS for same point-code. MaxSequenceNumber controls the maximum SLS that should be used for this. Its safe to leave it at 256. This property cannot be updated while stack is running. Set this value in jboss-beans.xml">'+
+																	'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																	'<td style="font-size: 0.9em;">MaxSequenceNumber</td>'+
+																	'<td style="font-size: 0.9em; padding: 0;">'+ maxSequenceNumber + '</td>'+
+																	'<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
+																    '</tr>'+	
+																    
+																	'<tr data-toggle="tooltip" title="Every destination point code should be configured in M3UA with corresponding AS. This parameter controls how many max AS can be used to route the message to same Destination Point Code. Its better to always keep this as even number for better load-sharing. Maximum of 2 is standard and widely accepted. As of now you should not change this value if there is at least one route defined else it will throw Exception for that route. You have to delete all the routes, change this property and redefine routes. This property cannot be updated while stack is running. Set this value in jboss-beans.xml">'+
+																	'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																	'<td style="font-size: 0.9em;">MaxAsForRoute</td>'+
+																	'<td style="font-size: 0.9em; padding: 0;">'+ maxAsForRoute  + '</td>'+
+																	'<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
+																    '</tr>'+	
+																    
+																	'<tr data-toggle="tooltip" title="Each ASP can send HEART_BEAT to peer to determine the availability of link. If there is no traffic M3UA will initiate heart beat every heartbeatTime milli seconds. If 3 consecutive HEART_BEAT are missed, stack will close and re-initiate connection.">'+
+																	'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																	'<td style="font-size: 0.9em;">heartbeatTime</td>'+
+																	'<td style="font-size: 0.9em; padding: 0;">'+
+																		'<div id="div-' + name +'heartbeatTime-input" class="control-group">'+
+																		'<span id="' + name +'heartbeatTime-input" style="display: none;">'+
+																			'<input type="text" class="input-small" value="' + heartbeatTime + '" /> ' +
+																			'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'HeartbeatTime\', \'' + name+"heartbeatTime" + '\')"></i> ' +
+																			'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"heartbeatTime"+']\').toggle(); $(\'input[id^='+name+"heartbeatTime"+']\').focus();"></i>' + 
+																		'</span>'+
+																		'</div>' +
+																		'<span id="' +name + 'heartbeatTime-text">' + heartbeatTime + '</span>'+
+																	'</td>'+
+																	'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"heartbeatTime"+']\').toggle(); $(\'input[id^='+name+"heartbeatTime"+']\').focus();"></i>' +
+																	'</td>'+
+																    '</tr>'+																    
+																	
+																	
+																	'				</tbody>'+
+																	'			</table>'+ 											
+																	'		</div>'+
+																	
+																	
+																	'		<div class="tab-pane" id="aspFactories'+name+'">'+
+																	'			<table id="no-aspFactories-list-table'+name+'" class="table" style="display: none;">'+
+																	'				<tr>'+
+																	'					<td>'+
+																	'						<div class="alert alert-warning fade in text-center" >'+
+																	'							<h2>No ASP Factory has been defined yet.</h2>'+
+																	'						</div>'+
+																	'					</td>'+
+																	'				</tr>'+
+																	'			</table>'+	
+																	'			<table id="aspFactories-list-table'+name+'" class="table table-hover">'+
+																	'				<thead>'+
+																	'					<tr>'+
+																	'					<th style="width: 30px;">&nbsp;</th>'+
+																	'					<th>Name</th>'+
+																	'					<th>State</th>'+
+																	'					<th>Actions</th>'+
+																	'					<th>Delete</th>'+
+																	'					</tr>'+
+																	'				</thead>'+
+																	'				<tbody>'+
+																	'				</tbody>'+	
+																	'			</table>'+ 	
+																	'			<a href="#entities-modal-aspFactories'+name+'" role="button" class="btn btn-info btn-small" data-toggle="modal" ><i class="icon-external-link"></i> Create ASP</a>'+
+																	'			<div id="entities-modal-aspFactories'+name+'" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">'+
+																	'				<div class="modal-header">'+
+																	'					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
+																	'					<h3><i class="icon-map-marker" style="color: #CC9522;"></i> Create AspFactory</h3>'+
+																	'				</div>'+
+																	'				<div id="entities-modal-body" class="modal-body">'+
+																	'					<div class="alert alert-error" id="create-aspFactories-error'+name+'" style="display:none;">'+
+																	'					  <button type="button" class="close">&times;</button>'+
+																	'					  Some Fields are not correctly filled out, please double check the settings below !'+
+																	'					</div>'+
+																	'					<p>'+  
+																	'						<span>'+
+																	
+																	
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="name of the new Application Server Process created. This must be unique and takes any String value">'+
+																	'    								<span class="add-on">Name</span>'+
+																	'      								<input id="aspName'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="Name" />'+
+																	'  								</span>'+
+																	'							</div>'+
+																		
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="name of the SCTP Association">'+
+																	'    								<span class="add-on">SCTP Association Name</span>'+
+																	'      								<input id="sctpAssocName'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="SCTP Association Name" />'+
+																	'  								</span>'+																	
+																	'							</div>'+
+																	
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="identifier for this newly created Application Server Process. If this is not passed, next available aspid will be used">'+
+																	'    								<span class="add-on">ASP Id</span>'+
+																	'      								<input id="aspIdName'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="ASP Id" />'+
+																	'  								</span>'+																	
+																	'							</div>'+	
+																	
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="if this parameter is enabled (value set to true), then heartbeat mechanism is enabled between M3UA peers. When this is enabled, it sends a Heartbeat message every 10 seconds. If there is no response for the third heartbeat then it assumes that the underlying network is dead. So it closes the connection and attempts to connect again. The M3UA peers are brought back to the same state as they were prior to dying. This is an optional parameter and if unspecified, heartbeat mechanism is disabled">'+
+																	'									<span class="add-on">Heartbeat </span>'+
+																	'									<input id="heartbeat'+name+'" type="checkbox" class="input-mini" style="margin-left:3px; margin-top:0px; margin-right:12px; text-align:center; width:30px; height:30px;"></input></br>'+
+																	'  								</span>'+
+																	'							</div>'+																	
+																
+																	'							<button id="add-rsp-btn'+name+'" onclick="addASP(\'' + name + '\');" class="btn btn btn-primary" >Create</button> '+
+																	'						</span>'+					
+																	'					</p>'+
+																	'				</div>'+					
+																	'				<div class="modal-footer">'+
+																	'					<a href="#" onclick="$(\'#entities-modal-aspFactories'+name+'\').modal(\'hide\'); return false;" class="btn">Close</a>'+
+																    '				</div>'+
+																	'			</div>'+
+																	'		</div>'+
+																	
+																	
+																	'		<div class="tab-pane" id="applicationServers'+name+'">'+
+																	'			<table id="no-applicationServers-list-table'+name+'" class="table" style="display: none;">'+
+																	'				<tr>'+
+																	'					<td>'+
+																	'						<div class="alert alert-warning fade in text-center" >'+
+																	'							<h2>No AS has been defined yet.</h2>'+
+																	'						</div>'+
+																	'					</td>'+
+																	'				</tr>'+
+																	'			</table>'+	
+																	'			<table id="applicationServers-list-table'+name+'" class="table table-hover">'+
+																	'				<thead>'+
+																	'					<tr>'+
+																	'					<th style="width: 30px;">&nbsp;</th>'+
+																	'					<th>Name</th>'+
+																	'					<th>State</th>'+
+																	'					<th>Delete</th>'+
+																	'					</tr>'+
+																	'				</thead>'+
+																	'				<tbody>'+
+																	'				</tbody>'+	
+																	'			</table>'+ 	
+																	'			<a href="#entities-modal-applicationServers'+name+'" role="button" class="btn btn-info btn-small" data-toggle="modal" ><i class="icon-external-link"></i> Create AS</a>'+
+																	'			<div id="entities-modal-applicationServers'+name+'" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">'+
+																	'				<div class="modal-header">'+
+																	'					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
+																	'					<h3><i class="icon-cog" style="color: #CC9522;"></i> Create Application Server</h3>'+
+																	'				</div>'+
+																	'				<div id="entities-modal-body" class="modal-body">'+
+																	'					<div class="alert alert-error" id="create-applicationServers-error'+name+'" style="display:none;">'+
+																	'					  <button type="button" class="close">&times;</button>'+
+																	'					  Some Fields are not correctly filled out, please double check the settings below !'+
+																	'					</div>'+
+																	'					<p>'+  
+																
+																	'						<span>'+
+																	
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="name of the new Server created. This must be unique and takes any String value">'+
+																	'    								<span class="add-on">Name</span>'+
+																	'      								<input id="asName'+name+'" type="text" placeholder="Name"  class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" />'+
+																	'  								</span>'+																	
+																	'							</div>'+
+																	
+																	'							<div class="control-group" >'+
+																	'   							<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="type of the new Server is specified using this parameter. The three possible values are AS (Application Server), SGW (Signaling Gateway) and IPSP">'+
+																	'       							<span class="add-on">Functionality</span>'+
+																	'   								<select id="asFunctionality'+name+'" >'+
+																	'   									<option>AS</option>'+
+																	'       								<option>SGW</option>'+
+																	'       								<option>IPSP</option>'+
+																	'       							</select>'+
+																	'   							</span>'+	
+																	'							</div>'+	
+																	
+																	'							<div class="control-group" >'+
+																	'   							<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="specify if Single Exchange or Double Exchange of ASPSM (ASP State Maintenance) and ASPTM (ASP Traffic Maintenance) messages should be performed">'+
+																	'       							<span class="add-on">Exchange</span>'+
+																	'   								<select id="asExchange'+name+'" >'+
+																	'   									<option>SE</option>'+
+																	'       								<option>DE</option>'+
+																	'       							</select>'+
+																	'   							</span>'+	
+																	'							</div>'+
+																	
+																	'							<div class="control-group" >'+
+																	'   							<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="required if the newly created AS is of type IPSP. You must specify if it is of type Client or Server">'+
+																	'       							<span class="add-on">IPSP Type</span>'+
+																	'   								<select id="asIPSP'+name+'" >'+
+																	'   									<option>CLIENT</option>'+
+																	'       								<option>SERVER</option>'+
+																	'       							</select>'+
+																	'   							</span>'+	
+																	'							</div>'+																	
+																										
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="refers to the Routing Context configured for M3UA Stack on SGW. This parameter is optional. However for an ASP (Application Server Process) assigned to this AS to be configured to process signaling traffic related to more than one AS over a single SCTP Association, it is mandatory to specify a routing-context for the AS. If an ASP is configured to always process signaling traffic from one AS, irrespective of whether the received messages have routing context set or not, it will always be delivered to AS for further processing. However if an ASP is configured to process signaling traffic related to more than one AS over a single SCTP Association and if a signaling message is received without RC, then the ASP will drop the message and send back an Error message. A respective log4j error will also be logged.">'+
+																	'    								<span class="add-on">Routing Context</span>'+
+																	'      								<input id="asRoutingContext'+name+'" type="text" placeholder="Routing Context"  class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" />'+
+																	'  								</span>'+																	
+																	'							</div>'+
+																	
+																	'							<div class="control-group" >'+
+																	'   							<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="specify the traffic mode for ASPs. At the moment jSS7 M3UA supports only 2 modes: loadshare and override. Broadcast mode is not supported.">'+
+																	'       							<span class="add-on">Traffic Mode</span>'+
+																	'   								<select id="asTrafficMode'+name+'" >'+
+																	'   									<option value="2">Loadshare</option>'+
+																	'       								<option value="1">Override</option>'+
+																	'       								<option value="3">Broadcast</option>'+
+																	'       							</select>'+
+																	'   							</span>'+	
+																	'							</div>'+																	
+																									
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="specify the minumum asp active for traffic mode loadshare before the payload starts flowing. This is an optional parameter and if not specified the default value is 1. Also if traffic-mode is not loadshare setting this value has no effect">'+
+																	'    								<span class="add-on">Minimum ASP Active for Loadshare</span>'+
+																	'      								<input id="asMinASPActive'+name+'" type="text" placeholder="Minimum ASP Active for Loadshare"  class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" />'+
+																	'  								</span>'+																	
+																	'							</div>'+
+																	
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="this is a M3UA local reference (typically an integer) shared by SG and AS. This value together with a Signaling Point Code, uniquely identifies a SS7 node by indicating the specific SS7 network to which it belongs. It can be used to distinguish between signalling traffic, associated with different networks, being sent between the SG and the ASP over a common SCTP association.">'+
+																	'    								<span class="add-on">NetworkAppearance</span>'+
+																	'      								<input id="asNetworkAppearance'+name+'" type="text" placeholder="NetworkAppearance"  class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" />'+
+																	'  								</span>'+																	
+																	'							</div>'+																	
+																	
+																	'							<button id="add-rsp-btn'+name+'" onclick="addAS(\'' + name + '\');" class="btn btn btn-primary" >Create</button> '+
+																	'						</span>'+					
+																	'					</p>'+
+																	'				</div>'+					
+																	'				<div class="modal-footer">'+
+																	'					<a href="#" onclick="$(\'#entities-modal-applicationServers'+name+'\').modal(\'hide\'); return false;" class="btn">Close</a>'+
+																    '				</div>'+
+																	'			</div>'+
+																	'		</div>'+
+																	
+																	'		<div class="tab-pane" id="routes'+name+'">'+
+																	'			<table id="no-routes-list-table'+name+'" class="table" style="display: none;">'+
+																	'				<tr>'+
+																	'					<td>'+
+																	'						<div class="alert alert-warning fade in text-center" >'+
+																	'							<h2>No Route has been defined yet.</h2>'+
+																	'						</div>'+
+																	'					</td>'+
+																	'				</tr>'+
+																	'			</table>'+	
+																	'			<table id="routes-list-table'+name+'" class="table table-hover">'+
+																	'				<thead>'+
+																	'					<tr>'+
+																	'					<th style="width: 30px;">&nbsp;</th>'+
+																	'					<th>Name</th>'+
+																	'					<th>State</th>'+
+																	'					<th>Traffic Mode</th>'+
+																	'					<th>Application Servers</th>'+
+																	'					</tr>'+
+																	'				</thead>'+
+																	'				<tbody>'+
+																	'				</tbody>'+	
+																	'			</table>'+ 	
+																	'			<a href="#entities-modal-routes'+name+'" role="button" class="btn btn-info btn-small" data-toggle="modal" ><i class="icon-external-link"></i> Create Route</a>'+
+																	'			<div id="entities-modal-routes'+name+'" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">'+
+																	'				<div class="modal-header">'+
+																	'					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
+																	'					<h3><i class="icon-list-alt" style="color: #CC9522;"></i> Create Route</h3>'+
+																	'				</div>'+
+																	'				<div id="entities-modal-body" class="modal-body">'+
+																	'					<div class="alert alert-error" id="create-routes-error'+name+'" style="display:none;">'+
+																	'					  <button type="button" class="close">&times;</button>'+
+																	'					  Some Fields are not correctly filled out, please double check the settings below !'+
+																	'					</div>'+
+																	'					<p>'+    
+																	'						<span>'+
+																
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="destination point code">'+
+																	'									<span class="add-on">Destination point code</span>'+
+																	'									<input id="routeDPC'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="DPC" />'+
+																	'  								</span>'+
+																	'							</div>'+																	
+																	
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="originating point code. You can pass -1 as wild card">'+
+																	'									<span class="add-on">Originating point code</span>'+
+																	'									<input id="routeOPC'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="OPC" />'+
+																	'  								</span>'+																	
+																	'							</div>'+
+																
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="service indicator. You can pass -1 as wild card">'+
+																	'									<span class="add-on">Service indicator</span>'+
+																	'									<input id="routeSI'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="SI" />'+
+																	'  								</span>'+																																		
+																	'							</div>'+
+																	
+																	
+																	'							<div class="control-group" >'+
+																	'   							<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="load sharing algorthim between AS fo this route">'+
+																	'       							<span class="add-on">Traffic Mode</span>'+
+																	'   								<select id="trafficMode'+name+'" >'+
+																	'   									<option value="1">Override</option>'+
+																	'       								<option value="2">Loadshare</option>'+
+																	'       								<option value="3">Broadcast</option>'+
+																	'       							</select>'+
+																	'   							</span>'+	
+																	'							</div>'+																		
+																
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="name of the AS assigned to route message for this DPC">'+
+																	'									<span class="add-on">AppServer Name</span>'+
+																	'									<input id="routeAppServerName'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="AppServer Name" />'+
+																	'  								</span>'+	
+																	'							</div>'+
+																	
+																	'							<button id="add-rsp-btn'+name+'" onclick="addRoute(\'' + name + '\');" class="btn btn btn-primary" >Create</button> '+
+																	'						</span>'+					
+																	'					</p>'+
+																	'				</div>'+					
+																	'				<div class="modal-footer">'+
+																	'					<a href="#" onclick="$(\'#entities-modal-routes'+name+'\').modal(\'hide\'); return false;" class="btn">Close</a>'+
+																    '				</div>'+
+																	'			</div>'+
+																	'		</div>'+
+																	
+																	'	</div>	'+
+																	'</span>');
+															
+															
+															
+															$('.aspfactories-row'+name).remove();
+															
+															var noOfAspfactories = 0 ;
+															
+															jQuery.each(aspfactories, function() {
+																var aspfactoryTmp = this;
+																var aspFacName = aspfactoryTmp.name;
+																var aspFacState = aspfactoryTmp.status;
+																
+																noOfAspfactories = noOfAspfactories + 1;
+																
+																var color = "#CC9522";
+																var aspAction = "Start";
+																var aspButtonStyle = "warning";
+																
+																if(aspFacState){
+																	color = "#229522";
+																	aspAction = "Stop";
+																	aspButtonStyle = "success";
+																}
+											
+																$('#aspFactories-list-table'+name).children('tbody').append('<tr class="aspfactories-row'+name+'">'+
+																		'<td style="vertical-align: middle; text-align: center;"><i style="color: '+color+';" class="icon-map-marker"></i></td>'+
+																		'<td><a href="#" onclick="showInternalPageDetails(\''+name+'-fac-'+aspFacName+'\',\''+aspFacName+'\')">' + aspFacName + '</a></td>' + 
+																		'<td>' + aspFacState + '</td>' + 
+																		'<td style="font-size: 16px; vertical-align: middle; text-align: center; width: 100px;">' + 
+																		'<button class="btn btn-small btn-'+aspButtonStyle+'" data-toggle="tooltip" title="Start ASP" data-placement="bottom" onclick="changeAspState(\'' + name +  '\',\'' + aspFacName +  '\',\'' + aspFacState +  '\')">'+aspAction+'</i></button> ' +
+																	    '</td>' +
+																		'<td style="font-size: 16px; vertical-align: middle; text-align: center; width: 100px;">' + 
+																		'<button class="btn btn-small btn-danger" data-toggle="tooltip" title="Delete ASP" data-placement="bottom" onclick="destroyAsp(\'' + name +  '\',\'' + aspFacName +  '\')"><i class="icon-remove"> </i></button> ' +
+																	    '</td></tr>' 
+																);
+																
+																//start ASP Factory DISPLAY segment
+																aspFacMbeanSearch="com.telscale.ss7:layer=M3UA,type=AspFactory,name="+aspFacName;
+																var mbeanAspFac;
+																$.ajax({
+																	dataType: "json",
+																	url: window.jolokiaProtocol + "//" + window.jolokiaAddress + ":" + window.jolokiaPort + "/jolokia/search/" + aspFacMbeanSearch
+																})
+																.done(function(html) {
+																	if (html.error) {
+																		logToConsole("ERROR", html.error);
+																	}
+																	else {		
+																		jQuery.each(html.value, function() {
+																			mbeanAspFac = this;
+																			
+																			
+																			
+																			jolokia.request(
+																					[
+																					 	{ type: "read", mbean: mbeanAspFac },
+																					],
+																					{ success: [
+																								function(response) {
+																									var aspFacNameTmp = response.value.Name;
+																									var aspFacStartedTmp = response.value.Status;
+																									var aspFacAssociationTmp = response.value.Association;
+																									var aspFacFunctionalityTmp = response.value.Functionality;
+																									var aspFacIpspTypeTmp = response.value.IpspType;
+																									var aspFacAspidTmp = response.value.Aspid;
+																									var aspFacHeartBeatEnabledTmp = response.value.HeartBeatEnabled;
+																									
+																									var aspFacAspListTmp = response.value.AspList;
+																									
+																									
+																									
+																									$('#div-ss7-m3ua-settings').append('<span id="ss7-m3ua-settings-'+name+'-fac-'+aspFacName+'" style="display:none;">'+
+																											'	<ul class="nav nav-tabs" id="myTab">'+
+																											'		<li class="active"><a href="#aspFacDetail'+name+'-'+aspFacName+'" data-toggle="tab"><i style="color: #CC9522;" class="icon-signin"></i> Details</a></li>'+
+																											'		<li><a href="#aspFacAsps'+name+'-'+aspFacName+'" data-toggle="tab"><i style="color: #CC9522;" class="icon-cog"></i> Application Server Processes</a></li>'+
+																											'	</ul>	'+
+																											''+
+																											'	<div class="tab-content">'+
+																											'		<div class="tab-pane active" id="aspFacDetail'+name+'-'+aspFacName+'">'+
+																											'			<table id="aspFacDetail-list-table'+name+'-'+aspFacName+'" class="table table-hover">'+
+																											'				<thead>'+
+																											'					<tr>'+
+																											'					<th style="width: 30px;">&nbsp;</th>'+
+																											'					<th>Property</th>'+
+																											'					<th>Value</th>'+
+																											'					</tr>'+
+																											'				</thead>'+
+																											'				<tbody>'+
+																											'					<tr class="aspFacDetail-row">'+
+																											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+																											'					<td>Name</td>'+
+																											'					<td>' + aspFacNameTmp + '</td>'+
+																											'					</tr>'+
+																											'					<tr class="aspFacDetail-row">'+
+																											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+																											'					<td>Started</td>'+
+																											'					<td>' + aspFacStartedTmp + '</td>'+
+																											'					</tr>'+
+																											'					<tr class="aspFacDetail-row">'+
+																											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+																											'					<td>SCTP Association Name</td>'+
+																											'					<td>' + aspFacAssociationTmp.name + '</td>'+
+																											'					</tr>'+
+																											'					<tr class="aspFacDetail-row">'+
+																											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+																											'					<td>Functionality</td>'+
+																											'					<td>' +  ((typeof aspFacFunctionalityTmp == "undefined" || aspFacFunctionalityTmp == null )? "": aspFacFunctionalityTmp)  + '</td>'+
+																											'					</tr>'+
+																											'					<tr class="aspFacDetail-row">'+
+																											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+																											'					<td>IPSP Type</td>'+
+																											'					<td>' + ((typeof aspFacIpspTypeTmp == "undefined" || aspFacIpspTypeTmp == null )? "": aspFacIpspTypeTmp)  + '</td>'+
+																											'					</tr>'+
+																											'					<tr class="aspFacDetail-row">'+
+																											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+																											'					<td>ASP Id</td>'+
+																											'					<td>' + aspFacAspidTmp.aspId + '</td>'+
+																											'					</tr>'+
+																											'					<tr class="aspFacDetail-row">'+
+																											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+																											'					<td>Heartbeat Enabled</td>'+
+																											'					<td>' + aspFacHeartBeatEnabledTmp + '</td>'+
+																											'					</tr>'+
+																											'				</tbody>'+
+																											'			</table>'+ 											
+																											'		</div>'+
+																											
+																											'		<div class="tab-pane" id="aspFacAsps'+name+'-'+aspFacName+'">'+
+																											'			<table id="no-aspFacAsps-list-table'+name+'-'+aspFacName+'" class="table" style="display: none;">'+
+																											'				<tr>'+
+																											'					<td>'+
+																											'						<div class="alert alert-warning fade in text-center" >'+
+																											'							<h2>No ASP has been defined yet.</h2>'+
+																											'						</div>'+
+																											'					</td>'+
+																											'				</tr>'+
+																											'			</table>'+	
+																											'			<table id="aspFacAsps-list-table'+name+'-'+aspFacName+'" class="table table-hover">'+
+																											'				<thead>'+
+																											'					<tr>'+
+																											'					<th style="width: 30px;">&nbsp;</th>'+
+																											'					<th>Name</th>'+
+																											'					<th>isConnected</th>'+
+																											'					<th>isUp</th>'+
+																											'					<th>State</th>'+
+																											'					<th>AppServer</th>'+
+																											'					</tr>'+
+																											'				</thead>'+
+																											'				<tbody>'+
+																											'				</tbody>'+	
+																											'			</table>'+ 
+																											'		</div>'+
+																											
+																											
+																											'	</div>	'+
+																											'</span>');
+																									
+																										$('.aspFacAsps-row'+name+'-'+aspFacName).remove();
+																										var noOfASForASPFactory = 0;
+																										jQuery.each(aspFacAspListTmp, function() {
+																											noOfASForASPFactory = noOfASForASPFactory + 1;
+																											var aspFacAspTmp = this;
+																											var aspFacAspNameTmp = aspFacAspTmp.name;
+																											var aspFacAspConnectedTmp = aspFacAspTmp.connected;
+																											var aspFacAspUpTmp = aspFacAspTmp.up;
+																											var aspFacAspStateTmp = aspFacAspTmp.started;
+																											var aspFacAspAsTmp = aspFacAspTmp.as;
+																											
+																											$('#aspFacAsps-list-table'+name+'-'+aspFacName).children('tbody').append('<tr class="aspFacAsps-row'+name+'-'+aspFacName+'"><td style="vertical-align: middle; text-align: center;"><i style="color: #CC9522;" class="icon-map-marker"></i></td>'+
+																													'<td>' + aspFacName + '</td>' + 
+																													'<td>' + aspFacAspConnectedTmp + '</td>' + 
+																													'<td>' + aspFacAspUpTmp + '</td>' + 
+																													'<td>' + (aspFacAspStateTmp ? 'UP' : 'DOWN') + '</td>' + 
+																													'<td><a href="#" onclick="showInternalPageDetails(\''+name+'-app-'+aspFacAspAsTmp.name+'\',\''+aspFacAspAsTmp.name+'\')">' + aspFacAspAsTmp.name + '</td>' + 
+																												    '</tr>' 
+																											);	
+																										});	
+																										
+																										if(noOfASForASPFactory == 0){
+																											$('#no-aspFacAsps-list-table'+name+'-'+aspFacName).show();
+																											$('#aspFacAsps-list-table'+name+'-'+aspFacName).hide();
+																										}else {
+																											$('#no-aspFacAsps-list-table'+name+'-'+aspFacName).hide();
+																											$('#aspFacAsps-list-table'+name+'-'+aspFacName).show();
+																										}	
+																								}],
+																								error: function(value){
+																									errorUID = ("st" + new Date().getTime()).hashCode();
+																									createStackTrace(errorUID, value.stacktrace);
+																									logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+																								}
+																						}
+																					);																			
+																			
+																		});
+																	}
+																})
+																.fail(function() {
+																	logToConsole("ERROR", "Failure trying to communicate with the jSS7. Please try again later.");
+																})
+																//end ASP Factory DISPLAY segment
+																
+																
+															});	
+															
+															
+															if(noOfAspfactories == 0){
+																$('#no-aspFactories-list-table'+name).show();
+																$('#aspFactories-list-table'+name).hide();
+															}else {
+																$('#no-aspFactories-list-table'+name).hide();
+																$('#aspFactories-list-table'+name).show();
+															}	
+															
+															
+															$('.applicationServers-row'+name).remove();
+															var noOfApplicationServers = 0 ;
+															jQuery.each(appServers, function() {
+																noOfApplicationServers = noOfApplicationServers + 1;
+																var appServersTmp = this;
+																var appName = appServersTmp.name;
+																var appState = appServersTmp.state;
+																$('#applicationServers-list-table'+name).children('tbody').append('<tr class="applicationServers-row'+name+'"><td style="vertical-align: middle; text-align: center;"><i style="color: #CC9522;" class="icon-map-marker"></i></td>'+
+																		'<td><a href="#" onclick="showInternalPageDetails(\''+name+'-app-'+appName+'\',\''+appName+'\')">' + appName + '</a></td>' + 
+																		'<td>' + appState + '</td>' + 
+																		'<td style="font-size: 16px; vertical-align: middle; text-align: center; width: 100px;">' + 
+																		'<button class="btn btn-small btn-danger" data-toggle="tooltip" title="Delete AS" data-placement="bottom" onclick="destroyAs(\'' + name +  '\',\'' + appName +  '\')"><i class="icon-remove"> </i></button> ' +
+																	    '</td></tr>' 
+																);
+																
+																var aspForSelectOption = '';
+																
+																jQuery.each(aspfactories, function() {
+																	var aspfactoryForSelect = this;
+																	aspForSelectOption += '<option value="'+aspfactoryForSelect.name+'">'+aspfactoryForSelect.name+'</option>';											
+																});	
+																
+																//start Application Server DISPLAY segment
+																appServerMbeanSearch="com.telscale.ss7:layer=M3UA,type=As,name="+appName;
+																var mbeanAppServer;
+																$.ajax({
+																	dataType: "json",
+																	url: window.jolokiaProtocol + "//" + window.jolokiaAddress + ":" + window.jolokiaPort + "/jolokia/search/" + appServerMbeanSearch
+																})
+																.done(function(html) {
+																	if (html.error) {
+																		logToConsole("ERROR", html.error);
+																	}
+																	else {		
+																		jQuery.each(html.value, function() {
+																			mbeanAppServer = this;
+																			
+																			
+																			
+																			
+																			jolokia.request(
+																					[
+																					 	{ type: "read", mbean: mbeanAppServer },
+																					],
+																					{ success: [
+																								function(response) {
+																									
+																									var appServerNameTmp = response.value.Name;
+																									var appServerStartedTmp = response.value.Up;
+																									var appServerStateTmp = response.value.State;
+																									var appServerFunctionalityTmp = response.value.Functionality;
+																									var appServerExchangeTmp = response.value.ExchangeType;
+																									var appServerIPSPTypeTmp = response.value.IpspType;
+																									var appServerRoutingContextTmp = response.value.RoutingContext;
+																									var appServerTrafficModeTmp = response.value.TrafficModeType;
+																									var appServerMinASPActiveTmp = response.value.MinAspActiveForLb;
+																									var appServerNetworkAppearanceTmp = response.value.NetworkAppearance;
+																									var appServerAppServerProcessListTmp = response.value.AspList;
+
+																									$('#div-ss7-m3ua-settings').append('<span id="ss7-m3ua-settings-'+name+'-app-'+appServerNameTmp+'" style="display:none;">'+
+																											'	<ul class="nav nav-tabs" id="myTab">'+
+																											'		<li class="active"><a href="#appServerDetail'+name+'-'+appName+'" data-toggle="tab"><i style="color: #CC9522;" class="icon-signin"></i> Details</a></li>'+
+																											'		<li><a href="#appServerASPs'+name+'-'+appName+'" data-toggle="tab"><i style="color: #CC9522;" class="icon-cog"></i> Application Server Processes</a></li>'+
+																											'	</ul>	'+
+																											''+
+																											'	<div class="tab-content">'+
+																											'		<div class="tab-pane active" id="appServerDetail'+name+'-'+appName+'">'+
+																											'			<table id="appServerDetail-list-table'+name+'-'+appName+'" class="table table-hover">'+
+																											'				<thead>'+
+																											'					<tr>'+
+																											'					<th style="width: 30px;">&nbsp;</th>'+
+																											'					<th>Property</th>'+
+																											'					<th>Value</th>'+
+																											'					</tr>'+
+																											'				</thead>'+
+																											'				<tbody>'+
+																											'					<tr class="appServerDetail-row">'+
+																											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+																											'					<td>Name</td>'+
+																											'					<td>' + appServerNameTmp + '</td>'+
+																											'					</tr>'+
+																											'					<tr class="appServerDetail-row">'+
+																											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+																											'					<td>Started</td>'+
+																											'					<td>' + appServerStartedTmp + '</td>'+
+																											'					</tr>'+
+																											'					<tr class="appServerDetail-row">'+
+																											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+																											'					<td>State</td>'+
+																											'					<td>' + appServerStateTmp + '</td>'+
+																											'					</tr>'+
+																											'					<tr class="appServerDetail-row">'+
+																											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+																											'					<td>Functionality</td>'+
+																											'					<td>' + appServerFunctionalityTmp + '</td>'+
+																											'					</tr>'+
+																											'					<tr class="appServerDetail-row">'+
+																											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+																											'					<td>Exchange</td>'+
+																											'					<td>' + appServerExchangeTmp + '</td>'+
+																											'					</tr>'+
+																											'					<tr class="appServerDetail-row">'+
+																											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+																											'					<td>IPSP Type</td>'+
+																											'					<td>' + appServerIPSPTypeTmp + '</td>'+
+																											'					</tr>'+
+																											'					<tr class="appServerDetail-row">'+
+																											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+																											'					<td>Routing Context</td>'+
+																											'					<td>' + ((typeof appServerRoutingContextTmp == "undefined" || appServerRoutingContextTmp == null ) ? " - " : appServerRoutingContextTmp.routingContexts) + '</td>'+
+																											'					</tr>'+
+																											'					<tr class="appServerDetail-row">'+
+																											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+																											'					<td>Traffic Mode</td>'+
+																											'					<td>' + ((typeof appServerTrafficModeTmp == "undefined" || appServerTrafficModeTmp == null )  ?"-":(((appServerTrafficModeTmp.mode == 1) ? 'Override' : ((appServerTrafficModeTmp.mode == 2) ? 'Loadshare' : 'Broadcast'))))  + '</td>'+
+																											'					</tr>'+
+																											'					<tr class="appServerDetail-row">'+
+																											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+																											'					<td>Minimum ASP Active for Loadshare</td>'+
+																											'					<td>' + appServerMinASPActiveTmp + '</td>'+
+																											'					</tr>'+
+																											'					<tr class="appServerDetail-row">'+
+																											'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-signin"></i></td>'+
+																											'					<td>Network Appearance</td>'+
+																											'					<td>' + ((typeof appServerNetworkAppearanceTmp == "undefined" || appServerNetworkAppearanceTmp == null ) ? " - " : appServerNetworkAppearanceTmp.netApp) + '</td>'+
+																											'					</tr>'+
+																											'				</tbody>'+
+																											'			</table>'+ 											
+																											'		</div>'+
+																											
+																											'		<div class="tab-pane" id="appServerASPs'+name+'-'+appName+'">'+
+																											'			<table id="no-appServerASPs-list-table'+name+'-'+appName+'" class="table" style="display: none;">'+
+																											'				<tr>'+
+																											'					<td>'+
+																											'						<div class="alert alert-warning fade in text-center" >'+
+																											'							<h2>No ASP has been defined yet.</h2>'+
+																											'						</div>'+
+																											'					</td>'+
+																											'				</tr>'+
+																											'			</table>'+	
+																											'			<table id="appServerASPs-list-table'+name+'-'+appName+'" class="table table-hover">'+
+																											'				<thead>'+
+																											'					<tr>'+
+																											'					<th style="width: 30px;">&nbsp;</th>'+
+																											'					<th>Name</th>'+
+																											'					<th>isStarted</th>'+
+																											'					<th>isConnected</th>'+
+																											'					<th>isUp</th>'+
+																											'					<th>State</th>'+
+																											'					<th>Remove</th>'+
+																											'					</tr>'+
+																											'				</thead>'+
+																											'				<tbody>'+
+																											'				</tbody>'+	
+																											'			</table>'+ 
+																											'			<a href="#entities-modal-addAspToAs'+name+'-'+appName+'" role="button" class="btn btn-info btn-small" data-toggle="modal" ><i class="icon-external-link"></i> Add ASP</a>'+
+																											'			<div id="entities-modal-addAspToAs'+name+'-'+appName+'" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">'+
+																											'				<div class="modal-header">'+
+																											'					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
+																											'					<h3><i class="icon-map-marker" style="color: #CC9522;"></i> Add ASP</h3>'+
+																											'				</div>'+
+																											'				<div id="entities-modal-body" class="modal-body">'+
+																											'					<div class="alert alert-error" id="create-addAspToAs-error'+name+'-'+appName+'" style="display:none;">'+
+																											'					  <button type="button" class="close">&times;</button>'+
+																											'					  Some Fields are not correctly filled out, please double check the settings below !'+
+																											'					</div>'+
+																											'					<p>'+  
+																											
+																											'						<span>'+
+																											'							<label>AspFactories : </label>'+
+																											'                            <select id="asp-'+name+'-'+appName+'" style="width: 300px;">'+aspForSelectOption+'</select></br>'+
+																											
+																											'							<button id="add-rsp-btn'+name+'" onclick="assignAspToAs(\'' + name + '\',\'' + appName + '\');" class="btn btn btn-primary" >Create</button> '+
+																											'						</span>'+					
+																											'					</p>'+
+																											'				</div>'+					
+																											'				<div class="modal-footer">'+
+																											'					<a href="#" onclick="$(\'#entities-modal-addAspToAs'+name+'-'+appName+'\').modal(\'hide\'); return false;" class="btn">Close</a>'+
+																										    '				</div>'+
+																											'			</div>'+
+																											'		</div>'+
+																											
+																											
+																											'	</div>	'+
+																											'</span>');
+																									
+																										$('.appServerAsps-row'+name+'-'+appName).remove();
+																										var noOfASPForAP = 0;
+																										jQuery.each(appServerAppServerProcessListTmp, function() {
+																											noOfASPForAP = noOfASPForAP +1;
+																											var appServerAppServerProcessTmp = this;
+																											var appServerAppServerProcessNameTmp = appServerAppServerProcessTmp.name;
+																											var appServerAppServerProcessStartedTmp = appServerAppServerProcessTmp.started;
+																											var appServerAppServerProcessConnectedTmp = appServerAppServerProcessTmp.connected;
+																											var appServerAppServerProcessUpTmp = appServerAppServerProcessTmp.up;
+																											var appServerAppServerProcessStateTmp = appServerAppServerProcessTmp.state;
+																											
+																											$('#appServerASPs-list-table'+name+'-'+appName).children('tbody').append('<tr class="appServerAsps-row'+name+'-'+appName+'"><td style="vertical-align: middle; text-align: center;"><i style="color: #CC9522;" class="icon-map-marker"></i></td>'+
+																													'<td><a href="#" onclick="showInternalPageDetails(\''+name+'-fac-'+appServerAppServerProcessNameTmp+'\',\''+appServerAppServerProcessNameTmp+'\')">' + appServerAppServerProcessNameTmp + '</a></td>' + 
+																													'<td>' + appServerAppServerProcessStartedTmp + '</td>' + 
+																													'<td>' + appServerAppServerProcessConnectedTmp + '</td>' +               
+																													'<td>' + appServerAppServerProcessUpTmp + '</td>' + 
+																													'<td>' + appServerAppServerProcessStateTmp + '</td>' + 
+																													'<td style="font-size: 16px; vertical-align: middle; text-align: center; width: 100px;">' + 
+																													'<button class="btn btn-small btn-danger" data-toggle="tooltip" title="Unassign ASP" data-placement="bottom" onclick="unassignAspFromAs(\'' + name +  '\',\'' + appServerNameTmp +  '\',\'' + appServerAppServerProcessNameTmp +  '\')"><i class="icon-remove"> </i></button> ' +
+																												    '</td>'+
+																												    '</tr>' 
+																											);	
+																										});	
+																										
+																										
+																										if(noOfASPForAP == 0){
+																											$('#no-appServerASPs-list-table'+name+'-'+appName).show();
+																											$('#appServerASPs-list-table'+name+'-'+appName).hide();
+																										}else {
+																											$('#no-appServerASPs-list-table'+name+'-'+appName).hide();
+																											$('#appServerASPs-list-table'+name+'-'+appName).show();
+																										}	
+																								}],
+																								error: function(value){
+																									errorUID = ("st" + new Date().getTime()).hashCode();
+																									createStackTrace(errorUID, value.stacktrace);
+																									logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+																								}
+																						}
+																					);																			
+																			
+																		});
+																	}
+																})
+																.fail(function() {
+																	logToConsole("ERROR", "Failure trying to communicate with the jSS7. Please try again later.");
+																})
+																//end Application ServerDISPLAY segment
+																
+																
+															});	
+														
+															
+															if(noOfApplicationServers == 0){
+																$('#no-applicationServers-list-table'+name).show();
+																$('#applicationServers-list-table'+name).hide();
+															}else {
+																$('#no-applicationServers-list-table'+name).hide();
+																$('#applicationServers-list-table'+name).show();
+															}	
+															
+															
+															$('.routes-row'+name).remove();
+															var noOfRoutes = 0;
+															jQuery.each(routes, function(key, value) {
+																noOfRoutes = noOfRoutes + 1;
+																var status = "INACTIVE";
+																var asNames = "";
+																var trafficMode = value.trafficModeType.stringRepresentation;
+																var asArray = value.asArray;
+																jQuery.each(asArray, function() {
+																	var valueTmp = this;
+																	if(valueTmp.name != "" ){
+																		asNames = asNames + valueTmp.name +' <button class="btn btn-small btn-danger" data-toggle="tooltip" title="Delete AS from route" data-placement="bottom" onclick="deleteRoute(\'' + name +  '\',\'' + key + '\',\'' + valueTmp.name +  '\')"><i class="icon-remove"> </i></button>, ';
+																		if(valueTmp.up){
+																			status = "ACTIVE";
+																		}
+																	}
+																});	
+																
+																$('#routes-list-table'+name).children('tbody').append('<tr class="routes-row'+name+'"><td style="vertical-align: middle; text-align: center;"><i style="color: #CC9522;" class="icon-map-marker"></i></td>'+
+																		'<td>' + key + '</td>' + 
+																		'<td>' + status + '</td>' + 
+																		'<td>' + trafficMode + '</td>' +
+																		'<td>' + asNames + '</td>' + 
+																		'</tr>' 
+																);
+																
+															});	
+															
+															
+															if(noOfRoutes== 0){
+																$('#no-routes-list-table'+name).show();
+																$('#routes-list-table'+name).hide();
+															}else {
+																$('#no-routes-list-table'+name).hide();
+																$('#routes-list-table'+name).show();
+															}															
+															
+														}],
+														error: function(value){
+															errorUID = ("st" + new Date().getTime()).hashCode();
+															createStackTrace(errorUID, value.stacktrace);
+															logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+														}
+												}
+											);									
+									
+	
+									
+									
+								});
+							}
+						})
+						.fail(function() {
+							logToConsole("ERROR", "Failure trying to communicate with the jSS7. Please try again later.");
+						})
+											
+					}
+					</script>

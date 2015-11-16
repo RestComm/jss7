@@ -1,0 +1,191 @@
+				<h3 style="margin: 0px;"><i class="icon-bar-chart"></i> SS7 Metrics</h3>
+				<hr style="margin: 10 0px;"/>
+				
+				<span class="span5 offset7">
+					<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="select the refresh rate at which page will be refreshed">
+					<span class="add-on">Refresh Rate</span>
+					<select id="refresh-rate-select" onchange="refreshRate()">
+						<option value="5000">5 Sec</option>
+						<option value="10000">10 Sec</option>
+						<option value="15000">15 Sec</option>
+						<option value="20000">20 Sec</option>
+						<option value="30000">30 Sec</option>
+						<option selected="selected" value="60000">60 Sec</option>
+						<option value="300000">5 Min</option>
+						<option value="600000">10 Min</option>
+						<option value="900000">15 Min</option>
+						<option value="1200000">20 Min</option>
+						<option value="1800000">30 Min</option>
+						<option value="3600000">60 Min</option>
+					</select>
+					</span>					
+					<button id="refresh" style="float: right; margin-right: 20px; margin-left: 20px; height: 30px;" class="btn btn-medium btn-success" data-toggle="tooltip" data-placement="left" onclick="updateGraphs();" data-original-title="Refresh Graph"><i class="icon-refresh"></i></button>
+				</span>
+				
+				<span id="ras-table-wrapper">
+					<table id="no-campaigns-table" class="table" style="display: none;">
+						<tr>
+							<td>
+								<div class="alert alert-info fade in">
+									<strong>No Campaigns defined yet!</strong> 
+								</div>
+							</td>
+						</tr>
+					</table>	
+					
+					<div id="campaigns-div" class="control-group">
+						<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="select the campaign to display the metrics graph">
+							<span class="add-on">Campaigns</span>
+							<select id="campaigns-list-select" onchange="createGraphs()">
+								<option value="Select">Select</option>
+							</select>
+						</span>
+					</div>
+					
+					<input type="hidden" value="-1" id="timerIdValue"/>
+									
+					<div id="chart_div" style="width: 900px; height: 500px;"></div>
+					
+				</span>
+				
+				
+				<script type='text/javascript'>
+					//@ sourceURL=loadGoogleCharts.js
+					
+					var allEstablishedDialogsCountData = new google.visualization.DataTable();
+					allEstablishedDialogsCountData.addColumn('datetime', 'Time');
+					allEstablishedDialogsCountData.addColumn('number', 'AllEstablishedDialogsCount');
+					allEstablishedDialogsCountData.addColumn('number', 'AllLocalEstablishedDialogsCount');
+					allEstablishedDialogsCountData.addColumn('number', 'AllRemoteEstablishedDialogsCount');
+					
+					
+					 var options = {
+					          title: 'All Established Dialogs Count',
+					          curveType: 'function',
+					          pointSize: 5,
+					          width: 1200,
+					      	  height: 400,
+					 };
+				 
+			        var allEstablishedDialogsCountChart = new google.visualization.LineChart(document.getElementById('chart_div'));
+				        
+					function drawCharts() {
+				        allEstablishedDialogsCountChart.draw(allEstablishedDialogsCountData, options);
+					}
+					
+					function refreshCampaignsList(){
+						
+						jolokia.request(
+								[
+									{ type: "read", mbean: "com.telscale.ss7:layer=COUNTER,name=CounterHost,type=Management"}
+								],
+								{ success: 
+									function(response) {
+										var noOfCampaigns = 0 ;
+										var campaignsList = response.value.CampaignsList;
+										
+										jQuery.each(campaignsList, function() {
+											noOfCampaigns = noOfCampaigns + 1;
+											$('#campaigns-list-select').append('<option value='+this+'>'+this+'</option>')										
+										});	
+									
+										if(noOfCampaigns == 0){
+											$('#no-campaigns-table').show();
+											$('#campaigns-div').hide();
+										}else {
+											$('#no-campaigns-table').hide();
+											$('#campaigns-div').show();
+										}	
+
+									},
+									error: function(value) {
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									} 
+								}
+							);
+					}
+					
+				function refreshRate() {
+					var timerIdValue = document.getElementById("timerIdValue").value;
+					clearInterval(timerIdValue);
+					
+					var e = document.getElementById("refresh-rate-select");
+					var refreshRate = e.options[e.selectedIndex].value;
+					var timerId = setAutoCancellableInterval(refreshRate, "updateGraphs", "SS7 Metrics");
+					
+					$("#timerIdValue").val(timerId);
+				}
+					
+				function createGraphs() {
+					//Remove all rows
+					var numRows = allEstablishedDialogsCountData.getNumberOfRows();
+					
+					if(numRows != 0){
+						allEstablishedDialogsCountData.removeRows(0, numRows)
+					}
+					
+					updateGraphs();
+					var timerIdValue = document.getElementById("timerIdValue").value;
+					
+					if(timerIdValue == "-1"){
+						var timerId = setAutoCancellableInterval(60000, "updateGraphs", "SS7 Metrics");
+						$("#timerIdValue").val(timerId);
+					}
+				}
+				
+				function updateGraphs() {
+					
+					var e = document.getElementById("campaigns-list-select");
+					var value = e.options[e.selectedIndex].text;
+					
+					if(value=="Select"){						
+						return;
+					}
+					
+					
+					jolokia.request(
+						[ 
+							{ type: "exec", mbean: "com.telscale.ss7:layer=COUNTER,name=CounterHost,type=Management", operation: "getLastCounterValues", arguments: [value]},
+						],
+						{ success: [ 
+							function(response) {
+								if(response.value == null){
+									logToConsole("ERROR", "Last CounterValueSet Does not exist");
+									return;
+								}
+								var counterValues = response.value.counterValues;
+								
+								var allEstablishedDialogsCount = 0;
+								var allLocalEstablishedDialogsCount = 0;
+								var allRemoteEstablishedDialogsCount = 0;
+								
+								jQuery.each(counterValues, function() {
+									if(this.counterDef.counterName == "AllEstablishedDialogsCount"){
+										allEstablishedDialogsCount = this.longValue;
+									} else if(this.counterDef.counterName == "AllLocalEstablishedDialogsCount"){
+										allLocalEstablishedDialogsCount = this.longValue;
+									} else if(this.counterDef.counterName == "AllRemoteEstablishedDialogsCount"){
+										allRemoteEstablishedDialogsCount = this.longValue;
+									}
+								});
+								
+								allEstablishedDialogsCountData.addRow([(new Date()), allEstablishedDialogsCount, allLocalEstablishedDialogsCount, allRemoteEstablishedDialogsCount]);
+								
+								drawCharts();
+							}
+							],
+							error: function(response) {
+								alert("Jolokia request failed: " + response.error);
+							} 
+						}
+					);
+					
+					
+				}
+				$(document).ready(function () {
+					refreshCampaignsList();
+					//setAutoCancellableInterval(1000, "updateState", "SS7 Metrics");
+				});
+			</script>				

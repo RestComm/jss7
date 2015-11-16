@@ -1,0 +1,52 @@
+						<div class="well sidebar-nav">
+							<ul class="nav nav-list">
+								<li class="nav-header"><i class="icon-desktop"></i> Connected to <span class="pull-right"><button class="btn btn-mini" onclick="showConnectionOptions();" ><i id="conn-options-icon"class="icon-caret-down" style="margin-left: 0px;" data-toggle="tooltip" data-placement="right" title="Show Connection Options"></i></button></span></li>
+								<li> <h5 style="margin: 0; color: #777777;"><i id="connected-security"></i> <span id="connected-to" style=""></span> &nbsp; <span></span></h5></li>
+								<span id="connection-options" style="display: none;">
+									<hr style="margin: 10px 0;"/>
+									<li class="nav-header"><i class="icon-plus-sign"></i>New Connection</li>
+									<li>
+										<button type="button" onclick="toggleSecurity(this);" style="vertical-align: baseline; height: 28px; width: 30px;" class="btn btn-small btn-warning" data-toggle="button" >
+											<i class="icon-unlock" style="font-size: 22px; width: 12px; margin-left: -4px;" data-toggle="tooltip" data-placement="right" title="Secure Connection (HTTPS)"></i>
+										</button>
+										<input class="span7" id="host" type="text" placeholder="IP Address">
+										<input class="span3	" id="port" type="text" placeholder="Port">
+									</li>
+									<li>
+										<input class="span6" id="user" type="text" placeholder="Username" />
+										<input class="span6	" id="pass" type="password" placeholder="Password" />
+									</li>
+									<li>
+										<button class="btn btn-primary" type="button">Connect</button>
+									</li>
+									<!--
+									<hr style="margin: 20px 0 10px 0;"/>
+									<li class="nav-header"><i class="icon-time"></i>Recent Connections</li>
+									<li><a href="#"><span style="padding-left: 20px;">192.168.1.123:8080</span></a></li>
+									<li><a href="#"><span style="padding-left: 20px;">127.0.0.2:8080</span></a></li>
+									<li><a href="#"><span style="padding-left: 20px;">84.143.32.234:8080</span></a></li>
+									<li><a href="#"><span style="padding-left: 20px;">101.102.103.104:80</span></a></li>
+									<li><a href="#"><span style="padding-left: 20px;">1.2.3.4:8080</span></a></li>
+									-->
+								</span>
+							</ul>
+						</div>
+						<div id="left-sidebar" class="well sidebar-nav">
+							<ul class="nav nav-list">
+								<li class="nav-header">Management</li>
+								<li><a href="#" onclick="setMenu(this, 'services')"><i class="icon-cogs" style="font-size: 1.2em;"></i> Services</a></li>
+								<li><a href="#" onclick="setMenu(this, 'sctp')"><i class="icon-hdd" style="font-size: 1.2em;"></i> SCTP</a></li>
+								<li><a href="#" onclick="setMenu(this, 'm3ua')"><i class="icon-copy" style="font-size: 1.2em;"></i> M3UA</a></li>
+								<li><a href="#" onclick="setMenu(this, 'linkset')"><i class="icon-copy" style="font-size: 1.2em;"></i> Linkset</a></li>
+								<li><a href="#" onclick="setMenu(this, 'sccp')"><i class="icon-resize-small" style="font-size: 1.2em;"></i> SCCP</a></li>
+								<li><a href="#" onclick="setMenu(this, 'tcap')"><i class="icon-cloud" style="font-size: 1.2em;"></i> TCAP</a></li>
+								<li><a href="#" onclick="setMenu(this, 'alarms')"><i class="icon-bell-alt" style="font-size: 1.2em;"></i> Alarms</a></li>
+								<li class="nav-header">Monitoring</li>
+								<li><a href="#" onclick="setMenu(this, 'managecampaigns')"><i class="icon-dashboard" style="font-size: 1.2em;"></i>Manage Campaigns</a></li>
+								<li><a href="#" onclick="setMenu(this, 'metrics')"><i class="icon-bar-chart" style="font-size: 1.2em;"></i> Metrics</a></li>
+							</ul>
+						</div><!--/.well -->
+						&nbsp;<br/>
+						&nbsp;<br/>
+						&nbsp;<br/>
+						&nbsp;<br/>

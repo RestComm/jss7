@@ -1,0 +1,60 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.telscale.protocols.ss7.oam</groupId>
+		<artifactId>telscale-ss7-oam</artifactId>
+		<version>2.2.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>new-ui</artifactId>
+	
+	<name>Mobicents SS7 :: Management :: UI :: ${pom.artifactId}</name>
+	<packaging>war</packaging>
+
+	<properties>
+	</properties>
+
+	 <build>
+                <finalName>jss7-management-console</finalName>
+                <plugins>
+                    <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-war-plugin</artifactId>
+                            <version>2.3</version>
+                    </plugin>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<echo>
+											${jboss.home}server/default/deploy
+										</echo>
+										<copy file="${project.build.directory}/jss7-management-console.war" todir="${jboss.home}/server/${node}/deploy" />
+									</tasks>
+								</configuration>
+							</execution>
+							<execution>
+								<id>undeploy</id>
+								<phase>clean</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<delete failonerror="false" file="${jboss.home}/server/${node}/deploy/jss7-management-console.war" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>                        
+                </plugins>
+        </build>
+</project>

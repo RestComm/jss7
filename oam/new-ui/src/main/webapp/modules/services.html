@@ -1,0 +1,70 @@
+				<h3 style="margin: 0px;"><i class="icon-cogs"></i> Services</h3>
+				<hr style="margin: 10 0px;"/>
+
+				<p id="slee-version"></p>
+				<p style="text-align: center;">
+					<span id="slee-state"></span>
+					
+				</p>
+			<script type="text/javascript">
+				function updateState() {
+					mbeanSearch="org.mobicents.ss7:service=*";
+					
+					var mbean;
+					$.ajax({
+						dataType: "json",
+						url: window.jolokiaProtocol + "//" + window.jolokiaAddress + ":" + window.jolokiaPort + "/jolokia/search/" + mbeanSearch
+					})
+					.done(function(html) {
+						if (html.error) {
+							logToConsole("ERROR", html.error);
+						}
+						else {		
+							jQuery.each(html.value, function() {
+								mbeanVar = this;
+								jolokia.request(
+								[
+								 	{ type: "read", mbean: mbeanVar },
+								],
+								{ success: [
+											function(response) {
+												var jndiName = response.value.JndiName;
+												var isStarted = response.value.Started;
+												var ss7Name = response.value.SS7Name;
+												var ss7ServiceName = response.value.SS7ServiceName;
+												var ss7Vendor = response.value.SS7Vendor;
+												var ss7Version = response.value.SS7Version;
+												
+												$('#content').append('<p>'+
+														'<h4>'+ ss7ServiceName +' <small>service for</small> ' + ss7Name + ' v' + ss7Version + '<small> by ' + ss7Vendor+'</small></h4>'+
+												'</p>'+
+												'<p style="text-align: center;">' +
+													'<span id="state'+ss7ServiceName+'"></span>'+
+												'</p>');
+												
+												if(isStarted){
+													$('#state'+ss7ServiceName).append('<pre style="background-color: #BADABA; text-align: center;"><i class="icon-play-circle icon-2x"></i> RUNNING</pre>');
+												} else {
+													$('#state'+ss7ServiceName).append('<pre style="background-color: #DD9388; text-align: center;"><i class="icon-minus-sign icon-2x"></i> STOPPED</pre>');
+												}
+											}],
+											error: function(value){
+												errorUID = ("st" + new Date().getTime()).hashCode();
+												createStackTrace(errorUID, value.stacktrace);
+												logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+											}
+									}
+								);
+							});
+						}
+					})
+					.fail(function() {
+						logToConsole("ERROR", "Failure trying to communicate with the SMSC Gateway. Please try again later.");
+					})
+								
+				}
+				$(document).ready(function () {
+					updateState();
+					//setAutoCancellableInterval(1000, "updateState", "SLEE Management");
+				});
+			</script>

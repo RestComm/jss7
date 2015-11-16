@@ -9,7 +9,7 @@
 
 	<artifactId>statistics-oam-parent</artifactId>
 	<packaging>pom</packaging>
-	<name>TelScale SS7 :: Statistic-oam :: Parent :: ${pom.artifactId}</name>
+	<name>Mobicents SS7 :: Statistic-oam :: Parent :: ${pom.artifactId}</name>
 
 	<modules>
 		<module>api</module>
