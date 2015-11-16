@@ -8,12 +8,12 @@
 
 	<artifactId>mobicents-ss7</artifactId>
 
-	<name>Mobicents SS7 :: Service</name>
+	<name>TelScale SS7 :: ${pom.artifactId}</name>
 
 	<properties>
-		<ss7.name>Mobicents jSS7</ss7.name>
-		<ss7.vendor>TeleStax</ss7.vendor>
-		<ss7.version>${pom.version}</ss7.version>
+		<telscale.name>mobicents-ss7</telscale.name>
+		<telscale.vendor>TeleStax</telscale.vendor>
+		<telscale.version>${pom.version}</telscale.version>
 	</properties>
 
 	<dependencies>
@@ -27,15 +27,45 @@
 		<dependency>
 			<artifactId>asn</artifactId>
 			<groupId>org.mobicents.protocols.asn</groupId>
-		</dependency>		
-		<dependency>
-			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
-			<artifactId>sccp-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
-			<artifactId>sccp-impl</artifactId>
+			<groupId>org.mobicents.commons</groupId>
+			<artifactId>commons</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.mobicents.protocols.sctp</groupId>
+			<artifactId>sctp-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.sctp</groupId>
+			<artifactId>sctp-impl</artifactId>
+		</dependency>
+
+		<dependency>
+			<artifactId>congestion</artifactId>
+			<groupId>org.mobicents.protocols.ss7.congestion</groupId>
+		</dependency>
+
+		<dependency>
+			<artifactId>shell-server-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.management</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>shell-server-impl</artifactId>
+			<groupId>org.mobicents.protocols.ss7.management</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>shell-transport</artifactId>
+			<groupId>org.mobicents.protocols.ss7.management</groupId>
+		</dependency>
+
+		<dependency>
+			<artifactId>scheduler</artifactId>
+			<groupId>org.mobicents.protocols.ss7.scheduler</groupId>
+		</dependency>
+
 		<dependency>
 			<artifactId>mtp-api</artifactId>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
@@ -47,20 +77,22 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 			<artifactId>linkset</artifactId>
-			<version>${pom.version}</version>
 		</dependency>
 
-		<!-- Hardware Dahdi Java 
+		<!-- Hardware Dahdi Java -->
 		<dependency>
 			<artifactId>mobicents-dahdi</artifactId>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 		</dependency>
--->
 		<!-- Hardware Dialogic Java -->
 		<dependency>
 			<artifactId>mobicents-dialogic</artifactId>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 		</dependency>
+		<dependency>
+			<groupId>com.vendor.dialogic</groupId>
+			<artifactId>gctapi</artifactId>
+		</dependency>		
 
 		<!-- m3ua -->
 		<dependency>
@@ -74,65 +106,31 @@
 		</dependency>
 
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>concurrent</groupId>
-			<artifactId>concurrent</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javolution</groupId>
-			<artifactId>javolution</artifactId>
-		</dependency>
-		<dependency>
-			<artifactId>shell-server-api</artifactId>
-			<groupId>org.mobicents.protocols.ss7.management</groupId>
-		</dependency>
-		<dependency>
-			<artifactId>shell-server-impl</artifactId>
-			<groupId>org.mobicents.protocols.ss7.management</groupId>
-		</dependency>		
-		<dependency>
-			<artifactId>shell-transport</artifactId>
-			<groupId>org.mobicents.protocols.ss7.management</groupId>
-		</dependency>		
-		<dependency>
-			<artifactId>scheduler</artifactId>
-			<groupId>org.mobicents.protocols.ss7.scheduler</groupId>
-		</dependency>
-		<dependency>
-			<groupId>org.mobicents.protocols.sctp</groupId>
-			<artifactId>sctp-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mobicents.protocols.sctp</groupId>
-			<artifactId>sctp-impl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mobicents.commons</groupId>
-			<artifactId>commons</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.mobicents.protocols.ss7.isup</groupId>
 			<artifactId>isup-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.isup</groupId>
 			<artifactId>isup-impl</artifactId>
-		</dependency>		
-		
+		</dependency>
+
 		<dependency>
-			<artifactId>congestion</artifactId>
-			<groupId>org.mobicents.protocols.ss7.congestion</groupId>
-		</dependency>		
+			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+			<artifactId>sccp-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+			<artifactId>sccp-impl</artifactId>
+		</dependency>
+		<dependency>
+			<artifactId>tcap-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>tcap-impl</artifactId>
+			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+		</dependency>
+
 		<dependency>
 			<artifactId>map-api</artifactId>
 			<groupId>org.mobicents.protocols.ss7.map</groupId>
@@ -149,24 +147,78 @@
 			<artifactId>cap-impl</artifactId>
 			<groupId>org.mobicents.protocols.ss7.cap</groupId>
 		</dependency>
+		<dependency>
+			<artifactId>inap-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.inap</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>inap-impl</artifactId>
+			<groupId>org.mobicents.protocols.ss7.inap</groupId>
+		</dependency>
 
+		<!-- SS7 stats -->
 		<dependency>
-			<artifactId>isup-api</artifactId>
-			<groupId>org.mobicents.protocols.ss7.isup</groupId>
+			<artifactId>statistics-api</artifactId>
+			<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+			<version>${pom.version}</version>
+		</dependency>	
+		<dependency>
+			<artifactId>statistics-impl</artifactId>
+			<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+			<version>${pom.version}</version>
+		</dependency>	
+
+		<!-- telscale dependencies -->
+		<dependency>
+			<artifactId>jmx</artifactId>
+			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
-			<artifactId>isup-impl</artifactId>
-			<groupId>org.mobicents.protocols.ss7.isup</groupId>
-		</dependency>
-		
-		<dependency>
-			<artifactId>tcap-api</artifactId>
-			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+			<artifactId>alarm</artifactId>
+			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
-			<artifactId>tcap-impl</artifactId>
-			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
-		</dependency>				
+			<artifactId>jmxss7</artifactId>
+			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>sctp-oam</artifactId>
+			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>m3ua-oam</artifactId>
+			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>sccp-oam</artifactId>
+			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>linkset-oam</artifactId>
+			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>statistics-oam-api</artifactId>
+			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>statistics-oam-impl</artifactId>
+			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>tcap-oam</artifactId>
+			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<version>${pom.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>${pom.artifactId}-${pom.version}</finalName>
@@ -186,6 +238,7 @@
 					</archive>
 				</configuration>
 			</plugin>
+
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
@@ -194,7 +247,6 @@
 							src/main/assembly/pojo.xml
 						</descriptor>
 					</descriptors>
-					<!-- this is doubled in sccp-beans -->
 					<finalName>mobicents-ss7</finalName>
 				</configuration>
 				<executions>
@@ -242,7 +294,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<groupId>org.mobicents.tools</groupId>

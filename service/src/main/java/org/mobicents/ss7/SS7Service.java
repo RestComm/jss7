@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -56,12 +56,12 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
         logger.info(generateMessageWithLogo("service started"));
     }
 
-    public String getSS7ServiceName() {
-        return this.serviceName;
-    }
-
     private String generateMessageWithLogo(String message) {
         return lLogo + getSS7Name() + " " + getSS7Version() + " " + this.serviceName + " " + message + rLogo;
+    }
+
+    public String getSS7ServiceName() {
+        return this.serviceName;
     }
 
     public String getSS7Name() {
@@ -152,5 +152,4 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
     public boolean isStarted() {
         return (this.getState() == STARTED);
     }
-
 }

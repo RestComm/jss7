@@ -9,13 +9,18 @@
 		</constructor>
 		<property name="persistDir">${jboss.server.data.dir}</property>
 		<property name="singleThread">true</property>
-		<property name="connectDelay">5000</property>
 	</bean>
 
-	<bean name="SCTPShellExecutor"
-		class="org.mobicents.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
-		<property name="sctpManagement">
-			<inject bean="SCTPManagement" />
+	<bean name="SCTPShellExecutor" class="org.mobicents.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
+		<property name="sctpManagements">
+			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.sctp.ManagementImpl">
+				<entry>
+					<key>SCTPManagement</key>
+					<value>
+						<inject bean="SCTPManagement" />
+					</value>
+				</entry>
+			</map>
 		</property>
 	</bean>
 
@@ -24,7 +29,8 @@
 	<!-- Define MTP3 PointCode Format -->
 	<!-- ==================================================================== -->
 	<bean name="RoutingLabelFormat" class="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat">
-		<constructor factoryClass="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat" factoryMethod="getInstance">
+		<constructor factoryClass="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat"
+			factoryMethod="getInstance">
 			<parameter>ITU</parameter>
 		</constructor>
 	</bean>
@@ -37,16 +43,29 @@
 	<bean name="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl">
 		<constructor>
 			<parameter>Mtp3UserPart</parameter>
+			<parameter>TelScale-jSS7</parameter>
 		</constructor>
 		<property name="persistDir">${jboss.server.data.dir}</property>
-		<property name="transportManagement"><inject bean="SCTPManagement" /></property>
-		<property name="routingLabelFormat"><inject bean="RoutingLabelFormat" /></property>	
+		<property name="maxSequenceNumber">256</property>
+		<property name="maxAsForRoute">2</property>
+		<property name="transportManagement">
+			<inject bean="SCTPManagement" />
+		</property>
+		<property name="routingLabelFormat">
+			<inject bean="RoutingLabelFormat" />
+		</property>
 	</bean>
 
-	<bean name="M3UAShellExecutor"
-		class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
-		<property name="m3uaManagement">
-			<inject bean="Mtp3UserPart" />
+	<bean name="M3UAShellExecutor" class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
+		<property name="m3uaManagements">
+			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl">
+				<entry>
+					<key>Mtp3UserPart</key>
+					<value>
+						<inject bean="Mtp3UserPart" />
+					</value>
+				</entry>
+			</map>
 		</property>
 	</bean>
 
@@ -67,15 +86,28 @@
 	<!-- ==================================================================== -->
 	<!-- Dialogic Mtp3UserPart -->
 	<!-- ==================================================================== -->
-	<!--
-	<bean name="Mtp3UserPart" class="org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart">
-		<property name="sourceModuleId">61</property>
-		<property name="destinationModuleId">34</property>
-		<property name="routingLabelFormat">
-			<inject bean="RoutingLabelFormat" />
-		</property>		
-	</bean>
-	-->
+	<!-- <bean name="Mtp3UserPart" class="org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart"> 
+		<constructor>
+			<parameter>TelScale-jSS7</parameter>
+		</constructor>	
+		<property name="sourceModuleId">61</property> <property name="destinationModuleId">34</property> 
+		<property name="routingLabelFormat"> <inject bean="RoutingLabelFormat" /> 
+		</property> </bean> -->
+
+	<!-- ==================================================================== -->
+	<!-- Linkset -->
+	<!-- ==================================================================== -->
+	<!-- <bean name="LinksetFactoryFactory" class="org.mobicents.ss7.linkset.oam.LinksetFactoryFactory"> 
+		<incallback method="addFactory" /> <uncallback method="removeFactory" /> 
+		</bean> <bean name="DahdiLinksetFactory" class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory"> 
+		</bean> <bean name="LinksetManager" class="org.mobicents.ss7.linkset.oam.LinksetManagerImpl"> 
+		<constructor> <parameter>LinksetManager</parameter> </constructor> <property 
+		name="scheduler"> <inject bean="SS7Scheduler" /> </property> <property name="linksetFactoryFactory"> 
+		<inject bean="LinksetFactoryFactory" /> </property> <property name="persistDir">${jboss.server.data.dir}</property> 
+		</bean> <bean name="LinksetExecutor" class="org.mobicents.ss7.linkset.oam.LinksetExecutor"> 
+		<property name="linksetManager"> <inject bean="LinksetManager" /> </property> 
+		</bean> -->
+
 	<!-- ==================================================================== -->
 	<!-- SCCP Service -->
 	<!-- ==================================================================== -->
@@ -96,18 +128,88 @@
 		</property>
 	</bean>
 
-	<bean name="SccpExecutor"
-		class="org.mobicents.protocols.ss7.sccp.impl.oam.SccpExecutor">
-		<property name="sccpStack">
-			<inject bean="SccpStack" />
+	<bean name="SccpExecutor" class="org.mobicents.protocols.ss7.sccp.impl.oam.SccpExecutor">
+		<property name="sccpStacks">
+			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl">
+				<entry>
+					<key>SccpStack</key>
+					<value>
+						<inject bean="SccpStack" />
+					</value>
+				</entry>
+			</map>		
 		</property>
 	</bean>
 
 	<!-- ==================================================================== -->
+	<!-- TCAP Service -->
+	<!-- ==================================================================== -->
+	<bean name="TcapStackMap" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
+		<constructor>
+			<parameter>TcapStackMap</parameter>
+			<parameter>
+				<inject bean="SccpStack" property="sccpProvider" />
+			</parameter>
+			<parameter>8</parameter>
+		</constructor>
+		<property name="persistDir">${jboss.server.data.dir}</property>
+		<property name="previewMode">false</property>
+	</bean>
+
+	<bean name="TcapStackCap" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
+		<constructor>
+			<parameter>TcapStackCap</parameter>
+			<parameter>
+				<inject bean="SccpStack" property="sccpProvider" />
+			</parameter>
+			<parameter>146</parameter>
+		</constructor>
+		<property name="persistDir">${jboss.server.data.dir}</property>
+		<property name="previewMode">false</property>
+	</bean>
+
+	<bean name="TcapStack" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
+		<constructor>
+			<parameter>TcapStack</parameter>
+			<parameter>
+				<inject bean="SccpStack" property="sccpProvider" />
+			</parameter>
+			<parameter>9</parameter>
+		</constructor>
+		<property name="persistDir">${jboss.server.data.dir}</property>
+		<property name="previewMode">false</property>
+	</bean>
+
+	<bean name="TcapExecutor" class="org.mobicents.protocols.ss7.tcap.oam.TCAPExecutor">
+		<property name="tcapStacks">
+			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
+				<entry>
+					<key>TcapStackMap</key>
+					<value>
+						<inject bean="TcapStackMap" />
+					</value>
+				</entry>
+				<entry>
+					<key>TcapStackCap</key>
+					<value>
+						<inject bean="TcapStackCap" />
+					</value>
+				</entry>
+				<entry>
+					<key>TcapStack</key>
+					<value>
+						<inject bean="TcapStack" />
+					</value>
+				</entry>								
+			</map>
+		</property>
+	</bean>
+	
+	<!-- ==================================================================== -->
 	<!-- Shell Service -->
 	<!-- ==================================================================== -->
 	<!-- Define Shell Executor -->
-	<bean name="ShellExecutor" class="org.mobicents.ss7.management.console.ShellServer">
+	<bean name="ShellExecutor" class="com.telscale.ss7.management.console.ShellServer">
 		<constructor>
 			<parameter>
 				<inject bean="SS7Scheduler" />
@@ -118,67 +220,23 @@
 					<inject bean="SccpExecutor" />
 					<inject bean="M3UAShellExecutor" />
 					<inject bean="SCTPShellExecutor" />
+					<inject bean="TcapExecutor" />
+					<!-- <inject bean="LinksetExecutor" /> -->
 				</list>
 			</parameter>
 		</constructor>
 
 		<property name="address">${jboss.bind.address}</property>
 		<property name="port">3435</property>
-	</bean>
-
-	<!-- ==================================================================== -->
-	<!-- TCAP Service -->
-	<!-- ==================================================================== -->
-	<bean name="TcapStackMap" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
-		<constructor>
-			<parameter>
-				<inject bean="SccpStack" property="sccpProvider" />
-			</parameter>
-			<parameter>8</parameter>
-		</constructor>
-		<property name="persistDir">${jboss.server.data.dir}</property>
-		<property name="dialogIdleTimeout">60000</property>
-		<property name="invokeTimeout">30000</property>
-		<property name="dialogIdRangeStart">1</property>
-		<property name="dialogIdRangeEnd">30000</property>		
-		<property name="maxDialogs">25000</property>
-	</bean>
-
-	<bean name="TcapStackCap" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
-		<constructor>
-			<parameter>
-				<inject bean="SccpStack" property="sccpProvider" />
-			</parameter>
-			<parameter>146</parameter>
-		</constructor>
-		<property name="persistDir">${jboss.server.data.dir}</property>
-		<property name="dialogIdleTimeout">60000</property>
-		<property name="invokeTimeout">30000</property>
-		<property name="dialogIdRangeStart">1</property>
-		<property name="dialogIdRangeEnd">30000</property>
-		<property name="maxDialogs">25000</property>
-	</bean>
-
-	<bean name="TcapStack" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
-		<constructor>
-			<parameter>
-				<inject bean="SccpStack" property="sccpProvider" />
-			</parameter>
-			<parameter>9</parameter>
-		</constructor>
-		<property name="persistDir">${jboss.server.data.dir}</property>
-		<property name="dialogIdleTimeout">60000</property>
-		<property name="invokeTimeout">30000</property>
-		<property name="dialogIdRangeStart">1</property>
-		<property name="dialogIdRangeEnd">30000</property>		
-		<property name="maxDialogs">25000</property>
-	</bean>
+		<property name="securityDomain">java:/jaas/jmx-console</property>
+	</bean>	
 
 	<!-- ==================================================================== -->
 	<!-- CAP Service -->
 	<!-- ==================================================================== -->
 	<bean name="CapStack" class="org.mobicents.protocols.ss7.cap.CAPStackImpl">
 		<constructor>
+			<parameter>CapStack</parameter>
 			<parameter>
 				<inject bean="TcapStackCap" property="provider" />
 			</parameter>
@@ -191,6 +249,7 @@
 	<!-- ==================================================================== -->
 	<bean name="MapStack" class="org.mobicents.protocols.ss7.map.MAPStackImpl">
 		<constructor>
+			<parameter>MapStack</parameter>
 			<parameter>
 				<inject bean="TcapStackMap" property="provider" />
 			</parameter>
@@ -211,7 +270,6 @@
 			</parameter>
 			<parameter>22234</parameter>
 			<parameter>2</parameter>
-                        <parameter>true</parameter>
 		</constructor>
 		<property name="mtp3UserPart">
 			<inject bean="Mtp3UserPart" />
@@ -224,39 +282,151 @@
 	<!-- Mobicents SS7 Service -->
 	<!-- ==================================================================== -->
 	<bean name="TCAPSS7Service" class="org.mobicents.ss7.SS7Service">
-		<constructor><parameter>TCAP</parameter></constructor>
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=TCAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
-		</annotation>
+		<constructor>
+			<parameter>TCAP</parameter>
+		</constructor>
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=TCAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)</annotation>
 		<property name="jndiName">java:/mobicents/ss7/tcap</property>
 		<property name="stack">
 			<inject bean="TcapStack" property="provider" />
 		</property>
 	</bean>
 	<bean name="MAPSS7Service" class="org.mobicents.ss7.SS7Service">
-		<constructor><parameter>MAP</parameter></constructor>
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=MAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
-		</annotation>
+		<constructor>
+			<parameter>MAP</parameter>
+		</constructor>
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=MAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)</annotation>
 		<property name="jndiName">java:/mobicents/ss7/map</property>
 		<property name="stack">
 			<inject bean="MapStack" property="MAPProvider" />
 		</property>
 	</bean>
 	<bean name="CAPSS7Service" class="org.mobicents.ss7.SS7Service">
-		<constructor><parameter>CAP</parameter></constructor>
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=CAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
-		</annotation>
+		<constructor>
+			<parameter>CAP</parameter>
+		</constructor>
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=CAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)</annotation>
 		<property name="jndiName">java:/mobicents/ss7/cap</property>
 		<property name="stack">
 			<inject bean="CapStack" property="CAPProvider" />
 		</property>
 	</bean>
 	<bean name="ISUPSS7Service" class="org.mobicents.ss7.SS7Service">
-		<constructor><parameter>ISUP</parameter></constructor>
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=ISUPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
-		</annotation>
+		<constructor>
+			<parameter>ISUP</parameter>
+		</constructor>
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=ISUPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)</annotation>
 		<property name="jndiName">java:/mobicents/ss7/isup</property>
 		<property name="stack">
 			<inject bean="IsupStack" property="isupProvider" />
 		</property>
 	</bean>
+
+	<!-- ==================================================================== -->
+	<!-- TelScale jSS7 Managemenet Service -->
+	<!-- ==================================================================== -->
+	<bean name="Ss7Management"
+		class="com.telscale.protocols.ss7.oam.common.jmxss7.Ss7Management">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="com.telscale.ss7:service=Ss7Management",exposedInterface=com.telscale.protocols.ss7.oam.common.jmxss7.Ss7ManagementMBean.class,registerDirectly=true)</annotation>
+		<property name="agentId">jboss</property>
+	</bean>
+
+	<bean name="TelscaleAlarmManagement"
+		class="com.telscale.protocols.ss7.oam.common.alarm.AlarmProvider">
+		<constructor>
+			<parameter>
+				<inject bean="Ss7Management" />
+			</parameter>
+			<parameter>
+				<inject bean="Ss7Management" />
+			</parameter>
+		</constructor>
+	</bean>
+
+	<bean name="TelscaleStatisticManagement"
+		class="com.telscale.protocols.ss7.oam.common.statistics.CounterProviderManagement">
+		<constructor>
+			<parameter>
+				<inject bean="Ss7Management" />
+			</parameter>
+		</constructor>
+		<property name="persistDir">${jboss.server.data.dir}</property>
+	</bean>
+
+	<bean name="TelScaleSctpManagement"
+		class="com.telscale.protocols.ss7.oam.common.sctp.SctpManagementJmx">
+		<constructor>
+			<parameter>
+				<inject bean="Ss7Management" />
+			</parameter>
+			<parameter>
+				<inject bean="SCTPManagement" />
+			</parameter>
+		</constructor>
+	</bean>
+
+	<bean name="TelscaleM3uaManagement"
+		class="com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmx">
+		<constructor>
+			<parameter>
+				<inject bean="Ss7Management" />
+			</parameter>
+			<parameter>
+				<inject bean="Mtp3UserPart" />
+			</parameter>
+		</constructor>
+	</bean>
+
+	<bean name="TelscaleSccpManagement"
+		class="com.telscale.protocols.ss7.oam.common.sccp.SccpManagementJmx">
+		<constructor>
+			<parameter>
+				<inject bean="Ss7Management" />
+			</parameter>
+			<parameter>
+				<inject bean="SccpStack" />
+			</parameter>
+		</constructor>
+	</bean>
+
+	<bean name="TelscaleTcapManagement"
+		class="com.telscale.protocols.ss7.oam.common.tcap.TcapManagementJmx">
+		<constructor>
+			<parameter>
+				<inject bean="Ss7Management" />
+			</parameter>
+			<parameter>
+				<inject bean="TcapStack" />
+			</parameter>
+		</constructor>
+	</bean>
+	
+	<bean name="TelscaleTcapMapManagement"
+		class="com.telscale.protocols.ss7.oam.common.tcap.TcapManagementJmx">
+		<constructor>
+			<parameter>
+				<inject bean="Ss7Management" />
+			</parameter>
+			<parameter>
+				<inject bean="TcapStackMap" />
+			</parameter>
+		</constructor>
+	</bean>
+	
+	<bean name="TelscaleTcapCapManagement"
+		class="com.telscale.protocols.ss7.oam.common.tcap.TcapManagementJmx">
+		<constructor>
+			<parameter>
+				<inject bean="Ss7Management" />
+			</parameter>
+			<parameter>
+				<inject bean="TcapStackCap" />
+			</parameter>
+		</constructor>
+	</bean>		
+
+	<!-- <bean name="TelScaleLinksetManagement" class="com.telscale.protocols.ss7.oam.common.linkset.LinksetManagerJmx"> 
+		<constructor> <parameter><inject bean="Ss7Management" /></parameter> <parameter><inject 
+		bean="LinksetManager" /></parameter> </constructor> </bean> -->
+
 </deployment>
