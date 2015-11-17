@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter id="traceparser">
+
+	<title>Trace Parser Tool</title>
+
+	<para>
+		&THIS.PLATFORM; &THIS.APPLICATION;  Trace Parser is a simple tool that can parse trace capture data files (of some formats) and log its content in some log file in a text form.
+		This tool can be very handy to debug the flow of SS7 messages.
+	</para>
+	
+	<section id="traceparser_running">
+		<title>Running &THIS.PLATFORM; &THIS.APPLICATION; Trace Parser</title>
+		<para>
+			The &THIS.PLATFORM; &THIS.APPLICATION; Stack comes with a Trace Parser module. You can install and run the module on any machine.
+		</para>
+		<procedure>
+			<step>
+				<para>
+					Change the working directory to the bin folder in the Simulator's installation
+					directory.
+				</para>
+				<screen>downloads]$ cd TelScale-jss7-&lt;version&gt;/ss7/TelScale-ss7-traceparser/bin</screen>
+			</step>
+			<step>
+				<para>
+					(Optional) Ensure that the <filename>run.sh</filename> start script is executable.
+				</para>
+				<screen>bin$ chmod +x run.sh</screen>
+			</step>
+			<step>
+				<para>
+					Execute the <filename>run.sh</filename> Bourne shell script. 
+				</para>
+				<screen>bin$ ./run.sh</screen>
+			</step>
+			<step>
+				<para>Result: This will launch the GUI application as shown in the figure below:  
+					<figure>
+	  					<title>Running Trace Parser</title>
+				  		<mediaobject>
+				    		<imageobject>
+				      			<imagedata fileref="images/Traceparser-Example1.png" format="PNG" align="center"/>
+				    		</imageobject>
+				  		</mediaobject>
+					</figure>
+				</para>
+			</step>
+		</procedure>	
+	</section>
+	<section id="traceparser_configuration">
+		<title>Configuring Trace Parser</title>
+		<para>
+			Once trace parser is started user can configure tool depending on requirements as explained below
+			<itemizedlist> 
+				<listitem>
+					<para>
+						Trace file type : User can configure a trace file type for parsing. Possible values are:
+						<itemizedlist> 
+							<listitem>
+								<para>
+									Acterna - file format of logs of some Acterna family devices
+								</para>
+							</listitem>
+							<listitem>
+								<para>
+									Simple sequence - binary file format that content consists of several records. 
+									When you have some unsupported data format you can convert your data into this format. Each record has the following structure:
+									<itemizedlist> 
+										<listitem>
+											<para>
+												2 bytes of binary encoded integer value with record length
+											</para>
+										</listitem>
+										<listitem>
+											<para>
+												without two length bytes (less significant byte is first) binary code of legacy SS7 message (Routing label and user data)
+											</para>
+										</listitem>
+									</itemizedlist>										
+								</para>
+							</listitem>
+							<listitem>
+								<para>
+									PCAP - pcap wireshark file format. DLT_EN10MB, DLT_LINUX_SLL and DLT_MTP3 network formats are supported now
+								</para>
+							</listitem>
+							<listitem>
+								<para>
+									Hex stream - special encoded hex text file format, it is not covered in this manaul.
+								</para>
+							</listitem>														
+						</itemizedlist>						
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						 Protocol: MAP, CAP or ISUP - defines which protocol will be parsed. 
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						 Trace file path: you have to select a file for parsing
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						 ApplicationContext filter - this value is used only for MAP protocol. It is integer value and used for message filtering. 
+						 The value of this field is 7th number of MAP application context. For example for USSD services this value is 19. 
+						 So can be filtered only all versions for a concrete application context.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						 DialogId filter - for MAP and CAP protocols it is possible to filter one dialog chain. Two values in the integer form 
+						 (as they are present in the text log of Trace Parser) can be used (to define origination and destination TCAP Transaction Id). 
+						 Also can be only one Integer value used.
+					</para>
+				</listitem>	
+				<listitem>
+					<para>
+						 OPC / DPC filter - this filter filters messages only for defined SS7 point codes. 
+						 You can define several point codes, for example: "123,124,125". Use this filter when trace file contains a lot of data between several point 
+						 codes and you want to select messages.
+					</para>
+				</listitem>	
+				<listitem>
+					<para>
+						Message logging - User have to define a file where text parsed data will be stored. User also needs to define which details will be saved into a log 
+						(TCAP message source data, MAP/CAP dialog portion details, components portion details)
+					</para>
+				</listitem>					
+				<listitem>
+					<para>
+						Recording of dialog message chains log - user can write another log that contains trace of which DPC / OPC nodes dialogs are sent. 
+						Look at log format for other details. 
+						If there are several dialogs with the same path they will be present only once in the log.
+					</para>
+				</listitem>																				
+			</itemizedlist>
+		</para>
+		<para>
+			User can start parsing with the button "Start", stop with the button "Stop". 
+			After the parsing process is finished, user can get some statistic info like how many different TCAP primitives are exchanged, messages for separate Application contexts and operational codes.
+		</para>
+	</section>
+</chapter>

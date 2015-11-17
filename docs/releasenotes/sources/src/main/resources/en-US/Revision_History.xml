@@ -1,0 +1,92 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_Release_Notes.ent">
+%BOOK_ENTITIES;
+]>
+<appendix
+	id="revision_history">
+	<title>Revision History</title>
+	<simpara>
+		<revhistory>
+			<revision>
+				<revnumber>5.0</revnumber>
+				<date>October 5 2015</date>
+				<author>
+					<firstname>Amit</firstname>
+					<surname>Bhayani</surname>
+				</author>
+				<revdescription>
+					<simplelist>
+						<member>6.2.5 G.A Release</member>
+					</simplelist>
+				</revdescription>
+			</revision>				
+			<revision>
+				<revnumber>5.0</revnumber>
+				<date>August 8 2015</date>
+				<author>
+					<firstname>Vinu S</firstname>
+					<surname>Renish</surname>
+				</author>
+				<revdescription>
+					<simplelist>
+						<member>6.2.4 G.A Release</member>
+					</simplelist>
+				</revdescription>
+			</revision>	
+			<revision>
+				<revnumber>4.0</revnumber>
+				<date>September 16 2014</date>
+				<author>
+					<firstname>Amit</firstname>
+					<surname>Bhayani</surname>
+				</author>
+				<revdescription>
+					<simplelist>
+						<member>6.2.0 G.A Release</member>
+					</simplelist>
+				</revdescription>
+			</revision>		
+			<revision>
+				<revnumber>3.0</revnumber>
+				<date>June 26 2013</date>
+				<author>
+					<firstname>Vinu S</firstname>
+					<surname>Renish</surname>
+				</author>
+				<revdescription>
+					<simplelist>
+						<member>6.1.4 G.A Release</member>
+					</simplelist>
+				</revdescription>
+			</revision>		
+			<revision>
+				<revnumber>2.0</revnumber>
+				<date>Nov 28 2012</date>
+				<author>
+					<firstname>Vinu S</firstname>
+					<surname>Renish</surname>
+				</author>
+				<revdescription>
+					<simplelist>
+						<member>6.1.3 G.A Release</member>
+					</simplelist>
+				</revdescription>
+			</revision>		
+			<revision>
+				<revnumber>1.0</revnumber>
+				<date>June 18 2012</date>
+				<author>
+					<firstname>Vinu S</firstname>
+					<surname>Renish</surname>
+				</author>
+				<revdescription>
+					<simplelist>
+						<member>6.1.2 G.A Release</member>
+					</simplelist>
+				</revdescription>
+			</revision>
+		
+		</revhistory>
+	</simpara>
+</appendix>

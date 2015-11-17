@@ -1,0 +1,697 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<section id="managing_sctp">
+		<title>SCTP Management</title>
+	<section id="managing_sctp_using_CLI">
+		<title>Using CLI</title>
+		<para>
+                        You can manage all SCTP related configurations through the Command Line Interface by using the <literal>sctp</literal> command. You can create, destroy, start and stop SCTP Servers / Associations by issuing the <literal>sctp</literal> command with appropriate parameters.
+                </para>
+	</section>
+	<section id="managing_sctp_using_GUI">
+		<title>Using GUI</title>
+<para>The GUI will allow you to manage your SCTP Servers and Associations efficiently using a user-friendly interface. Open a Web Browser and navigate to http://localhost:8080/jss7-management-console/. Click on the 'SCTP' link in the left panel. The main panel will display the names of all configured SCTP Management units. To configure or view the settings of a particular SCTP Management Unit you must click on the name of that unit. The GUI will look similar to the figure below and is divided into three tabs. </para>
+<figure>
+  		<title>GUI - SCTP Management</title>
+  		<mediaobject>
+    		<imageobject>
+      			<imagedata fileref="images/GUI_SCTP_Management.png" format="PNG" align="center"/>
+    		</imageobject>
+  		</mediaobject>
+	</figure>
+		<para>
+The first tab will display the properties of the SCTP Management unit. These details displayed here are fetched from the XML descriptor file <filename>jboss-beans.xml</filename>, which is 
+		located at <filename>$JBOSS_HOME/server/profile_name/deploy/TelScale-ss7-service/META-INF</filename>, where 
+		<application>profile_name</application> is the server profile name. These properties can be modified here in the GUI. To modify them you must click the pencil, change the value and save. The GUI will then display the modified values. 
+		</para>
+		<para>		
+		The other two tabs will allow you to manage and monitor all Servers and Associations within this SCTP Management unit. 
+		</para>
+
+	</section>
+	
+	<section id="sctp_properties">
+		<title>SCTP stack properties</title>
+		
+		<section id="sctp_property_connectdelay">
+		<title>Connect Delay</title>
+		
+			<section id="sctp_property_connectdelay_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can set the 'Connect Delay (milliseconds)' by issuing the command <command>sctp set connectdelay</command> with appropriate parameters as described below. 
+					You can verify this by issuing the command <command>sctp get connectdelay</command> which will display the value set for this property.
+				</para>
+				<screen><![CDATA[
+Name
+	sctp set connectdelay 
+
+SYNOPSIS
+	sctp set connectdelay <connectdelay> stackname <stack-name>
+
+DESCRIPTION
+	If the SCTP Socket is client-side, connectDelay specifies 
+	the delay time in milliseconds after which a connection 
+	with the server will be attempted. This delay is necessary 
+	when there is network disruption and the connection between 
+	the client and the server breaks, so that the SCTP stack 
+	doesn't continuously attempt to reconnect. 
+	Defalut is 30000 milliseconds.
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<connectdelay>	-	Connect delay in milliseconds.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sctp set connectdelay 40000
+			]]></screen>
+		</section>
+		<section id="sctp_property_connectdelay_GUI">
+			<title>Using GUI</title>
+				<para>On SCTP management page, click on pencil against the 'Connect Delay' property and text box becomes editable. Change value and save. </para>
+		</section>			
+	</section>
+	
+	<section id="sctp_property_singlethread">
+		<title>Single Thread</title>
+		 <para>You can modify the settings for the parameter 'singlethread' only when the SCTP Stack is not running. In addition, this parameter cannot be modified through the CLI or GUI. You will have to invoke the setter function directly from the source code. 
+		 </para>
+		 <para>If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file <filename>jboss-beans.xml</filename>, which is located at <filename>$JBOSS_HOME/server/profile_name/deploy/TelScale-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
+<screen><![CDATA[
+/*Add property for the parameter 'singleThread' to jboss-beans.xml file and specify settings to true or false*/ 
+<property name="singleThread">true</property>						 
+]]></screen>
+		 </para>
+		 <para>The current settings of the parameter can be viewed in the GUI or by invoking the appropriate CLI command as described below.
+		 </para>
+		 <section id="sctp_property_singlethread_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can retrieve the current settings of the parameter 'singlethread' by issuing the command <command>sctp get singlethread</command>. However as explained above, you cannot modify the settings through the CLI.
+				</para>
+				<screen><![CDATA[
+Name
+	sctp get singlethread 
+
+SYNOPSIS
+	sctp get singlethread
+
+DESCRIPTION
+	This command is used to retrieve the current settings of the parameter
+	'singlethread'. The 'singlethread' parameter is used to specify if there
+	can be more than one worker threads dedicated to call the applications
+	above SCTP. 
+	
+	The default settings will dedicate only one thread for calling applications
+	above SCTP. If you wish to assign multiple worker threads, then the value of
+	the paramter 'singlethread' must be set to false before you can change the
+	number of worker threads to more than one.
+	
+	The settings can be modified only when the SCTP Stack is not running.
+	To modify this parameter you must invoke the setter function
+	directly from the code or if you are using the JBoss AS, you can add a 
+	property to the XML descriptor file jboss-beans.xml. You cannot change the
+	settings through the CLI.
+			]]></screen>
+		</section>
+		<section id="sctp_property_singlethread_GUI">
+			<title>Using GUI</title>
+				<para>In the SCTP management page, you can view the current settings of the 'Single Thread' property. But as explained above, you cannot change the settings in the GUI. But as explained above, you cannot change the settings in the GUI. For more details about this parameter, refer to the detailed description about the parameter in the above section for CLI.</para>
+		</section>			
+	</section>	
+	
+	<section id="sctp_property_workerthreads">
+		<title>Worker Threads</title>
+		 <para>You can modify the settings for the parameter 'workerthreads' only when the SCTP Stack is not running. In addition, this parameter cannot be modified through the CLI or GUI. You will have to invoke the setter function directly from the source code. 
+		 </para>
+		 <para>If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file <filename>jboss-beans.xml</filename>, which is located at <filename>$JBOSS_HOME/server/profile_name/deploy/TelScale-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
+<screen><![CDATA[
+/*Add property for the parameter 'workerthreads' to jboss-beans.xml file and specify the value*/ 
+<property name="workerThreads">4</property>						 
+]]></screen>
+		 </para>
+		 <para>The current settings of the parameter can be viewed in the GUI or by invoking the appropriate CLI command as described below.
+		 </para>
+			<section id="sctp_property_workerthreads_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can retrieve the current settings of the parameter 'workerthreads' by issuing the command <command>sctp get workerthreads</command>. However as explained above, you cannot modify the settings through the CLI.
+				</para>
+				<screen><![CDATA[
+Name
+	sctp get workerthreads 
+
+SYNOPSIS
+	sctp get workerthreads
+
+DESCRIPTION	
+	This command is used to retrieve the current settings of the parameter
+	'workerthreads'. The 'workerthreads' parameter is used to specify the number
+	of worker threads dedicated to call the applications above SCTP. 
+	
+	The default settings will dedicate only one thread for I/O and one thread
+	for calling applications above SCTP. If you wish to assign multiple 
+	worker threads, then the value of the paramter 'singlethread' must be
+	set to false and the number of worker threads must be set using this parameter
+	'workerthreads'. 
+	
+	The settings can be modified only when the SCTP Stack is not running.
+	To modify this parameter you must invoke the setter function
+	directly from the code or if you are using the JBoss AS, you can add a 
+	property to the XML descriptor file jboss-beans.xml. You cannot change the
+	settings through the CLI.
+	
+			]]></screen>
+		</section>
+		<section id="sctp_property_workerthreads_GUI">
+			<title>Using GUI</title>
+				<para>In the SCTP management page, you can view the current settings of the 'Worker Threads' property. But as explained above, you cannot change the settings in the GUI. For more details about this parameter, refer to the detailed description about the parameter in the above section for CLI.</para>
+		</section>			
+	</section>	
+</section>	
+	
+<section id="show_sctp_server">
+		<title>View all SCTP (or TCP) Server Instances</title>
+		<section id="show_sctp_server_cli">
+		<title>Using CLI</title>
+<para>You can view the details of all configured SCTP (or TCP) Server instances by issuing the command <command>sctp server show</command> as described below:
+		</para>
+<screen><![CDATA[
+Name
+	sctp server show
+
+SYNOPSIS
+	sctp server show stackname <stack-name> stackname <stack-name>
+
+DESCRIPTION
+	This command is used to view the details of all SCTP Server instances created. 
+	The information displayed will include the socket type (SCTP or TCP), name of the 
+	Server, state (whether started=false or true), the IP address and port that the 
+	Server is bound to. For multi-home SCTP Servers it will display all the 
+	IP addresses that are configured.
+	
+PARAMETERS
+	
+	Optional Parameters
+	
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.
+]]>
+		</screen>
+		</section>
+		<section id="show_sctp_server_gui">
+		<title>Using GUI</title>
+<para>Navigate to the specific SCTP Management unit and switch to the 'Servers' tab. Here you can view a list of all the Servers created. Every correctly configured Server will be displayed in a row and for each Server, the first column will display the name of the Server. The icon adjacent to the name will be lit 'green' if the server is currently running or if the server is stopped the icon will be lit 'orange'. The second column will indicate the current state of the Server (Started / Stopped), the third column will allow you to Start / Stop the Server and the fourth column will allow you to delete the Server.
+</para>
+	<figure>
+  		<title>GUI - SCTP Management - Servers</title>
+  		<mediaobject>
+    		<imageobject>
+      			<imagedata fileref="images/GUI_SCTP_Management_Servers.png" format="PNG" align="center"/>
+    		</imageobject>
+  		</mediaobject>
+	</figure>
+<para>
+In the screen above, click on the name of the Server whose details you wish to view. This will launch the Server Details and display all the configured properties of the selected Server. The second tab in this view will allow you to view all Associations linked to this particular Server. You can click on any Association name here to view the configured properties. You can click on the bread crumbs at the top to return to any of the previous pages you navigated through.
+</para>
+	<figure>
+  		<title>GUI - SCTP Management - Server Details</title>
+  		<mediaobject>
+    		<imageobject>
+      			<imagedata fileref="images/GUI_SCTP_Management_Server_Details.png" format="PNG" align="center"/>
+    		</imageobject>
+  		</mediaobject>
+	</figure>
+
+		</section>
+	</section>
+	<section id="create_new_sctp_server">
+		<title>Create a new SCTP (or TCP) Server Instance</title>           
+		<section id="create_new_sctp_server_cli"> 
+		<title>Using CLI</title>           
+		<para>You can create a new SCTP Server by issuing the command <command>sctp server create</command> with appropriate parameters as described below:
+		</para>
+<screen><![CDATA[
+Name
+	sctp server create
+
+SYNOPSIS
+	sctp server create <sever-name> <host-ip> <host-port> <socket-type> stackname <stack-name>
+
+DESCRIPTION
+	This command is used to create a new SCTP Server (or TCP Server) instance. 
+
+PARAMETERS
+
+	Standard Parameters
+
+	<server-name>	-	Name of the new Server created. This must be 
+					unique and takes any String value.
+
+	<host-ip>		-	The host IP address to which the SCTP Server 
+					socket will bind to. 
+
+					For SCTP multi-home support, you can pass multiple 
+					IP addresses as comma separated values. The Server
+					socket will bind to the primary IP address and 
+					when it becomes unavailable, it will automatically
+					fall back to secondary address. If the socket-type
+					is TCP, these comma separated values will be 
+					ignored and the Server socket will always bind to
+					the primary IP address (the first value in the 
+					comma separated list).
+
+	<host-port>		-	The host port to which the underlying SCTP Server
+					socket will bind to.
+
+	Optional Parameters
+	
+	<socket-type>	-	If you do not specify the socket-type as "TCP",
+					by default it will be SCTP.
+					
+	<stack-name>	-	Name of the stack on which this command is executed. 
+						If not passed, the first stack configured in ShellExecutor
+						will be used.					
+
+EXAMPLES
+	sctp server create TestServer 127.0.0.1 2905
+
+	The above command will create a new SCTP Server identified as TestServer and bind 
+	the Server socket to the IP address 127.0.0.1 and port 2905.
+
+	sctp server create TestServerMulti 10.2.50.145,10.2.50.146 2905
+
+	The above command will create a new SCTP Server identified as TestServerMulti and 
+	bind the Server socket to the IP address 10.2.50.145 and port 2905. If 10.2.50.145
+	is unavailable, the Server will automatically fall back to 10.2.50.146.
+
+	sctp server create TestServerTCP 127.0.0.1 2906 TCP
+	
+	The above command will create a new TCP Server identified as TestServerTCP and 
+	bind the socket to the IP address 127.0.0.1 and port 2906.
+
+]]>
+		</screen>
+		</section>
+		<section id="create_new_sctp_server_gui">
+		<title>Using GUI</title>           
+	<figure>
+  		<title>GUI - SCTP Management - Server Create</title>
+  		<mediaobject>
+    		<imageobject>
+      			<imagedata fileref="images/GUI_SCTP_Management_Server_Create.png" format="PNG" align="center"/>
+    		</imageobject>
+  		</mediaobject>
+	</figure>
+		<procedure>
+				<title>Create new SCTP Server (or TCP Server) instance using GUI</title>
+				<step><para>In the section for Servers in the SCTP Management Unit window, click on the 'Create Server' button. This will launch a pop-up 'Create Server'.</para></step>
+				<step><para>In the 'Create Server' pop-up, add details of the new Server. You must ensure that you fill in all the mandatory parameters (Name, Host Address, Host Port, IP Type, Max Concurrent Connections). For definition of these parameters, please refer to the description of the CLI command for the same in the preceding section.
+				</para></step>
+				<step><para>Verify the details entered and then click on the 'Create' button. A new SCTP Server (or TCP Server) will be created with parameters as specified. If there is an error in creating the Server then you will find the details of the error in the Management Console Log section below.</para></step>
+				<step><para>Click on the 'Close' button to close the 'Create Server' pop-up.
+				</para></step>
+			</procedure>
+		</section>
+	</section>
+	<section id="destroy_sctp_server">
+		<title>Delete a SCTP (or TCP) Server Instance</title>
+		<section id="destroy_sctp_server_cli">
+		<title>Using CLI</title>
+<para>You can delete an existing SCTP Server by issuing the command <command>sctp server destroy</command> with appropriate parameters as described below:
+		</para>
+<screen><![CDATA[
+Name
+	sctp server destroy
+
+SYNOPSIS
+	sctp server destroy <sever-name> stackname <stack-name>
+
+DESCRIPTION
+	This command is used to delete an existing SCTP Server instance. You must ensure
+	that the Server is stopped prior to deletion.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<server-name>		-	Name of the Server instance to be deleted.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+						If not passed, the first stack configured in ShellExecutor
+						will be used.		
+
+EXAMPLES
+	sctp server destroy TestServer
+
+	The above command will destroy the Server identified by the name TestServer.  
+]]>
+		</screen>
+                        
+		</section>
+		<section id="destroy_sctp_server_gui">
+		<title>Using GUI</title>
+<procedure>
+				<title>Delete SCTP Server (or TCP Server) instance using GUI</title>
+				<step><para>Navigate to the 'Servers' section in the SCTP Management Unit window and locate the row corresponding to the Server you wish to delete.</para></step>
+				<step><para>You must ensure that the Server is stopped prior to deletion. If the Server is stopped, the last column for 'Delete' will display a 'x' button in red and will be enabled. If the Server is currently running, the 'x' button will be disabled. You can only delete the server if it is stopped.</para></step>
+				<step><para>Click on the red 'x' button to delete the corresponding Server instance.  
+				</para></step>
+			</procedure>
+		</section>
+	</section>
+	<section id="start_sctp_server">
+		<title>Start a SCTP (or TCP) Server Instance</title>
+		<section id="start_sctp_server_cli">
+		<title>Using CLI</title>
+<para>You can start an existing SCTP Server by issuing the command <command>sctp server start</command> with appropriate parameters as described below:
+		</para>
+<screen><![CDATA[
+Name
+	sctp server start
+
+SYNOPSIS
+	sctp server start <sever-name> stackname <stack-name>
+
+DESCRIPTION
+	This command is used to start an existing SCTP Server instance. Upon executing 
+	this command, the underlying SCTP server socket is bound to the IP: Port 
+	configured for this Server instance at the time of creation using the 
+	"sctp server create" command.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<server-name>	-	Name of the Server instance to be started.
+	
+	Optional Parameters
+	
+	<stack-name>	-	Name of the stack on which this command is executed. 
+						If not passed, the first stack configured in ShellExecutor
+						will be used.
+
+EXAMPLES
+	sctp server start TestServer
+	
+	The above command will start the previously created Server instance identified 
+	by the name TestServer and bind the underlying socket to the IP address and port 
+	configured for TestServer at the time of creation.
+
+]]>
+		</screen>
+
+		</section>
+		<section id="start_sctp_server_gui">
+		<title>Using GUI</title>
+			<procedure>
+				<title>Start a SCTP Server (or TCP Server) instance using GUI</title>
+				<step><para>Navigate to the 'Servers' section in the SCTP Management Unit window and locate the row corresponding to the Server you wish to start.</para></step>
+				<step><para>Click on the 'Start' button in the actions column to start the corresponding Server instance. The SCTP Server will be started and the underlying SCTP server socket will be bound to the IP: Port configured for this Server instance at the time of creation.
+				</para></step>
+				<step><para>If the Server has started successfully you will find the status indicating the Server as 'Started' and the Server's icon will be lit green.  If there is an error and the Server failed to start, you will find details of the error in the Management Console log below.</para></step>
+			</procedure>
+		</section>
+	</section>
+	<section id="stop_sctp_server">
+		<title>Stop a SCTP (or TCP) Server Instance</title>
+		<section id="stop_sctp_server_cli">
+		<title>Using CLI</title>
+<para>You can stop a currently running SCTP Server by issuing the command <command>sctp server stop</command> with appropriate parameters as described below:
+		</para>
+<screen><![CDATA[
+Name
+	sctp server stop
+
+SYNOPSIS
+	sctp server stop <sever-name> stackname <stack-name>
+
+DESCRIPTION
+	This command is used to stop an existing SCTP Server instance. Upon executing this
+	command, the underlying SCTP server socket is closed and all resources are 
+	released.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<server-name>		-	Name of the Server instance to be stopped.
+	
+	Optional Parameters
+	
+	<stack-name>	-	Name of the stack on which this command is executed. 
+						If not passed, the first stack configured in ShellExecutor
+						will be used.	
+
+EXAMPLES
+	sctp server stop TestServer
+	
+	The above command will stop the currently running Server instance identified by
+	the name TestServer, close the underlying socket and release all resources.
+]]>
+		</screen>
+		</section>
+		<section id="stop_sctp_server_gui">
+		<title>Using GUI</title>
+			<procedure>
+				<title>Stop a SCTP Server (or TCP Server) instance using GUI</title>
+				<step><para>Navigate to the 'Servers' section in the SCTP Management Unit window and locate the row corresponding to the Server you wish to stop.</para></step>
+				<step><para>To stop a Server currently running, click on the 'Stop' button in the actions column of the row corresponding to the Server instance. When the Server is stopped the underlying SCTP server socket will be closed and all resources are released.</para></step>
+			</procedure>
+		</section>
+	</section>
+	<section id="show_sctp_association">
+<title>View all SCTP (or TCP) Associations</title>
+		<section id="show_sctp_association_cli">
+		<title>Using CLI</title>
+<para>You can view the details of all configured SCTP (or TCP) Associations by issuing the command <command>sctp association show</command> as described below:
+		</para>
+<screen><![CDATA[
+Name
+	sctp association show
+
+SYNOPSIS
+	sctp association show stackname <stack-name>
+
+DESCRIPTION
+	This command is used to view the details of all SCTP Associations created. 
+	The information displayed will include the Association type (SERVER or CLIENT), 
+	name of the Association, state (whether started=false or true). For a CLIENT 
+	Association it will also display the host-ip, host-port and peer-ip, peer-port 
+	values.
+
+	For multi-home SCTP, it will display all the IP addresses that are configured. 
+	For a SERVER Association, it will display the configured peer-ip and peer-port 
+	values.
+	
+PARAMETERS
+	
+	Optional Parameters
+	
+	<stack-name>	-	Name of the stack on which this command is executed. 
+						If not passed, the first stack configured in ShellExecutor
+						will be used.
+]]>
+		</screen>
+		</section>
+		<section id="show_sctp_association_gui">
+		<title>Using GUI</title>
+<para>Navigate to the specific SCTP Management unit and switch to the 'Associations' tab. Here you can view a list of all the Associations created. Every correctly configured Association will be displayed in a row and for each Association, the first column will display the name of the Association. The icon adjacent to the name will be lit 'green' if the Association is currently running or if the Association is stopped the icon will be 'orange'. The second column will indicate the current state of the Association (Started / Stopped) and the third column will allow you to delete the Association.</para>
+<note>
+<para>You cannot start or stop a SCTP Association here in this window. Every SCTP Association must be associated with an ASP (M3UA) and will automatically start or stop when the associated ASP is started or stopped. For more details on how to associate with an ASP, please refer to <xref linkend="managing_m3ua" />.</para>
+</note>
+	<figure>
+  		<title>GUI - SCTP Management - Associations</title>
+  		<mediaobject>
+    		<imageobject>
+      			<imagedata fileref="images/GUI_SCTP_Management_Associations.png" format="PNG" align="center"/>
+    		</imageobject>
+  		</mediaobject>
+	</figure>
+<para>
+In the screen above, click on the name of the Association whose details you wish to view. This will launch the Association Details and display all the configured properties of the selected Association.
+</para>
+		</section>
+	</section>	
+	<section id="create_sctp_association">
+		<title>Create a new SCTP (or TCP) Association</title>
+		<section id="create_sctp_association_cli">
+		<title>Using CLI</title>
+<para>You can create a new SCTP Association by issuing the command <command>sctp association create</command> with appropriate parameters as described below:
+		</para>
+<screen><![CDATA[
+Name
+	sctp association create
+
+SYNOPSIS
+	sctp association create <assoc-name> <CLIENT | SERVER> <server-name> <peer-ip> 
+	<peer-port> <host- ip> <host-port> <socket-type> stackname <stack-name>
+
+DESCRIPTION
+	This command is used to create a new SCTP (Client side or Server side) 
+	association. 
+
+PARAMETERS
+
+	Standard Parameters
+
+	<assoc-name>		-	Name of the new Association created. This must be 
+					unique and takes any String value.
+
+	<CLIENT | SERVER>	-	Specify if this association is client side or 
+					server side. If it is client side, it will 
+					initiate the connection to peer. If it is server 
+					side, it will wait for peer to initiate the
+					connection. The connection request will be 
+					accepted from peer-ip: peer:port.
+
+	<peer-ip>		-	In a client side association, the server IP 
+					address to which the client is connecting to.
+
+					In a server side association, the client IP 
+					address from which connections will be accepted.
+	
+	<peer-port>		-	In a client side association, the server Port 
+					to which the client is connecting to.
+
+					In a server side association, the client port from 
+					which connections will be accepted.
+
+	<host-ip>		-	In a client side association, the local IP address
+					to which the socket will bind to. 
+			
+					For SCTP multi-home support, you can pass multiple
+					IP addresses as comma separated values. The 
+					Association will bind to the primary IP address 
+					and when it becomes unavailable, it will 
+					automatically fall back to secondary address. 
+					If the socket-type is TCP, these comma separated 
+					values will be ignored and the Assocation will 
+					always bind to the primary IP address (the first
+					value in the comma separated list). This is 
+					required only for a client side Association. 
+					
+					For a server side association, even if you specify
+					these values it will be ignored.
+	
+	<host-port>		-	In a client side association, the local port to
+					which the socket will bind to. This is 
+					required only for a client side Association.
+					
+					For a server side association, even if you specify
+					these values it will be ignored.
+
+	<server-name>	-	In a server-side association, the server-name must
+					be passed to associate with the Server identified 
+					by that name. You must ensure that the Server 
+					identified by server-name has already been created 
+					using the sctp server create command. 
+
+					In a client-side association, this is not required 
+					and you should not pass this parameter.
+
+	Optional Parameters
+	
+	<socket-type>	-	If you do not specify the socket-type as "TCP", 
+					by default it will be SCTP. If it is a
+					SERVER SCTP Association, the socket-type must 
+					match with the one specified while creating the
+					Server.
+						
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used. 					
+
+EXAMPLES
+	sctp association create Assoc1 CLIENT 
+	192.168.56.101 2905 192.168.56.1,192.168.56.1 2905
+	
+	The above command will create a new CLIENT SCTP Association identified as Assoc1. 
+	The client side will initiate the connection. It will bind the 
+	host-ip 192.168.56.1 and host-port 2905 to the Server IP 192.168.56.101 and 
+	port 2905.
+
+	sctp association create Assoc2 SERVER TestServer 192.168.56.1 2905
+
+	The above command will create a new SERVER SCTP association with the Server 
+	identified as TestServer and accept connections from peer whose IP address is
+	192.168.56.1 and port 2905.
+]]>
+		</screen>
+		</section>
+		<section id="create_sctp_association_gui">
+		<title>Using GUI</title>
+<procedure>
+				<title>Create new SCTP (or TCP) Association (Client side or Server side) </title>
+				<step><para>In the section for Associations in the SCTP Management Unit window, click on the 'Create Association' button. This will launch a pop-up 'Create Association'.</para></step>
+				<step><para>In the 'Create Association' pop-up, add details of the new Association. You must ensure that you fill in all the mandatory parameters: Name, Peer Address, Peer Port, Server Name (for Server side Association), Host Address and Host Port (for Client side Association). For definition of these parameters, please refer to the description of the CLI command for the same in the preceding section.
+				</para></step>
+				<step><para>Verify the details entered and then click on the 'Create' button. A new SCTP Association (or TCP Association) will be created with parameters as specified. If there is an error in creating the Association then you will find the details of the error in the Management Console Log section below.</para></step>
+				<step><para>Click on the 'Close' button to close the 'Create Association' pop-up.
+				</para></step>
+			</procedure>
+		</section>
+	</section>
+	<section id="destroy_sctp_association">
+		<title>Delete a SCTP (or TCP) Association</title>
+		<section id="destroy_sctp_association_cli">
+		<title>Using CLI</title>
+<para>You can delete an existing SCTP Association by issuing the command <command>sctp association destroy</command> as described below:
+		</para>
+<screen><![CDATA[
+Name
+	sctp association destroy
+
+SYNOPSIS
+	sctp association destroy <assoc-name> stackname <stack-name>
+
+DESCRIPTION
+	This command is used to delete an existing SCTP Association identified by the 
+	name assoc-name. 
+
+PARAMETERS
+
+	Standard Parameters
+
+	<assoc-name>	-	Name of the Association to be deleted.
+	
+	Optional Parameters
+	
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.
+
+EXAMPLES
+	sctp association destroy Assoc1
+
+	The above command will destroy the Association identified by the name Assoc1.  
+]]>
+		</screen>
+		</section>
+		<section id="destroy_sctp_association_gui">
+		<title>Using GUI</title>
+			<procedure>
+				<title>Delete SCTP Association (or TCP Association) instance</title>
+				<step><para>Navigate to the 'Associations' section in the SCTP Management Unit window and locate the row corresponding to the Association you wish to delete.</para></step>
+				<step><para>You must ensure that the Association is stopped prior to deletion. If the Association is stopped, the last column for 'Delete' will display a 'x' button in red. If the Association is currently running, the 'x' button will be displayed in orange. You can only delete the Association if it is stopped and the 'x' button is displayed in red.</para></step>
+				<step><para>Click on the red 'x' button to delete the corresponding Association instance.  
+				</para></step>
+			</procedure>
+		</section>
+	</section>
+
+</section>

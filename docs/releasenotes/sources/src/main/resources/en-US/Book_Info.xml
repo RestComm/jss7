@@ -1,0 +1,31 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_Release_Notes.ent">
+%BOOK_ENTITIES;
+]>
+<bookinfo id="doc-SS7_Stack_Release_Notes">
+	<title>&THIS.PLATFORM; &THIS.APPLICATION;</title>
+	<subtitle>Release Notes</subtitle>
+	<productname>&THIS.PLATFORM; &THIS.APPLICATION; </productname>
+	<productnumber>&THIS.VERSION;</productnumber>
+	<edition>3.0</edition>
+	<pubsnumber>1</pubsnumber>
+
+	<abstract> 			
+		<para>These release notes contain important information related to &THIS.PLATFORM; &THIS.APPLICATION; &THIS.VERSION;. You must ensure that you read the Release Notes in its entirety before installing and using &THIS.PLATFORM; &THIS.APPLICATION;.</para>		
+	</abstract>
+	
+	
+	<copyright>
+		<year>&YEAR;</year>
+		<holder>TeleStax, Inc.</holder>
+	</copyright>
+	<!-- FIXME this include is throwing compile errors
+	<xi:include
+		href="Common_Content/Legal_Notice.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	-->
+	<xi:include
+		href="Author_Group.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+</bookinfo>

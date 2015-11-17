@@ -1,0 +1,435 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter
+	id="design_jss7">
+
+	<title>Architecture</title>
+	
+<section id="logical_divisions">
+<title>Logical Design</title>	
+	<para>The &THIS.PLATFORM; &THIS.APPLICATION; is logically divided into two sections - lower and upper. 
+		<itemizedlist><listitem><para>The lower section provides implementation for SS7 Level 2 and Level 3. This section is therefore influenced by the type of SS7 hardware (Level 1) used.</para></listitem><listitem><para> The upper section provides implementation for SS7 Level 4 and above. </para></listitem></itemizedlist>
+	</para>
+	<para>
+This logical division offers great flexibility where hardware is concerned. Irrespective of the type of hardware used in the lower section, &THIS.PLATFORM; &THIS.APPLICATION; Level 4 and above remains the same. Since the API set is consistent regardless of the lower layers, you can easily migrate your applications from TDM equipments to M3UA. For example, applications using &THIS.PLATFORM; SCCP stack (and/or upper layers) can easily be migrated from TDM equipments to &THIS.PLATFORM; M3UA with just configuration changes and without changing a single line of code.
+	</para>
+	
+	<para>
+		&THIS.PLATFORM; &THIS.APPLICATION; is designed efficiently to offer you the flexibility to install and use the Levels 2,3 and 4 in the same JVM and machine where SS7 Hardware (Level 1) is installed. Alternately, you can also install Level 1,2 and 3 in one machine and install Level 4 on a separate machine. In the second scenario, <literal>M3UA</literal> over <literal>SCTP</literal> 
+		is used for communication between Level 3 and Level 4 (on different machines) and this is referred to as &THIS.PLATFORM; Signaling Gateway. The figures below illustrate the above 2 scenarios.
+	</para>
+	<para>
+	Scenario 1: The complete &THIS.PLATFORM; &THIS.APPLICATION; is installed in one machine.
+	<mediaobject id="ss7_stack_same_machine">
+		<imageobject>
+			<imagedata
+				width="300px"
+				align="center"
+				fileref="images/SS7StackSimple.jpg"
+				format="JPG" />
+		</imageobject>
+		<caption>
+			<para>&THIS.PLATFORM; &THIS.APPLICATION;</para>
+		</caption>
+	</mediaobject>
+	</para>
+	<para>
+	The above two sce	
+	</para>
+	<para>
+	Scenario 2: &THIS.PLATFORM; Signaling Gateway - Level 3 and below are installed on one machine and Level 4 is installed on a different machine. 
+	</para>
+	<mediaobject id="signaling_gateway">
+		<imageobject>
+			<imagedata
+				align="center"
+				fileref="images/MobicentsSgw.jpg"
+				format="JPG" />
+		</imageobject>
+		<caption>
+			<para>&THIS.PLATFORM; Signaling Gateway</para>
+		</caption>
+	</mediaobject>
+	
+	<important>
+		<para>If you use &THIS.PLATFORM; M3UA stack, you must use JDK 7 to run the stack as well as to compile the source code. M3UA leverages Java SCTP which is available only in JDK 7.</para>
+	</important>
+	<para>For more details regarding installation, please refer to the &THIS.PLATFORM; &THIS.APPLICATION; Installation Guide.</para>
+</section>	
+<section id="dir_structure">
+		<title>Directory Structure</title>
+<para>The top-level directory is named <filename>&THIS.APPLICATION.DIRNAME;-&THIS.VERSION;</filename> and immediately below this are five sub-directories named <filename>asn</filename>, <filename>_docs</filename>, <filename>oam</filename>, <filename>sctp</filename> and <filename>ss7</filename>. All the functional modules of the Stack reside in the <filename>ss7</filename> folder.</para>
+<screen><![CDATA[
+|- TelScale-jss7-<version>
+		|- asn	
+
+		|- docs
+	
+		|- oam
+
+		|- sctp	
+
+		|- ss7
+				|+ native
+				|+ protocols
+				|+ shell
+				|+ TelScale-ss7-service
+				|+ TelScale-ss7-sgw
+				|+ TelScale-ss7-simulator 
+				|+ TelScale-ss7-traceparser 				
+
+]]>
+</screen>
+			<para>The following is a description of the important services and libraries that make up &THIS.PLATFORM; &THIS.APPLICATION;
+			<variablelist>
+				<varlistentry>
+					<term><filename>asn</filename></term> 
+					<listitem><para>Abstract Syntax Notation One (ASN.1) library is used by various &THIS.PLATFORM; &THIS.APPLICATION;
+					protocols to encode/decode the structured data exchanged between Signaling Points over networks. For more details on the <literal>asn</literal> library, refer to the 
+					document included in the <filename>_docs</filename> folder. Applications using any of the &THIS.PLATFORM; &THIS.APPLICATION; User Protocols may never need to call an <literal>asn</literal> API directly,
+					however it must be in the classpath since &THIS.PLATFORM; &THIS.APPLICATION; User Protocols refer to this library.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term><filename>docs</filename></term> 
+						<listitem>
+							<para>All relevant documentation for &THIS.PLATFORM; &THIS.APPLICATION;. </para>
+						</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term><filename>oam</filename></term> 
+						<listitem>
+							<para>UI Management module </para>
+						</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term><filename>sctp</filename></term>
+					<listitem><para>Stream Control Transmission Protocol (SCTP) Library provides the APIs over Java SCTP. 
+					This library will be used only if M3UA layer is used. For more details on the <literal>sctp</literal> library, refer to the documentation included in the <filename>docs</filename> folder. 
+                    				</para>
+					</listitem>
+              			</varlistentry>
+				<varlistentry>
+                                        <term><filename>ss7</filename></term>
+					<listitem>
+					<para>
+					This folder contains the core protocol libraries that will be used by end applications as well as by the SS7 Service deployed in JBoss AS. The sub-directories included in the <filename>ss7</filename> folder are: 
+					<itemizedlist>
+						<listitem>
+							<para><filename>TelScale-ss7-sgw</filename> : Standalone Signaling Gateway <!--whose binary structure has the following layout:</para>
+							<mediaobject id="binary_sgw">
+								<imageobject>
+									<imagedata width="300px" align="center" fileref="images/sgw-binary.png" format="PNG" />
+								</imageobject>
+							</mediaobject>-->
+														
+						</para></listitem>							
+						<listitem>
+							<para><filename>TelScale-ss7-service</filename> : SS7 service is the core engine and is used in conjunction with JBoss AS. The installation guide will teach you to install the Stack as a standalone component if you do not wish to run it as a JBoss AS Service. <!--The <filename>Telscale-ss7-service</filename> binary structure has the following layout:</para>
+							<mediaobject id="binary_ss7-service">
+								<imageobject>
+									<imagedata width="300px" align="center" fileref="images/binary-ss7-service.png" format="PNG" />
+								</imageobject>
+							</mediaobject>-->							
+						</para></listitem>	
+						<listitem>
+							<para><filename>TelScale-ss7-simulator</filename> : SS7 Simulator is an application for testing the SS7 stack and displaying its functionality. It is also a good example of how to use this stack.			
+						</para></listitem>
+						<listitem>
+							<para><filename>TelScale-ss7-traceparser</filename> : TelScale jSS7 Stack Trace Parser is a simple tool that can parse trace capture data files (of some formats) and log its content in some log file in a text form			
+							</para>
+						</listitem>															
+						<listitem>
+							<para><filename>native</filename> : This folder contains the native libraries to interact with the SS7 Cards installed on the server. As of now, native libraries are compiled and available only for linux OS.</para>
+						</listitem>	
+											
+						<listitem>
+							<para><filename>protocols</filename> : &THIS.PLATFORM; &THIS.APPLICATION; User Protocols libraries. Your application will directly 
+							call the APIs exposed by these libraries. Depending on the application, you may be interested in either <literal>TCAP</literal> or <literal>MAP</literal>, or both, or <literal>ISUP</literal> libraries.</para>
+						</listitem>	
+						<listitem>
+							<para><filename>shell</filename> : This holds the Command Line Interface (CLI) module to manage the &THIS.PLATFORM; &THIS.APPLICATION;.</para>
+						</listitem>	
+					</itemizedlist>
+					</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			</para>
+ 	 </section>
+<section id="functional_blocks">
+	<title>Functional Blocks</title>	
+	<para>The major functional modules of the &THIS.APPLICATION; are:
+	<orderedlist>
+		<listitem><para>SS7 Service [dir: <filename>TelScale-ss7-service</filename>]</para></listitem>
+		<listitem><para>Signaling Gateway [dir: <filename>TelScale-ss7-sgw</filename>]</para></listitem>
+		<listitem><para>Shell [dir: <filename>shell</filename>]</para></listitem>
+		<listitem><para>GUI [dir: <filename>ui</filename>]</para></listitem>
+		<listitem><para>SS7 Simulator [dir: <filename>TelScale-ss7-simulator</filename>]</para></listitem>
+	</orderedlist>
+	</para>
+	<para>
+The following sub-sections discuss in detail about the functionality of these individual components.
+	</para>
+		<!--  	
+		<varlistentry>
+			<term>Application</term>
+			<listitem>
+				<para>
+					<literal>Application</literal>
+					term encapsulates not only application level protocols(such as
+					<literal>SCCP</literal>
+					or
+					<literal>ISUP</literal>
+					) but also
+					entities which make use of them(like
+					<literal>SLEE RA &amp; Service</literal>
+					)
+				</para>
+			</listitem>
+		</varlistentry>
+		-->
+	
+
+	<section
+		id="design_overview_ss7_service">
+		<title>SS7 Service</title>
+				<para>SS7 Service creates an instance of higher layer of the &THIS.PLATFORM; Stack and binds the instance to JNDI. SS7 Service is a JMX based service deployed in JBoss Application Server. It hides the underlying details like whether Level 4 and above are connected to peer via <literal>M3UA</literal> or if connected to the SS7 Hardware installed in the same machine as Level 4.
+				</para>
+				<para>Following services are bound:</para>
+				<table frame="all" pgwide="1">
+					<title>SS7 Services</title>
+					<tgroup colsep="1" cols="3">
+						<colspec colnum="1" colname="c0" colwidth="3*" />
+						<colspec colnum="2" colname="c3" colwidth="3*" />
+						<colspec colnum="3" colname="c6" colwidth="3*" />
+						<thead>
+							<row>
+								<entry>Stack Name</entry>
+								<entry>JNDI Name</entry>
+								<entry>Comments</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row>
+								<entry>TCAP</entry>
+								<entry>java:/mobicents/ss7/tcap</entry>
+								<entry>Exposes TCAP Stack via JNDI</entry>
+							</row>
+							<row>
+								<entry>MAP</entry>
+								<entry>java:/mobicents/ss7/map</entry>
+								<entry>Exposes MAP Stack via JNDI</entry>
+							</row>
+							<row>
+								<entry>CAP</entry>
+								<entry>java:/mobicents/ss7/cap</entry>
+								<entry>Exposes CAP Stack via JNDI</entry>
+							</row>
+							<row>
+								<entry>ISUP</entry>
+								<entry>java:/mobicents/ss7/isup</entry>
+								<entry>Exposes ISUP stack via JNDI</entry>
+							</row>
+						</tbody>						
+					</tgroup>
+				</table>
+
+		<para>
+			The figure below depicts the elements that are deployed as part of the SS7 MAP Service.
+		</para>
+
+		<mediaobject
+			id="ss7_service_design_overview">
+			<imageobject>
+				<imagedata
+					width="300px"
+					align="center"
+					fileref="images/ss7-design-overview3.jpg"
+					format="PNG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; &THIS.APPLICATION; Service Elements
+				</para>
+			</caption>
+		</mediaobject>
+<para>SS7 Service Elements serve the following purposes:</para>
+		<variablelist>
+			<varlistentry>
+				<term>Expose protocol access points:</term>
+				<listitem>
+					<para>Access points allow users to access lower layer protocols like <literal>MAP</literal> and interact with the SS7 network through such protocols.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Expose management interface:</term>
+				<listitem>
+					<para><literal>Shell Executor</literal> allows the  <literal>Shell</literal> client to connect and issue commands.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		
+		
+		<para>
+			The figure below depicts the elements that are deployed as part of SS7 Service.
+		</para>
+
+		<mediaobject
+			id="ss7_service">
+			<imageobject>
+				<imagedata
+					width="300px"
+					align="center"
+					fileref="images/ss7-design-overview3.jpg"
+					format="PNG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; &THIS.APPLICATION; Service Elements
+				</para>
+			</caption>
+		</mediaobject>
+<para>For more details on Running and Configuring the SS7 Service Elements, please refer to the chapter <xref linkend="running_jss7" />.</para>
+  
+	 <section id="design_functional_ss7_service">
+		<title>Stack Usage</title>
+		<para>The figure below depicts how &THIS.PLATFORM; &THIS.APPLICATION; is used.
+		</para>
+		<mediaobject
+			id="ss7_design_general_2">
+			<imageobject>
+				<imagedata
+					width="300px"
+					align="center"
+					fileref="images/ss7-design-overview2.jpg"
+					format="PNG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; &THIS.APPLICATION;
+					General Design
+				</para>
+			</caption>
+		</mediaobject>
+	 </section>
+	 
+		
+	</section>
+	
+	 
+	 
+	<section id="mobicents_signaling_gateway">
+		<title>Signaling Gateway</title>
+
+		<para>
+			&THIS.PLATFORM; Signaling Gateway (SG) is a signaling agent that receives and sends Switched Circuit Network (SCN) 
+			native signaling at the edge of the IP network. &THIS.PLATFORM; Signaling Gateway leverages MTP and &THIS.PLATFORM; <literal>M3UA</literal> Stack 
+			explained in <xref linkend="mobicents_signaling_gateway_m3ua"/>.
+		</para>
+		
+		<para>
+			The figure below shows the components included in &THIS.PLATFORM; Signaling Gateway. Configuring the Signaling Gateway is explained in the chapter <xref linkend="running_jss7"/>.
+		</para>
+		<mediaobject
+			id="sgw_elements">
+			<imageobject>
+				<imagedata
+					width="300px"
+					align="center"
+					fileref="images/MobicentsSS7Gateway.jpg"
+					format="JPG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; Signaling Gateway Components
+				</para>
+			</caption>
+		</mediaobject>		
+		
+	
+		</section>
+	<section
+		id="design_overview_shell">
+		<title>Shell - Comman Line Interface </title>
+				<para>
+				  <literal>Shell</literal> is a Command Line Interface (CLI) tool that will allow you to manage different aspects of &THIS.PLATFORM; &THIS.APPLICATION; in an interactive manner. 
+					It connects to different instances of &THIS.PLATFORM; &THIS.APPLICATION; which manages <literal>Linksets</literal>,
+					<literal>SCCP</literal> resource, routing and <literal>M3UA</literal>.<!-- For detailed information please refer to:	<xref linkend="shell" />.-->
+					Usually <literal>Shell</literal> will be invoked from a remote machine(remote to <literal>Linksets</literal> and application protocols).
+
+				</para>
+				</section>
+	<section
+		id="design_overview_gui">
+		<title>Graphical User Interface</title>
+				<para>
+				  The Graphical User Interface will allow you to manage different aspects of &THIS.PLATFORM; &THIS.APPLICATION; through a convenient user-friendly interface. You can launch the GUI in any Web Browser and manage the Stack instance efficiently using the GUI operations. 
+				</para>
+				</section>
+			
+		<section id="design_ss7_simulator">
+			<title>SS7 Simulator</title>
+
+			<para>&THIS.PLATFORM; &THIS.APPLICATION; comes with a Simulator that will help you to understand the functionality of the Stack. The Simulator may be used as an application for testing the SS7 Stack or as an example of how to use this Stack. You can run several instances of the Simulator in a single machine and each instance can have its own configuration. In addition, the Simulator offers you the flexibility to run it locally or remotely. You must remember to configure all layers before running tests with the Simulator.</para>
+<para>
+The Simulator contains three layers of SS7 stack components and one testing task layer which presents the concrete testing task. You can select from these layers as required, however some layers demand corresponding lower layers. For example, the <literal>TCAP+MAP</literal> layer demands <literal>SCCP</literal> as layer 2. Depending on your testing goals, you can configure each of these layers separately but the configuration options are limited and do not cover all possible SS7 Stack options. 
+	</para>	
+<section id="simulator_layers">
+		<title>Simulator Layers</title>
+	<para>
+	<variablelist>
+				<varlistentry>
+					<term>Layer 1 [MTP3]</term>
+					<listitem><para>M3UA
+					</para></listitem>
+					<listitem><para>DialogicCard
+					</para></listitem>
+					<listitem><para>DahdiCard [yet to be implemented]
+					</para></listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Layer 2</term>
+					<listitem><para>SCCP
+					</para></listitem>
+					<listitem><para>ISUP [yet to be implemented]
+					</para></listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Layer 3</term>
+					<listitem><para>TCAP + MAP
+					</para></listitem>
+					<listitem><para>TCAP + CAP
+					</para></listitem>
+					<listitem><para>TCAP + INAP [yet to be implemented]
+					</para></listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Testing Task Layer</term>
+					<listitem><para>USSD client test
+					</para></listitem>
+					<listitem><para>USSD server test
+					</para></listitem>
+					<listitem><para>SMS server test
+					</para></listitem>
+				        <listitem><para>SMS client test
+					</para></listitem>
+					<listitem><para>CAP SSF test
+					</para></listitem>			
+					<listitem><para>CAP SCF test
+					</para></listitem>
+					<listitem><para>MAP ATI client test
+					</para></listitem>
+					<listitem><para>MAP ATI server test
+					</para></listitem>																	
+				</varlistentry>
+	</variablelist>
+</para>
+</section>
+		</section>	
+
+	 </section>	 
+	 
+	
+</chapter>
+

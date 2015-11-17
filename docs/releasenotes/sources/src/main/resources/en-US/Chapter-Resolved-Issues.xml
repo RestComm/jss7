@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_Release_Notes.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter id="resolved_issues">
+	<title>Resolved Issues</title>
+	<para>&THIS.PLATFORM; &THIS.APPLICATION; &THIS.VERSION; includes many bug fixes. Below is a list of the major bugs fixed in this release. For more details about each of the individual bugs, refer to the corresponding URL of the bug in the Issue Tracker. 
+	</para>
+		<variablelist>
+<varlistentry><term><ulink url="https://telestax.atlassian.net/browse/JSSSEVEN-171">JSSSEVEN-171</ulink> </term>
+<listitem><para> M3UA/TCAP: Some parameters are not to be configured through CLI / GUI. This has now been resolved and you can no longer configure the following parameters through the CLI or GUI. SCTP:singlethread, workerthreads; M3UA:maxsequencenumber, maxasforroute; TCAP:previewmode. You can change them only when the respective Stack is not running and by invoking the corresponding setter methods directly from the code. If you are using the JBoss Application Server, then you can set these parameters by adding appropriate properties to the XML descriptor file <filename>jboss-beans.xml</filename>, which is located at <filename>$JBOSS_HOME/server/profile_name/deploy/TelScale-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name. This is explained in detail in the User Guide available with this release.
+</para></listitem>
+</varlistentry>
+
+<varlistentry><term><ulink url="https://telestax.atlassian.net/browse/JSSSEVEN-195">JSSSEVEN-195</ulink> </term>
+<listitem><para>GUI updated for the M3UA/TCAP configuring issue that has now been resolved.
+</para></listitem>
+</varlistentry>
+
+<varlistentry><term><ulink url="https://telestax.atlassian.net/browse/JSSSEVEN-196">JSSSEVEN-196</ulink> </term> <listitem><para>Docs updated for the M3UA/TCAP configuring issue that has now been resolved.
+</para></listitem>
+</varlistentry>
+
+<varlistentry><term><ulink url="https://telestax.atlassian.net/browse/JSSSEVEN-182">JSSSEVEN-182</ulink> </term> <listitem><para> GSMCharsetEncoder.encodeLoop() did not handle outbound buffer capacity. This issue has now been resolved.
+</para></listitem>
+</varlistentry>
+
+<varlistentry><term><ulink url="https://telestax.atlassian.net/browse/JSSSEVEN-168">JSSSEVEN-168</ulink> </term> <listitem><para>SCCP GTT: configuring details for checking DPC / SSN in add rule / add address.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><ulink url="https://telestax.atlassian.net/browse/JSSSEVEN-170">JSSSEVEN-170</ulink> </term> <listitem><para> TCAP: Not throwing Exception in MAPProvider.fireTCAbortUser() even if a Dialog is not yet established.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><ulink url="https://telestax.atlassian.net/browse/JSSSEVEN-181">JSSSEVEN-181</ulink> </term> <listitem><para>
+SCCP rule creation: It is not possible to create a rule with pointcode&lt;=0. This issue has now been resolved.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><ulink url="https://telestax.atlassian.net/browse/JSSSEVEN-69">JSSSEVEN-69</ulink> </term> <listitem><para>
+Load balancing between M3UA AS Route should be configurable - Loadshare or Override. This issue has now been resolved. While defining a new M3UA AS route, you can specify the traffic mode.
+</para>
+</listitem>
+</varlistentry>
+
+		</variablelist>	
+
+</chapter>

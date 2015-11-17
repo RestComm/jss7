@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter id="introduction">
+	<title>Introduction</title>
+        <section id="jss7_overview">
+    	<title>&THIS.PLATFORM; &THIS.APPLICATION;</title>
+		<para>
+&THIS.PLATFORM; &THIS.APPLICATION; is the only Open Source Java based implementation of the SS7 protocol stack. It provides implementation for <literal>MTP2</literal>, <literal>MTP3</literal>, <literal>ISUP</literal>, <literal>SCCP</literal>, <literal>TCAP</literal>, <literal>CAMEL (Phase I, Phase II, Phase III and Phase IV)</literal> and <literal>MAP</literal> protocols
+for a dedicated equipment. It also has in-built support for <literal>SIGTRAN (M3UA)</literal> over IP and strictly adheres to the standards and specifications defined by the International Telecommunications Union (ITU) and American National Standards Institute (ANSI). The platform offers developers with a flexible API set that hides the lower layer details (legacy SS7 links or SIGTRAN) and therefore makes it simple and easy to develop SS7 applications as well as to migrate your applications from TDM equipments to M3UA. &THIS.PLATFORM; &THIS.APPLICATION; is based on an easily scalable and configurable load-balancing architecture.
+		</para>
+
+<para>
+&THIS.PLATFORM; &THIS.APPLICATION; supports TDM hardware offered by major vendors in the market, namely Intel family boards (Dialogic) and 
+Zaptel/Dahdi (Digium, Sangoma).   
+		</para>
+		<para> 
+If you intend to use only <literal>M3UA</literal> you can install the &THIS.APPLICATION; on any Operating System that supports Java. However if you wish to use SS7 cards, the native libaries for these are only compiled for Linux at the moment. &THIS.PLATFORM; &THIS.APPLICATION; can work as a standalone library. However if you wish to use JSLEE Resource Adapters, the Command Line Interface (Shell Management tool) or the GUI Management Console for run-time configuration, then you must have JBoss Application Server installed and running. &THIS.PLATFORM; &THIS.APPLICATION; comes with JSLEE TCAP, MAP, CAP and ISUP Resource Adaptors (RA) that enable developers to build SS7 
+applications with ease. Developers only require an understanding of Resource Adaptors and can focus on building applications quickly and efficiently rather than worry about the SS7 stack.
+		</para>
+		<para>
+The Open Source Software gives you the flexibility to understand the readily available source code and customise the product for your Enterprise needs.
+		</para>
+		<para>
+This guide provides details on configuring and using the platform and information regarding the supported protocols and compliant standards. For installation instructions, please refer to the Installation Guide published along with this. 
+		</para>
+        </section>
+	<section id="ss7_overview">
+	  <title>About SS7</title>
+	  <para>
+    	SS7 (Signaling System No.7) is a set of signaling protocols defined for information exchange in telephony. It is the global standard for telecommunications and is defined by the <ulink url="http://www.voip-info.org/wiki/view/ITU">International Telecommunication Union (ITU) - Telecommunication Standardization Sector (ITU-T)</ulink>. It is also commonly referred to as Common Channel Signaling System No. 7 (i.e., <acronym>SS7</acronym> or <acronym>C7</acronym>).
+		</para>
+		<para>
+		In telephony (wireless and wireline), the information associated with a call must be exchanged between a telephone and the telephone exchange or between exchanges, transit nodes and other elements in the network. Information exchange is required to set up, control and tear down calls and this exchange of information is called Signaling. SS7 is the global standard that defines the procedures and protocol to be followed by network elements in the Public Switched Telephone Network (<acronym>PSTN</acronym>) in order to exchange information over a digital signaling network to effect wireless (cellular) and wireline call setup, route,control, monitor and terminate. 
+		</para>
+	<para>
+		The
+		ITU definition of SS7 allows for national variants such as the
+		American National Standards Institute (<acronym>ANSI</acronym>) and Bell Communications
+		Research (Telcordia Technologies) standards used in North America and
+		the European Telecommunications Standards Institute (
+		<ulink url="http://www.voip-info.org/wiki/view/ETSI">ETSI</ulink>
+		) standard
+		used in Europe.
+	</para>
+	
+	<para>
+		The hardware and software functions of the <acronym>SS7</acronym> protocol are divided
+		into
+		functional abstractions called "levels". These levels map loosely
+		to
+		the Open Systems Interconnect (<acronym>OSI</acronym>) 7-layer model defined by the
+		<ulink url="http://www.iso.ch/">International Standards Organization (ISO)</ulink>.
+	</para>
+	<mediaobject>
+		<imageobject>
+			<imagedata width="300px" align="center" fileref="images/ss7-fig3.gif"
+				format="GIF" />
+		</imageobject>
+		<caption>
+			<para>SS7 Stack
+			</para>
+		</caption>
+	</mediaobject>
+	</section>
+	<section id="jss7_implemented_protocols">
+	<title>Implemented Protocols and Standards Compliance</title>
+<para>
+		&THIS.PLATFORM; &THIS.APPLICATION; is a software based implementation of the SS7 protocol. It provides implementation for Level 2 and above in the SS7 protocol Stack. 
+		The &THIS.PLATFORM; &THIS.APPLICATION; is a platform in the sense that it does not provide the application itself but rather allows users to build their own SS7 applications using &THIS.PLATFORM; &THIS.APPLICATION; as a platform.
+	</para>	
+	
+	<para>
+		The figure below depicts the various SS7 protocols implemented by &THIS.PLATFORM; &THIS.APPLICATION;.  
+	</para>
+	<mediaobject>
+		<imageobject>
+			<imagedata width="300px" align="center" fileref="images/MobicentsjSS7Layers.jpg"
+				format="GIF" />
+		</imageobject>
+		<caption>
+			<para>&THIS.PLATFORM; &THIS.APPLICATION; overview
+			</para>
+		</caption>
+	</mediaobject>	
+<para>&THIS.PLATFORM; &THIS.APPLICATION; adheres to the standards specified by ITU and ANSI. The table below depicts the implementation standards compliance matrix.
+						<table
+						frame="all"
+						pgwide="1">
+						<title>Standards Compliance</title>
+						<tgroup cols='2' colsep='1' rowsep='1'>
+							<colspec
+								colnum="1"
+								colname="c0" />
+							<colspec
+								colnum="2"
+								colname="c1" />
+							
+							<thead>
+								<row>
+									<entry>Stack</entry>
+									<entry>Compliance</entry>
+								</row>
+							</thead>
+							<tbody>
+								<row>
+									<entry>ISUP</entry>
+									<entry>ITU-T Q.761 to Q.764 and Q.767</entry>	
+								</row>
+								<row>
+									<entry>SCCP</entry>
+									<entry>ITU-T Q.711 to Q.716, ANSI T1.112-2000</entry>	
+								</row>
+								<row>
+									<entry>TCAP</entry>
+									<entry>ITU-T Q.771 to Q.775, ANSI T1.114-2000</entry>	
+								</row>
+								<row>
+									<entry>MAP</entry>
+									<entry>GSM 09.02, GSM 29.002, GSM 03.40</entry>	
+								</row>
+								<row>
+									<entry>CAP</entry>
+									<entry>GSM 09.78 - CAMEL Phase - I, II, III and IV </entry>	
+								</row>
+								<row>
+									<entry>M3UA</entry>
+									<entry>RFC 4666</entry>	
+								</row>
+							</tbody>
+						</tgroup>
+						</table>
+</para>
+<para>
+M3UA, SCCP and TCAP stacks are compliant with ANSI standard.
+ANSI support for MAP, CAP and ISUP is not ready.
+</para>
+
+
+	</section>
+<section id="major_features">
+			<title>Major Features of &THIS.PLATFORM; &THIS.APPLICATION;</title>
+			<para>
+			<variablelist>
+				<varlistentry>
+					<term>Java-based:</term>
+					<listitem><para>&THIS.PLATFORM; &THIS.APPLICATION; is the only Java based SS7 stack. It is robust and reliable and can be installed on any Operating System that supports Java (JDK 7 and SCTP).</para></listitem>
+				</varlistentry>				
+				<varlistentry>
+					<term>Open Source:</term>
+					<listitem><para>The Software is open-source, giving you the freedom the understand the code and customise it to your enterprise needs. It is supported by a vibrant Open source community.</para></listitem>
+				</varlistentry>	
+				<varlistentry>
+					<term>SS7 Hardware Cards:</term>
+					<listitem><para>&THIS.PLATFORM; &THIS.APPLICATION; can be used with Intel family boards (Dialogic SS7 cards) or Zaptel/Dahdi compatible TDM devices (Digium, Sangoma).</para></listitem>
+				</varlistentry>				
+				<varlistentry>
+					<term>SIGTRAN (M3UA):</term>
+					<listitem><para>It also has in-built support for SIGTRAN (M3UA using SCTP).&THIS.PLATFORM; &THIS.APPLICATION; M3UA is based on RFC 4666 and supports ASP, SGW or IPSP modes. It supports both Single Exchange and Double Exchange of messages.</para></listitem>
+				</varlistentry>				
+				<varlistentry>
+					<term>Flexibile and Consistent API:</term>
+					<listitem><para>It offers a flexible and consistent API set to develop SS7 applications quickly and efciently irrespective of the lower layer details (legacy SS7 links or SIGTRAN). For example, applications using &THIS.PLATFORM; &THIS.APPLICATION; SCCP (and/or upper layers) can be easily migrated from TDM equipments to &THIS.PLATFORM; &THIS.APPLICATION; M3UA with just configuration changes without having to modify a single line of code.</para></listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Standalone or JSLEE RA</term>
+					<listitem><para>You can use it as a standalone library or make use of JSLEE RA (Resource Adaptors) that come with it to manage the Stack and develop applications effectively.</para></listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Easy Configuration and Management:</term>
+					<listitem><para>&THIS.PLATFORM; &THIS.APPLICATION; comes with an efficient Command Line Interface (CLI) tool allowing you to completely configure the Stack at run-time and manage it using simple commands rather than do everything manually. &THIS.PLATFORM; &THIS.APPLICATION; also comes with a Graphical User Interface that will allow you to configure,
+monitor and manage the Stack through a convenient user-friendly interface.
+</para></listitem>
+				</varlistentry>	
+				<varlistentry>
+					<term>Scalability</term>
+					<listitem><para>&THIS.PLATFORM; &THIS.APPLICATION; is easily scalable with a configurable load-balancing architecture.</para></listitem>
+				</varlistentry>	
+				<varlistentry>
+					<term>Statistics</term>
+					<listitem><para>&THIS.PLATFORM; &THIS.APPLICATION; provides teal time statistics at <literal>TCAP</literal> level indicating number of dialogs, components, error's etc for given time period</para></listitem>
+				</varlistentry>								
+				
+				<varlistentry>
+					<term>Technical Specifications:</term>
+					<listitem> <para>&THIS.PLATFORM; &THIS.APPLICATION; is not restricted by any license or Transaction Per Second model. The only restricting factor is memory + CPU capacity of the host servers. 
+						<itemizedlist>
+						<listitem><para>Telscale SCTP supports as many associations as supported by the underlying Operating System.</para></listitem>
+						<listitem><para>Telscale M3UA can be confgured to have as many ASP's / IPSP's as needed by the system.</para></listitem>
+						<listitem><para>Telscale SCCP can be confgured to have virtually unlimited Global Title Translation rules and also supports wild characters for partial matching of Global Title digits.</para></listitem>
+						</itemizedlist>		
+					</para>
+					</listitem>
+				</varlistentry>					
+			</variablelist>	
+			</para>
+		</section>
+</chapter>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_Release_Notes.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter id="known_issues">
+	<title>Known Issues</title>
+	<para>&THIS.PLATFORM; &THIS.APPLICATION; &THIS.VERSION; has few minor issues. Below is a list of major know issues in this release. For more details about each of the individual bugs, refer to the corresponding URL of the bug in the Issue Tracker. </para>
+	<para>
+		<variablelist>
+			<varlistentry>
+				<term><ulink url="https://bitbucket.org/telestax/telscale-jss7/issue/15">Issue 15:</ulink> Missing primitives for <literal>sendRoutingInfo</literal> MAP operation</term>
+				<listitem><para>Some primitives are not yet implemented for <literal>sendRoutingInfo</literal> MAP operation.</para></listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><ulink url="https://bitbucket.org/telestax/telscale-jss7/issue/31">Issue 31:</ulink> SCCP does not respect point-code for incoming messages</term>
+				<listitem><para>Consider a scenario where SCCP stack is configured with multiple rsp, SCCP Rule1 is configured to use PC1 as primary and PC2 as secondary. Now if messages are received from PC2 and consumed by SCCP-User and replies back, if the GT matches for Rule1 then it will use PC1 for outgoing message instead of PC2. This is a known issue and will be fixed in future release.</para></listitem>
+			</varlistentry>
+		</variablelist>	
+	</para>
+</chapter>

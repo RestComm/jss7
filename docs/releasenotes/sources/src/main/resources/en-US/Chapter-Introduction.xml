@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_Release_Notes.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter id="introduction">
+	<title>Introduction</title>
+  
+		<para>
+TeleStax is pleased to announce the release of &THIS.PLATFORM; &THIS.APPLICATION; &THIS.VERSION;. The Release Notes will provide you with information about what is included, new features, resolved issues and known issues in this release.  
+</para>
+	<section id="jss7_overview">
+	    	<title>Overview</title>
+		<para>
+		&THIS.PLATFORM; &THIS.APPLICATION; is the first and only Java based Open Source implementation of the SS7 protocol stack that is fully tested and supported by TeleStax. It provides implementation for <literal>MTP2</literal>, <literal>MTP3</literal>, <literal>ISUP</literal>, <literal>SCCP</literal>, <literal>TCAP</literal>, <literal>CAMEL (Phase I, Phase II and Phase III partially implemented)</literal> and <literal>MAP</literal> protocols for a dedicated equipment and also has in-built support for <literal>SIGTRAN (M3UA)</literal> over IP. &THIS.PLATFORM; &THIS.APPLICATION; strictly adheres to the standards and specifications defined by the International Telecommunications Union (ITU). The platform offers developers with a flexible API set that hides the lower layer details (legacy SS7 links or SIGTRAN) and therefore makes it simple and easy to develop SS7 applications. 
+		</para>
+		<para>Enterprises can now use &THIS.PLATFORM; &THIS.APPLICATION; to develop SS7 applications with the added assurance that the product is fully supported by TeleStax. 
+		</para>
+	</section>
+
+		
+</chapter>

@@ -1,0 +1,78 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_Installation_Guide.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter
+	id="pre-requisites">
+	<title>Pre-Requisites</title>
+ <para>&THIS.PLATFORM; &THIS.APPLICATION;'s core requirement is Java. The following table details the Hardware, Operating System and Software requirements for a clean installation of &THIS.PLATFORM; &THIS.APPLICATION;. 
+<table
+						frame="all"
+						pgwide="1">
+						<title>Installation Pre-Requisites</title>
+						<tgroup cols='3' colsep='1' rowsep='1'>
+							<colspec
+								colnum="1"
+								colname="c0" />
+							<colspec
+								colnum="2"
+								colname="c1" />
+							<colspec
+								colnum="3"
+								colname="c2" />
+							<thead>
+								<row>
+									<entry>Component</entry>
+									<entry>Requirement</entry>
+									<entry>Notes</entry>
+								</row>
+							</thead>
+							<tbody>
+								<row>
+									<entry>System Requirements</entry>
+									<entry>Intel Pentium 1 GHz or faster for simple applications. Hard disk space of at least 20MB. RAM of at least 1.5 GB</entry>	
+									<entry>Higher the RAM and processing power, better is the throughput</entry>	
+								</row>
+								<row>
+									<entry>TDM Hardware</entry>
+									<entry>If you wish to use legacy SS7 links, then you must have TelScale SS7 Cards or <literal>dahdi</literal> or <literal>dialogic</literal> cards installed along with their native libraries.</entry>
+									<entry>You do not require any specific hardware for <literal>SIGTRAN (M3UA)</literal>.</entry>		
+								</row>
+								<row>
+									<entry>Operating System</entry>
+									<entry>The platform can be installed on any OS that supports Java and SCTP. But if you wish to use TDM hardware, native libraries for SS7 cards are compiled only for Linux at the moment and therefore supported only on Linux Operating System. If you are using TelScale SS7 Cards, then you do not require any additional libraries to be installed.</entry>
+									<entry>The libraries will be compiled for Windows in future releases.</entry>	
+								</row>
+								<row>
+									<entry>Java</entry>
+									<entry>You must have a working Java Runtime Environment (JRE) or Java Development Kit (JDK) installed on your system and it must be version 5 or higher. If you intend to use <literal>SIGTRAN (M3UA)</literal> then you must have JDK 7 installed. <literal>M3UA</literal> uses Java SCTP which is available only from JDK 7 onwards.</entry>
+									<entry>If you are using <literal>M3UA</literal>, then you must use JDK 7 to run the stack as well as to compile the source code.</entry>	
+								</row>
+								<row>
+									<entry>JBoss Application Server</entry>
+									<entry>&THIS.PLATFORM; &THIS.APPLICATION; can work as a standalone library if you do not require JSLEE Resource Adaptors and the Shell Management Tool (Command Line Interface) for run-time configuration of the platform. But if you wish to avail of these, then you must have JBoss Application Server (version 5.1.0.GA or above) installed on your machine.</entry>
+									<entry>Refer to the appendix section for more details.</entry>	
+								</row>
+								<row>
+									<entry>SCTP libraries</entry>
+									<entry>If you intend to use <literal>SIGTRAN (M3UA)</literal>, you must have the <literal>lksctp</literal> library installed. The Linux Kernel Stream Control Transmission Protocol (<literal>lksctp</literal>) library provides SCTP implementation.</entry>
+									<entry>For more details on downloading and installing the <literal>lksctp</literal>, please refer to <ulink url="http://lksctp.sourceforge.net/"></ulink></entry>
+								</row>
+								<row>
+									<entry>Others</entry>
+									<entry>You must have Ant (version 1.6 or above) to install the binary.</entry>
+									<entry>Instructions for installing and using Ant can be found at http://ant.apache.org/ </entry>	
+								</row>		
+							</tbody>
+						</tgroup>
+					</table>
+</para>
+<important>					<para>
+			
+ You must ensure that the <literal>JAVA_HOME</literal> and <literal>JBOSS_HOME</literal> Environment variables are set properly for the user account(s) that will run the server. For more details on setting these variables, please refer to the sections <xref linkend="jdk-installing_configuring_and_running" /> and <xref linkend="jboss_home_setup" />.
+					</para>
+</important>
+</chapter>
+

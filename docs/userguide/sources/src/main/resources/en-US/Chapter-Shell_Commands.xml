@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter
+	id="shell_commands">
+	<title>Shell - Command Line Interface</title>
+
+
+	<section id="command_reference">
+		<title>Command Reference</title>
+		<para>This section describes the Shell commands, their syntax and provide examples of usage. This information is also available at run-time in the Shell and can be referenced by issuing any command using the <literal>--help</literal> option. </para>
+	<!--<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Shell_Usage.xml" />-->
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Shell_Linkset.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Shell_Sccp.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Shell_M3UA.xml" />
+	</section>
+<!--
+<para> The sections below describe the available Shell
+			commands and provide examples of usage.
+			To see examples of specific flow or to perform certain tasks, please refer to corresponding sections devoted to
+			<literal>Linksets</literal>, <literal>SCCP</literal> or <literal>M3UA</literal>
+			
+		</para>-->
+	
+	
+
+</chapter>

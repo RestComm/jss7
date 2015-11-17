@@ -1,0 +1,404 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<section id="managing_tcap">
+	<title>TCAP Management</title>
+	
+	<para>
+		Transaction Capabilities Application Part <acronym>TCAP</acronym> , from ITU-T recommendations Q.771-Q.775 or ANSI T1.114 is a protocol for Signalling System 7 networks. 
+		Its primary purpose is to facilitate multiple concurrent dialogs between the same sub-systems on the same machines, using Transaction IDs to differentiate these, similar 
+		to the way TCP ports facilitate multiplexing connections between the same IP addresses on the Internet.
+	</para>
+	
+	<section id="managing_tcap_using_CLI">
+		<title>Using CLI</title>
+		<para>
+			You can manage all TCAP stack properties through the Command Line Interface by using the <literal>tcap</literal> command.
+		</para>
+	</section>
+	<section id="managing_tcap_using_GUI">
+		<title>Using GUI</title>
+		<para>
+			The GUI will allow you to manage your TCAP configurations efficiently using a user-friendly interface. 
+			Open a Web Browser and navigate to http://localhost:8080/jss7-management-console/. Click on the 'TCAP' link in the left panel. 
+			The main panel will display the names of all configured TCAP Management units. To configure or view the settings of a particular TCAP Management Unit 
+			you must click on the name of that unit. The GUI will look similar to the figure below. 
+		</para>
+		<figure>
+  			<title>GUI - TCAP Management</title>
+	  		<mediaobject>
+	    		<imageobject>
+	      			<imagedata fileref="images/GUI_TCAP_Management.png" format="PNG" align="center"/>
+	    		</imageobject>
+	  		</mediaobject>
+		</figure>
+		<para>
+			The first tab will display the properties of the TCAP Management unit. These details displayed here are fetched from the XML descriptor file <filename>jboss-beans.xml</filename>, which is 
+			located at <filename>$JBOSS_HOME/server/profile_name/deploy/TelScale-ss7-service/META-INF</filename>, where 
+			<application>profile_name</application> is the server profile name. These properties can be modified here in the GUI. To modify them you must click the pencil, change value and save. 
+			The GUI will then display the modified values. 
+		</para>
+	</section>
+	
+	
+	<section id="tcap_properties">
+		<title>TCAP stack properties</title>
+		
+		<section id="tcap_property_dialogidletimeout">
+		<title>Dialog Idle Timeout</title>
+		
+			<section id="tcap_property_dialogidletimeout_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can set the 'dialogidletimeout' by issuing the command <command>tcap set dialogidletimeout</command> with appropriate parameters as described below. 
+					You can verify this by issuing the command <command>tcap get dialogidletimeout</command> which will display the value set for this property.
+				</para>
+				<screen><![CDATA[
+Name
+	tcap set dialogidletimeout 
+
+SYNOPSIS
+	tcap set dialogidletimeout <dialogidletimeout> stackname <stack-name>
+
+DESCRIPTION
+	Sets millisecond value for dialog timeout. It specifies how long 
+	dialog can be idle - not receive/send any messages
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<dialogidletimeout>	-	Timeout in milliseconds.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap set dialogidletimeout 30000
+			]]></screen>
+		</section>
+		<section id="tcap_property_dialogidletimeout_GUI">
+			<title>Using GUI</title>
+				<para>On TCAP management page, click on pencil against the 'Dialog Idle Timeout' property and text box becomes editable. Change value and save. </para>
+		</section>			
+	</section>
+	
+	<section id="tcap_property_dialogidrangeend">
+		<title>Dialog Id Rang End</title>
+		
+			<section id="tcap_property_dialogidrangeend_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can set the 'dialogidrangeend' by issuing the command <command>tcap set dialogidrangeend</command> with appropriate parameters as described below. 
+					You can verify this by issuing the command <command>tcap get dialogidrangeend</command> which will display the value set for this property.
+				</para>
+				<screen><![CDATA[
+Name
+	tcap set dialogidrangeend 
+
+SYNOPSIS
+	tcap set dialogidrangeend <dialogidrangeend> stackname <stack-name>
+
+DESCRIPTION
+	End of the range of the generated dialog ids. The id's used will be
+	between dialogidrangestart and dialogidrangeend.
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<dialogidrangeend>	-	Dialog id range end.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap set dialogidrangeend 30000000
+			]]></screen>
+		</section>
+		<section id="tcap_property_dialogidrangeend_GUI">
+			<title>Using GUI</title>
+				<para>On TCAP management page, click on pencil against the 'Dialog Id Range End' property and text box becomes editable. Change value and save. </para>
+		</section>			
+	</section>	
+	
+	<section id="tcap_property_dialogidrangestart">
+		<title>Dialog Id Range Start</title>
+		
+			<section id="tcap_property_dialogidrangestart_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can set the 'dialogidrangestart' by issuing the command <command>tcap set dialogidrangestart</command> with appropriate parameters as described below. 
+					You can verify this by issuing the command <command>tcap get dialogidrangestart</command> which will display the value set for this property.
+				</para>
+				<screen><![CDATA[
+Name
+	tcap set dialogidrangestart 
+
+SYNOPSIS
+	tcap set dialogidrangestart <dialogidrangestart> stackname <stack-name>
+
+DESCRIPTION
+	Start of the range of the generated dialog ids. The id's used will be
+	between dialogidrangestart and dialogidrangeend.
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<dialogidrangestart>	-	Dialog id range start.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap set dialogidrangestart 1
+			]]></screen>
+		</section>
+		<section id="tcap_property_dialogidrangestart_GUI">
+			<title>Using GUI</title>
+				<para>On TCAP management page, click on pencil against the 'Dialog Id Range Start' property and text box becomes editable. Change value and save. </para>
+		</section>			
+	</section>	
+	
+	<section id="tcap_property_donotsendprotocolversion">
+		<title>Do Not Send Protocol Version</title>
+		
+			<section id="tcap_property_donotsendprotocolversion_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can set the 'donotsendprotocolversion' by issuing the command <command>tcap set donotsendprotocolversion</command> with appropriate parameters as described below. 
+					You can verify this by issuing the command <command>tcap get donotsendprotocolversion</command> which will display the value set for this property.
+				</para>
+				<screen><![CDATA[
+Name
+	tcap set donotsendprotocolversion 
+
+SYNOPSIS
+	tcap set donotsendprotocolversion <true | false> stackname <stack-name>
+
+DESCRIPTION
+	If set to true Protocol Version is not send in User Data part of Dialog
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<donotsendprotocolversion>	-	If true doesn't send the protocol version
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap set donotsendprotocolversion false
+			]]></screen>
+		</section>
+		<section id="tcap_property_donotsendprotocolversion_GUI">
+			<title>Using GUI</title>
+				<para>On TCAP management page, click on pencil against the 'Do Not Send Protocol Version' property and text box becomes editable. Change value and save. </para>
+		</section>			
+	</section>	
+	
+	<section id="tcap_property_invoketimeout">
+		<title>Invoke Timeout</title>
+		
+			<section id="tcap_property_invoketimeout_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can set the 'invoketimeout' by issuing the command <command>tcap set invoketimeout</command> with appropriate parameters as described below. 
+					You can verify this by issuing the command <command>tcap get invoketimeout</command> which will display the value set for this property.
+				</para>
+				<screen><![CDATA[
+Name
+	tcap set invoketimeout 
+
+SYNOPSIS
+	tcap set invoketimeout <invoketimeout> stackname <stack-name>
+
+DESCRIPTION
+	Sets the Invoke timeout for this invoke. Peer should respond back 
+	within invoke timeout, else stack will callback TCListener
+	for application to take corrective. invoketimeout should always be 
+	less than dialogidletimeout
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<invoketimeout>		-	Sets the Invoke timeout in milliseconds
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap set invoketimeout 30000
+			]]></screen>
+		</section>
+		<section id="tcap_property_invoketimeout_GUI">
+			<title>Using GUI</title>
+				<para>On TCAP management page, click on pencil against the 'Invoke Timeout' property and text box becomes editable. Change value and save. </para>
+		</section>			
+	</section>	
+	
+	<section id="tcap_property_maxdialogs">
+		<title>Max Dialogs</title>
+		
+			<section id="tcap_property_maxdialogs_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can set the 'maxdialogs' by issuing the command <command>tcap set maxdialogs</command> with appropriate parameters as described below. 
+					You can verify this by issuing the command <command>tcap get maxdialogs</command> which will display the value set for this property.
+				</para>
+				<screen><![CDATA[
+Name
+	tcap set maxdialogs 
+
+SYNOPSIS
+	tcap set maxdialogs <maxdialogs> stackname <stack-name>
+
+DESCRIPTION
+	Sets the maximum number of dialogs allowed to be alive at a given 
+	time. If not set, a default value of 5000 dialogs will be used.
+    If stack ranges provided, maximum number dialogs naturally cannot 
+    be greater than the provided range, thus, it will be normalized to 
+    range delta (end - start).
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<maxdialogs>	-	Sets the maximum concurrent dialogs alive at any given
+						point in time.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap set maxdialogs 30000000
+			]]></screen>
+		</section>
+		<section id="tcap_property_maxdialogs_GUI">
+			<title>Using GUI</title>
+				<para>On TCAP management page, click on pencil against the 'Max Dialogs' property and text box becomes editable. Change value and save. </para>
+		</section>			
+	</section>			
+	
+	<section id="tcap_property_previewmode">
+		<title>Preview Mode</title>
+		<para>You can modify the settings for the parameter 'previewmode' only when the TCAP Stack is not running. In addition, this parameter cannot be modified through the CLI or GUI. You will have to invoke the setter function directly from the source code. 
+		 </para>
+		 <para>If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file <filename>jboss-beans.xml</filename>, which is located at <filename>$JBOSS_HOME/server/profile_name/deploy/TelScale-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
+<screen><![CDATA[
+/*Add property for the parameter 'previewmode' to jboss-beans.xml file and specify true or false*/ 
+<property name="previewMode">true</property>						 
+]]></screen>
+		 </para>
+		 <para>The current settings of the parameter can be viewed in the GUI or by invoking the appropriate CLI command as described below.
+		 </para>
+			<section id="tcap_property_previewmode_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can retrieve the current settings of the parameter 'previewmode' by issuing the command <command>sctp get previewmode</command>. However as explained above, you cannot modify the settings through the CLI.
+				</para>
+				<screen><![CDATA[
+Name
+	tcap get previewmode 
+
+SYNOPSIS
+	tcap get previewmode 
+
+DESCRIPTION
+	This command is used to retrieve the current settings of the parameter
+	'previewMode'. The 'previewMode' parameter is used for special processing 
+	mode.
+	
+	When Preview Mode is set to true:
+	- In TCAP level the stack only listens for incoming messages and
+	sends nothing.
+	- Methods like send(), close(), sendComponent() and other such methods
+	do nothing.
+	- A TCAP Dialog is temporary. The TCAP Dialog is discarded after 
+	any incoming message like TC-BEGIN or TC-CONTINUE has been processed.
+	- For any incoming messages (including TC-CONTINUE, TC-END, TC-ABORT) a new 
+	TCAP Dialog is created (and then deleted).
+	- There are no timers and timeouts.
+	
+	The settings of this parameter can be modified only when the TCAP Stack is
+	not running. To modify this parameter you must invoke the setter function
+	directly from the code or if you are using the JBoss AS, you can add a 
+	property to the XML descriptor file jboss-beans.xml. You cannot change the
+	settings through the CLI.
+			]]></screen>
+		</section>
+		<section id="tcap_property_previewmode_GUI">
+			<title>Using GUI</title>
+				<para>In the TCAP management page, you can view the current settings of the 'Preview Mode' property. But as explained above, you cannot change the settings in the GUI. For more details about this parameter, refer to the detailed description about the parameter in the above section for CLI.</para>
+		</section>			
+	</section>		
+	
+	
+	<section id="tcap_property_statisticsenabled">
+		<title>Statistics Enabled</title>
+		
+			<section id="tcap_property_statisticsenabled_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can set the 'statisticsenabled' by issuing the command <command>tcap set statisticsenabled</command> with appropriate parameters as described below. 
+					You can verify this by issuing the command <command>tcap get statisticsenabled</command> which will display the value set for this property.
+				</para>
+				<screen><![CDATA[
+Name
+	tcap set statisticsenabled 
+
+SYNOPSIS
+	tcap set statisticsenabled <true | false> stackname <stack-name>
+
+DESCRIPTION
+	If set to true, statistics is enabled. Its recommended to keep this off
+	for better performance and enabled statistics only when needed.
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<statisticsenabled>	-	If true, statistics is enabled
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap set statisticsenabled false
+			]]></screen>
+		</section>
+		<section id="tcap_property_statisticsenabled_GUI">
+			<title>Using GUI</title>
+				<para>On TCAP management page, click on pencil against the 'Statistics Enabled' property and text box becomes editable. Change value and save. </para>
+		</section>			
+	</section>	
+	
+	</section>		
+
+</section>

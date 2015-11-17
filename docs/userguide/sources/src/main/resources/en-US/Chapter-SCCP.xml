@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
+ 
+<chapter
+	id="sccp">
+
+	<title>SCCP</title>
+	<para>The Signaling Connection Control Part (SCCP) is defined in ITU-T Recommendations Q.711-Q.716.
+	SCCP sits on top of Message Transfer Part 3 (MTP3) in the SS7 protocol stack. 
+	The SCCP provides additional network layer functions to provide transfer of noncircuit-related (NCR) signaling information, 
+	application management procedures and alternative, more flexible methods of routing. 
+	</para>
+	<section
+		id="sccp_routing">
+		<title>Routing Management</title>
+		<para>SCCP provides a routing function that allows signaling messages to be routed to a signaling point based on dialed digits, 
+		for example. This capability is known as Global Title Translation (GTT), which translates what is known as a global title 
+		(for example, dialed digits for a toll free number) into a signaling point code and a subsystem number so that it can be processed 
+		at the correct application.
+		</para>
+	
+		<section id="sccp_GTT_configure">
+			<title>GTT Configuration</title>
+			<para>GTT is performed in two stages. First is matching the rule and second is actual translation.</para>
+			<para>For matching the rule, the called party address global title digits are matched with &lt;digits&gt; configured while defining the Rule. Once the digits match actual 
+			translation is done. Also for rule matching GT Indicator, translation type, numbering plan and nature-of-address of a rule and of message called party address must be equal.
+			</para>
+			
+			<variablelist>
+				<varlistentry>
+					<term>Matching rule</term>
+					<listitem>
+                        <para>As explained previously, the 
+                        &lt;digits&gt; can be divided into sections using the "/" separate character. Each section defines set of 
+                        digits to be matched. Wild card * can be used to match any digits and ? can be used to match exatcly one digit
+                        </para>
+						
+						<para>
+							For example Rule is to match starting 4 digits (should be 1234) and doesn't care for rest; 
+							the &lt;digits&gt; in the command will be 1234/*. If the Rule is such that starting 3 digits should be 123, doesn't care for 
+							other three digits but last two digits should be 78; the &lt;digits&gt; in the command will be 123/???/78. 
+							If digit to digit matching is needed the the &lt;digits&gt; in the command will be exact digits to be matched without sections.
+						</para>
+					</listitem>					
+				</varlistentry>
+				<varlistentry>
+					<term>Translation</term>
+					<listitem>
+                        <para>Resulting Called Party Address will contain:
+<itemizedlist>
+                        <listitem><para>PC in the generated CalledPartyAddress is taken from primary/backup address. This PC will not be encoded into a message if the following option is set: sccp set removespc true.</para></listitem>
+                        <listitem><para>SSN will be taken from primary/backup address. If it is absent there - will be taken from an original message address. If also absent - SSN will not be included.</para></listitem>
+                        <listitem><para>GT type (0001, 0010, 0011, 0100) is taken from from AI (AddressIndicator) of primary/backup address.
+                        If AI of primary/backup address contains "no GT" (or bad value) but after address translating we need GT - it will be taken from AI of an original message address.</para></listitem>
+                        <listitem><para>NAI, TT, NP (and Encoding schema) is taken from GT of primary/backup address.
+                        If no GT in primary/backup address but after address translating we need GT - it will be taken from GT of an original message address.</para></listitem>
+
+                        <listitem><para>Digits for CalledPartyAddress will be generated in following way.
+                        For translation each section in &lt;mask&gt; defined while creating the Rule, defines how
+                        replacement operation is performed. If  &lt;mask&gt; defines K (KEEP), the originally dialed digits are kept and if
+                        &lt;mask&gt; defines R (REPLACE) the digits from primary address or back address are used. The primary/backup address 
+                        should always define the point code and the translated address will always have this point code. If the primary/backup
+                        address defines the subsystem number the translated address will also have this subsystem number. The address-indicator 
+                        of translated address is always from primary/backup address. See bellow examples
+                        </para></listitem>
+</itemizedlist>
+                        </para>
+ 
+ 						<variablelist>
+							<varlistentry>
+								<term>Example 1 : Remove the Global Title and add PC and SSN</term>
+								<listitem>
+									<para>
+										
+									</para> 
+									<mediaobject id="sccp_GTT_Ex1">
+										<imageobject>
+											<imagedata align="center" fileref="images/GTT-Example1.jpg" format="JPEG" />
+										</imageobject>
+										<caption>
+											<para>GTT - Example 1</para>
+										</caption>
+									</mediaobject>									
+								</listitem>
+								
+							</varlistentry>
+							<varlistentry>
+								<term>Example 2 : Partial match</term>
+								<listitem>
+									<para>
+										Match a eight digit number starting "800", followed by any four digits, then "9".
+										If the translated digits is not null and if the primary/backup address has no Global Title,
+										the Global Title from dialed address is kept with new translated digits.
+									</para> 
+									<mediaobject id="sccp_GTT_Ex2">
+										<imageobject>
+											<imagedata align="center" fileref="images/GTT-Example2.jpg" format="JPEG" />
+										</imageobject>
+										<caption>
+											<para>GTT - Example 2</para>
+										</caption>
+									</mediaobject>									
+								</listitem>
+								
+							</varlistentry>	
+							<varlistentry>
+								<term>Example 3 : Partial match</term>
+								<listitem>
+									<para>
+										Match "800800", followed by any digits Remove the first six digits. Keep any following digits in the Input. 
+										Add a PC(123) and SSN (8).
+									</para> 
+									<mediaobject id="sccp_GTT_Ex3">
+										<imageobject>
+											<imagedata align="center" fileref="images/GTT-Example3.jpg" format="JPEG" />
+										</imageobject>
+										<caption>
+											<para>GTT - Example 3</para>
+										</caption>
+									</mediaobject>									
+								</listitem>
+								
+							</varlistentry>
+							<varlistentry>
+								<term>Example 4 : Partial match</term>
+								<listitem>
+									<para>
+										Match any digits keep the digits in the and add a PC(123) and SSN (8).
+										If the translated digits is not null and if the primary/backup address has no Global Title,
+										the Global Title from dialed address is kept with new translated digits.
+									</para> 
+									<mediaobject id="sccp_GTT_Ex4">
+										<imageobject>
+											<imagedata align="center" fileref="images/GTT-Example4.jpg" format="JPEG" />
+										</imageobject>
+										<caption>
+											<para>GTT - Example 4</para>
+										</caption>
+									</mediaobject>									
+								</listitem>
+								
+							</varlistentry>	
+						</variablelist>
+						
+					</listitem>
+				</varlistentry>				
+			</variablelist>			
+		</section>
+
+	</section>
+
+	<section id="sccp_design">
+		<title>SCCP Usage</title>
+		<para>
+			The instance of <classname>org.mobicents.protocols.ss7.sccp.SccpStack</classname> acts as starting point. 
+			All the sccp messages sent by SCCP User Part are routed as per the rule configured in Router
+		</para>
+		<note><para>The term SCCP User Part refers to the applications that use SCCP's services.</para></note>
+		<para>
+			The SCCP User Part gets handle to <classname>SccpStack</classname> by doing a JNDI look-up.
+		</para>
+		
+		<para>
+			<classname>SccpStack</classname> exposes <classname>org.mobicents.protocols.ss7.sccp.SccpProvider</classname> 
+			that interacts directly with SccpStack. This interface defines the methods that will be used by SCCP User Part to send 
+			<classname>org.mobicents.protocols.ss7.sccp.message.SccpMessage</classname> and register 
+			<classname>org.mobicents.protocols.ss7.sccp.SccpListener</classname>'s to listen for incoming SCCP messages. 
+		</para>
+		
+		<para>
+			SCCP User Part registers SccpListener for specific local subsystem number.
+			For every incoming SccpMessage, if the called subsystem matches with this local subsystem, the corresponding SccpListner is called.
+		</para>
+		
+		<para>
+			SccpProvider also exposes <classname>org.mobicents.protocols.ss7.sccp.message.MessageFactory</classname> and
+			<classname>org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory</classname> to create new SccpMessage. For transfer data via
+			connectionless service <classname>org.mobicents.protocols.ss7.sccp.message.SccpDataMessage</classname> is used.
+			(This class use UDT, XUDT, LUDT SCCP message type for message transfer.)
+		</para>
+		
+			
+	</section>
+
+	<section
+		id="sccp_complete_example">
+		<title>SCCP User Part Example</title>
+		<para>
+			Below is SCCP User Part example listening for incoming SCCP message and sending back new message		
+		</para>		
+		<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.sccp.impl;
+
+import java.io.IOException;
+
+import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
+import org.mobicents.protocols.ss7.indicator.NumberingPlan;
+import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
+import org.mobicents.protocols.ss7.sccp.SccpListener;
+import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.SignallingPointStatus;
+import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
+import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
+import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+
+public class Test implements SccpListener {
+        private SccpProvider sccpProvider;
+        private SccpAddress localAddress;
+        private int localSsn = 8;
+
+        private static SccpProvider getSccpProvider() {
+                Mtp3UserPartImpl mtp3UserPart1 = null;
+                // ......
+                // ......
+                SccpStackImpl sccpStack1 = new SccpStackImpl("testSccpStack");
+                sccpStack1.setMtp3UserPart(1, mtp3UserPart1);
+                sccpStack1.start();
+                return sccpStack1.getSccpProvider();
+        }
+
+        public void start() throws Exception {
+                this.sccpProvider = getSccpProvider();
+                int translationType = 0;
+                GlobalTitle gt = GlobalTitle.getInstance(translationType,
+                                NumberingPlan.ISDN_MOBILE, NatureOfAddress.NATIONAL, "1234");
+                localAddress = new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, -1, gt, 0);
+                this.sccpProvider.registerSccpListener(this.localSsn, this);
+        }
+
+        public void stop() {
+                this.sccpProvider.deregisterSccpListener(this.localSsn);
+        }
+
+        @Override
+        public void onMessage(SccpDataMessage message) {
+                localAddress = message.getCalledPartyAddress();
+                SccpAddress remoteAddress = message.getCallingPartyAddress();
+                // now decode content
+                byte[] data = message.getData();
+                // processing a request
+                byte[] answerData = new byte[10];
+                // put custom executing code here and fill answerData
+                HopCounter hc = this.sccpProvider.getParameterFactory().createHopCounter(5);
+                SccpDataMessage sccpAnswer = this.sccpProvider.getMessageFactory().createDataMessageClass1(
+                                remoteAddress, localAddress, answerData, message.getSls(),
+                                localSsn, false, hc, null);
+                try {
+                        this.sccpProvider.send(sccpAnswer);
+                } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                }
+        }
+
+        @Override
+        public void onNotice(SccpNoticeMessage message) {
+        }
+
+        public void onCoordRequest(int dpc, int ssn, int multiplicityIndicator) {
+        }
+
+        public void onCoordResponse(int dpc, int ssn, int multiplicityIndicator) {
+        }
+
+        public void onState(int dpc, int ssn, boolean inService, int multiplicityIndicator) {
+        }
+
+        @Override
+        public void onPcState(int dpc, SignallingPointStatus status, int restrictedImportanceLevel,
+                        RemoteSccpStatus remoteSccpStatus) {
+        }
+
+}
+		</programlisting>
+	</section>
+</chapter>

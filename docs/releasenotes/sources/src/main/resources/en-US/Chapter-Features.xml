@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_Release_Notes.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter id="features">
+	<title>New Features</title>
+	<para>
+		&THIS.PLATFORM; &THIS.APPLICATION; &THIS.VERSION; is minor release that includes single new feature that replaces Dialogic native library 
+		<literal>libmobicents-dialogic-linux</literal> with Dialogic's own <literal>libgctjni</literal>. 
+	</para>
+	
+	<para>
+		Below is a list of fixes included in this version. 
+	</para>
+	<para>
+		<variablelist>
+
+			<varlistentry>
+				<term><ulink url="https://telestax.atlassian.net/browse/JSSSEVEN-204">JSSSEVEN-204</ulink></term>
+				<listitem>
+					<para>Encoding of MAPErrorMessageSMDeliveryFailure in MAP V1.</para>
+				</listitem>
+			</varlistentry>
+			
+			<varlistentry>
+				<term><ulink url="https://telestax.atlassian.net/browse/JSSSEVEN-205">JSSSEVEN-205</ulink></term>
+				<listitem>
+					<para>Add unknown for MAPProviderAbortReason.</para>
+				</listitem>
+			</varlistentry>			
+			
+		
+
+		</variablelist>	
+	</para>
+	
+	<para>
+		Below is a list of improvements included in this version. 
+	</para>
+	<para>
+		<variablelist>
+
+			<varlistentry>
+				<term><ulink url="https://telestax.atlassian.net/browse/JSSSEVEN-203">JSSSEVEN-203</ulink></term>
+				<listitem>
+					<para>Trace-Parser - support for PCAP NG format.</para>
+				</listitem>
+			</varlistentry>
+			
+			<varlistentry>
+				<term><ulink url="https://telestax.atlassian.net/browse/JSSSEVEN-206">JSSSEVEN-206</ulink></term>
+				<listitem>
+					<para>Replace dialogic native code with gctApi.</para>
+				</listitem>
+			</varlistentry>			
+			
+			<varlistentry>
+				<term><ulink url="https://telestax.atlassian.net/browse/JSSSEVEN-207">JSSSEVEN-207</ulink></term>
+				<listitem>
+					<para>Binary folder should have libgctjni.</para>
+				</listitem>
+			</varlistentry>					
+			
+			<varlistentry>
+				<term><ulink url="https://telestax.atlassian.net/browse/JSSSEVEN-208">JSSSEVEN-208</ulink></term>
+				<listitem>
+					<para>Docs : Explain inclusion of libgctjni.so in docs and change in binary folder structure.</para>
+				</listitem>
+			</varlistentry>								
+
+		</variablelist>	
+	</para>	
+</chapter>

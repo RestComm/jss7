@@ -1,0 +1,54 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<section id="shell_usage">
+	<title>Shell Management Commands</title>
+	<section id="shell_connect_command">
+		<title>Connect Shell to Managed Instance</title>
+			<variablelist>
+				<title><command>connect</command> command</title>
+				<varlistentry>
+					<term>Name</term>
+					<listitem><para>connect</para></listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>SYNOPSIS</term>
+					<listitem><para>connect &lt;host-ip&gt; &lt;host-port&gt;</para></listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>DESCRIPTION</term>
+					<listitem><para>This command is used to connect the Shell to a managed instance. The parameters
+        &lt;host-ip&gt; and &lt;host-port&gt; are optional. If you do not specify them, the shell will
+        attempt connecting to 127.0.0.1:3435.</para></listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>PARAMETERS</term>
+					<listitem><para>
+					  Optional Parameters
+<itemizedlist>
+<listitem><para>
+        &lt;host-ip&gt;               -       The host IP address of the system the Shell will
+                                        connect to.</para></listitem>
+<listitem><para>
+        &lt;host-port&gt;             -       The host port of the managed instance, which the
+                                        Shell will bind to.</para></listitem>
+</itemizedlist>
+					</para></listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>EXAMPLES</term>
+					<listitem><para>connect 10.65.208.215 3435</para>
+	<para>The above command will connect the Shell to the IP address 10.65.208.215 and
+        port 3435.</para></listitem>
+				</varlistentry>
+		<!--		<varlistentry>
+					<term></term>
+					<listitem><para></para></listitem>
+				</varlistentry>
+-->
+			</variablelist>
+
+	</section>
+</section>

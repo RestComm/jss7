@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter id="m3ua">
+	<title>M3UA</title>
+<section id="mobicents_signaling_gateway_m3ua">
+			<title>&THIS.PLATFORM; Signaling Gateway M3UA Stack</title>
+	
+			<para>
+				<literal>M3UA</literal> is a client-server protocol supporting the transport of any SS7 MTP3-User signaling (e.g. <literal>ISUP</literal> and <literal>SCCP</literal> messages) over IP. <literal>M3UA</literal> is defined
+				by the IETF SIGTRAN working group in RFC 4666. 
+				&THIS.PLATFORM; M3UA Stack can be used on the Application Server side or on the Signaling Gateway side or can also be used in peer-to-peer mode IPSP. 
+			</para>
+			<para>
+				<literal>M3UA</literal> uses the  &THIS.PLATFORM; SCTP (Stream Control Transmission Protocol) Stack.
+			</para>
+		
+			<note>
+				<title>Note</title>
+				<para>
+					&THIS.PLATFORM; SCTP Stack uses Java SCTP layer which is only available from JDK 7 onwards.
+				</para>
+			</note>
+			<section id="m3ua_load_balancing">
+				<title>M3UA Load Balancing</title>
+				<para>
+					Load Balancing can be configured by using the M3UA configuration parameter <literal>useLsbForLinksetSelection</literal> defined in the <filename>jboss-beans.xml</filename> file. Refer to <xref linkend="configuring_Rem_SGW"/> for more details on configuring this. 
+</para>
+<para>
+Depending on the
+configuration (<literal>useLsbForLinksetSelection</literal> set to true or false), either the least significant bit or the most significant bit of SLS is used for
+load balancing between two Application Servers. The remaining bits in the SLS are used for load balancing
+between ASPs within each AS.</para>
+			</section>		
+			<section id="mobicents_signaling_gateway_m3ua_as">
+				<title>&THIS.PLATFORM; M3UA Stack on the Application Server side</title>		
+				<para>
+					The figure below demonstrates the basic functionality of the &THIS.PLATFORM; M3UA Stack when configured as an Application Server (AS) 
+					that will communicate with an External Signaling Gateway. 
+				</para>
+				<mediaobject
+					id="m3ua_AS">
+					<imageobject>
+						<imagedata
+							width="300px"
+							align="center"
+							fileref="images/M3UAAs.jpg"
+							format="JPG" />
+					</imageobject>
+					<caption>
+						<para>&THIS.PLATFORM; M3UA Stack configured as an AS
+						</para>
+					</caption>
+				</mediaobject>
+				<para>
+					To use M3UA Stack as an AS, the Routing Context (RC) may not be known and is optional. Refer to <xref linkend="configuring_Rem_SGW"/> for help in configuring M3UA Stack 
+					as an AS.
+				</para>
+			</section>
+			
+			<section id="mobicents_signaling_gateway_m3ua_SG">
+				<title>&THIS.PLATFORM; M3UA Stack on the Signaling Gateway side</title>			
+				<para>
+					The figure below demonstrates the basic functionality of the &THIS.PLATFORM; M3UA Stack when configured as a Signaling Gateway (SG). 
+					The &THIS.PLATFORM; Signaling Gateway provides the Nodal Interworking Function (NIF) that allows SS7 Signaling (SCCP/ISUP)
+					to be inter-worked into the M3UA/IP Network.
+					
+				</para>
+				<mediaobject
+					id="m3ua_SGW">
+					<imageobject>
+						<imagedata
+							width="300px"
+							align="center"
+							fileref="images/M3UASgw.jpg"
+							format="JPG" />
+					</imageobject>
+					<caption>
+						<para>&THIS.PLATFORM; M3UA Stack configured as a SG
+						</para>
+					</caption>
+				</mediaobject>
+				<para>
+					&THIS.PLATFORM; M3UA Stack used on the SG side will share a common point code with a set of M3UA Application Servers. 
+					You can configure the M3UA stack on SG side in one of the two traffic modes: Loadbalance or Override. Broadcast traffic mode is not supported. Refer to <xref linkend="configuring_sgw"/> for instructions on configuring M3UA Stack as SG. &THIS.PLATFORM; M3UA Stack used on SG side doesn't support routing key management messages. The Routing Key should be provisioned statically using the management console.
+				</para>	
+			</section>	
+			<section id="mobicents_ipsp_m3ua">
+				<title>&THIS.PLATFORM; M3UA Stack as IPSP</title>			
+				<para>
+					An IPSP is essentially the same as an ASP, except that it uses M3UA in a point-to-point fashion.  Conceptually, an IPSP does not use the services of a Signalling Gateway node.
+				</para>
+			</section>
+		</section>
+	<section id="m3ua_route">
+	<title>Route</title>
+	<para>
+Before you can transfer Payload Data from M3UA-User to a peer, you must define the route based on Destination Point Code (DPC), Originating Point Code (OPC) and Service Indicator (SI). For details on how to add a new Route, please refer to <xref linkend="managing_add_m3ua_route"/>.  
+	</para>
+	<para>
+While DPC is mandatory and should be an actual value, OPC and SI can be -1 indicating wild card. The table below shows an example of a routeset table. The routeset table contains routesets for all the possible destinations that can be reached. This table is searched to find a match for the DPC:OPC:SI to be routed. If a match is found in the list of Application Servers, an AS is chosen from the available routes associated with the routeset. If an AS is not found, SI is substitued with -1 (DPC:OPC:-1) and a match is searched for again. If a match still is not found, OPC is substituted with -1 (DPC:-1:-1) and the table is searched again for a match. If there is still no matching AS, MSU is dropped and routing does not take place.  
+	
+<table frame="all" pgwide="1">
+					<title>Routesets</title>
+					<tgroup colsep="1" cols="4">
+						<colspec colnum="1" colname="c0" colwidth="3*" />
+						<colspec colnum="2" colname="c3" colwidth="3*" />
+						<colspec colnum="3" colname="c6" colwidth="3*" />
+						<colspec colnum="4" colname="c12" colwidth="3*" />
+						<thead>
+							<row>
+								<entry>DPC</entry>
+								<entry>OPC</entry>
+								<entry>SI</entry>
+								<entry>AS Name</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row><entry>2</entry><entry>3</entry><entry>2</entry><entry>AS1, AS2</entry></row>
+							<row><entry>2</entry><entry>3</entry><entry>-1</entry><entry>AS1, AS2</entry></row>
+							<row><entry>4</entry><entry>-1</entry><entry>-1</entry><entry>AS3</entry></row>
+						</tbody>
+					</tgroup>
+					
+</table>
+	</para>
+	</section>
+	<section id="m3ua_loadsharing">
+	<title>Load Sharing</title>
+	<para>
+M3UA load-balancing makes use of the SLS field of the Protocol Data carried in the Payload Data Message. M3UA can be configured as below:
+<itemizedlist>
+	<listitem><para>load-balance between Application Servers (AS) for a given route. For any given route, there can be a maximum of 16 ASs defined. </para></listitem>
+	<listitem><para>load-balance within an AS and between Application Server Processes (ASP). A maximum 128 ASPs can be defined within an AS for load-sharing.</para></listitem>
+
+</itemizedlist>
+	</para>
+	<para>
+For even distribution of messages in the network it is recommended that you define an even number of ASs for a route for load sharing. You must ensure that you take proper care in deciding on a number of ASs for a route and number of ASPs within an AS depending on the routing label format of MSU.
+	</para>
+	<para>
+M3UA can be configured to use either the highest or lowest bits of the SLS for AS selection. The number of SLS bits used for AS selection depends on the number of maximum AS defined for a route. The remaining bits are used for ASP selection.
+	</para>
+	<para>
+<table frame="all" pgwide="1">
+					<title>Routesets</title>
+					<tgroup colsep="1" cols="3">
+						<colspec colnum="1" colname="c0" colwidth="3*" />
+						<colspec colnum="2" colname="c3" colwidth="3*" />
+						<colspec colnum="3" colname="c6" colwidth="3*" />
+						<thead>
+							<row>
+								<entry>Max AS for Route</entry>
+								<entry>Number of SLS bits used for AS</entry>
+								<entry>Max ASPs that can be used within an AS</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row><entry>1 or 2</entry><entry>1</entry><entry>128</entry></row>
+							<row><entry>3 or 4</entry><entry>2</entry><entry>64</entry></row>
+							<row><entry>5 to 8</entry><entry>3</entry><entry>32</entry></row>
+							<row><entry>9 to 16</entry><entry>4</entry><entry>16</entry></row>
+						</tbody>
+					</tgroup>
+					
+</table>
+	</para>
+	</section>
+	<section id="m3ua_internal_state_machine">
+		<title>M3UA Internal State Machine</title>
+		<para>&THIS.PLATFORM; M3UA Stack maintains finite state machine (FSM) for each ASP and AS. Its important to understand these state's to troubleshoot the M3UA handshake messages exchanged</para>
+		<para>
+			The FSM for ASP at AS side (or IPSPS client side) is referred to as LocalFSM and FSM for AS at AS side (or IPSP client side) is referred to as PeerFSM. 
+			Similarly FSM for ASP at SGW side (or IPSP server side) is referred to as PeerFSM and FSM for AS at SGW side (or IPSP server side) is referred to as LocalFsm. 
+		</para>
+		<para>
+			Figure below shows the various state of ASP at AS and SGW side. In below example only Single Exchange of messages are considered for handshake mechanism 
+		</para>
+		<mediaobject
+			id="M3UAStateASPSE">
+			<imageobject>
+				<imagedata
+					width="300px"
+					align="center"
+					fileref="images/M3UAStateASPSE.jpg"
+					format="JPG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; M3UA Stack ASP state machine
+				</para>
+			</caption>
+		</mediaobject>	
+		
+		<para>
+			Figure below shows the various state of AS at AS and SGW side. In below example only Single Exchange of messages are considered for handshake mechanism 
+		</para>
+		<mediaobject
+			id="M3UAStateASSE">
+			<imageobject>
+				<imagedata
+					width="300px"
+					align="center"
+					fileref="images/M3UAStateASSE.jpg"
+					format="JPG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; M3UA Stack AS state machine for AS - SGW
+				</para>
+			</caption>
+		</mediaobject>		
+		
+		<para>
+			For IPSP, the ASP state machine remains same as AS-SGW, however for AS the state machine changes a bit as there is no exchange of Notify (NTFY) messages.
+			Figure below shows the various state of AS at IPSP Client and Server side. In below example only Single Exchange of messages are considered for handshake mechanism 
+		</para>
+		<mediaobject
+			id="M3UAStateIPSPASPSE">
+			<imageobject>
+				<imagedata
+					width="300px"
+					align="center"
+					fileref="images/M3UAStateIPSPASPSE.jpg"
+					format="JPG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; M3UA Stack AS state machine for IPSP Client - Server
+				</para>
+			</caption>
+		</mediaobject>	
+		
+		<para>
+			In Double Exhcnage handshake mechanism both Local and Peer FSM exist in ASP and AS at each side. Hence the number of handshake messages exchanged are twice that of Single Exchange. 
+		</para>					
+	</section>
+</chapter>

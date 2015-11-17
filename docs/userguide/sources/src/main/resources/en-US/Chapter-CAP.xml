@@ -1,0 +1,1430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter
+	id="cap">
+
+	<title>CAP</title>
+
+	<para>
+		The <acronym>CAMEL</acronym> (Customized Applications for Mobile network Enhanced Logic) Application Part (<acronym>CAP</acronym>) protocol is used by network operators to provide their subscribers 
+		with operator specific services even when roaming outside the HPLMN.
+		<acronym>CAP</acronym> provides services such as prepaid roaming services, fraud control, special numbers 
+		and closed user groups (e.g., office extension numbers that work everywhere).
+		CAP has been defined in four versions (phases), each of which has an accompanying specification that builds upon the previous phase.		 
+		This application layer provides a standardized set of services.
+		<acronym>CAP</acronym> uses the services of the <literal>SS7</literal>
+		network, specifically the Signaling Connection Control Part (<acronym>SCCP</acronym>) 
+		and the Transaction Capabilities Application Part (<acronym>TCAP</acronym>)
+	</para>
+	<important>
+		<para>For better understanding of this chapter you must be familiar with the specifications defined in <literal>3GPP TS 22.078</literal> (service aspects) and <literal>3GPP TS 23.078</literal> (technical realization).</para>
+	</important>
+	<note>
+		<para>&THIS.PLATFORM; &THIS.APPLICATION;
+				CAP has full implementation for Phase 1 and Phase 2 and we welcome any contribution to implement
+				other Phases. We will provide you with all the guidance you may require.
+			The list of implemented operations can be found at
+			<ulink type="http" url="http://code.google.com/p/jss7/source/browse/cap/CAPMessagesImplemented.ods">CAPMessagesImplemented.ods</ulink>.
+You can find the list of implemented operations here: <ulink type="http" url="http://code.google.com/p/jss7/source/browse/cap/CAPMessagesImplemented.ods">CAPMessagesImplemented.ods</ulink>. The document uses color coding to represent the status of the implementation:
+			<variablelist>
+				<varlistentry>
+				<term>Green</term>
+				<listitem><para>Fully Implemented</para></listitem>
+				</varlistentry>
+				<varlistentry>
+				<term>Red</term>
+				<listitem><para>Interface available (but not yet implemented)</para></listitem>
+				</varlistentry>
+				<varlistentry>
+				<term>Yellow</term>
+				<listitem><para>Implementation in progress</para></listitem>
+				</varlistentry>
+				<varlistentry>
+				<term>Blue</term>
+				<listitem><para>Implemeted only for CAP V2 and not available for CAP V3 and V4</para></listitem>
+				</varlistentry>
+			</variablelist>
+		</para>
+	</note>
+
+	<section id="cap_usage">
+		<title>&THIS.APPLICATION; CAP 
+		</title>
+		<para>
+			The <classname>org.mobicents.protocols.ss7.cap.api.CAPStack</classname>
+			interface defines the methods required to represent CAP Protocol Stack.
+			CAPStack exposes <classname>org.mobicents.protocols.ss7.cap.api.CAPProvider</classname>
+			that interacts directly with CAPStack. 
+			This interface defines the methods that will be used by any registered CAP-User application.
+			CAP-User application must implement interfaces to listen for CAP messages and for dialogue and component handling primitives.
+			One interface is <classname>org.mobicents.protocols.ss7.cap.api.CAPDialogListener</classname> 
+			(listening associated with dialog events).
+			Others are one or more interfaces for listening to messages associated with component events based on 
+			<classname>org.mobicents.protocols.ss7.cap.api.CAPServiceListener</classname> interface.
+		</para>
+
+		<para>
+			Each CAP-User interested in listening to messages specific to a CAP Service must implement the specific <classname>CAPServiceListener</classname>.
+			<itemizedlist> 
+				<listitem>
+					<para>
+						CAP-User interested only in circuit switched call operations implements <classname>org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.
+						CAPServiceCircuitSwitchedCallListener</classname>
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						CAP-User interested only in GPRS operations implements <classname>org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprsListener</classname>
+					</para>
+				</listitem>
+					<listitem>
+					<para>
+						CAP-User interested only in SMS operations implements <classname>org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSmsListener</classname>
+					</para>
+				</listitem>				
+			</itemizedlist>
+			CAP-User interested in all the services must implement all the service listener classes.
+		</para>
+		<!--  <para>
+		The class diagram looks like
+		</para>
+		<mediaobject
+			id="map_classdia">
+			<imageobject>
+				<imagedata
+					width="300px"
+					align="center"
+					fileref="images/MapClassDiagram.png"
+					format="PNG" />
+			</imageobject>
+			<caption>
+				<para>&THIS.PLATFORM; &THIS.APPLICATION;
+					MAP Class Diagram
+				</para>
+			</caption>
+		</mediaobject>
+		 -->
+
+
+		<para>
+			The <classname>org.mobicents.protocols.ss7.cap.CAPStackImpl</classname> 
+			is a concrete implementation of <classname>CAPStack.</classname>
+			The CAP-User application gets access to <classname>CAPProvider</classname> by doing a JNDI look-up as explained in <xref linkend="design_overview_ss7_service"/>. 
+		</para>
+
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[String providerJndiName = "java:/mobicents/ss7/cap";
+this.capProvider = ((CAPProvider) ctx.lookup(providerJndiName));
+...]]>
+		</programlisting>
+
+		<para>
+			The CAP-User application should register the concrete implementation of <classname>CAPDialogListener</classname> 
+			with <classname>CAPProvider</classname> to listen for incoming CAP Dialog and CAP Primitive messages. 
+			The CAP-User application should register the concrete implementation of <classname>CAPServiceListener</classname> 
+			with  corresponding <classname>CAPServiceBase </classname> to  listen  for  incoming  CAP  Service  messages.  
+			Following CAPServiceBase are exposed by <classname>CAPProvider</classname>.
+			<itemizedlist>
+				<listitem>
+					<para>For circuit switched call service <classname>org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.
+					CAPServiceCircuitSwitchedCall</classname></para>
+				</listitem>
+				<listitem>
+					<para>For GPRS service <classname>org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprs</classname></para>
+				</listitem>
+				<listitem>
+					<para>For SMS service <classname>org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSms</classname></para>
+				</listitem>								
+			</itemizedlist>
+		</para>
+
+		<programlisting language="Java" role="JAVA"><![CDATA[
+public class CAPExample implements CAPDialogListener, CAPServiceCircuitSwitchedCallListener {
+	    ....       
+        capProvider.addCAPDialogListener(this);
+		capProvider.getCAPServiceCircuitSwitchedCall().addCAPServiceListener(this);
+        ....
+}]]>
+	</programlisting>
+	
+		<para>Before any CAP specific service can be used, the corresponding service should be activated as shown below:</para>
+		
+		<programlisting language="Java" role="JAVA"><![CDATA[
+        ....
+		// Make the circuitSwitchedCall service activated
+        capProvider.getCAPServiceCircuitSwitchedCall().acivate();
+        ....]]>
+	</programlisting>		
+
+		<para>
+			The CAP-User Application leverages:
+			<itemizedlist>
+				<listitem>
+					<para><classname>MAPParameterFactory</classname> to create instances of 
+					<classname>IMSI</classname>, <classname>ISDNAddressString</classname>
+					and many other MAP primitives that are used by CAP services.</para>
+				</listitem>
+				<listitem>
+					<para><classname>CAPParameterFactory</classname> to create instances of 
+					CAP primitives that are used by CAP services.</para>
+				</listitem>
+				<listitem>
+					<para><classname>ISUPParameterFactory</classname> to create instances of 
+					ISUP primitives that are used by CAP services.</para>
+				</listitem>
+				<listitem>
+					<para><classname>INAPPParameterFactory</classname> to create instances of 
+					INAP primitives that are used by CAP services.</para>
+				</listitem>
+				<listitem>
+					<para><classname>CAPErrorMessageFactory</classname> to create instances of 
+					CAP error messages like <classname>CAPErrorMessageSystemFailure</classname>.</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+		MapParameterFactory mapParamFact = capProvider.getMapServiceFactory();
+		CapParameterFactory capParamFact = capProvider.getCapServiceFactory();
+        ISDNAddressString msisdn = mapParamFact.createISDNAddressString(
+                AddressNature.international_number, NumberingPlan.ISDN,
+                "31628838002");
+		BCSMEvent ev = capParamFact.createBCSMEvent(EventTypeBCSM.routeSelectFailure, 
+				MonitorMode.notifyAndContinue, null, null, false);
+]]></programlisting>
+
+	</section>
+
+
+	<section
+		id="cap_send_request"> 
+		<title>&THIS.APPLICATION; Sending a CAP request (InitialDPRequest as an example)</title>
+
+		<para>
+			For sending a CAP request you must do the following at the SSF side:
+		</para>
+		<para>
+			- Create a new CAP Dialog
+		</para>
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+// First create Dialog
+SccpAddress origAddress = createLocalAddress();
+SccpAddress destAddress = createRemoteAddress();
+CAPApplicationContext acn = CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF; 
+currentCapDialog = capProvider.getCAPServiceCircuitSwitchedCall().
+	createNewDialog(acn, origAddress, remoteAddress);
+]]></programlisting>
+
+		<para>
+			- Add an Invoke component (InitialDPRequest message)
+		</para>
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+int serviceKey = 1;
+
+CalledPartyNumber calledPartyNumber = client.getCAPProvider().
+	getISUPParameterFactory().createCalledPartyNumber();
+calledPartyNumber.setAddress("552348762");
+calledPartyNumber.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
+calledPartyNumber.setNumberingPlanIndicator(CalledPartyNumber._NPI_ISDN);
+calledPartyNumber.setInternalNetworkNumberIndicator(CalledPartyNumber._INN_ROUTING_ALLOWED);
+CalledPartyNumberCap calledPartyNumberCap = client.getCAPProvider().
+	getCAPParameterFactory().createCalledPartyNumberCap(calledPartyNumber);
+
+CallingPartyNumber callingPartyNumber = client.getCAPProvider().
+	getISUPParameterFactory().createCallingPartyNumber();
+callingPartyNumber.setAddress("55998223");
+callingPartyNumber.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
+callingPartyNumber.setNumberingPlanIndicator(CalledPartyNumber._NPI_ISDN);
+callingPartyNumber.setAddressRepresentationREstrictedIndicator(CallingPartyNumber._APRI_ALLOWED);
+callingPartyNumber.setScreeningIndicator(CallingPartyNumber._SI_NETWORK_PROVIDED);
+CallingPartyNumberCap callingPartyNumberCap = client.getCAPProvider().
+	getCAPParameterFactory().createCallingPartyNumberCap(callingPartyNumber);
+
+LocationNumber locationNumber = client.getCAPProvider().getISUPParameterFactory().
+	createLocationNumber();
+locationNumber.setAddress("55200001");
+locationNumber.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
+locationNumber.setNumberingPlanIndicator(LocationNumber._NPI_ISDN);
+locationNumber.setAddressRepresentationRestrictedIndicator(LocationNumber._APRI_ALLOWED);
+locationNumber.setScreeningIndicator(LocationNumber._SI_NETWORK_PROVIDED);
+locationNumber.setInternalNetworkNumberIndicator(LocationNumber._INN_ROUTING_ALLOWED);
+LocationNumberCap locationNumberCap = client.getCAPProvider().getCAPParameterFactory().
+	createLocationNumberCap(locationNumber);
+
+ISDNAddressString vlrNumber = client.getCAPProvider().getMAPParameterFactory()
+		.createISDNAddressString(AddressNature.international_number, 
+		NumberingPlan.ISDN, "552000002");
+LocationInformation locationInformation = client.getCAPProvider().getMAPParameterFactory()
+		.createLocationInformation(10, null, vlrNumber, null, 
+		null, null, null, vlrNumber, null, false, false, null, null);
+
+currentCapDialog.addInitialDPRequest(serviceKey, calledPartyNumber, callingPartyNumber, 
+		null, null, null, locationNumber, null, null, null, null, null,
+		eventTypeBCSM, null, null, null, null, null, null, null, false, 
+		null, null, locationInformation, null, null, null, null, null, false, null);
+]]></programlisting>
+
+		<para>
+			- Send a TC-Begin message to the server peer
+		</para>
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+// This will initiate the TC-BEGIN with INVOKE component
+currentCapDialog.send();
+]]></programlisting>
+
+		<para>
+			- Wait for a response and other instructions from the SCF
+		</para>
+		<para>
+			At the SCF side when the TC-Begin message is received, the following sequence of events occur:
+		</para>
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+void CAPDialogListener.onDialogRequest(CAPDialog capDialog, 
+	CAPGprsReferenceNumber capGprsReferenceNumber);
+]]></programlisting>
+
+		<para>
+			This is the request for CAP Dialog processing. 	
+			A CAP-User can reject the Dialog by invoking <literal>capDialog.refuse()</literal> method.
+		</para>
+
+		<para>
+			Then the incoming primitives corresponding events (one or more) occur. In this case it is
+		</para>
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+void CAPServiceCircuitSwitchedCallListener.onInitialDPRequest(InitialDPRequest ind);
+]]></programlisting>
+
+		<para>
+			When processing component-dependant messages you can add response components
+			or add other Invoke requests. 
+			In this case it is RequestReportBCSMEventRequest as an example:
+		</para>
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+ArrayList<BCSMEvent> bcsmEventList = new ArrayList<BCSMEvent>();
+BCSMEvent ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
+	EventTypeBCSM.routeSelectFailure, MonitorMode.notifyAndContinue,
+	null, null, false);
+bcsmEventList.add(ev);
+ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oCalledPartyBusy, 
+	MonitorMode.interrupted, null, null, false);
+bcsmEventList.add(ev);
+ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oNoAnswer, 
+	MonitorMode.interrupted, null, null, false);
+bcsmEventList.add(ev);
+ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oAnswer, 
+	MonitorMode.notifyAndContinue, null, null, false);
+bcsmEventList.add(ev);
+LegID legId = this.capProvider.getINAPParameterFactory().createLegID(true, LegType.leg1);
+ev = this.capProvider.getCAPParameterFactory()
+		.createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.notifyAndContinue, legId, null, false);
+bcsmEventList.add(ev);
+legId = this.capProvider.getINAPParameterFactory().createLegID(true, LegType.leg2);
+ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oDisconnect, 
+	MonitorMode.interrupted, legId, null, false);
+bcsmEventList.add(ev);
+ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oAbandon, 
+	MonitorMode.notifyAndContinue, null, null, false);
+bcsmEventList.add(ev);
+currentCapDialog.addRequestReportBCSMEventRequest(bcsmEventList, null);
+
+currentCapDialog.send();
+]]></programlisting>
+
+		<para>
+			If preparing the response takes time, you should return the control and prepare the answer in a separate thread.
+		</para>
+		<para>
+			If error or reject primitives are included into a TCAP message the following events occur:
+		</para>
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+public void onErrorComponent(CAPDialog capDialog, Long invokeId, CAPErrorMessage capErrorMessage);
+public void onProviderErrorComponent(CAPDialog capDialog, Long invokeId, 
+	CAPComponentErrorReason providerError);
+public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem);
+]]></programlisting>
+
+		<para>
+			After all incoming components have been processed, the event <literal>onDialogDelimiter(CAPDialog capDialog);</literal> 
+			event is invoked (or <literal>onDialogClose(CAPDialog capDialog)</literal> in TC-END case). 
+			If all response components have been prepared you can tell the Stack to send response:
+			<itemizedlist>
+				<listitem>
+					<para><classname>capDialog.close(false);</classname> - to send TC-END</para>
+				</listitem>
+				<listitem>
+					<para><classname>capDialog.send();</classname> - to send TC-CONTINUE</para>
+				</listitem>
+				<listitem>
+					<para><classname>capDialog.close(true);</classname> - sends TC-END without any components (prearrangedEnd)</para>
+				</listitem>
+			</itemizedlist>
+			Instead of the methods <literal>send()</literal> and <literal>close(boolean prearrangedEnd)</literal>, you can invoke 
+			<literal>sendDelayed()</literal> or <literal>closeDelayed(boolean prearrangedEnd)</literal>.
+			These methods are the same as  <literal>send()</literal> and <literal>close(boolean prearrangedEnd)</literal> methods, but when invoking them from events of parsing incoming components
+			real sending and dialog closing will occur only when all incoming component events
+			and onDialogDelimiter() or onDialogClose() would be processed.
+			 
+			If all response components have been prepared you should return the control and 
+			send a response when all components are ready.
+		</para>
+		<para>
+			In case of an error, you can terminate a CAP dialog in any method by invoking:
+			<itemizedlist>
+				<listitem>
+					<para><classname>capDialog.abort(CAPUserAbortReason abortReason);</classname> - sends TC-U-ABORT primitive</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+		<para>
+			If there are no local actions or no response from a remote size for a long time, timeouts occur and the following methods are invoked:
+			<itemizedlist>
+				<listitem>
+					<para><classname>CAPDialogListener.onDialogTimeout(CAPDialog capDialog);</classname></para>
+				</listitem>
+				<listitem>
+					<para><classname>CAPServiceListener.onInvokeTimeout(CAPDialog capDialog, Long invokeId);</classname></para>
+				</listitem>
+			</itemizedlist>
+		</para>
+		<para>
+			In the <classname>onDialogTimeout()</classname> method you can invoke <classname>capDialog.keepAlive();</classname> to prevent a Dialog from closing. 
+			For preventing an Invoke timeout you should invoke <classname>resetInvokeTimer(Long invokeId);</classname> 
+			(before <classname>onInvokeTimeout()</classname> occurs).
+		</para>
+	</section>
+
+
+<!-- // .................................................. -->		
+	<section
+		id="cap_usage_example"> 
+		<title>&THIS.APPLICATION; CAP Usage</title>
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.cap;
+
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ODisconnectSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
+import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
+import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
+import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
+import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
+import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+
+public class Example {
+
+	private static SccpAddress createLocalAddress() {
+		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 1, null, 146);
+	}
+
+	private static SccpAddress createRemoteAddress() {
+		return new SccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, 2, null, 146);
+	}
+
+
+	public static void startCallSsf() throws Exception {
+		CallSsfExample client = new CallSsfExample();
+
+		client.start();
+
+		// starting a call
+		SccpAddress origAddress = createLocalAddress();
+		SccpAddress destAddress = createRemoteAddress();
+
+		int serviceKey = 1;
+
+		CalledPartyNumber calledPartyNumber = client.getCAPProvider().getISUPParameterFactory()
+			.createCalledPartyNumber();
+		calledPartyNumber.setAddress("552348762");
+		calledPartyNumber.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
+		calledPartyNumber.setNumberingPlanIndicator(CalledPartyNumber._NPI_ISDN);
+		calledPartyNumber.setInternalNetworkNumberIndicator(CalledPartyNumber._INN_ROUTING_ALLOWED);
+		CalledPartyNumberCap calledPartyNumberCap = client.getCAPProvider()
+			.getCAPParameterFactory().createCalledPartyNumberCap(calledPartyNumber);
+
+		CallingPartyNumber callingPartyNumber = client.getCAPProvider().getISUPParameterFactory()
+			.createCallingPartyNumber();
+		callingPartyNumber.setAddress("55998223");
+		callingPartyNumber.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
+		callingPartyNumber.setNumberingPlanIndicator(CalledPartyNumber._NPI_ISDN);
+		callingPartyNumber.setAddressRepresentationREstrictedIndicator(CallingPartyNumber._APRI_ALLOWED);
+		callingPartyNumber.setScreeningIndicator(CallingPartyNumber._SI_NETWORK_PROVIDED);
+		CallingPartyNumberCap callingPartyNumberCap = client.getCAPProvider()
+			.getCAPParameterFactory().createCallingPartyNumberCap(callingPartyNumber);
+
+		LocationNumber locationNumber = client.getCAPProvider().getISUPParameterFactory()
+		.createLocationNumber();
+		locationNumber.setAddress("55200001");
+		locationNumber.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
+		locationNumber.setNumberingPlanIndicator(LocationNumber._NPI_ISDN);
+		locationNumber.setAddressRepresentationRestrictedIndicator(LocationNumber._APRI_ALLOWED);
+		locationNumber.setScreeningIndicator(LocationNumber._SI_NETWORK_PROVIDED);
+		locationNumber.setInternalNetworkNumberIndicator(LocationNumber._INN_ROUTING_ALLOWED);
+		LocationNumberCap locationNumberCap = client.getCAPProvider().getCAPParameterFactory()
+			.createLocationNumberCap(locationNumber);
+
+		ISDNAddressString vlrNumber = client.getCAPProvider().getMAPParameterFactory()
+				.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, 
+						"552000002");
+		LocationInformation locationInformation = client.getCAPProvider().getMAPParameterFactory()
+				.createLocationInformation(10, null, vlrNumber, null, null, null, null, 
+						vlrNumber, null, false, false, null, null);
+
+		client.sendInitialDP(origAddress, destAddress, serviceKey, calledPartyNumberCap, 
+				callingPartyNumberCap, locationNumberCap, EventTypeBCSM.collectedInfo,
+				locationInformation);
+		
+		// sending oAnswer in 5 sec
+		Thread.sleep(5000);
+		OAnswerSpecificInfo oAnswerSpecificInfo = client.getCAPProvider().getCAPParameterFactory()
+				.createOAnswerSpecificInfo(null, false, false, null, null, null);
+		ReceivingSideID legID = client.getCAPProvider().getCAPParameterFactory()
+			.createReceivingSideID(LegType.leg2);
+		MiscCallInfo miscCallInfo = client.getCAPProvider().getINAPParameterFactory()
+			.createMiscCallInfo(MiscCallInfoMessageType.notification, null);
+		client.sendEventReportBCSM_OAnswer(oAnswerSpecificInfo, legID, miscCallInfo);
+		
+		// sending oDisconnect in 20 sec
+		Thread.sleep(20000);
+		CauseIndicators causeIndicators = client.getCAPProvider().getISUPParameterFactory()
+			.createCauseIndicators();
+		causeIndicators.setLocation(CauseIndicators._LOCATION_USER);
+		causeIndicators.setCodingStandard(CauseIndicators._CODING_STANDARD_ITUT);
+		causeIndicators.setCauseValue(CauseIndicators._CV_ALL_CLEAR);
+		CauseCap releaseCause = client.getCAPProvider().getCAPParameterFactory()
+			.createCauseCap(causeIndicators);
+		ODisconnectSpecificInfo oDisconnectSpecificInfo = client.getCAPProvider()
+			.getCAPParameterFactory().createODisconnectSpecificInfo(releaseCause);
+		legID = client.getCAPProvider().getCAPParameterFactory().createReceivingSideID(LegType.leg1);
+		miscCallInfo = client.getCAPProvider().getINAPParameterFactory()
+			.createMiscCallInfo(MiscCallInfoMessageType.notification, null);
+		client.sendEventReportBCSM_ODisconnect(oDisconnectSpecificInfo, legID, miscCallInfo);
+		
+		// wait for answer
+		Thread.sleep(600000);
+
+		client.stop();
+	}
+
+	public static void startCallScf() throws Exception {
+		CallScfExample server = new CallScfExample();
+
+		server.start();
+		
+		// wait for a request
+		Thread.sleep(600000);
+
+		server.stop();
+	}
+}
+
+]]>
+	</programlisting>
+
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.cap;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
+import org.mobicents.protocols.ss7.cap.api.CAPDialog;
+import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
+import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.CAPMessage;
+import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
+import org.mobicents.protocols.ss7.cap.api.CAPProvider;
+import org.mobicents.protocols.ss7.cap.api.CAPStack;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ODisconnectSpecificInfo;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
+import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
+import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestResponse;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.AssistRequestInstructionsRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallListener;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CancelRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectToResourceRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EstablishTemporaryConnectionRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.FurnishChargingInformationRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PlayAnnouncementRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationResponse;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ReleaseCallRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
+import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
+import org.mobicents.protocols.ss7.map.api.MAPProvider;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
+import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+
+public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitchedCallListener {
+
+	private CAPProvider capProvider;
+	private CAPParameterFactory paramFact;
+	private CAPDialogCircuitSwitchedCall currentCapDialog;
+	private CallContent cc;
+
+	public CallSsfExample() throws NamingException {
+		InitialContext ctx = new InitialContext();
+		try {
+			String providerJndiName = "java:/mobicents/ss7/cap";
+			this.capProvider = ((CAPProvider) ctx.lookup(providerJndiName));
+		} finally {
+			ctx.close();
+		}
+		
+		paramFact = capProvider.getCAPParameterFactory();
+
+		capProvider.addCAPDialogListener(this);
+		capProvider.getCAPServiceCircuitSwitchedCall().addCAPServiceListener(this);
+	}
+
+	public CAPProvider getCAPProvider() {
+		return capProvider;
+	}
+
+	public void start() {
+		// Make the circuitSwitchedCall service activated
+        capProvider.getCAPServiceCircuitSwitchedCall().acivate();
+
+        currentCapDialog = null;
+	}
+
+	public void stop() {
+		 capProvider.getCAPServiceCircuitSwitchedCall().deactivate();
+	}
+
+	public void sendInitialDP(SccpAddress origAddress, SccpAddress remoteAddress, 
+			int serviceKey, CalledPartyNumberCap calledPartyNumber,
+			CallingPartyNumberCap callingPartyNumber, LocationNumberCap locationNumber, 
+			EventTypeBCSM eventTypeBCSM, LocationInformation locationInformation)
+			throws CAPException {
+		// First create Dialog
+		CAPApplicationContext acn = CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF; 
+		currentCapDialog = capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(
+				acn, origAddress, remoteAddress);
+
+		currentCapDialog.addInitialDPRequest(serviceKey, calledPartyNumber, 
+				callingPartyNumber, null, null, null, locationNumber, null, null, 
+				null, null, null,
+				eventTypeBCSM, null, null, null, null, null, null, null, false, 
+				null, null, locationInformation, null, null, null, null, null, false, null);
+		// This will initiate the TC-BEGIN with INVOKE component
+		currentCapDialog.send();
+
+		this.cc.step = Step.initialDPSent;
+		this.cc.calledPartyNumber = calledPartyNumber;
+		this.cc.callingPartyNumber = callingPartyNumber;		
+	
+	}
+
+	public void sendEventReportBCSM_OAnswer(OAnswerSpecificInfo oAnswerSpecificInfo, 
+			ReceivingSideID legID, MiscCallInfo miscCallInfo) throws CAPException {
+		if (currentCapDialog != null && this.cc != null) {
+			EventSpecificInformationBCSM eventSpecificInformationBCSM = 
+				this.capProvider.getCAPParameterFactory().createEventSpecificInformationBCSM(
+						oAnswerSpecificInfo);
+			currentCapDialog.addEventReportBCSMRequest(EventTypeBCSM.oAnswer, 
+					eventSpecificInformationBCSM, legID, miscCallInfo, null);
+			currentCapDialog.send();
+			this.cc.step = Step.answered;
+		}
+	}
+
+	public void sendEventReportBCSM_ODisconnect(ODisconnectSpecificInfo oDisconnectSpecificInfo, 
+			ReceivingSideID legID, MiscCallInfo miscCallInfo) throws CAPException {
+		if (currentCapDialog != null && this.cc != null) {
+			EventSpecificInformationBCSM eventSpecificInformationBCSM = 
+				this.capProvider.getCAPParameterFactory().createEventSpecificInformationBCSM(
+						oDisconnectSpecificInfo);
+			currentCapDialog.addEventReportBCSMRequest(EventTypeBCSM.oDisconnect, 
+					eventSpecificInformationBCSM, legID, miscCallInfo, null);
+			currentCapDialog.send();
+			this.cc.step = Step.disconnected;
+		}
+	}
+
+	@Override
+	public void onRequestReportBCSMEventRequest(RequestReportBCSMEventRequest ind) {
+		if (currentCapDialog != null && this.cc != null && this.cc.step != Step.disconnected) {
+			this.cc.requestReportBCSMEventRequest = ind;
+
+			// initiating BCSM events processing
+		}
+		ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+	}
+
+	@Override
+	public void onActivityTestRequest(ActivityTestRequest ind) {
+		if (currentCapDialog != null && this.cc != null && this.cc.step != Step.disconnected) {
+			this.cc.activityTestInvokeId = ind.getInvokeId();
+		}
+	}
+
+	@Override
+	public void onActivityTestResponse(ActivityTestResponse ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onContinueRequest(ContinueRequest ind) {
+		this.cc.step = Step.callAllowed;
+		ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+		// sending Continue to use the original calledPartyAddress
+	}
+
+	@Override
+	public void onConnectRequest(ConnectRequest ind) {
+		this.cc.step = Step.callAllowed;
+		this.cc.destinationRoutingAddress = ind.getDestinationRoutingAddress();
+		ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+		// sending Connect to force routing the call to a new  number
+	}
+
+	@Override
+	public void onDialogTimeout(CAPDialog capDialog) {
+		if (currentCapDialog != null && this.cc != null && this.cc.step != Step.disconnected) {
+			// if the call is still up - keep the sialog alive
+			currentCapDialog.keepAlive();
+		}
+	}
+
+	@Override
+	public void onDialogDelimiter(CAPDialog capDialog) {
+		if (currentCapDialog != null && this.cc != null && this.cc.step != Step.disconnected) {
+			if (this.cc.activityTestInvokeId != null) {
+				try {
+					currentCapDialog.addActivityTestResponse(this.cc.activityTestInvokeId);
+					this.cc.activityTestInvokeId = null;
+					currentCapDialog.send();
+				} catch (CAPException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	@Override
+	public void onErrorComponent(CAPDialog capDialog, Long invokeId, CAPErrorMessage capErrorMessage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem, 
+			boolean isLocalOriginated) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInvokeTimeout(CAPDialog capDialog, Long invokeId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCAPMessage(CAPMessage capMessage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onInitialDPRequest(InitialDPRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onApplyChargingRequest(ApplyChargingRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onEventReportBCSMRequest(EventReportBCSMRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onApplyChargingReportRequest(ApplyChargingReportRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onReleaseCallRequest(ReleaseCallRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCallInformationRequestRequest(CallInformationRequestRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCallInformationReportRequest(CallInformationReportRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAssistRequestInstructionsRequest(AssistRequestInstructionsRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onEstablishTemporaryConnectionRequest(EstablishTemporaryConnectionRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDisconnectForwardConnectionRequest(DisconnectForwardConnectionRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnectToResourceRequest(ConnectToResourceRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onResetTimerRequest(ResetTimerRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onFurnishChargingInformationRequest(FurnishChargingInformationRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendChargingInformationRequest(SendChargingInformationRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSpecializedResourceReportRequest(SpecializedResourceReportRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPlayAnnouncementRequest(PlayAnnouncementRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPromptAndCollectUserInformationRequest(PromptAndCollectUserInformationRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPromptAndCollectUserInformationResponse(PromptAndCollectUserInformationResponse ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCancelRequest(CancelRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogRequest(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogAccept(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, 
+			CAPUserAbortReason userReason) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogProviderAbort(CAPDialog capDialog, PAbortCauseType abortCause) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogClose(CAPDialog capDialog) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogRelease(CAPDialog capDialog) {
+		this.currentCapDialog = null;
+		this.cc = null;
+	}
+
+	@Override
+	public void onDialogNotice(CAPDialog capDialog, CAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
+		// TODO Auto-generated method stub
+		
+	}	
+
+	private enum Step {
+		initialDPSent,
+		callAllowed,
+		answered,
+		disconnected;
+	}
+	
+	private class CallContent {
+		public Step step;
+		public Long activityTestInvokeId;
+
+		public CalledPartyNumberCap calledPartyNumber;
+		public CallingPartyNumberCap callingPartyNumber;
+		public RequestReportBCSMEventRequest requestReportBCSMEventRequest;
+		public DestinationRoutingAddress destinationRoutingAddress;
+	}
+
+}
+
+]]>
+	</programlisting>
+
+		<programlisting
+			language="Java"
+			role="JAVA"><![CDATA[
+package org.mobicents.protocols.ss7.cap;
+
+import java.util.ArrayList;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import org.mobicents.protocols.ss7.cap.api.CAPDialog;
+import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
+import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.CAPMessage;
+import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
+import org.mobicents.protocols.ss7.cap.api.CAPProvider;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
+import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
+import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
+import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
+import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestResponse;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.AssistRequestInstructionsRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallListener;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CancelRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectToResourceRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EstablishTemporaryConnectionRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.FurnishChargingInformationRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PlayAnnouncementRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationResponse;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ReleaseCallRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
+import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+
+public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitchedCallListener {
+
+	private CAPProvider capProvider;
+	private CAPParameterFactory paramFact;
+	private CAPDialogCircuitSwitchedCall currentCapDialog;
+	private CallContent cc;
+
+	public CallScfExample() throws NamingException {
+		InitialContext ctx = new InitialContext();
+		try {
+			String providerJndiName = "java:/mobicents/ss7/cap";
+			this.capProvider = ((CAPProvider) ctx.lookup(providerJndiName));
+		} finally {
+			ctx.close();
+		}
+		paramFact = capProvider.getCAPParameterFactory();
+
+		capProvider.addCAPDialogListener(this);
+		capProvider.getCAPServiceCircuitSwitchedCall().addCAPServiceListener(this);
+	}
+
+	public CAPProvider getCAPProvider() {
+		return capProvider;
+	}
+
+	public void start() {
+		// Make the circuitSwitchedCall service activated
+        capProvider.getCAPServiceCircuitSwitchedCall().acivate();
+
+        currentCapDialog = null;
+	}
+
+	public void stop() {
+		capProvider.getCAPServiceCircuitSwitchedCall().deactivate();
+	}
+
+	@Override
+	public void onInitialDPRequest(InitialDPRequest ind) {
+		this.cc = new CallContent();
+		this.cc.idp = ind;
+		this.cc.step = Step.initialDPRecieved;
+
+		ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+	}
+
+	@Override
+	public void onEventReportBCSMRequest(EventReportBCSMRequest ind) {
+		if (this.cc != null) {
+			this.cc.eventList.add(ind);
+
+			switch (ind.getEventTypeBCSM()) {
+			case oAnswer:
+				this.cc.step = Step.answered;
+				break;
+			case oDisconnect:
+				this.cc.step = Step.disconnected;
+				break;
+			}
+		}
+
+		ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+	}
+
+	@Override
+	public void onDialogDelimiter(CAPDialog capDialog) {
+		try {
+			if (this.cc != null) {
+				switch (this.cc.step) {
+				case initialDPRecieved:
+					// informing SSF of BCSM events processing
+					ArrayList<BCSMEvent> bcsmEventList = new ArrayList<BCSMEvent>();
+					BCSMEvent ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
+							EventTypeBCSM.routeSelectFailure, MonitorMode.notifyAndContinue,
+							null, null, false);
+					bcsmEventList.add(ev);
+					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
+							EventTypeBCSM.oCalledPartyBusy, MonitorMode.interrupted, null, 
+							null, false);
+					bcsmEventList.add(ev);
+					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
+							EventTypeBCSM.oNoAnswer, MonitorMode.interrupted, null, null, false);
+					bcsmEventList.add(ev);
+					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
+							EventTypeBCSM.oAnswer, MonitorMode.notifyAndContinue, null, 
+							null, false);
+					bcsmEventList.add(ev);
+					LegID legId = this.capProvider.getINAPParameterFactory().createLegID(
+							true, LegType.leg1);
+					ev = this.capProvider.getCAPParameterFactory()
+							.createBCSMEvent(EventTypeBCSM.oDisconnect, 
+									MonitorMode.notifyAndContinue, legId, null, false);
+					bcsmEventList.add(ev);
+					legId = this.capProvider.getINAPParameterFactory().createLegID(true, 
+							LegType.leg2);
+					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
+							EventTypeBCSM.oDisconnect, MonitorMode.interrupted, legId, 
+							null, false);
+					bcsmEventList.add(ev);
+					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
+							EventTypeBCSM.oAbandon, MonitorMode.notifyAndContinue, null, 
+							null, false);
+					bcsmEventList.add(ev);
+					currentCapDialog.addRequestReportBCSMEventRequest(bcsmEventList, null);
+
+					// calculating here a new called party number if it is needed
+					String newNumber = "22123124"; 
+					if (newNumber != null) {
+						// sending Connect to force routing the call to a new  number
+						ArrayList<CalledPartyNumberCap> calledPartyNumber = 
+							new ArrayList<CalledPartyNumberCap>();
+						CalledPartyNumber cpn = this.capProvider.getISUPParameterFactory()
+							.createCalledPartyNumber();
+						cpn.setAddress("5599999988");
+						cpn.setNatureOfAddresIndicator(NAINumber._NAI_INTERNATIONAL_NUMBER);
+						cpn.setNumberingPlanIndicator(CalledPartyNumber._NPI_ISDN);
+						cpn.setInternalNetworkNumberIndicator(
+								CalledPartyNumber._INN_ROUTING_ALLOWED);
+						CalledPartyNumberCap cpnc = this.capProvider.getCAPParameterFactory()
+						.createCalledPartyNumberCap(cpn);
+						calledPartyNumber.add(cpnc);
+						DestinationRoutingAddress destinationRoutingAddress = this.capProvider
+							.getCAPParameterFactory().createDestinationRoutingAddress(
+								calledPartyNumber);
+						currentCapDialog.addConnectRequest(destinationRoutingAddress, null, 
+								null, null, null, null, null, null, null, null, null, 
+								null, null,
+								false, false, false, null, false);
+					} else {
+						// sending Continue to use the original calledPartyAddress
+						currentCapDialog.addContinueRequest();
+					}
+
+					currentCapDialog.send();
+					break;
+
+				case disconnected:
+					// the call is terminated - close dialog
+					currentCapDialog.close(false);
+					break;
+				}
+			}
+		} catch (CAPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onDialogTimeout(CAPDialog capDialog) {
+		if (currentCapDialog != null && this.cc != null && this.cc.step != Step.disconnected 
+				&& this.cc.activityTestInvokeId == null) {
+			// check the SSF if the call is still alive
+			currentCapDialog.keepAlive();
+			try {
+				this.cc.activityTestInvokeId = currentCapDialog.addActivityTestRequest();
+				currentCapDialog.send();
+			} catch (CAPException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public void onActivityTestResponse(ActivityTestResponse ind) {
+		if (currentCapDialog != null && this.cc != null) {
+			this.cc.activityTestInvokeId = null;
+		}
+	}
+
+	@Override
+	public void onInvokeTimeout(CAPDialog capDialog, Long invokeId) {
+		if (currentCapDialog != null && this.cc != null) {
+			if (this.cc.activityTestInvokeId == invokeId) { // activityTest failure
+				try {
+					currentCapDialog.close(true);
+				} catch (CAPException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	@Override
+	public void onErrorComponent(CAPDialog capDialog, Long invokeId, 
+			CAPErrorMessage capErrorMessage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem, 
+			boolean isLocalOriginated) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCAPMessage(CAPMessage capMessage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRequestReportBCSMEventRequest(RequestReportBCSMEventRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onApplyChargingRequest(ApplyChargingRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onContinueRequest(ContinueRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onApplyChargingReportRequest(ApplyChargingReportRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onReleaseCallRequest(ReleaseCallRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnectRequest(ConnectRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCallInformationRequestRequest(CallInformationRequestRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCallInformationReportRequest(CallInformationReportRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onActivityTestRequest(ActivityTestRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onAssistRequestInstructionsRequest(AssistRequestInstructionsRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onEstablishTemporaryConnectionRequest(EstablishTemporaryConnectionRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDisconnectForwardConnectionRequest(DisconnectForwardConnectionRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onConnectToResourceRequest(ConnectToResourceRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onResetTimerRequest(ResetTimerRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onFurnishChargingInformationRequest(FurnishChargingInformationRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSendChargingInformationRequest(SendChargingInformationRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSpecializedResourceReportRequest(SpecializedResourceReportRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPlayAnnouncementRequest(PlayAnnouncementRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPromptAndCollectUserInformationRequest(PromptAndCollectUserInformationRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPromptAndCollectUserInformationResponse(PromptAndCollectUserInformationResponse ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onCancelRequest(CancelRequest ind) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogRequest(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogAccept(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, 
+			CAPUserAbortReason userReason) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogProviderAbort(CAPDialog capDialog, PAbortCauseType abortCause) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogClose(CAPDialog capDialog) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogRelease(CAPDialog capDialog) {
+		this.currentCapDialog = null;
+		this.cc = null;
+	}
+
+	@Override
+	public void onDialogNotice(CAPDialog capDialog, 
+			CAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private enum Step {
+		initialDPRecieved,
+		answered,
+		disconnected;
+	}
+
+	private class CallContent {
+		public Step step;
+		public InitialDPRequest idp;
+		public ArrayList<EventReportBCSMRequest> eventList = new ArrayList<EventReportBCSMRequest>();
+		public Long activityTestInvokeId;
+	}
+}
+]]>
+	</programlisting>
+
+	</section>
+
+</chapter>

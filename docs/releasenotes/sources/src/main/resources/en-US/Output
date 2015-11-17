@@ -1,0 +1,42 @@
+[root@vinu-neha ss7]# ant deploy
+Buildfile: /home/vinu/mobicents-ss7-2.0.0-SNAPSHOT/ss7/build.xml
+
+deploy:
+     [copy] Copying 23 files to /home/vinu/jboss-5.1.0.GA/server/default/deploy/mobicents-ss7-service
+     [copy] Copying 3 files to /home/vinu/jboss-5.1.0.GA/bin
+
+BUILD SUCCESSFUL
+Total time: 0 seconds
+[root@vinu-neha ss7]# 
+
+
+---------------------------------------------------
+10:09:24,172 INFO  [ServerImpl] JBoss (Microcontainer) [5.1.0.GA (build: SVNTag=JBoss_5_1_0_GA date=200905221053)] Started in 42s:961ms
+10:22:13,370 INFO  [ManagementImpl] SCTP configuration file path /home/vinu/jboss-5.1.0.GA/server/default/data/SCTPManagement_sctp.xml
+10:22:13,371 WARN  [ManagementImpl] Failed to load the SCTP configuration file. 
+/home/vinu/jboss-5.1.0.GA/server/default/data/SCTPManagement_sctp.xml (No such file or directory)
+10:22:13,383 INFO  [SelectorThread] SelectorThread for Management=SCTPManagement started.
+10:22:13,383 INFO  [ManagementImpl] Started SCTP Management=SCTPManagement WorkerThreads=0 SingleThread=true
+10:22:13,474 INFO  [M3UAManagement] M3UA configuration file path /home/vinu/jboss-5.1.0.GA/server/default/data/Mtp3UserPart_m3ua.xml
+10:22:13,474 WARN  [M3UAManagement] Failed to load the SS7 configuration file. 
+/home/vinu/jboss-5.1.0.GA/server/default/data/Mtp3UserPart_m3ua.xml (No such file or directory)
+10:22:13,475 INFO  [M3UAManagement] Started M3UAManagement
+10:22:13,512 INFO  [SccpStackImpl-SccpStack] Starting ...
+10:22:13,526 INFO  [Router] SCCP Router configuration file path /home/vinu/jboss-5.1.0.GA/server/default/data/SccpStack_sccprouter.xml
+10:22:13,527 WARN  [Router] Failed to load the SS7 configuration file. 
+/home/vinu/jboss-5.1.0.GA/server/default/data/SccpStack_sccprouter.xml (No such file or directory)
+10:22:13,527 INFO  [Router] Started SCCP Router
+10:22:13,528 INFO  [SccpResource] SCCP Resource configuration file path /home/vinu/jboss-5.1.0.GA/server/default/data/SccpStack_sccpresource.xml
+10:22:13,528 WARN  [SccpResource] Failed to load the SS7 configuration file. 
+/home/vinu/jboss-5.1.0.GA/server/default/data/SccpStack_sccpresource.xml (No such file or directory)
+10:22:13,528 INFO  [SccpResource] Started Sccp Resource
+10:22:13,528 INFO  [SccpStackImpl-SccpStack] Starting routing engine...
+10:22:13,528 INFO  [SccpStackImpl-SccpStack] Starting management ...
+10:22:13,528 INFO  [SccpStackImpl-SccpStack] Starting MSU handler...
+10:22:13,546 INFO  [ShellExecutor] Starting SS7 management shell environment
+10:22:13,553 INFO  [ShellExecutor] ShellExecutor listening at /127.0.0.1:3435
+10:22:13,581 INFO  [TCAPStackImpl] Starting ...org.mobicents.protocols.ss7.tcap.TCAPProviderImpl@113ebcc
+10:22:13,581 INFO  [TCAPProviderImpl] Starting TCAP Provider
+10:22:13,581 INFO  [TCAPProviderImpl] Registered SCCP listener with address 8
+10:22:13,718 INFO  [SS7Service]  [[[[[[[[[ Mobicents SS7 2.0.0-SNAPSHOT service started ]]]]]]]]] 
+

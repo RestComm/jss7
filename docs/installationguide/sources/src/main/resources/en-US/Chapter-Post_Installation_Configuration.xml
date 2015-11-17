@@ -1,0 +1,27 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_Installation_Guide.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter
+	id="setup_configuration">
+	<title>Post Installation Configuration</title>
+	<para>
+		Now that you have installed &THIS.PLATFORM; &THIS.APPLICATION; to suit your needs, you can go ahead and configure the Stack to meet your requirements. The User Guide (available along with this Installation Guide) in the <filename>telscale-ss7-&lt;version&gt;/ss7/docs</filename> folder will assist you in configuring and managing the Stack. The Shell Management module will enable you to easily configure the Stack using the Command Line Interface (CLI) tool.
+	</para>	
+	<section id="memory_settings">
+		<title>Memory Settings</title>
+		You should fine tune the JVM memory settings based on your needs but we recommend you allocate a minimum of 3 GB for initial and maximum heap size. 
+<variablelist>
+				<varlistentry>
+					<term>-Xms3072m</term><listitem> Initial heap size, set in megabytes</listitem>
+ 				</varlistentry>
+ 				<varlistentry>
+					<term>-Xmx3072m</term><listitem> Maximum heap size, set in megabytes</listitem>  
+ 				</varlistentry>
+</variablelist>
+	</section>
+
+</chapter>
+

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_Release_Notes.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter id="notes">
+	<title>Important Notes</title>
+ 	<section id="notes_download">
+		<title>Download</title>
+		<para>
+		The binary release is available for download from the TeleStax Customer Support Portal at <ulink url="&THIS.RELEASE_BINARY_URL;" />.
+		</para>
+	</section>
+	<section id="notes_doc">
+		<title>Documentation</title>
+		<para>
+		When you download the binary release and extract the contents of the zip file, you will notice that the top level directory is named <filename>TelScale-jss7-&THIS.VERSION;</filename> and within the <filename>TelScale-jss7-&THIS.VERSION;/_docs/</filename> folder you will find the &THIS.PLATFORM; &THIS.APPLICATION; Installation Guide and User Guide. For installation and usage guidance, please refer to these guides that will help you install and set up the SS7 Stack and use it.
+		</para>
+	</section>
+	<section id="notes_whats_included">
+		<title>What's Included?</title>
+		<para>
+		This release includes: 
+		<itemizedlist>
+			<listitem><para>ASN</para></listitem>
+			<listitem><para>SCTP</para></listitem>
+			<listitem><para>SS7</para></listitem>
+		</itemizedlist>
+		</para>
+	</section>
+		
+	<section id="notes_support">
+		<title>Support</title>
+		<para>
+			&THIS.PLATFORM; &THIS.APPLICATION; &THIS.VERSION; is fully supported by TeleStax. For help with the software or to raise bugs please login to your account at <ulink url="https://telestax.zendesk.com/home" /> and follow the instructions.
+		</para>
+	</section>
+	<section id="upgrade_notes">
+		<title>Upgrade Notes</title>
+		<para>
+			If you are upgrading to &THIS.PLATFORM; &THIS.APPLICATION; &THIS.VERSION; from version 6.1.2.GA, make sure you delete the <filename>SccpStack_sccpresource.xml</filename> and <filename>SccpStack_sccprouter.xml</filename> files from the persist directory. These are the files where SCCP persists configurations. You must delete these files and execute the SCCP commands again from CLI. This is because, starting from version 6.1.3.GA, XML tags of the persist directory were changed to use nouns (similar to M3UA and SCTP) instead of fully qualified class names. You do not have to do anything if you are upgrading from version 6.1.3.GA. 
+		</para>
+		<!--TODO TelScale License Integrated -->
+	</section>
+</chapter>

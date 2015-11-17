@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter id="overview">
+	<title>Overview</title>
+ 
+	<!--<section id="tdm">
+		<title>Time Division Multiplexing</title>
+		<para>
+			In circuit switched networks such as the Public Switched Telephone
+			Network (<acronym>PSTN</acronym>) there exists the need to transmit multiple
+			subscribers’ calls along the same transmission medium. To accomplish
+			this, network designers make use of Time Division Multiplexing<acronym>TDM</acronym>. <acronym>TDM</acronym> allows switches to
+			create channels, also known as tributaries, within a transmission
+			stream. A standard DS0 voice signal has a data bit rate of 64 kbit/s,
+			determined using Nyquist’s sampling criterion. <acronym>TDM</acronym> takes frames of
+			the voice signals and multiplexes them into a <acronym>TDM</acronym> frame which runs at
+			a higher bandwidth. So if the <acronym>TDM</acronym> frame consists of 'n' voice frames,
+			the bandwidth will be n*64 kbit/s.
+			Each voice sample timeslot in the <acronym>TDM</acronym> frame is called a channel . In
+			European systems, <acronym>TDM</acronym> frames contain 30 digital voice channels, and
+			in American systems, they contain 24 channels. Both standards also
+			contain extra bits (or bit timeslots) for signaling (SS7) and
+			synchronisation bits.
+			Multiplexing more than 24 or 30 digital voice channels is called higher order
+			multiplexing. Higher order multiplexing is accomplished by
+			multiplexing the standard <acronym>TDM</acronym> frames.For example, a European 120
+			channel <acronym>TDM</acronym> frame is formed by multiplexing four standard 30 channel
+			<acronym>TDM</acronym> frames.At each higher order multiplex, four <acronym>TDM</acronym> frames from the
+			immediate lower order are combined, creating multiplexes with a
+			bandwidth of n x 64 kbit/s, where n = 120, 480, 1920, etc.
+		</para>
+	</section>-->
+</chapter>

@@ -1,0 +1,28 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.mobicents.protocols.ss7.docs</groupId>
+		<artifactId>mobicents-ss7-docs</artifactId>
+		<version>2.2.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>mobicents-ss7-releasenotes</artifactId>
+	<groupId>org.mobicents.protocols.ss7.docs.releasenotes</groupId>
+	<name>Mobicents SS7 :: Docs :: Release Notes :: ${pom.artifactId}</name>
+	<packaging>pom</packaging>
+
+	<properties>
+		<docs.application.name>jSS7 Stack</docs.application.name>
+		<docs.application.dirname>Mobicents-jss7</docs.application.dirname>
+		<docs.bookid>SS7Stack</docs.bookid>
+	</properties>
+
+	<modules>
+		<module>sources</module>
+		<module>sources-mobicents</module>
+		<module>jdocbook-mobicents</module>
+	</modules>
+</project>

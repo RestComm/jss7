@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter
+	id="managing">
+	<title>Managing &THIS.PLATFORM; &THIS.APPLICATION;</title>
+	<para>
+		&THIS.PLATFORM; &THIS.APPLICATION; comes with a convenient user-friendly Graphical User Interface (GUI) and a Command Line Interface (CLI) that will allow you to configure, monitor and manage the Stack. While the CLI tool allows complete configuration and control of the Stack, the GUI-based management enhances the usability of the platform and gives you the ability to create different SS7 configurations and manage the platform dynamically. This chapter will explain how to manage the Stack effectively using both the GUI and the CLI.
+	</para>
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Managing-linksets.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Managing-SCTP.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Managing-M3UA.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Managing-SCCP.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Managing-TCAP.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Managing-Stats.xml" />
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Section-Managing-Alarms.xml" />
+</chapter>

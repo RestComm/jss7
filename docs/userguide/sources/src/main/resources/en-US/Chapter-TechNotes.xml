@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
+ 
+<chapter
+    id="design_multitenancy">
+
+        <title>Multi tenancy support</title>
+        <para>
+        	Multi tenancy allows same instance of &THIS.PLATFORM; &THIS.APPLICATION; to connect to different operators, each having its own 
+        	links and point-codes.
+        </para>
+        <para>
+			Multi tenancy is achieved by having a model of SS7 network as a splitted to several logical networks.
+			Each logical network has a corresponded key "networkId". It is digital one and default value (if we do not specify it) - 0.
+
+        </para>
+        <para>
+				NetworkId value is assigned for a configurable objects:
+                <itemizedlist>
+                <listitem><para>SCCP SAP</para></listitem>
+                <listitem><para>SCCP Rule</para></listitem>
+                </itemizedlist>
+        </para>
+        <para>
+				NetworkId is also assigned to activities:
+                <itemizedlist>
+                <listitem><para>SccpMessage (assigned by Service Acess Point - SAP for SS7 originated messages, assigned by TCAP Dialog for TCAP originated messages)</para></listitem>
+                <listitem><para>TCAP Dialog (assigned by SccpMessage for SCCP originated messages, assigned by upper Dialog for user messages)</para></listitem>
+                <listitem><para>MAP / CAP Dialog (same as TCAP Dialog)</para></listitem>
+                <listitem><para>SCCP rule is taken into account only when SCCP rule networkId == SccpMessage networkId</para></listitem>
+                </itemizedlist>
+        </para>
+</chapter>
+
+
+
+
+

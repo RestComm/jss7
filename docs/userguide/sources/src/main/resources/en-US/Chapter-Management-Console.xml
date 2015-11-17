@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_User_Guide.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter
+	id="mgmt_console">
+	<title>Managing &THIS.PLATFORM; &THIS.APPLICATION; using GUI</title>
+	
+	<section id="managing_sctp">
+		<title>SCTP Management using GUI</title>
+		
+		<section id="gui_sctp_server">
+			<title>Managing SCTP (or TCP) Servers using GUI</title>
+			<para>You can create, delete, start and stop SCTP Servers using the GUI. In the middle section for Servers in the SCTP Management Unit window, you will find a list of all the Servers created. Every correctly configured Server will be displayed in a row and for each Server, the first column will display the name of the Server. The icon adjacent to the name will be lit 'green' if the server is currently running or if the server is stopped the icon will be 'red'. The second column will indicate the current state of the Server (Started / Stopped), the third column will allow you to Start / Stop the Server and the fourth column will allow you to delete the Server.</para>
+			<procedure>
+				<title>Create new SCTP Server (or TCP Server) instance</title>
+				<step><para>In the middle section for Servers in the SCTP Management Unit window, click on the 'Create Server' button.</para></step>
+				<step><para>In the 'Create Server' page, add details of the new Server. You must ensure that you fill in all the mandatory parameters (Name, Host Address, Host Port, Max Concurrent Connections). A detailed description of all the parameters is available in the Command Reference <xref linkend="shell_m3ua_sctp_server_create" />.
+				</para></step>
+				<step><para>Verify the details entered and then click on the 'Save' button. A new SCTP Server (or TCP Server) will be created with parameters as specified. If there is an error in creating the Server then you will find the details of the error in the Management Console Log section below.</para></step>
+				<step><para>You can click on the bread crumbs at the top to return to the SCTP Management page. You will find the newly created Server listed down in the 'Servers' section. 
+				</para></step>
+			</procedure>
+			<procedure>
+				<title>Delete SCTP Server (or TCP Server) instance</title>
+				<step><para>Navigate to the 'Servers' section in the SCTP Management Unit window and locate the row corresponding to the Server you wish to delete.</para></step>
+				<step><para>You must ensure that the Server is stopped prior to deletion. If the Server is stopped, the last column for 'Delete' will display a 'x' in red. If the Server is currently running, the 'x' will be displayed in grey. You can only delete the server if it is stopped and the 'x' is displayed in red.</para></step>
+				<step><para>Click on the red 'x' to delete the corresponding Server instance.  
+				</para></step>
+			</procedure>
+			<procedure>
+				<title>Start or Stop a SCTP Server (or TCP Server) instance</title>
+				<step><para>Navigate to the 'Servers' section in the SCTP Management Unit window and locate the row corresponding to the Server you wish to start / stop.</para></step>
+				<step><para>Click on 'Start' in the actions column to start the corresponding Server instance. The SCTP Server will be started and the underlying SCTP server socket will be bound to the IP: Port configured for this Server instance at the time of creation.
+				</para></step>
+				<step><para>If the Server has started successfully you will find the status indicating the Server as 'Started' and the icon will be green.  If there is an error and the Server failed to start, you will find details of the error in the Management Console log below.</para></step>
+				<step><para>To stop a Server currently running, click on 'Stop' in the actions column of the row corresponding to the Server instance. When the Server is stopped the underlying SCTP server socket will be closed and all resources are released.</para></step>
+			</procedure>
+		</section>
+		<section id="gui_sctp_association">
+			<title>Managing SCTP (or TCP) Associations using GUI</title>
+			<para>You can create and delete SCTP Associations using the GUI. In the section for Associations in the SCTP Management Unit window, you will find a list of all the Associations created. Every correctly configured Association will be displayed in a row and for each Server, the first column will display the name of the Association. The icon adjacent to the name will be lit 'green' if the Association is currently running or if the Association is stopped the icon will be 'red'. The second column will indicate the current state of the Association (Started / Stopped) and the third column will allow you to delete the Association.</para>
+			<para>You cannot start or stop a SCTP Association here in this window. Every SCTP Association must be associated with an ASP (M3UA) and will automatically start or stop when the associated ASP is started or stopped. For more details on how to associate with an ASP, please refer to <xref linkend="managing_m3ua" />.</para>
+			<procedure>
+				<title>Create new SCTP (or TCP) Association (Client side or Server side) </title>
+				<step><para>In the section for Associations in the SCTP Management Unit window, click on the 'Create Association' button.</para></step>
+				<step><para>In the 'Create Association' page, add details of the new Association. You must ensure that you fill in all the mandatory parameters: Name, Peer Address, Peer Port, Server Name (for Server side Association), Host Address and Host Port (for Client side Association). A detailed description of all the parameters is available in the Command Reference <xref linkend="shell_m3ua_sctp_association_create" />.
+				</para></step>
+				<step><para>Verify the details entered and then click on the 'Save' button. A new SCTP Association will be created with parameters as specified. If there is an error in creating the Association then you will find the details of the error in the Management Console Log section below.</para></step>
+				<step><para>You can click on the bread crumbs at the top to return to the SCTP Management page. You will find the newly created Association listed down in the 'Associations' section. 
+				</para></step>
+			</procedure>
+			<procedure>
+				<title>Delete SCTP Association (or TCP Association) instance</title>
+				<step><para>Navigate to the 'Associations' section in the SCTP Management Unit window and locate the row corresponding to the Association you wish to delete.</para></step>
+				<step><para>You must ensure that the Association is stopped prior to deletion. If the Association is stopped, the last column for 'Delete' will display a 'x' in red. If the Association is currently running, the 'x' will be displayed in grey. You can only delete the Association if it is stopped and the 'x' is displayed in red.</para></step>
+				<step><para>Click on the red 'x' to delete the corresponding Association instance.  
+				</para></step>
+			</procedure>
+		</section>
+	</section>
+	<section id="managing_m3ua">
+		<title>M3UA Management using GUI</title>
+		<para>If you click on the 'M3UA' link in the left panel, the main panel will display the details of all configured M3UA Management units as shown in the figure below. Each configured unit will be displayed in a row and for each unit, the first column will display the name of the m3UA Management unit, the second column will display the current state of the unit (active or deactive). The name of the M3UA Management unit displayed here is fetched from the XML descriptor file <filename>jboss-beans.xml</filename> which is 
+		located at <filename>$JBOSS_HOME/server/profile_name/deploy/TelScale-ss7-service/META-INF</filename>, where 
+		<application>profile_name</application> is the server profile name. </para>
+<figure>
+  		<title>GUI - M3UA Management</title>
+  		<mediaobject>
+    		<imageobject>
+      			<imagedata fileref="images/GUI_M3UA_Management.png" format="PNG" align="center"/>
+    		</imageobject>
+  		</mediaobject>
+	</figure>
+		<para>
+		To manage a specific M3UA Management unit, click on the name of the unit in the first column. The main panel will look similar to the figure below and is divided into four sections. </para>
+		<para>The top section will display the properties of the chosen M3UA Management unit. These values are also fetched from the XML descriptor file <filename>jboss-beans.xml</filename> and cannot be modified here in the GUI. To modify these properties you must modifiy the <filename>jboss-beans.xml</filename> and restart the Server. The GUI will now display the modified values. 
+		</para>
+		<para>		
+		The three sections below will allow you to manage and monitor all Application Server Processes, Application Servers and Routes within this M3UA Management unit. 
+		</para>
+		<figure>
+  		<title>GUI - M3UA Management Unit</title>
+  		<mediaobject>
+    		<imageobject>
+      			<imagedata fileref="images/GUI_M3UA_Management_prop.png" format="PNG" align="center"/>
+    		</imageobject>
+  		</mediaobject>
+		</figure>
+		<section id="gui_m3ua_asp">
+			<title>Managing M3UA Application Server Processes using GUI</title>
+			<para>You can create, delete, start and stop ASPs using the GUI. In the section for ASPs in the M3UA Management Unit window, you will find a list of all the ASPs created. Every correctly configured ASP will be displayed in a row and for each ASP, the first column will display the name of the ASP. The icon adjacent to the name will be lit 'green' if the ASP is currently running or if the ASP is stopped the icon will be 'red'. The second column will indicate the current state of the ASP (Started / Stopped), the third column will allow you to Start / Stop the ASP and the fourth column will allow you to delete the ASP.</para>
+			<procedure>
+				<title>Create a new Application Server Process</title>
+				<step><para>In the section for ASPs in the M3UA Management Unit window, click on the 'Create ASP' button.</para></step>
+				<step><para>In the 'Create ASP' page, add details of the new ASP. You must ensure that you fill in all the mandatory parameters (Name, SCTP Association Name). A detailed description of all the parameters is available in the Command Reference <xref linkend="shell_m3ua_asp_side_create" />. You must ensure that a correctly configured SCTP Association is created and available prior to creating a new ASP. When the ASP is started or stopped, this corresponding SCTP Association will start / stop automatically.
+				</para></step>
+				<step><para>Verify the details entered and then click on the 'Save' button. A new ASP will be created with parameters as specified. If there is an error in creating the ASP then you will find the details of the error in the Management Console Log section below.</para></step>
+				<step><para>You can click on the bread crumbs at the top to return to the M3UA Management page. You will find the newly created ASP listed down in the 'ASPs' section. 
+				</para></step>
+			</procedure>
+			<procedure>
+				<title>Delete an Application Server Process</title>
+				<step><para>Navigate to the 'ASPs' section in the M3UA Management Unit window and locate the row corresponding to the ASP you wish to delete.</para></step>
+				<step><para>You must ensure that the ASP is stopped and unassigned from AS prior to deletion. If the ASP is stopped, the last column for 'Delete' will display a 'x' in red. If the ASP is currently running, the 'x' will be displayed in grey. You can only delete the ASP if it is stopped and the 'x' is displayed in red.</para></step>
+				<step><para>Click on the red 'x' to delete the corresponding ASP.  
+				</para></step>
+			</procedure>
+			<procedure>
+				<title>Start or Stop an Application Server Process</title>
+				<step><para>Navigate to the 'ASPs' section in the M3UA Management Unit window and locate the row corresponding to the ASP you wish to start / stop.</para></step>
+				<step><para>Click on 'Start' in the actions column to start the corresponding ASP. You must ensure that the ASP is assigned to at least one AS prior to starting it.
+				</para></step>
+				<step><para>If the ASP has started successfully you will find the status indicating the ASP as 'Started' and the icon will be green.  If there is an error and the ASP failed to start, you will find details of the error in the Management Console log below.</para></step>
+				<step><para>To stop an ASP currently running, click on 'Stop' in the actions column of the row corresponding to the ASP.</para></step>
+			</procedure>
+		</section>
+		<section id="gui_m3ua_as">
+			<title>Managing M3UA Application Servers using GUI</title>
+			<para>You can create and delete M3UA Application Servers and assign ASPs to an AS using the GUI. In the section for Application Servers in the M3UA Management Unit window, you will find a list of all the Application Servers created. Every correctly configured AS will be displayed in a row and for each AS, the first column will display the name of the AS. The icon adjacent to the name will be lit 'green' if the AS is currently active or if the AS is inactive the icon will be 'red'. The second column will indicate the current state of the AS (Active / Inactive) and the third column will allow you to delete the AS.</para>
+			<procedure>
+				<title>Create a new M3UA Application Server </title>
+				<step><para>In the section for AS in the M3UA Management Unit window, click on the 'Create Application Server' button.</para></step>
+				<step><para>In the 'Create Application Server' page, add details of the new AS. A detailed description of all the parameters is available in the Command Reference <xref linkend="shell_m3ua_as_side_create" />.
+				</para></step>
+				<step><para>Verify the details entered and then click on the 'Save' button. A new AS will be created with parameters as specified. If there is an error in creating the AS then you will find the details of the error in the Management Console Log section below.</para></step>
+				<step><para>You can click on the bread crumbs at the top to return to the M3UA Management page. You will find the newly created AS listed down in the 'Application Servers' section. 
+				</para></step>
+			</procedure>
+			<procedure>
+				<title>Delete a M3UA Application Server</title>
+				<step><para>Navigate to the 'Application Servers' section in the M3UA Management Unit window and locate the row corresponding to the AS you wish to delete.</para></step>
+				<step><para> You must ensure that all ASPs are unassigned from this AS and the current state of the AS is 'INACTIVE' prior to destroying the AS. If the AS is inactive, the last column for 'Delete' will display a 'x' in red. If the AS is currently active, the 'x' will be displayed in grey. You can only delete the AS if it is inactive and the 'x' is displayed in red.</para></step>
+				<step><para>Click on the red 'x' to delete the corresponding AS.  
+				</para></step>
+			</procedure>
+			<procedure>
+				<title>Assign an ASP to an AS</title>
+				<step><para>Navigate to the 'Application Servers' section in the M3UA Management Unit window, locate the row corresponding to the AS you wish to assign an ASP and click on the name of the AS.</para></step>
+				<step><para>This will launch the AS details page where all the properties of the AS will be displayed. Scroll down to find the section "Select ASP to add to this AS:" and choose an ASP from the list. You can configure an ASP to process signaling traffic related to more than one AS, over a single SCTP Association. However you must ensure that all the Application Servers that share the ASP are configured with a valid Routing Context value.</para></step>
+				<step><para>Click on the 'Add' button to add the selected ASP to this AS. The ASP will be assigned to this AS and will be displayed in the ASP list for this AS. </para></step>
+			</procedure>
+			<procedure>
+				<title>Unassign an ASP from an AS</title>
+				<step><para>Navigate to the 'Application Servers' section in the M3UA Management Unit window, locate the row corresponding to the AS you wish to unassign an ASP from and click on the name of the AS.</para></step>
+				<step><para>This will launch the AS details page where all the properties of the AS will be displayed. Scroll down to find the section "Application Server Processes", listing all assigned ASPs. Locate the row corresponding to the ASP you wish to unassign from this AS.			</para></step>
+				<step><para>
+ Click on the red coloured 'x' icon in the row corresponding to the ASP you wish to remove. This action will unassign the ASP from this AS.</para></step>
+			</procedure>
+		</section>
+		<section id="gui_m3ua_route">
+			<title>Managing M3UA Route using GUI</title>
+			<para>You can create and delete M3UA Routes using the GUI. In the section for Routes in the M3UA Management Unit window, you will find a list of all the Routes created. Every correctly configured Route will be displayed in a row and for each Route, the first column will display DPC, OPC, SI values. The icon adjacent to the name will be lit 'green' if the Route is currently active or if the Route is inactive the icon will be 'red'. The second column will indicate the current state of the Route (Active / Inactive) and the third column will display the name of the AS assigned to route messages for this DPC.</para>
+			<note><para>The maximum possible Application Servers you can configure for a Route is limited by the 'Max As For Route' parameter specified for this M3UA Management unit in the XML descriptor file <filename>jboss-beans.xml</filename> which is 
+		located at <filename>$JBOSS_HOME/server/profile_name/deploy/TelScale-ss7-service/META-INF</filename>, where 
+		<application>profile_name</application> is the server profile name.</para></note>
+			<procedure>
+				<title>Create a new M3UA Route </title>
+				<step><para>In the section for Routes in the M3UA Management Unit window, add values for DPC, OPC, SI and Application Server Name. A detailed description of all the parameters is available in the Command Reference <xref linkend="shell_m3ua_as_side_route_add" />.
+				</para></step>
+				<step><para>Verify the details entered and then click on the 'Create' button. A new Route will be configured with parameters as specified. If there is an error in creating the Route then you will find the details of the error in the Management Console Log section below.</para></step>
+			</procedure>
+			<procedure>
+				<title>Delete a M3UA Route</title>
+				<step><para>Navigate to the 'Routes' section in the M3UA Management Unit window.</para></step>
+				<step><para>Enter values for DPC, OPC, SI and Application Server Name.</para></step>
+				<step><para>Click on the 'Remove' button to delete the Route corresponding to the parameters specified.  
+				</para></step>
+			</procedure>
+			
+		</section>
+	</section>
+<!--
+	<section id="managing_sccp">
+		<title>SCCP Management using GUI</title>
+	</section>-->
+</chapter>

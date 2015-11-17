@@ -1,0 +1,52 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_Installation_Guide.ent">
+%BOOK_ENTITIES;
+]>
+<appendix
+	id="revision_history">
+	<title>Revision History</title>
+	<simpara>
+		<revhistory>	
+			<revision>
+				<revnumber>5.0</revnumber>
+				<date>October 5 2015</date>
+				<author>
+					<firstname>Amit</firstname>
+					<surname>Bhayani</surname>
+				</author>
+				<revdescription>
+					<simplelist>
+						<member>6.2.5 G.A Release</member>
+					</simplelist>
+				</revdescription>
+			</revision>		
+			<revision>
+				<revnumber>2.0</revnumber>
+				<date>July 2 2013</date>
+				<author>
+					<firstname>Vinu S</firstname>
+					<surname>Renish</surname>
+				</author>
+				<revdescription>
+					<simplelist>
+						<member>6.1.4 G.A Release: Edited to reflect new features.</member>
+					</simplelist>
+				</revdescription>
+			</revision>	
+			<revision>
+				<revnumber>1.0</revnumber>
+				<date>June 2 2012</date>
+				<author>
+					<firstname>Vinu S</firstname>
+					<surname>Renish</surname>
+				</author>
+				<revdescription>
+					<simplelist>
+						<member>First Release of the &THIS.PLATFORM; &THIS.APPLICATION; Installation Guide.</member>
+					</simplelist>
+				</revdescription>
+			</revision>
+		</revhistory>
+	</simpara>
+</appendix>

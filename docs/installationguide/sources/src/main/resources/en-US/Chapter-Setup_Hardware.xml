@@ -1,0 +1,61 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "SS7_Stack_Installation_Guide.ent">
+%BOOK_ENTITIES;
+]>
+
+<chapter
+	id="setup_hardware">
+	<title>Hardware Setup</title>
+	<para>
+		You do not require any specific hardware if you intend to use only SIGTRAN (M3UA). But if you wish to use legacy SS7 links, then you must have relevant SS7 cards installed along with their native libraries.
+	</para>
+	<para>
+	&THIS.PLATFORM; &THIS.APPLICATION; supports <literal>dahdi</literal> based SS7 cards like <literal>diguim</literal> and <literal>sangoma</literal> as well as <literal>dialogic</literal> cards. 
+	Since <literal>dahdi</literal> based SS7 crads do not have MTP2/MTP3 support on board they rely on external software to provide these services. 
+	But <literal>dialogic</literal> based SS7 cards have on board support for MTP2/MTP3 and recommended.
+	</para>
+	<para>
+		This guide does not provide installation instructions for SS7 hardware. You must refer to respective vendor documentation for installing and configuring the hardware cards. 
+		The following external links point to information that will assist you in setting up the hardware. 
+	</para>
+	<itemizedlist>
+		<listitem><para>Sangoma: <ulink url="http://wiki.sangoma.com/"></ulink></para></listitem>
+		<listitem><para>Diguim: <ulink url="http://www.digium.com/en/products/digital/"></ulink></para></listitem>
+		<listitem><para>Dialogic: <ulink url="http://www.dialogic.com/"></ulink></para></listitem>
+	</itemizedlist>
+	
+	<note>
+              <para>
+              	The corresponding native libraries for <literal>dialogic</literal> and <literal>dahdi</literal> from folder 
+              	<literal>TelScale-jss7-&lt;version&gt;/ss7/native/32</literal> or <literal>TelScale-jss7-&lt;version&gt;/ss7/native/64</literal> should be copied 
+              	to <literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x86</literal> if OS is 32 bit or copied to 
+              	<literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x64</literal> if OS is 64 bit. 
+              </para>
+              <para>
+              	libraries are compiled only for linux OS for now.
+              </para>		                
+              <para>	
+              	<literal>TelScale-jss7-&lt;version&gt;/ss7/native/32</literal> and <literal>TelScale-jss7-&lt;version&gt;/ss7/native/64</literal> folders carries 
+              	libraries compiled for 32 bit and 64 bit linux OS.
+              </para>
+              <para>
+                     <variablelist>
+                             <varlistentry>
+                                     <term>libgctjni</term>
+                                     <listitem>
+                                             <para>Native library for Dialogic</para>
+                                     </listitem>
+                             </varlistentry>                                 
+                             <varlistentry>
+                                     <term>libmobicents-dahdi-linux</term>
+                                     <listitem>
+                                             <para>Native library for <literal>dahdi</literal> based cards - Diguim and Sangoma</para>
+                                     </listitem>
+                             </varlistentry>
+                     </variablelist>	                	
+              </para>
+            	</note>	
+	
+</chapter>
+
