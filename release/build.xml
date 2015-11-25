@@ -1,0 +1,253 @@
+<?xml version="1.0"?>
+<project name="ss7.release.sf" default="release" basedir=".">
+	<property environment="sys"/>
+	<property name="release.dir" location="${ant.file.ss7.release.sf}/../target" />
+	<property name="base.dir" location="${ant.file.ss7.release.sf}/.." />
+	<property name="checkout.asn.dir" value="${base.dir}/checkout/asn" />
+	<property name="checkout.sctp.dir" value="${base.dir}/checkout/sctp" />
+	<property name="mobicents.jss7.dist" value="${release.dir}/mobicents-jss7-dist" />
+	<property name="jss7.addon" value="${release.dir}/jss7-addon" />
+	<property name="jss7.dir" value="${base.dir}/.." />
+	<property name="docs.dir" location="${mobicents.jss7.dist}/_docs" />
+
+	<!--Versions -->
+	<property name="checkout.asn.version" value="release-2.0.3.FINAL" />
+	<property name="checkout.sctp.version" value="release-1.6.0.FINAL" />
+	<property name="release.version" value="2.2.0-SNAPSHOT"/>
+
+
+	<condition property="mvn.executable" value="${sys.M2_HOME}\bin\mvn.bat" else="mvn">
+		<os family="windows"/>
+	</condition>
+	
+	<taskdef onerror="fail" resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${ant.file.ss7.release.sf}/../ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<target name="release" depends="clean,build-asn,build-sctp,build-jss7,build-docs,copy-asn,copy-sctp,copy-jss7,copy-documentation,make-final-zip" />
+	
+
+	<!-- Build dependencies-->
+	
+	<target name="build-asn">
+		<echo>Building ASN</echo>
+		
+		<exec failonerror="true" executable="git">
+		    <arg value="clone" />
+		    <arg value="https://github.com/Mobicents/jasn/" />
+            <arg value="-b" />
+		    <arg value="${checkout.asn.version}" />
+		    <arg value="${checkout.asn.dir}" />
+		</exec>
+
+		<exec failonerror="true" executable="${mvn.executable}" dir="${checkout.asn.dir}">
+			<arg line="clean install -Dmaven.test.skip=true" />
+		</exec>
+	</target>
+	
+	<target name="build-sctp">
+		<echo>Building SCTP</echo>
+
+		<exec failonerror="true" executable="git">
+		    <arg value="clone" />
+		    <arg value="https://github.com/Mobicents/sctp" />
+            <arg value="-b" />
+		    <arg value="${checkout.sctp.version}" />
+		    <arg value="${checkout.sctp.dir}" />
+		</exec>
+
+		<exec failonerror="true" executable="${mvn.executable}" dir="${checkout.sctp.dir}">
+			<arg line="clean install -Dmaven.test.skip=true -Prelease" />
+		</exec>
+	</target>
+
+	<target name="copy-asn">
+        <echo>Copy ASN</echo>
+        <copy todir="${mobicents.jss7.dist}/asn/" failonerror="true">
+                <fileset dir="${checkout.asn.dir}/asn-impl/target/">
+                        <include name="*.jar" />
+                </fileset>
+       	</copy>
+	</target>
+	
+	<target name="copy-sctp">
+        <echo>Copy SCTP</echo>
+        <copy todir="${mobicents.jss7.dist}/sctp/" failonerror="true">
+                <fileset dir="${checkout.sctp.dir}/sctp-impl/target/">
+                        <include name="*.jar" />
+                </fileset>
+	            <fileset dir="${checkout.sctp.dir}/sctp-api/target/">
+	                    <include name="*.jar" />
+	            </fileset>
+	   	</copy>
+	</target>
+	
+	
+    <target name="copy-jss7">
+            <echo>Copy SS7 Simulator</echo>
+            <copy todir="${mobicents.jss7.dist}/ss7/mobicents-ss7-simulator" failonerror="true">
+                    <fileset dir="${jss7.dir}/tools/simulator/bootstrap/target/simulator-ss7">
+                            <include name="**" />
+                    </fileset>
+            </copy>
+
+	        <echo>Copy SS7 - SWG</echo>
+	        <copy todir="${mobicents.jss7.dist}/ss7/mobicents-ss7-sgw" failonerror="true">
+	                <fileset dir="${jss7.dir}/sgw/boot/target/mobicents-sgw">
+	                        <include name="**" />
+	                </fileset>
+	        </copy>
+
+	        <echo>Copy SS7 native libs</echo>
+	        <copy todir="${mobicents.jss7.dist}/ss7/native" failonerror="true">
+	                <fileset dir="${jss7.dir}/sgw/boot/target/mobicents-sgw/native">
+	                        <include name="**" />
+	                </fileset>
+	        </copy>
+
+            <echo>Copy Protocols</echo>
+            <copy todir="${mobicents.jss7.dist}/ss7/protocols" failonerror="true">
+                    <fileset dir="${jss7.dir}/tcap/tcap-api/target/">
+                            <include name="*.jar" />
+                    </fileset>
+	                <fileset dir="${jss7.dir}/tcap/tcap-impl/target/">
+	                        <include name="*.jar" />
+	                </fileset>
+	                <fileset dir="${jss7.dir}/map/map-api/target/">
+	                        <include name="*.jar" />
+	                </fileset>
+	                <fileset dir="${jss7.dir}/map/map-impl/target/">
+	                        <include name="*.jar" />
+	                </fileset>
+		            <fileset dir="${jss7.dir}/cap/cap-api/target/">
+		                    <include name="*.jar" />
+		            </fileset>
+		            <fileset dir="${jss7.dir}/cap/cap-impl/target/">
+		                    <include name="*.jar" />
+		            </fileset>
+	                <fileset dir="${jss7.dir}/isup/isup-api/target/">
+	                        <include name="*.jar" />
+	                </fileset>
+	                <fileset dir="${jss7.dir}/isup/isup-impl/target/">
+	                        <include name="*.jar" />
+	                </fileset>
+	                <fileset dir="${jss7.dir}/inap/inap-api/target/">
+	                        <include name="*.jar" />
+	                </fileset>
+	                <fileset dir="${jss7.dir}/inap/inap-impl/target/">
+	                        <include name="*.jar" />
+	                </fileset>
+            </copy>
+    	
+	        <echo>Copy Parser</echo>
+	        <copy todir="${mobicents.jss7.dist}/ss7/mobicents-ss7-traceparser" failonerror="true">
+	                <fileset dir="${jss7.dir}/tools/trace-parser/bootstrap/target/traceparser-ss7">
+	                        <include name="**" />
+	                </fileset>
+	        </copy>
+    	
+
+            <echo>Copy Shell</echo>
+            <copy todir="${mobicents.jss7.dist}/ss7/shell/lib" failonerror="true">
+                    <fileset dir="${jss7.dir}/management/shell-client/target/mobicents-cli/lib">
+                            <include name="**" />
+                    </fileset>
+            </copy>
+            <copy todir="${mobicents.jss7.dist}/ss7/shell/bin" failonerror="true">
+                    <fileset dir="${jss7.dir}/management/shell-client/target/mobicents-cli/bin">
+                            <include name="**" />
+                    </fileset>
+            </copy>
+            <copy file="${jss7.dir}/hardware/cli/target/linkset-cli.jar" todir="${mobicents.jss7.dist}/ss7/shell/lib" failonerror="true" />
+            <copy file="${jss7.dir}/m3ua/cli/m3ua/target/m3ua-cli-m3ua.jar" todir="${mobicents.jss7.dist}/ss7/shell/lib" failonerror="true" />
+            <copy file="${jss7.dir}/m3ua/cli/sctp/target/m3ua-cli-sctp.jar" todir="${mobicents.jss7.dist}/ss7/shell/lib" failonerror="true" />
+            <copy file="${jss7.dir}/sccp/sccp-cli/target/sccp-cli.jar" todir="${mobicents.jss7.dist}/ss7/shell/lib" failonerror="true" />
+            <copy file="${jss7.dir}/tcap/tcap-cli/target/tcap-cli.jar" todir="${mobicents.jss7.dist}/ss7/shell/lib" failonerror="true" />
+            <copy file="${jss7.dir}/release/release-build.xml" tofile="${mobicents.jss7.dist}/ss7/build.xml" failonerror="true" />
+
+        <copy todir="${mobicents.jss7.dist}/ss7/mobicents-ss7-service" failonerror="true">
+                <fileset dir="${jss7.dir}/service/target/mobicents-ss7-service">
+                        <include name="**" />
+                </fileset>
+        </copy>
+
+    	<echo>Copy OAM ui</echo>
+        <copy todir="${mobicents.jss7.dist}/oam/new-ui" failonerror="true">
+                <fileset dir="${jss7.dir}/oam/new-ui/target/">
+                        <include name="*.war" />
+                </fileset>
+        </copy>
+
+        <echo>Copy Modified Jolokia War</echo>
+	<copy file="./jolokia.war" todir="${mobicents.jss7.dist}/oam/new-ui" failonerror="true" />
+    </target>
+
+	<target name="build-jss7">
+		<exec failonerror="true" executable="${mvn.executable}" dir="${base.dir}/../">
+			<arg line="clean install -Dmaven.test.skip=true" />
+		</exec>
+	</target>
+	
+	<target name="build-docs">
+		<exec failonerror="true" executable="${mvn.executable}" dir="${base.dir}/../docs">
+			<arg line="clean install -Ptelscale" />
+		</exec>
+	</target>
+
+	
+	
+	<target name="make-final-zip" depends="set-time-stamp">
+		<zip destfile="${base.dir}/mobicents-jss7-${release.version}-${time.stamp}.zip" filesonly="false">
+			<zipfileset dir="${mobicents.jss7.dist}" prefix="mobicents-jss7-${release.version}">
+				<include name="**" />
+			</zipfileset>
+		</zip>
+	</target>
+	
+	<target name="set-time-stamp" unless="skip.timestamp">
+		<tstamp>
+			<format property="time.stamp" pattern="yyMMddHHmm" />
+		</tstamp>
+	</target>
+
+	<target name="copy-documentation" >
+		<echo>copying documentation</echo>
+		<mkdir dir="${docs.dir}"/>
+
+        <copy todir="${docs.dir}" failonerror="true">
+                <fileset dir="${checkout.asn.dir}/docs/jdocbook-mobicents/target/docbook/publish/en-US/pdf">
+                        <include name="*.pdf" />
+                </fileset>
+        </copy>
+		<copy todir="${docs.dir}" failonerror="true">
+                <fileset dir="${checkout.sctp.dir}/docs/jdocbook-mobicents/target/docbook/publish/en-US/pdf">
+                        <include name="*.pdf" />
+                </fileset>
+        </copy>
+        <copy todir="${docs.dir}" failonerror="true">
+                <fileset dir="${jss7.dir}/docs/userguide/jdocbook-mobicents/target/docbook/publish/en-US/pdf">
+                        <include name="*.pdf" />
+                </fileset>
+        </copy>
+        <copy todir="${docs.dir}" failonerror="true">
+                <fileset dir="${jss7.dir}/docs/releasenotes/jdocbook-mobicents/target/docbook/publish/en-US/pdf">
+                        <include name="*.pdf" />
+                </fileset>
+        </copy>
+        <copy todir="${docs.dir}" failonerror="true">
+                <fileset dir="${jss7.dir}/docs/installationguide/jdocbook-mobicents/target/docbook/publish/en-US/pdf">
+                        <include name="*.pdf" />
+                </fileset>
+        </copy>
+	</target>
+
+
+
+	<target name="clean">
+	    <delete dir="${release.dir}"/>
+	    <delete dir="${base.dir}/checkout"/>
+	</target>
+	
+</project>
