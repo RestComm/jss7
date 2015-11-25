@@ -22,7 +22,7 @@ popd
 
 REM Add bin/native to the PATH if present
 if exist "%SGW_HOME%\native" set PATH=%SGW_HOME%\native;%PATH%
-if exist "%SGW_HOME%\native" set JAVA_OPTS=%JAVA_OPTS% -Djava.library.path="%PATH%"
+rem if exist "%SGW_HOME%\native" set JAVA_OPTS=%JAVA_OPTS% -Djava.library.path="%PATH%"
 
 REM Run section  - here we define node and default ip
 set IP=127.0.0.1

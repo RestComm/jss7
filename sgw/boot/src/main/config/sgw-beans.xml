@@ -91,7 +91,7 @@
 		<uncallback method="removeFactory" />
 	</bean>
 
-	<bean name="ShellExecutor" class="org.mobicents.ss7.management.console.ShellServer">
+	<bean name="ShellExecutor" class="com.telscale.ss7.management.console.ShellServer">
 		<constructor>
 			<parameter>
 				<inject bean="Scheduler" />
