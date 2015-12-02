@@ -54,10 +54,10 @@
 		</dependency>
 
 		<!-- Hardware Dahdi Java -->
-		<dependency>
+		<!--dependency>
 			<artifactId>mobicents-dahdi</artifactId>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
-		</dependency>
+		</dependency-->
 
 		<!-- Hardware Dialogic Java 
 		<dependency>
@@ -134,7 +134,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
+			<!--plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
@@ -165,7 +165,6 @@
 										libmobicents-dahdi-linux.so
 									</destFileName>
 								</artifactItem>
-								<!-- 
 								<artifactItem>
 									<groupId>
 										org.mobicents.protocols.ss7.hardware
@@ -185,7 +184,6 @@
 										libmobicents-dialogic-linux.so
 									</destFileName>
 								</artifactItem>	
-								 -->	
 								<artifactItem>
 									<groupId>
 										com.vendor.dialogic
@@ -228,7 +226,7 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin-->
 		</plugins>
 	</build>
 </project>
