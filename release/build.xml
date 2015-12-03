@@ -27,6 +27,7 @@
 	</taskdef>
 
 	<target name="release" depends="clean,build-asn,build-sctp,build-jss7,build-docs,copy-asn,copy-sctp,copy-jss7,copy-documentation,make-final-zip" />
+	<target name="release-mobicents" depends="copy-asn,copy-sctp,copy-jss7,copy-documentation,make-final-zip" />
 	
 
 	<!-- Build dependencies-->
@@ -100,12 +101,12 @@
 	                </fileset>
 	        </copy>
 
-	        <echo>Copy SS7 native libs</echo>
+	        <!--echo>Copy SS7 native libs</echo>
 	        <copy todir="${mobicents.jss7.dist}/ss7/native" failonerror="true">
 	                <fileset dir="${jss7.dir}/sgw/boot/target/mobicents-sgw/native">
 	                        <include name="**" />
 	                </fileset>
-	        </copy>
+	        </copy-->
 
             <echo>Copy Protocols</echo>
             <copy todir="${mobicents.jss7.dist}/ss7/protocols" failonerror="true">
