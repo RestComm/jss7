@@ -20,7 +20,19 @@ Mobicents jSS7 is licensed under dual license policy. The default license is the
 
 ## Downloads
 
-Download binary from here
+Download binary from [here](https://github.com/Mobicents/jss7/releases) or Continuous Delivery builds from [CloudBees](https://mobicents.ci.cloudbees.com/job/Mobicents-jSS7/)
+
+## Maven Repository
+
+Artifacts are available at [Sonatype Maven Repo](https://oss.sonatype.org/content/repositories/releases/org/mobicents) which are also synched to central
+
+## Wiki
+
+Read our [Mobicents jSS7 wiki](https://github.com/Mobicents/jss7/wiki) 
+
+## Build From Source
+
+Read [the instructions](https://github.com/Mobicents/jss7/wiki/Build-jSS7-from-Source) to build Mobicents jSS7 from Source 
 
 ## Other Open Source Projects that leverages jSS7
 
