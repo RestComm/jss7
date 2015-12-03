@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.telscale.protocols.ss7.oam</groupId>
 		<artifactId>telscale-ss7-oam</artifactId>
-		<version>2.2.0-SNAPSHOT</version>
+		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>new-ui</artifactId>

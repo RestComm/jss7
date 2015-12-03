@@ -45,7 +45,7 @@ maxChargingControlIndicatorsLen INTEGER ::= 8
 -- It is only used to change the actually applied tariff.
 -- Coding of 'delayUntilStart':
 -- 0 - start tariffing, if it is not already started, without waiting for the 'start' signal
--- 1 – delay start of tariffing up to the receipt of the 'start' signal
+-- 1 - delay start of tariffing up to the receipt of the 'start' signal
 </code>
 *
 * @author sergey vetyutnev
