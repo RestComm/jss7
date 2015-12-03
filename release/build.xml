@@ -27,7 +27,6 @@
 	</taskdef>
 
 	<target name="release" depends="clean,build-asn,build-sctp,build-jss7,build-docs,copy-asn,copy-sctp,copy-jss7,copy-documentation,make-final-zip" />
-	<target name="release-mobicents" depends="copy-asn,copy-sctp,copy-jss7,copy-documentation,make-final-zip" />
 	
 
 	<!-- Build dependencies-->
