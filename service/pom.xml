@@ -168,55 +168,55 @@
 			<version>${pom.version}</version>
 		</dependency>	
 
-		<!-- telscale dependencies -->
+		<!-- mobicents dependencies -->
 		<dependency>
 			<artifactId>jmx</artifactId>
-			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>alarm</artifactId>
-			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>jmxss7</artifactId>
-			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>sctp-oam</artifactId>
-			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>m3ua-oam</artifactId>
-			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>sccp-oam</artifactId>
-			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>linkset-oam</artifactId>
-			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>statistics-oam-api</artifactId>
-			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>statistics-oam-impl</artifactId>
-			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>tcap-oam</artifactId>
-			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 	</dependencies>

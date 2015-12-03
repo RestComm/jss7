@@ -20,18 +20,18 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<artifactId>alarm</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<artifactId>tcap-oam</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<artifactId>jmxss7</artifactId>
 			<version>${pom.version}</version>
 		</dependency>

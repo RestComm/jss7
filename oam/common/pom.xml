@@ -4,13 +4,13 @@
 	<packaging>pom</packaging>
 
 	<parent>
-		<groupId>com.telscale.protocols.ss7.oam</groupId>
-		<artifactId>telscale-ss7-oam</artifactId>
+		<groupId>org.mobicents.protocols.ss7.oam</groupId>
+		<artifactId>mobicents-ss7-oam</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
-	<groupId>com.telscale.protocols.ss7.oam.common</groupId>
-	<artifactId>telscale-ss7-oam-common</artifactId>
+	<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
+	<artifactId>mobicents-ss7-oam-common</artifactId>
 	<name>Mobicents SS7 :: ${pom.artifactId}</name>
 
 	<modules>

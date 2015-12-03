@@ -2,8 +2,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.telscale.protocols.ss7.oam</groupId>
-		<artifactId>telscale-ss7-oam</artifactId>
+		<groupId>org.mobicents.protocols.ss7.oam</groupId>
+		<artifactId>mobicents-ss7-oam</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 

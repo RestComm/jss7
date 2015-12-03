@@ -2,8 +2,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.telscale.protocols.ss7.oam.common</groupId>
-		<artifactId>telscale-ss7-oam-common</artifactId>
+		<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
+		<artifactId>mobicents-ss7-oam-common</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
@@ -19,22 +19,22 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<artifactId>jmx</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<artifactId>jmxss7</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<artifactId>alarm</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.telscale.protocols.ss7.oam.common</groupId>
+			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<artifactId>statistics-oam-impl</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
