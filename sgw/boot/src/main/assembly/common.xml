@@ -36,11 +36,6 @@
 			<outputDirectory>/lib</outputDirectory>
 			<unpack>false</unpack>
 			<scope>runtime</scope>
-			<excludes>
-			  	<!-- TelScale licensing lib -->
-			    <exclude>com.telscale.licensing:lce-common:jar</exclude>
-			    <exclude>com.telscale.licensing:lce-secret:jar</exclude>
-			</excludes>
 		</dependencySet>
 	</dependencySets>
 </component>

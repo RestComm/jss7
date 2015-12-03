@@ -61,17 +61,17 @@
 				<include>org.mobicents.protocols.ss7.statistics:statistics-api</include>
 				<include>org.mobicents.protocols.ss7.statistics:statistics-impl</include>
 				
-				<!-- TelScale SS7 Libs -->
-				<include>com.telscale.protocols.ss7.oam.common:jmx</include>
-				<include>com.telscale.protocols.ss7.oam.common:jmxss7</include>
-				<include>com.telscale.protocols.ss7.oam.common:alarm</include>
-				<include>com.telscale.protocols.ss7.oam.common:statistics-oam-api</include>
-				<include>com.telscale.protocols.ss7.oam.common:statistics-oam-impl</include>
-				<include>com.telscale.protocols.ss7.oam.common:sctp-oam</include>
-				<include>com.telscale.protocols.ss7.oam.common:m3ua-oam</include>
-				<include>com.telscale.protocols.ss7.oam.common:sccp-oam</include>
-				<include>com.telscale.protocols.ss7.oam.common:linkset-oam</include>
-				<include>com.telscale.protocols.ss7.oam.common:tcap-oam</include>
+				<!-- Mobicents SS7 Libs -->
+				<include>org.mobicents.protocols.ss7.oam.common:jmx</include>
+				<include>org.mobicents.protocols.ss7.oam.common:jmxss7</include>
+				<include>org.mobicents.protocols.ss7.oam.common:alarm</include>
+				<include>org.mobicents.protocols.ss7.oam.common:statistics-oam-api</include>
+				<include>org.mobicents.protocols.ss7.oam.common:statistics-oam-impl</include>
+				<include>org.mobicents.protocols.ss7.oam.common:sctp-oam</include>
+				<include>org.mobicents.protocols.ss7.oam.common:m3ua-oam</include>
+				<include>org.mobicents.protocols.ss7.oam.common:sccp-oam</include>
+				<include>org.mobicents.protocols.ss7.oam.common:linkset-oam</include>
+				<include>org.mobicents.protocols.ss7.oam.common:tcap-oam</include>
 			    <include>org.apache.commons:commons-email</include>
 			    
 			    <!-- Dialogic -->
