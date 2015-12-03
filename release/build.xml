@@ -13,7 +13,7 @@
 	<!--Versions -->
 	<property name="checkout.asn.version" value="release-2.0.3.FINAL" />
 	<property name="checkout.sctp.version" value="release-1.6.0.FINAL" />
-	<property name="release.version" value="2.2.0-SNAPSHOT"/>
+	<property name="release.version" value="${jSS7.release.version}"/>
 
 
 	<condition property="mvn.executable" value="${sys.M2_HOME}\bin\mvn.bat" else="mvn">
