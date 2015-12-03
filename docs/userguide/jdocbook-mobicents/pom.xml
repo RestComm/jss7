@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.docs.userguide</groupId>
 		<artifactId>mobicents-ss7-userguide</artifactId>
-		<version>2.2.0-SNAPSHOT</version>
+		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mobicents-ss7-userguide-jdocbook-mobicents</artifactId>
@@ -79,13 +79,13 @@
 					<dependency>
 						<groupId>org.mobicents.jdocbook</groupId>
 						<artifactId>telestax-xslt-ns</artifactId>
-						<version>1.2.0</version>
+						<version>1.5.0.FINAL</version>
 					</dependency>
 					<dependency>
 						<groupId>org.mobicents.jdocbook</groupId>
 						<artifactId>telestax-community-style</artifactId>
 						<type>jdocbook-style</type>
-						<version>1.2.0</version>
+						<version>1.5.0.FINAL</version>
 					</dependency>
 				</dependencies>
 				<configuration>
