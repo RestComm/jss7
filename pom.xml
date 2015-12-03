@@ -330,6 +330,12 @@
 			<id>release</id>
 			<modules />
 		</profile>
+		<profile>
+			<id>docs</id>
+			<modules>
+				<module>docs</module>
+			</modules>
+		</profile>
 		<!--profile>
 			<id>release-sign-artifacts</id>
 			<activation>
