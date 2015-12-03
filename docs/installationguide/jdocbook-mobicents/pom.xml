@@ -60,7 +60,7 @@
 								<artifactItem>
 									<groupId>${pom.groupId}</groupId>
 									<artifactId>mobicents-ss7-installguide-sources-mobicents</artifactId>
-									<version>${pom.version}</version>
+									<version>${project.version}</version>
 									<type>jar</type>
 									<overWrite>true</overWrite>
 									<outputDirectory>${project.build.directory}/docbook/resources</outputDirectory>

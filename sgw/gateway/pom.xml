@@ -13,7 +13,7 @@
 	<properties>
 		<sgw.name>Mobicents SGW</sgw.name>
 		<sgw.vendor>TeleStax</sgw.vendor>
-		<sgw.version>${pom.version}</sgw.version>
+		<sgw.version>${project.version}</sgw.version>
 	</properties>
 	
 	<dependencies>
@@ -80,11 +80,11 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 			<artifactId>linkset</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>${pom.artifactId}-${pom.version}</finalName>
+		<finalName>${pom.artifactId}-${project.version}</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>

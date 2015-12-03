@@ -14,7 +14,7 @@
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
 			<artifactId>gateway</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -50,7 +50,7 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 			<artifactId>linkset</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<!-- Hardware Dahdi Java -->
@@ -154,7 +154,7 @@
 										libmobicents-dahdi-linux
 									</artifactId>
 									<version>
-										${pom.version}
+										${project.version}
 									</version>
 									<type>so</type>
 									<overWrite>true</overWrite>
@@ -173,7 +173,7 @@
 										libmobicents-dialogic-linux
 									</artifactId>
 									<version>
-										${pom.version}
+										${project.version}
 									</version>
 									<type>so</type>
 									<overWrite>true</overWrite>

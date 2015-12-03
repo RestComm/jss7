@@ -15,7 +15,7 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.management</groupId>
 			<artifactId>shell-client</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

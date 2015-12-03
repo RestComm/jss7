@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
 			<artifactId>isup-api</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>concurrent</groupId>
@@ -47,7 +47,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>${pom.artifactId}-${pom.version}</finalName>
+		<finalName>${pom.artifactId}-${project.version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

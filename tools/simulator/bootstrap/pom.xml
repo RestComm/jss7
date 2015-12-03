@@ -16,13 +16,13 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.tools.simulator</groupId>
 			<artifactId>simulator-core</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.tools.simulator</groupId>
 			<artifactId>simulator-gui</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>

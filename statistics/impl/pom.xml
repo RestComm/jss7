@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
 			<artifactId>statistics-api</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javolution</groupId>

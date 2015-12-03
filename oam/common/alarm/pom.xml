@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<artifactId>jmx</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<!-- non mobicents -->

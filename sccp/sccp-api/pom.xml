@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 			<artifactId>mtp-api</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>		
 		<dependency>
 			<groupId>junit</groupId>
@@ -40,6 +40,6 @@
 	</dependencies>
 
 	<build>
-		<finalName>${pom.artifactId}-${pom.version}</finalName>
+		<finalName>${pom.artifactId}-${project.version}</finalName>
 	</build>
 </project>

@@ -39,7 +39,7 @@
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
 			<artifactId>tcap-ansi-api</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
@@ -48,12 +48,12 @@
         <dependency>
             <groupId>org.mobicents.protocols.ss7.management</groupId>
             <artifactId>shell-server-api</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
         </dependency>       
 	</dependencies>
 
 	<build>
-		<finalName>${pom.artifactId}-${pom.version}</finalName>
+		<finalName>${pom.artifactId}-${project.version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -91,7 +91,7 @@
 					<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 					<artifactId>sccp-impl</artifactId>
 					<type>test-jar</type>
-					<version>${pom.version}</version>
+					<version>${project.version}</version>
 					<scope>test</scope>
 				</dependency>
 				<dependency>

@@ -48,7 +48,7 @@
 								<artifactItem>
 									<groupId>${pom.groupId}</groupId>
 									<artifactId>mobicents-ss7-userguide-sources</artifactId>
-									<version>${pom.version}</version>
+									<version>${project.version}</version>
 									<type>jar</type>
 									<overWrite>true</overWrite>
 									<outputDirectory>${basedir}/src/main/resources</outputDirectory>
@@ -56,7 +56,7 @@
 								<artifactItem>
 									<groupId>org.mobicents.protocols.ss7.docs.commons</groupId>
 									<artifactId>mobicents-ss7-commons-sources</artifactId>
-									<version>${pom.version}</version>
+									<version>${project.version}</version>
 									<type>jar</type>
 									<overWrite>true</overWrite>
 									<outputDirectory>${basedir}/src/main/resources</outputDirectory>

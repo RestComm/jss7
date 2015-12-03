@@ -21,38 +21,38 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<artifactId>jmx</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<artifactId>jmxss7</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<artifactId>alarm</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<artifactId>statistics-oam-impl</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
 			<artifactId>tcap-api</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
 			<artifactId>tcap-impl</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>statistics-api</artifactId>
 			<groupId>org.mobicents.protocols.ss7.statistics</groupId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>	
 
 		<!-- non mobicents -->
@@ -145,7 +145,7 @@
 					<groupId>org.mobicents.protocols.ss7.sccp</groupId>
 					<artifactId>sccp-impl</artifactId>
 					<type>test-jar</type>
-					<version>${pom.version}</version>
+					<version>${project.version}</version>
 					<scope>test</scope>
 				</dependency>
 				<dependency>
@@ -156,12 +156,12 @@
 				<dependency>
 					<artifactId>statistics-impl</artifactId>
 					<groupId>org.mobicents.protocols.ss7.statistics</groupId>
-					<version>${pom.version}</version>
+					<version>${project.version}</version>
 				</dependency>	
 				<dependency>
 					<artifactId>statistics-api</artifactId>
 					<groupId>org.mobicents.protocols.ss7.statistics</groupId>
-					<version>${pom.version}</version>
+					<version>${project.version}</version>
 				</dependency>	
 			</dependencies>
 		</profile>

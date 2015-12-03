@@ -13,7 +13,7 @@
 	<properties>
 		<telscale.name>mobicents-ss7</telscale.name>
 		<telscale.vendor>TeleStax</telscale.vendor>
-		<telscale.version>${pom.version}</telscale.version>
+		<telscale.version>${project.version}</telscale.version>
 	</properties>
 
 	<dependencies>
@@ -54,7 +54,7 @@
 		<dependency>
 			<artifactId>shell-server-impl</artifactId>
 			<groupId>org.mobicents.protocols.ss7.management</groupId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>shell-transport</artifactId>
@@ -160,68 +160,68 @@
 		<dependency>
 			<artifactId>statistics-api</artifactId>
 			<groupId>org.mobicents.protocols.ss7.statistics</groupId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>	
 		<dependency>
 			<artifactId>statistics-impl</artifactId>
 			<groupId>org.mobicents.protocols.ss7.statistics</groupId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>	
 
 		<!-- mobicents dependencies -->
 		<dependency>
 			<artifactId>jmx</artifactId>
 			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>alarm</artifactId>
 			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>jmxss7</artifactId>
 			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>sctp-oam</artifactId>
 			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>m3ua-oam</artifactId>
 			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>sccp-oam</artifactId>
 			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>linkset-oam</artifactId>
 			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>statistics-oam-api</artifactId>
 			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>statistics-oam-impl</artifactId>
 			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>tcap-oam</artifactId>
 			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>${pom.artifactId}-${pom.version}</finalName>
+		<finalName>${pom.artifactId}-${project.version}</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>

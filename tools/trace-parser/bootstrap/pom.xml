@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.tools.traceparser</groupId>
 			<artifactId>ss7-trace-parser</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
@@ -119,7 +119,7 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.scheduler</groupId>
 			<artifactId>scheduler</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
 		</dependency>
 	</dependencies>
 

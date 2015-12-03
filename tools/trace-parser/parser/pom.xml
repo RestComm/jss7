@@ -75,12 +75,12 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.statistics</groupId>
 			<artifactId>statistics-api</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.statistics</groupId>
 			<artifactId>statistics-impl</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>

@@ -21,23 +21,23 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<artifactId>jmx</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<artifactId>jmxss7</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 			<artifactId>alarm</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<artifactId>linkset</artifactId>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<!-- non mobicents -->

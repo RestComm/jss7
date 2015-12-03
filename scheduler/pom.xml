@@ -55,7 +55,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<finalName>mobicents-scheduler-${pom.version}</finalName>
+		<finalName>mobicents-scheduler-${project.version}</finalName>
 	</build>
 
 </project>

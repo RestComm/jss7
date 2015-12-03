@@ -42,7 +42,7 @@
 			<properties>
 				<cli.name>Mobicents CLI</cli.name>
 				<cli.vendor>TeleStax</cli.vendor>
-				<cli.version>${pom.version}</cli.version>
+				<cli.version>${project.version}</cli.version>
 				<cli.prefix>mobicents</cli.prefix>
 			</properties>
 		</profile>
@@ -54,7 +54,7 @@
 			<properties>
 				<cli.name>TelScale CLI</cli.name>
 				<cli.vendor>TeleStax</cli.vendor>
-				<cli.version>${pom.version}</cli.version>
+				<cli.version>${project.version}</cli.version>
 				<cli.prefix>telscale</cli.prefix>
 			</properties>
 		</profile>

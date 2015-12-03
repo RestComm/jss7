@@ -19,7 +19,7 @@
                 <dependency>
                         <groupId>org.mobicents.protocols.ss7.management</groupId>
                         <artifactId>shell-server-api</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                 </dependency>           
                 <dependency>
                         <groupId>log4j</groupId>
@@ -33,7 +33,7 @@
                 <dependency>
                         <groupId>org.mobicents.protocols.ss7.m3ua</groupId>
                         <artifactId>m3ua-api</artifactId>
-                        <version>${pom.version}</version>
+                        <version>${project.version}</version>
                 </dependency>
                 
                 <!-- javolution -->
@@ -57,7 +57,7 @@
         </dependencies>
 
         <build>
-                <finalName>${pom.artifactId}-${pom.version}</finalName>
+                <finalName>${pom.artifactId}-${project.version}</finalName>
                 <plugins>
                         <plugin>
                                 <groupId>org.apache.maven.plugins</groupId>
