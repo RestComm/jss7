@@ -209,7 +209,7 @@
 	<!-- Shell Service -->
 	<!-- ==================================================================== -->
 	<!-- Define Shell Executor -->
-	<bean name="ShellExecutor" class="org.mobicents.ss7.management.console.ShellServer">
+	<bean name="ShellExecutor" class="com.telscale.ss7.management.console.ShellServer">
 		<constructor>
 			<parameter>
 				<inject bean="SS7Scheduler" />
@@ -326,13 +326,13 @@
 	<!-- TelScale jSS7 Managemenet Service -->
 	<!-- ==================================================================== -->
 	<bean name="Ss7Management"
-		class="org.mobicents.protocols.ss7.oam.common.jmxss7.Ss7Management">
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=Ss7Management",exposedInterface=org.mobicents.protocols.ss7.oam.common.jmxss7.Ss7ManagementMBean.class,registerDirectly=true)</annotation>
+		class="com.telscale.protocols.ss7.oam.common.jmxss7.Ss7Management">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=Ss7Management",exposedInterface=com.telscale.protocols.ss7.oam.common.jmxss7.Ss7ManagementMBean.class,registerDirectly=true)</annotation>
 		<property name="agentId">jboss</property>
 	</bean>
 
 	<bean name="TelscaleAlarmManagement"
-		class="org.mobicents.protocols.ss7.oam.common.alarm.AlarmProvider">
+		class="com.telscale.protocols.ss7.oam.common.alarm.AlarmProvider">
 		<constructor>
 			<parameter>
 				<inject bean="Ss7Management" />
@@ -344,7 +344,7 @@
 	</bean>
 
 	<bean name="TelscaleStatisticManagement"
-		class="org.mobicents.protocols.ss7.oam.common.statistics.CounterProviderManagement">
+		class="com.telscale.protocols.ss7.oam.common.statistics.CounterProviderManagement">
 		<constructor>
 			<parameter>
 				<inject bean="Ss7Management" />
@@ -354,7 +354,7 @@
 	</bean>
 
 	<bean name="TelScaleSctpManagement"
-		class="org.mobicents.protocols.ss7.oam.common.sctp.SctpManagementJmx">
+		class="com.telscale.protocols.ss7.oam.common.sctp.SctpManagementJmx">
 		<constructor>
 			<parameter>
 				<inject bean="Ss7Management" />
@@ -366,7 +366,7 @@
 	</bean>
 
 	<bean name="TelscaleM3uaManagement"
-		class="org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmx">
+		class="com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmx">
 		<constructor>
 			<parameter>
 				<inject bean="Ss7Management" />
@@ -378,7 +378,7 @@
 	</bean>
 
 	<bean name="TelscaleSccpManagement"
-		class="org.mobicents.protocols.ss7.oam.common.sccp.SccpManagementJmx">
+		class="com.telscale.protocols.ss7.oam.common.sccp.SccpManagementJmx">
 		<constructor>
 			<parameter>
 				<inject bean="Ss7Management" />
@@ -390,7 +390,7 @@
 	</bean>
 
 	<bean name="TelscaleTcapManagement"
-		class="org.mobicents.protocols.ss7.oam.common.tcap.TcapManagementJmx">
+		class="com.telscale.protocols.ss7.oam.common.tcap.TcapManagementJmx">
 		<constructor>
 			<parameter>
 				<inject bean="Ss7Management" />
@@ -402,7 +402,7 @@
 	</bean>
 	
 	<bean name="TelscaleTcapMapManagement"
-		class="org.mobicents.protocols.ss7.oam.common.tcap.TcapManagementJmx">
+		class="com.telscale.protocols.ss7.oam.common.tcap.TcapManagementJmx">
 		<constructor>
 			<parameter>
 				<inject bean="Ss7Management" />
@@ -414,7 +414,7 @@
 	</bean>
 	
 	<bean name="TelscaleTcapCapManagement"
-		class="org.mobicents.protocols.ss7.oam.common.tcap.TcapManagementJmx">
+		class="com.telscale.protocols.ss7.oam.common.tcap.TcapManagementJmx">
 		<constructor>
 			<parameter>
 				<inject bean="Ss7Management" />
