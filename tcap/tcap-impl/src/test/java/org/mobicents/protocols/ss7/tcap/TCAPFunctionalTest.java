@@ -238,13 +238,13 @@ public class TCAPFunctionalTest extends SccpHarness {
 
             // operationCode is not sent via ReturnResultLast because it does not contain a Parameter
             // so operationCode is taken from a sent Invoke
-            assertEquals((long) rrl.getInvokeId(), 1);
+            assertEquals((long) rrl.getInvokeId(), 0);
             assertEquals((long) rrl.getOperationCode().getLocalOperationCode(), 12);
 
             // second Invoke has its own operationCode and it has linkedId to the second sent Invoke
-            assertEquals((long) inv.getInvokeId(), 1);
+            assertEquals((long) inv.getInvokeId(), 0);
             assertEquals((long) inv.getOperationCode().getLocalOperationCode(), 14);
-            assertEquals((long) inv.getLinkedId(), 2);
+            assertEquals((long) inv.getLinkedId(), 1);
 
             // we should see operationCode of the second sent Invoke
             Invoke linkedInv = inv.getLinkedInvoke();

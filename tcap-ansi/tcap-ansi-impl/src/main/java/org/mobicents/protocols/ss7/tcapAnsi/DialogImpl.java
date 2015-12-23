@@ -132,7 +132,7 @@ public class DialogImpl implements Dialog {
 
     private boolean[] invokeIDTable = new boolean[256];
     private int freeCount = invokeIDTable.length;
-    private int lastInvokeIdIndex = _INVOKE_TABLE_SHIFT;
+    private int lastInvokeIdIndex = _INVOKE_TABLE_SHIFT - 1;
 
     // only originating side keeps FSM, see: Q.771 - 3.1.5
     protected InvokeImpl[] operationsSent = new InvokeImpl[invokeIDTable.length];

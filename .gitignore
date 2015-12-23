@@ -47,3 +47,22 @@ debuglog.txt.*
 
 #generated doc src
 docs/sources-*/src
+/DialogIdleEndTestSccpStack1_sccpresource2.xml
+/DialogIdleEndTestSccpStack1_sccprouter2.xml
+/DialogIdleEndTestSccpStack2_sccpresource2.xml
+/DialogIdleEndTestSccpStack2_sccprouter2.xml
+/sspTestSccpStack1_management2.xml
+/sspTestSccpStack1_sccpresource2.xml
+/sspTestSccpStack1_sccprouter2.xml
+/sspTestSccpStack2_management2.xml
+/sspTestSccpStack2_sccpresource2.xml
+/sspTestSccpStack2_sccprouter2.xml
+/TCAPFunctionalTest_1_management.xml
+/TCAPFunctionalTest_2_management.xml
+/TCAPFunctionalTest_management.xml
+/TCAPFunctionalTestSccpStack1_management2.xml
+/TCAPFunctionalTestSccpStack1_sccpresource2.xml
+/TCAPFunctionalTestSccpStack1_sccprouter2.xml
+/TCAPFunctionalTestSccpStack2_management2.xml
+/TCAPFunctionalTestSccpStack2_sccpresource2.xml
+/TCAPFunctionalTestSccpStack2_sccprouter2.xml
