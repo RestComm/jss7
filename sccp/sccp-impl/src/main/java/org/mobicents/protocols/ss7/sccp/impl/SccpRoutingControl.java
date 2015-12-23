@@ -250,6 +250,61 @@ public class SccpRoutingControl {
         }
     }
 
+    protected ReturnCauseValue sendManagementMessage(SccpDataMessageImpl message) throws Exception {
+        int dpc = message.getOutgoingDpc();
+
+        Mtp3ServiceAccessPoint sap = this.sccpStackImpl.router.findMtp3ServiceAccessPoint(dpc, 0);
+        if (sap == null) {
+            if (logger.isEnabledFor(Level.WARN)) {
+                logger.warn(String.format("Sccp management message for sending=%s but no matching dpc=%d SAP found", message,
+                        dpc));
+            }
+            return ReturnCauseValue.SCCP_FAILURE;
+        }
+
+        Mtp3UserPart mup = this.sccpStackImpl.getMtp3UserPart(sap.getMtp3Id());
+        if (mup == null) {
+            if (logger.isEnabledFor(Level.WARN)) {
+                logger.warn(String.format("Sccp management message for sending=%s but no matching Mtp3UserPart found for Id=%d", message,
+                        sap.getMtp3Id()));
+            }
+            return ReturnCauseValue.SCCP_FAILURE;
+        }
+
+        LongMessageRuleType lmrt = LongMessageRuleType.LONG_MESSAGE_FORBBIDEN;
+        EncodingResultData erd = message.encode(sccpStackImpl, lmrt, mup.getMaxUserDataLength(dpc), logger, this.sccpStackImpl.isRemoveSpc(),
+                this.sccpStackImpl.getSccpProtocolVersion());
+        switch (erd.getEncodingResult()) {
+            case Success:
+                Mtp3TransferPrimitiveFactory factory = mup.getMtp3TransferPrimitiveFactory();
+                if (erd.getSolidData() != null) {
+                    // nonsegmented data
+                    Mtp3TransferPrimitive msg = factory.createMtp3TransferPrimitive(Mtp3._SI_SERVICE_SCCP, sap.getNi(), 0,
+                            sap.getOpc(), dpc, 0, erd.getSolidData());
+                    mup.sendMessage(msg);
+                } else {
+                    // segmented data - not possible for a management message
+                    if (logger.isEnabledFor(Level.WARN)) {
+                        logger.warn(String.format(
+                                "Sccp management message for sending=%s was encoded with segments, it is forbidded", message));
+                    }
+                    return ReturnCauseValue.SCCP_FAILURE;
+                }
+                return null;
+
+            case ReturnFailure:
+                return erd.getReturnCause();
+
+            default:
+                String em = String.format("Error %s when encoding a SccpMessage\n%s", erd.getEncodingResult().toString(),
+                        message.toString());
+                if (logger.isEnabledFor(Level.WARN)) {
+                    logger.warn(em);
+                }
+                throw new IOException(em);
+        }
+    }
+
     private enum TranslationAddressCheckingResult {
         destinationAvailable, destinationUnavailable_SubsystemFailure, destinationUnavailable_MtpFailure, translationFailure;
     }

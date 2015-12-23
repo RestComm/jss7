@@ -131,7 +131,6 @@ public class SccpManagement {
 
         switch (messgType) {
             case SSA:
-
                 if (logger.isInfoEnabled()) {
                     logger.info(String.format(
                             "Rx : SSA, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d",
@@ -215,7 +214,6 @@ public class SccpManagement {
     }
 
     private void sendManagementMessage(int dpc, int messageTypeCode, int affectedSsn, int subsystemMultiplicityIndicator) {
-
         Mtp3ServiceAccessPoint sap = this.sccpStackImpl.router.findMtp3ServiceAccessPoint(dpc, 0);
         if (sap == null) {
             logger.warn(String.format("Failed sendManagementMessage : Mtp3ServiceAccessPoint has not found for dpc=%d", dpc));
@@ -258,7 +256,10 @@ public class SccpManagement {
         }
 
         try {
-            this.sccpRoutingControl.sendMessageToMtp(msg);
+            msg.setOutgoingDpc(msg.getCalledPartyAddress().getSignalingPointCode());
+            this.sccpRoutingControl.sendManagementMessage(msg);
+
+            // this.sccpRoutingControl.sendMessageToMtp(msg);
         } catch (Exception e) {
             logger.error(String.format("Exception while trying to send SSP message=%s", msg), e);
         }
