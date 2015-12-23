@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.tcapAnsi;
 
+import io.netty.util.concurrent.DefaultThreadFactory;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -494,7 +496,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     void start() {
         logger.info("Starting TCAP Provider");
 
-        this._EXECUTOR = Executors.newScheduledThreadPool(4);
+        this._EXECUTOR = Executors.newScheduledThreadPool(4, new DefaultThreadFactory("Tcap-Thread"));
         this.sccpProvider.registerSccpListener(ssn, this);
         logger.info("Registered SCCP listener with address " + ssn);
     }
