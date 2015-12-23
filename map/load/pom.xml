@@ -14,6 +14,7 @@
 	<packaging>jar</packaging>
 
 	<properties>
+		<guava.version>18.0</guava.version>
 		<assemble.dir>${pom.build.directory}/load</assemble.dir>
 	</properties>
 
@@ -144,6 +145,19 @@
 			<groupId>org.mobicents.protocols.ss7.statistics</groupId>
 			<!-- <version>${project.version}</version> -->
 		</dependency>						
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
+
+		<!-- netty -->
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>${netty.version}</version>
+		</dependency>
 	</dependencies>
 
 	<profiles>
@@ -417,6 +431,32 @@
 												javolution.jar
 											</destFileName>
 										</artifactItem>
+
+										<artifactItem>
+											<groupId>io.netty</groupId>
+											<artifactId>netty-all</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+											</outputDirectory>
+											<destFileName>
+												netty-all.jar
+											</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>com.google.guava</groupId>
+											<artifactId>guava</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+											</outputDirectory>
+											<destFileName>
+												guava.jar
+											</destFileName>
+										</artifactItem>
+
 										<artifactItem>
 											<groupId>concurrent</groupId>
 											<artifactId>concurrent</artifactId>

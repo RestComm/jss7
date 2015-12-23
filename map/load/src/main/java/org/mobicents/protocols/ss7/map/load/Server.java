@@ -1,29 +1,30 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and/or its affiliates, and individual
- * contributors as indicated by the @authors tag. All rights reserved.
- * See the copyright.txt in the distribution for a full listing
- * of individual contributors.
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
  *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU General Public License, v. 2.0.
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License,
- * v. 2.0 along with this distribution; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02110-1301, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.mobicents.protocols.ss7.map.load;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.api.IpChannelType;
-import org.mobicents.protocols.sctp.ManagementImpl;
+import org.mobicents.protocols.sctp.netty.NettySctpManagementImpl;
 import org.mobicents.protocols.ss7.m3ua.As;
 import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.AspFactory;
@@ -104,7 +105,10 @@ public class Server extends TestHarness {
     private M3UAManagementImpl serverM3UAMgmt;
 
     // SCTP
-    private ManagementImpl sctpManagement;
+    private NettySctpManagementImpl sctpManagement;
+
+    int endCount = 0;
+    volatile long start = System.currentTimeMillis();
 
     protected void initializeStack(IpChannelType ipChannelType) throws Exception {
 
@@ -127,8 +131,8 @@ public class Server extends TestHarness {
     }
 
     private void initSCTP(IpChannelType ipChannelType) throws Exception {
-        this.sctpManagement = new ManagementImpl("Server");
-        this.sctpManagement.setSingleThread(true);
+        this.sctpManagement = new NettySctpManagementImpl("Server");
+//        this.sctpManagement.setSingleThread(false);
         this.sctpManagement.start();
         this.sctpManagement.setConnectDelay(10000);
         this.sctpManagement.removeAllResourses();
@@ -146,6 +150,7 @@ public class Server extends TestHarness {
     private void initM3UA() throws Exception {
         this.serverM3UAMgmt = new M3UAManagementImpl("Server", null);
         this.serverM3UAMgmt.setTransportManagement(this.sctpManagement);
+        this.serverM3UAMgmt.setDeliveryMessageThreadCount(DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT);
         this.serverM3UAMgmt.start();
         this.serverM3UAMgmt.removeAllResourses();
 
@@ -334,6 +339,16 @@ public class Server extends TestHarness {
         if (logger.isDebugEnabled()) {
             logger.debug(String.format("onDialogResease for DialogId=%d", mapDialog.getLocalDialogId()));
         }
+
+        this.endCount++;
+
+        if ((this.endCount % 2000) == 0) {
+            long currentTime = System.currentTimeMillis();
+            long processingTime = currentTime - start;
+            start = currentTime;
+            logger.warn("Completed 2000 Dialogs in=" + processingTime);
+        }
+
     }
 
     /*
@@ -502,46 +517,62 @@ public class Server extends TestHarness {
         } else {
             ipChannelType = IpChannelType.SCTP;
         }
+        System.out.println("IpChannelType="+ipChannelType);
 
         if (args.length >= 2) {
             TestHarness.CLIENT_IP = args[1];
         }
+        System.out.println("CLIENT_IP="+TestHarness.CLIENT_IP);
 
         if (args.length >= 3) {
             TestHarness.CLIENT_PORT = Integer.parseInt(args[2]);
         }
+        System.out.println("CLIENT_PORT="+TestHarness.CLIENT_PORT);
 
         if (args.length >= 4) {
             TestHarness.SERVER_IP = args[3];
         }
+        System.out.println("SERVER_IP="+TestHarness.SERVER_IP);
 
         if (args.length >= 5) {
             TestHarness.SERVER_PORT = Integer.parseInt(args[4]);
         }
+        System.out.println("SERVER_PORT="+TestHarness.SERVER_PORT);
 
         if (args.length >= 6) {
             TestHarness.CLIENT_SPC = Integer.parseInt(args[5]);
         }
+        System.out.println("CLIENT_SPC="+TestHarness.CLIENT_SPC);
 
         if (args.length >= 7) {
             TestHarness.SERVET_SPC = Integer.parseInt(args[6]);
         }
+        System.out.println("SERVET_SPC="+TestHarness.SERVET_SPC);
 
         if (args.length >= 8) {
             TestHarness.NETWORK_INDICATOR = Integer.parseInt(args[7]);
         }
+        System.out.println("NETWORK_INDICATOR="+TestHarness.NETWORK_INDICATOR);
 
         if (args.length >= 9) {
             TestHarness.SERVICE_INIDCATOR = Integer.parseInt(args[8]);
         }
+        System.out.println("SERVICE_INIDCATOR="+TestHarness.SERVICE_INIDCATOR);
 
         if (args.length >= 10) {
             TestHarness.SSN = Integer.parseInt(args[9]);
         }
+        System.out.println("SSN="+TestHarness.SSN);
 
         if (args.length >= 11) {
             TestHarness.ROUTING_CONTEXT = Integer.parseInt(args[10]);
         }
+        System.out.println("ROUTING_CONTEXT="+TestHarness.ROUTING_CONTEXT);
+
+        if(args.length >= 12){
+            TestHarness.DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT = Integer.parseInt(args[11]);
+        }
+        System.out.println("DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT="+TestHarness.DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT);
 
         final Server server = new Server();
         try {
