@@ -35,6 +35,7 @@
 		<sctp.version>1.7.0-SNAPSHOT</sctp.version>
 		<commons.version>1.0.0.CR1</commons.version>
 		<dialogic.version>6.7.1</dialogic.version>
+		<netty.version>4.0.33.Final</netty.version>
 	</properties>
 
 	<modules>
