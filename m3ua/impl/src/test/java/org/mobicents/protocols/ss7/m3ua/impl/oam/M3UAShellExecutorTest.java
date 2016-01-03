@@ -23,6 +23,7 @@ package org.mobicents.protocols.ss7.m3ua.impl.oam;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
+import io.netty.buffer.ByteBufAllocator;
 
 import java.util.List;
 import java.util.Map;
@@ -345,6 +346,12 @@ public class M3UAShellExecutorTest {
         public boolean isUp() {
             // TODO Auto-generated method stub
             return false;
+        }
+
+        @Override
+        public ByteBufAllocator getByteBufAllocator() throws Exception {
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 

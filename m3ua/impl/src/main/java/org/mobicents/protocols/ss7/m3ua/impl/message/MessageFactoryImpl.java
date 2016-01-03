@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.message;
 
-import java.nio.ByteBuffer;
+import io.netty.buffer.ByteBuf;
 
 import org.mobicents.protocols.ss7.m3ua.impl.message.aspsm.ASPDownAckImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.message.aspsm.ASPDownImpl;
@@ -54,23 +54,11 @@ import org.mobicents.protocols.ss7.m3ua.message.MessageType;
 /**
  * @author amit bhayani
  * @author kulikov
+ * @author sergey vetyutnev
  */
 public class MessageFactoryImpl implements MessageFactory {
-    // header binary view
-    private byte[] header = new byte[8];
-    // variable length parameters
-    private byte[] params;
-    // current position either in header or in params
-    private int pos = 0;
-    // flag indicating that header is completely read
-    private boolean isHeaderReady = false;
 
-    // the length of message's parameters
-    private int length;
-    // message instance
-    private M3UAMessageImpl message;
-
-    public M3UAMessageImpl createMessage(int messageClass, int messageType) {
+public M3UAMessageImpl createMessage(int messageClass, int messageType) {
         switch (messageClass) {
             case MessageClass.TRANSFER_MESSAGES:
                 switch (messageType) {
@@ -147,105 +135,34 @@ public class MessageFactoryImpl implements MessageFactory {
         return null;
     }
 
-    public M3UAMessageImpl createMessage(ByteBuffer buffer) {
-        // fill header buffer completely before start parsing header
-        if (!isHeaderReady) {
-            // the amount of data possible to read is determined as
-            // minimal remainder either of header buffer or of the input buffer
-            int len = Math.min(header.length - this.pos, buffer.remaining());
-
-            //System.out.println(String.format("len=%d, pos=%d, buffer.remaining=%d", len, this.pos, buffer.remaining()));
-            buffer.get(header, this.pos, len);
-
-            // update cursor postion in the header's buffer
-            this.pos += len;
-
-            // header completed?
-            isHeaderReady = this.pos == header.length;
-
-            if (!isHeaderReady) {
-                // no more data available
-                return null;
-            }
-
-            // obtain message class and type from header
-            int messageClass = header[2] & 0xff;
-            int messageType = header[3] & 0xff;
-
-            // construct new message instance
-            message = this.createMessage(messageClass, messageType);
-
-            // obtain remaining length of the message and prepare buffer
-            length = (((header[4] & 0xff) << 24) | ((header[5] & 0xff) << 16) | ((header[6] & 0xff) << 8) | (header[7] & 0xff)) - 8;
-
-            if (length == 0) {
-                // This is only header message,no body
-                this.pos = 0;
-                this.isHeaderReady = false;
-                return message;
-            }
-            params = new byte[length];
-
-            // finally switch cursor position
-            this.pos = 0;
-        }
-
-        // at this point we must recheck remainder of the input buffer
-        // because possible case when input buffer fits exactly to the header
-        if (!buffer.hasRemaining()) {
-            return null;
-        }
-
-        // again, reading all parameters before parsing
-
-        // compute available or required data
-        int len = Math.min(params.length - this.pos, buffer.remaining());
-        buffer.get(params, this.pos, len);
-
-        // update cursor position
-        this.pos += len;
-
-        // end of message not reached
-        if (this.pos < params.length) {
-            return null;
-        }
-
-        // end of message reached and most probably some data remains in buffer
-        // do not touch remainder of the input buffer, next call to this method
-        // will proceed remainder
-
-        // parsing params of this message
-        message.decode(params);
-
-        // switch factory for receiving new message
-        this.isHeaderReady = false;
-        this.pos = 0;
-
-        // return
-        return message;
-    }
-
-    public M3UAMessageImpl createSctpMessage(byte[] buffer) {
+    public M3UAMessageImpl createMessage(ByteBuf message) {
         int dataLen;
-        // fill header buffer completely before start parsing header
-        if (buffer.length < 8) {
+        if (message.readableBytes() < 8) {
             return null;
         }
 
         // obtain message class and type from header
-        int messageClass = buffer[2] & 0xff;
-        int messageType = buffer[3] & 0xff;
+        message.markReaderIndex();
+        message.skipBytes(2);
+        int messageClass = message.readUnsignedByte();
+        int messageType = message.readUnsignedByte();
+
+        // obtain remaining length of the message and prepare buffer
+        dataLen = message.readInt() - 8;
+        if (message.readableBytes() < dataLen) {
+            message.resetReaderIndex();
+            return null;
+        }
 
         // construct new message instance
         M3UAMessageImpl messageTemp = this.createMessage(messageClass, messageType);
 
-        // obtain remaining length of the message and prepare buffer
-        dataLen = (((buffer[4] & 0xff) << 24) | ((buffer[5] & 0xff) << 16) | ((buffer[6] & 0xff) << 8) | (buffer[7] & 0xff)) - 8;
+        // parsing params of this message
+        message.markWriterIndex();
+        message.writerIndex(message.readerIndex() + dataLen);
+        messageTemp.decode(message);
+        message.resetWriterIndex();
 
-        if (buffer.length >= (dataLen - 8)) {
-            // parsing params of this message
-            messageTemp.decode(buffer, 8);
-        }
         return messageTemp;
     }
 }
