@@ -132,9 +132,9 @@ public class MAPServicePdpContextActivationImpl extends MAPServiceBaseImpl imple
         // BEGIN indication primitive but is not acceptable from a load
         // control point of view, the MAP PM
         // shall ignore this dialogue request. The MAP-user is not informed.
-        if (compType == ComponentType.Invoke && this.mapProviderImpl.isCongested()) {
-            // TODO: we need to care of conjection control
-        }
+//        if (compType == ComponentType.Invoke && this.mapProviderImpl.isCongested()) {
+//            // TODO: we need to care of conjection control
+//        }
 
         MAPDialogPdpContextActivationImpl mapDialogPdpContextActivationImpl = (MAPDialogPdpContextActivationImpl) mapDialog;
 

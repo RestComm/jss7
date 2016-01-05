@@ -168,10 +168,10 @@ public class MAPServiceLsmImpl extends MAPServiceBaseImpl implements MAPServiceL
         // BEGIN indication primitive but is not acceptable from a load
         // control point of view, the MAP PM
         // shall ignore this dialogue request. The MAP-user is not informed.
-        if (compType == ComponentType.Invoke && this.mapProviderImpl.isCongested()) {
-            // we reject all lms services when congestion
-            return;
-        }
+//        if (compType == ComponentType.Invoke && this.mapProviderImpl.isCongested()) {
+//            // we reject all lms services when congestion
+//            return;
+//        }
 
         MAPDialogLsmImpl mAPDialogLsmImpl = (MAPDialogLsmImpl) mapDialog;
 

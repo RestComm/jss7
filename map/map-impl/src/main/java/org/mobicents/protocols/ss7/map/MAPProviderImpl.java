@@ -142,10 +142,10 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
     protected transient FastMap<Long, MAPDialogImpl> dialogs = new FastMap<Long, MAPDialogImpl>().shared();
 
-    /**
-     * Congestion sources name list. Congestion is where this collection is not empty
-     */
-    protected transient FastMap<String, String> congSources = new FastMap<String, String>();
+//    /**
+//     * Congestion sources name list. Congestion is where this collection is not empty
+//     */
+//    protected transient FastMap<String, String> congSources = new FastMap<String, String>();
 
     private transient TCAPProvider tcapProvider = null;
 
@@ -265,24 +265,24 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
         //}
     }
 
-    public void onCongestionFinish(String congName) {
-        synchronized (this.congSources) {
-            this.congSources.put(congName, congName);
-        }
-    }
-
-    public void onCongestionStart(String congName) {
-        synchronized (this.congSources) {
-            this.congSources.remove(congName);
-        }
-    }
-
-    public boolean isCongested() {
-        if (this.congSources.size() > 0)
-            return true;
-        else
-            return false;
-    }
+//    public void onCongestionFinish(String congName) {
+//        synchronized (this.congSources) {
+//            this.congSources.put(congName, congName);
+//        }
+//    }
+//
+//    public void onCongestionStart(String congName) {
+//        synchronized (this.congSources) {
+//            this.congSources.remove(congName);
+//        }
+//    }
+//
+//    public boolean isCongested() {
+//        if (this.congSources.size() > 0)
+//            return true;
+//        else
+//            return false;
+//    }
 
     public void onTCBegin(TCBeginIndication tcBeginIndication) {
 

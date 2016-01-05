@@ -23,44 +23,28 @@
 package org.mobicents.ss7.congestion;
 
 /**
- * The user who is interested in monitoring the underlying source should implement this interface.
+ * The Congestion Ticket interface contains info for the source of congestion and the congestion level
  *
- * @author amit bhayani
+ * @author sergey vetyutnev
  *
  */
-public interface CongestionMonitor {
+public interface CongestionTicket {
 
     /**
-     * The user should call this method periodically to monitor underlying resource
-     */
-    void monitor();
-
-    /**
-     * Add {@link CongestionListener}
-     *
-     * @param listener
-     */
-    void addCongestionListener(CongestionListener listener);
-
-    /**
-     * Remove {@link CongestionListener}
-     *
-     * @param listener
-     */
-    void removeCongestionListener(CongestionListener listener);
-
-    /**
-     * Get the name of underlying source
-     *
-     * @return
+     * @return the name of the source of the congestion
      */
     String getSource();
 
     /**
-     * Return the list of the actual congestion tickets or null if no
-     * 
-     * @return
+     * @return the level of the congestion. 0 means no congestion, 3 means max congestion level. Level 1 is warning level
+     *         without of message processing affect, Level 2 will prevent from new dialog creating, Level 3 will prevent from
+     *         any message processing.
      */
-    CongestionTicket[] getCongestionTicketsList();
+    int getLevel();
+
+    /**
+     * @return the attribute for the ticket (like networkID, dpc values, etc)
+     */
+    Object getAttribute(String key);
 
 }

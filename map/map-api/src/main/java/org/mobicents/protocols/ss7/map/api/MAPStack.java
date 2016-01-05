@@ -46,19 +46,19 @@ public interface MAPStack {
 
     TCAPStack getTCAPStack();
 
-    /**
-     * As soon as congestion starts in the underlying source, it calls this method to notify about it. Notification is only
-     * one-time till the congestion abates in which case {@link CongestionListener#onCongestionFinish(String)} is called
-     *
-     * @param source The underlying source which is facing congestion
-     */
-    void onCongestionStart(String source);
-
-    /**
-     * As soon as congestion abates in the underlying source, it calls this method to notify about it. Notification is only
-     * one-time till the congestion starts agaain in which case {@link CongestionListener#onCongestionStart(String)} is called
-     *
-     * @param source The underlying source
-     */
-    void onCongestionFinish(String source);
+//    /**
+//     * As soon as congestion starts in the underlying source, it calls this method to notify about it. Notification is only
+//     * one-time till the congestion abates in which case {@link CongestionListener#onCongestionFinish(String)} is called
+//     *
+//     * @param source The underlying source which is facing congestion
+//     */
+//    void onCongestionStart(String source);
+//
+//    /**
+//     * As soon as congestion abates in the underlying source, it calls this method to notify about it. Notification is only
+//     * one-time till the congestion starts agaain in which case {@link CongestionListener#onCongestionStart(String)} is called
+//     *
+//     * @param source The underlying source
+//     */
+//    void onCongestionFinish(String source);
 }
