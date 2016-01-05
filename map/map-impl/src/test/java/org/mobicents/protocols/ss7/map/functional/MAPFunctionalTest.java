@@ -1666,7 +1666,7 @@ public class MAPFunctionalTest extends SccpHarness {
                 assertTrue(problem.getReturnErrorProblemType() == null);
                 assertTrue(problem.getReturnResultProblemType() == null);
                 assertFalse(isLocalOriginated);
-                assertEquals((long) invokeId, 1);
+                assertEquals((long) invokeId, 0);
             }
 
         };
@@ -2387,17 +2387,17 @@ public class MAPFunctionalTest extends SccpHarness {
                     case 1:
                         assertEquals(problem.getReturnResultProblemType(), ReturnResultProblemType.MistypedParameter);
                         assertTrue(isLocalOriginated);
-                        assertEquals((long) invokeId, 1L);
+                        assertEquals((long) invokeId, 0L);
                         break;
                     case 2:
                         assertEquals(problem.getReturnErrorProblemType(), ReturnErrorProblemType.MistypedParameter);
                         assertTrue(isLocalOriginated);
-                        assertEquals((long) invokeId, 2L);
+                        assertEquals((long) invokeId, 1L);
                         break;
                     case 3:
                         assertEquals(problem.getReturnErrorProblemType(), ReturnErrorProblemType.UnrecognizedError);
                         assertTrue(isLocalOriginated);
-                        assertEquals((long) invokeId, 3L);
+                        assertEquals((long) invokeId, 2L);
                         break;
                 }
 
