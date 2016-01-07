@@ -94,3 +94,10 @@ docs/sources-*/src
 /u111_simulator2.xml
 /uu_simulator2.xml
 /win_simulator2.xml
+/MAPFunctionalTestSccpStack1_management2.xml
+/MAPFunctionalTestSccpStack1_sccpresource2.xml
+/MAPFunctionalTestSccpStack1_sccprouter2.xml
+/MAPFunctionalTestSccpStack2_management2.xml
+/MAPFunctionalTestSccpStack2_sccpresource2.xml
+/MAPFunctionalTestSccpStack2_sccprouter2.xml
+/Test_management.xml

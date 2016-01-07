@@ -22,16 +22,12 @@
 
 package org.mobicents.ss7.congestion;
 
-import org.apache.log4j.Logger;
-
 /**
  * @author amit bhayani
  * @author sergey vetyutnev
  *
  */
 public class MemoryCongestionMonitor extends BaseCongestionMonitor {
-    private static final Logger logger = Logger.getLogger(MemoryCongestionMonitor.class);
-
     private static final String SOURCE = "MEMORY";
 
     private double maxMemory;
@@ -52,7 +48,7 @@ public class MemoryCongestionMonitor extends BaseCongestionMonitor {
     public void setBackToNormalMemoryThreshold1(double backToNormalMemoryThreshold1) {
         this.backToNormalMemoryThreshold[0] = backToNormalMemoryThreshold1;
         if (logger.isInfoEnabled()) {
-            logger.info("Back To Normal Memory threshold 1 set to " + backToNormalMemoryThreshold1 + "%");
+            logger.info("MemoryCongestionMonitor: Back To Normal Memory threshold 1 set to " + backToNormalMemoryThreshold1 + "%");
         }
     }
 
@@ -62,7 +58,7 @@ public class MemoryCongestionMonitor extends BaseCongestionMonitor {
     public void setBackToNormalMemoryThreshold2(double backToNormalMemoryThreshold2) {
         this.backToNormalMemoryThreshold[1] = backToNormalMemoryThreshold2;
         if (logger.isInfoEnabled()) {
-            logger.info("Back To Normal Memory threshold 2 set to " + backToNormalMemoryThreshold2 + "%");
+            logger.info("MemoryCongestionMonitor: Back To Normal Memory threshold 2 set to " + backToNormalMemoryThreshold2 + "%");
         }
     }
 
@@ -72,7 +68,7 @@ public class MemoryCongestionMonitor extends BaseCongestionMonitor {
     public void setBackToNormalMemoryThreshold3(double backToNormalMemoryThreshold3) {
         this.backToNormalMemoryThreshold[2] = backToNormalMemoryThreshold3;
         if (logger.isInfoEnabled()) {
-            logger.info("Back To Normal Memory threshold 3 set to " + backToNormalMemoryThreshold3 + "%");
+            logger.info("MemoryCongestionMonitor: Back To Normal Memory threshold 3 set to " + backToNormalMemoryThreshold3 + "%");
         }
     }
 
@@ -103,7 +99,7 @@ public class MemoryCongestionMonitor extends BaseCongestionMonitor {
     public void setMemoryThreshold1(double memoryThreshold1) {
         this.memoryThreshold[0] = memoryThreshold1;
         if (logger.isInfoEnabled()) {
-            logger.info("Memory threshold 1 set to " + memoryThreshold1 + "%");
+            logger.info("MemoryCongestionMonitor: Memory threshold 1 set to " + memoryThreshold1 + "%");
         }
     }
 
@@ -113,7 +109,7 @@ public class MemoryCongestionMonitor extends BaseCongestionMonitor {
     public void setMemoryThreshold2(double memoryThreshold2) {
         this.memoryThreshold[1] = memoryThreshold2;
         if (logger.isInfoEnabled()) {
-            logger.info("Memory threshold 2 set to " + memoryThreshold2 + "%");
+            logger.info("MemoryCongestionMonitor: Memory threshold 2 set to " + memoryThreshold2 + "%");
         }
     }
 
@@ -123,7 +119,7 @@ public class MemoryCongestionMonitor extends BaseCongestionMonitor {
     public void setMemoryThreshold3(double memoryThreshold3) {
         this.memoryThreshold[2] = memoryThreshold3;
         if (logger.isInfoEnabled()) {
-            logger.info("Memory threshold 3 set to " + memoryThreshold3 + "%");
+            logger.info("MemoryCongestionMonitor: Memory threshold 3 set to " + memoryThreshold3 + "%");
         }
     }
 
@@ -164,7 +160,7 @@ public class MemoryCongestionMonitor extends BaseCongestionMonitor {
 
         this.percentageOfMemoryUsed = (((double) 100) - ((totalFreeMemory / maxMemory) * ((double) 100)));
 
-        super.applyNewValue(memoryAlarmLevel, percentageOfMemoryUsed, memoryThreshold, backToNormalMemoryThreshold);
+        super.applyNewValue(memoryAlarmLevel, percentageOfMemoryUsed, memoryThreshold, backToNormalMemoryThreshold, true);
     }
 
     protected CongestionTicketImpl generateTicket() {

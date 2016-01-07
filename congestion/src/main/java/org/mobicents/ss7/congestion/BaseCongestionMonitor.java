@@ -22,6 +22,8 @@
 
 package org.mobicents.ss7.congestion;
 
+import org.apache.log4j.Logger;
+
 import javolution.util.FastList;
 
 /**
@@ -30,6 +32,7 @@ import javolution.util.FastList;
  *
  */
 public abstract class BaseCongestionMonitor implements CongestionMonitor {
+    protected static final Logger logger = Logger.getLogger(BaseCongestionMonitor.class);
 
     private final FastList<CongestionListener> listeners = new FastList<CongestionListener>();
 
@@ -64,15 +67,20 @@ public abstract class BaseCongestionMonitor implements CongestionMonitor {
 
     protected abstract CongestionTicketImpl generateTicket();
 
-    protected void applyNewValue(int currentAlarmLevel, double newValue, double[] alarmThreshold, double[] clearThreshold) {
+    protected void applyNewValue(int currentAlarmLevel, double newValue, double[] alarmThreshold, double[] clearThreshold,
+            boolean reverse) {
+        int sign = 1;
+        if (!reverse)
+            sign = -1;
+
         int newAlarmLevel = currentAlarmLevel;
         for (int i1 = currentAlarmLevel - 1; i1 >= 0; i1--) {
-            if (newValue <= clearThreshold[i1]) {
+            if (newValue * sign <= clearThreshold[i1] * sign) {
                 newAlarmLevel = i1;
             }
         }
         for (int i1 = currentAlarmLevel; i1 < 3; i1++) {
-            if (newValue >= alarmThreshold[i1]) {
+            if (newValue * sign >= alarmThreshold[i1] * sign) {
                 newAlarmLevel = i1 + 1;
             }
         }
@@ -81,6 +89,13 @@ public abstract class BaseCongestionMonitor implements CongestionMonitor {
             this.setAlarmLevel(newAlarmLevel);
 
         if (newAlarmLevel < currentAlarmLevel) {
+            String msg = "CongestionMonitor-" + this.getSource() + ": congestion increase up to level " + newAlarmLevel
+                    + ", couter value=" + newValue;
+            if (newAlarmLevel == 3)
+                logger.error(msg);
+            else
+                logger.warn(msg);
+
             // Lets notify the listeners
             CongestionTicketImpl ticket = generateTicket();
             for (FastList.Node<CongestionListener> n = listeners.head(), end = listeners.tail(); (n = n.getNext()) != end;) {
@@ -89,6 +104,13 @@ public abstract class BaseCongestionMonitor implements CongestionMonitor {
             }
         }
         if (newAlarmLevel > currentAlarmLevel) {
+            String msg = "CongestionMonitor-" + this.getSource() + ": congestion decrease down to level " + newAlarmLevel
+                    + ", couter value=" + newValue;
+            if (currentAlarmLevel == 3)
+                logger.error(msg);
+            else
+                logger.warn(msg);
+
             // Lets notify the listeners
             CongestionTicketImpl ticket = generateTicket();
             for (FastList.Node<CongestionListener> n = listeners.head(), end = listeners.tail(); (n = n.getNext()) != end;) {

@@ -121,7 +121,7 @@ public class CongTest {
 
         @Override
         public void monitor() {
-            super.applyNewValue(alarmLevel, testValue, alarmThreshold, backToNormalMemoryThreshold);
+            super.applyNewValue(alarmLevel, testValue, alarmThreshold, backToNormalMemoryThreshold, true);
         }
 
         @Override
