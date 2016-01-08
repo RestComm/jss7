@@ -508,5 +508,19 @@
 				<updatePolicy>never</updatePolicy>
 			</snapshots>
 		</repository>
+		<!-- for com.sun.jdmk.jmxtools jar -->
+		<repository>
+			<id>datanucleus</id>
+			<name>DataNucleus Releases</name>
+			<url>http://www.datanucleus.org/downloads/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
 	</repositories>
 </project>
