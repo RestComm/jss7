@@ -25,6 +25,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
+import io.netty.buffer.ByteBufAllocator;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -83,7 +84,7 @@ public class IPSPClientFSMTest {
     private MessageFactoryImpl messageFactory = new MessageFactoryImpl();
     private M3UAManagementImpl clientM3UAMgmt = null;
     private Mtp3UserPartListenerimpl mtp3UserPartListener = null;
-    private TransportManagement transportManagement = null;
+    private NettyTransportManagement transportManagement = null;
 
     private Semaphore semaphore = null;
 
@@ -101,7 +102,7 @@ public class IPSPClientFSMTest {
     @BeforeMethod
     public void setUp() throws Exception {
         semaphore = new Semaphore(0);
-        this.transportManagement = new TransportManagement();
+        this.transportManagement = new NettyTransportManagement();
         this.clientM3UAMgmt = new M3UAManagementImpl("IPSPClientFSMTest", null);
         this.clientM3UAMgmt.setTransportManagement(this.transportManagement);
         this.mtp3UserPartListener = new Mtp3UserPartListenerimpl();
@@ -672,7 +673,7 @@ public class IPSPClientFSMTest {
 
         @Override
         public void send(PayloadData payloadData) throws Exception {
-            M3UAMessage m3uaMessage = messageFactory.createSctpMessage(payloadData.getData());
+            M3UAMessage m3uaMessage = messageFactory.createMessage(payloadData.getByteBuf());
             this.messageRxFromUserPart.add(m3uaMessage);
         }
 
@@ -741,9 +742,21 @@ public class IPSPClientFSMTest {
             return false;
         }
 
+        @Override
+        public ByteBufAllocator getByteBufAllocator() throws Exception {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public int getCongestionLevel() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
     }
 
-    class TransportManagement implements Management {
+    class NettyTransportManagement implements Management {
 
         private FastMap<String, Association> associations = new FastMap<String, Association>();
 

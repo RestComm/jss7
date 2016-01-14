@@ -28,7 +28,7 @@ import javolution.util.FastList;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.api.Management;
-import org.mobicents.protocols.sctp.ManagementImpl;
+import org.mobicents.protocols.sctp.netty.NettySctpManagementImpl;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
@@ -102,7 +102,7 @@ public class GatewayTest {
         client = new Client();
         server = new Server();
 
-        this.sctpManagement = new ManagementImpl("GatewayTest");
+        this.sctpManagement = new NettySctpManagementImpl("GatewayTest");
         this.sctpManagement.setPersistDir(Util.getTmpTestDir());
         this.sctpManagement.setSingleThread(true);
         this.sctpManagement.start();

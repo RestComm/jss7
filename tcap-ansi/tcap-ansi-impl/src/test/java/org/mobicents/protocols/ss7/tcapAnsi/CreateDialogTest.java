@@ -158,6 +158,12 @@ public class CreateDialogTest {
             // TODO Auto-generated method stub
 
         }
+
+        @Override
+        public void coordRequest(int ssn) {
+            // TODO Auto-generated method stub
+            
+        }
     }
 
 }

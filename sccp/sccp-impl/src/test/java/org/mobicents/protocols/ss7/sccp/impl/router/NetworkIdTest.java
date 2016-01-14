@@ -37,6 +37,7 @@ import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
 import org.mobicents.protocols.ss7.mtp.RoutingLabelFormat;
 import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
+import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.sccp.OriginationType;
 import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
 import org.mobicents.protocols.ss7.sccp.RuleType;
@@ -309,13 +310,7 @@ public class NetworkIdTest implements SccpListener {
     }
 
     @Override
-    public void onCoordRequest(int dpc, int ssn, int multiplicityIndicator) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void onCoordResponse(int dpc, int ssn, int multiplicityIndicator) {
+    public void onCoordResponse(int ssn, int multiplicityIndicator) {
         // TODO Auto-generated method stub
         
     }
@@ -327,7 +322,14 @@ public class NetworkIdTest implements SccpListener {
     }
 
     @Override
-    public void onPcState(int dpc, SignallingPointStatus status, int restrictedImportanceLevel, RemoteSccpStatus remoteSccpStatus) {
+    public void onPcState(int dpc, SignallingPointStatus status, Integer restrictedImportanceLevel,
+            RemoteSccpStatus remoteSccpStatus) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onNetworkIdState(int networkId, NetworkIdState networkIdState) {
         // TODO Auto-generated method stub
         
     }

@@ -42,6 +42,8 @@
 		<pathelement location="${assemble.dir}/log4j.jar" />
 		<pathelement location="${assemble.dir}/javolution.jar" />
 		<pathelement location="${assemble.dir}/concurrent.jar" />
+		<pathelement location="${assemble.dir}/guava.jar" />
+		<pathelement location="${assemble.dir}/netty-all.jar" />
 		<pathelement location="src/main/resources" />
 		
 	</path>
@@ -80,6 +82,25 @@
 		<delete file="log4j-server.log" />
 		<java classname="${packageprefix}.Server" fork="true" maxmemory="2048m" classpathref="project.class.path" dir="server">
 			<jvmarg value="-Dlog.file.name=log4j-server.log" />
+			<jvmarg value="-Xms2048m"/>
+			<jvmarg value="-Xmx2048m"/>
+			<jvmarg value="-Xmn128m"/>
+			<jvmarg value="-XX:PermSize=256m"/>
+			<jvmarg value="-XX:MaxPermSize=256m"/>
+			<jvmarg value="-XX:+HeapDumpOnOutOfMemoryError"/>
+			<!--
+			<jvmarg value="-XX:CMSInitiatingOccupancyFraction=80"/>
+			<jvmarg value="-XX:+UseConcMarkSweepGC"/>
+			<jvmarg value="-XX:+CMSIncrementalMode"/>
+			<jvmarg value="-XX:-CMSIncrementalPacing"/>
+			<jvmarg value="-XX:CMSIncrementalDutyCycleMin=100"/>
+			<jvmarg value="-XX:CMSIncrementalDutyCycle=100"/>
+			<jvmarg value="-Dsun.rmi.dgc.client.gcInterval=3600000"/>
+			<jvmarg value="-Dorg.jboss.resolver.warning=true"/>
+			<jvmarg value="-Djava.net.preferIPv4Stack=true"/>
+			<jvmarg value="-Dio.netty.leakDetection.level=advanced"/>
+			-->
+			<jvmarg value="-XX:+UseParallelOldGC"/>
 			<!--
 			<jvmarg value="-XX:+PrintGCDetails" />
 			<jvmarg value="-XX:+PrintGCTimeStamps" />
@@ -94,7 +115,8 @@
 			<arg value="2" /> <!-- NI -->
 			<arg value="3" /> <!-- SI -->
 			<arg value="8" /> <!-- SSN -->
-			<arg value="100" /> <!-- RC -->			
+			<arg value="100" /> <!-- RC -->	
+			<arg value="16" /> <!-- deliveryTransferMessageThreadCount -->
 		</java>
 	</target>
 	<target name="client" description="run the Load Test Client">
@@ -102,9 +124,28 @@
 		<delete dir="client" />
 		<mkdir dir="client" />
 		<java classname="${packageprefix}.Client" fork="true" maxmemory="2048m" classpathref="project.class.path" dir="client">
-			<jvmarg value="-Dlog.file.name=log4j-client.log" />
-			<arg value="1000000" /> <!-- numbe of Dialogs -->
-			<arg value="2000" /> <!-- Concurrent Dialogs -->
+			<jvmarg value="-Dlog.file.name=log4j-client.log"/>
+			<jvmarg value="-Xms2048m"/>
+			<jvmarg value="-Xmx2048m"/>
+			<jvmarg value="-Xmn128m"/>
+			<jvmarg value="-XX:PermSize=256m"/>
+			<jvmarg value="-XX:MaxPermSize=256m"/>
+			<jvmarg value="-XX:+HeapDumpOnOutOfMemoryError"/>
+			<!--
+			<jvmarg value="-XX:CMSInitiatingOccupancyFraction=80"/>
+			<jvmarg value="-XX:+UseConcMarkSweepGC"/>
+			<jvmarg value="-XX:+CMSIncrementalMode"/>
+			<jvmarg value="-XX:-CMSIncrementalPacing"/>
+			<jvmarg value="-XX:CMSIncrementalDutyCycleMin=100"/>
+			<jvmarg value="-XX:CMSIncrementalDutyCycle=100"/>
+			<jvmarg value="-Dsun.rmi.dgc.client.gcInterval=3600000"/>
+			<jvmarg value="-Dorg.jboss.resolver.warning=true"/>
+			<jvmarg value="-Djava.net.preferIPv4Stack=true"/>
+			<jvmarg value="-Dio.netty.leakDetection.level=advanced"/>
+			-->
+			<jvmarg value="-XX:+UseParallelOldGC"/>
+			<arg value="5000000" /> <!-- numbe of Dialogs -->
+			<arg value="50000" /> <!-- Concurrent Dialogs -->
 			<arg value="sctp" /> <!-- socket type -->
 			<arg value="127.0.0.1" /> <!-- Client IP -->
 			<arg value="2345" /> <!-- Client Port -->
@@ -116,8 +157,10 @@
 			<arg value="3" /> <!-- SI -->
 			<arg value="8" /> <!-- SSN -->
 			<arg value="100" /> <!-- RC -->
+			<arg value="16" /> <!-- deliveryTransferMessageThreadCount -->
 		</java>
 	</target>
+
 	<!-- -->
 	<target name="clean" description="clean the logs">
 		<delete dir="server" />

@@ -23,6 +23,7 @@ package org.mobicents.protocols.ss7.sccp;
 
 /**
  * @author Amit Bhayani
+ * @author sergey vetyutnev
  *
  */
 public interface RemoteSignalingPointCode {
@@ -36,5 +37,7 @@ public interface RemoteSignalingPointCode {
     boolean isRemoteSpcProhibited();
 
     boolean isRemoteSccpProhibited();
+
+    int getCurrentRestrictionLevel();
 
 }

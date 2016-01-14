@@ -27,6 +27,10 @@
 			<groupId>org.mobicents.protocols.ss7.scheduler</groupId>
 			<artifactId>scheduler</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.congestion</groupId>
+			<artifactId>congestion</artifactId>
+		</dependency>
 		<!-- non mobicents -->
 		<dependency>
 			<groupId>log4j</groupId>
@@ -46,6 +50,14 @@
 			<groupId>javolution</groupId>
 			<artifactId>javolution</artifactId>
 		</dependency>
+
+		<!-- netty -->
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>${netty.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
 			<artifactId>mtp-api</artifactId>

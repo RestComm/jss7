@@ -159,10 +159,10 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
         // BEGIN indication primitive but is not acceptable from a load
         // control point of view, the MAP PM
         // shall ignore this dialogue request. The MAP-user is not informed.
-        if (compType == ComponentType.Invoke && this.mapProviderImpl.isCongested()) {
-            // we reject all supplementary services when congestion
-            return;
-        }
+//        if (compType == ComponentType.Invoke && this.mapProviderImpl.isCongested()) {
+//            // we reject all supplementary services when congestion
+//            return;
+//        }
 
         MAPDialogSupplementaryImpl mapDialogSupplementaryImpl = (MAPDialogSupplementaryImpl) mapDialog;
 

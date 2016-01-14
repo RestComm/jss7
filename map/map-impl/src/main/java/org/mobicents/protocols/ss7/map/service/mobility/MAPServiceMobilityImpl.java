@@ -320,9 +320,9 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         // BEGIN indication primitive but is not acceptable from a load
         // control point of view, the MAP PM
         // shall ignore this dialogue request. The MAP-user is not informed.
-        if (compType == ComponentType.Invoke && this.mapProviderImpl.isCongested()) {
-            // we agree mobility services when congestion
-        }
+//        if (compType == ComponentType.Invoke && this.mapProviderImpl.isCongested()) {
+//            // we agree mobility services when congestion
+//        }
 
         MAPDialogMobilityImpl mapDialogMobilityImpl = (MAPDialogMobilityImpl) mapDialog;
 

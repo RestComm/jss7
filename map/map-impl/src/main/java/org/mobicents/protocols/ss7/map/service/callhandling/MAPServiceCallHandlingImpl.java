@@ -149,10 +149,10 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
     public void processComponent(ComponentType compType, OperationCode oc, Parameter parameter, MAPDialog mapDialog,
             Long invokeId, Long linkedId, Invoke linkedInvoke) throws MAPParsingComponentException {
 
-        if (compType == ComponentType.Invoke && this.mapProviderImpl.isCongested()) {
-            // we reject all supplementary services when congestion
-            return;
-        }
+//        if (compType == ComponentType.Invoke && this.mapProviderImpl.isCongested()) {
+//            // we reject all supplementary services when congestion
+//            return;
+//        }
 
         MAPDialogCallHandlingImpl mapDialogImpl = (MAPDialogCallHandlingImpl) mapDialog;
 

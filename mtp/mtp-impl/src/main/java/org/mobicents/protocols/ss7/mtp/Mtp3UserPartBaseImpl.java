@@ -22,9 +22,13 @@
 
 package org.mobicents.protocols.ss7.mtp;
 
+import io.netty.util.concurrent.DefaultThreadFactory;
+
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
@@ -55,8 +59,9 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
     // a thread pool for delivering Mtp3TransferMessage messages
     private ExecutorService[] msgDeliveryExecutors;
     // a thread for delivering PAUSE, RESUME and STATUS messages
-    private ExecutorService msgDeliveryExecutorSystem;
+    private ScheduledExecutorService msgDeliveryExecutorSystem;
     private int[] slsTable = null;
+    private ExecutorCongestionMonitor executorCongestionMonitor = null;
 
     private RoutingLabelFormat routingLabelFormat = RoutingLabelFormat.ITU;
 
@@ -173,11 +178,17 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 
         this.msgDeliveryExecutors = new ExecutorService[this.deliveryTransferMessageThreadCount];
         for (int i = 0; i < this.deliveryTransferMessageThreadCount; i++) {
-            this.msgDeliveryExecutors[i] = Executors.newFixedThreadPool(1);
+            this.msgDeliveryExecutors[i] = Executors.newFixedThreadPool(1, new DefaultThreadFactory("Mtp3-DeliveryExecutor-"
+                    + i));
         }
-        this.msgDeliveryExecutorSystem = Executors.newFixedThreadPool(1);
+        this.msgDeliveryExecutorSystem = Executors.newSingleThreadScheduledExecutor(new DefaultThreadFactory(
+                "Mtp3-DeliveryExecutorSystem"));
+
+        this.executorCongestionMonitor = new ExecutorCongestionMonitor(productName, msgDeliveryExecutors);
 
         this.isStarted = true;
+
+        this.startThreadMonitoring();
     }
 
     public void stop() throws Exception {
@@ -191,6 +202,16 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
             es.shutdown();
         }
         this.msgDeliveryExecutorSystem.shutdown();
+        this.executorCongestionMonitor = null;
+    }
+
+    private void startThreadMonitoring() {
+        ExecutorCongestionMonitor monitor = this.executorCongestionMonitor;
+        if (isStarted && monitor != null) {
+            monitor.monitor();
+            ExecutorCongestionMonitorHandler handler = new ExecutorCongestionMonitorHandler();
+            this.msgDeliveryExecutorSystem.schedule(handler, 1000, TimeUnit.MILLISECONDS);
+        }
     }
 
     /**
@@ -303,6 +324,13 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
                 logger.error(String.format(
                         "Received Mtp3Primitive=%s but Mtp3UserPart is not started. Message will be dropped", msg));
             }
+        }
+    }
+
+    private class ExecutorCongestionMonitorHandler implements Runnable {
+        @Override
+        public void run() {
+            startThreadMonitoring();
         }
     }
 }

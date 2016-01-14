@@ -304,8 +304,8 @@ public class Mtp3UserPartImpl extends Mtp3UserPartBaseImpl {
         this.sendResumeMessageToLocalUser(msg);
     }
 
-    public void sendStatusMessageToLocalUser(int affectedDpc, Mtp3StatusCause cause, int congestionLevel) {
-        Mtp3StatusPrimitive msg = new Mtp3StatusPrimitive(affectedDpc, cause, congestionLevel);
+    public void sendStatusMessageToLocalUser(int affectedDpc, Mtp3StatusCause cause, int congestionLevel, int userPartIdentity) {
+        Mtp3StatusPrimitive msg = new Mtp3StatusPrimitive(affectedDpc, cause, congestionLevel, userPartIdentity);
         this.sendStatusMessageToLocalUser(msg);
     }
 

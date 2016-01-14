@@ -157,9 +157,9 @@ public class MAPServiceOamImpl extends MAPServiceBaseImpl implements MAPServiceO
         // BEGIN indication primitive but is not acceptable from a load
         // control point of view, the MAP PM
         // shall ignore this dialogue request. The MAP-user is not informed.
-        if (compType == ComponentType.Invoke && this.mapProviderImpl.isCongested()) {
-            // TODO: we need to care of it
-        }
+//        if (compType == ComponentType.Invoke && this.mapProviderImpl.isCongested()) {
+//            // TODO: we need to care of it
+//        }
 
         MAPDialogOamImpl mapDialogOamImpl = (MAPDialogOamImpl) mapDialog;
 

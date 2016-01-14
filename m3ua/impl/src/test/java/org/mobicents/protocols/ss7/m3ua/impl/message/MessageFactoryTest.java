@@ -25,9 +25,10 @@ package org.mobicents.protocols.ss7.m3ua.impl.message;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import org.mobicents.protocols.ss7.m3ua.message.MessageType;
 import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
@@ -79,12 +80,9 @@ public class MessageFactoryTest {
                 0x00, 0x00, 0x18, 0x1c, 0x03, 0x03, 0x00, 0x02, 0x09, 0x00, 0x03, 0x05, 0x07, 0x02, 0x42, 0x01, 0x02, 0x42,
                 0x01, 0x05, 0x03, (byte) 0xd5, 0x1c, 0x18, 0x00, 0x00, 0x00, 0x00 };
 
-        ByteBuffer byteBuffer = ByteBuffer.allocate(256);
-        byteBuffer.put(data);
-        byteBuffer.flip();
-        M3UAMessageImpl messageImpl = messageFactory.createMessage(byteBuffer);
+        ByteBuf byteBuf = Unpooled.wrappedBuffer(data);
+        M3UAMessageImpl messageImpl = messageFactory.createMessage(byteBuf);
 
-        // Test with TCP
         assertEquals(MessageType.PAYLOAD, messageImpl.getMessageType());
         PayloadData payloadData = (PayloadData) messageImpl;
         assertEquals(0l, payloadData.getNetworkAppearance().getNetApp());
@@ -98,23 +96,6 @@ public class MessageFactoryTest {
         assertEquals(2, protocolData.getSLS());
         assertEquals(3, protocolData.getNI());
         assertEquals(0, protocolData.getMP());
-
-        // Test with sctp
-        M3UAMessageImpl messageImpl1 = messageFactory.createSctpMessage(data);
-        assertEquals(MessageType.PAYLOAD, messageImpl1.getMessageType());
-        PayloadData payloadData1 = (PayloadData) messageImpl1;
-        assertEquals(0l, payloadData1.getNetworkAppearance().getNetApp());
-        assertEquals(1, payloadData1.getRoutingContext().getRoutingContexts().length);
-        assertEquals(25l, payloadData1.getRoutingContext().getRoutingContexts()[0]);
-        ProtocolData protocolData1 = payloadData1.getData();
-        assertNotNull(protocolData1);
-        assertEquals(6045, protocolData1.getOpc());
-        assertEquals(6172, protocolData1.getDpc());
-        assertEquals(3, protocolData1.getSI());
-        assertEquals(2, protocolData1.getSLS());
-        assertEquals(3, protocolData1.getNI());
-        assertEquals(0, protocolData1.getMP());
-
     }
 
     @Test
@@ -140,108 +121,8 @@ public class MessageFactoryTest {
                 0x37, 0x07, (byte) 0x91, 0x19, (byte) 0x89, (byte) 0x86, (byte) 0x95, (byte) 0x99, (byte) 0x89, (byte) 0x9f,
                 0x39, 0x08, 0x02, 0x11, 0x20, 0x10, (byte) 0x91, 0x45, 0x51, 0x23 };
 
-        ByteBuffer byteBuffer = ByteBuffer.allocate(8192);
-        byteBuffer.put(data);
-        byteBuffer.flip();
-        M3UAMessageImpl messageImpl = messageFactory.createMessage(byteBuffer);
-
-        // Test with TCP
-        assertEquals(MessageType.PAYLOAD, messageImpl.getMessageType());
-        PayloadData payloadData = (PayloadData) messageImpl;
-        assertNull(payloadData.getNetworkAppearance());
-        assertEquals(1, payloadData.getRoutingContext().getRoutingContexts().length);
-        assertEquals(1l, payloadData.getRoutingContext().getRoutingContexts()[0]);
-        ProtocolData protocolData = payloadData.getData();
-        assertNotNull(protocolData);
-        assertEquals(2, protocolData.getOpc());
-        assertEquals(1, protocolData.getDpc());
-        assertEquals(3, protocolData.getSI());
-        assertEquals(1, protocolData.getSLS());
-        assertEquals(2, protocolData.getNI());
-        assertEquals(0, protocolData.getMP());
-
-        // Test with SCTP
-        messageImpl = messageFactory.createSctpMessage(data);
-
-        assertEquals(MessageType.PAYLOAD, messageImpl.getMessageType());
-        payloadData = (PayloadData) messageImpl;
-        assertNull(payloadData.getNetworkAppearance());
-        assertEquals(1, payloadData.getRoutingContext().getRoutingContexts().length);
-        assertEquals(1l, payloadData.getRoutingContext().getRoutingContexts()[0]);
-        protocolData = payloadData.getData();
-        assertNotNull(protocolData);
-        assertEquals(2, protocolData.getOpc());
-        assertEquals(1, protocolData.getDpc());
-        assertEquals(3, protocolData.getSI());
-        assertEquals(1, protocolData.getSLS());
-        assertEquals(2, protocolData.getNI());
-        assertEquals(0, protocolData.getMP());
-
-    }
-
-    @Test
-    public void test2TCPPartial() {
-
-        // Only header
-        byte[] header = new byte[] { 0x01, 0x00, 0x01, 0x01, 0x00, 0x00, 0x01, 0x08 };
-
-        byte[] bodyStart = new byte[] { 0x00, 0x06, 0x00, 0x08, 0x00, 0x00, 0x00, 0x01, 0x02, 0x10, 0x00, (byte) 0xf8, 0x00,
-                0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x01, 0x03, 0x02, 0x00, 0x01, 0x09, 0x01, 0x03, 0x10, 0x1d, 0x0d, 0x53,
-                0x01, 0x00, (byte) 0x91, 0x00, 0x12, 0x04, 0x19, 0x09, 0x31, (byte) 0x91, 0x39, 0x08, 0x0d, 0x53, 0x02, 0x00,
-                (byte) 0x92, 0x00, 0x12, 0x04, 0x19, 0x09, 0x31, (byte) 0x91, 0x39, 0x09, (byte) 0xc6, 0x62, (byte) 0x81,
-                (byte) 0xc3, 0x48, 0x04, 0x00, 0x08, 0x00, 0x10, 0x6b, 0x1a, 0x28, 0x18, 0x06, 0x07, 0x00, 0x11, (byte) 0x86,
-                0x05, 0x01, 0x01, 0x01, (byte) 0xa0, 0x0d, 0x60, 0x0b, (byte) 0xa1, 0x09, 0x06, 0x07, 0x04, 0x00, 0x00, 0x01,
-                0x00, 0x32, 0x01, 0x6c, (byte) 0x81, (byte) 0x9e, (byte) 0xa1, (byte) 0x81, (byte) 0x9b, 0x02, 0x01, 0x01,
-                0x02, 0x01, 0x00, 0x30, (byte) 0x81, (byte) 0x92, (byte) 0x80, 0x01, 0x0c, (byte) 0x82, 0x09, 0x03, 0x10, 0x13,
-                0x60, (byte) 0x99, (byte) 0x86, 0x00, 0x00, 0x02, (byte) 0x83, 0x08, 0x04, 0x13, 0x19, (byte) 0x89, 0x17,
-                (byte) 0x97, 0x31, 0x72, (byte) 0x85, 0x01, 0x0a, (byte) 0x88, 0x01, 0x01, (byte) 0x8a, 0x05, 0x04, 0x13, 0x19,
-                (byte) 0x89, (byte) 0x86, (byte) 0xbb, 0x04, (byte) 0x80, 0x02, (byte) 0x80, };
-
-        byte[] bodyEndWithOtherMessage = { (byte) 0x90, (byte) 0x9c, 0x01, 0x0c, (byte) 0x9f, 0x32, 0x08, 0x04, 0x64, 0x58,
-                0x05, (byte) 0x94, 0x74, 0x34, (byte) 0xf3, (byte) 0xbf, 0x33, 0x02, (byte) 0x80, 0x00, (byte) 0xbf, 0x34,
-                0x2b, 0x02, 0x01, 0x23, (byte) 0x80, 0x08, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte) 0x81, 0x07,
-                (byte) 0x91, 0x19, (byte) 0x89, (byte) 0x86, (byte) 0x91, 0x01, (byte) 0x82, (byte) 0x82, 0x08, 0x04,
-                (byte) 0x97, 0x19, (byte) 0x89, (byte) 0x86, (byte) 0x91, 0x01, (byte) 0x82, (byte) 0xa3, 0x09, (byte) 0x80,
-                0x07, 0x04, (byte) 0xf4, (byte) 0x86, 0x00, 0x65, 0x18, (byte) 0xd1, (byte) 0xbf, 0x35, 0x03, (byte) 0x83,
-                0x01, 0x11, (byte) 0x9f, 0x36, 0x08, (byte) 0xd2, 0x25, 0x00, 0x00, 0x0d, 0x62, 0x0b, (byte) 0x88, (byte) 0x9f,
-                0x37, 0x07, (byte) 0x91, 0x19, (byte) 0x89, (byte) 0x86, (byte) 0x95, (byte) 0x99, (byte) 0x89, (byte) 0x9f,
-                0x39, 0x08, 0x02, 0x11, 0x20, 0x10, (byte) 0x91, 0x45, 0x51, 0x23, 0x01, 0x00, 0x01, 0x01, 0x00, 0x00, 0x01,
-                0x08, 0x00, 0x06, 0x00, 0x08, 0x00, 0x00, 0x00, 0x01, 0x02, 0x10, 0x00, (byte) 0xf8, 0x00, 0x00, 0x00, 0x02,
-                0x00, 0x00, 0x00, 0x01, 0x03, 0x02, 0x00, 0x01, 0x09, 0x01, 0x03, 0x10, 0x1d, 0x0d, 0x53, 0x01, 0x00,
-                (byte) 0x91, 0x00, 0x12, 0x04, 0x19, 0x09, 0x31, (byte) 0x91, 0x39, 0x08, 0x0d, 0x53, 0x02, 0x00, (byte) 0x92,
-                0x00, 0x12, 0x04, 0x19, 0x09, 0x31, (byte) 0x91, 0x39, 0x09, (byte) 0xc6, 0x62, (byte) 0x81, (byte) 0xc3, 0x48,
-                0x04, 0x00, 0x08, 0x00, 0x10, 0x6b, 0x1a, 0x28, 0x18, 0x06, 0x07, 0x00, 0x11, (byte) 0x86, 0x05, 0x01, 0x01,
-                0x01, (byte) 0xa0, 0x0d, 0x60, 0x0b, (byte) 0xa1, 0x09, 0x06, 0x07, 0x04, 0x00, 0x00, 0x01, 0x00, 0x32, 0x01,
-                0x6c, (byte) 0x81, (byte) 0x9e, (byte) 0xa1, (byte) 0x81, (byte) 0x9b, 0x02, 0x01, 0x01, 0x02, 0x01, 0x00,
-                0x30, (byte) 0x81, (byte) 0x92, (byte) 0x80, 0x01, 0x0c, (byte) 0x82, 0x09, 0x03, 0x10, 0x13, 0x60,
-                (byte) 0x99, (byte) 0x86, 0x00, 0x00, 0x02, (byte) 0x83, 0x08, 0x04, 0x13, 0x19, (byte) 0x89, 0x17,
-                (byte) 0x97, 0x31, 0x72, (byte) 0x85, 0x01, 0x0a, (byte) 0x88, 0x01, 0x01, (byte) 0x8a, 0x05, 0x04, 0x13, 0x19,
-                (byte) 0x89, (byte) 0x86, (byte) 0xbb, 0x04, (byte) 0x80, 0x02, (byte) 0x80, (byte) 0x90, (byte) 0x9c, 0x01,
-                0x0c, (byte) 0x9f, 0x32, 0x08, 0x04, 0x64, 0x58, 0x05, (byte) 0x94, 0x74, 0x34, (byte) 0xf3, (byte) 0xbf, 0x33,
-                0x02, (byte) 0x80, 0x00, (byte) 0xbf, 0x34, 0x2b, 0x02, 0x01, 0x23, (byte) 0x80, 0x08, 0x10, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, (byte) 0x81, 0x07, (byte) 0x91, 0x19, (byte) 0x89, (byte) 0x86, (byte) 0x91, 0x01,
-                (byte) 0x82, (byte) 0x82, 0x08, 0x04, (byte) 0x97, 0x19, (byte) 0x89, (byte) 0x86, (byte) 0x91, 0x01,
-                (byte) 0x82, (byte) 0xa3, 0x09, (byte) 0x80, 0x07, 0x04, (byte) 0xf4, (byte) 0x86, 0x00, 0x65, 0x18,
-                (byte) 0xd1, (byte) 0xbf, 0x35, 0x03, (byte) 0x83, 0x01, 0x11, (byte) 0x9f, 0x36, 0x08, (byte) 0xd2, 0x25,
-                0x00, 0x00, 0x0d, 0x62, 0x0b, (byte) 0x88, (byte) 0x9f, 0x37, 0x07, (byte) 0x91, 0x19, (byte) 0x89,
-                (byte) 0x86, (byte) 0x95, (byte) 0x99, (byte) 0x89, (byte) 0x9f, 0x39, 0x08, 0x02, 0x11, 0x20, 0x10,
-                (byte) 0x91, 0x45, 0x51, 0x23 };
-
-        ByteBuffer byteBuffer = ByteBuffer.wrap(header);
-        M3UAMessageImpl messageImpl = messageFactory.createMessage(byteBuffer);
-
-        assertNull(messageImpl);
-
-        // Now lets read only first half of body and yet we have null
-        // messageImpl
-        byteBuffer = ByteBuffer.wrap(bodyStart);
-        messageImpl = messageFactory.createMessage(byteBuffer);
-        assertNull(messageImpl);
-
-        // Now lets read other half
-        byteBuffer = ByteBuffer.wrap(bodyEndWithOtherMessage);
-        messageImpl = messageFactory.createMessage(byteBuffer);
-        assertNotNull(messageImpl);
+        ByteBuf byteBuf = Unpooled.wrappedBuffer(data);
+        M3UAMessageImpl messageImpl = messageFactory.createMessage(byteBuf);
 
         assertEquals(MessageType.PAYLOAD, messageImpl.getMessageType());
         PayloadData payloadData = (PayloadData) messageImpl;
@@ -249,24 +130,6 @@ public class MessageFactoryTest {
         assertEquals(1, payloadData.getRoutingContext().getRoutingContexts().length);
         assertEquals(1l, payloadData.getRoutingContext().getRoutingContexts()[0]);
         ProtocolData protocolData = payloadData.getData();
-        assertNotNull(protocolData);
-        assertEquals(2, protocolData.getOpc());
-        assertEquals(1, protocolData.getDpc());
-        assertEquals(3, protocolData.getSI());
-        assertEquals(1, protocolData.getSLS());
-        assertEquals(2, protocolData.getNI());
-        assertEquals(0, protocolData.getMP());
-
-        // Now lets re-read same buffer to get 2nd message
-        messageImpl = messageFactory.createMessage(byteBuffer);
-        assertNotNull(messageImpl);
-
-        assertEquals(MessageType.PAYLOAD, messageImpl.getMessageType());
-        payloadData = (PayloadData) messageImpl;
-        assertNull(payloadData.getNetworkAppearance());
-        assertEquals(1, payloadData.getRoutingContext().getRoutingContexts().length);
-        assertEquals(1l, payloadData.getRoutingContext().getRoutingContexts()[0]);
-        protocolData = payloadData.getData();
         assertNotNull(protocolData);
         assertEquals(2, protocolData.getOpc());
         assertEquals(1, protocolData.getDpc());
@@ -299,11 +162,8 @@ public class MessageFactoryTest {
                 (byte) 0x86, (byte) 0x95, (byte) 0x99, (byte) 0x89, (byte) 0x9f, 0x39, 0x08, 0x02, 0x11, 0x20, 0x10,
                 (byte) 0x91, 0x45, 0x51, 0x23 };
 
-        // Test with TCP
-        ByteBuffer byteBuffer = ByteBuffer.allocate(8192);
-        byteBuffer.put(data);
-        byteBuffer.flip();
-        M3UAMessageImpl messageImpl = messageFactory.createMessage(byteBuffer);
+        ByteBuf byteBuf = Unpooled.wrappedBuffer(data);
+        M3UAMessageImpl messageImpl = messageFactory.createMessage(byteBuf);
         assertEquals(MessageType.PAYLOAD, messageImpl.getMessageType());
         PayloadData payloadData = (PayloadData) messageImpl;
         assertNull(payloadData.getNetworkAppearance());
@@ -317,24 +177,6 @@ public class MessageFactoryTest {
         assertEquals(15, protocolData.getSLS());
         assertEquals(2, protocolData.getNI());
         assertEquals(0, protocolData.getMP());
-
-        // Test with SCTP
-        messageImpl = messageFactory.createSctpMessage(data);
-
-        assertEquals(MessageType.PAYLOAD, messageImpl.getMessageType());
-        payloadData = (PayloadData) messageImpl;
-        assertNull(payloadData.getNetworkAppearance());
-        assertEquals(1, payloadData.getRoutingContext().getRoutingContexts().length);
-        assertEquals(1l, payloadData.getRoutingContext().getRoutingContexts()[0]);
-        protocolData = payloadData.getData();
-        assertNotNull(protocolData);
-        assertEquals(2, protocolData.getOpc());
-        assertEquals(1, protocolData.getDpc());
-        assertEquals(3, protocolData.getSI());
-        assertEquals(15, protocolData.getSLS());
-        assertEquals(2, protocolData.getNI());
-        assertEquals(0, protocolData.getMP());
-
     }
 
     // Test receiving for UnitDataService from live trace
@@ -355,25 +197,13 @@ public class MessageFactoryTest {
                 (byte) 0x80, 0x01, 0x02, 0x30, 0x06, (byte) 0x80, 0x01, 0x12, (byte) 0x81, 0x01, 0x01, (byte) 0xA1, 0x06, 0x02,
                 0x01, 0x03, 0x02, 0x01, 0x1F, 0x00, 0x00, 0x00 };
 
-        // Test with TCP
-        ByteBuffer byteBuffer = ByteBuffer.allocate(8192);
-        byteBuffer.put(data);
-        byteBuffer.flip();
-        M3UAMessageImpl messageImpl = messageFactory.createMessage(byteBuffer);
+        ByteBuf byteBuf = Unpooled.wrappedBuffer(data);
+        M3UAMessageImpl messageImpl = messageFactory.createMessage(byteBuf);
 
         assertEquals(MessageType.PAYLOAD, messageImpl.getMessageType());
         PayloadData payloadData = (PayloadData) messageImpl;
         ProtocolData protocolData = payloadData.getData();
         assertNotNull(protocolData);
-
-        // Test with SCTP
-        messageImpl = messageFactory.createSctpMessage(data);
-
-        assertEquals(MessageType.PAYLOAD, messageImpl.getMessageType());
-        payloadData = (PayloadData) messageImpl;
-        protocolData = payloadData.getData();
-        assertNotNull(protocolData);
-
     }
 
 }

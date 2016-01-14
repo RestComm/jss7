@@ -42,9 +42,7 @@ import org.mobicents.protocols.ss7.sccp.impl.mgmt.SccpMgmtMessage;
 import org.mobicents.protocols.ss7.sccp.impl.mgmt.SccpMgmtMessageType;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
@@ -232,7 +230,7 @@ public class MtpPrimitivesTest extends SccpHarness {
 
         // super.data1.add(createStatusPrimitive(getStack2PC(),Mtp3StatusType.RemoteUserUnavailable,Mtp3CongestionType.NULL,Mtp3UnavailabiltyCauseType.CAUSE_UNEQUIPED));
         this.mtp3UserPart1.sendStatusMessageToLocalUser(getStack2PC(),
-                Mtp3StatusCause.UserPartUnavailability_UnequippedRemoteUser, 0);
+                Mtp3StatusCause.UserPartUnavailability_UnequippedRemoteUser, 0, 0);
 
         Thread.currentThread().sleep(500);
         // now s1 thinks s2 is not available
@@ -277,7 +275,7 @@ public class MtpPrimitivesTest extends SccpHarness {
                 cs = Mtp3StatusCause.UserPartUnavailability_UnequippedRemoteUser;
                 break;
         }
-        this.mtp3UserPart1.sendStatusMessageToLocalUser(getStack2PC(), cs, 0);
+        this.mtp3UserPart1.sendStatusMessageToLocalUser(getStack2PC(), cs, 0, 0);
 
         Thread.sleep(15000);
         stack = (SccpStackImplProxy) sccpStack1;

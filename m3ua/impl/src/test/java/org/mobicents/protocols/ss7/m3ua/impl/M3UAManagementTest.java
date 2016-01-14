@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.m3ua.impl;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import io.netty.buffer.ByteBufAllocator;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -66,7 +67,7 @@ import org.testng.annotations.Test;
 public class M3UAManagementTest {
 
     private M3UAManagementImpl m3uaMgmt = null;
-    private TransportManagement transportManagement = null;
+    private NettyTransportManagement transportManagement = null;
     private ParameterFactoryImpl factory = new ParameterFactoryImpl();
 
     /**
@@ -86,7 +87,7 @@ public class M3UAManagementTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        this.transportManagement = new TransportManagement();
+        this.transportManagement = new NettyTransportManagement();
 
         this.m3uaMgmt = new M3UAManagementImpl("M3UAManagementTest", null);
         this.m3uaMgmt.setPersistDir(Util.getTmpTestDir());
@@ -349,9 +350,21 @@ public class M3UAManagementTest {
             return false;
         }
 
+        @Override
+        public ByteBufAllocator getByteBufAllocator() throws Exception {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public int getCongestionLevel() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
     }
 
-    class TransportManagement implements Management {
+    class NettyTransportManagement implements Management {
 
         private FastMap<String, TestAssociation> associations = new FastMap<String, TestAssociation>();
 

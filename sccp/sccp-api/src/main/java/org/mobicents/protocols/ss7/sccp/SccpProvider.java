@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -52,14 +52,15 @@ public interface SccpProvider extends Serializable {
     ParameterFactory getParameterFactory();
 
     /**
-     * Register listener for some adddress.
+     * Registers listener for some SSN. This is an equivalent of N-STATE request with User status==UIS (user in service)
      *
      * @param listener
      */
     void registerSccpListener(int ssn, SccpListener listener);
 
     /**
-     * Removes listener
+     * Removes listener for some SSN. This is an equivalent of N-STATE request with User status==UOS (user out of service)
+     *
      */
     void deregisterSccpListener(int ssn);
 
@@ -84,5 +85,12 @@ public interface SccpProvider extends Serializable {
      * @return
      */
     int getMaxUserDataLength(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress, int msgNetworkId);
+
+    /**
+     * Request of N-COORD when the originating user is requesting permission to go out-of-service
+     *
+     * @param ssn
+     */
+    void coordRequest(int ssn);
 
 }

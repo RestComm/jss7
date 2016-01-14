@@ -154,6 +154,11 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
         this.wrappedM3UAManagement.setMaxSequenceNumber(maxSequenceNumber);
     }
 
+    @Override
+    public boolean isSctpLibNettySupport() {
+        return this.wrappedM3UAManagement.isSctpLibNettySupport();
+    }
+
     /*
      * (non-Javadoc)
      *

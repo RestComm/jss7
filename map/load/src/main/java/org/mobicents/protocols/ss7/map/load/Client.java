@@ -1,31 +1,30 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and/or its affiliates, and individual
- * contributors as indicated by the @authors tag. All rights reserved.
- * See the copyright.txt in the distribution for a full listing
- * of individual contributors.
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
  *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU General Public License, v. 2.0.
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License,
- * v. 2.0 along with this distribution; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02110-1301, USA.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.mobicents.protocols.ss7.map.load;
 
-import java.util.concurrent.atomic.AtomicInteger;
+package org.mobicents.protocols.ss7.map.load;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.api.IpChannelType;
-import org.mobicents.protocols.sctp.ManagementImpl;
+import org.mobicents.protocols.sctp.netty.NettySctpManagementImpl;
 import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
@@ -84,6 +83,8 @@ import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 
+import com.google.common.util.concurrent.RateLimiter;
+
 /**
  * @author amit bhayani
  *
@@ -107,16 +108,21 @@ public class Client extends TestHarness {
     private M3UAManagementImpl clientM3UAMgmt;
 
     // SCTP
-    private ManagementImpl sctpManagement;
+    private NettySctpManagementImpl sctpManagement;
 
     // a ramp-up period is required for performance testing.
     int endCount = -100;
 
-    AtomicInteger nbConcurrentDialogs = new AtomicInteger(0);
+    //AtomicInteger nbConcurrentDialogs = new AtomicInteger(0);
 
     volatile long start = 0L;
+    volatile long prev = 0L;
+
+    private RateLimiter rateLimiterObj = null;
 
     protected void initializeStack(IpChannelType ipChannelType) throws Exception {
+
+        this.rateLimiterObj = RateLimiter.create(MAXCONCURRENTDIALOGS); // rate
 
         this.initSCTP(ipChannelType);
 
@@ -138,8 +144,8 @@ public class Client extends TestHarness {
     }
 
     private void initSCTP(IpChannelType ipChannelType) throws Exception {
-        this.sctpManagement = new ManagementImpl("Client");
-        this.sctpManagement.setSingleThread(true);
+        this.sctpManagement = new NettySctpManagementImpl("Client");
+//        this.sctpManagement.setSingleThread(false);
         this.sctpManagement.start();
         this.sctpManagement.setConnectDelay(10000);
         this.sctpManagement.removeAllResourses();
@@ -152,6 +158,7 @@ public class Client extends TestHarness {
     private void initM3UA() throws Exception {
         this.clientM3UAMgmt = new M3UAManagementImpl("Client", null);
         this.clientM3UAMgmt.setTransportManagement(this.sctpManagement);
+        this.clientM3UAMgmt.setDeliveryMessageThreadCount(DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT);
         this.clientM3UAMgmt.start();
         this.clientM3UAMgmt.removeAllResourses();
 
@@ -209,6 +216,7 @@ public class Client extends TestHarness {
 
     private void initiateUSSD() throws MAPException {
 
+        this.rateLimiterObj.acquire();
         // System.out.println("initiateUSSD");
 
         // First create Dialog
@@ -231,7 +239,7 @@ public class Client extends TestHarness {
 
         mapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString, null, msisdn);
 
-        nbConcurrentDialogs.incrementAndGet();
+        //nbConcurrentDialogs.incrementAndGet();
 
         // This will initiate the TC-BEGIN with INVOKE component
         mapDialog.send();
@@ -241,6 +249,7 @@ public class Client extends TestHarness {
 
         int noOfCalls = Integer.parseInt(args[0]);
         int noOfConcurrentCalls = Integer.parseInt(args[1]);
+
         IpChannelType ipChannelType = IpChannelType.SCTP;
         if (args.length >= 3 && args[2].toLowerCase().equals("tcp")) {
             ipChannelType = IpChannelType.TCP;
@@ -248,52 +257,85 @@ public class Client extends TestHarness {
             ipChannelType = IpChannelType.SCTP;
         }
 
+        System.out.println("IpChannelType="+ipChannelType);
+
         if (args.length >= 4) {
             TestHarness.CLIENT_IP = args[3];
         }
+
+        System.out.println("CLIENT_IP="+TestHarness.CLIENT_IP);
 
         if (args.length >= 5) {
             TestHarness.CLIENT_PORT = Integer.parseInt(args[4]);
         }
 
+        System.out.println("CLIENT_PORT="+TestHarness.CLIENT_PORT);
+
         if (args.length >= 6) {
             TestHarness.SERVER_IP = args[5];
         }
+
+        System.out.println("SERVER_IP="+TestHarness.SERVER_IP);
 
         if (args.length >= 7) {
             TestHarness.SERVER_PORT = Integer.parseInt(args[6]);
         }
 
+        System.out.println("SERVER_PORT="+TestHarness.SERVER_PORT);
+
         if (args.length >= 8) {
             TestHarness.CLIENT_SPC = Integer.parseInt(args[7]);
         }
+
+        System.out.println("CLIENT_SPC="+TestHarness.CLIENT_SPC);
 
         if (args.length >= 9) {
             TestHarness.SERVET_SPC = Integer.parseInt(args[8]);
         }
 
+        System.out.println("SERVET_SPC="+TestHarness.SERVET_SPC);
+
         if (args.length >= 10) {
             TestHarness.NETWORK_INDICATOR = Integer.parseInt(args[9]);
         }
+
+        System.out.println("NETWORK_INDICATOR="+TestHarness.NETWORK_INDICATOR);
 
         if (args.length >= 11) {
             TestHarness.SERVICE_INIDCATOR = Integer.parseInt(args[10]);
         }
 
+        System.out.println("SERVICE_INIDCATOR="+TestHarness.SERVICE_INIDCATOR);
+
         if (args.length >= 12) {
             TestHarness.SSN = Integer.parseInt(args[11]);
         }
 
+        System.out.println("SSN="+TestHarness.SSN);
+
         if (args.length >= 13) {
             TestHarness.ROUTING_CONTEXT = Integer.parseInt(args[12]);
         }
+
+        System.out.println("ROUTING_CONTEXT="+TestHarness.ROUTING_CONTEXT);
+
+        if(args.length >= 14){
+            TestHarness.DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT = Integer.parseInt(args[13]);
+        }
+
+        System.out.println("DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT="+TestHarness.DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT);
 
         // logger.info("Number of calls to be completed = " + noOfCalls +
         // " Number of concurrent calls to be maintained = " +
         // noOfConcurrentCalls);
 
         NDIALOGS = noOfCalls;
+
+        System.out.println("NDIALOGS="+NDIALOGS);
+
         MAXCONCURRENTDIALOGS = noOfConcurrentCalls;
+
+        System.out.println("MAXCONCURRENTDIALOGS="+MAXCONCURRENTDIALOGS);
 
         final Client client = new Client();
 
@@ -303,23 +345,24 @@ public class Client extends TestHarness {
             Thread.sleep(20000);
 
             while (client.endCount < NDIALOGS) {
-                while (client.nbConcurrentDialogs.intValue() >= MAXCONCURRENTDIALOGS) {
+                //while (client.nbConcurrentDialogs.intValue() >= MAXCONCURRENTDIALOGS) {
 
                     // logger.warn("Number of concurrent MAP dialog's = " +
                     // client.nbConcurrentDialogs.intValue()
                     // + " Waiting for max dialog count to go down!");
 
-                    synchronized (client) {
-                        try {
-                            client.wait();
-                        } catch (Exception ex) {
-                        }
-                    }
-                }// end of while (client.nbConcurrentDialogs.intValue() >=
+                    //synchronized (client) {
+                      //  try {
+                        //    client.wait();
+                        //} catch (Exception ex) {
+                        //}
+                    //}
+                //}// end of while (client.nbConcurrentDialogs.intValue() >=
                  // MAXCONCURRENTDIALOGS)
 
                 if (client.endCount < 0) {
                     client.start = System.currentTimeMillis();
+                    client.prev = client.start;
                     //logger.warn("StartTime = " + client.start);
                 }
 
@@ -611,29 +654,35 @@ public class Client extends TestHarness {
             logger.debug(String.format("onDialogResease for DialogId=%d", mapDialog.getLocalDialogId()));
         }
 
-        int ndialogs = nbConcurrentDialogs.decrementAndGet();
+        //int ndialogs = nbConcurrentDialogs.decrementAndGet();
 
-        if (ndialogs > MAXCONCURRENTDIALOGS) {
-            logger.warn("Concurrent Dialogs active = " + ndialogs);
-        }
-        synchronized (this) {
-            if (ndialogs < MAXCONCURRENTDIALOGS / 2)
-                this.notify();
-        }
+        //if (ndialogs > MAXCONCURRENTDIALOGS) {
+        //    logger.warn("Concurrent Dialogs active = " + ndialogs);
+        //}
+        //synchronized (this) {
+         //   if (ndialogs < MAXCONCURRENTDIALOGS / 2)
+         //       this.notify();
+        //}
 
         this.endCount++;
 
-        if ((this.endCount % 1000) == 0) {
-            logger.warn("Completed 1000 Dialogs");
-        }
-        if (this.endCount == NDIALOGS) {
-            long current = System.currentTimeMillis();
-            logger.warn("Start Time = " + start);
-            logger.warn("Current Time = " + current);
-            float sec = (float) (current - start) / 1000f;
+        if (this.endCount < NDIALOGS) {
+            if ((this.endCount % 2000) == 0) {
+                long current = System.currentTimeMillis();
+                float sec = (float) (current - prev) / 1000f;
+                prev = current;
+                logger.warn("Completed 2000 Dialogs, dlg per a sec: " + (float) (2000 / sec));
+            }
+        } else {
+            if (this.endCount == NDIALOGS) {
+                long current = System.currentTimeMillis();
+                logger.warn("Start Time = " + start);
+                logger.warn("Current Time = " + current);
+                float sec = (float) (current - start) / 1000f;
 
-            logger.warn("Total time in sec = " + sec);
-            logger.warn("Thrupt = " + (float) (NDIALOGS / sec));
+                logger.warn("Total time in sec = " + sec);
+                logger.warn("Thrupt = " + (float) (NDIALOGS / sec));
+            }
         }
     }
 

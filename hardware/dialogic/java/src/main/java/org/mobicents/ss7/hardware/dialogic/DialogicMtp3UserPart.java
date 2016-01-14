@@ -169,8 +169,11 @@ public class DialogicMtp3UserPart extends Mtp3UserPartBaseImpl {
 
                             Mtp3StatusCause cause;
 
+                            int par2 = BBUtil.getU16(byteBuffer);
+                            int par3 = BBUtil.getU16(byteBuffer);
                             if (status == 1) { // 1 = Remote User Unavailable
-                                int unavailabiltyCause = BBUtil.getU16(byteBuffer);
+                                int unavailabiltyCause = par3;
+                                // int unavailabiltyCause = BBUtil.getU16(byteBuffer);
                                 switch (unavailabiltyCause) {
                                     case 1:
                                         cause = Mtp3StatusCause.UserPartUnavailability_UnequippedRemoteUser;
@@ -184,11 +187,12 @@ public class DialogicMtp3UserPart extends Mtp3UserPartBaseImpl {
                                 }
                                 congestionLevel = 0;
                             } else { // 2 = Signaling Network Congestion
-                                congestionLevel = BBUtil.getU16(byteBuffer);
+                                congestionLevel = par2;
+                                // congestionLevel = BBUtil.getU16(byteBuffer);
                                 cause = Mtp3StatusCause.SignallingNetworkCongested;
                             }
 
-                            Mtp3StatusPrimitive msgStatus = new Mtp3StatusPrimitive(affectedDpc, cause, congestionLevel);
+                            Mtp3StatusPrimitive msgStatus = new Mtp3StatusPrimitive(affectedDpc, cause, congestionLevel, 0);
                             sendStatusMessageToLocalUser(msgStatus);
                             break;
                         default:

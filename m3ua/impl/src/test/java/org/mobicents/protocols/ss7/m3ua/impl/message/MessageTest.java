@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -25,9 +25,10 @@ package org.mobicents.protocols.ss7.m3ua.impl.message;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import org.mobicents.protocols.ss7.m3ua.impl.message.aspsm.ASPDownAckImpl;
@@ -115,23 +116,18 @@ public class MessageTest {
     public void tearDown() {
     }
 
-    /**
-     * Test of getOpc method, of class ProtocolDataImpl.
-     */
     @Test
     public void testPayloadData() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         PayloadDataImpl msg = (PayloadDataImpl) messageFactory.createMessage(MessageClass.TRANSFER_MESSAGES,
                 MessageType.PAYLOAD);
-        ProtocolDataImpl p1 = (ProtocolDataImpl) parmFactory.createProtocolData(1408, 14150, 1, 1, 0, 0, new byte[] { 1, 2, 3,
-                4 });
+        byte[] payload = new byte[] { 1, 2, 3, 4 };
+        ProtocolDataImpl p1 = (ProtocolDataImpl) parmFactory.createProtocolData(1408, 14150, 1, 1, 0, 0, payload);
         msg.setData(p1);
-        msg.encode(buffer);
+        msg.encode(byteBuf);
 
-        buffer.flip();
-
-        PayloadDataImpl msg1 = (PayloadDataImpl) messageFactory.createMessage(buffer);
+        PayloadDataImpl msg1 = (PayloadDataImpl) messageFactory.createMessage(byteBuf);
 
         ProtocolDataImpl p2 = (ProtocolDataImpl) msg1.getData();
 
@@ -142,11 +138,39 @@ public class MessageTest {
         assertEquals(p1.getNI(), p2.getNI());
         assertEquals(p1.getMP(), p2.getMP());
         assertEquals(p1.getSLS(), p2.getSLS());
+        assertEquals(payload, p1.getData());
+        assertEquals(payload, p2.getData());
+    }
+
+    @Test
+    public void testPayloadData_Padding() throws IOException {
+        ByteBuf byteBuf = Unpooled.buffer();
+
+        PayloadDataImpl msg = (PayloadDataImpl) messageFactory.createMessage(MessageClass.TRANSFER_MESSAGES,
+                MessageType.PAYLOAD);
+        byte[] payload = new byte[] { 1, 2, 3, 4, 5 };
+        ProtocolDataImpl p1 = (ProtocolDataImpl) parmFactory.createProtocolData(1408, 14150, 1, 1, 0, 0, payload);
+        msg.setData(p1);
+        msg.encode(byteBuf);
+
+        PayloadDataImpl msg1 = (PayloadDataImpl) messageFactory.createMessage(byteBuf);
+
+        ProtocolDataImpl p2 = (ProtocolDataImpl) msg1.getData();
+
+        assertEquals(p1.getTag(), p2.getTag());
+        assertEquals(p1.getOpc(), p2.getOpc());
+        assertEquals(p1.getDpc(), p2.getDpc());
+        assertEquals(p1.getSI(), p2.getSI());
+        assertEquals(p1.getNI(), p2.getNI());
+        assertEquals(p1.getMP(), p2.getMP());
+        assertEquals(p1.getSLS(), p2.getSLS());
+        assertEquals(payload, p1.getData());
+        assertEquals(payload, p2.getData());
     }
 
     @Test
     public void testDestinationUnavailable() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         DestinationUnavailableImpl msg = (DestinationUnavailableImpl) messageFactory.createMessage(
                 MessageClass.SIGNALING_NETWORK_MANAGEMENT, MessageType.DESTINATION_UNAVAILABLE);
@@ -159,11 +183,9 @@ public class MessageTest {
         AffectedPointCode afpc = parmFactory.createAffectedPointCode(new int[] { 123 }, new short[] { 0 });
         msg.setAffectedPointCodes(afpc);
 
-        msg.encode(buffer);
+        msg.encode(byteBuf);
 
-        buffer.flip();
-
-        DestinationUnavailableImpl msg1 = (DestinationUnavailableImpl) messageFactory.createMessage(buffer);
+        DestinationUnavailableImpl msg1 = (DestinationUnavailableImpl) messageFactory.createMessage(byteBuf);
 
         NetworkAppearance netApp1 = (NetworkAppearance) msg1.getNetworkAppearance();
 
@@ -172,7 +194,7 @@ public class MessageTest {
 
     @Test
     public void testDestinationAvailable() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         DestinationAvailableImpl msg = (DestinationAvailableImpl) messageFactory.createMessage(
                 MessageClass.SIGNALING_NETWORK_MANAGEMENT, MessageType.DESTINATION_AVAILABLE);
@@ -188,11 +210,9 @@ public class MessageTest {
         InfoString str = parmFactory.createInfoString("Some debug message");
         msg.setInfoString(str);
 
-        msg.encode(buffer);
+        msg.encode(byteBuf);
 
-        buffer.flip();
-
-        DestinationAvailableImpl msg1 = (DestinationAvailableImpl) messageFactory.createMessage(buffer);
+        DestinationAvailableImpl msg1 = (DestinationAvailableImpl) messageFactory.createMessage(byteBuf);
 
         NetworkAppearance netApp1 = (NetworkAppearance) msg1.getNetworkAppearance();
 
@@ -205,7 +225,7 @@ public class MessageTest {
 
     @Test
     public void testSignallingCongestion() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         SignallingCongestion msg = (SignallingCongestion) messageFactory.createMessage(
                 MessageClass.SIGNALING_NETWORK_MANAGEMENT, MessageType.SIGNALING_CONGESTION);
@@ -227,11 +247,9 @@ public class MessageTest {
         CongestedIndication congInd = parmFactory.createCongestedIndication(CongestionLevel.LEVEL1);
         msg.setCongestedIndication(congInd);
 
-        ((SignallingCongestionImpl) msg).encode(buffer);
+        ((SignallingCongestionImpl) msg).encode(byteBuf);
 
-        buffer.flip();
-
-        SignallingCongestion msg1 = (SignallingCongestion) messageFactory.createMessage(buffer);
+        SignallingCongestion msg1 = (SignallingCongestion) messageFactory.createMessage(byteBuf);
 
         NetworkAppearance netApp1 = (NetworkAppearance) msg1.getNetworkAppearance();
 
@@ -247,7 +265,7 @@ public class MessageTest {
 
     @Test
     public void testDestinationUPUnavailable() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         DestinationUPUnavailableImpl msg = (DestinationUPUnavailableImpl) messageFactory.createMessage(
                 MessageClass.SIGNALING_NETWORK_MANAGEMENT, MessageType.DESTINATION_USER_PART_UNAVAILABLE);
@@ -263,11 +281,9 @@ public class MessageTest {
         UserCause usrCau = parmFactory.createUserCause(5, 0);
         msg.setUserCause(usrCau);
 
-        msg.encode(buffer);
+        msg.encode(byteBuf);
 
-        buffer.flip();
-
-        DestinationUPUnavailableImpl msg1 = (DestinationUPUnavailableImpl) messageFactory.createMessage(buffer);
+        DestinationUPUnavailableImpl msg1 = (DestinationUPUnavailableImpl) messageFactory.createMessage(byteBuf);
 
         NetworkAppearance netApp1 = (NetworkAppearance) msg1.getNetworkAppearance();
 
@@ -279,24 +295,22 @@ public class MessageTest {
 
     @Test
     public void testASPUp() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         ASPUpImpl msg = (ASPUpImpl) messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_UP);
         ASPIdentifier aspId = parmFactory.createASPIdentifier(1234);
         msg.setASPIdentifier(aspId);
 
-        msg.encode(buffer);
+        msg.encode(byteBuf);
 
-        buffer.flip();
-
-        ASPUpImpl msg1 = (ASPUpImpl) messageFactory.createMessage(buffer);
+        ASPUpImpl msg1 = (ASPUpImpl) messageFactory.createMessage(byteBuf);
 
         assertEquals(msg.getASPIdentifier().getAspId(), msg1.getASPIdentifier().getAspId());
     }
 
     @Test
     public void testASPUpAck() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         ASPUpAckImpl msg = (ASPUpAckImpl) messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
                 MessageType.ASP_UP_ACK);
@@ -306,11 +320,9 @@ public class MessageTest {
         InfoString infStr = parmFactory.createInfoString("Hello World");
         msg.setInfoString(infStr);
 
-        msg.encode(buffer);
+        msg.encode(byteBuf);
 
-        buffer.flip();
-
-        ASPUpAckImpl msg1 = (ASPUpAckImpl) messageFactory.createMessage(buffer);
+        ASPUpAckImpl msg1 = (ASPUpAckImpl) messageFactory.createMessage(byteBuf);
 
         assertEquals(msg.getASPIdentifier().getAspId(), msg1.getASPIdentifier().getAspId());
         assertEquals(msg.getInfoString().getString(), msg1.getInfoString().getString());
@@ -318,38 +330,34 @@ public class MessageTest {
 
     @Test
     public void testASPDown() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         ASPDownImpl msg = (ASPDownImpl) messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE, MessageType.ASP_DOWN);
 
-        msg.encode(buffer);
+        msg.encode(byteBuf);
 
-        buffer.flip();
-
-        ASPDownImpl msg1 = (ASPDownImpl) messageFactory.createMessage(buffer);
+        ASPDownImpl msg1 = (ASPDownImpl) messageFactory.createMessage(byteBuf);
 
         assertNotNull(msg1);
     }
 
     @Test
     public void testASPDownAck() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         ASPDownAckImpl msg = (ASPDownAckImpl) messageFactory.createMessage(MessageClass.ASP_STATE_MAINTENANCE,
                 MessageType.ASP_DOWN_ACK);
 
-        msg.encode(buffer);
+        msg.encode(byteBuf);
 
-        buffer.flip();
-
-        ASPDownAckImpl msg1 = (ASPDownAckImpl) messageFactory.createMessage(buffer);
+        ASPDownAckImpl msg1 = (ASPDownAckImpl) messageFactory.createMessage(byteBuf);
 
         assertNotNull(msg1);
     }
 
     @Test
     public void testRegistrationRequest() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         RegistrationRequestImpl msg = (RegistrationRequestImpl) messageFactory.createMessage(
                 MessageClass.ROUTING_KEY_MANAGEMENT, MessageType.REG_REQUEST);
@@ -371,18 +379,16 @@ public class MessageTest {
 
         msg.setRoutingKey(routKey);
 
-        msg.encode(buffer);
+        msg.encode(byteBuf);
 
-        buffer.flip();
-
-        RegistrationRequestImpl msg1 = (RegistrationRequestImpl) messageFactory.createMessage(buffer);
+        RegistrationRequestImpl msg1 = (RegistrationRequestImpl) messageFactory.createMessage(byteBuf);
 
         assertEquals(msg.getRoutingKey().getLocalRKIdentifier().getId(), msg1.getRoutingKey().getLocalRKIdentifier().getId());
     }
 
     @Test
     public void testRegistrationResponse() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         RegistrationResponseImpl msg = (RegistrationResponseImpl) messageFactory.createMessage(
                 MessageClass.ROUTING_KEY_MANAGEMENT, MessageType.REG_RESPONSE);
@@ -395,11 +401,9 @@ public class MessageTest {
 
         msg.setRegistrationResult(result);
 
-        msg.encode(buffer);
+        msg.encode(byteBuf);
 
-        buffer.flip();
-
-        RegistrationResponseImpl msg1 = (RegistrationResponseImpl) messageFactory.createMessage(buffer);
+        RegistrationResponseImpl msg1 = (RegistrationResponseImpl) messageFactory.createMessage(byteBuf);
 
         assertEquals(msg.getRegistrationResult().getLocalRKIdentifier().getId(), msg1.getRegistrationResult()
                 .getLocalRKIdentifier().getId());
@@ -407,7 +411,7 @@ public class MessageTest {
 
     @Test
     public void testDeregistrationRequest() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         DeregistrationRequestImpl msg = (DeregistrationRequestImpl) messageFactory.createMessage(
                 MessageClass.ROUTING_KEY_MANAGEMENT, MessageType.DEREG_REQUEST);
@@ -416,18 +420,16 @@ public class MessageTest {
 
         msg.setRoutingContext(rc);
 
-        msg.encode(buffer);
+        msg.encode(byteBuf);
 
-        buffer.flip();
-
-        DeregistrationRequestImpl msg1 = (DeregistrationRequestImpl) messageFactory.createMessage(buffer);
+        DeregistrationRequestImpl msg1 = (DeregistrationRequestImpl) messageFactory.createMessage(byteBuf);
 
         assertTrue(Arrays.equals(msg.getRoutingContext().getRoutingContexts(), msg1.getRoutingContext().getRoutingContexts()));
     }
 
     @Test
     public void testDeregistrationResponse() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         DeregistrationResponseImpl msg = (DeregistrationResponseImpl) messageFactory.createMessage(
                 MessageClass.ROUTING_KEY_MANAGEMENT, MessageType.DEREG_RESPONSE);
@@ -439,11 +441,9 @@ public class MessageTest {
 
         msg.setDeregistrationResult(result);
 
-        msg.encode(buffer);
+        msg.encode(byteBuf);
 
-        buffer.flip();
-
-        DeregistrationResponseImpl msg1 = (DeregistrationResponseImpl) messageFactory.createMessage(buffer);
+        DeregistrationResponseImpl msg1 = (DeregistrationResponseImpl) messageFactory.createMessage(byteBuf);
 
         assertEquals(msg.getDeregistrationResult().getDeregistrationStatus().getStatus(), msg1.getDeregistrationResult()
                 .getDeregistrationStatus().getStatus());
@@ -451,7 +451,7 @@ public class MessageTest {
 
     @Test
     public void testASPActive() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         ASPActiveImpl msg = (ASPActiveImpl) messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE,
                 MessageType.ASP_ACTIVE);
@@ -463,11 +463,9 @@ public class MessageTest {
         msg.setRoutingContext(rc);
         msg.setInfoString(str);
 
-        msg.encode(buffer);
+        msg.encode(byteBuf);
 
-        buffer.flip();
-
-        ASPActiveImpl msg1 = (ASPActiveImpl) messageFactory.createMessage(buffer);
+        ASPActiveImpl msg1 = (ASPActiveImpl) messageFactory.createMessage(byteBuf);
 
         assertEquals(msg.getTrafficModeType().getMode(), msg1.getTrafficModeType().getMode());
         assertEquals(msg.getInfoString().getString(), msg1.getInfoString().getString());
@@ -475,7 +473,7 @@ public class MessageTest {
 
     @Test
     public void testASPActiveAck() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         ASPActiveAckImpl msg = (ASPActiveAckImpl) messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE,
                 MessageType.ASP_ACTIVE_ACK);
@@ -487,11 +485,9 @@ public class MessageTest {
         msg.setRoutingContext(rc);
         msg.setInfoString(str);
 
-        msg.encode(buffer);
+        msg.encode(byteBuf);
 
-        buffer.flip();
-
-        ASPActiveAckImpl msg1 = (ASPActiveAckImpl) messageFactory.createMessage(buffer);
+        ASPActiveAckImpl msg1 = (ASPActiveAckImpl) messageFactory.createMessage(byteBuf);
 
         assertEquals(msg.getTrafficModeType().getMode(), msg1.getTrafficModeType().getMode());
         assertEquals(msg.getInfoString().getString(), msg1.getInfoString().getString());
@@ -500,7 +496,7 @@ public class MessageTest {
 
     @Test
     public void testASPInactive() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         ASPInactiveImpl msg = (ASPInactiveImpl) messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE,
                 MessageType.ASP_INACTIVE);
@@ -510,11 +506,9 @@ public class MessageTest {
         msg.setRoutingContext(rc);
         msg.setInfoString(str);
 
-        msg.encode(buffer);
+        msg.encode(byteBuf);
 
-        buffer.flip();
-
-        ASPInactiveImpl msg1 = (ASPInactiveImpl) messageFactory.createMessage(buffer);
+        ASPInactiveImpl msg1 = (ASPInactiveImpl) messageFactory.createMessage(byteBuf);
 
         assertEquals(msg.getInfoString().getString(), msg1.getInfoString().getString());
 
@@ -523,7 +517,7 @@ public class MessageTest {
 
     @Test
     public void testASPInactiveAck() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         ASPInactiveAckImpl msg = (ASPInactiveAckImpl) messageFactory.createMessage(MessageClass.ASP_TRAFFIC_MAINTENANCE,
                 MessageType.ASP_INACTIVE_ACK);
@@ -533,11 +527,9 @@ public class MessageTest {
         msg.setRoutingContext(rc);
         msg.setInfoString(str);
 
-        msg.encode(buffer);
+        msg.encode(byteBuf);
 
-        buffer.flip();
-
-        ASPInactiveAckImpl msg1 = (ASPInactiveAckImpl) messageFactory.createMessage(buffer);
+        ASPInactiveAckImpl msg1 = (ASPInactiveAckImpl) messageFactory.createMessage(byteBuf);
 
         assertEquals(msg.getInfoString().getString(), msg1.getInfoString().getString());
         assertTrue(Arrays.equals(msg.getRoutingContext().getRoutingContexts(), msg1.getRoutingContext().getRoutingContexts()));
@@ -545,7 +537,7 @@ public class MessageTest {
 
     @Test
     public void testError() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         ErrorImpl msg = (ErrorImpl) messageFactory.createMessage(MessageClass.MANAGEMENT, MessageType.ERROR);
 
@@ -564,11 +556,9 @@ public class MessageTest {
         DiagnosticInfo str = parmFactory.createDiagnosticInfo("There it is");
         msg.setDiagnosticInfo(str);
 
-        msg.encode(buffer);
+        msg.encode(byteBuf);
 
-        buffer.flip();
-
-        ErrorImpl msg1 = (ErrorImpl) messageFactory.createMessage(buffer);
+        ErrorImpl msg1 = (ErrorImpl) messageFactory.createMessage(byteBuf);
 
         assertEquals(msg.getErrorCode().getCode(), msg1.getErrorCode().getCode());
         assertTrue(Arrays.equals(msg.getRoutingContext().getRoutingContexts(), msg1.getRoutingContext().getRoutingContexts()));
@@ -582,7 +572,7 @@ public class MessageTest {
 
     @Test
     public void testNotify() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         NotifyImpl msg = (NotifyImpl) messageFactory.createMessage(MessageClass.MANAGEMENT, MessageType.NOTIFY);
 
@@ -595,11 +585,9 @@ public class MessageTest {
         RoutingContext rc = parmFactory.createRoutingContext(new long[] { 1 });
         msg.setRoutingContext(rc);
 
-        msg.encode(buffer);
+        msg.encode(byteBuf);
 
-        buffer.flip();
-
-        NotifyImpl msg1 = (NotifyImpl) messageFactory.createMessage(buffer);
+        NotifyImpl msg1 = (NotifyImpl) messageFactory.createMessage(byteBuf);
 
         assertEquals(msg.getStatus().getType(), msg1.getStatus().getType());
         assertEquals(msg.getStatus().getInfo(), msg1.getStatus().getInfo());
@@ -609,14 +597,14 @@ public class MessageTest {
 
     @Test
     public void encodeTwoMessages() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         PayloadDataImpl payloadMsg = (PayloadDataImpl) messageFactory.createMessage(MessageClass.TRANSFER_MESSAGES,
                 MessageType.PAYLOAD);
         ProtocolDataImpl p1 = (ProtocolDataImpl) parmFactory.createProtocolData(1408, 14150, 1, 1, 0, 0, new byte[] { 1, 2, 3,
                 4 });
         payloadMsg.setData(p1);
-        payloadMsg.encode(buffer);
+        payloadMsg.encode(byteBuf);
 
         DestinationUnavailableImpl dunaMsg = (DestinationUnavailableImpl) messageFactory.createMessage(
                 MessageClass.SIGNALING_NETWORK_MANAGEMENT, MessageType.DESTINATION_UNAVAILABLE);
@@ -629,12 +617,10 @@ public class MessageTest {
         AffectedPointCode afpc = parmFactory.createAffectedPointCode(new int[] { 123 }, new short[] { 0 });
         dunaMsg.setAffectedPointCodes(afpc);
 
-        dunaMsg.encode(buffer);
-
-        buffer.flip();
+        dunaMsg.encode(byteBuf);
 
         // Paylod decode
-        PayloadDataImpl payloadMsg1 = (PayloadDataImpl) messageFactory.createMessage(buffer);
+        PayloadDataImpl payloadMsg1 = (PayloadDataImpl) messageFactory.createMessage(byteBuf);
 
         ProtocolDataImpl p2 = (ProtocolDataImpl) payloadMsg1.getData();
 
@@ -646,9 +632,9 @@ public class MessageTest {
         assertEquals(p1.getMP(), p2.getMP());
         assertEquals(p1.getSLS(), p2.getSLS());
 
-        assertTrue(buffer.hasRemaining());
+        assertTrue(byteBuf.readableBytes() > 0);
 
-        DestinationUnavailableImpl dunaMsg1 = (DestinationUnavailableImpl) messageFactory.createMessage(buffer);
+        DestinationUnavailableImpl dunaMsg1 = (DestinationUnavailableImpl) messageFactory.createMessage(byteBuf);
 
         NetworkAppearance netApp1 = (NetworkAppearance) dunaMsg1.getNetworkAppearance();
 
@@ -658,9 +644,8 @@ public class MessageTest {
 
     @Test
     public void testHeartBeat() throws IOException {
-
         // Test encode
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         byte[] data = new byte[] { 0x01, 0x00, 0x03, 0x03, 0x00, 0x00, 0x00, 0x1c, 0x00, 0x09, 0x00, 0x14, 0x00, 0x02, 0x00,
                 0x00, 0x00, 0x07, (byte) 0xaf, 0x3e, 0x75, 0x40, 0x03, 0x13, 0x05, 0x07, 0x11, 0x20 };
@@ -674,17 +659,15 @@ public class MessageTest {
 
         heartbeat.setHeartbeatData(hrBtData);
 
-        ((HeartbeatImpl) heartbeat).encode(buffer);
+        ((HeartbeatImpl) heartbeat).encode(byteBuf);
 
-        buffer.flip();
+//        byte[] rawData = new byte[buffer.limit()];
+//        buffer.get(rawData);
 
-        byte[] rawData = new byte[buffer.limit()];
-        buffer.get(rawData);
-
-        assertTrue(Arrays.equals(data, rawData));
+//        assertTrue(Arrays.equals(data, buf));
 
         // Test Decode
-        M3UAMessageImpl m3uaMessageImpl = messageFactory.createSctpMessage(data);
+        M3UAMessageImpl m3uaMessageImpl = messageFactory.createMessage(byteBuf);
         assertTrue((m3uaMessageImpl instanceof HeartbeatImpl));
         assertNotNull(((HeartbeatImpl) m3uaMessageImpl).getHeartbeatData());
 
@@ -694,9 +677,8 @@ public class MessageTest {
 
     @Test
     public void testHeartBeatAck() throws IOException {
-
         // Test encode
-        ByteBuffer buffer = ByteBuffer.allocate(8192);
+        ByteBuf byteBuf = Unpooled.buffer();
 
         byte[] data = new byte[] { 0x01, 0x00, 0x03, 0x06, 0x00, 0x00, 0x00, 0x1c, 0x00, 0x09, 0x00, 0x14, 0x00, 0x02, 0x00,
                 0x00, 0x00, 0x07, (byte) 0xaf, 0x3e, 0x75, 0x40, 0x03, 0x13, 0x05, 0x07, 0x11, 0x20 };
@@ -710,17 +692,15 @@ public class MessageTest {
 
         heartbeatAck.setHeartbeatData(hrBtData);
 
-        ((HeartbeatAckImpl) heartbeatAck).encode(buffer);
+        ((HeartbeatAckImpl) heartbeatAck).encode(byteBuf);
 
-        buffer.flip();
+//        byte[] rawData = new byte[buffer.limit()];
+//        buffer.get(rawData);
 
-        byte[] rawData = new byte[buffer.limit()];
-        buffer.get(rawData);
-
-        assertTrue(Arrays.equals(data, rawData));
+//        assertTrue(Arrays.equals(data, buf));
 
         // Test Decode
-        M3UAMessageImpl m3uaMessageImpl = messageFactory.createSctpMessage(data);
+        M3UAMessageImpl m3uaMessageImpl = messageFactory.createMessage(byteBuf);
         assertTrue((m3uaMessageImpl instanceof HeartbeatAckImpl));
         assertNotNull(((HeartbeatAckImpl) m3uaMessageImpl).getHeartbeatData());
 
