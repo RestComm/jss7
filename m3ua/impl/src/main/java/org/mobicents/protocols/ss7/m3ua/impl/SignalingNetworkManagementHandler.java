@@ -298,7 +298,7 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
                         }
 
                         Mtp3StatusPrimitive mtpPausePrimi = new Mtp3StatusPrimitive(affectedPcs[i],
-                                Mtp3StatusCause.SignallingNetworkCongested, cong);
+                                Mtp3StatusCause.SignallingNetworkCongested, cong, 0);
                         ((AsImpl) aspImpl.getAs()).getM3UAManagement().sendStatusMessageToLocalUser(mtpPausePrimi);
                     }
                 } else {
@@ -347,7 +347,7 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
                             }
 
                             Mtp3StatusPrimitive mtpPausePrimi = new Mtp3StatusPrimitive(affectedPcs[i],
-                                    Mtp3StatusCause.SignallingNetworkCongested, cong);
+                                    Mtp3StatusCause.SignallingNetworkCongested, cong, 0);
                             ((AsImpl) aspImpl.getAs()).getM3UAManagement().sendStatusMessageToLocalUser(mtpPausePrimi);
                         }
                     } else {
@@ -405,7 +405,7 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
                         UserCause userCause = dupu.getUserCause();
                         cause = userCause.getCause();
                         Mtp3StatusPrimitive mtpPausePrimi = new Mtp3StatusPrimitive(affectedPcs[i],
-                                Mtp3StatusCause.getMtp3StatusCause(cause), 0);
+                                Mtp3StatusCause.getMtp3StatusCause(cause), 0, 0);
                         ((AsImpl) aspImpl.getAs()).getM3UAManagement().sendStatusMessageToLocalUser(mtpPausePrimi);
                     }
                 } else {
@@ -449,7 +449,7 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
                             UserCause userCause = dupu.getUserCause();
                             cause = userCause.getCause();
                             Mtp3StatusPrimitive mtpPausePrimi = new Mtp3StatusPrimitive(affectedPcs[i],
-                                    Mtp3StatusCause.getMtp3StatusCause(cause), 0);
+                                    Mtp3StatusCause.getMtp3StatusCause(cause), 0, 0);
                             ((AsImpl) aspImpl.getAs()).getM3UAManagement().sendStatusMessageToLocalUser(mtpPausePrimi);
                         }
                     } else {

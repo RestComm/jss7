@@ -30,8 +30,10 @@ import io.netty.util.ReferenceCountUtil;
 
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javolution.util.FastList;
+import javolution.util.FastMap;
 import javolution.xml.XMLFormat;
 import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
@@ -75,6 +77,8 @@ import org.mobicents.protocols.ss7.m3ua.message.ssnm.SignallingCongestion;
 import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
 import org.mobicents.protocols.ss7.m3ua.parameter.ASPIdentifier;
 import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
+import org.mobicents.protocols.ss7.mtp.Mtp3StatusCause;
+import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
 
 /**
  *
@@ -140,6 +144,8 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 
     protected HeartBeatTimer heartBeatTimer = null;
     private boolean isHeartBeatEnabled = false;
+
+    private FastMap<Integer, AtomicInteger> congDpcList = new FastMap<Integer, AtomicInteger>().shared();
 
     public AspFactoryImpl() {
         // clean transmission buffer
@@ -491,6 +497,13 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
                 }
 
                 this.association.send(payloadData);
+
+                // congestion control - we will send MTP-PAUSE every 8 messages
+                int congLevel = this.association.getCongestionLevel();
+                if (congLevel > 0 && message instanceof PayloadData) {
+                    PayloadData payloadData2 = (PayloadData) message;
+                    sendCongestionInfoToMtp3Users(congLevel, payloadData2.getData().getDpc());
+                }
             } else {
                 byte[] bf = new byte[byteBuf.readableBytes()];
                 byteBuf.readBytes(bf);
@@ -519,6 +532,19 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
             }
         } catch (Throwable e) {
             logger.error(String.format("Error while trying to send PayloadData to SCTP layer. M3UAMessage=%s", message), e);
+        }
+    }
+
+    private void sendCongestionInfoToMtp3Users(int congLevel, int dpc) {
+        AtomicInteger ai = congDpcList.get(dpc);
+        if (ai == null) {
+            ai = new AtomicInteger();
+            congDpcList.put(dpc, ai);
+        }
+        if (ai.incrementAndGet() % 8 == 0) {
+            Mtp3StatusPrimitive statusPrimitive = new Mtp3StatusPrimitive(dpc, Mtp3StatusCause.SignallingNetworkCongested,
+                    congLevel, 0);
+            this.m3UAManagementImpl.sendStatusMessageToLocalUser(statusPrimitive);
         }
     }
 

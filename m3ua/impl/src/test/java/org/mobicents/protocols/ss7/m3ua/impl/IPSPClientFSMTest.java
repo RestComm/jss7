@@ -748,6 +748,12 @@ public class IPSPClientFSMTest {
             return null;
         }
 
+        @Override
+        public int getCongestionLevel() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
     }
 
     class NettyTransportManagement implements Management {

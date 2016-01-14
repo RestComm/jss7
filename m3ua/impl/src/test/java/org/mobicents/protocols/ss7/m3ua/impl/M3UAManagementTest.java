@@ -356,6 +356,12 @@ public class M3UAManagementTest {
             return null;
         }
 
+        @Override
+        public int getCongestionLevel() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
     }
 
     class NettyTransportManagement implements Management {
