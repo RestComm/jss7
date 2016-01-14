@@ -118,6 +118,11 @@ public class SctpAssociationJmx implements SctpAssociationJmxMBean {
     }
 
     @Override
+    public int getCongestionLevel() {
+        return this.wrappedAssociation.getCongestionLevel();
+    }
+
+    @Override
     public void rejectAnonymousAssociation() {
     }
 
