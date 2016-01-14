@@ -559,6 +559,12 @@ public class PreviewModeFunctionalTest {
             // TODO Auto-generated method stub
 
         }
+
+        @Override
+        public void coordRequest(int ssn) {
+            // TODO Auto-generated method stub
+            
+        }
     }
 
     private class TCAPListenerHarness implements TCListener {

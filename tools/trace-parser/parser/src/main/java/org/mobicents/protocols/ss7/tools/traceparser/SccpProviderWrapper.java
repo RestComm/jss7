@@ -96,4 +96,10 @@ public class SccpProviderWrapper implements SccpProvider {
 
     }
 
+    @Override
+    public void coordRequest(int ssn) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

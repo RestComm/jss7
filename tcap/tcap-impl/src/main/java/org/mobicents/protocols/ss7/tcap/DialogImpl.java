@@ -1790,6 +1790,11 @@ public class DialogImpl implements Dialog {
             this.dialogLock.lock();
 
             try {
+                if (this.remoteTransactionId == null) {
+                    // no remoteTransactionId - we can not send back TC-ABORT
+                    return;
+                }
+
                 // sending to the remote side
                 DialogPortion dp = TcapFactory.createDialogPortion();
                 dp.setUnidirectional(false);

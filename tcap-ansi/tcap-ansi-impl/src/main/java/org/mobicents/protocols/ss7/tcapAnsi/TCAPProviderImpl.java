@@ -39,6 +39,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
@@ -563,16 +564,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         }
     }
 
-    public void onCoordRequest(int arg0, int arg1, int arg2) {
-        // TODO Auto-generated method stub
-
-    }
-
-    public void onCoordResponse(int arg0, int arg1, int arg2) {
-        // TODO Auto-generated method stub
-
-    }
-
     public void onMessage(SccpDataMessage message) {
 
         try {
@@ -911,16 +902,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         }
     }
 
-    public void onPcState(int arg0, SignallingPointStatus arg1, int arg2, RemoteSccpStatus arg3) {
-        // TODO Auto-generated method stub
-
-    }
-
-    public void onState(int arg0, int arg1, boolean arg2, int arg3) {
-        // TODO Auto-generated method stub
-
-    }
-
     private Dialog createPreviewDialog(PrevewDialogDataKey ky, SccpAddress localAddress, SccpAddress remoteAddress,
             int seqControl) throws TCAPException {
         synchronized (this.dialogPreviewList) {
@@ -1067,5 +1048,30 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             result = prime * result + (int) (this.origTxId + (this.origTxId >> 32));
             return result;
         }
+    }
+
+    @Override
+    public void onCoordResponse(int ssn, int multiplicityIndicator) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onState(int dpc, int ssn, boolean inService, int multiplicityIndicator) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onPcState(int dpc, SignallingPointStatus status, Integer restrictedImportanceLevel,
+            RemoteSccpStatus remoteSccpStatus) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onNetworkIdState(int networkId, NetworkIdState networkIdState) {
+        // TODO Auto-generated method stub
+        
     }
 }
