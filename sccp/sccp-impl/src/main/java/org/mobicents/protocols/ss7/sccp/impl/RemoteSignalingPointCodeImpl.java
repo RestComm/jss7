@@ -27,9 +27,13 @@ import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
 
 import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
+import org.mobicents.protocols.ss7.sccp.impl.congestion.CongStateTimerA;
+import org.mobicents.protocols.ss7.sccp.impl.congestion.CongStateTimerD;
+import org.mobicents.protocols.ss7.sccp.impl.congestion.SccpCongestionControl;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  *
  */
 public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSignalingPointCode {
@@ -43,8 +47,14 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSign
     private boolean remoteSpcProhibited;
     private boolean remoteSccpProhibited;
 
-    public RemoteSignalingPointCodeImpl() {
+    private int rl;
+    private int rsl;
+    private CongStateTimerA timerA;
+    private CongStateTimerD timerD;
 
+    private SccpCongestionControl sccpCongestionControl;
+
+    public RemoteSignalingPointCodeImpl() {
     }
 
     public RemoteSignalingPointCodeImpl(int remoteSpc, int remoteSpcFlag, int mask) {
@@ -100,6 +110,61 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSign
      */
     protected void setMask(int mask) {
         this.mask = mask;
+    }
+
+    @Override
+    public int getCurrentRestrictionLevel() {
+        return rl;
+    }
+
+    public void clearCongLevel() {
+        this.rl = 0;
+        this.rsl = 0;
+    }
+
+    public void increaseCongLevel(SccpCongestionControl sccpCongestionControl, int level) {
+        this.sccpCongestionControl = sccpCongestionControl;
+
+        if (this.timerA != null)
+            return;
+
+        timerA = new CongStateTimerA(this);
+        this.sccpCongestionControl.scheduleTimer(timerA, sccpCongestionControl.getTIMER_A());
+        CongStateTimerD _timerD = timerD;
+        if (_timerD != null) {
+            _timerD.cancel();
+        }
+        timerD = new CongStateTimerD(this);
+        this.sccpCongestionControl.scheduleTimer(timerD, sccpCongestionControl.getTIMER_D());
+
+        if (rl >= sccpCongestionControl.getN())
+            return;
+
+        rsl += level;
+        if (rsl > sccpCongestionControl.getM()) {
+            rsl = 0;
+            rl++;
+            this.sccpCongestionControl.onRestrictionLevelChange(remoteSpc, rl, true);
+        }
+    }
+
+    public void clearTimerA() {
+        timerA = null;
+    }
+
+    public void decreaseCongLevel() {
+        if (rl == 0)
+            return;
+
+        rsl--;
+        if (rsl < 0) {
+            rsl = sccpCongestionControl.getM();
+            rl--;
+            this.sccpCongestionControl.onRestrictionLevelChange(remoteSpc, rl, false);
+        }
+
+        timerD = new CongStateTimerD(this);
+        this.sccpCongestionControl.scheduleTimer(timerD, sccpCongestionControl.getTIMER_D());
     }
 
     @Override

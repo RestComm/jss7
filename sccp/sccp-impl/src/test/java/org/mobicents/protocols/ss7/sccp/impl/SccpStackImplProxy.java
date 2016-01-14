@@ -29,6 +29,7 @@ import java.util.concurrent.Executors;
 import javolution.util.FastMap;
 
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
+import org.mobicents.protocols.ss7.sccp.impl.congestion.SccpCongestionControl;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 
@@ -74,9 +75,11 @@ public class SccpStackImplProxy extends SccpStackImpl {
 
         super.sccpManagement = new SccpManagementProxy(this.getName(), sccpProvider, this);
         super.sccpRoutingControl = new SccpRoutingControl(sccpProvider, this);
+        super.sccpCongestionControl = new SccpCongestionControl(sccpManagement);
 
         super.sccpManagement.setSccpRoutingControl(sccpRoutingControl);
         super.sccpRoutingControl.setSccpManagement(sccpManagement);
+        this.sccpManagement.setSccpCongestionControl(sccpCongestionControl);
 
         this.router = new RouterImpl(this.getName(), this);
         this.router.setPersistDir(this.getPersistDir());

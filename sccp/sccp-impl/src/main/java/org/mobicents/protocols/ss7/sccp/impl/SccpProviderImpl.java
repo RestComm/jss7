@@ -150,4 +150,10 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
     public int getMaxUserDataLength(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress, int msgNetworkId) {
         return this.stack.getMaxUserDataLength(calledPartyAddress, callingPartyAddress, msgNetworkId);
     }
+
+    @Override
+    public void coordRequest(int ssn) {
+        // TODO Auto-generated method stub
+        
+    }
 }

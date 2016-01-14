@@ -29,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -48,6 +49,7 @@ import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
 import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
+import org.mobicents.protocols.ss7.mtp.Mtp3StatusCause;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
@@ -55,6 +57,7 @@ import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
 import org.mobicents.protocols.ss7.sccp.LongMessageRule;
 import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
+import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.Rule;
@@ -63,6 +66,7 @@ import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpResource;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
+import org.mobicents.protocols.ss7.sccp.impl.congestion.SccpCongestionControl;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpAddressedMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
@@ -74,6 +78,7 @@ import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculateLudtFieldsLengthWithoutData;
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculateXudtFieldsLengthWithoutData;
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculateXudtFieldsLengthWithoutData2;
@@ -104,6 +109,11 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     private static final String SST_TIMER_DURATION_MIN = "ssttimerduration_min";
     private static final String SST_TIMER_DURATION_MAX = "ssttimerduration_max";
     private static final String SST_TIMER_DURATION_INCREASE_FACTOR = "ssttimerduration_increasefactor";
+
+    /**
+     * Interval in milliseconds in which new coming for an affected PC MTP-STATUS messages will be logged
+     */
+    private static final int STATUS_MSG_LOGGING_INTERVAL_MILLISEC = 1000;
 
     private static final XMLBinding binding = new XMLBinding();
 
@@ -147,6 +157,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
     protected SccpManagement sccpManagement;
     protected SccpRoutingControl sccpRoutingControl;
+    protected SccpCongestionControl sccpCongestionControl;
 
     protected FastMap<Integer, Mtp3UserPart> mtp3UserParts = new FastMap<Integer, Mtp3UserPart>();
     protected ScheduledExecutorService timerExecutors;
@@ -164,6 +175,9 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     private volatile int segmentationLocalRef = 0;
     private volatile int slsCounter = 0;
     private volatile int selectorCounter = 0;
+
+    private FastMap<Integer, Date> lastCongNotice = new FastMap<Integer, Date>();
+    private FastMap<Integer, Date> lastUserPartUnavailNotice = new FastMap<Integer, Date>();
 
     public SccpStackImpl(String name) {
 
@@ -394,9 +408,11 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         // FIXME: move creation to constructor ?
         this.sccpManagement = new SccpManagement(name, sccpProvider, this);
         this.sccpRoutingControl = new SccpRoutingControl(sccpProvider, this);
+        this.sccpCongestionControl = new SccpCongestionControl(sccpManagement);
 
         this.sccpManagement.setSccpRoutingControl(sccpRoutingControl);
         this.sccpRoutingControl.setSccpManagement(sccpManagement);
+        this.sccpManagement.setSccpCongestionControl(sccpCongestionControl);
 
         this.router = new RouterImpl(this.name, this);
         this.router.setPersistDir(this.persistDir);
@@ -654,13 +670,40 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     }
 
     public void onMtp3StatusMessage(Mtp3StatusPrimitive msg) {
-        logger.warn(String.format("Rx : %s", msg));
+        int affectedDpc = msg.getAffectedDpc();
+
+        // we are making of announcing of MTP-STATUS only each 10 seconds
+        Date lastNotice;
+        if (msg.getCause() == Mtp3StatusCause.SignallingNetworkCongested) {
+            lastNotice = lastCongNotice.get(affectedDpc);
+            if (lastNotice == null) {
+                lastCongNotice.put(affectedDpc, new Date());
+                logger.warn(String.format("Rx : %s", msg));
+            } else {
+                if (System.currentTimeMillis() - lastNotice.getTime() > STATUS_MSG_LOGGING_INTERVAL_MILLISEC) {
+                    lastNotice.setTime(System.currentTimeMillis());
+                    logger.warn(String.format("Rx : %s", msg));
+                }
+            }
+        } else {
+            lastNotice = lastUserPartUnavailNotice.get(affectedDpc);
+            if (lastNotice == null) {
+                lastUserPartUnavailNotice.put(affectedDpc, new Date());
+                logger.warn(String.format("Rx : %s", msg));
+            } else {
+                if (System.currentTimeMillis() - lastNotice.getTime() > STATUS_MSG_LOGGING_INTERVAL_MILLISEC) {
+                    lastNotice.setTime(System.currentTimeMillis());
+                    logger.warn(String.format("Rx : %s", msg));
+                }
+            }
+        }
+
         if (this.state != State.RUNNING) {
             logger.error("Cannot consume MTP3 STATUS message as SCCP stack is not RUNNING");
             return;
         }
 
-        sccpManagement.handleMtp3Status(msg.getCause(), msg.getAffectedDpc(), msg.getCongestionLevel());
+        sccpManagement.handleMtp3Status(msg.getCause(), affectedDpc, msg.getCongestionLevel());
     }
 
     public void onMtp3TransferMessage(Mtp3TransferPrimitive mtp3Msg) {
@@ -855,6 +898,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         } catch (Exception e) {
             logger.error("IOException while decoding SCCP message: " + e.getMessage(), e);
         }
+    }
+
+    public FastMap<Integer, NetworkIdState> getNetworkIdList(int affectedPc) {
+        return router.getNetworkIdList(affectedPc);
     }
 
     public class MessageReassemblyProcess implements Runnable {

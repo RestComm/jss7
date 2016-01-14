@@ -46,11 +46,15 @@ import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.LongMessageRule;
 import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
+import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.sccp.OriginationType;
+import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.Rule;
 import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
+import org.mobicents.protocols.ss7.sccp.impl.congestion.NetworkIdStateImpl;
+import org.mobicents.protocols.ss7.sccp.impl.congestion.SccpCongestionControl;
 import org.mobicents.protocols.ss7.sccp.impl.oam.SccpOAMMessage;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.GlobalTitle0001Impl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.GlobalTitle0010Impl;
@@ -58,7 +62,6 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.GlobalTitle0011Impl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.GlobalTitle0100Impl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.NoGlobalTitle;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
-
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -785,6 +788,110 @@ public class RouterImpl implements Router {
             // We store the cleared state
             this.store();
         }
+    }
+
+    public FastMap<Integer,NetworkIdState> getNetworkIdList(int affectedPc) {
+        FastMap<Integer, NetworkIdState> res = new FastMap<Integer, NetworkIdState>();
+
+        for (FastMap.Entry<Integer, Rule> e = this.rulesMap.head(), end = rulesMap.tail(); (e = e.getNext()) != end;) {
+            Rule rule = e.getValue();
+            NetworkIdStateImpl networkIdState = getRoutingAddressStatusForRoutingRule(rule, affectedPc);
+            if (networkIdState != null) {
+                NetworkIdState prevNetworkIdState = res.get(rule.getNetworkId());
+                if (prevNetworkIdState != null) {
+                    if (prevNetworkIdState.isAvailavle()) {
+                        if (networkIdState.isAvailavle()) {
+                            if (prevNetworkIdState.getCongLevel() < networkIdState.getCongLevel()) {
+                                res.put(rule.getNetworkId(), networkIdState);
+                            }
+                        }
+                    } else {
+                        if (!networkIdState.isAvailavle()) {
+                            res.put(rule.getNetworkId(), networkIdState);
+                        }
+                    }
+                } else {
+                    res.put(rule.getNetworkId(), networkIdState);
+                }
+            }
+        }
+
+        return res;
+    }
+
+    private NetworkIdStateImpl getRoutingAddressStatusForRoutingRule(Rule rule, int affectedPc) {
+        SccpAddress translationAddressPri = getRoutingAddress(rule.getPrimaryAddressId());
+        NetworkIdStateImpl rspStatusPri = getRoutingAddressStatusForRoutingAddress(translationAddressPri, affectedPc);
+
+        if (rule.getRuleType() == RuleType.DOMINANT || rule.getRuleType() == RuleType.LOADSHARED) {
+            SccpAddress translationAddressSec = getRoutingAddress(rule.getSecondaryAddressId());
+            NetworkIdStateImpl rspStatusSec = getRoutingAddressStatusForRoutingAddress(translationAddressSec, affectedPc);
+
+            if (rspStatusPri.isAffectedByPc() || rspStatusSec.isAffectedByPc()) {
+                if (rule.getRuleType() == RuleType.DOMINANT) {
+                    if (rspStatusPri.isAvailavle())
+                        return rspStatusPri;
+
+                    return rspStatusSec;
+                }
+                if (rule.getRuleType() == RuleType.LOADSHARED) {
+                    if (rspStatusPri.isAvailavle()) {
+                        if (rspStatusSec.isAvailavle()) {
+                            if (rspStatusPri.getCongLevel() >= rspStatusSec.getCongLevel())
+                                return rspStatusPri;
+                            else
+                                return rspStatusSec;
+                        } else {
+                            return rspStatusPri;
+                        }
+                    } else {
+                        if (rspStatusSec.isAvailavle()) {
+                            return rspStatusSec;
+                        } else {
+                            // both are prohibited - we can select any response
+                            return rspStatusPri;
+                        }
+                    }
+                }
+            } else {
+                return null;
+            }
+        } else {
+            if (rspStatusPri.isAffectedByPc())
+                return rspStatusPri;
+            else
+                return null;
+        }
+
+        return null;
+    }
+
+    private NetworkIdStateImpl getRoutingAddressStatusForRoutingAddress(SccpAddress routingAddress, int affectedPc) {
+        if (routingAddress != null && routingAddress.getAddressIndicator().isPCPresent()) {
+            boolean affectedByPc = true;
+            if ((affectedPc >= 0 || routingAddress.getSignalingPointCode() != affectedPc))
+                affectedByPc = false;
+            boolean spcIsLocal = spcIsLocal(routingAddress.getSignalingPointCode());
+            if (spcIsLocal) {
+                return new NetworkIdStateImpl(affectedByPc);
+            }
+
+            RemoteSignalingPointCode remoteSpc = sccpStack.getSccpResource().getRemoteSpcByPC(
+                    routingAddress.getSignalingPointCode());
+            if (remoteSpc == null) {
+                return new NetworkIdStateImpl(affectedByPc);
+            }
+            if (remoteSpc.isRemoteSpcProhibited()) {
+                return new NetworkIdStateImpl(false, affectedByPc);
+            }
+            int congLevel = SccpCongestionControl.generateSccpUserCongLevel(remoteSpc.getCurrentRestrictionLevel());
+            if (congLevel > 0) {
+                return new NetworkIdStateImpl(congLevel, affectedByPc);
+            }
+        }
+
+        // we return here value that this affectedPc does not affect this rule
+        return new NetworkIdStateImpl(false);
     }
 
     /**

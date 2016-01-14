@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
@@ -163,30 +164,35 @@ public class User implements SccpListener {
         return messages;
     }
 
-    public void onCoordRequest(int dpc, int ssn, int multiplicityIndicator) {
-        // TODO Auto-generated method stub
-
-    }
-
-    public void onCoordResponse(int dpc, int ssn, int multiplicityIndicator) {
-        // TODO Auto-generated method stub
-
-    }
-
-    public void onState(int dpc, int ssn, boolean inService, int multiplicityIndicator) {
-        // TODO Auto-generated method stub
-
-    }
-
-    public void onPcState(int dpc, SignallingPointStatus status, int restrictedImportanceLevel,
-            RemoteSccpStatus remoteSccpStatus) {
-        // TODO Auto-generated method stub
-
-    }
-
+    @Override
     public void onNotice(SccpNoticeMessage message) {
         this.messages.add(message);
         System.out.println(String.format("SccpNoticeMessage=%s seqControl=%d", message, message.getSls()));
+    }
+
+    @Override
+    public void onCoordResponse(int ssn, int multiplicityIndicator) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onState(int dpc, int ssn, boolean inService, int multiplicityIndicator) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onPcState(int dpc, SignallingPointStatus status, Integer restrictedImportanceLevel,
+            RemoteSccpStatus remoteSccpStatus) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onNetworkIdState(int networkId, NetworkIdState networkIdState) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

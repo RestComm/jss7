@@ -51,25 +51,15 @@ public interface SccpListener extends Serializable {
     void onNotice(SccpNoticeMessage message);
 
     /**
-     * Indication of N-COORD request
+     * Indication of N-COORD response when the originator (SCCP user) is informed that it may go out-of-service
      *
-     * @param dpc
      * @param ssn
      * @param multiplicityIndicator
      */
-    void onCoordRequest(int dpc, int ssn, int multiplicityIndicator);
+    void onCoordResponse(int ssn, int multiplicityIndicator);
 
     /**
-     * Indication of N-COORD response
-     *
-     * @param dpc
-     * @param ssn
-     * @param multiplicityIndicator
-     */
-    void onCoordResponse(int dpc, int ssn, int multiplicityIndicator);
-
-    /**
-     * Indication of N-STATE (subsystem state)
+     * Indication of N-STATE (another local subsystem state change - UIS / UOS)
      *
      * @param dpc
      * @param ssn
@@ -86,7 +76,14 @@ public interface SccpListener extends Serializable {
      * @param restrictedImportanceLevel
      * @param remoteSccpStatus
      */
-    void onPcState(int dpc, SignallingPointStatus status, int restrictedImportanceLevel,
-            RemoteSccpStatus remoteSccpStatus);
+    void onPcState(int dpc, SignallingPointStatus status, Integer restrictedImportanceLevel, RemoteSccpStatus remoteSccpStatus);
+
+    /**
+     * Reporting of changing of availability / congestion state for a networkId
+     *
+     * @param networkId
+     * @param networkIdState
+     */
+    void onNetworkIdState(int networkId, NetworkIdState networkIdState);
 
 }
