@@ -37,11 +37,16 @@ public class Mtp3StatusPrimitive extends Mtp3Primitive {
      * Many networks use only a single level of congestion (that is, 1). <br/>
      */
     private int congestionLevel;
+    /**
+     * The User Part identity (3==SCCP, 4==TUP, 5==ISUP, 6==DUP, 8==MTP Testing User Part, 0==unknown)
+     */
+    private int userPartIdentity;
 
-    public Mtp3StatusPrimitive(int affectedDpc, Mtp3StatusCause cause, int congestionLevel) {
+    public Mtp3StatusPrimitive(int affectedDpc, Mtp3StatusCause cause, int congestionLevel, int userPartIdentity) {
         super(STATUS, affectedDpc);
         this.cause = cause;
         this.congestionLevel = congestionLevel;
+        this.userPartIdentity = userPartIdentity;
     }
 
     public Mtp3StatusCause getCause() {
@@ -52,16 +57,22 @@ public class Mtp3StatusPrimitive extends Mtp3Primitive {
         return this.congestionLevel;
     }
 
+    public int getUserPartIdentity() {
+        return this.userPartIdentity;
+    }
+
     @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
         sb.append("MTP-STATUS: AffectedDpc=");
         sb.append(this.affectedDpc);
-        sb.append("Cause=");
+        sb.append(", Cause=");
         sb.append(this.cause.toString());
-        sb.append("CongLevel=");
+        sb.append(", CongLevel=");
         sb.append(this.congestionLevel);
+        sb.append(", userPartIdentity=");
+        sb.append(this.userPartIdentity);
 
         return sb.toString();
     }
