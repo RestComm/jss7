@@ -33,15 +33,15 @@ public class ArrayListSerializingBase<T> {
 
     private ArrayList<T> data = new ArrayList<T>();
     private String elementName;
-    private Class classDef;
+    private Class<? extends T> classDef;
 
-    public ArrayListSerializingBase(String elementName, Class classDef, ArrayList<T> data) {
+    public ArrayListSerializingBase(String elementName, Class<? extends T> classDef, ArrayList<T> data) {
         this.data = data;
         this.classDef = classDef;
         this.elementName = elementName;
     }
 
-    public ArrayListSerializingBase(String elementName, Class classDef) {
+    public ArrayListSerializingBase(String elementName, Class<? extends T> classDef) {
         this.elementName = elementName;
         this.classDef = classDef;
     }
@@ -61,8 +61,11 @@ public class ArrayListSerializingBase<T> {
             data.data.clear();
 
             while (xml.hasNext()) {
-                Object pe = xml.get(data.elementName, data.classDef);
-                data.data.add(pe);
+                String localName = xml.getStreamReader().getLocalName().toString();
+                if (localName.equals(data.elementName)) {
+                    data.data.add(xml.get(data.elementName, data.classDef));
+                } else
+                    throw new XMLStreamException("Only <" + data.elementName + "> elements are allowed in this list. Found: " + localName);
             }
         }
 
