@@ -76,7 +76,10 @@
 			    
 			    <!-- Dialogic -->
 			    <include>com.vendor.dialogic:gctapi</include>
-    
+
+			    <!-- netty -->
+			    <include>io.netty:netty-all</include>
+
 			</includes>
 		</dependencySet>
 		

@@ -3,7 +3,7 @@
 	xmlns="urn:jboss:bean-deployer:2.0">
 
 
-	<bean name="SCTPManagement" class="org.mobicents.protocols.sctp.ManagementImpl">
+	<bean name="SCTPManagement" class="org.mobicents.protocols.sctp.netty.NettySctpManagementImpl">
 		<constructor>
 			<parameter>SCTPManagement</parameter>
 		</constructor>
@@ -13,7 +13,7 @@
 
 	<bean name="SCTPShellExecutor" class="org.mobicents.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
 		<property name="sctpManagements">
-			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.sctp.ManagementImpl">
+			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.sctp.netty.NettySctpManagementImpl">
 				<entry>
 					<key>SCTPManagement</key>
 					<value>
