@@ -110,3 +110,6 @@ docs/sources-*/src
 /TestSccp_management2.xml
 /TestSccp_sccpresource2.xml
 /TestSccp_sccprouter2.xml
+/SccpExecutorTest_management2.xml
+/SccpExecutorTest_sccpresource2.xml
+/SccpExecutorTest_sccprouter2.xml
