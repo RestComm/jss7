@@ -116,7 +116,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     /*
      * (non-Javadoc)
      *
-     * @see com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean#getName ()
+     * @see org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean#getName ()
      */
     @Override
     public String getName() {
@@ -126,7 +126,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     /*
      * (non-Javadoc)
      *
-     * @see com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# getPersistDir()
+     * @see org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# getPersistDir()
      */
     @Override
     public String getPersistDir() {
@@ -141,7 +141,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     /*
      * (non-Javadoc)
      *
-     * @see com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# getMaxSequenceNumber()
+     * @see org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# getMaxSequenceNumber()
      */
     @Override
     public int getMaxSequenceNumber() {
@@ -156,7 +156,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     /*
      * (non-Javadoc)
      *
-     * @see com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# getMaxAsForRoute()
+     * @see org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# getMaxAsForRoute()
      */
     @Override
     public int getMaxAsForRoute() {
@@ -171,7 +171,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     /*
      * (non-Javadoc)
      *
-     * @see com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# getAppServers()
+     * @see org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# getAppServers()
      */
     @Override
     public List<As> getAppServers() {
@@ -181,7 +181,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     /*
      * (non-Javadoc)
      *
-     * @see com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# getAspfactories()
+     * @see org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# getAspfactories()
      */
     @Override
     public List<AspFactory> getAspfactories() {
@@ -191,7 +191,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     /*
      * (non-Javadoc)
      *
-     * @see com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean#createAs (java.lang.String,
+     * @see org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean#createAs (java.lang.String,
      * org.mobicents.protocols.ss7.m3ua.Functionality, org.mobicents.protocols.ss7.m3ua.ExchangeType,
      * org.mobicents.protocols.ss7.m3ua.IPSPType, org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext,
      * org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType, org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance)
@@ -230,7 +230,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     /*
      * (non-Javadoc)
      *
-     * @see com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean#destroyAs (java.lang.String)
+     * @see org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean#destroyAs (java.lang.String)
      */
     @Override
     public As destroyAs(String asName) throws Exception {
@@ -241,7 +241,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     /*
      * (non-Javadoc)
      *
-     * @see com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# createAspFactory(java.lang.String,
+     * @see org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# createAspFactory(java.lang.String,
      * java.lang.String)
      */
     @Override
@@ -274,7 +274,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     /*
      * (non-Javadoc)
      *
-     * @see com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# createAspFactory(java.lang.String,
+     * @see org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# createAspFactory(java.lang.String,
      * java.lang.String, long)
      */
     @Override
@@ -287,7 +287,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     /*
      * (non-Javadoc)
      *
-     * @see com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# destroyAspFactory(java.lang.String)
+     * @see org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# destroyAspFactory(java.lang.String)
      */
     @Override
     public AspFactory destroyAspFactory(String aspName) throws Exception {
@@ -298,7 +298,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     /*
      * (non-Javadoc)
      *
-     * @see com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# assignAspToAs(java.lang.String, java.lang.String)
+     * @see org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# assignAspToAs(java.lang.String, java.lang.String)
      */
     @Override
     public Asp assignAspToAs(String asName, String aspName) throws Exception {
@@ -309,7 +309,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     /*
      * (non-Javadoc)
      *
-     * @see com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# unassignAspFromAs(java.lang.String,
+     * @see org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# unassignAspFromAs(java.lang.String,
      * java.lang.String)
      */
     @Override
@@ -321,7 +321,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     /*
      * (non-Javadoc)
      *
-     * @see com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean#startAsp (java.lang.String)
+     * @see org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean#startAsp (java.lang.String)
      */
     @Override
     public void startAsp(String aspName) throws Exception {
@@ -331,7 +331,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     /*
      * (non-Javadoc)
      *
-     * @see com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean#stopAsp (java.lang.String)
+     * @see org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean#stopAsp (java.lang.String)
      */
     @Override
     public void stopAsp(String aspName) throws Exception {
@@ -341,7 +341,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     /*
      * (non-Javadoc)
      *
-     * @see com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean#addRoute (int, int, int, java.lang.String)
+     * @see org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean#addRoute (int, int, int, java.lang.String)
      */
     @Override
     @Deprecated
@@ -357,7 +357,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     /*
      * (non-Javadoc)
      *
-     * @see com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean#removeRoute (int, int, int, java.lang.String)
+     * @see org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean#removeRoute (int, int, int, java.lang.String)
      */
     @Override
     public void removeRoute(int dpc, int opc, int si, String asName) throws Exception {
@@ -367,7 +367,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     /*
      * (non-Javadoc)
      *
-     * @see com.telscale.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# removeAllResourses()
+     * @see org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmxMBean# removeAllResourses()
      */
     @Override
     public void removeAllResourses() throws Exception {
