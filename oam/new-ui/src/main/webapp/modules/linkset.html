@@ -126,7 +126,7 @@
 							
 						}
 						
-						mbeanSearch="com.telscale.ss7:layer=LINKSET,type=Management,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=LINKSET,type=Management,name="+name;
 						jolokia.execute(mbeanSearch,"createLinkset",commandString,
 								{
 									success: function(value) {
@@ -146,7 +146,7 @@
 						
 						var commandString = "linkset,delete," + linksetName;
 						
-						mbeanSearch="com.telscale.ss7:layer=LINKSET,type=Management,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=LINKSET,type=Management,name="+name;
 						jolokia.execute(mbeanSearch,"deleteLinkset",commandString,
 								{
 									success: function(value) {
@@ -164,7 +164,7 @@
 					function activateLinkset(name,linksetName){
 						var commandString = "linkset,activate," + linksetName;
 						
-						mbeanSearch="com.telscale.ss7:layer=LINKSET,type=Management,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=LINKSET,type=Management,name="+name;
 						jolokia.execute(mbeanSearch,"activateLinkset",commandString,
 								{
 									success: function(value) {
@@ -182,7 +182,7 @@
 					function deactivateLinkset(name,linksetName){
 						var commandString = "linkset,deactivate," + linksetName;
 						
-						mbeanSearch="com.telscale.ss7:layer=LINKSET,type=Management,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=LINKSET,type=Management,name="+name;
 						jolokia.execute(mbeanSearch,"deactivateLinkset",commandString,
 								{
 									success: function(value) {
@@ -237,7 +237,7 @@
 						var commandString  ="linkset,link,create,span,"+span+",code,"+code+",channel,"+channel+","+linksetName+","+linkname+"";
 						
 						
-						mbeanSearch="com.telscale.ss7:layer=LINKSET,type=Management,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=LINKSET,type=Management,name="+name;
 						jolokia.execute(mbeanSearch,"createLink",commandString,
 								{
 									success: function(value) {
@@ -258,7 +258,7 @@
 						
 						var commandString = "linkset,link,delete,"+linksetName+","+linkname+"";
 						
-						mbeanSearch="com.telscale.ss7:layer=LINKSET,type=Management,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=LINKSET,type=Management,name="+name;
 						jolokia.execute(mbeanSearch,"deleteLink",commandString,
 								{
 									success: function(value) {
@@ -279,7 +279,7 @@
 						
 						var commandString = "linkset,link,activate,"+linksetName+","+linkname+"";
 						
-						mbeanSearch="com.telscale.ss7:layer=LINKSET,type=Management,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=LINKSET,type=Management,name="+name;
 						jolokia.execute(mbeanSearch,"activateLink",commandString,
 								{
 									success: function(value) {
@@ -299,7 +299,7 @@
 						
 						var commandString = "linkset,link,deactivate,"+linksetName+","+linkname+"";
 						
-						mbeanSearch="com.telscale.ss7:layer=LINKSET,type=Management,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=LINKSET,type=Management,name="+name;
 						jolokia.execute(mbeanSearch,"deactivateLink",commandString,
 								{
 									success: function(value) {
@@ -315,7 +315,7 @@
 					}
 					
 					function refreshLinksetList(){
-						mbeanSearch="com.telscale.ss7:layer=LINKSET,type=Management,name=*";
+						mbeanSearch="org.mobicents.ss7:layer=LINKSET,type=Management,name=*";
 						var mbean;
 						$.ajax({
 							dataType: "json",

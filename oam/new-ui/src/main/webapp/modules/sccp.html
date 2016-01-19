@@ -100,7 +100,7 @@
 							$("#login-settings-error").hide();
 						}					
 						
-						var mbeanSearch="com.telscale.ss7:layer=SCCP,type=Management,name="+mbeanName;
+						var mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Management,name="+mbeanName;
 						jolokia.request(
 								[
 									{ type: "write", mbean: mbeanSearch, attribute: propertyName, value: inputTextEle.value },
@@ -136,7 +136,7 @@
 						$("#ss7-sccp-settings-"+sccpName).show();
 					}
 					function deleteSap(name, sapId){
-						mbeanSearch="com.telscale.ss7:layer=SCCP,type=Router,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Router,name="+name;
 						jolokia.execute(mbeanSearch,"removeMtp3ServiceAccessPoint",sapId,
 								{
 									success: function(value) {
@@ -152,7 +152,7 @@
 								});	
 					}
 					function deleteSapDest(name, sapId, sapDestId){
-						mbeanSearch="com.telscale.ss7:layer=SCCP,type=Router,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Router,name="+name;
 						jolokia.execute(mbeanSearch,"removeMtp3Destination",sapId,sapDestId,
 								{
 									success: function(value) {
@@ -168,7 +168,7 @@
 								});	
 					}					
 					function deleteRsp(name, sapId){
-						mbeanSearch="com.telscale.ss7:layer=SCCP,type=Resource,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Resource,name="+name;
 						jolokia.execute(mbeanSearch,"removeRemoteSpc",sapId,
 								{
 									success: function(value) {
@@ -184,7 +184,7 @@
 								});	
 					}
 					function deleteCsp(name, cspId){
-						mbeanSearch="com.telscale.ss7:layer=SCCP,type=Resource,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Resource,name="+name;
 						jolokia.execute(mbeanSearch,"removeConcernedSpc",cspId,
 								{
 									success: function(value) {
@@ -200,7 +200,7 @@
 								});	
 					}					
 					function deleteRss(name, sapId){
-						mbeanSearch="com.telscale.ss7:layer=SCCP,type=Resource,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Resource,name="+name;
 						jolokia.execute(mbeanSearch,"removeRemoteSsn",sapId,
 								{
 									success: function(value) {
@@ -216,7 +216,7 @@
 								});	
 					}	
 					function deleteAddress(name, addressId){
-						mbeanSearch="com.telscale.ss7:layer=SCCP,type=Router,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Router,name="+name;
 						jolokia.execute(mbeanSearch,"removeRoutingAddress",addressId,
 								{
 									success: function(value) {
@@ -232,7 +232,7 @@
 								});	
 					}	
 					function deleteRule(name, ruleId){
-						mbeanSearch="com.telscale.ss7:layer=SCCP,type=Router,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Router,name="+name;
 						jolokia.execute(mbeanSearch,"removeRule",ruleId,
 								{
 									success: function(value) {
@@ -248,7 +248,7 @@
 								});	
 					}						
 					function deleteLMR(name, lmrId){
-						mbeanSearch="com.telscale.ss7:layer=SCCP,type=Router,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Router,name="+name;
 						jolokia.execute(mbeanSearch,"removeLongMessageRule",lmrId,
 								{
 									success: function(value) {
@@ -308,7 +308,7 @@
 							$("#create-rss-error").hide();
 						}
 						
-						mbeanSearch="com.telscale.ss7:layer=SCCP,type=Resource,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Resource,name="+name;
 						jolokia.execute(mbeanSearch,"addRemoteSsn",rssId,rssspc,rssssn,rssFlag,rssMarkProhibited,
 								{
 									success: function(value) {
@@ -354,7 +354,7 @@
 							$("#create-csp-error").hide();
 						}
 						
-						mbeanSearch="com.telscale.ss7:layer=SCCP,type=Resource,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Resource,name="+name;
 						jolokia.execute(mbeanSearch,"addConcernedSpc",cspId,csppc,
 								{
 									success: function(value) {
@@ -410,7 +410,7 @@
 							$("#create-rsp-error").hide();
 						}
 						
-						mbeanSearch="com.telscale.ss7:layer=SCCP,type=Resource,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Resource,name="+name;
 						jolokia.execute(mbeanSearch,"addRemoteSpc",rspId,rspc,rspcFlag,rspcMask,
 								{
 									success: function(value) {
@@ -499,7 +499,7 @@
 							$("#create-sap-dest-error").hide();
 						}
 						
-						mbeanSearch="com.telscale.ss7:layer=SCCP,type=Router,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Router,name="+name;
 						jolokia.execute(mbeanSearch,"addMtp3Destination",sapdestId,sapdestdestId,sapdestfpc,sapdestlpc,sapdestfsls,sapdestlsls,sapdestslsmask,
 								{
 									success: function(value) {
@@ -565,7 +565,7 @@
 							$("#create-sap-error").hide();
 						}
 						
-						mbeanSearch="com.telscale.ss7:layer=SCCP,type=Router,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Router,name="+name;
 						jolokia.execute(mbeanSearch,"addMtp3ServiceAccessPoint",sapId,sapMtp3Id,sapOpc,sapNi,sapNid,
 								{
 									success: function(value) {
@@ -628,7 +628,7 @@
 							$("#create-lmr-error").hide();
 						}
 						
-						mbeanSearch="com.telscale.ss7:layer=SCCP,type=Router,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Router,name="+name;
 						jolokia.execute(mbeanSearch,"addLongMessageRule",lmrId,lmrfirstpc,lmrlastpc,lmrtype,
 								{
 									success: function(value) {
@@ -720,7 +720,7 @@
 							$("#create-address-error").hide();
 						}
 						
-						mbeanSearch="com.telscale.ss7:layer=SCCP,type=Router,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Router,name="+name;
 						jolokia.request(
 								{
 									type: "EXEC",
@@ -869,7 +869,7 @@
 							$("#create-rule-error").hide();
 						}
 						
-						mbeanSearch="com.telscale.ss7:layer=SCCP,type=Router,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Router,name="+name;
 						jolokia.request(
 								{
 									type: "EXEC",
@@ -895,7 +895,7 @@
 					}						
 					
 					function refreshSccpList(){
-						mbeanSearch="com.telscale.ss7:layer=SCCP,type=Management,name=*";
+						mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Management,name=*";
 						var mbean;
 						$.ajax({
 							dataType: "json",

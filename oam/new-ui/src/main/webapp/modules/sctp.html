@@ -61,7 +61,7 @@
 							$("#login-settings-error").hide();
 						}					
 						
-						var mbeanSearch="com.telscale.ss7:layer=SCTP,type=Management,name="+mbeanName;
+						var mbeanSearch="org.mobicents.ss7:layer=SCTP,type=Management,name="+mbeanName;
 						jolokia.request(
 								[
 									{ type: "write", mbean: mbeanSearch, attribute: propertyName, value: inputTextEle.value },
@@ -102,7 +102,7 @@
 							method = "stopServer";
 							msg = "stopped";
 						}
-						mbeanSearch="com.telscale.ss7:layer=SCTP,type=Management,name="+sctpName;
+						mbeanSearch="org.mobicents.ss7:layer=SCTP,type=Management,name="+sctpName;
 						jolokia.execute(mbeanSearch,method,serverName,
 								{
 									success: function(value) {
@@ -119,7 +119,7 @@
 					}
 					
 					function removeAssociation(sctpName,assocName){
-						mbeanSearch="com.telscale.ss7:layer=SCTP,type=Management,name="+sctpName;
+						mbeanSearch="org.mobicents.ss7:layer=SCTP,type=Management,name="+sctpName;
 						jolokia.execute(mbeanSearch,"removeAssociation",assocName,
 								{
 									success: function(value) {
@@ -135,7 +135,7 @@
 					}
 					
 					function removeServer(sctpName,serverName){
-						mbeanSearch="com.telscale.ss7:layer=SCTP,type=Management,name="+sctpName;
+						mbeanSearch="org.mobicents.ss7:layer=SCTP,type=Management,name="+sctpName;
 						jolokia.execute(mbeanSearch,"removeServer",serverName,
 								{
 									success: function(value) {
@@ -207,7 +207,7 @@
 							$("#create-sctpServers-error"+name).hide();
 						}
 						
-						mbeanSearch="com.telscale.ss7:layer=SCTP,type=Management,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=SCTP,type=Management,name="+name;
 						jolokia.execute(mbeanSearch,"addSctpServer",sctpName, sctpHostAddress, sctpHostPort, sctpIPType,
 								acceptAnonymous, sctpMaxConcurrentConn, sctpExtraHostAddress,
 								{
@@ -326,7 +326,7 @@
 							$("#create-sctpAssociations-error"+name).hide();
 						}
 						
-						mbeanSearch="com.telscale.ss7:layer=SCTP,type=Management,name="+name;
+						mbeanSearch="org.mobicents.ss7:layer=SCTP,type=Management,name="+name;
 						
 						if (sctpAssocIsServer) {
 							jolokia.execute(mbeanSearch,"addSctpServerAssociation",sctpAssocPeerAddress, sctpAssocPeerPort, sctpAssocServerName,
@@ -364,7 +364,7 @@
 					}
 					
 					function refreshSctpList(){
-						mbeanSearch="com.telscale.ss7:layer=SCTP,type=Management,name=*";
+						mbeanSearch="org.mobicents.ss7:layer=SCTP,type=Management,name=*";
 						var mbean;
 						$.ajax({
 							dataType: "json",
@@ -721,7 +721,7 @@
 														
 														
 														//start SCTP Server DISPLAY segment
-														sctpMbeanSearch="com.telscale.ss7:layer=SCTP,type=Server,name="+sctpServerName;
+														sctpMbeanSearch="org.mobicents.ss7:layer=SCTP,type=Server,name="+sctpServerName;
 														var mbeanSctpServer;
 														$.ajax({
 															dataType: "json",
@@ -926,7 +926,7 @@
 														
 														
 														//start SCTP Association DISPLAY segment
-														sctpAssocMbeanSearch="com.telscale.ss7:layer=SCTP,type=Association,name="+assocName;
+														sctpAssocMbeanSearch="org.mobicents.ss7:layer=SCTP,type=Association,name="+assocName;
 														var mbeanSctpServer;
 														$.ajax({
 															dataType: "json",
