@@ -27,7 +27,7 @@ import java.util.List;
 import org.apache.log4j.Level;
 import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.api.IpChannelType;
-import org.mobicents.protocols.sctp.ManagementImpl;
+import org.mobicents.protocols.sctp.netty.NettySctpManagementImpl;
 import org.mobicents.protocols.ss7.m3ua.As;
 import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.AspFactory;
@@ -58,7 +58,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 
     private final String name;
     private TesterHost testerHost;
-    private ManagementImpl sctpManagement;
+    private NettySctpManagementImpl sctpManagement;
     private ParameterFactoryImpl factory = new ParameterFactoryImpl();
     private M3UAManagementProxyImpl m3uaMgmt;
     private boolean isSctpConnectionUp = false;
@@ -628,7 +628,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
         this.stopM3ua();
 
         // init SCTP stack
-        this.sctpManagement = new ManagementImpl("SimSCTPServer_" + name);
+        this.sctpManagement = new NettySctpManagementImpl("SimSCTPServer_" + name);
         // set 8 threads for delivering messages
         this.sctpManagement.setPersistDir(persistDir);
         this.sctpManagement.setWorkerThreads(8);
