@@ -643,7 +643,7 @@ public class SccpExecutorTest {
         // test show
         rspCmd = "sccp rsp show";
         res = this.sccpExecutor.execute(rspCmd.split(" "));
-        assertEquals(res, "key=1  rsp=11 rsp-flag=0 mask=0 rsp-prohibited=false rsccp-prohibited=false\n");
+        assertEquals(res, "key=1  rsp=11 rsp-flag=0 mask=0 rsp-prohibited=false rsccp-prohibited=false rl=0 rsl=0\n");
 
         rspCmd = "sccp rsp create 1 12 0 0";
         res = this.sccpExecutor.execute(rspCmd.split(" "));
