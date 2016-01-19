@@ -143,7 +143,7 @@
 							$("#create-campaign-error").hide();
 						}
 						
-						jolokia.execute("com.telscale.ss7:layer=COUNTER,name=CounterHost,type=Management",methodName, campaignName,cntDefSetName,duration, 
+						jolokia.execute("org.mobicents.ss7:layer=COUNTER,name=CounterHost,type=Management",methodName, campaignName,cntDefSetName,duration, 
 								{
 									success: function(value) {
 										refreshCampaignsList();
@@ -163,7 +163,7 @@
 						
 						$('#div-ss7-campaigns-details').empty();
 						
-						jolokia.execute("com.telscale.ss7:layer=COUNTER,name=CounterHost,type=Management","getCampaign", campaignName,
+						jolokia.execute("org.mobicents.ss7:layer=COUNTER,name=CounterHost,type=Management","getCampaign", campaignName,
 								{
 									success: function(response) {
 										var name = response.name;
@@ -370,7 +370,7 @@
 						
 						jolokia.request(
 								[
-									{ type: "read", mbean: "com.telscale.ss7:layer=COUNTER,name=CounterHost,type=Management"}
+									{ type: "read", mbean: "org.mobicents.ss7:layer=COUNTER,name=CounterHost,type=Management"}
 								],
 								{ success: 
 									function(response) {
@@ -418,7 +418,7 @@
 					}
 					
 					function deleteCampaign(campaignName){
-						jolokia.execute("com.telscale.ss7:layer=COUNTER,name=CounterHost,type=Management","destroyCampaign", campaignName,
+						jolokia.execute("org.mobicents.ss7:layer=COUNTER,name=CounterHost,type=Management","destroyCampaign", campaignName,
 								{
 									success: function(value) {
 										refreshCampaignsList();

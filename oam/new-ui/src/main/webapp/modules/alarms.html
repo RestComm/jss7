@@ -74,7 +74,7 @@
 				function updateAlarms() {
 					jolokia.request(
 						[
-							{ type: "read", mbean: "com.telscale.ss7:layer=ALARM,name=AlarmHost,type=Management", attribute: ["CurrentAlarmList"] }
+							{ type: "read", mbean: "org.mobicents.ss7:layer=ALARM,name=AlarmHost,type=Management", attribute: ["CurrentAlarmList"] }
 						],
 						{ success: 
 							function(response) {
