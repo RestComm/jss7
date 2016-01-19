@@ -44,7 +44,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
  *
  *
  * @author sergey vetyutnev
- *
+ * @author tamas gyorgyey
  */
 public class GenericNumberCapImpl implements GenericNumberCap, CAPAsnPrimitive {
 
@@ -58,6 +58,7 @@ public class GenericNumberCapImpl implements GenericNumberCap, CAPAsnPrimitive {
     }
 
     public GenericNumberCapImpl(byte[] data) {
+        // TODO: should use setData(byte[]), but omitted for now to keep no-throws constructor. Check performed in #encodeData(AsnOutputStream).
         this.data = data;
     }
 
@@ -69,10 +70,18 @@ public class GenericNumberCapImpl implements GenericNumberCap, CAPAsnPrimitive {
         if (genericNumber == null)
             throw new CAPException("The genericNumber parameter must not be null");
         try {
-            this.data = ((GenericNumberImpl) genericNumber).encode();
+            setData(((GenericNumberImpl) genericNumber).encode());
         } catch (ParameterException e) {
             throw new CAPException("ParameterException when encoding genericNumber: " + e.getMessage(), e);
         }
+    }
+
+    private void setData(byte[] data) throws CAPException {
+        if (data == null)
+            throw new CAPException("Generic Number data field must not be null");
+        if (data.length < 3 || data.length > 11)
+            throw new CAPException("Generic Number data field length must be from 3 to 11 octets. Provided octets: " + data.length);
+        this.data = data;
     }
 
     @Override
@@ -146,11 +155,12 @@ public class GenericNumberCapImpl implements GenericNumberCap, CAPAsnPrimitive {
 
     private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
-        this.data = ansIS.readOctetStringData(length);
-        if (this.data.length < 3 || this.data.length > 11)
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                    + ": data must be from 3 to 11 bytes length, found: " + this.data.length,
+        try {
+            setData(ansIS.readOctetStringData(length));
+        } catch (CAPException e) {
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": " + e.getMessage(), e,
                     CAPParsingComponentExceptionReason.MistypedParameter);
+        }
     }
 
     @Override
@@ -174,10 +184,8 @@ public class GenericNumberCapImpl implements GenericNumberCap, CAPAsnPrimitive {
     @Override
     public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-        if (this.data == null)
-            throw new CAPException("data field must not be null");
-        if (this.data.length < 3 && this.data.length > 11)
-            throw new CAPException("data field length must be from 3 to 11");
+        // note: if GenericNumberCapImpl(byte[]) threw a CAPException for invalid data, we wouldn't have to check here.
+        setData(this.data); // reset the same value to perform validity checks
 
         asnOs.writeOctetStringData(data);
     }
