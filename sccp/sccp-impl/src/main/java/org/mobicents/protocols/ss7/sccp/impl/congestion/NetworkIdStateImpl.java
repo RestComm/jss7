@@ -36,6 +36,7 @@ public class NetworkIdStateImpl implements NetworkIdState {
 
     public NetworkIdStateImpl(boolean affectedByPc) {
         this.affectedByPc = affectedByPc;
+        this.available = true;
     }
 
     public NetworkIdStateImpl(boolean available, boolean affectedByPc) {
@@ -46,6 +47,7 @@ public class NetworkIdStateImpl implements NetworkIdState {
     public NetworkIdStateImpl(int congLevel, boolean affectedByPc) {
         this.congLevel = congLevel;
         this.affectedByPc = affectedByPc;
+        this.available = true;
     }
 
     public boolean isAvailavle() {
@@ -64,22 +66,18 @@ public class NetworkIdStateImpl implements NetworkIdState {
         this.affectedByPc = val;
     }
 
-//    public boolean isWorseLevel(NetworkIdStateImpl comp) {
-//        if (comp == null)
-//            return false;
-//        if (this.available != comp.available) {
-//            if (!comp.available)
-//                return true;
-//            else
-//                return false;
-//        }
-//        if (this.congLevel != comp.congLevel) {
-//            if (this.congLevel < comp.congLevel)
-//                return true;
-//            else
-//                return false;
-//        }
-//        return false;
-//    }
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
 
+        sb.append("NetworkIdState=[affectedByPc=");
+        sb.append(affectedByPc);
+        sb.append(", available=");
+        sb.append(available);
+        sb.append(", congLevel=");
+        sb.append(congLevel);
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

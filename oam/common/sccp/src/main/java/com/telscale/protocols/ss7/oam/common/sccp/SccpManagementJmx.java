@@ -204,4 +204,44 @@ public class SccpManagementJmx implements SccpManagementJmxMBean {
         return this.wrappedSccpStack.getSccpProtocolVersion();
     }
 
+    @Override
+    public int getCongControlTIMER_A() {
+        return this.wrappedSccpStack.getCongControlTIMER_A();
+    }
+
+    @Override
+    public void setCongControlTIMER_A(int value) {
+        this.wrappedSccpStack.setCongControlTIMER_A(value);
+    }
+
+    @Override
+    public int getCongControlTIMER_D() {
+        return this.wrappedSccpStack.getCongControlTIMER_D();
+    }
+
+    @Override
+    public void setCongControlTIMER_D(int value) {
+        this.wrappedSccpStack.setCongControlTIMER_D(value);
+    }
+
+    @Override
+    public int getCongControlN() {
+        return this.wrappedSccpStack.getCongControlN();
+    }
+
+    @Override
+    public void setCongControlN(int value) {
+        this.wrappedSccpStack.setCongControlN(value);
+    }
+
+    @Override
+    public int getCongControlM() {
+        return this.wrappedSccpStack.getCongControlM();
+    }
+
+    @Override
+    public void setCongControlM(int value) {
+        this.wrappedSccpStack.setCongControlM(value);
+    }
+
 }

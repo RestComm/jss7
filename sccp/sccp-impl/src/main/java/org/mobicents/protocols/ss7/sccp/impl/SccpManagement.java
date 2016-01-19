@@ -136,12 +136,17 @@ public class SccpManagement {
         int affectedSsn = data[1] & 0xff;
         int affectedPc;
         int subsystemMultiplicity;
+        int congestionLevel = 0;
         if (this.sccpStackImpl.getSccpProtocolVersion() == SccpProtocolVersion.ANSI) {
             affectedPc = (data[2] & 0xff) | ((data[3] & 0xff) << 8) | ((data[4] & 0xff) << 16);
             subsystemMultiplicity = data[5] & 0xff;
+            if (messgType == SSC)
+                congestionLevel = data[6] & 0x0f;
         } else {
             affectedPc = (data[2] & 0xff) | ((data[3] & 0xff) << 8);
             subsystemMultiplicity = data[4] & 0xff;
+            if (messgType == SSC)
+                congestionLevel = data[5] & 0x0f;
         }
 
         switch (messgType) {
@@ -218,9 +223,12 @@ public class SccpManagement {
                 }
                 break;
             case SSC:
-                if (logger.isEnabledFor(Level.WARN)) {
-                    logger.warn("Received SSC. SSC not yet implemented, dropping message");
+                if (logger.isInfoEnabled()) {
+                    logger.info(String
+                            .format("Rx : SSC, Affected SSN=%d, Affected PC=%d, Subsystem Multiplicity Ind=%d SeqControl=%d  congestionLevel=%d",
+                                    affectedSsn, affectedPc, subsystemMultiplicity, message.getSls(), congestionLevel));
                 }
+                this.onCongState(affectedPc, congestionLevel);
                 break;
             default:
                 logger.error("Received SCMG with unknown MessageType.");
@@ -696,7 +704,9 @@ public class SccpManagement {
         FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
         for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
             try {
-                e1.getValue().onPcState(affectedPc, SignallingPointStatus.CONGESTED, congLevel, null);
+                e1.getValue().onPcState(affectedPc,
+                        levelEncreased ? SignallingPointStatus.CONGESTED : SignallingPointStatus.CONGESTION_REDUCED, congLevel,
+                        null);
             } catch (Exception ee) {
                 logger.error("Exception while invoking onPcState", ee);
             }

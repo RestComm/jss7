@@ -582,6 +582,54 @@ public class RouterTest {
             return null;
         }
 
+        @Override
+        public int getCongControlTIMER_A() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setCongControlTIMER_A(int value) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public int getCongControlTIMER_D() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setCongControlTIMER_D(int value) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public int getCongControlN() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setCongControlN(int value) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public int getCongControlM() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setCongControlM(int value) {
+            // TODO Auto-generated method stub
+            
+        }
+
     }
 
     private class Mtp3UserPartImpl implements Mtp3UserPart {

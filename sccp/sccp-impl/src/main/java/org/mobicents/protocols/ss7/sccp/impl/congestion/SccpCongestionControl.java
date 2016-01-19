@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.sccp.impl.congestion;
 
 import java.util.concurrent.TimeUnit;
 
+import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.SccpManagement;
 
 /**
@@ -32,15 +33,13 @@ import org.mobicents.protocols.ss7.sccp.impl.SccpManagement;
  *
  */
 public class SccpCongestionControl {
-    protected static int N = 8;
-    protected static int M = 4;
-    protected static int TIMER_A = 200;
-    protected static int TIMER_D = 2000;
 
     private SccpManagement sccpManagement;
+    private SccpStack sccpStack;
 
-    public SccpCongestionControl(SccpManagement sccpManagement) {
+    public SccpCongestionControl(SccpManagement sccpManagement, SccpStack sccpStack) {
         this.sccpManagement = sccpManagement;
+        this.sccpStack = sccpStack;
     }
 
     public void scheduleTimer(Runnable timer, int delay) {
@@ -51,20 +50,20 @@ public class SccpCongestionControl {
         sccpManagement.onRestrictionLevelChange(affectedPc, newLevel, levelEncreased);
     }
 
-    public int getTIMER_A() {
-        return TIMER_A;
+    public int getCongControlTIMER_A() {
+        return sccpStack.getCongControlTIMER_A();
     }
 
-    public int getTIMER_D() {
-        return TIMER_D;
+    public int getCongControlTIMER_D() {
+        return sccpStack.getCongControlTIMER_D();
     }
 
-    public int getN() {
-        return N;
+    public int getCongControlN() {
+        return sccpStack.getCongControlN();
     }
 
-    public int getM() {
-        return M;
+    public int getCongControlM() {
+        return sccpStack.getCongControlM();
     }
 
     public static int generateSccpUserCongLevel(int restrictionLevel) {

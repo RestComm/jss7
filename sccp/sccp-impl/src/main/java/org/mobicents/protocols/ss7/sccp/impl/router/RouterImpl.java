@@ -804,9 +804,7 @@ public class RouterImpl implements Router {
                             if (prevNetworkIdState.getCongLevel() < networkIdState.getCongLevel()) {
                                 res.put(rule.getNetworkId(), networkIdState);
                             }
-                        }
-                    } else {
-                        if (!networkIdState.isAvailavle()) {
+                        } else {
                             res.put(rule.getNetworkId(), networkIdState);
                         }
                     }
@@ -869,7 +867,7 @@ public class RouterImpl implements Router {
     private NetworkIdStateImpl getRoutingAddressStatusForRoutingAddress(SccpAddress routingAddress, int affectedPc) {
         if (routingAddress != null && routingAddress.getAddressIndicator().isPCPresent()) {
             boolean affectedByPc = true;
-            if ((affectedPc >= 0 || routingAddress.getSignalingPointCode() != affectedPc))
+            if ((affectedPc >= 0 && routingAddress.getSignalingPointCode() != affectedPc))
                 affectedByPc = false;
             boolean spcIsLocal = spcIsLocal(routingAddress.getSignalingPointCode());
             if (spcIsLocal) {
@@ -888,6 +886,7 @@ public class RouterImpl implements Router {
             if (congLevel > 0) {
                 return new NetworkIdStateImpl(congLevel, affectedByPc);
             }
+            return new NetworkIdStateImpl(affectedByPc);
         }
 
         // we return here value that this affectedPc does not affect this rule
@@ -1102,23 +1101,4 @@ public class RouterImpl implements Router {
 
         reader.close();
     }
-
-    // public void load() throws FileNotFoundException {
-    //
-    // XMLObjectReader reader = null;
-    // try {
-    // reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));
-    //
-    // reader.setBinding(binding);
-    // rulesMap = reader.read(RULE, RuleMap.class);
-    // routingAddresses = reader.read(ROUTING_ADDRESS, SccpAddressMap.class);
-    // // backupAddresses = reader.read(BACKUP_ADDRESS, SccpAddressMap.class);
-    //
-    // longMessageRules = reader.read(LONG_MESSAGE_RULE, LongMessageRuleMap.class);
-    // saps = reader.read(MTP3_SERVICE_ACCESS_POINT, Mtp3ServiceAccessPointMap.class);
-    // } catch (XMLStreamException ex) {
-    // // this.logger.info(
-    // // "Error while re-creating Linksets from persisted file", ex);
-    // }
-    // }
 }

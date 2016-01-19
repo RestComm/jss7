@@ -113,7 +113,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     /**
      * Interval in milliseconds in which new coming for an affected PC MTP-STATUS messages will be logged
      */
-    private static final int STATUS_MSG_LOGGING_INTERVAL_MILLISEC = 1000;
+    private static final int STATUS_MSG_LOGGING_INTERVAL_MILLISEC_CONG = 10000;
+    private static final int STATUS_MSG_LOGGING_INTERVAL_MILLISEC_UNAVAIL = 100;
 
     private static final XMLBinding binding = new XMLBinding();
 
@@ -142,6 +143,17 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     protected double sstTimerDuration_IncreaseFactor = 1.5;
     // Which SCCP protocol version stack processes (ITU / ANSI)
     private SccpProtocolVersion sccpProtocolVersion = SccpProtocolVersion.ITU;
+
+    // SCCP congestion control - the count of levels for restriction level - RLM
+    protected int congControl_N = 8;
+    // SCCP congestion control - the count of sublevels for restriction level - RSLM
+    protected int congControl_M = 4;
+    // Timer Ta value - started at next MTP-STATUS(cong) primitive coming; during this timer no more MTP-STATUS(cong) are
+    // accepted
+    protected int congControl_TIMER_A = 200;
+    // Timer Td value - started after last MTP-STATUS(cong) primitive coming; after end of this timer (without new coming
+    // MTP-STATUS(cong)) RSLM will be reduced
+    protected int congControl_TIMER_D = 2000;
 
     private boolean previewMode = false;
 
@@ -299,6 +311,48 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         this.store();
     }
 
+
+    public int getCongControlTIMER_A() {
+        return congControl_TIMER_A;
+    }
+
+    public void setCongControlTIMER_A(int value) {
+        congControl_TIMER_A = value;
+
+        this.store();
+    }
+
+    public int getCongControlTIMER_D() {
+        return congControl_TIMER_D;
+    }
+
+    public void setCongControlTIMER_D(int value) {
+        congControl_TIMER_D = value;
+
+        this.store();
+    }
+
+    public int getCongControlN() {
+        return congControl_N;
+    }
+
+    public void setCongControlN(int value) {
+        congControl_N = value;
+
+        this.store();
+    }
+
+    public int getCongControlM() {
+        return congControl_M;
+    }
+
+    public void setCongControlM(int value) {
+        congControl_M = value;
+
+        this.store();
+    }
+
+
     public boolean isRemoveSpc() {
         return this.removeSpc;
     }
@@ -408,7 +462,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         // FIXME: move creation to constructor ?
         this.sccpManagement = new SccpManagement(name, sccpProvider, this);
         this.sccpRoutingControl = new SccpRoutingControl(sccpProvider, this);
-        this.sccpCongestionControl = new SccpCongestionControl(sccpManagement);
+        this.sccpCongestionControl = new SccpCongestionControl(sccpManagement, this);
 
         this.sccpManagement.setSccpRoutingControl(sccpRoutingControl);
         this.sccpRoutingControl.setSccpManagement(sccpManagement);
@@ -680,7 +734,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
                 lastCongNotice.put(affectedDpc, new Date());
                 logger.warn(String.format("Rx : %s", msg));
             } else {
-                if (System.currentTimeMillis() - lastNotice.getTime() > STATUS_MSG_LOGGING_INTERVAL_MILLISEC) {
+                if (System.currentTimeMillis() - lastNotice.getTime() > STATUS_MSG_LOGGING_INTERVAL_MILLISEC_CONG) {
                     lastNotice.setTime(System.currentTimeMillis());
                     logger.warn(String.format("Rx : %s", msg));
                 }
@@ -691,7 +745,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
                 lastUserPartUnavailNotice.put(affectedDpc, new Date());
                 logger.warn(String.format("Rx : %s", msg));
             } else {
-                if (System.currentTimeMillis() - lastNotice.getTime() > STATUS_MSG_LOGGING_INTERVAL_MILLISEC) {
+                if (System.currentTimeMillis() - lastNotice.getTime() > STATUS_MSG_LOGGING_INTERVAL_MILLISEC_UNAVAIL) {
                     lastNotice.setTime(System.currentTimeMillis());
                     logger.warn(String.format("Rx : %s", msg));
                 }
