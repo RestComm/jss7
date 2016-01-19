@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.sccp.impl.congestion;
 
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCodeImpl;
+import org.apache.log4j.Logger;
 
 /**
 *
@@ -31,13 +32,20 @@ import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCodeImpl;
 */
 public class CongStateTimerA implements Runnable {
     private RemoteSignalingPointCodeImpl remoteSignalingPointCodeImpl;
+    private Logger logger = Logger.getLogger(CongStateTimerA.class.getCanonicalName());
 
     public CongStateTimerA(RemoteSignalingPointCodeImpl remoteSignalingPointCodeImpl) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("SCCP cong TimerA has started: " + remoteSignalingPointCodeImpl);
+        }
         this.remoteSignalingPointCodeImpl = remoteSignalingPointCodeImpl;
     }
 
     @Override
     public void run() {
+        if (logger.isDebugEnabled()) {
+            logger.debug("SCCP cong TimerA is over: " + remoteSignalingPointCodeImpl);
+        }
         remoteSignalingPointCodeImpl.clearTimerA();
     }
 }

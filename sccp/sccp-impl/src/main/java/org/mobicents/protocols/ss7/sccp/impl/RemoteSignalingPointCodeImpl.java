@@ -26,6 +26,7 @@ import javolution.xml.XMLFormat;
 import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
 
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.impl.congestion.CongStateTimerA;
 import org.mobicents.protocols.ss7.sccp.impl.congestion.CongStateTimerD;
@@ -41,14 +42,16 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSign
     private static final String REMOTE_SPC_FLAG = "remoteSpcFlag";
     private static final String MASK = "mask";
 
+    private Logger logger = Logger.getLogger(RemoteSignalingPointCodeImpl.class);
+
     private int remoteSpc;
     private int remoteSpcFlag;
     private int mask;
-    private boolean remoteSpcProhibited;
-    private boolean remoteSccpProhibited;
+    protected boolean remoteSpcProhibited;
+    protected boolean remoteSccpProhibited;
 
-    private int rl;
-    private int rsl;
+    protected int rl;
+    protected int rsl;
     private CongStateTimerA timerA;
     private CongStateTimerD timerD;
 
@@ -117,6 +120,10 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSign
         return rl;
     }
 
+    public int getCurrentRestrictionSubLevel() {
+        return rsl;
+    }
+
     public void clearCongLevel() {
         this.rl = 0;
         this.rsl = 0;
@@ -125,25 +132,37 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSign
     public void increaseCongLevel(SccpCongestionControl sccpCongestionControl, int level) {
         this.sccpCongestionControl = sccpCongestionControl;
 
-        if (this.timerA != null)
+        if (this.timerA != null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("SCCP cong increaseCongLevel - no actions because of timerA is not over: " + this);
+            }
             return;
+        }
 
         timerA = new CongStateTimerA(this);
-        this.sccpCongestionControl.scheduleTimer(timerA, sccpCongestionControl.getTIMER_A());
+        this.sccpCongestionControl.scheduleTimer(timerA, sccpCongestionControl.getCongControlTIMER_A());
         CongStateTimerD _timerD = timerD;
         if (_timerD != null) {
             _timerD.cancel();
         }
         timerD = new CongStateTimerD(this);
-        this.sccpCongestionControl.scheduleTimer(timerD, sccpCongestionControl.getTIMER_D());
+        this.sccpCongestionControl.scheduleTimer(timerD, sccpCongestionControl.getCongControlTIMER_D());
 
-        if (rl >= sccpCongestionControl.getN())
+        if (rl >= sccpCongestionControl.getCongControlN()) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("SCCP cong increaseCongLevel - no actions because rl has its max level: " + this);
+            }
             return;
+        }
 
         rsl += level;
-        if (rsl > sccpCongestionControl.getM()) {
+        if (rsl >= sccpCongestionControl.getCongControlM()) {
             rsl = 0;
             rl++;
+            if (logger.isDebugEnabled()) {
+                logger.debug("SCCP cong increaseCongLevel - rl has increased: " + this);
+            }
+
             this.sccpCongestionControl.onRestrictionLevelChange(remoteSpc, rl, true);
         }
     }
@@ -153,18 +172,32 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSign
     }
 
     public void decreaseCongLevel() {
-        if (rl == 0)
+        if (rl == 0 && rsl == 0)
             return;
 
         rsl--;
         if (rsl < 0) {
-            rsl = sccpCongestionControl.getM();
+            rsl = sccpCongestionControl.getCongControlM() - 1;
             rl--;
+            if (logger.isDebugEnabled()) {
+                logger.debug("SCCP cong increaseCongLevel - rl has decreased: " + this);
+            }
+
             this.sccpCongestionControl.onRestrictionLevelChange(remoteSpc, rl, false);
         }
 
         timerD = new CongStateTimerD(this);
-        this.sccpCongestionControl.scheduleTimer(timerD, sccpCongestionControl.getTIMER_D());
+        this.sccpCongestionControl.scheduleTimer(timerD, sccpCongestionControl.getCongControlTIMER_D());
+    }
+
+    /**
+     * Do not use this method directly except of debugging. Use clearCongLevel(), increaseCongLevel(), decreaseCongLevel()
+     * 
+     * @param value
+     */
+    protected void setCurrentRestrictionLevel(int value) {
+        this.rl = value;
+        this.rsl = 0;
     }
 
     @Override
@@ -172,7 +205,7 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSign
         StringBuffer sb = new StringBuffer();
         sb.append("rsp=").append(this.remoteSpc).append(" rsp-flag=").append(this.remoteSpcFlag).append(" mask=")
                 .append(this.mask).append(" rsp-prohibited=").append(this.remoteSpcProhibited).append(" rsccp-prohibited=")
-                .append(this.remoteSccpProhibited);
+                .append(this.remoteSccpProhibited).append(" rl=").append(rl).append(" rsl=").append(rsl);
         return sb.toString();
     }
 

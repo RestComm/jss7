@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.sccp.impl.congestion;
 
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCodeImpl;
+import org.apache.log4j.Logger;
 
 /**
 *
@@ -32,19 +33,33 @@ import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCodeImpl;
 public class CongStateTimerD implements Runnable {
     private RemoteSignalingPointCodeImpl remoteSignalingPointCodeImpl;
     private boolean isCancelled;
+    private Logger logger = Logger.getLogger(CongStateTimerD.class);
 
     public CongStateTimerD(RemoteSignalingPointCodeImpl remoteSignalingPointCodeImpl) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("SCCP cong TimerD has started: " + remoteSignalingPointCodeImpl);
+        }
         this.remoteSignalingPointCodeImpl = remoteSignalingPointCodeImpl;
     }
 
     @Override
     public void run() {
         if (!isCancelled) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("SCCP cong TimerD decreasing cong level: " + remoteSignalingPointCodeImpl);
+            }
             remoteSignalingPointCodeImpl.decreaseCongLevel();
+        } else {
+            if (logger.isDebugEnabled()) {
+                logger.debug("SCCP cong TimerD was concelled: " + remoteSignalingPointCodeImpl);
+            }
         }
     }
 
     public void cancel() {
+        if (logger.isDebugEnabled()) {
+            logger.debug("SCCP cong TimerD is cancelling: " + remoteSignalingPointCodeImpl);
+        }
         isCancelled = true;
     }
 }

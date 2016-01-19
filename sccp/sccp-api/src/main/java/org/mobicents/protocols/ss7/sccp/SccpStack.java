@@ -248,4 +248,48 @@ public interface SccpStack {
      */
     Router getRouter();
 
+    /**
+     * @return Timer Ta value - started at next MTP-STATUS(cong) primitive coming; during this timer no more MTP-STATUS(cong)
+     *         are accepted
+     */
+    int getCongControlTIMER_A();
+
+    /**
+     * @param value Timer Ta value - started at next MTP-STATUS(cong) primitive coming; during this timer no more
+     *        MTP-STATUS(cong) are accepted
+     */
+    void setCongControlTIMER_A(int value);
+
+    /**
+     * @return Timer Td value - started after last MTP-STATUS(cong) primitive coming; after end of this timer (without new
+     *         coming MTP-STATUS(cong)) RSLM will be reduced
+     */
+    int getCongControlTIMER_D();
+
+    /**
+     * @param value Timer Td value - started after last MTP-STATUS(cong) primitive coming; after end of this timer (without new
+     *        coming MTP-STATUS(cong)) RSLM will be reduced
+     */
+    void setCongControlTIMER_D(int value);
+
+    /**
+     * @return SCCP congestion control - the count of levels for restriction level - RLM
+     */
+    int getCongControlN();
+
+    /**
+     * @param value SCCP congestion control - the count of levels for restriction level - RLM
+     */
+    void setCongControlN(int value);
+
+    /**
+     * @return SCCP congestion control - the count of sublevels for restriction level - RSLM
+     */
+    int getCongControlM();
+
+    /**
+     * @param value SCCP congestion control - the count of sublevels for restriction level - RSLM
+     */
+    void setCongControlM(int value);
+
 }

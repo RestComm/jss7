@@ -75,7 +75,7 @@ public class SccpStackImplProxy extends SccpStackImpl {
 
         super.sccpManagement = new SccpManagementProxy(this.getName(), sccpProvider, this);
         super.sccpRoutingControl = new SccpRoutingControl(sccpProvider, this);
-        super.sccpCongestionControl = new SccpCongestionControl(sccpManagement);
+        super.sccpCongestionControl = new SccpCongestionControl(sccpManagement, this);
 
         super.sccpManagement.setSccpRoutingControl(sccpRoutingControl);
         super.sccpRoutingControl.setSccpManagement(sccpManagement);
