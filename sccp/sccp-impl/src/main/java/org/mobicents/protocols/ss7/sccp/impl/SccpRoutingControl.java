@@ -43,6 +43,7 @@ import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.Rule;
 import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
+import org.mobicents.protocols.ss7.sccp.impl.congestion.SccpCongestionControl;
 import org.mobicents.protocols.ss7.sccp.impl.message.EncodingResultData;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpAddressedMessageImpl;
@@ -51,6 +52,7 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpNoticeMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
+import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCause;
@@ -190,10 +192,35 @@ public class SccpRoutingControl {
         this.route(msg);
     }
 
+    private long lastCongAnnounseTime;
+    
     protected ReturnCauseValue send(SccpMessageImpl message) throws Exception {
 
         int dpc = message.getOutgoingDpc();
         int sls = message.getSls();
+
+        // outgoing congestion control
+        RemoteSignalingPointCode remoteSpc = this.sccpStackImpl.getSccpResource().getRemoteSpcByPC(dpc);
+        int currentRestrictionLevel = remoteSpc.getCurrentRestrictionLevel();
+        int msgImportance = 8;
+        if (message instanceof SccpDataMessageImpl) {
+            // UDT, XUDT, LUDT
+            msgImportance = 5;
+        }
+        if (message instanceof SccpNoticeMessageImpl) {
+            // UDTS, XUDTS, LUDTS
+            msgImportance = 3;
+        }
+        if (msgImportance < currentRestrictionLevel) {
+            // we are dropping a message because of outgoing congestion
+            long curTime = System.currentTimeMillis();
+            if (lastCongAnnounseTime + 1000 < curTime) {
+                lastCongAnnounseTime = curTime;
+                logger.warn(String.format("SccpMessage for sending=%s was dropped because of congestion level %d to dpc %d", message,
+                        currentRestrictionLevel, dpc));
+            }
+            return ReturnCauseValue.NETWORK_CONGESTION;
+        }
 
         Mtp3ServiceAccessPoint sap = this.sccpStackImpl.router.findMtp3ServiceAccessPoint(dpc, sls, message.getNetworkId());
         if (sap == null) {

@@ -30,6 +30,7 @@ import javolution.util.FastMap;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpManagementEventListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
@@ -152,8 +153,13 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
     }
 
     @Override
+    public FastMap<Integer, NetworkIdState> getNetworkIdStateList() {
+        return this.stack.router.getNetworkIdList(-1);
+    }
+
+    @Override
     public void coordRequest(int ssn) {
         // TODO Auto-generated method stub
-        
+
     }
 }

@@ -25,6 +25,8 @@ package org.mobicents.protocols.ss7.sccp;
 import java.io.IOException;
 import java.io.Serializable;
 
+import javolution.util.FastMap;
+
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
@@ -92,5 +94,12 @@ public interface SccpProvider extends Serializable {
      * @param ssn
      */
     void coordRequest(int ssn);
+
+    /**
+     * The collection of netwokIds that are marked as prohibited or congested.
+     * 
+     * @return The collection of pairs: netwokId value - NetworkIdState (prohibited / congested state)
+     */
+    FastMap<Integer, NetworkIdState> getNetworkIdStateList();
 
 }

@@ -50,10 +50,12 @@ public class NetworkIdStateImpl implements NetworkIdState {
         this.available = true;
     }
 
+    @Override
     public boolean isAvailavle() {
         return this.available;
     }
 
+    @Override
     public int getCongLevel() {
         return this.congLevel;
     }

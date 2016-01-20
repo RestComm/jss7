@@ -29,9 +29,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javolution.util.FastMap;
+
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpManagementEventListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
@@ -577,6 +580,12 @@ public class PreviewModeFunctionalTest {
         public void coordRequest(int ssn) {
             // TODO Auto-generated method stub
             
+        }
+
+        @Override
+        public FastMap<Integer, NetworkIdState> getNetworkIdStateList() {
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 

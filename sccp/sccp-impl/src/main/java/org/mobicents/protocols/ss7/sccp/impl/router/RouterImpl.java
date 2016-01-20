@@ -790,7 +790,11 @@ public class RouterImpl implements Router {
         }
     }
 
-    public FastMap<Integer,NetworkIdState> getNetworkIdList(int affectedPc) {
+    public FastMap<Integer, NetworkIdState> getNetworkIdStateList() {
+        return getNetworkIdList(-1);
+    }
+
+    public FastMap<Integer, NetworkIdState> getNetworkIdList(int affectedPc) {
         FastMap<Integer, NetworkIdState> res = new FastMap<Integer, NetworkIdState>();
 
         for (FastMap.Entry<Integer, Rule> e = this.rulesMap.head(), end = rulesMap.tail(); (e = e.getNext()) != end;) {
