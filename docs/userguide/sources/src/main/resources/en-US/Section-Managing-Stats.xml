@@ -87,7 +87,7 @@
 		If you wish to have the stats logged in the main server log file located at <filename>jboss-5.1.0.GA/server/default/log/server.log</filename>, 
 		then you must add a new category to the <filename>jboss-log4j.xml</filename> as shown below and set priority value to "DEBUG".
 <screen><![CDATA[
-<category name="com.telscale.protocols.ss7.oam.common.statistics.StatsPrinter" additivity="false"> 
+<category name="org.mobicents.protocols.ss7.oam.common.statistics.StatsPrinter" additivity="false"> 
 	    <priority value="DEBUG" /> 
 </category>
 ]]></screen>
@@ -113,7 +113,7 @@
 <param name="ConversionPattern" value="%d %-5p [%c] %m%n"/> 
 </layout> 
 </appender>
-<category name="com.telscale.protocols.ss7.oam.common.statistics.StatsPrinter" additivity="false"> 
+<category name="org.mobicents.protocols.ss7.oam.common.statistics.StatsPrinter" additivity="false"> 
 <priority value="DEBUG" /> 
 <appender-ref ref="STATS"/> 
 </category>

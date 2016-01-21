@@ -37,12 +37,12 @@
 								</row>
 								<row>
 									<entry>TDM Hardware</entry>
-									<entry>If you wish to use legacy SS7 links, then you must have TelScale SS7 Cards or <literal>dahdi</literal> or <literal>dialogic</literal> cards installed along with their native libraries.</entry>
+									<entry>If you wish to use legacy SS7 links, then you must have <literal>dahdi</literal> or <literal>dialogic</literal> cards installed along with their native libraries.</entry>
 									<entry>You do not require any specific hardware for <literal>SIGTRAN (M3UA)</literal>.</entry>		
 								</row>
 								<row>
 									<entry>Operating System</entry>
-									<entry>The platform can be installed on any OS that supports Java and SCTP. But if you wish to use TDM hardware, native libraries for SS7 cards are compiled only for Linux at the moment and therefore supported only on Linux Operating System. If you are using TelScale SS7 Cards, then you do not require any additional libraries to be installed.</entry>
+									<entry>The platform can be installed on any OS that supports Java and SCTP. But if you wish to use TDM hardware, native libraries for SS7 cards are compiled only for Linux at the moment and therefore supported only on Linux Operating System.</entry>
 									<entry>The libraries will be compiled for Windows in future releases.</entry>	
 								</row>
 								<row>

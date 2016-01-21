@@ -64,7 +64,7 @@ This logical division offers great flexibility where hardware is concerned. Irre
 		<title>Directory Structure</title>
 <para>The top-level directory is named <filename>&THIS.APPLICATION.DIRNAME;-&THIS.VERSION;</filename> and immediately below this are five sub-directories named <filename>asn</filename>, <filename>_docs</filename>, <filename>oam</filename>, <filename>sctp</filename> and <filename>ss7</filename>. All the functional modules of the Stack reside in the <filename>ss7</filename> folder.</para>
 <screen><![CDATA[
-|- TelScale-jss7-<version>
+|- mobicents-jss7-<version>
 		|- asn	
 
 		|- docs
@@ -77,10 +77,10 @@ This logical division offers great flexibility where hardware is concerned. Irre
 				|+ native
 				|+ protocols
 				|+ shell
-				|+ TelScale-ss7-service
-				|+ TelScale-ss7-sgw
-				|+ TelScale-ss7-simulator 
-				|+ TelScale-ss7-traceparser 				
+				|+ mobicents-ss7-service
+				|+ mobicents-ss7-sgw
+				|+ mobicents-ss7-simulator 
+				|+ mobicents-ss7-traceparser 				
 
 ]]>
 </screen>
@@ -120,7 +120,7 @@ This logical division offers great flexibility where hardware is concerned. Irre
 					This folder contains the core protocol libraries that will be used by end applications as well as by the SS7 Service deployed in JBoss AS. The sub-directories included in the <filename>ss7</filename> folder are: 
 					<itemizedlist>
 						<listitem>
-							<para><filename>TelScale-ss7-sgw</filename> : Standalone Signaling Gateway <!--whose binary structure has the following layout:</para>
+							<para><filename>mobicents-ss7-sgw</filename> : Standalone Signaling Gateway <!--whose binary structure has the following layout:</para>
 							<mediaobject id="binary_sgw">
 								<imageobject>
 									<imagedata width="300px" align="center" fileref="images/sgw-binary.png" format="PNG" />
@@ -129,7 +129,7 @@ This logical division offers great flexibility where hardware is concerned. Irre
 														
 						</para></listitem>							
 						<listitem>
-							<para><filename>TelScale-ss7-service</filename> : SS7 service is the core engine and is used in conjunction with JBoss AS. The installation guide will teach you to install the Stack as a standalone component if you do not wish to run it as a JBoss AS Service. <!--The <filename>Telscale-ss7-service</filename> binary structure has the following layout:</para>
+							<para><filename>mobicents-ss7-service</filename> : SS7 service is the core engine and is used in conjunction with JBoss AS. The installation guide will teach you to install the Stack as a standalone component if you do not wish to run it as a JBoss AS Service. <!--The <filename>mobicents-ss7-service</filename> binary structure has the following layout:</para>
 							<mediaobject id="binary_ss7-service">
 								<imageobject>
 									<imagedata width="300px" align="center" fileref="images/binary-ss7-service.png" format="PNG" />
@@ -137,10 +137,10 @@ This logical division offers great flexibility where hardware is concerned. Irre
 							</mediaobject>-->							
 						</para></listitem>	
 						<listitem>
-							<para><filename>TelScale-ss7-simulator</filename> : SS7 Simulator is an application for testing the SS7 stack and displaying its functionality. It is also a good example of how to use this stack.			
+							<para><filename>mobicents-ss7-simulator</filename> : SS7 Simulator is an application for testing the SS7 stack and displaying its functionality. It is also a good example of how to use this stack.			
 						</para></listitem>
 						<listitem>
-							<para><filename>TelScale-ss7-traceparser</filename> : TelScale jSS7 Stack Trace Parser is a simple tool that can parse trace capture data files (of some formats) and log its content in some log file in a text form			
+							<para><filename>mobicents-ss7-traceparser</filename> : mobicents jSS7 Stack Trace Parser is a simple tool that can parse trace capture data files (of some formats) and log its content in some log file in a text form			
 							</para>
 						</listitem>															
 						<listitem>
@@ -165,11 +165,11 @@ This logical division offers great flexibility where hardware is concerned. Irre
 	<title>Functional Blocks</title>	
 	<para>The major functional modules of the &THIS.APPLICATION; are:
 	<orderedlist>
-		<listitem><para>SS7 Service [dir: <filename>TelScale-ss7-service</filename>]</para></listitem>
-		<listitem><para>Signaling Gateway [dir: <filename>TelScale-ss7-sgw</filename>]</para></listitem>
+		<listitem><para>SS7 Service [dir: <filename>mobicents-ss7-service</filename>]</para></listitem>
+		<listitem><para>Signaling Gateway [dir: <filename>mobicents-ss7-sgw</filename>]</para></listitem>
 		<listitem><para>Shell [dir: <filename>shell</filename>]</para></listitem>
 		<listitem><para>GUI [dir: <filename>ui</filename>]</para></listitem>
-		<listitem><para>SS7 Simulator [dir: <filename>TelScale-ss7-simulator</filename>]</para></listitem>
+		<listitem><para>SS7 Simulator [dir: <filename>mobicents-ss7-simulator</filename>]</para></listitem>
 	</orderedlist>
 	</para>
 	<para>

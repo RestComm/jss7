@@ -25,7 +25,7 @@
 					Change the working directory to the bin folder in the Simulator's installation
 					directory.
 				</para>
-				<screen>downloads]$ cd TelScale-jss7-&lt;version&gt;/ss7/TelScale-ss7-traceparser/bin</screen>
+				<screen>downloads]$ cd mobicents-jss7-&lt;version&gt;/ss7/mobicents-ss7-traceparser/bin</screen>
 			</step>
 			<step>
 				<para>
