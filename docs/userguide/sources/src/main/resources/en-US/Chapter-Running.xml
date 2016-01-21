@@ -48,7 +48,7 @@
 14:07:50,776 INFO  [TCAPStackImpl] Starting ...org.mobicents.protocols.ss7.tcap.TCAPProviderImpl@14d18a1
 14:07:50,776 INFO  [TCAPProviderImpl] Starting TCAP Provider
 14:07:50,776 INFO  [TCAPProviderImpl] Registered SCCP listener with address 8
-14:07:51,012 INFO  [SS7Service]  [[[[[[[[[ TelScale jSS7 6.1.3.GA-TelScale service started ]]]]]]]]] 
+14:07:51,012 INFO  [SS7Service]  [[[[[[[[[ Mobicents jSS7 3.0.0 service started ]]]]]]]]] 
 14:07:51,156 INFO  [Http11Protocol] Starting Coyote HTTP/1.1 on http-127.0.0.1-8080
 14:07:51,177 INFO  [AjpProtocol] Starting Coyote AJP/1.3 on ajp-127.0.0.1-8009
 14:07:51,184 INFO  [ServerImpl] JBoss (Microcontainer) [5.1.0.GA (build: SVNTag=JBoss_5_1_0_GA date=200905221053)] Started in 40s:691ms
@@ -93,7 +93,7 @@ Halting VM]]></screen></para></step>
 							directory (the one into which the zip file's
 							contents was extracted to)
 						</para>
-						<screen>downloads]$ cd TelScale-jss7-&lt;version&gt;/ss7/TelScale-ss7-sgw</screen>
+						<screen>downloads]$ cd mobicents-jss7-&lt;version&gt;/ss7/mobicents-ss7-sgw</screen>
 					</step>
 					<step>
 						<para>
@@ -101,7 +101,7 @@ Halting VM]]></screen></para></step>
 							<filename>bin/run.sh</filename>
 							start script is executable.
 						</para>
-						<screen>TelScale-ss7-sgw$ chmod +x bin/run.sh</screen>
+						<screen>mobicents-ss7-sgw$ chmod +x bin/run.sh</screen>
 					</step>
 					<step>
 						<para>
@@ -109,14 +109,14 @@ Halting VM]]></screen></para></step>
 							<filename>run.sh</filename>
 							Bourne shell script.
 						</para>
-						<screen>TelScale-ss7-sgw$ ./bin/run.sh</screen>
+						<screen>mobicents-ss7-sgw$ ./bin/run.sh</screen>
 					</step>
 <step><para>
 				In the Linux terminal, the
 				&THIS.PLATFORM; Signaling Gateway has started successfully if the
 				last line of output is similar to the following
 			</para>
-			<programlisting><![CDATA[15:51:18,247 INFO  [MainDeployer] [[[[[[[[[ telscale Signaling Gateway: release.version=]]>&THIS.VERSION; <![CDATA[Started ]]]]]]]]]]]></programlisting>
+			<programlisting><![CDATA[15:51:18,247 INFO  [MainDeployer] [[[[[[[[[ Mobicents Signaling Gateway: release.version=]]>&THIS.VERSION; <![CDATA[Started ]]]]]]]]]]]></programlisting>
 </step>
 				</procedure>
 	
@@ -126,7 +126,7 @@ Halting VM]]></screen></para></step>
 					</title>
 					<step>
 						<para>
-							Using Windows Explorer, navigate to the <filename>TelScale-jss7-&lt;version&gt;/ss7/TelScale-ss7-sgw/bin</filename> subfolder in the installation directory.
+							Using Windows Explorer, navigate to the <filename>mobicents-jss7-&lt;version&gt;/ss7/mobicents-ss7-sgw/bin</filename> subfolder in the installation directory.
 						</para>
 					</step>
 					<step>
@@ -139,7 +139,7 @@ Halting VM]]></screen></para></step>
 						<para>
 							Open the Command Prompt via the <guilabel>Start</guilabel> menu and navigate to the correct folder:
 						</para>
-						<screen>C:\Users\&lt;user&gt;\My	Downloads&gt;cd &quot;TelScale-jss7-&lt;version&gt;\ss7\TelScale-ss7-sgw&quot;</screen>
+						<screen>C:\Users\&lt;user&gt;\My	Downloads&gt;cd &quot;mobicents-jss7-&lt;version&gt;\ss7\mobicents-ss7-sgw&quot;</screen>
 					</step>
 					<step>
 						<para>
@@ -171,7 +171,7 @@ Halting VM]]></screen></para></step>
 					To bind the Gateway to a different IP, pass the IP address as value to the <literal>-b</literal> command line option. 
 					For example to bind the server to <literal>115.252.103.220</literal> you will use the command as below:
 				</para>
-				<screen>TelScale-ss7-sgw$ ./bin/run.sh -b 115.252.103.220</screen>
+				<screen>mobicents-ss7-sgw$ ./bin/run.sh -b 115.252.103.220</screen>
 			</section>						
 		</section>			
 		<section id="running_standalone">
@@ -190,16 +190,15 @@ Halting VM]]></screen></para></step>
 			:
 		</para>
 		<programlisting>[$] ./ss7-cli.sh</programlisting>
-		<para>Once console starts, it will print following information:</para>
+		<para>Once console starts, it will print following like information:</para>
 		<screen>
 =========================================================================
 
-telscale SS7: release.version=2.0.0
-This is free software, with components licensed under the GNU General Public License
-version 2 and other licenses. For further details visit http://telscale.org
+Mobicents SS7 Management Shell Bootstrap Environment
+
 =========================================================================
 
-telscale>
+mobicents>
 		</screen>
 
 
@@ -227,9 +226,9 @@ connect &lt;IP&gt; &lt;PORT&gt; </programlisting>
 		<example>
 			<title>Connect to remote machine</title>
 			<screen>
-telscale>connect 10.65.208.215 3435
+mobicents>connect 10.65.208.215 3435
 
-telscale(10.65.208.215:3435)>
+mobicents(10.65.208.215:3435)>
 			</screen>
 		</example>
 		<note>
@@ -246,10 +245,10 @@ telscale(10.65.208.215:3435)>
 		<example>
 			<title>Disconnect</title>
 			<screen>
-telscale(10.65.208.215:3435)>ss7 disconnect
+mobicents(10.65.208.215:3435)>ss7 disconnect
 
 Bye
-telscale>
+mobicents>
 			</screen>
 		</example>
 	</section>
@@ -266,7 +265,7 @@ telscale>
 			<para>
 				<procedure>
 					<title>Enable Security</title>
-					<step><para>Add a new parameter named "<literal>securityDomain</literal>" to the "ShellExecutor" bean in the configuration file <filename>jboss-5.1.0.GA/server/default/deploy/telscale-ss7-service/META-INF/jboss-beans.xml</filename> and save the changes.
+					<step><para>Add a new parameter named "<literal>securityDomain</literal>" to the "ShellExecutor" bean in the configuration file <filename>jboss-5.1.0.GA/server/default/deploy/mobicents-ss7-service/META-INF/jboss-beans.xml</filename> and save the changes.
 <screen><![CDATA[
 <property name="securityDomain">java:/jaas/jmx-console</property>
 ]]></screen>
@@ -277,7 +276,7 @@ telscale>
 				</procedure>	
 				<procedure>
 					<title>Disable Security</title>
-					<step><para>Delete all configurations created as mentioned above and remove the parameter "<literal>securityDomain</literal>" from the "Shell Executor" bean defined in <filename>jboss-5.1.0.GA/server/default/deploy/telscale-ss7-service/META-INF/jboss-beans.xml</filename>. 
+					<step><para>Delete all configurations created as mentioned above and remove the parameter "<literal>securityDomain</literal>" from the "Shell Executor" bean defined in <filename>jboss-5.1.0.GA/server/default/deploy/mobicents-ss7-service/META-INF/jboss-beans.xml</filename>. 
 					</para></step>
 				</procedure>			
 			</para>
@@ -334,25 +333,25 @@ telscale>
 When you first enter CLI and press the "tab" key, CLI will display all operations permitted in that context. Once you connect to a managed instance and while staying connected if you press the "tab" key it will display all other commands allowed.
 		</para>
 <programlisting>
-telscale> [tab key press]
+mobicents> [tab key press]
 history  connect  exit     
-telscale>connect 10.65.208.215 3435
-telscale(10.65.208.215:3435)> [tab key press]
+mobicents>connect 10.65.208.215 3435
+mobicents(10.65.208.215:3435)> [tab key press]
 sctp        linkset     m3ua        sccp        history     disconnect 
 </programlisting>
 		<para>
 If you enter the first few characters of a command and press "tab", CLI will automatically fill in the rest of the command or display all possible commands if there is more than one command beginning with the characters entered by you.
 		</para>
 <programlisting>
-telscale(10.65.208.215:3435)>sctp [tab key press]
+mobicents(10.65.208.215:3435)>sctp [tab key press]
 server       association  --help       
-telscale(10.65.208.215:3435)>sctp 
+mobicents(10.65.208.215:3435)>sctp 
 </programlisting>
 		<para>
 In addition, help files are also available for every command using the --help option. The help files provide details of the command including possible parameters and examples of usage if applicable. 
 		</para>
 <programlisting>
-telscale(10.65.208.215:3435)>sctp --help
+mobicents(10.65.208.215:3435)>sctp --help
 Name
 	sctp
 	Manage M3UA - SCTP
@@ -376,7 +375,7 @@ SEE ALSO
 	sctp server show, sctp association create, sctp association destroy,
 	sctp association show
 
-telscale(10.65.208.215:3435)>
+mobicents(10.65.208.215:3435)>
 </programlisting>
 	</section>
 
@@ -439,7 +438,7 @@ The main window will display all the configured services and their current state
 							Change the working directory to the bin folder in the Simulator's installation
 							directory.
 						</para>
-						<screen>downloads]$ cd TelScale-jss7-&lt;version&gt;/ss7/TelScale-ss7-simulator/bin</screen>
+						<screen>downloads]$ cd mobicents-jss7-&lt;version&gt;/ss7/mobicents-ss7-simulator/bin</screen>
 				</step>
 					<step>
 						<para>
@@ -529,7 +528,7 @@ The form has three sections:
 							Change the working directory to the bin folder in the Simulator's installation
 							directory.
 						</para>
-						<screen>downloads]$ cd TelScale-jss7-&lt;version&gt;/ss7/TelScale-ss7-simulator/bin</screen>
+						<screen>downloads]$ cd mobicents-jss7-&lt;version&gt;/ss7/mobicents-ss7-simulator/bin</screen>
 				</step>
 					<step>
 						<para>
@@ -572,13 +571,13 @@ The form has three sections:
 
   SS7 Simulator Bootstrap Environment
 
-  SIMULATOR_HOME: /home/vinu/TelScale-jSS7-6.1.3.GA/ss7/TelScale-ss7-simulator
+  SIMULATOR_HOME: /home/vinu/mobicents-jSS7-6.1.3.GA/ss7/mobicents-ss7-simulator
 
   JAVA: /usr/lib/jvm/jre-1.7.0-openjdk/bin/java
 
   JAVA_OPTS: -Dprogram.name=run.sh  -Djava.net.preferIPv4Stack=true -Xms256m -Xmx512m -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000
 
-  CLASSPATH: /home/vinu/TelScale-jSS7-6.1.3.GA/ss7/TelScale-ss7-simulator/bin/run.jar
+  CLASSPATH: /home/vinu/mobicents-jSS7-6.1.3.GA/ss7/mobicents-ss7-simulator/bin/run.jar
 
 =========================================================================
 .

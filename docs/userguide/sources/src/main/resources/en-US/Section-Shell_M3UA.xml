@@ -92,21 +92,21 @@
                         <example>
                                 <title>SCTP Server creation</title>
                                 <screen>
-telscale(127.0.0.1:3436)>sctp server create TestServer 127.0.0.1 2905
+mobicents(127.0.0.1:3436)>sctp server create TestServer 127.0.0.1 2905
 Successfully added Server=TestServer
                                 </screen>
                         </example>
                         <example>
                                 <title>SCTP Server creation with multi-home</title>
                                 <screen>
-telscale(127.0.0.1:3436)>sctp server create TestServer 10.2.50.145,10.2.50.146 2905
+mobicents(127.0.0.1:3436)>sctp server create TestServer 10.2.50.145,10.2.50.146 2905
 Successfully added Server=TestServer
                                 </screen>
                         </example>                      
                         <example>
                                 <title>TCP Server creation</title>
                                 <screen>
-telscale(127.0.0.1:3436)>sctp server create TestServerTCP 10.2.50.145 2906 TCP
+mobicents(127.0.0.1:3436)>sctp server create TestServerTCP 10.2.50.145 2906 TCP
 Successfully added Server=TestServerTCP
                                 </screen>
                         </example>                      
@@ -131,7 +131,7 @@ Successfully added Server=TestServerTCP
                         <example>
                                 <title>Destroy SCTP Server</title>
                                 <screen>
-telscale(127.0.0.1:3436)>sctp server destroy TestServer
+mobicents(127.0.0.1:3436)>sctp server destroy TestServer
 Successfully removed Server=TestServer
                                 </screen>
                         </example>
@@ -156,7 +156,7 @@ Successfully removed Server=TestServer
                         <example>
                                 <title>Start SCTP Server</title>
                                 <screen>
-telscale(127.0.0.1:3436)>sctp server start TestServer
+mobicents(127.0.0.1:3436)>sctp server start TestServer
 Successfully started Server=TestServer
                                 </screen>
                         </example>
@@ -181,7 +181,7 @@ Successfully started Server=TestServer
                         <example>
                                 <title>Stop SCTP Server</title>
                                 <screen>
-telscale(127.0.0.1:3436)>sctp server stop TestServer
+mobicents(127.0.0.1:3436)>sctp server stop TestServer
 Successfully stopped Server=TestServer
                                 </screen>
                         </example>
@@ -195,7 +195,7 @@ Successfully stopped Server=TestServer
                         <example>
                                 <title>Show SCTP Server</title>
                                 <screen>
-telscale(local)>sctp server show
+mobicents(local)>sctp server show
 
 SERVER TCP name=TestServerTCP started=false hostIp=10.2.50.145 hostPort=2906
 Associations:
@@ -258,14 +258,14 @@ Associations:
                         <example>
                                 <title>Create CLIENT SCTP Association</title>
                                 <screen>
-telscale(local)>sctp association create Assoc1 CLIENT 192.168.56.101 2905 192.168.56.1,192.168.56.1 2905
+mobicents(local)>sctp association create Assoc1 CLIENT 192.168.56.101 2905 192.168.56.1,192.168.56.1 2905
 Successfully added client Associtaion=Assoc1
                                 </screen>
                         </example>
                         <example>
                                 <title>Create SERVER SCTP Association</title>
                                 <screen>
-telscale(192.168.56.1:3436)>sctp association create Assoc2 SERVER TestServer 192.168.56.1 2905
+mobicents(192.168.56.1:3436)>sctp association create Assoc2 SERVER TestServer 192.168.56.1 2905
 Successfully added server Association=TestServer
                                 </screen>
                         </example>                      
@@ -290,7 +290,7 @@ Successfully added server Association=TestServer
                         <example>
                                 <title>Destroy SCTP Association</title>
                                 <screen>
-telscale(192.168.56.1:3436)>sctp association destroy Assoc1
+mobicents(192.168.56.1:3436)>sctp association destroy Assoc1
 Successfully removed association=Assoc1
                                 </screen>
                         </example>
@@ -418,7 +418,7 @@ ASSOCIATION SCTP name=Assoc2 started=false peerIp=192.168.56.1 peerPort=2905 ser
                                         <term>traffic-mode</term>
                                         <listitem>
                                                 <para>
-                                                        Traffic mode for ASP's. By default its loadshare. TelScale M3UA only supports loadshare and override, broadcast is not supported.
+                                                        Traffic mode for ASP's. By default its loadshare. Mobicents M3UA only supports loadshare and override, broadcast is not supported.
                                                 </para>
                                         </listitem>
                                 </varlistentry>
@@ -448,14 +448,14 @@ ASSOCIATION SCTP name=Assoc2 started=false peerIp=192.168.56.1 peerPort=2905 ser
                         <example>
                                 <title>AS (IPSP) creation</title>
                                 <screen>
-telscale(127.0.0.1:3435)>m3ua as create AS1 IPSP mode DE ipspType server rc 1 traffic-mode loadshare
+mobicents(127.0.0.1:3435)>m3ua as create AS1 IPSP mode DE ipspType server rc 1 traffic-mode loadshare
 Successfully created AS name=AS1
                                 </screen>
                         </example>
                         <example>
                                 <title>AS creation</title>
                                 <screen>
-telscale(127.0.0.1:3435)>m3ua as create AS2 AS mode SE rc 100 traffic-mode loadshare network-appearance 12
+mobicents(127.0.0.1:3435)>m3ua as create AS2 AS mode SE rc 100 traffic-mode loadshare network-appearance 12
 Successfully created AS name=AS2
                                 </screen>
                         </example>                      
@@ -478,7 +478,7 @@ Successfully created AS name=AS2
                         <example>
                                 <title>Destroy AS</title>
                                 <screen>
-telscale(127.0.0.1:3435)>m3ua as destroy AS1
+mobicents(127.0.0.1:3435)>m3ua as destroy AS1
 Successfully destroyed AS name=AS1
                                 </screen>
                         </example>
@@ -492,7 +492,7 @@ Successfully destroyed AS name=AS1
                         <example>
                                 <title>Show AS</title>
                                 <screen>
-telscale(local)>m3ua as show
+mobicents(local)>m3ua as show
 
 AS name=AS2 functionality=AS mode=SE rc=[100] trMode=2 defaultTrMode=2 na=12 peerFSMState=DOWN
 Assigned to :
@@ -534,7 +534,7 @@ Assigned to :
                         <example>
                                 <title>ASP creation</title>
                                 <screen>
-telscale(127.0.0.1:3435)>m3ua asp create ASP1 Assoc1
+mobicents(127.0.0.1:3435)>m3ua asp create ASP1 Assoc1
 Successfully created AS name=ASP1
                                 </screen>
                         </example>
@@ -556,7 +556,7 @@ Successfully created AS name=ASP1
                         <example>
                                 <title>Destroy ASP</title>
                                 <screen>
-telscale(127.0.0.1:3435)>m3ua asp destroy ASP1
+mobicents(127.0.0.1:3435)>m3ua asp destroy ASP1
 Successfully destroyed ASP name=ASP1
                                 </screen>
                         </example>
@@ -570,7 +570,7 @@ Successfully destroyed ASP name=ASP1
                         <example>
                                 <title>Show ASP</title>
                                 <screen>
-telscale(local)>m3ua asp show 
+mobicents(local)>m3ua asp show 
 
 ASP name=ASP1 sctpAssoc=Assoc1 started=false
 Assigned to :
@@ -594,7 +594,7 @@ Assigned to :
                         <example>
                                 <title>Start ASP</title>
                                 <screen>
-telscale(127.0.0.1:3435)>m3ua asp start ASP1
+mobicents(127.0.0.1:3435)>m3ua asp start ASP1
 Successfully started ASP name=ASP1
                                 </screen>
                         </example>
@@ -616,7 +616,7 @@ Successfully started ASP name=ASP1
                         <example>
                                 <title>Stop ASP</title>
                                 <screen>
-telscale(127.0.0.1:3435)>m3ua asp stop ASP1
+mobicents(127.0.0.1:3435)>m3ua asp stop ASP1
 Successfully stopped ASP name=ASP1
                                 </screen>
                         </example>
@@ -646,13 +646,13 @@ Successfully stopped ASP name=ASP1
                         <note>
                                 <title>Note</title>
                                 <para>
-                                  TelScale M3UA supports configuring ASP to process signaling traffic related to more than one Application Server, over a single SCTP Association. However you need to make sure that all the AS's that ASP is shared with has Routing Context (unique) configured. 
+                                  Mobicents M3UA supports configuring ASP to process signaling traffic related to more than one Application Server, over a single SCTP Association. However you need to make sure that all the AS's that ASP is shared with has Routing Context (unique) configured. 
                                 </para>
                         </note>
                         <example>
                                 <title>Add ASP to AS</title>
                                 <screen>
-telscale(127.0.0.1:3435)>m3ua as add AS1 ASP1
+mobicents(127.0.0.1:3435)>m3ua as add AS1 ASP1
 Successfully added ASP name=ASP1 to AS name=AS1
                                 </screen>
                         </example>
@@ -684,7 +684,7 @@ Successfully added ASP name=ASP1 to AS name=AS1
                         <example>
                                 <title>Remove ASP from AS</title>
                                 <screen>
-telscale(127.0.0.1:3435)>m3ua as remove AS1 ASP1
+mobicents(127.0.0.1:3435)>m3ua as remove AS1 ASP1
 Successfully removed ASP name=ASP1 from AS name=AS1
                                 </screen>
                         </example>
@@ -725,7 +725,7 @@ Successfully removed ASP name=ASP1 from AS name=AS1
                         <example>
                                 <title>Add Route</title>
                                 <screen>
-telscale(127.0.0.1:3435)>m3ua route add AS1 2 -1 -1
+mobicents(127.0.0.1:3435)>m3ua route add AS1 2 -1 -1
                                 </screen>
                         </example>
                 </section>              
@@ -764,7 +764,7 @@ telscale(127.0.0.1:3435)>m3ua route add AS1 2 -1 -1
                         <example>
                                 <title>Remove Route</title>
                                 <screen>
-telscale(127.0.0.1:3435)>m3ua route remove AS1 2 -1 -1
+mobicents(127.0.0.1:3435)>m3ua route remove AS1 2 -1 -1
                                 </screen>
                         </example>
                 </section>              
@@ -777,7 +777,7 @@ telscale(127.0.0.1:3435)>m3ua route remove AS1 2 -1 -1
                         <example>
                                 <title>Show Route</title>
                                 <screen>
-telscale(local)>m3ua route show
+mobicents(local)>m3ua route show
 
 2:-1:-1        AS1,AS2,
                                 </screen>

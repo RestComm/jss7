@@ -28,7 +28,7 @@
 	<note>
               <para>
               	The corresponding native libraries for <literal>dialogic</literal> and <literal>dahdi</literal> from folder 
-              	<literal>TelScale-jss7-&lt;version&gt;/ss7/native/32</literal> or <literal>TelScale-jss7-&lt;version&gt;/ss7/native/64</literal> should be copied 
+              	<literal>mobicents-jss7-&lt;version&gt;/ss7/native/32</literal> or <literal>mobicents-jss7-&lt;version&gt;/ss7/native/64</literal> should be copied 
               	to <literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x86</literal> if OS is 32 bit or copied to 
               	<literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x64</literal> if OS is 64 bit. 
               </para>
@@ -36,7 +36,7 @@
               	libraries are compiled only for linux OS for now.
               </para>		                
               <para>	
-              	<literal>TelScale-jss7-&lt;version&gt;/ss7/native/32</literal> and <literal>TelScale-jss7-&lt;version&gt;/ss7/native/64</literal> folders carries 
+              	<literal>mobicents-jss7-&lt;version&gt;/ss7/native/32</literal> and <literal>mobicents-jss7-&lt;version&gt;/ss7/native/64</literal> folders carries 
               	libraries compiled for 32 bit and 64 bit linux OS.
               </para>
               <para>

@@ -11,7 +11,7 @@
                 <title>
                         Configuring &THIS.PLATFORM; SS7 Service
                 </title>
-                <para>Configuration is done through an XML descriptor file named <filename>jboss-beans.xml</filename> located at <filename>$JBOSS_HOME/server/profile_name/deploy/telscale-ss7-service/META-INF</filename>, where 
+                <para>Configuration is done through an XML descriptor file named <filename>jboss-beans.xml</filename> located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where 
                 <literal>profile_name</literal> is the name of the server profile.</para>
                 
                 <para>&THIS.PLATFORM; SS7 Layer 4 (<literal>SCCP, ISUP</literal>) leverages either of the following <literal>MTP</literal> 
@@ -42,7 +42,7 @@
         <!-- SCTP Properties                                                      -->
         <!-- Used by M3UA layer                                                   -->
         <!-- ==================================================================== -->   
-        <bean name="SCTPManagement" class="org.telscale.protocols.sctp.ManagementImpl">
+        <bean name="SCTPManagement" class="org.mobicents.protocols.sctp.ManagementImpl">
                 <constructor>
                         <parameter>SCTPManagement</parameter>
                 </constructor>
@@ -50,7 +50,7 @@
         </bean>
 
         <bean name="SCTPShellExecutor"
-                class="org.telscale.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
+                class="org.mobicents.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
                 <property name="sctpManagement">
                         <inject bean="SCTPManagement" />
                 </property>
@@ -85,7 +85,7 @@
                 </para>
 
   <formalpara>
-                <title><classname>org.telscale.protocols.sctp.ManagementImpl</classname></title>
+                <title><classname>org.mobicents.protocols.sctp.ManagementImpl</classname></title>
                 <para>This SCTP Management Bean takes a <classname>String</classname> as a constructor argument. The name is prepended to the name of the XML file created by the SCTP stack for persisting the state of SCTP resources. This XML file is stored in the path specified by the property <literal>persistDir</literal>. For example, in the above case, when &THIS.PLATFORM; SS7 Service is started, a file named <filename>SCTPManagement_sctp.xml</filename> will be created at <filename>$JBOSS_HOME/server/profile_name/data</filename> directory. The other properties of the Stack are defined below:
               </para>  
   </formalpara>           
@@ -118,14 +118,14 @@ This M3UA Management Bean takes a <classname>String</classname> as a constructor
 					<note>
 		                <para>
 		                	The corresponding native libraries for <literal>dahdi</literal> from folder 
-		                	<literal>TelScale-jss7-&lt;version&gt;/ss7/native/32</literal> or <literal>TelScale-jss7-&lt;version&gt;/ss7/native/64</literal> should be copied to 
+		                	<literal>mobicents-jss7-&lt;version&gt;/ss7/native/32</literal> or <literal>mobicents-jss7-&lt;version&gt;/ss7/native/64</literal> should be copied to 
 		                	 copied to <literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x86</literal> if OS is 32 bit or <literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x64</literal> if OS is 64 bit. 
 		                </para>
 		                <para>
 		                	libraries are compiled only for linux OS for now.
 		                </para>
 		                <para>	
-		                	<literal>TelScale-jss7-&lt;version&gt;/ss7/native/32</literal> and <literal>TelScale-jss7-&lt;version&gt;/ss7/native/64</literal> folders carries 
+		                	<literal>mobicents-jss7-&lt;version&gt;/ss7/native/32</literal> and <literal>mobicents-jss7-&lt;version&gt;/ss7/native/64</literal> folders carries 
 		                	libraries compiled for 32 bit and 64 bit linux OS.
 		                </para>
 		                <para>
@@ -149,7 +149,7 @@ This M3UA Management Bean takes a <classname>String</classname> as a constructor
                         
                                         <programlisting language="XML" role="XML"><![CDATA[
         <bean name="DahdiLinksetFactory"
-                class="org.telscale.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
+                class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
         </bean>]]>
                         </programlisting>                                       
                                                         
@@ -209,7 +209,7 @@ This M3UA Management Bean takes a <classname>String</classname> as a constructor
 					<note>
 		                <para>
 		                	The corresponding native libraries for <literal>dialogic</literal> from folder 
-		                	<literal>TelScale-jss7-&lt;version&gt;/ss7/native/32</literal> or <literal>TelScale-jss7-&lt;version&gt;/ss7/native/64</literal> should be copied 
+		                	<literal>mobicents-jss7-&lt;version&gt;/ss7/native/32</literal> or <literal>mobicents-jss7-&lt;version&gt;/ss7/native/64</literal> should be copied 
 		                	to <literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x86</literal> if OS is 32 bit or copied to 
 		                	<literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x64</literal> if OS is 64 bit. 
 		                </para>
@@ -217,7 +217,7 @@ This M3UA Management Bean takes a <classname>String</classname> as a constructor
 		                	libraries are compiled only for linux OS for now.
 		                </para>		                
 		                <para>	
-		                	<literal>TelScale-jss7-&lt;version&gt;/ss7/native/32</literal> and <literal>TelScale-jss7-&lt;version&gt;/ss7/native/64</literal> folders carries 
+		                	<literal>mobicents-jss7-&lt;version&gt;/ss7/native/32</literal> and <literal>mobicents-jss7-&lt;version&gt;/ss7/native/64</literal> folders carries 
 		                	libraries compiled for 32 bit and 64 bit linux OS.
 		                </para>
 		                <para>
@@ -244,7 +244,7 @@ This M3UA Management Bean takes a <classname>String</classname> as a constructor
         <!-- Dialogic Mtp3UserPart -->
         <!-- ==================================================================== -->
         <!---->
-        <bean name="Mtp3UserPart" class="org.telscale.ss7.hardware.dialogic.DialogicMtp3UserPart">
+        <bean name="Mtp3UserPart" class="org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart">
                 <property name="sourceModuleId">61</property>
                 <property name="destinationModuleId">34</property>
                 <property name="routingLabelFormat">
@@ -259,7 +259,7 @@ The other properties of the Stack are defined below:
                                 <term>sourceModuleId</term>
                                 <listitem>
                                         <para>
-                                                <literal>sourceModuleId</literal> is the id of source module and should match with the value configured in the file <filename>system.txt</filename> used by <literal>dialogic</literal> drivers. In the above example, 61 is assigned for TelScale process.
+                                                <literal>sourceModuleId</literal> is the id of source module and should match with the value configured in the file <filename>system.txt</filename> used by <literal>dialogic</literal> drivers. In the above example, 61 is assigned for mobicents process.
                                         </para>
                                 </listitem>
                         </varlistentry>    
@@ -299,8 +299,8 @@ The other properties of the Stack are defined below:
         <!-- MTP3 Properties -->
         <!-- Define MTP3 routing label Format -->
         <!-- ==================================================================== -->
-        <bean name="RoutingLabelFormat" class="org.telscale.protocols.ss7.mtp.RoutingLabelFormat">
-                <constructor factoryClass="org.telscale.protocols.ss7.mtp.RoutingLabelFormat"
+        <bean name="RoutingLabelFormat" class="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat">
+                <constructor factoryClass="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat"
                         factoryMethod="getInstance">
                         <parameter>ITU</parameter>
                 </constructor>
@@ -351,13 +351,13 @@ The other properties of the Stack are defined below:
                         <programlisting language="XML" role="XML"><![CDATA[     <!-- ==================================================================== -->
         <!-- SCCP Service -->
         <!-- ==================================================================== -->
-        <bean name="SccpStack" class="org.telscale.protocols.ss7.sccp.impl.SccpStackImpl">
+        <bean name="SccpStack" class="org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl">
                 <constructor>
                         <parameter>SccpStack</parameter>
                 </constructor>
                 <property name="persistDir">${jboss.server.data.dir}</property>
                 <property name="mtp3UserParts">
-                        <map keyClass="java.lang.Integer" valueClass="org.telscale.protocols.ss7.mtp.Mtp3UserPart">
+                        <map keyClass="java.lang.Integer" valueClass="org.mobicents.protocols.ss7.mtp.Mtp3UserPart">
                                 <entry>
                                         <key>1</key>
                                         <value>
@@ -369,13 +369,13 @@ The other properties of the Stack are defined below:
         </bean>
 
         <bean name="SccpExecutor"
-                class="org.telscale.protocols.ss7.sccp.impl.oam.SccpExecutor">
+                class="org.mobicents.protocols.ss7.sccp.impl.oam.SccpExecutor">
                 <property name="sccpStack">
                         <inject bean="SccpStack" />
                 </property>
         </bean>]]></programlisting>     
                         <para>
-                                <classname>org.telscale.protocols.ss7.sccp.impl.SccpStackImpl</classname> takes <classname>String</classname> as constructor
+                                <classname>org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl</classname> takes <classname>String</classname> as constructor
                                 argument. The name is prepend to <literal>xml</literal> file created by SCCP stack for persisting state of SCCP resources. 
                                 The <literal>xml</literal> is stored in path specified by <literal>persistDir</literal> property above.
                         </para>
@@ -415,7 +415,7 @@ The other properties of the Stack are defined below:
         <!-- ==================================================================== -->
         <!-- TCAP Service -->
         <!-- ==================================================================== -->   
-        <bean name="TcapStackMap" class="org.telscale.protocols.ss7.tcap.TCAPStackImpl">
+        <bean name="TcapStackMap" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
                 <constructor>
                         <parameter>
                                 <inject bean="SccpStack" property="sccpProvider" />
@@ -427,7 +427,7 @@ The other properties of the Stack are defined below:
                 <property name="maxDialogs">25000</property>
         </bean>
 
-        <bean name="TcapStackCap" class="org.telscale.protocols.ss7.tcap.TCAPStackImpl">
+        <bean name="TcapStackCap" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
                 <constructor>
                         <parameter>
                                 <inject bean="SccpStack" property="sccpProvider" />
@@ -439,7 +439,7 @@ The other properties of the Stack are defined below:
                 <property name="maxDialogs">25000</property>
         </bean>
         
-        <bean name="TcapStack" class="org.telscale.protocols.ss7.tcap.TCAPStackImpl">
+        <bean name="TcapStack" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
                 <constructor>
                         <parameter>
                                 <inject bean="SccpStack" property="sccpProvider" />
@@ -476,7 +476,7 @@ The other properties of the Stack are defined below:
 			</property>
 		</bean>]]></programlisting>   
                         <para>
-                                <classname>org.telscale.protocols.ss7.tcap.TCAPStackImpl</classname> takes <classname>SccpStack</classname> as constructor
+                                <classname>org.mobicents.protocols.ss7.tcap.TCAPStackImpl</classname> takes <classname>SccpStack</classname> as constructor
                                 argument. TCAP uses passed SCCP stack. Constructor also takes the sub system number (SSN) which is registered with passed SCCP stack.
                         </para> 
           
@@ -565,7 +565,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
         <!-- Shell Service -->
         <!-- ==================================================================== -->
         <!-- Define Shell Executor -->
-	<bean name="ShellExecutor" class="com.telscale.ss7.management.console.ShellServer">
+	<bean name="ShellExecutor" class="com.mobicents.ss7.management.console.ShellServer">
 		<constructor>
 			<parameter>
 				<inject bean="SS7Scheduler" />
@@ -607,7 +607,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                         <programlisting language="XML" role="XML"><![CDATA[<!-- ==================================================================== -->
         <!-- MAP Service -->
         <!-- ==================================================================== -->   
-        <bean name="MapStack" class="org.telscale.protocols.ss7.map.MAPStackImpl">
+        <bean name="MapStack" class="org.mobicents.protocols.ss7.map.MAPStackImpl">
                 <constructor>
                         <parameter>
                                 <inject bean="TcapStackMap" property="provider" />
@@ -615,7 +615,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                 </constructor>
         </bean>]]></programlisting>     
                          <para>
-                                <classname>org.telscale.protocols.ss7.map.MAPStackImpl</classname> takes <classname>TcapStack</classname> as constructor
+                                <classname>org.mobicents.protocols.ss7.map.MAPStackImpl</classname> takes <classname>TcapStack</classname> as constructor
                                 argument. MAP uses passed TCAP stack. 
                         </para> 
                          <para>
@@ -631,7 +631,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                         <programlisting language="XML" role="XML"><![CDATA[     <!-- ==================================================================== -->
         <!-- CAP Service -->
         <!-- ==================================================================== -->
-        <bean name="CapStack" class="org.telscale.protocols.ss7.cap.CAPStackImpl">
+        <bean name="CapStack" class="org.mobicents.protocols.ss7.cap.CAPStackImpl">
                 <constructor>
                         <parameter>
                                 <inject bean="TcapStackCap" property="provider" />
@@ -639,7 +639,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                 </constructor>
         </bean>]]></programlisting>     
                          <para>
-                                <classname>org.telscale.protocols.ss7.cap.CAPStackImpl</classname> takes <classname>TcapStack</classname> as constructor
+                                <classname>org.mobicents.protocols.ss7.cap.CAPStackImpl</classname> takes <classname>TcapStack</classname> as constructor
                                 argument. CAP uses passed TCAP stack. 
                         </para> 
                         <para>
@@ -656,10 +656,10 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
         <!-- ISUP Service -->
         <!-- ==================================================================== -->
         <bean name="CircuitManager"
-                class="org.telscale.protocols.ss7.isup.impl.CircuitManagerImpl">
+                class="org.mobicents.protocols.ss7.isup.impl.CircuitManagerImpl">
         </bean>
 
-        <bean name="IsupStack" class="org.telscale.protocols.ss7.isup.impl.ISUPStackImpl">
+        <bean name="IsupStack" class="org.mobicents.protocols.ss7.isup.impl.ISUPStackImpl">
                 <constructor>
                         <parameter>
                                 <inject bean="SS7Scheduler" />
@@ -675,7 +675,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                 </property>
         </bean>]]></programlisting>     
                          <para>
-                                <classname>org.telscale.protocols.ss7.isup.impl.ISUPStackImpl</classname> takes <classname>SS7Scheduler</classname>, local signaling pointcode and network indicator
+                                <classname>org.mobicents.protocols.ss7.isup.impl.ISUPStackImpl</classname> takes <classname>SS7Scheduler</classname>, local signaling pointcode and network indicator
                                  as constructor argument. MAP uses passed TCAP stack. 
                         </para> 
                         
@@ -713,46 +713,46 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                         <programlisting language="XML" role="XML"><![CDATA[<!-- ==================================================================== -->
         <!-- Mobicents SS7 Service -->
         <!-- ==================================================================== -->
-        <bean name="TCAPSS7Service" class="org.telscale.ss7.SS7Service">
+        <bean name="TCAPSS7Service" class="org.mobicents.ss7.SS7Service">
                 <constructor><parameter>TCAP</parameter></constructor>
-                <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.telscale.ss7:service=TCAPSS7Service",exposedInterface=org.telscale.ss7.SS7ServiceMBean.class,registerDirectly=true)
+                <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=TCAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
                 </annotation>
-                <property name="jndiName">java:/telscale/ss7/tcap</property>
+                <property name="jndiName">java:/mobicents/ss7/tcap</property>
                 <property name="stack">
                         <inject bean="TcapStack" property="provider" />
                 </property>
         </bean>
-        <bean name="MAPSS7Service" class="org.telscale.ss7.SS7Service">
+        <bean name="MAPSS7Service" class="org.mobicents.ss7.SS7Service">
                 <constructor><parameter>MAP</parameter></constructor>
-                <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.telscale.ss7:service=MAPSS7Service",exposedInterface=org.telscale.ss7.SS7ServiceMBean.class,registerDirectly=true)
+                <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=MAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
                 </annotation>
-                <property name="jndiName">java:/telscale/ss7/map</property>
+                <property name="jndiName">java:/mobicents/ss7/map</property>
                 <property name="stack">
                         <inject bean="MapStack" property="MAPProvider" />
                 </property>
         </bean>
-        <bean name="CAPSS7Service" class="org.telscale.ss7.SS7Service">
+        <bean name="CAPSS7Service" class="org.mobicents.ss7.SS7Service">
                 <constructor><parameter>CAP</parameter></constructor>
-                <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.telscale.ss7:service=CAPSS7Service",exposedInterface=org.telscale.ss7.SS7ServiceMBean.class,registerDirectly=true)
+                <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=CAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
                 </annotation>
-                <property name="jndiName">java:/telscale/ss7/cap</property>
+                <property name="jndiName">java:/mobicents/ss7/cap</property>
                 <property name="stack">
                         <inject bean="CapStack" property="CAPProvider" />
                 </property>
         </bean>
-        <bean name="ISUPSS7Service" class="org.telscale.ss7.SS7Service">
+        <bean name="ISUPSS7Service" class="org.mobicents.ss7.SS7Service">
                 <constructor><parameter>ISUP</parameter></constructor>
-                <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.telscale.ss7:service=ISUPSS7Service",exposedInterface=org.telscale.ss7.SS7ServiceMBean.class,registerDirectly=true)
+                <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=ISUPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
                 </annotation>
-                <property name="jndiName">java:/telscale/ss7/isup</property>
+                <property name="jndiName">java:/mobicents/ss7/isup</property>
                 <property name="stack">
                         <inject bean="IsupStack" property="isupProvider" />
                 </property>
         </bean>]]></programlisting> 
-                                                <para> TCAPSS7Service binds TcapStack to JNDI <literal>java:/telscale/ss7/tcap</literal>. </para>            
-                        <para> MAPSS7Service binds MapStack to JNDI <literal>java:/telscale/ss7/map</literal>. </para>
-                        <para> CAPSS7Service binds CapStack to JNDI <literal>java:/telscale/ss7/cap</literal>. </para>
-                          <para> ISUPSS7Service binds IsupStack to JNDI <literal>java:/telscale/ss7/isup</literal>. </para>
+                                                <para> TCAPSS7Service binds TcapStack to JNDI <literal>java:/mobicents/ss7/tcap</literal>. </para>            
+                        <para> MAPSS7Service binds MapStack to JNDI <literal>java:/mobicents/ss7/map</literal>. </para>
+                        <para> CAPSS7Service binds CapStack to JNDI <literal>java:/mobicents/ss7/cap</literal>. </para>
+                          <para> ISUPSS7Service binds IsupStack to JNDI <literal>java:/mobicents/ss7/isup</literal>. </para>
                         <para>The JNDI name can be configured to any valid JNDI name specific to your application.</para>
                         <para>Feel free to delete service that your application is not using.</para>
                 </section>              
@@ -762,12 +762,12 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                         Configuring &THIS.PLATFORM; Signaling Gateway
                 </title>
                 <para>Configuration is done through an XML descriptor named <filename>sgw-beans.xml</filename> and is 
-                located at <filename>TelScale-ss7-sgw/deploy</filename> </para>
+                located at <filename>mobicents-ss7-sgw/deploy</filename> </para>
                 
                 <note>
 	                <para>
 	                	Before &THIS.PLATFORM; Signaling Gateway is configured the corresponding native libraries for <literal>dahdi</literal> or <literal>dialogic</literal> from folder 
-	                	<literal>Telscale-ss7-sgw/native/32</literal> or <literal>Telscale-ss7-sgw/native/64</literal> should be copied to <literal>Telscale-ss7-sgw/native</literal>. 
+	                	<literal>mobicents-ss7-sgw/native/32</literal> or <literal>mobicents-ss7-sgw/native/64</literal> should be copied to <literal>mobicents-ss7-sgw/native</literal>. 
 	                </para>
 	                <para>	
 	                	<literal>32</literal> and <literal>64</literal> folders carries libraries compiled for 32 bit and 64 bit. Depending on which JDK (32 or 64 bit) is used to start 
@@ -797,7 +797,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                         </para>
                         
                                         <programlisting language="XML" role="XML"><![CDATA[
-        <bean name="SCTPManagement" class="org.telscale.protocols.sctp.ManagementImpl">
+        <bean name="SCTPManagement" class="org.mobicents.protocols.sctp.ManagementImpl">
                 <constructor>
                         <parameter>SCTPManagement</parameter>
                 </constructor>
@@ -805,13 +805,13 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
         </bean>
 
         <bean name="SCTPShellExecutor"
-                class="org.telscale.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
+                class="org.mobicents.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
                 <property name="sctpManagement">
                         <inject bean="SCTPManagement" />
                 </property>
         </bean>
         
-        <bean name="Mtp3UserPart" class="org.telscale.protocols.ss7.m3ua.impl.M3UAManagement">
+        <bean name="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement">
                 <constructor>
                         <parameter>Mtp3UserPart</parameter>
                 </constructor>
@@ -822,7 +822,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
         </bean>
 
         <bean name="M3UAShellExecutor"
-                class="org.telscale.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
+                class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
                 <property name="m3uaManagement">
                         <inject bean="Mtp3UserPart" />
                 </property>
@@ -841,7 +841,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                                         <para><literal>DahdiLinksetFactory</literal> </para>
                                         <programlisting language="XML" role="XML"><![CDATA[
         <bean name="DahdiLinksetFactory"
-                class="org.telscale.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
+                class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
         </bean>]]>
                         </programlisting>                                       
                                 </listitem>
@@ -849,7 +849,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                                         <para><literal>DialogicLinksetFactory</literal></para>
                                          <programlisting language="XML" role="XML"><![CDATA[
         <bean name="DialogicLinksetFactory"
-                class="org.telscale.ss7.hardware.dialogic.oam.DialogicLinksetFactory">
+                class="org.mobicents.ss7.hardware.dialogic.oam.DialogicLinksetFactory">
         </bean>]]>
                         </programlisting>
                                 </listitem>
@@ -884,7 +884,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
         </bean>
         
         <bean name="LinksetExecutor"
-                class="org.telscale.ss7.linkset.oam.LinksetExecutor">
+                class="org.mobicents.ss7.linkset.oam.LinksetExecutor">
                 <property name="linksetManager">
                         <inject bean="LinksetManager" />
                 </property>
@@ -906,13 +906,13 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                         <programlisting language="XML" role="XML"><![CDATA[<!-- ================================================ -->
     <!-- Shell Service                                                        -->
     <!-- ================================================ -->
-        <bean name="ShellExecutor" class="org.telscale.ss7.management.console.ShellServer">
+        <bean name="ShellExecutor" class="org.mobicents.ss7.management.console.ShellServer">
                 <constructor>
                         <parameter>
                                 <inject bean="Scheduler" />
                         </parameter>
                         <parameter>
-                                <list class="javolution.util.FastList" elementClass="org.telscale.ss7.management.console.ShellExecutor">
+                                <list class="javolution.util.FastList" elementClass="org.mobicents.ss7.management.console.ShellExecutor">
                                         <inject bean="M3UAShellExecutor" />
                                         <inject bean="SCTPShellExecutor" />
                                         <inject bean="LinksetExecutor" />
@@ -934,10 +934,10 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                                 <literal>SignalingGateway</literal> acts as core engine binding all the components together. 
                         </para>
                         <programlisting language="XML" role="XML"><![CDATA[        <!-- ================================================ -->
-    <!-- telscale Signaling Gateway                                      -->
+    <!-- mobicents Signaling Gateway                                      -->
     <!-- ================================================ -->
         <bean name="SignalingGateway"
-                class="org.telscale.ss7.sgw.SignalingGateway">
+                class="org.mobicents.ss7.sgw.SignalingGateway">
 
                 <property name="shellExecutor">
                         <inject bean="ShellExecutor" />

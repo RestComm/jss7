@@ -24,7 +24,7 @@
 	</figure>
 		<para>
 The first tab will display the properties of the SCTP Management unit. These details displayed here are fetched from the XML descriptor file <filename>jboss-beans.xml</filename>, which is 
-		located at <filename>$JBOSS_HOME/server/profile_name/deploy/TelScale-ss7-service/META-INF</filename>, where 
+		located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where 
 		<application>profile_name</application> is the server profile name. These properties can be modified here in the GUI. To modify them you must click the pencil, change the value and save. The GUI will then display the modified values. 
 		</para>
 		<para>		
@@ -87,7 +87,7 @@ EXAMPLES
 		<title>Single Thread</title>
 		 <para>You can modify the settings for the parameter 'singlethread' only when the SCTP Stack is not running. In addition, this parameter cannot be modified through the CLI or GUI. You will have to invoke the setter function directly from the source code. 
 		 </para>
-		 <para>If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file <filename>jboss-beans.xml</filename>, which is located at <filename>$JBOSS_HOME/server/profile_name/deploy/TelScale-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
+		 <para>If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file <filename>jboss-beans.xml</filename>, which is located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
 <screen><![CDATA[
 /*Add property for the parameter 'singleThread' to jboss-beans.xml file and specify settings to true or false*/ 
 <property name="singleThread">true</property>						 
@@ -135,7 +135,7 @@ DESCRIPTION
 		<title>Worker Threads</title>
 		 <para>You can modify the settings for the parameter 'workerthreads' only when the SCTP Stack is not running. In addition, this parameter cannot be modified through the CLI or GUI. You will have to invoke the setter function directly from the source code. 
 		 </para>
-		 <para>If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file <filename>jboss-beans.xml</filename>, which is located at <filename>$JBOSS_HOME/server/profile_name/deploy/TelScale-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
+		 <para>If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file <filename>jboss-beans.xml</filename>, which is located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
 <screen><![CDATA[
 /*Add property for the parameter 'workerthreads' to jboss-beans.xml file and specify the value*/ 
 <property name="workerThreads">4</property>						 

@@ -8,7 +8,7 @@
 	id="setup_configuration">
 	<title>Post Installation Configuration</title>
 	<para>
-		Now that you have installed &THIS.PLATFORM; &THIS.APPLICATION; to suit your needs, you can go ahead and configure the Stack to meet your requirements. The User Guide (available along with this Installation Guide) in the <filename>telscale-ss7-&lt;version&gt;/ss7/docs</filename> folder will assist you in configuring and managing the Stack. The Shell Management module will enable you to easily configure the Stack using the Command Line Interface (CLI) tool.
+		Now that you have installed &THIS.PLATFORM; &THIS.APPLICATION; to suit your needs, you can go ahead and configure the Stack to meet your requirements. The User Guide (available along with this Installation Guide) in the <filename>mobicents-ss7-&lt;version&gt;/ss7/docs</filename> folder will assist you in configuring and managing the Stack. The Shell Management module will enable you to easily configure the Stack using the Command Line Interface (CLI) tool.
 	</para>	
 	<section id="memory_settings">
 		<title>Memory Settings</title>
