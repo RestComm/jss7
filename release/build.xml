@@ -194,7 +194,7 @@
 	
 	<target name="build-docs">
 		<exec failonerror="true" executable="${mvn.executable}" dir="${base.dir}/../docs">
-			<arg line="clean install -Ptelscale" />
+			<arg line="clean install -Pmobicents" />
 		</exec>
 	</target>
 

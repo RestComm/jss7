@@ -400,7 +400,7 @@ public class SimpleAlarmListenerForm extends JFrame implements NotificationListe
             MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
 
             // checking of existence the target domain
-            String tagDomain = "com.telscale.ss7";
+            String tagDomain = "org.mobicents.ss7";
             String[] domains = mbsc.getDomains();
             boolean found = false;
             for (String domain : domains) {

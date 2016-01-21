@@ -46,6 +46,8 @@
 				<cli.prefix>mobicents</cli.prefix>
 			</properties>
 		</profile>
+		
+<!--
 		<profile>
 			<id>telscale</id>
 			<activation>
@@ -58,5 +60,7 @@
 				<cli.prefix>telscale</cli.prefix>
 			</properties>
 		</profile>
+-->
+
 	</profiles>
 </project>

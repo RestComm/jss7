@@ -11,9 +11,9 @@
 	<name>Mobicents SS7 :: ${pom.artifactId}</name>
 
 	<properties>
-		<telscale.name>mobicents-ss7</telscale.name>
-		<telscale.vendor>TeleStax</telscale.vendor>
-		<telscale.version>${project.version}</telscale.version>
+		<mobicents.name>mobicents-ss7</mobicents.name>
+		<mobicents.vendor>TeleStax</mobicents.vendor>
+		<mobicents.version>${project.version}</mobicents.version>
 	</properties>
 
 	<dependencies>
