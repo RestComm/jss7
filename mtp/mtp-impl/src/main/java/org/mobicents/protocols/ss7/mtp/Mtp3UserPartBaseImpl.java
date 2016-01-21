@@ -42,7 +42,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 
     private static final Logger logger = Logger.getLogger(Mtp3UserPartBaseImpl.class);
 
-    private static final String LICENSE_PRODUCT_NAME = "TelScale-jSS7";
+    private static final String LICENSE_PRODUCT_NAME = "Mobicents-jSS7";
 
     private int maxSls = 32;
     private int slsFilter = 0x1F;
