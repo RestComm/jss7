@@ -37,7 +37,7 @@
 		<profile>
 			<id>mobicents</id>
 			<activation>
-				<activeByDefault>false</activeByDefault>
+				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
 				<cli.name>Mobicents CLI</cli.name>
