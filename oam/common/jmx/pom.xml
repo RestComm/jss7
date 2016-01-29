@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 		<artifactId>mobicents-ss7-oam-common</artifactId>
-		<version>3.0.0-SNAPSHOT</version>
+		<version>3.0.1328</version>
 	</parent>
 
 	<artifactId>jmx</artifactId>
