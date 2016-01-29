@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.docs.releasenotes</groupId>
 		<artifactId>mobicents-ss7-releasenotes</artifactId>
-		<version>3.0.0-SNAPSHOT</version>
+		<version>3.0.1329</version>
 	</parent>
 
 	<artifactId>mobicents-ss7-releasenotes-jdocbook-mobicents</artifactId>
