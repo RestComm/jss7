@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>m3ua-cli-m3ua</artifactId>
-	<name>Mobicents SS7 :: M3UA :: CLI :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: M3UA :: CLI :: ${pom.artifactId}</name>
 
 	<dependencies>
 		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 

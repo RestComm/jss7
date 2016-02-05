@@ -10,7 +10,7 @@
 
 	<artifactId>map-load</artifactId>
 
-	<name>Mobicents SS7 :: MAP :: LOAD :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: MAP :: LOAD :: ${pom.artifactId}</name>
 	<packaging>jar</packaging>
 
 	<properties>
@@ -102,7 +102,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
-			<artifactId>mobicents-dialogic</artifactId>
+			<artifactId>restcomm-dialogic</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.commons</groupId>
@@ -193,7 +193,7 @@
 												${assemble.dir}
 											</outputDirectory>
 											<destFileName>
-												mobicents-congestion.jar
+												restcomm-congestion.jar
 											</destFileName>
 										</artifactItem>
 

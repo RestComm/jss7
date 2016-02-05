@@ -5,12 +5,12 @@
 
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.hardware</groupId>
-		<artifactId>mobicents-dialogic-parent</artifactId>
+		<artifactId>restcomm-dialogic-parent</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mobicents-dialogic</artifactId>
-	<name>Mobicents SS7 :: Hardware :: ${pom.artifactId}</name>
+	<artifactId>restcomm-dialogic</artifactId>
+	<name>Restcomm jSS7 :: Hardware :: ${pom.artifactId}</name>
 
 	<dependencies>
 		<dependency>
@@ -41,7 +41,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>mobicents-dialogic</finalName>
+		<finalName>restcomm-dialogic</finalName>
 
 		<plugins>
 			<plugin>

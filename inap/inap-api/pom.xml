@@ -9,7 +9,7 @@
 
 	<artifactId>inap-api</artifactId>
 
-	<name>Mobicents SS7 :: INAP :: Api :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: INAP :: Api :: ${pom.artifactId}</name>
 
 	<dependencies>
 		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 

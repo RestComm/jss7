@@ -11,7 +11,7 @@
   <groupId>org.mobicents.protocols.ss7.tools.traceparser</groupId>
 
   <packaging>pom</packaging>
-  <name>Mobicents Trase Parser :: Parent</name>
+  <name>Restcomm jSS7 Trase Parser :: Parent</name>
 
   <modules>
   	<module>parser</module>

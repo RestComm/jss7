@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>mtp-api</artifactId>
-	<name>Mobicents SS7 :: MTP :: Impl :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: MTP :: Impl :: ${pom.artifactId}</name>
 
 
 	<dependencies>
@@ -16,7 +16,7 @@
 			<groupId>org.mobicents.protocols.stream</groupId>
 			<artifactId>stream</artifactId>
 		</dependency>
-		<!-- non mobicents -->
+		<!-- non restcomm -->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>

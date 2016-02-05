@@ -11,7 +11,7 @@
 	<property name="javac.source" value="1.7" />
 	<property name="srcroot" value="${root}/src" />
 
-	<property name="assemble.dir" value="${ant.file.mobicents.release}/../target/load" />
+	<property name="assemble.dir" value="${ant.file.restcomm.release}/../target/load" />
 	<path id="project.class.path">
 		<pathelement location="${assemble.dir}/sctp-api.jar" />
 		<pathelement location="${assemble.dir}/sctp-impl.jar" />
@@ -28,14 +28,14 @@
 		<pathelement location="${assemble.dir}/m3ua-impl.jar" />
 		<pathelement location="${assemble.dir}/mtp-api.jar" />
 		<pathelement location="${assemble.dir}/mtp.jar" />
-		<pathelement location="${assemble.dir}/mobicents-congestion.jar" />
+		<pathelement location="${assemble.dir}/restcomm-congestion.jar" />
 		<pathelement location="${assemble.dir}/commons.jar" />
 		<pathelement location="${assemble.dir}/commons-email.jar" />
 		<!-- Stats -->
 		<pathelement location="${assemble.dir}/statistics-api.jar" />
 		<pathelement location="${assemble.dir}/statistics-impl.jar" />
 		
-		<!-- mobicents 3rd party -->
+		<!-- restcomm 3rd party -->
 		<pathelement location="${assemble.dir}/asn.jar" />
 		<pathelement location="${assemble.dir}/stream.jar" />
 		<!-- real 3rd party -->
@@ -63,11 +63,11 @@
 			</condition>
 		</fail>
 
-		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../">
+		<exec executable="${mvn.executable}" dir="${ant.file.restcomm.release}/../">
 			<arg line="install" />
 		</exec>
 
-		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../">
+		<exec executable="${mvn.executable}" dir="${ant.file.restcomm.release}/../">
 			<arg line="install -Passemble" />
 		</exec>
 	</target>

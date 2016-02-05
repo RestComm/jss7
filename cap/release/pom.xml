@@ -11,7 +11,7 @@
 
 	
 	<artifactId>cap-release</artifactId>
-	<name>Mobicents SS7 :: CAP :: Release :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: CAP :: Release :: ${pom.artifactId}</name>
 	<profiles>
 		<profile>
 			<id>release</id>

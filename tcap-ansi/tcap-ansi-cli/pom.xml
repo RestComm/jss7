@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>tcap-ansi-cli</artifactId>
-	<name>Mobicents SS7 :: TCAP-ANSI :: CLI :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: TCAP-ANSI :: CLI :: ${pom.artifactId}</name>
 
 	<dependencies>
 		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 

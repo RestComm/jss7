@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>ss7-trace-parser-bootstrap</artifactId>
-	<name>Mobicents Trase Parser :: Trase Parser Bootstrap</name>
+	<name>Restcomm jSS7 Trase Parser :: Trase Parser Bootstrap</name>
 
 	<dependencies>
 		<dependency>

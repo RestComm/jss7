@@ -9,7 +9,7 @@
 
 	<artifactId>inap-impl</artifactId>
 
-	<name>Mobicents SS7 :: INAP :: Impl :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: INAP :: Impl :: ${pom.artifactId}</name>
 	<properties>
 		<log.file.name>tests.log</log.file.name>
 	</properties>

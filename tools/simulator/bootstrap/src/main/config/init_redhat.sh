@@ -2,20 +2,20 @@
 #
 ### $Id: run.sh abhayani@redhat.com $ ###
 #
-# Mobicents SS7 Simulator Control Script
+# Restcomm jSS7 Simulator Control Script
 #
 # To use this script run it as root - it will switch to the specified user
 #
 # Here is a little (and extremely primitive) startup/shutdown script
-# for RedHat systems. It assumes that Mobicents Media Server lives in /usr/local/mms,
-# it's run by user 'mobicents' and JDK binaries are in /usr/local/jdk/bin.
+# for RedHat systems. It assumes that Restcomm Media Server lives in /usr/local/rms,
+# it's run by user 'restcomm' and JDK binaries are in /usr/local/jdk/bin.
 # All this can be changed in the script itself. 
 #
 # Either modify this script for your requirements or just ensure that
 # the following variables are set correctly before calling the script.
 
 #define where jboss is - this is the directory containing directories log, bin, conf etc
-MMS_HOME=${MMS_HOME:-"/home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-standalone/target/mms-standalone-pojo"}
+MMS_HOME=${MMS_HOME:-"/home/abhayani/workarea/restcomm/svn/trunk/servers/media/core/server-standalone/target/rms-standalone-pojo"}
 
 #define the user under which jboss will run, or use 'RUNASIS' to run as the current user
 MMS_USER=${MMS_USER:-"RUNASIS"}

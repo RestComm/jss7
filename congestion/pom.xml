@@ -11,7 +11,7 @@
 
 	<groupId>org.mobicents.protocols.ss7.congestion</groupId>
 	<artifactId>congestion</artifactId>
-	<name>Mobicents SS7 :: Congestion :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Congestion :: ${pom.artifactId}</name>
 
 	<dependencies>
 		<dependency>
@@ -49,7 +49,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<finalName>mobicents-congestion-${project.version}</finalName>
+		<finalName>restcomm-congestion-${project.version}</finalName>
 	</build>
 
 </project>

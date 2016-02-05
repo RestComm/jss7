@@ -1,6 +1,6 @@
 @echo off
 rem -------------------------------------------------------------------------
-rem Mobicents SS7 CLI Bootstrap Script for Win32
+rem Restcomm jSS7 CLI Bootstrap Script for Win32
 rem -------------------------------------------------------------------------
 
 rem $Id: run.bat,v 1.5 2010/12/13 10:15:40 abhayani Exp $
@@ -55,7 +55,7 @@ set ARGS=""
 
 rem Find run.jar, or we can't continue
 
-set RUNJAR=%SHELL_HOME%\lib\mobicents-ss7-shell.jar
+set RUNJAR=%SHELL_HOME%\lib\restcomm-ss7-shell.jar
 if exist "%RUNJAR%" goto FOUND_RUN_JAR
 echo Could not locate %RUNJAR%. Please check that you are in the
 echo bin directory when running this script.
@@ -120,7 +120,7 @@ set SHELL_ENDORSED_DIRS=%SHELL_HOME%\lib
 
 echo ===============================================================================
 echo.
-echo   Mobicents SS7 Management Shell Bootstrap Environment
+echo   Restcomm jSS7 Management Shell Bootstrap Environment
 echo.
 echo   SHELL_HOME: %SHELL_HOME%
 echo.

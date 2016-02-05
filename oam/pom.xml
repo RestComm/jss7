@@ -10,8 +10,8 @@
 	</parent>
 
 	<groupId>org.mobicents.protocols.ss7.oam</groupId>
-	<artifactId>mobicents-ss7-oam</artifactId>
-	<name>Mobicents SS7 :: ${pom.artifactId}</name>
+	<artifactId>restcomm-ss7-oam</artifactId>
+	<name>Restcomm jSS7 :: ${pom.artifactId}</name>
 
 	<modules>
 		<module>common</module>

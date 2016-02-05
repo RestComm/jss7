@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>simulator-bootstrap</artifactId>
-	<name>Mobicents SS7 Simulator :: Simulator Bootstrap</name>
+	<name>Restcomm jSS7 Simulator :: Simulator Bootstrap</name>
 
 	<dependencies>
 		<dependency>

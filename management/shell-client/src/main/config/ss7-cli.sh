@@ -1,7 +1,7 @@
 #!/bin/sh
 ### ====================================================================== ###
 ##                                                                          ##
-##  Mobicents SS7 CLI Bootstrap Script                                 ##
+##  Restcomm SS7 CLI Bootstrap Script                                 ##
 ##                                                                          ##
 ### ====================================================================== ###
 
@@ -98,7 +98,7 @@ if [ "x$JAVA" = "x" ]; then
 fi
 
 # Setup the classpath
-runjar="$SHELL_HOME/lib/mobicents-ss7-shell.jar"
+runjar="$SHELL_HOME/lib/restcomm-ss7-shell.jar"
 if [ ! -f "$runjar" ]; then
     die "Missing required file: $runjar"
 fi
@@ -149,7 +149,7 @@ fi
 # Display our environment
 #echo "========================================================================="
 #echo ""
-#echo "  Mobicents SS7 Management Shell Bootstrap Environment"
+#echo "  Restcomm SS7 Management Shell Bootstrap Environment"
 #echo ""
 #echo "  SHELL_HOME: $SHELL_HOME"
 #echo ""

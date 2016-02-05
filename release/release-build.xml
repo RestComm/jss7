@@ -21,8 +21,8 @@
 
 	<target name="deploy">
 
-		<copy overwrite="true" todir="${jboss.deploy}/mobicents-ss7-service">
-			<fileset dir="./mobicents-ss7-service">
+		<copy overwrite="true" todir="${jboss.deploy}/restcomm-ss7-service">
+			<fileset dir="./restcomm-ss7-service">
 				<include name="**" />
 			</fileset>			
 		</copy>
@@ -48,7 +48,7 @@
 	</target>
 
 	<target name="undeploy">
-		<delete dir="${jboss.deploy}/mobicents-ss7-service" />
+		<delete dir="${jboss.deploy}/restcomm-ss7-service" />
 		<delete file="${jboss.deploy}/jss7-management-console.war" />
 		<delete file="${jboss.deploy}/jolokia.war" />
 		<delete file="${jboss.home}/bin/ss7-cli.sh" />

@@ -9,7 +9,7 @@
 
 	<artifactId>alarm-listener</artifactId>
 
-	<name>Mobicents Simple alarm listener :: SimpleAlarmListener-core</name>
+	<name>Restcomm jSS7 Simple alarm listener :: SimpleAlarmListener-core</name>
 
 	<properties>
 		<tool.directory>
@@ -36,7 +36,7 @@
 			<version>${project.version}</version>
 		</dependency>
 
-		<!-- non mobicents -->
+		<!-- non restcomm -->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>

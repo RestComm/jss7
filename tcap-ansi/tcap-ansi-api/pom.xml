@@ -9,7 +9,7 @@
 
 	<artifactId>tcap-ansi-api</artifactId>
 
-	<name>Mobicents SS7 :: TCAP ANSI :: Api :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: TCAP ANSI :: Api :: ${pom.artifactId}</name>
 
 	<dependencies>
 		<dependency>

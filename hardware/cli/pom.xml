@@ -3,12 +3,12 @@
 
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.hardware</groupId>
-		<artifactId>mobicents-hardware</artifactId>
+		<artifactId>restcomm-hardware</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>linkset-cli</artifactId>
-	<name>Mobicents SS7 :: Hardware :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Hardware :: ${pom.artifactId}</name>
 
 	<dependencies>
 		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 

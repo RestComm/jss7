@@ -13,7 +13,7 @@
 
 	<packaging>pom</packaging>
 
-	<name>Mobicents SS7 :: ${pom.artifactId}</name>
+	<name>RestComm jSS7 :: ${pom.artifactId}</name>
 
 
 
@@ -29,7 +29,7 @@
 		<javolution.version>5.5.1</javolution.version>
 		<compiler.plugin.version>2.0.2</compiler.plugin.version>
 		<compile.source>1.5</compile.source>
-		<!-- mobicents but not strictly ss7 -->
+		<!-- restcomm but not strictly ss7 -->
 		<asn.version>2.0.3.FINAL</asn.version>
 		<stream.version>1.0.0.CR1</stream.version>
 		<sctp.version>1.6.0.FINAL</sctp.version>
@@ -136,7 +136,7 @@
 
 			<!-- Hardware Dahdi Java -->
 			<dependency>
-				<artifactId>mobicents-dahdi</artifactId>
+				<artifactId>restcomm-dahdi</artifactId>
 				<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 				<version>${project.version}</version>
 			</dependency>
@@ -148,14 +148,14 @@
 				<version>${dialogic.version}</version>
 			</dependency>
 			<dependency>
-				<artifactId>mobicents-dialogic</artifactId>
+				<artifactId>restcomm-dialogic</artifactId>
 				<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 				<version>${project.version}</version>
 			</dependency>
 
 			<!-- /hardware m3ua Java -->
 			<dependency>
-				<artifactId>mobicents-m3ua</artifactId>
+				<artifactId>restcomm-m3ua</artifactId>
 				<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 				<version>${project.version}</version>
 			</dependency>
@@ -455,7 +455,7 @@
 						true
 					</resolveTransitiveDependencies>
 					<eclipseProjectName>
-						mobicents-ss7
+						restcomm-jss7
 					</eclipseProjectName>
 				</configuration>
 			</plugin>
@@ -475,9 +475,9 @@
 	</build>
 
 	<scm>
-		<connection>scm:git:https://github.com/mobicents/jss7/</connection>
-		<developerConnection>scm:git:https://github.com/mobicents/jss7/</developerConnection>
-		<url>https://github.com/mobicents/jss7/</url>
+		<connection>scm:git:https://github.com/Restcomm/jss7/</connection>
+		<developerConnection>scm:git:https://github.com/Restcomm/jss7/</developerConnection>
+		<url>https://github.com/Restcomm/jss7/</url>
 	</scm>
 	<!-- repositories -->
 	<repositories>

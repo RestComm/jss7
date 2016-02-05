@@ -2,13 +2,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.sgw</groupId>
-		<artifactId>mobicents-sgw</artifactId>
+		<artifactId>restcomm-sgw</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>boot</artifactId>
 
-	<name>Mobicents SS7 :: SGW :: Boot :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: SGW :: Boot :: ${pom.artifactId}</name>
 
 	<dependencies>
 		<dependency>
@@ -55,13 +55,13 @@
 
 		<!-- Hardware Dahdi Java -->
 		<!--dependency>
-			<artifactId>mobicents-dahdi</artifactId>
+			<artifactId>restcomm-dahdi</artifactId>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 		</dependency-->
 
 		<!-- Hardware Dialogic Java 
 		<dependency>
-			<artifactId>mobicents-dialogic</artifactId>
+			<artifactId>restcomm-dialogic</artifactId>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 		</dependency>
 		-->
@@ -123,7 +123,7 @@
 							src/main/assembly/pojo.xml
 						</descriptor>
 					</descriptors>
-					<finalName>mobicents</finalName>
+					<finalName>restcomm</finalName>
 				</configuration>
 				<executions>
 					<execution>
@@ -151,7 +151,7 @@
 										org.mobicents.protocols.ss7.hardware
 									</groupId>
 									<artifactId>
-										libmobicents-dahdi-linux
+										librestcomm-dahdi-linux
 									</artifactId>
 									<version>
 										${project.version}
@@ -159,10 +159,10 @@
 									<type>so</type>
 									<overWrite>true</overWrite>
 									<outputDirectory>
-										${project.build.directory}/mobicents-sgw/native/32
+										${project.build.directory}/restcomm-sgw/native/32
 									</outputDirectory>
 									<destFileName>
-										libmobicents-dahdi-linux.so
+										librestcomm-dahdi-linux.so
 									</destFileName>
 								</artifactItem>
 								<artifactItem>
@@ -170,7 +170,7 @@
 										org.mobicents.protocols.ss7.hardware
 									</groupId>
 									<artifactId>
-										libmobicents-dialogic-linux
+										librestcomm-dialogic-linux
 									</artifactId>
 									<version>
 										${project.version}
@@ -178,10 +178,10 @@
 									<type>so</type>
 									<overWrite>true</overWrite>
 									<outputDirectory>
-										${project.build.directory}/mobicents-sgw/native
+										${project.build.directory}/restcomm-sgw/native
 									</outputDirectory>
 									<destFileName>
-										libmobicents-dialogic-linux.so
+										librestcomm-dialogic-linux.so
 									</destFileName>
 								</artifactItem>	
 								<artifactItem>
@@ -197,7 +197,7 @@
 									<type>so</type>
 									<overWrite>true</overWrite>
 									<outputDirectory>
-										${project.build.directory}/mobicents-sgw/native/32
+										${project.build.directory}/restcomm-sgw/native/32
 									</outputDirectory>
 									<destFileName>
 										libgctjni.so
@@ -216,7 +216,7 @@
 									<type>so</type>
 									<overWrite>true</overWrite>
 									<outputDirectory>
-										${project.build.directory}/mobicents-sgw/native/64
+										${project.build.directory}/restcomm-sgw/native/64
 									</outputDirectory>
 									<destFileName>
 										libgctjni.so

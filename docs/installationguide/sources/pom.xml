@@ -5,12 +5,12 @@
 
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.docs.installguide</groupId>
-		<artifactId>mobicents-ss7-installguide</artifactId>
+		<artifactId>restcomm-ss7-installguide</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mobicents-ss7-installguide-sources</artifactId>
-	<name>Mobicents SS7 :: Docs :: Install Guide :: Sources :: ${pom.artifactId}</name>
+	<artifactId>restcomm-ss7-installguide-sources</artifactId>
+	<name>Restcomm jSS7 :: Docs :: Install Guide :: Sources :: ${pom.artifactId}</name>
 	<properties>
 
 	</properties>

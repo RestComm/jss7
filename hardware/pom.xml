@@ -8,10 +8,10 @@
 	</parent>
 
 	<groupId>org.mobicents.protocols.ss7.hardware</groupId>
-	<artifactId>mobicents-hardware</artifactId>
+	<artifactId>restcomm-hardware</artifactId>
 
 	<name>
-		Mobicents SS7 :: Hardware :: Parent :: ${pom.artifactId}
+		Restcomm jSS7 :: Hardware :: Parent :: ${pom.artifactId}
 	</name>
 	<packaging>pom</packaging>
 

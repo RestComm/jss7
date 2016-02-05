@@ -5,12 +5,12 @@
 
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.docs.releasenotes</groupId>
-		<artifactId>mobicents-ss7-releasenotes</artifactId>
+		<artifactId>restcomm-ss7-releasenotes</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mobicents-ss7-releasenotes-sources</artifactId>
-	<name>Mobicents SS7 :: Docs :: Release Notes :: Sources :: ${pom.artifactId}</name>
+	<artifactId>restcomm-ss7-releasenotes-sources</artifactId>
+	<name>Restcomm jSS7 :: Docs :: Release Notes :: Sources :: ${pom.artifactId}</name>
 	<properties>
 
 	</properties>

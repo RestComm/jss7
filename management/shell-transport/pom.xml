@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>shell-transport</artifactId>
-	<name>Mobicents SS7 :: Management :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Management :: ${pom.artifactId}</name>
 
 	<dependencies>
 		<dependency>
@@ -35,15 +35,15 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>mobicents</id>
+			<id>restcomm</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<cli.name>Mobicents CLI</cli.name>
+				<cli.name>Restcomm jSS7 CLI</cli.name>
 				<cli.vendor>TeleStax</cli.vendor>
 				<cli.version>${project.version}</cli.version>
-				<cli.prefix>mobicents</cli.prefix>
+				<cli.prefix>restcomm</cli.prefix>
 			</properties>
 		</profile>
 		

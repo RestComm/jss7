@@ -69,7 +69,7 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
         if (name != null) {
             return name;
         } else {
-            return "Mobicents jSS7 Service";
+            return "Restcomm jSS7 Service";
         }
     }
 

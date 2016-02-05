@@ -2,16 +2,16 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.sgw</groupId>
-		<artifactId>mobicents-sgw</artifactId>
+		<artifactId>restcomm-sgw</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>gateway</artifactId>
 
-	<name>Mobicents SS7 :: SGW :: Gateway :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: SGW :: Gateway :: ${pom.artifactId}</name>
 
 	<properties>
-		<sgw.name>Mobicents SGW</sgw.name>
+		<sgw.name>Restcomm SGW</sgw.name>
 		<sgw.vendor>TeleStax</sgw.vendor>
 		<sgw.version>${project.version}</sgw.version>
 	</properties>
@@ -48,13 +48,13 @@
 		
 		<!-- Hardware Dahdi Java -->
 		<dependency>
-			<artifactId>mobicents-dahdi</artifactId>
+			<artifactId>restcomm-dahdi</artifactId>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 		</dependency>
 
 		<!-- Hardware Dialogic Java -->
 		<dependency>
-			<artifactId>mobicents-dialogic</artifactId>
+			<artifactId>restcomm-dialogic</artifactId>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 		</dependency>
 

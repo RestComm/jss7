@@ -9,7 +9,7 @@
 
 	<artifactId>cap-impl</artifactId>
 
-	<name>Mobicents SS7 :: CAP :: Impl :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: CAP :: Impl :: ${pom.artifactId}</name>
 	<dependencyManagement>
 		<dependencies>
 		</dependencies>

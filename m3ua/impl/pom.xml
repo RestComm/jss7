@@ -9,7 +9,7 @@
 
         <artifactId>m3ua-impl</artifactId>
 
-        <name>Mobicents SS7 :: M3UA :: Impl :: ${pom.artifactId}</name>
+        <name>Restcomm jSS7 :: M3UA :: Impl :: ${pom.artifactId}</name>
 
         <dependencies>
                 <dependency>

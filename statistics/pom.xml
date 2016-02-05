@@ -11,7 +11,7 @@
 
 	<groupId>org.mobicents.protocols.ss7.statistics</groupId>
 	<artifactId>statistics-parent</artifactId>
-	<name>Mobicents SS7 :: Statistics :: Parent :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Statistics :: Parent :: ${pom.artifactId}</name>
 
 	<modules>
 		<module>api</module>

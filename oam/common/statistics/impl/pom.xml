@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>statistics-oam-impl</artifactId>
-	<name>Mobicents SS7 :: Statistic-oam :: Impl :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Statistic-oam :: Impl :: ${pom.artifactId}</name>
 
 	<properties>
 		<tool.directory>
@@ -29,7 +29,7 @@
 			<version>${project.version}</version>
 		</dependency>
 
-		<!-- non mobicents -->
+		<!-- non restcomm -->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
