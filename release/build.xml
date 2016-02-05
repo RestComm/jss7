@@ -219,12 +219,12 @@
 		<mkdir dir="${docs.dir}"/>
 
         <copy todir="${docs.dir}" failonerror="true">
-                <fileset dir="${checkout.asn.dir}/docs/jdocbook-restcomm/target/docbook/publish/en-US/pdf">
+                <fileset dir="${checkout.asn.dir}/docs/jdocbook-mobicents/target/docbook/publish/en-US/pdf">
                         <include name="*.pdf" />
                 </fileset>
         </copy>
 		<copy todir="${docs.dir}" failonerror="true">
-                <fileset dir="${checkout.sctp.dir}/docs/jdocbook-restcomm/target/docbook/publish/en-US/pdf">
+                <fileset dir="${checkout.sctp.dir}/docs/jdocbook-mobicents/target/docbook/publish/en-US/pdf">
                         <include name="*.pdf" />
                 </fileset>
         </copy>
