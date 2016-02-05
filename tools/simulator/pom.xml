@@ -11,7 +11,7 @@
 	<groupId>org.mobicents.protocols.ss7.tools.simulator</groupId>
 
 	<packaging>pom</packaging>
-	<name>Mobicents SS7 Simulator :: Parent</name>
+	<name>Restcomm jSS7 Simulator :: Parent</name>
 
 	<properties>
 		<version.jboss.microcontainer>2.2.0.M2</version.jboss.microcontainer>

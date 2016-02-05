@@ -8,7 +8,7 @@
 
 	<artifactId>simulator-gui</artifactId>
 
-	<name>Mobicents SS7 Simulator :: Simulator GUI</name>
+	<name>Restcomm jSS7 Simulator :: Simulator GUI</name>
 
 	<dependencies>
 		<dependency>

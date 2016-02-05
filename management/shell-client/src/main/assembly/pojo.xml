@@ -18,10 +18,10 @@
 			<destName>bin/ss7-cli.bat</destName>
 		</file>
 		<file>
-			<source>target/mobicents-ss7-shell.jar</source>
+			<source>target/restcomm-ss7-shell.jar</source>
 			<fileMode>0744</fileMode>
 			<filtered>true</filtered>
-			<destName>lib/mobicents-ss7-shell.jar</destName>
+			<destName>lib/restcomm-ss7-shell.jar</destName>
 		</file>
 
 	</files>

@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>statistics-impl</artifactId>
-	<name>Mobicents SS7 :: Statistics :: Impl :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Statistics :: Impl :: ${pom.artifactId}</name>
 
 	<dependencies>
 		<dependency>

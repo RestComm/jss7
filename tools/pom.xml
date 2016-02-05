@@ -9,7 +9,7 @@
 
 	<artifactId>tools</artifactId>
 
-	<name>Mobicents SS7 :: Tools :: Parent</name>
+	<name>Restcomm jSS7 :: Tools :: Parent</name>
 
 	<modules>
 		<module>simulator</module>

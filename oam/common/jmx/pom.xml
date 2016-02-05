@@ -3,12 +3,12 @@
 
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
-		<artifactId>mobicents-ss7-oam-common</artifactId>
+		<artifactId>restcomm-ss7-oam-common</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>jmx</artifactId>
-	<name>Mobicents SS7 :: Management-jmx :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Management-jmx :: ${pom.artifactId}</name>
 
 	<properties>
 		<tool.directory>
@@ -19,7 +19,7 @@
 
 	<dependencies>
 
-		<!-- non mobicents -->
+		<!-- non restcomm -->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>

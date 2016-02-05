@@ -12,7 +12,7 @@
 
 	
 	<artifactId>map-release</artifactId>
-	<name>Mobicents SS7 :: MAP :: Release :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: MAP :: Release :: ${pom.artifactId}</name>
 	<profiles>
 		<profile>
 			<id>release</id>

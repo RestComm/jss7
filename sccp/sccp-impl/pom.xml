@@ -9,7 +9,7 @@
 
 	<artifactId>sccp-impl</artifactId>
 
-	<name>Mobicents SS7 :: SCCP :: Impl :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: SCCP :: Impl :: ${pom.artifactId}</name>
 
 
 	<dependencies>

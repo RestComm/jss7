@@ -8,7 +8,7 @@
 
 	<artifactId>simulator-core</artifactId>
 
-	<name>Mobicents SS7 Simulator :: Simulator core</name>
+	<name>Restcomm jSS7 Simulator :: Simulator core</name>
 
 	<dependencies>
 		<dependency>
@@ -102,7 +102,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
-			<artifactId>mobicents-dialogic</artifactId>
+			<artifactId>restcomm-dialogic</artifactId>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>

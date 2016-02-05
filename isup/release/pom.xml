@@ -11,7 +11,7 @@
 
 	
 	<artifactId>isup-release</artifactId>
-	<name>Mobicents SS7 :: ISUP :: Release :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: ISUP :: Release :: ${pom.artifactId}</name>
 	<profiles>
 		<profile>
 			<id>release</id>

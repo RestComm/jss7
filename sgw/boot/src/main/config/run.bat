@@ -1,6 +1,6 @@
 @echo off
 rem -------------------------------------------------------------------------
-rem Mobicents Media Server Bootstrap Script for Win32
+rem Restcomm Media Server Bootstrap Script for Win32
 rem -------------------------------------------------------------------------
 
 rem $Id: run.bat,v 1.5 2007/08/07 10:15:40 baranowb Exp $

@@ -5,14 +5,14 @@
 
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.hardware</groupId>
-		<artifactId>mobicents-dahdi-parent</artifactId>
+		<artifactId>restcomm-dahdi-parent</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mobicents-dahdi</artifactId>
+	<artifactId>restcomm-dahdi</artifactId>
 	
 	<name>
-		Mobicents SS7 :: Hardware :: ${pom.artifactId}
+		Restcomm jSS7 :: Hardware :: ${pom.artifactId}
 	</name>
 
 	<dependencies>
@@ -40,7 +40,7 @@
 
 	</dependencies>
 	<build>
-		<finalName>mobicents-dahdi</finalName>
+		<finalName>restcomm-dahdi</finalName>
 
 		<plugins>
 			<plugin>

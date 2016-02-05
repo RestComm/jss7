@@ -32,7 +32,7 @@
 	<!-- Endpoint definition  -->
 	<bean name="SccpService" class="org.mobicents.protocols.ss7.sccp.impl.SccpService">
 		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7.sccp:service=SccpService" ,exposedInterface=org.mobicents.protocols.ss7.sccp.impl.SccpServiceMBean.class,registerDirectly=true)</annotation>
-		<property name="jndiName">java:/mobicents/ss7/sccp</property>
+		<property name="jndiName">java:/restcomm/ss7/sccp</property>
 		<property name="configPath">${catalina.home}/deploy/a${pom.artifactId}-stack/sccp-routing.txt</property>
 		<!-- 
 		<property name="linksets">

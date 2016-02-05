@@ -10,7 +10,7 @@
 	</parent>
 	
 	<artifactId>mtp-release</artifactId>
-	<name>Mobicents SS7 :: MTP :: Release :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: MTP :: Release :: ${pom.artifactId}</name>
 	<profiles>
 		<profile>
 			<id>release</id>

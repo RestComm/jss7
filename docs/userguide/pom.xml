@@ -5,26 +5,26 @@
 
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.docs</groupId>
-		<artifactId>mobicents-ss7-docs</artifactId>
+		<artifactId>restcomm-ss7-docs</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mobicents-ss7-userguide</artifactId>
+	<artifactId>restcomm-ss7-userguide</artifactId>
 	<groupId>org.mobicents.protocols.ss7.docs.userguide</groupId>
-	<name>Mobicents SS7 :: Docs :: User Guide :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Docs :: User Guide :: ${pom.artifactId}</name>
 	<packaging>pom</packaging>
 
 	<properties>
 		<docs.application.name>jSS7 Stack</docs.application.name>
-		<docs.application.dirname>Mobicents-jss7</docs.application.dirname>
+		<docs.application.dirname>Restcomm-jss7</docs.application.dirname>
 		<docs.bookid>SS7Stack</docs.bookid>
 	</properties>
 
 	<!-- -->
 	<modules>
 		<module>sources</module>
-		<module>sources-mobicents</module>
-		<module>jdocbook-mobicents</module>
+		<module>sources-restcomm</module>
+		<module>jdocbook-restcomm</module>
 	</modules>
 	
 </project>

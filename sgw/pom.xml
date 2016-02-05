@@ -8,9 +8,9 @@
 	</parent>
 
 	<groupId>org.mobicents.protocols.ss7.sgw</groupId>
-	<artifactId>mobicents-sgw</artifactId>
+	<artifactId>restcomm-sgw</artifactId>
 
-	<name>Mobicents SS7 :: SGW :: Parent :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: SGW :: Parent :: ${pom.artifactId}</name>
 
 	<modules>
 		<module>gateway</module>

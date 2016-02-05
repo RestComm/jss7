@@ -9,7 +9,7 @@
 
 	<groupId>org.mobicents.protocols.ss7.management</groupId>
 	<artifactId>management</artifactId>
-	<name>Mobicents SS7 :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: ${pom.artifactId}</name>
 
 
 	<modules>

@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>sccp-cli</artifactId>
-	<name>Mobicents SS7 :: SCCP :: CLI :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: SCCP :: CLI :: ${pom.artifactId}</name>
 
 	<dependencies>
 		<!-- MTP3 -->

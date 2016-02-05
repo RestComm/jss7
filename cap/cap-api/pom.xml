@@ -9,7 +9,7 @@
 
 	<artifactId>cap-api</artifactId>
 
-	<name>Mobicents SS7 :: CAP :: Api :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: CAP :: Api :: ${pom.artifactId}</name>
 
 	<properties>
 		<maven.test.skip>false</maven.test.skip>

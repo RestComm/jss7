@@ -3,16 +3,16 @@
 
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.hardware</groupId>
-		<artifactId>mobicents-hardware</artifactId>
+		<artifactId>restcomm-hardware</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mobicents-dahdi-parent</artifactId>
+	<artifactId>restcomm-dahdi-parent</artifactId>
 
 	<packaging>pom</packaging>
 	
 	<name>
-		Mobicents SS7 :: Hardware :: ${pom.artifactId}
+		Restcomm jSS7 :: Hardware :: ${pom.artifactId}
 	</name>
 
 	<modules>

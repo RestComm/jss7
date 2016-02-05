@@ -9,7 +9,7 @@
 
 	<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 	<artifactId>mtp-parent</artifactId>
-	<name>Mobicents SS7 :: MTP :: Parent :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: MTP :: Parent :: ${pom.artifactId}</name>
 	<packaging>pom</packaging>
 
 	<modules>

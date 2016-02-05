@@ -14,7 +14,7 @@
 
 	<packaging>pom</packaging>
 
-	<name>Mobicents SS7 :: TCAP-ANSI :: Parent :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: TCAP-ANSI :: Parent :: ${pom.artifactId}</name>
 	<properties />
 
 	<modules>

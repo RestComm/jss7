@@ -10,7 +10,7 @@
 
 	<artifactId>sccp-api</artifactId>
 
-	<name>Mobicents SS7 :: SCCP :: Api :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: SCCP :: Api :: ${pom.artifactId}</name>
 
 	<properties>
 		<maven.test.skip>false</maven.test.skip>

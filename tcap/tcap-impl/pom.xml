@@ -9,7 +9,7 @@
 
 	<artifactId>tcap-impl</artifactId>
 
-	<name>Mobicents SS7 :: TCAP :: Impl :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: TCAP :: Impl :: ${pom.artifactId}</name>
 	<dependencies>
 		<dependency>
 			<groupId>concurrent</groupId>

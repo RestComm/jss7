@@ -5,13 +5,13 @@
 
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.oam</groupId>
-		<artifactId>mobicents-ss7-oam</artifactId>
+		<artifactId>restcomm-ss7-oam</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
-	<artifactId>mobicents-ss7-oam-common</artifactId>
-	<name>Mobicents SS7 :: ${pom.artifactId}</name>
+	<artifactId>restcomm-ss7-oam-common</artifactId>
+	<name>Restcomm jSS7 :: ${pom.artifactId}</name>
 
 	<modules>
 		<module>jmx</module>

@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>statistics-api</artifactId>
-	<name>Mobicents SS7 :: Statistics :: Api :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Statistics :: Api :: ${pom.artifactId}</name>
 
 	<dependencies>
 		<dependency>

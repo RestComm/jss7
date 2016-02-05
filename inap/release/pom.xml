@@ -11,7 +11,7 @@
 
 	
 	<artifactId>inap-release</artifactId>
-	<name>Mobicents SS7 :: INAP :: Release :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: INAP :: Release :: ${pom.artifactId}</name>
 	<profiles>
 		<profile>
 			<id>release</id>

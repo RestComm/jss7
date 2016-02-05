@@ -3,14 +3,14 @@
 
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.hardware</groupId>
-		<artifactId>mobicents-dahdi-native</artifactId>
+		<artifactId>restcomm-dahdi-native</artifactId>
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>libmobicents-dahdi-linux</artifactId>
+	<artifactId>librestcomm-dahdi-linux</artifactId>
 
 	<name>
-		Mobicents SS7 :: Hardware :: ${pom.artifactId}
+		Restcomm jSS7 :: Hardware :: ${pom.artifactId}
 	</name>
 	
 	<properties>
@@ -22,7 +22,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
-			<artifactId>mobicents-dahdi</artifactId>
+			<artifactId>restcomm-dahdi</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

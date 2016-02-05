@@ -8,7 +8,7 @@
 
 	<artifactId>ss7-trace-parser</artifactId>
 
-	<name>Mobicents Trase Parser :: Trase Parser core</name>
+	<name>Restcomm jSS7 Trase Parser :: Trase Parser core</name>
 
 	<dependencies>
 		<dependency>
