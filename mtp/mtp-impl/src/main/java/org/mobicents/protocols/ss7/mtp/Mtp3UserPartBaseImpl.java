@@ -238,7 +238,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
             this.msgDeliveryExecutorSystem.execute(hdl);
         } else {
             logger.error(String.format(
-                    "Received Mtp3PausePrimitive=%s but Mtp3PausePrimitive is not started. Message will be dropped", msg));
+                    "Received Mtp3PausePrimitive=%s but MTP3 is not started. Message will be dropped", msg));
         }
     }
 
@@ -248,7 +248,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
             this.msgDeliveryExecutorSystem.execute(hdl);
         } else {
             logger.error(String.format(
-                    "Received Mtp3ResumePrimitive=%s but Mtp3PausePrimitive is not started. Message will be dropped", msg));
+                    "Received Mtp3ResumePrimitive=%s but MTP3 is not started. Message will be dropped", msg));
         }
     }
 
@@ -258,7 +258,17 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
             this.msgDeliveryExecutorSystem.execute(hdl);
         } else {
             logger.error(String.format(
-                    "Received Mtp3StatusPrimitive=%s but Mtp3PausePrimitive is not started. Message will be dropped", msg));
+                    "Received Mtp3StatusPrimitive=%s but MTP3 is not started. Message will be dropped", msg));
+        }
+    }
+
+    protected void sendEndCongestionMessageToLocalUser(Mtp3EndCongestionPrimitive msg) {
+        if (this.isStarted) {
+            MsgSystemDeliveryHandler hdl = new MsgSystemDeliveryHandler(msg);
+            this.msgDeliveryExecutorSystem.execute(hdl);
+        } else {
+            logger.error(String.format(
+                    "Received Mtp3EndCongestionPrimitive=%s but MTP3 is not started. Message will be dropped", msg));
         }
     }
 
@@ -316,6 +326,8 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
                             lsn.onMtp3ResumeMessage((Mtp3ResumePrimitive) this.msg);
                         if (this.msg.getType() == Mtp3Primitive.STATUS)
                             lsn.onMtp3StatusMessage((Mtp3StatusPrimitive) this.msg);
+                        if (this.msg.getType() == Mtp3Primitive.END_CONGESTION)
+                            lsn.onMtp3EndCongestionMessage((Mtp3EndCongestionPrimitive) this.msg);
                     }
                 } catch (Exception e) {
                     logger.error("Exception while delivering a payload messages to the MTP3-user: " + e.getMessage(), e);

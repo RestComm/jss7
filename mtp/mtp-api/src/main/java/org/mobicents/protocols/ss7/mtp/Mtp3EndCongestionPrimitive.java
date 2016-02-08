@@ -19,22 +19,27 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.mobicents.protocols.ss7.mtp;
 
 /**
+ *
  * @author sergey vetyutnev
  *
  */
-public interface Mtp3UserPartListener {
+public class Mtp3EndCongestionPrimitive extends Mtp3Primitive {
 
-    void onMtp3TransferMessage(Mtp3TransferPrimitive msg);
+    public Mtp3EndCongestionPrimitive(int affectedDpc) {
+        super(END_CONGESTION, affectedDpc);
+    }
 
-    void onMtp3PauseMessage(Mtp3PausePrimitive msg);
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("MTP-END-CONGESTION: AffectedDpc=");
+        sb.append(this.affectedDpc);
 
-    void onMtp3ResumeMessage(Mtp3ResumePrimitive msg);
-
-    void onMtp3StatusMessage(Mtp3StatusPrimitive msg);
-
-    void onMtp3EndCongestionMessage(Mtp3EndCongestionPrimitive msg);
+        return sb.toString();
+    }
 
 }

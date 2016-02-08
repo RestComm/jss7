@@ -104,8 +104,10 @@ public class ExecutorCongestionMonitor extends BaseCongestionMonitor {
             if (++finished >= cnt - 1) {
                 double maxValue = 0;
                 for (ExecutorTestMonitor testMonitor : monitorList) {
-                    if (maxValue < testMonitor.getDelay())
-                        maxValue = testMonitor.getDelay();
+                    if (testMonitor != null) {
+                        if (maxValue < testMonitor.getDelay())
+                            maxValue = testMonitor.getDelay();
+                    }
                 }
                 registerResults(maxValue);
             }

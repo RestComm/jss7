@@ -36,6 +36,7 @@ public abstract class Mtp3Primitive {
     public static final int PAUSE = 3;
     public static final int RESUME = 4;
     public static final int STATUS = 5;
+    public static final int END_CONGESTION = 11;
 
     protected int type;
 
