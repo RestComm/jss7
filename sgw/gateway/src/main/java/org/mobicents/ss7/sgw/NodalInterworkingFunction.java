@@ -31,6 +31,7 @@ import javolution.util.FastMap;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.m3ua.M3UAManagement;
 import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl;
+import org.mobicents.protocols.ss7.mtp.Mtp3EndCongestionPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
@@ -188,6 +189,11 @@ public class NodalInterworkingFunction extends Task implements Layer4, Mtp3UserP
     }
 
     public void onMtp3StatusMessage(Mtp3StatusPrimitive msg) {
+        // not used
+    }
+
+    @Override
+    public void onMtp3EndCongestionMessage(Mtp3EndCongestionPrimitive msg) {
         // not used
     }
 }

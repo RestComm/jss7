@@ -71,6 +71,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.m3ua.parameter.ProtocolData;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
+import org.mobicents.protocols.ss7.mtp.Mtp3EndCongestionPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
@@ -939,6 +940,10 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 
     public void sendStatusMessageToLocalUser(Mtp3StatusPrimitive msg) {
         super.sendStatusMessageToLocalUser(msg);
+    }
+
+    public void sendEndCongestionMessageToLocalUser(Mtp3EndCongestionPrimitive msg) {
+        super.sendEndCongestionMessageToLocalUser(msg);
     }
 
     private AspFactoryImpl getAspFactory(String aspName) {

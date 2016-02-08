@@ -77,6 +77,7 @@ import org.mobicents.protocols.ss7.m3ua.message.ssnm.SignallingCongestion;
 import org.mobicents.protocols.ss7.m3ua.message.transfer.PayloadData;
 import org.mobicents.protocols.ss7.m3ua.parameter.ASPIdentifier;
 import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
+import org.mobicents.protocols.ss7.mtp.Mtp3EndCongestionPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusCause;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
 
@@ -500,9 +501,13 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
 
                 // congestion control - we will send MTP-PAUSE every 8 messages
                 int congLevel = this.association.getCongestionLevel();
-                if (congLevel > 0 && message instanceof PayloadData) {
+                if (message instanceof PayloadData) {
                     PayloadData payloadData2 = (PayloadData) message;
-                    sendCongestionInfoToMtp3Users(congLevel, payloadData2.getData().getDpc());
+                    if (congLevel > 0) {
+                        sendCongestionInfoToMtp3Users(congLevel, payloadData2.getData().getDpc());
+                    } else {
+                        sendCongestionEndInfoToMtp3Users(congLevel, payloadData2.getData().getDpc());
+                    }
                 }
             } else {
                 byte[] bf = new byte[byteBuf.readableBytes()];
@@ -546,6 +551,18 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
                     congLevel, 0);
             this.m3UAManagementImpl.sendStatusMessageToLocalUser(statusPrimitive);
         }
+    }
+
+    private void sendCongestionEndInfoToMtp3Users(int congLevel, int dpc) {
+        AtomicInteger ai = congDpcList.get(dpc);
+        if (ai == null) {
+            return;
+        }
+
+        ai = new AtomicInteger();
+        congDpcList.remove(dpc);
+        Mtp3EndCongestionPrimitive endCongestionPrimitive = new Mtp3EndCongestionPrimitive(dpc);
+        this.m3UAManagementImpl.sendEndCongestionMessageToLocalUser(endCongestionPrimitive);
     }
 
     protected AspImpl createAsp() {

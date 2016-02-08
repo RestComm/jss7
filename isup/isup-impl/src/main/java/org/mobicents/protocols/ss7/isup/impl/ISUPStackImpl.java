@@ -39,6 +39,7 @@ import org.mobicents.protocols.ss7.isup.ISUPStack;
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.impl.message.AbstractISUPMessage;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
+import org.mobicents.protocols.ss7.mtp.Mtp3EndCongestionPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
@@ -196,6 +197,12 @@ public class ISUPStackImpl implements ISUPStack, Mtp3UserPartListener {
     public void onMtp3StatusMessage(Mtp3StatusPrimitive arg0) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public void onMtp3EndCongestionMessage(Mtp3EndCongestionPrimitive msg) {
+        // TODO Auto-generated method stub
+        
     }
 
     @Override

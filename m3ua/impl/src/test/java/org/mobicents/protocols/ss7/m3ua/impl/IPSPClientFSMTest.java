@@ -61,6 +61,7 @@ import org.mobicents.protocols.ss7.m3ua.message.mgmt.Notify;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.Status;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
+import org.mobicents.protocols.ss7.mtp.Mtp3EndCongestionPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3Primitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
@@ -995,6 +996,12 @@ public class IPSPClientFSMTest {
         @Override
         public void onMtp3TransferMessage(Mtp3TransferPrimitive transfer) {
             this.mtp3TransferPrimitives.add(transfer);
+            semaphore.release();
+        }
+
+        @Override
+        public void onMtp3EndCongestionMessage(Mtp3EndCongestionPrimitive msg) {
+            this.mtp3Primitives.add(msg);
             semaphore.release();
         }
 

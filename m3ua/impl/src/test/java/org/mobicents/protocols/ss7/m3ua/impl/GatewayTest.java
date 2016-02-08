@@ -36,6 +36,7 @@ import org.mobicents.protocols.ss7.m3ua.Util;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
+import org.mobicents.protocols.ss7.mtp.Mtp3EndCongestionPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusPrimitive;
@@ -366,6 +367,12 @@ public class GatewayTest {
         @Override
         public void onMtp3TransferMessage(Mtp3TransferPrimitive value) {
             receivedData.add(value);
+        }
+
+        @Override
+        public void onMtp3EndCongestionMessage(Mtp3EndCongestionPrimitive msg) {
+            // TODO Auto-generated method stub
+            
         }
 
     }
