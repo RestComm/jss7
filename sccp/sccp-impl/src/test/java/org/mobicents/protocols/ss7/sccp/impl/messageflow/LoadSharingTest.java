@@ -35,7 +35,6 @@ import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImplProxy;
 import org.mobicents.protocols.ss7.sccp.impl.User;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
-import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;

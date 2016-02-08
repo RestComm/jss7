@@ -211,13 +211,15 @@ public class SccpRoutingControl {
             // UDTS, XUDTS, LUDTS
             msgImportance = 3;
         }
-        if (msgImportance < currentRestrictionLevel) {
+        if (this.sccpManagement.getSccpCongestionControl().isCongControl_blockingOutgoungScpMessages()
+                && msgImportance < currentRestrictionLevel) {
             // we are dropping a message because of outgoing congestion
+
             long curTime = System.currentTimeMillis();
             if (lastCongAnnounseTime + 1000 < curTime) {
                 lastCongAnnounseTime = curTime;
-                logger.warn(String.format("SccpMessage for sending=%s was dropped because of congestion level %d to dpc %d", message,
-                        currentRestrictionLevel, dpc));
+                logger.warn(String.format("Outgoing congestion control: SCCP: SccpMessage for sending=%s was dropped because of congestion level %d to dpc %d",
+                        message, currentRestrictionLevel, dpc));
             }
             return ReturnCauseValue.NETWORK_CONGESTION;
         }

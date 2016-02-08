@@ -292,4 +292,28 @@ public interface SccpStack {
      */
     void setCongControlM(int value);
 
+    /**
+     * @return getting sccp congestion control international: international algorithm - only one level is provided by MTP3 level
+     *         (in MTP-STATUS primitive). Each MTP-STATUS increases N / M levels levelDepended: MTP3 level (MTP-STATUS
+     *         primitive) provides 3 levels of a congestion (1-3) and SCCP congestion will increase to the next level after
+     *         MTP-STATUS next level increase (MTP-STATUS 1 to N up to 3, MTP-STATUS 2 to N up to 5, MTP-STATUS 3 to N up to 7)
+     */
+    SccpCongestionControlAlgo getCongControl_Algo();
+
+    /**
+     * @param value setting sccp congestion control
+     */
+    void setCongControl_Algo(SccpCongestionControlAlgo value);
+
+    /**
+     * @return getting if true outgoing SCCP messages will be blocked (depending on message type, UDP messages from level N=6)
+     */
+    boolean isCongControl_blockingOutgoungScpMessages();
+
+    /**
+     * @param value setting if true outgoing SCCP messages will be blocked (depending on message type, UDP messages from level
+     *        N=6)
+     */
+    void setCongControl_blockingOutgoungScpMessages(boolean value);
+
 }

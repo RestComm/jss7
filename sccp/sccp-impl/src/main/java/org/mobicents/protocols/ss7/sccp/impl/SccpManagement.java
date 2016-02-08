@@ -406,6 +406,10 @@ public class SccpManagement {
         }
     }
 
+    protected void handleMtp3EndCongestion(int affectedPc) {
+        this.onEndCong(affectedPc);
+    }
+
     private void prohibitAllSsn(int affectedPc) {
         FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
         FastMap<Integer, RemoteSubSystem> remoteSsns = this.sccpStackImpl.sccpResource.remoteSsns;
@@ -512,7 +516,7 @@ public class SccpManagement {
                 remoteSpc.setRemoteSpcProhibited(false);
             if (remoteSccpStatus != null && remoteSccpStatus == RemoteSccpStatus.AVAILABLE)
                 remoteSpc.setRemoteSccpProhibited(false);
-            remoteSpc.clearCongLevel();
+            remoteSpc.clearCongLevel(sccpCongestionControl);
 
             FastMap<Integer, NetworkIdState> lst = this.sccpStackImpl.getNetworkIdList(affectedPc);
             FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
@@ -694,6 +698,14 @@ public class SccpManagement {
                 .getRemoteSpcByPC(affectedPc);
         if (remoteSpc != null) {
             remoteSpc.increaseCongLevel(sccpCongestionControl, congStatus);
+        }
+    }
+
+    private void onEndCong(int affectedPc) {
+        RemoteSignalingPointCodeImpl remoteSpc = (RemoteSignalingPointCodeImpl) this.sccpStackImpl.getSccpResource()
+                .getRemoteSpcByPC(affectedPc);
+        if (remoteSpc != null) {
+            remoteSpc.clearCongLevel(sccpCongestionControl);
         }
     }
 

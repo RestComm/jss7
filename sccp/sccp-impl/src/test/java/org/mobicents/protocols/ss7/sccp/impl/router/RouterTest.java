@@ -48,6 +48,7 @@ import org.mobicents.protocols.ss7.sccp.OriginationType;
 import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.Rule;
 import org.mobicents.protocols.ss7.sccp.RuleType;
+import org.mobicents.protocols.ss7.sccp.SccpCongestionControlAlgo;
 import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpResource;
@@ -626,6 +627,30 @@ public class RouterTest {
 
         @Override
         public void setCongControlM(int value) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public SccpCongestionControlAlgo getCongControl_Algo() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public boolean isCongControl_blockingOutgoungScpMessages() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public void setCongControl_blockingOutgoungScpMessages(boolean value) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setCongControl_Algo(SccpCongestionControlAlgo value) {
             // TODO Auto-generated method stub
             
         }

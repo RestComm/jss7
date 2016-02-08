@@ -27,6 +27,7 @@ import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.oam.common.jmx.MBeanHost;
 import org.mobicents.protocols.ss7.oam.common.jmxss7.Ss7Layer;
 import org.mobicents.protocols.ss7.sccp.Router;
+import org.mobicents.protocols.ss7.sccp.SccpCongestionControlAlgo;
 import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpResource;
@@ -241,6 +242,26 @@ public class SccpManagementJmx implements SccpManagementJmxMBean {
     @Override
     public void setCongControlM(int value) {
         this.wrappedSccpStack.setCongControlM(value);
+    }
+
+    @Override
+    public SccpCongestionControlAlgo getCongControl_Algo() {
+        return this.wrappedSccpStack.getCongControl_Algo();
+    }
+
+    @Override
+    public void setCongControl_Algo(SccpCongestionControlAlgo value) {
+        this.wrappedSccpStack.setCongControl_Algo(value);
+    }
+
+    @Override
+    public boolean isCongControl_blockingOutgoungScpMessages() {
+        return this.wrappedSccpStack.isCongControl_blockingOutgoungScpMessages();
+    }
+
+    @Override
+    public void setCongControl_blockingOutgoungScpMessages(boolean value) {
+        this.wrappedSccpStack.setCongControl_blockingOutgoungScpMessages(value);
     }
 
 }

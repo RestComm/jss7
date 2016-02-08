@@ -30,7 +30,6 @@ import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.OriginationType;
 import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
-import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.testng.annotations.AfterClass;

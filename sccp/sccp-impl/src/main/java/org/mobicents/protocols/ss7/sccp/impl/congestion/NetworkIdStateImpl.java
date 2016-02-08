@@ -69,6 +69,20 @@ public class NetworkIdStateImpl implements NetworkIdState {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        if (!(obj instanceof NetworkIdStateImpl))
+            return false;
+        NetworkIdStateImpl b = (NetworkIdStateImpl) obj;
+        if (this.affectedByPc == b.affectedByPc && this.available == b.available && this.congLevel == b.congLevel) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 

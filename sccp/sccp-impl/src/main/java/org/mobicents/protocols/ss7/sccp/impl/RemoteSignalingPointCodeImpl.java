@@ -28,6 +28,7 @@ import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
+import org.mobicents.protocols.ss7.sccp.SccpCongestionControlAlgo;
 import org.mobicents.protocols.ss7.sccp.impl.congestion.CongStateTimerA;
 import org.mobicents.protocols.ss7.sccp.impl.congestion.CongStateTimerD;
 import org.mobicents.protocols.ss7.sccp.impl.congestion.SccpCongestionControl;
@@ -124,9 +125,13 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSign
         return rsl;
     }
 
-    public void clearCongLevel() {
+    public void clearCongLevel(SccpCongestionControl sccpCongestionControl) {
+        this.sccpCongestionControl = sccpCongestionControl;
+
         this.rl = 0;
         this.rsl = 0;
+
+        this.sccpCongestionControl.onRestrictionLevelChange(remoteSpc, rl, false);
     }
 
     public void increaseCongLevel(SccpCongestionControl sccpCongestionControl, int level) {
@@ -154,8 +159,12 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSign
             }
             return;
         }
+        if (sccpCongestionControl.getCongControl_Algo() == SccpCongestionControlAlgo.levelDepended
+                && rl >= SccpCongestionControl.getMaxRestrictionLevelForMtp3Level(level)) {
+            return;
+        }
 
-        rsl += level;
+        rsl++;
         if (rsl >= sccpCongestionControl.getCongControlM()) {
             rsl = 0;
             rl++;

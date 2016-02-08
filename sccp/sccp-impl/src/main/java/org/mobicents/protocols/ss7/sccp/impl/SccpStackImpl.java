@@ -47,6 +47,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.mtp.Mtp3;
+import org.mobicents.protocols.ss7.mtp.Mtp3EndCongestionPrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3PausePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3ResumePrimitive;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusCause;
@@ -61,6 +62,7 @@ import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.Rule;
+import org.mobicents.protocols.ss7.sccp.SccpCongestionControlAlgo;
 import org.mobicents.protocols.ss7.sccp.SccpManagementEventListener;
 import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
@@ -150,10 +152,20 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     protected int congControl_M = 4;
     // Timer Ta value - started at next MTP-STATUS(cong) primitive coming; during this timer no more MTP-STATUS(cong) are
     // accepted
-    protected int congControl_TIMER_A = 200;
+    protected int congControl_TIMER_A = 400; // 200
     // Timer Td value - started after last MTP-STATUS(cong) primitive coming; after end of this timer (without new coming
     // MTP-STATUS(cong)) RSLM will be reduced
-    protected int congControl_TIMER_D = 2000;
+    protected int congControl_TIMER_D = 2000; // 2000
+    // sccp congestion control
+    // international: international algorithm - only one level is provided by MTP3 level (in MTP-STATUS primitive). Each
+    // MTP-STATUS increases N / M levels
+    // levelDepended: MTP3 level (MTP-STATUS primitive) provides 3 levels of a congestion (1-3) and SCCP congestion will
+    // increase to the
+    // next level after MTP-STATUS next level increase (MTP-STATUS 1 to N up to 3, MTP-STATUS 2 to N up to 5, MTP-STATUS 3
+    // to N up to 7)
+    protected SccpCongestionControlAlgo congControl_Algo = SccpCongestionControlAlgo.international;
+    // if true outgoing SCCP messages will be blocked (depending on message type, UDP messages from level N=6)
+    protected boolean congControl_blockingOutgoungScpMessages = false;
 
     private boolean previewMode = false;
 
@@ -322,6 +334,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         this.store();
     }
 
+
     public int getCongControlTIMER_D() {
         return congControl_TIMER_D;
     }
@@ -348,6 +361,26 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
     public void setCongControlM(int value) {
         congControl_M = value;
+
+        this.store();
+    }
+
+    public SccpCongestionControlAlgo getCongControl_Algo() {
+        return congControl_Algo;
+    }
+
+    public void setCongControl_Algo(SccpCongestionControlAlgo value) {
+        congControl_Algo = value;
+
+        this.store();
+    }
+
+    public boolean isCongControl_blockingOutgoungScpMessages() {
+        return congControl_blockingOutgoungScpMessages;
+    }
+
+    public void setCongControl_blockingOutgoungScpMessages(boolean value) {
+        congControl_blockingOutgoungScpMessages = value;
 
         this.store();
     }
@@ -732,22 +765,22 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             lastNotice = lastCongNotice.get(affectedDpc);
             if (lastNotice == null) {
                 lastCongNotice.put(affectedDpc, new Date());
-                logger.warn(String.format("Rx : %s", msg));
+                logger.warn(String.format("Rx : %s  (one message in %d seconds)", msg, STATUS_MSG_LOGGING_INTERVAL_MILLISEC_UNAVAIL));
             } else {
                 if (System.currentTimeMillis() - lastNotice.getTime() > STATUS_MSG_LOGGING_INTERVAL_MILLISEC_CONG) {
                     lastNotice.setTime(System.currentTimeMillis());
-                    logger.warn(String.format("Rx : %s", msg));
+                    logger.warn(String.format("Rx : %s (one message in %d seconds)", msg, STATUS_MSG_LOGGING_INTERVAL_MILLISEC_UNAVAIL));
                 }
             }
         } else {
             lastNotice = lastUserPartUnavailNotice.get(affectedDpc);
             if (lastNotice == null) {
                 lastUserPartUnavailNotice.put(affectedDpc, new Date());
-                logger.warn(String.format("Rx : %s", msg));
+                logger.warn(String.format("Rx : %s (one message in %d seconds)", msg, STATUS_MSG_LOGGING_INTERVAL_MILLISEC_UNAVAIL));
             } else {
                 if (System.currentTimeMillis() - lastNotice.getTime() > STATUS_MSG_LOGGING_INTERVAL_MILLISEC_UNAVAIL) {
                     lastNotice.setTime(System.currentTimeMillis());
-                    logger.warn(String.format("Rx : %s", msg));
+                    logger.warn(String.format("Rx : %s (one message in %d seconds)", msg, STATUS_MSG_LOGGING_INTERVAL_MILLISEC_UNAVAIL));
                 }
             }
         }
@@ -758,6 +791,15 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         }
 
         sccpManagement.handleMtp3Status(msg.getCause(), affectedDpc, msg.getCongestionLevel());
+    }
+
+    @Override
+    public void onMtp3EndCongestionMessage(Mtp3EndCongestionPrimitive msg) {
+        int affectedDpc = msg.getAffectedDpc();
+
+        logger.warn(String.format("Rx : %s", msg));
+
+        sccpManagement.handleMtp3EndCongestion(affectedDpc);
     }
 
     public void onMtp3TransferMessage(Mtp3TransferPrimitive mtp3Msg) {
@@ -1084,4 +1126,5 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             // "Error while re-creating Linksets from persisted file", ex);
         }
     }
+
 }
