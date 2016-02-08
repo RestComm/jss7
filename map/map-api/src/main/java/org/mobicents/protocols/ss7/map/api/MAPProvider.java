@@ -24,6 +24,8 @@ package org.mobicents.protocols.ss7.map.api;
 
 import java.io.Serializable;
 
+import javolution.util.FastMap;
+
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageFactory;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.MAPServiceCallHandling;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm;
@@ -32,6 +34,7 @@ import org.mobicents.protocols.ss7.map.api.service.oam.MAPServiceOam;
 import org.mobicents.protocols.ss7.map.api.service.pdpContextActivation.MAPServicePdpContextActivation;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary;
+import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 
 /**
  *
@@ -97,5 +100,21 @@ public interface MAPProvider extends Serializable {
     MAPServiceSms getMAPServiceSms();
 
     MAPServiceLsm getMAPServiceLsm();
+
+    /**
+     * The collection of netwokIds that are marked as prohibited or congested.
+     * 
+     * @return The collection of pairs: netwokId value - NetworkIdState (prohibited / congested state)
+     */
+    FastMap<Integer, NetworkIdState> getNetworkIdStateList();
+
+    /**
+     * Returns the state of availability / congestion for a networkId subnetwork. Returns null if there is no info (we need to
+     * treat it as available)
+     *
+     * @param networkId
+     * @return
+     */
+    NetworkIdState getNetworkIdState(int networkId);
 
 }

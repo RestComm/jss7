@@ -113,3 +113,6 @@ docs/sources-*/src
 /SccpExecutorTest_management2.xml
 /SccpExecutorTest_sccpresource2.xml
 /SccpExecutorTest_sccprouter2.xml
+/Client_m3ua1.xml
+/Client_sctp.xml
+/maplog.txt

@@ -83,6 +83,7 @@ import org.mobicents.protocols.ss7.map.service.oam.MAPServiceOamImpl;
 import org.mobicents.protocols.ss7.map.service.pdpContextActivation.MAPServicePdpContextActivationImpl;
 import org.mobicents.protocols.ss7.map.service.sms.MAPServiceSmsImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.MAPServiceSupplementaryImpl;
+import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.tcap.DialogImpl;
 import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
@@ -2149,6 +2150,16 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
         } catch (TCAPSendException e) {
             throw new MAPException(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public FastMap<Integer, NetworkIdState> getNetworkIdStateList() {
+        return this.tcapProvider.getNetworkIdStateList();
+    }
+
+    @Override
+    public NetworkIdState getNetworkIdState(int networkId) {
+        return this.tcapProvider.getNetworkIdState(networkId);
     }
 
 }

@@ -105,7 +105,7 @@ public abstract class TestHarness implements MAPDialogListener, MAPServiceSupple
             try {
                 propertiesLog4j.load(inStreamLog4j);
                 PropertyConfigurator.configure(propertiesLog4j);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 BasicConfigurator.configure();
             }

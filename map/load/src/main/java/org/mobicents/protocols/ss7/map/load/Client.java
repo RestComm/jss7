@@ -25,6 +25,8 @@ package org.mobicents.protocols.ss7.map.load;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.sctp.netty.NettySctpManagementImpl;
+import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
+import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.m3ua.Asp;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
@@ -76,8 +78,19 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSN
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
 import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
+import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
+import org.mobicents.protocols.ss7.sccp.NetworkIdState;
+import org.mobicents.protocols.ss7.sccp.OriginationType;
+import org.mobicents.protocols.ss7.sccp.RuleType;
+import org.mobicents.protocols.ss7.sccp.SccpCongestionControlAlgo;
 import org.mobicents.protocols.ss7.sccp.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.BCDEvenEncodingScheme;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
+import org.mobicents.protocols.ss7.sccp.parameter.EncodingScheme;
+import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
@@ -182,6 +195,8 @@ public class Client extends TestHarness {
         this.sccpStack = new SccpStackImpl("MapLoadClientSccpStack");
         this.sccpStack.setMtp3UserPart(1, this.clientM3UAMgmt);
 
+//        this.sccpStack.setCongControl_Algo(SccpCongestionControlAlgo.levelDepended);
+
         this.sccpStack.start();
         this.sccpStack.removeAllResourses();
 
@@ -190,6 +205,25 @@ public class Client extends TestHarness {
 
         this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, 1, CLIENT_SPC, NETWORK_INDICATOR, 0);
         this.sccpStack.getRouter().addMtp3Destination(1, 1, SERVET_SPC, SERVET_SPC, 0, 255, 255);
+
+        ParameterFactoryImpl fact = new ParameterFactoryImpl();
+        EncodingScheme ec = new BCDEvenEncodingScheme();
+        GlobalTitle gt1 = fact.createGlobalTitle("-", 0, org.mobicents.protocols.ss7.indicator.NumberingPlan.ISDN_TELEPHONY,
+                ec, NatureOfAddress.INTERNATIONAL);
+        GlobalTitle gt2 = fact.createGlobalTitle("-", 0, org.mobicents.protocols.ss7.indicator.NumberingPlan.ISDN_TELEPHONY,
+                ec, NatureOfAddress.INTERNATIONAL);
+        SccpAddress localAddress = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt1, CLIENT_SPC, 0);
+        this.sccpStack.getRouter().addRoutingAddress(1, localAddress);
+        SccpAddress remoteAddress = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt2, SERVET_SPC, 0);
+        this.sccpStack.getRouter().addRoutingAddress(2, remoteAddress);
+
+        GlobalTitle gt = fact.createGlobalTitle("*", 0, org.mobicents.protocols.ss7.indicator.NumberingPlan.ISDN_TELEPHONY, ec,
+                NatureOfAddress.INTERNATIONAL);
+        SccpAddress pattern = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt, 0, 0);
+        this.sccpStack.getRouter().addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.REMOTE, pattern,
+                "K", 1, -1, null, 0);
+        this.sccpStack.getRouter().addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern,
+                "K", 2, -1, null, 0);
     }
 
     private void initTCAP() throws Exception {
@@ -215,6 +249,17 @@ public class Client extends TestHarness {
     }
 
     private void initiateUSSD() throws MAPException {
+        NetworkIdState networkIdState = this.mapStack.getMAPProvider().getNetworkIdState(0);
+        if (!(networkIdState == null || networkIdState.isAvailavle() && networkIdState.getCongLevel() == 0)) {
+            // congestion or unavailable
+            logger.warn("Outgoing congestion control: MAP load test client: networkIdState=" + networkIdState);
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
 
         this.rateLimiterObj.acquire();
         // System.out.println("initiateUSSD");
@@ -451,7 +496,6 @@ public class Client extends TestHarness {
      */
     @Override
     public void onUnstructuredSSRequest(UnstructuredSSRequest unstrReqInd) {
-
         if (logger.isDebugEnabled()) {
             logger.debug(String.format("Rx UnstructuredSSRequestIndication. USSD String=%s ", unstrReqInd.getUSSDString()));
         }
@@ -654,16 +698,6 @@ public class Client extends TestHarness {
             logger.debug(String.format("onDialogResease for DialogId=%d", mapDialog.getLocalDialogId()));
         }
 
-        //int ndialogs = nbConcurrentDialogs.decrementAndGet();
-
-        //if (ndialogs > MAXCONCURRENTDIALOGS) {
-        //    logger.warn("Concurrent Dialogs active = " + ndialogs);
-        //}
-        //synchronized (this) {
-         //   if (ndialogs < MAXCONCURRENTDIALOGS / 2)
-         //       this.notify();
-        //}
-
         this.endCount++;
 
         if (this.endCount < NDIALOGS) {
@@ -681,7 +715,7 @@ public class Client extends TestHarness {
                 float sec = (float) (current - start) / 1000f;
 
                 logger.warn("Total time in sec = " + sec);
-                logger.warn("Thrupt = " + (float) (NDIALOGS / sec));
+                logger.warn("Throughput = " + (float) (NDIALOGS / sec));
             }
         }
     }

@@ -110,6 +110,8 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     // explicitly...
     private transient FastMap<Long, DialogImpl> dialogs = new FastMap<Long, DialogImpl>();
     protected transient FastMap<PrevewDialogDataKey, PrevewDialogData> dialogPreviewList = new FastMap<PrevewDialogDataKey, PrevewDialogData>();
+    private transient FastMap<Integer, NetworkIdState> networkIdStateList = new FastMap<Integer, NetworkIdState>().shared();
+    private NetworkIdStateListUpdater currentNetworkIdStateListUpdater;
 
     private int seqControl = 0;
     private int ssn;
@@ -500,9 +502,13 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         this._EXECUTOR = Executors.newScheduledThreadPool(4, new DefaultThreadFactory("Tcap-Thread"));
         this.sccpProvider.registerSccpListener(ssn, this);
         logger.info("Registered SCCP listener with address " + ssn);
+
+        updateNetworkIdStateList();
     }
 
     void stop() {
+        stopNetworkIdStateList();
+
         this._EXECUTOR.shutdown();
         this.sccpProvider.deregisterSccpListener(ssn);
 
@@ -997,6 +1003,61 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
         // TODO ??? : create Dialog and invoke "this.doRelease(di);"
     }
+    @Override
+    public void onCoordResponse(int ssn, int multiplicityIndicator) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onState(int dpc, int ssn, boolean inService, int multiplicityIndicator) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onPcState(int dpc, SignallingPointStatus status, Integer restrictedImportanceLevel,
+            RemoteSccpStatus remoteSccpStatus) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onNetworkIdState(int networkId, NetworkIdState networkIdState) {
+        Integer ni = networkId;
+        NetworkIdState prev = networkIdStateList.get(ni);
+        if (!networkIdState.equals(prev)) {
+            logger.warn("Outgoing congestion control: TCAP-ANSI: onNetworkIdState: networkId=" + networkId + ", networkIdState="
+                    + networkIdState);
+        }
+
+        networkIdStateList.put(ni, networkIdState);
+    }
+
+    @Override
+    public FastMap<Integer, NetworkIdState> getNetworkIdStateList() {
+        return networkIdStateList;
+    }
+
+    @Override
+    public NetworkIdState getNetworkIdState(int networkId) {
+        return networkIdStateList.get(networkId);
+    }
+
+    private void stopNetworkIdStateList() {
+        NetworkIdStateListUpdater curUpd = currentNetworkIdStateListUpdater;
+        if (curUpd != null)
+            curUpd.cancel();
+    }
+
+    private void updateNetworkIdStateList() {
+        stopNetworkIdStateList();
+        currentNetworkIdStateListUpdater = new NetworkIdStateListUpdater();
+        this._EXECUTOR.schedule(currentNetworkIdStateListUpdater, 5000, TimeUnit.MILLISECONDS);
+
+        networkIdStateList = this.sccpProvider.getNetworkIdStateList();
+    }
+
 
     protected class PrevewDialogDataKey {
         public int dpc;
@@ -1050,28 +1111,19 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         }
     }
 
-    @Override
-    public void onCoordResponse(int ssn, int multiplicityIndicator) {
-        // TODO Auto-generated method stub
-        
-    }
+    private class NetworkIdStateListUpdater implements Runnable {
+        private boolean isCancelled;
 
-    @Override
-    public void onState(int dpc, int ssn, boolean inService, int multiplicityIndicator) {
-        // TODO Auto-generated method stub
-        
-    }
+        public void cancel() {
+            isCancelled = true;
+        }
 
-    @Override
-    public void onPcState(int dpc, SignallingPointStatus status, Integer restrictedImportanceLevel,
-            RemoteSccpStatus remoteSccpStatus) {
-        // TODO Auto-generated method stub
-        
-    }
+        @Override
+        public void run() {
+            if (isCancelled || !stack.isStarted())
+                return;
 
-    @Override
-    public void onNetworkIdState(int networkId, NetworkIdState networkIdState) {
-        // TODO Auto-generated method stub
-        
+            updateNetworkIdStateList();
+        }
     }
 }

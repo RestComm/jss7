@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.tcap.api;
 
 import java.io.Serializable;
 
+import javolution.util.FastMap;
+
+import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 
@@ -83,4 +86,21 @@ public interface TCAPProvider extends Serializable {
     void removeTCListener(TCListener lst);
 
     boolean getPreviewMode();
+
+    /**
+     * The collection of netwokIds that are marked as prohibited or congested.
+     * 
+     * @return The collection of pairs: netwokId value - NetworkIdState (prohibited / congested state)
+     */
+    FastMap<Integer, NetworkIdState> getNetworkIdStateList();
+
+    /**
+     * Returns the state of availability / congestion for a networkId subnetwork. Returns null if there is no info (we need to
+     * treat it as available)
+     *
+     * @param networkId
+     * @return
+     */
+    NetworkIdState getNetworkIdState(int networkId);
+
 }

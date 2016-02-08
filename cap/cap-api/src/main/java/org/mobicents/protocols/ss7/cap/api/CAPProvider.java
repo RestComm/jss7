@@ -24,6 +24,8 @@ package org.mobicents.protocols.ss7.cap.api;
 
 import java.io.Serializable;
 
+import javolution.util.FastMap;
+
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageFactory;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprs;
@@ -31,6 +33,7 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSms;
 import org.mobicents.protocols.ss7.inap.api.INAPParameterFactory;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
+import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 
 /**
  *
@@ -101,5 +104,21 @@ public interface CAPProvider extends Serializable {
     CAPServiceGprs getCAPServiceGprs();
 
     CAPServiceSms getCAPServiceSms();
+
+    /**
+     * The collection of netwokIds that are marked as prohibited or congested.
+     * 
+     * @return The collection of pairs: netwokId value - NetworkIdState (prohibited / congested state)
+     */
+    FastMap<Integer, NetworkIdState> getNetworkIdStateList();
+
+    /**
+     * Returns the state of availability / congestion for a networkId subnetwork. Returns null if there is no info (we need to
+     * treat it as available)
+     *
+     * @param networkId
+     * @return
+     */
+    NetworkIdState getNetworkIdState(int networkId);
 
 }
