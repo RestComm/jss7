@@ -5,8 +5,8 @@
 	
 	<parent>
 		<groupId>org.mobicents</groupId>
-		<artifactId>mobicents-parent</artifactId>
-		<version>2.26</version>
+		<artifactId>restcomm-parent</artifactId>
+		<version>2.27.32</version>
 	</parent>
 	
 	<artifactId>mtp-release</artifactId>

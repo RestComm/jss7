@@ -3,8 +3,8 @@
 
 	<parent>
 		<groupId>org.mobicents</groupId>
-		<artifactId>mobicents-parent</artifactId>
-		<version>2.27.18</version>
+		<artifactId>restcomm-parent</artifactId>
+		<version>2.27.32</version>
 	</parent>
 
 	<artifactId>ss7-parent</artifactId>
@@ -482,8 +482,8 @@
 	<!-- repositories -->
 	<repositories>
 		<repository>
-			<id>mobicents-public-repository-group</id>
-			<name>Mobicens Public Maven Repository Group</name>
+			<id>restcomm-public-repository-group</id>
+			<name>Restcomm Public Maven Repository Group</name>
 			<url>https://oss.sonatype.org/content/groups/public/</url>
 			<layout>default</layout>
 			<releases>
