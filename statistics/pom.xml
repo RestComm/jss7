@@ -26,7 +26,7 @@
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<groupId>org.mobicents.tools</groupId>
 				<version>
-					${mobicents.tools.mavenplugin.eclipse.version}
+					${restcomm.tools.mavenplugin.eclipse.version}
 				</version>
 				<inherited>false</inherited>
 				<executions />
@@ -44,7 +44,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<finalName>mobicents-statistics-${project.version}</finalName>
+		<finalName>restcomm-statistics-${project.version}</finalName>
 	</build>
 
 </project>
