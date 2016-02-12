@@ -36,12 +36,12 @@ The first tab will display the properties of the M3UA Management unit. These det
 	
 	<section id="m3ua_properties">
 		<title>M3UA stack properties</title>
-		
-		<section id="m3ua_property_maxsequencenumber">
+
+	<section id="m3ua_property_maxsequencenumber">
 		<title>Maximum Sequence Number</title>
  <para>You can modify the settings for the parameter 'maxsequencenumber' only when the M3UA Stack is not running. In addition, this parameter cannot be modified through the CLI or GUI. You will have to invoke the setter function directly from the source code. 
 		 </para>
-		 <para>If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file <filename>jboss-beans.xml</filename>, which is located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
+		 <para>If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file <filename>jboss-beans.xml</filename>, which is located at <filename>$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
 <screen><![CDATA[
 /*Add property for the parameter 'maxsequencenumber' to jboss-beans.xml file and specify the value*/ 
 <property name="maxSequenceNumber">128</property>						 
@@ -52,14 +52,14 @@ The first tab will display the properties of the M3UA Management unit. These det
 			<section id="m3ua_property_maxsequencenumber_CLI">
 			<title>Using CLI</title>
 				<para>
-					You can retrieve the current settings of the parameter 'maxsequencenumber' by issuing the command <command>sctp get maxsequencenumber</command>. However as explained above, you cannot modify the settings through the CLI.
+					You can retrieve the current settings of the parameter 'maxsequencenumber' by issuing the command <command>m3ua get maxsequencenumber</command>. However as explained above, you cannot modify the settings through the CLI.
 				</para>
 				<screen><![CDATA[
 Name
 	m3ua get maxsequencenumber 
 
 SYNOPSIS
-	m3ua get maxsequencenumber
+	m3ua get maxsequencenumber stackname <stack-name>
 
 DESCRIPTION	
 	This command is used to retrieve the current settings of the parameter
@@ -83,12 +83,12 @@ DESCRIPTION
 				<para>In the M3UA management page, you can view the current settings of the 'Max Sequence Number' property. But as explained above, you cannot change the settings in the GUI. For more details about this parameter, refer to the detailed description about the parameter in the above section for CLI.</para>
 		</section>			
 	</section>
-	
+
 	<section id="m3ua_property_maxasforroute">
 		<title>Maximum AS for route</title>
 		<para>You can modify the settings for the parameter 'maxasforroute' only when the M3UA Stack is not running. In addition, this parameter cannot be modified through the CLI or GUI. You will have to invoke the setter function directly from the source code. 
 		 </para>
-		 <para>If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file <filename>jboss-beans.xml</filename>, which is located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
+		 <para>If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file <filename>jboss-beans.xml</filename>, which is located at <filename>$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
 <screen><![CDATA[
 /*Add property for the parameter 'maxasforroute' to jboss-beans.xml file and specify the value*/ 
 <property name="maxAsForRoute">4</property>						 
@@ -99,14 +99,14 @@ DESCRIPTION
 			<section id="m3ua_property_maxasforroute_CLI">
 			<title>Using CLI</title>
 				<para>
-					You can retrieve the current settings of the parameter 'maxasforroute' by issuing the command <command>sctp get maxasforroute</command>. However as explained above, you cannot modify the settings through the CLI.
+					You can retrieve the current settings of the parameter 'maxasforroute' by issuing the command <command>m3ua get maxasforroute</command>. However as explained above, you cannot modify the settings through the CLI.
 				</para>
 				<screen><![CDATA[
 Name
 	m3ua get maxasforroute 
 
 SYNOPSIS
-	m3ua get maxasforroute 
+	m3ua get maxasforroute stackname <stack-name>
 
 DESCRIPTION
 	This command is used to retrieve the current settings of the parameter
@@ -136,7 +136,7 @@ DESCRIPTION
 				<para>In the M3UA management page, you can view the current settings of the 'Max As for Route' property. But as explained above, you cannot change the settings in the GUI. For more details about this parameter, refer to the detailed description about the parameter in the above section for CLI.</para>
 		</section>			
 	</section>	
-	
+
 	<section id="m3ua_property_heartbeattime">
 		<title>Heart Beat time</title>
 		
@@ -180,6 +180,142 @@ EXAMPLES
 				<para>On M3UA management page, click on pencil against the 'Worker Threads' property and text box becomes editable. Change value and save. </para>
 		</section>			
 	</section>	
+
+	<section id="m3ua_property_deliverymessagethreadcount">
+		<title>Threads count for processing of incoming messages</title>
+		<para>You can modify the settings for the parameter 'deliverymessagethreadcount' only when the M3UA Stack is not running. In addition, this parameter cannot be modified through the CLI or GUI. You will have to invoke the setter function directly from the source code. 
+		 </para>
+		 <para>If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file <filename>jboss-beans.xml</filename>, which is located at <filename>$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
+<screen><![CDATA[
+/*Add property for the parameter 'deliverymessagethreadcount' to jboss-beans.xml file and specify the value*/ 
+<property name="deliveryTransferMessageThreadCount">4</property>
+]]></screen>
+		 </para>
+		 <para>The current settings of the parameter can be viewed in the GUI or by invoking the appropriate CLI command as described below.
+		 </para>
+			<section id="m3ua_property_deliverymessagethreadcount_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can retrieve the current settings of the parameter 'deliverymessagethreadcount' by issuing the command <command>m3ua get deliverymessagethreadcount</command>. However as explained above, you cannot modify the settings through the CLI.
+				</para>
+				<screen><![CDATA[
+Name
+	m3ua get deliverymessagethreadcount 
+
+SYNOPSIS
+	m3ua get deliverymessagethreadcount 
+
+DESCRIPTION
+	Returns the count of threads that will be used for message delivering
+	to Mtp3UserPartListener's. Messages from SS7 peers (incoming messages)
+	are processed by these threads. Messages to SS7 peers (outgoing messages)
+	are processed by threads from user applications (not these threads).
+
+	For single thread model this value should be equal 1.
+			]]></screen>
+		</section>
+		<section id="m3ua_property_deliverymessagethreadcount_GUI">
+			<title>Using GUI</title>
+				<para>In the M3UA management page, you can view the current settings of the 'Max As for Route' property. But as explained above, you cannot change the settings in the GUI. For more details about this parameter, refer to the detailed description about the parameter in the above section for CLI.</para>
+		</section>			
+	</section>	
+
+	<section id="m3ua_property_routinglabelformat">
+		<title>MTP3 RoutingLabel Format</title>
+		<para>You can modify the settings for the parameter 'routinglabelformat' only when the M3UA Stack is not running. In addition, this parameter cannot be modified through the CLI or GUI. You will have to invoke the setter function directly from the source code. 
+		 </para>
+		 <para>If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below)
+		 to the XML descriptor file <filename>jboss-beans.xml</filename>, which is located at <filename>$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF</filename>, where <application>profile_name</application>
+		 and also an extra separate bean - RoutingLabelFormat (to which we refer from ).
+		 is the server profile name.
+<screen><![CDATA[
+/*Extra bean for RoutingLabelFormat Enum*/
+	<bean name="RoutingLabelFormat" class="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat">
+		<constructor factoryClass="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat"
+			factoryMethod="getInstance">
+			<parameter>ITU</parameter>
+		</constructor>
+	</bean>
+
+/*Add property for the parameter 'routinglabelformat' to jboss-beans.xml file and specify the value into M3UAManagementImpl mbean*/ 
+		<property name="routingLabelFormat">
+			<inject bean="RoutingLabelFormat" />
+		</property>
+]]></screen>
+		 </para>
+		 <para>The current settings of the parameter can be viewed in the GUI or by invoking the appropriate CLI command as described below.
+		 </para>
+			<section id="m3ua_property_routinglabelformat_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can retrieve the current settings of the parameter 'routinglabelformat' by issuing the command <command>m3ua get routinglabelformat</command>.
+					However as explained above, you cannot modify the settings through the CLI.
+				</para>
+				<screen><![CDATA[
+Name
+	m3ua get routinglabelformat 
+
+SYNOPSIS
+	m3ua get routinglabelformat stackname <stack-name>
+
+DESCRIPTION
+	Returns RoutingLabelFormat option. Possible values are: ITU, ANSI_Sls8Bit,
+	ANSI_Sls5Bit, Japan_TTC_DDI, Japan_NTT, China.
+			]]></screen>
+		</section>
+		<section id="m3ua_property_routinglabelformat_GUI">
+			<title>Using GUI</title>
+				<para>In the M3UA management page, you can view the current settings of the 'MTP3 RoutingLabel Format' property.
+				But as explained above, you cannot change the settings in the GUI. For more details about this parameter, refer to the detailed description about the parameter in the above section for CLI.</para>
+		</section>			
+	</section>	
+
+	<section id="m3ua_property_uselsbforlinksetselection">
+		<title>Bit of SLS for loadbalancing between Linksets</title>
+		
+			<section id="m3ua_property_uselsbforlinksetselection_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can set the 'uselsbforlinksetselection' by issuing the command <command>m3ua set uselsbforlinksetselection</command> with appropriate parameters as described below. 
+					You can verify this by issuing the command <command>m3ua get uselsbforlinksetselection</command> which will display the value set for this property.
+				</para>
+				<screen><![CDATA[
+Name
+	m3ua set uselsbforlinksetselection
+
+SYNOPSIS
+	m3ua set uselsbforlinksetselection <true | false> stackname <stack-name>
+
+DESCRIPTION
+	Possible values are false or true. Sets which bit of SLS will be used
+	for loadbalancing between Linkset.
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<true | false>	-	True value means lowest bit of SLS is used for
+						loadbalancing between Linkset, false value means
+						highest bit of SLS is used. Default value is false.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	m3ua set uselsbforlinksetselection false
+			]]></screen>
+		</section>
+		<section id="m3ua_property_uselsbforlinksetselection_GUI">
+			<title>Using GUI</title>
+				<para>On M3UA management page, click on pencil against the 'Worker Threads' property and text box becomes editable. Change value and save.</para>
+		</section>			
+	</section>	
+
+
+
 </section>		
 	
 	

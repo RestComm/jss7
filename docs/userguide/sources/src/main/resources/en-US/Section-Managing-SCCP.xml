@@ -113,7 +113,7 @@ EXAMPLES
 
 
 		
-		<section id="sccp_property_maxdatamessage">
+	<section id="sccp_property_maxdatamessage">
 		<title>Maximum Data Message</title>
 		
 			<section id="sccp_property_maxdatamessage_CLI">
@@ -252,15 +252,20 @@ EXAMPLES
 				</para>
 				<screen><![CDATA[
 Name
-	sccp get removespc 
+	sccp set removespc 
 
 SYNOPSIS
-	sccp get removespc stackname <stack-name>
+	sccp set removespc <false | true> stackname <stack-name>
 
 DESCRIPTION
-	Gets the value for removespc property.
+	If set, the signaling point code from SCCP called/calling address will 
+	be removed if corresponding routing is based on GT
 	
 PARAMETERS
+
+	Standard Parameters
+
+	<removespc>	-	true or false value.
 
 	Optional Parameters
 
@@ -269,7 +274,7 @@ PARAMETERS
 					will be used.	
 
 EXAMPLES
-	sccp get removespc
+	sccp set removespc true
 			]]></screen>
 		</section>
 		<section id="sccp_property_removespc_GUI">
@@ -277,11 +282,10 @@ EXAMPLES
 				<para>On SCCP management page, click on pencil against the 'RemoveSpc' property and text box becomes editable. Change value and save. </para>
 		</section>			
 	</section>
-	
 
 	<section id="sccp_property_ssttimerduration_increasefactor">
 		<title>SST Timer Duration Increase Factor</title>
-		
+
 			<section id="sccp_property_ssttimerduration_increasefactor_CLI">
 			<title>Using CLI</title>
 				<para>
@@ -290,15 +294,24 @@ EXAMPLES
 				</para>
 				<screen><![CDATA[
 Name
-	sccp get ssttimerduration_increasefactor 
+	sccp set ssttimerduration_increasefactor 
 
 SYNOPSIS
-	sccp get ssttimerduration_increasefactor stackname <stack-name>
+	sccp set ssttimerduration_increasefactor <ssttimerduration_increasefactor> 
+	stackname <stack-name>
 
 DESCRIPTION
-	Gets the value for ssttimerduration_increasefactor property.
-	
+	Set multiplicator of SST sending interval (next interval will be greater then 
+	the current by sstTimerDuration_IncreaseFactor). Range is 1 to 4. If passed 
+	value is less than 1, it sets to 1 and if passed value is greater than 4, 
+	it sets to 4
+
 PARAMETERS
+
+	Standard Parameters
+
+	<ssttimerduration_increasefactor>	-	values from 1 to 4 for SST duration increase
+										factor.
 
 	Optional Parameters
 
@@ -307,7 +320,7 @@ PARAMETERS
 					will be used.	
 
 EXAMPLES
-	sccp get ssttimerduration_increasefactor
+	sccp set ssttimerduration_increasefactor 1
 			]]></screen>
 		</section>
 		<section id="sccp_property_ssttimerduration_increasefactor_GUI">
@@ -315,8 +328,6 @@ EXAMPLES
 				<para>On SCCP management page, click on pencil against the 'SstTimerDuration_IncreaseFactor' property and text box becomes editable. Change value and save. </para>
 		</section>			
 	</section>
-
-
 
 	<section id="sccp_property_ssttimerduration_max">
 		<title>SST Timer Duration Max</title>
@@ -329,15 +340,21 @@ EXAMPLES
 				</para>
 				<screen><![CDATA[
 Name
-	sccp get ssttimerduration_max 
+	sccp set ssttimerduration_max 
 
 SYNOPSIS
-	sccp get ssttimerduration_max stackname <stack-name>
+	sccp set ssttimerduration_max <ssttimerduration_max> stackname <stack-name>
 
 DESCRIPTION
-	Gets the value for ssttimerduration_max property.
+	Sets Max (after increasing) SST sending interval (in 600000 - 1200000 milliseconds). 
+	Value can be from 600000 to 1200000. If value passed is less than 600000, it sets to 
+	600000 and if value passed is greater than 1200000, it sets to 1200000
 	
 PARAMETERS
+
+	Standard Parameters
+
+	<ssttimerduration_max>	-	values from 600000 - 1200000 milliseconds.
 
 	Optional Parameters
 
@@ -346,7 +363,7 @@ PARAMETERS
 					will be used.	
 
 EXAMPLES
-	sccp get ssttimerduration_max
+	sccp set ssttimerduration_max 600000
 			]]></screen>
 		</section>
 		<section id="sccp_property_ssttimerduration_max_GUI">
@@ -355,7 +372,6 @@ EXAMPLES
 		</section>			
 	</section>
 
-	
 	<section id="sccp_property_ssttimerduration_min">
 		<title>SST Timer Duration Min</title>
 		
@@ -367,15 +383,21 @@ EXAMPLES
 				</para>
 				<screen><![CDATA[
 Name
-	sccp get ssttimerduration_min 
+	sccp set ssttimerduration_min 
 
 SYNOPSIS
-	sccp get ssttimerduration_min stackname <stack-name>
+	sccp set ssttimerduration_min <ssttimerduration_min> stackname <stack-name>
 
 DESCRIPTION
-	Gets the value for ssttimerduration_min property.
+	Set's min (starting) SST sending interval (in milliseconds). Value can be 
+	from 5000 to 10000.If value passed is less than 5000, it sets to 5000 and 
+	if value passed is greater than 10000, its set to 10000
 	
 PARAMETERS
+
+	Standard Parameters
+
+	<ssttimerduration_min>	-	values from 5000 to 10000.
 
 	Optional Parameters
 
@@ -384,7 +406,7 @@ PARAMETERS
 					will be used.	
 
 EXAMPLES
-	sccp get ssttimerduration_min
+	sccp set ssttimerduration_min 10000
 			]]></screen>
 		</section>
 		<section id="sccp_property_ssttimerduration_min_GUI">
@@ -404,14 +426,63 @@ EXAMPLES
 				</para>
 				<screen><![CDATA[
 Name
-	sccp get ssttimerduration_min 
+	sccp set ssttimerduration_min 
 
 SYNOPSIS
-	sccp get ssttimerduration_min stackname <stack-name>
+	sccp set zmarginxudtmessage <zmarginxudtmessage> stackname <stack-name>
 
 DESCRIPTION
-	Gets the value for ssttimerduration_min property.
+	Sets segmentation length. If the XUDT message data length greater this value,
+    segmentation is processed. Otherwise no segmentation.
+    Range is 160 to 255. If passed value is less than 160, it sets to 160 and
+    if passed value is greater than 255, it sets to 255.
 	
+PARAMETERS
+
+	Standard Parameters
+
+	<zmarginxudtmessage>	-	values from 160 to 255.
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp set zmarginxudtmessage 255
+			]]></screen>
+		</section>
+		<section id="sccp_property_zmarginxudtmessage_min_GUI">
+			<title>Using GUI</title>
+				<para>On SCCP management page, click on pencil against the 'ZMarginXudtMessage' property and text box becomes editable. Change value and save. </para>
+		</section>			
+	</section>		
+
+	<section id="sccp_property_cc_timer_a">
+		<title>Timer A value for the congestion control</title>
+		
+			<section id="sccp_property_cc_timer_a_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can set the 'cc_timer_a' by issuing the command <command>sccp set cc_timer_a</command> with appropriate parameters as described below. 
+					You can verify this by issuing the command <command>sccp get cc_timer_a</command> which will display the value set for this property.
+				</para>
+				<screen><![CDATA[
+Name
+	sccp get cc_timer_a 
+
+SYNOPSIS
+	sccp get cc_timer_a stackname <stack-name>
+
+DESCRIPTION
+	Sets the Timer A value in milliseconds.
+	This timer starts at next MTP-STATUS(cong) primitive coming.
+	During this timer no more MTP-STATUS(cong) are accepted.
+
+	Default value is 400.
+	Possible values are between 60 and 1000.
+
 PARAMETERS
 
 	Optional Parameters
@@ -421,14 +492,155 @@ PARAMETERS
 					will be used.	
 
 EXAMPLES
-	sccp get ssttimerduration_min
-			]]></screen>
+	sccp set cc_timer_a 400
+]]></screen>
 		</section>
-		<section id="sccp_property_zmarginxudtmessage_min_GUI">
+		<section id="sccp_property_cc_timer_a_GUI">
 			<title>Using GUI</title>
-				<para>On SCCP management page, click on pencil against the 'ZMarginXudtMessage' property and text box becomes editable. Change value and save. </para>
+				<para>On SCCP management page, click on pencil against the 'Congestion control: Timer A' property and text box becomes editable. Change value and save.</para>
 		</section>			
 	</section>		
+
+	<section id="sccp_property_cc_timer_d">
+		<title>Timer D value for the congestion control</title>
+		
+			<section id="sccp_property_cc_timer_d_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can set the 'cc_timer_d' by issuing the command <command>sccp set cc_timer_d</command> with appropriate parameters as described below. 
+					You can verify this by issuing the command <command>sccp get cc_timer_d</command> which will display the value set for this property.
+				</para>
+				<screen><![CDATA[
+Name
+	sccp get cc_timer_d 
+
+SYNOPSIS
+	sccp get cc_timer_d stackname <stack-name>
+
+DESCRIPTION
+	Sets the Timer D value in milliseconds.
+	This timer starts after last MTP-STATUS(cong) primitive coming.
+	After end of this timer (without new coming MTP-STATUS(cong))
+	RSLM (the congestion level) will be reduced.
+
+	Default value is 2000.
+	Possible values are between 500 and 10000.
+
+PARAMETERS
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp set cc_timer_d 2000
+]]></screen>
+		</section>
+		<section id="sccp_property_cc_timer_d_min_GUI">
+			<title>Using GUI</title>
+				<para>On SCCP management page, click on pencil against the 'Congestion control: Timer A' property and text box becomes editable. Change value and save.</para>
+		</section>			
+	</section>		
+
+	<section id="sccp_property_cc_algo">
+		<title>Algorithm of the congestion control at SCCP level</title>
+
+			<section id="sccp_property_cc_algo_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can set the 'cc_algo' by issuing the command <command>sccp set cc_algo</command> with appropriate parameters as described below. 
+					You can verify this by issuing the command <command>sccp get cc_algo</command> which will display the value set for this property.
+				</para>
+				<screen><![CDATA[
+Name
+	sccp set cc_algo 
+
+SYNOPSIS
+	sccp set cc_algo <international | levelDepended> stackname <stack-name>
+
+DESCRIPTION
+	Sets the algorithm of the congestion control at SCCP level for outgoing
+	messages.
+	Possible values are international or levelDepended.
+	international algorithm - only one level is provided by MTP3 level
+	(in MTP-STATUS primitive). Each MTP-STATUS increases N / M levels.
+	international algorithm - MTP3 level (MTP-STATUS primitive) provides
+	3 levels of a congestion (1-3) and SCCP congestion will increase to
+	the next level after MTP-STATUS next level increase (MTP-STATUS 1
+	to N up to 3, MTP-STATUS 2 to N up to 5, MTP-STATUS 3 to N up to 7).
+
+	Default value is international.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<cc_algo>	-	international | levelDepended.
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.
+
+EXAMPLES
+	sccp set cc_algo international
+]]></screen>
+		</section>
+		<section id="sccp_property_cc_algo_GUI">
+			<title>Using GUI</title>
+				<para>On SCCP management page, click on pencil against the 'Congestion control: algorithm' property and text box becomes editable. Change value and save.</para>
+		</section>			
+	</section>		
+
+	<section id="sccp_property_cc_blockingoutgoungsccpmessages">
+		<title>Blocking of outgoing messages in case of the congestion</title>
+
+			<section id="sccp_property_blockingoutgoungsccpmessages_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can set the 'cc_blockingoutgoungsccpmessages' by issuing the command <command>sccp set cc_blockingoutgoungsccpmessages</command> with appropriate parameters as described below. 
+					You can verify this by issuing the command <command>sccp get cc_blockingoutgoungsccpmessages</command> which will display the value set for this property.
+				</para>
+				<screen><![CDATA[
+Name
+	sccp set cc_blockingoutgoungsccpmessages 
+
+SYNOPSIS
+	sccp set cc_blockingoutgoungsccpmessages <false | true> stackname <stack-name>
+
+DESCRIPTION
+	Sets the value of if outgoing SCCP messages will be blocked in congestion.
+	(depending on message type, UDP messages from level N=6).
+	true means that message will be blocken in the congestion case,
+	false means not.
+
+	Default value is false.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<cc_blockingoutgoungsccpmessages>	-	false or true.
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.
+
+EXAMPLES
+	sccp set cc_blockingoutgoungsccpmessages false
+]]></screen>
+		</section>
+		<section id="sccp_property_blockingoutgoungsccpmessages_GUI">
+			<title>Using GUI</title>
+				<para>On SCCP management page, click on pencil against the 'Congestion control: blocking of outgoing messages' property and text box becomes editable. Change value and save.</para>
+		</section>			
+	</section>		
+
 </section>		
 	
 	
