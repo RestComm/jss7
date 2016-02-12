@@ -1,19 +1,19 @@
 Name
-	sctp get singlethread 
+	sccp get cc_timer_a 
 
 SYNOPSIS
-	sctp get singlethread stackname <stack-name>
+	sccp get cc_timer_a stackname <stack-name>
 
 DESCRIPTION
-	Returns true if stack is single threaded else false
-	
+	Gets the value of Timer A value (in milliseconds) for SCCP congestion control.
+
 PARAMETERS
 
 	Optional Parameters
 
 	<stack-name>	-	Name of the stack on which this command is executed. 
 					If not passed, the first stack configured in ShellExecutor
-					will be used.		
+					will be used.	
 
 EXAMPLES
-	sctp get singlethread
+	sccp get cc_timer_a

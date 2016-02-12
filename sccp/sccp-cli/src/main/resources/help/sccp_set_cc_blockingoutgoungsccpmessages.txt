@@ -1,0 +1,28 @@
+Name
+	sccp set cc_blockingoutgoungsccpmessages 
+
+SYNOPSIS
+	sccp set cc_blockingoutgoungsccpmessages <false | true> stackname <stack-name>
+
+DESCRIPTION
+	Sets the value of if outgoing SCCP messages will be blocked in congestion.
+	(depending on message type, UDP messages from level N=6).
+	true means that message will be blocken in the congestion case,
+	false means not.
+
+	Default value is false.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<cc_blockingoutgoungsccpmessages>	-	false or true.
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp set cc_blockingoutgoungsccpmessages false

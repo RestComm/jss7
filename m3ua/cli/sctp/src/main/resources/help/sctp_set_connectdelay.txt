@@ -11,7 +11,7 @@ DESCRIPTION
 	when there is network disruption and the connection between 
 	the client and the server breaks, so that the SCTP stack 
 	doesn't continuously attempt to reconnect. 
-	Defalut is 30000 milliseconds.
+	Default is 30000 milliseconds.
 	
 PARAMETERS
 

@@ -1,0 +1,20 @@
+Name
+	sccp get cc_blockingoutgoungsccpmessages 
+
+SYNOPSIS
+	sccp get cc_blockingoutgoungsccpmessages stackname <stack-name>
+
+DESCRIPTION
+	Gets the value of if outgoing SCCP messages will be blocked in congestion.
+	(depending on message type, UDP messages from level N=6).
+
+PARAMETERS
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp get cc_blockingoutgoungsccpmessages

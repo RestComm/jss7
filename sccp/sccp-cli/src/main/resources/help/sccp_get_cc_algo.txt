@@ -1,19 +1,19 @@
 Name
-	sctp get workerthreads 
+	sccp get cc_algo 
 
 SYNOPSIS
-	sctp get workerthreads stackname <stack-name>
+	sccp get cc_algo stackname <stack-name>
 
 DESCRIPTION
-	Returns number of worker threads
-	
+	Gets the value of sccp congestion control algorithm (international or levelDepended).
+
 PARAMETERS
 
 	Optional Parameters
 
 	<stack-name>	-	Name of the stack on which this command is executed. 
 					If not passed, the first stack configured in ShellExecutor
-					will be used.		
+					will be used.	
 
 EXAMPLES
-	sctp get workerthreads
+	sccp get cc_algo

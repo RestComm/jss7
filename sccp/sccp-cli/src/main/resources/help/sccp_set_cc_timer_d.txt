@@ -1,0 +1,29 @@
+Name
+	sccp set cc_timer_d 
+
+SYNOPSIS
+	sccp set cc_timer_d <Timer D value> stackname <stack-name>
+
+DESCRIPTION
+	Sets the Timer D value in milliseconds.
+	This timer starts after last MTP-STATUS(cong) primitive coming.
+	After end of this timer (without new coming MTP-STATUS(cong))
+	RSLM (the congestion level) will be reduced.
+
+	Default value is 2000.
+	Possible values are between 500 and 10000.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<Timer D value>	-	Timer D value in milliseconds.
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp set cc_timer_d 2000

@@ -1,0 +1,25 @@
+Name
+	sccp set sccpprotocolversion 
+
+SYNOPSIS
+	sccp set sccpprotocolversion <ITU | ANSI> stackname <stack-name>
+
+DESCRIPTION
+	Sets the value of which protocol specification SCCP stack uses property -
+	ITU or ANSI.
+	Default value is ITU.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<sccpprotocolversion>	-	ITU or ANSI.
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp set sccpprotocolversion ITU

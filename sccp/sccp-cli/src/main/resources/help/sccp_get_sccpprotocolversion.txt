@@ -1,0 +1,19 @@
+Name
+	sccp get sccpprotocolversion 
+
+SYNOPSIS
+	sccp get sccpprotocolversion stackname <stack-name>
+
+DESCRIPTION
+	Gets the value which protocol specification SCCP stack uses (ITU-T or ANSI).
+
+PARAMETERS
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp get sccpprotocolversion

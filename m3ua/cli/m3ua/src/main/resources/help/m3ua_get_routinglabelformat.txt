@@ -1,0 +1,20 @@
+Name
+	m3ua get routinglabelformat 
+
+SYNOPSIS
+	m3ua get routinglabelformat stackname <stack-name>
+
+DESCRIPTION
+	Returns RoutingLabeFormat option. Possible values are: ITU, ANSI_Sls8Bit,
+	ANSI_Sls5Bit, Japan_TTC_DDI, Japan_NTT, China.
+
+PARAMETERS
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.		
+
+EXAMPLES
+	m3ua get routinglabelformat

@@ -1,0 +1,26 @@
+Name
+	m3ua set uselsbforlinksetselection 
+
+SYNOPSIS
+	m3ua set uselsbforlinksetselection <true | false> stackname <stack-name>
+
+DESCRIPTION
+	Possible values are false or true. Sets which bit of SLS will be used
+	for loadbalancing between Linkset.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<true | false>	-	True value means lowest bit of SLS is used for
+						loadbalancing between Linkset, false value means
+						highest bit of SLS is used. Default value is false.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	m3ua set uselsbforlinksetselection false

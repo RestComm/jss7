@@ -1,0 +1,23 @@
+Name
+	m3ua get deliverymessagethreadcount 
+
+SYNOPSIS
+	m3ua get deliverymessagethreadcount stackname <stack-name>
+
+DESCRIPTION
+	Returns the count of threads that will be used for message delivering
+	to Mtp3UserPartListener's. Messages from SS7 peers (incoming messages)
+	are processed by these threads. Messages to SS7 peers (outgoing messages)
+	are processed by threads from user applications (not these threads).
+	For single thread model this value should be equal 1.
+
+PARAMETERS
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.		
+
+EXAMPLES
+	m3ua get deliverymessagethreadcount

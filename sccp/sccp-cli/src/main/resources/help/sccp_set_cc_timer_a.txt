@@ -1,0 +1,28 @@
+Name
+	sccp set cc_timer_a 
+
+SYNOPSIS
+	sccp set cc_timer_a <Timer A value> stackname <stack-name>
+
+DESCRIPTION
+	Sets the Timer A value in milliseconds.
+	This timer starts at next MTP-STATUS(cong) primitive coming.
+	During this timer no more MTP-STATUS(cong) are accepted.
+
+	Default value is 400.
+	Possible values are between 60 and 1000.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<Timer A value>	-	Timer A value in milliseconds.
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp set cc_timer_a 400

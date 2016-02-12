@@ -1,0 +1,31 @@
+Name
+	sccp set cc_algo 
+
+SYNOPSIS
+	sccp set cc_algo <international | levelDepended> stackname <stack-name>
+
+DESCRIPTION
+	Sets the algorithm of the congestion control at SCCP level for outgoing messages.
+	Possible values are international or levelDepended.
+	international algorithm - only one level is provided by MTP3 level (in MTP-STATUS primitive).
+	Each MTP-STATUS increases N / M levels
+	international algorithm - MTP3 level (MTP-STATUS primitive) provides 3 levels of a congestion
+	(1-3) and SCCP congestion will increase to the next level after MTP-STATUS next level
+	increase (MTP-STATUS 1 to N up to 3, MTP-STATUS 2 to N up to 5, MTP-STATUS 3 to N up to 7)
+
+	Default value is international.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<cc_algo>	-	international | levelDepended.
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp set cc_algo international

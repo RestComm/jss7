@@ -1,0 +1,23 @@
+Name
+	sctp set cc_backtonormal_delaythreshold_1
+
+SYNOPSIS
+	sctp set cc_backtonormal_delaythreshold_1 stackname <stack-name>
+
+DESCRIPTION
+	For outgoing messages congestion control stack needs to have 3 thresholds - 
+	delays of outgoing messages before it will be sent to IP channel (3 levels
+	- 1, 2, 3). If a delay time in seconds becomes less then value for level
+	1, 2 or 3, the Association's congestion level decreases to 0, 1, or 2.
+	Default value for the threshold 1 is 1.5 seconds.
+	
+PARAMETERS
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.		
+
+EXAMPLES
+	sctp set cc_backtonormal_delaythreshold_1 1.5
