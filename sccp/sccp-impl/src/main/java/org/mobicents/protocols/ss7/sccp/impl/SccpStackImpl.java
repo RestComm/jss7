@@ -111,7 +111,11 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     private static final String SST_TIMER_DURATION_MIN = "ssttimerduration_min";
     private static final String SST_TIMER_DURATION_MAX = "ssttimerduration_max";
     private static final String SST_TIMER_DURATION_INCREASE_FACTOR = "ssttimerduration_increasefactor";
-
+    private static final String CONG_CONTROL_TIMER_A = "congControl_TIMER_A";
+    private static final String CONG_CONTROL_TIMER_D = "congControl_TIMER_D";
+    private static final String CONG_CONTROL_ALGO = "congControl_Algo";
+    private static final String CONG_CONTROL_BLOCKING_OUTGOUNG_SCCP_MESSAGES = "congControl_blockingOutgoungSccpMessages";    
+    
     /**
      * Interval in milliseconds in which new coming for an affected PC MTP-STATUS messages will be logged
      */
@@ -122,22 +126,16 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
     // If the XUDT message data length greater this value, segmentation is
     // needed
-    // TODO: make it configurable
     protected int zMarginXudtMessage = 240;
     // sccp segmented message reassembling timeout
-    // TODO: make it configurable
     protected int reassemblyTimerDelay = 15000;
     // Max available Sccp message data for all messages
-    // TODO: make it configurable
     protected int maxDataMessage = 2560;
     // remove PC from calledPartyAddress when sending to MTP3
-    // TODO: make it configurable
     private boolean removeSpc = true;
     // min (starting) SST sending interval (millisec)
-    // TODO: make it configurable
     protected int sstTimerDuration_Min = 10000;
     // max (after increasing) SST sending interval (millisec)
-    // TODO: make it configurable
     protected int sstTimerDuration_Max = 600000;
     // multiplicator of SST sending interval (next interval will be greater the
     // current by sstTimerDuration_IncreaseFactor)
@@ -165,7 +163,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     // to N up to 7)
     protected SccpCongestionControlAlgo congControl_Algo = SccpCongestionControlAlgo.international;
     // if true outgoing SCCP messages will be blocked (depending on message type, UDP messages from level N=6)
-    protected boolean congControl_blockingOutgoungScpMessages = false;
+    protected boolean congControl_blockingOutgoungSccpMessages = false;
 
     private boolean previewMode = false;
 
@@ -272,25 +270,38 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         }
     }
 
-    public void setRemoveSpc(boolean removeSpc) {
+    public void setRemoveSpc(boolean removeSpc) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("RemoveSpc parameter can be updated only when SCCP stack is running");
+
         this.removeSpc = removeSpc;
 
         this.store();
     }
 
-    public void setSccpProtocolVersion(SccpProtocolVersion sccpProtocolVersion) {
-        this.sccpProtocolVersion = sccpProtocolVersion;
+    public void setSccpProtocolVersion(SccpProtocolVersion sccpProtocolVersion) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("SccpProtocolVersion parameter can be updated only when SCCP stack is running");
+
+        if (sccpProtocolVersion != null)
+            this.sccpProtocolVersion = sccpProtocolVersion;
 
         this.store();
     }
 
-    public void setPreviewMode(boolean previewMode) {
+    public void setPreviewMode(boolean previewMode) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("PreviewMode parameter can be updated only when SCCP stack is running");
+
         this.previewMode = previewMode;
 
         this.store();
     }
 
-    public void setSstTimerDuration_Min(int sstTimerDuration_Min) {
+    public void setSstTimerDuration_Min(int sstTimerDuration_Min) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("SstTimerDuration_Min parameter can be updated only when SCCP stack is running");
+
         // 5-10 seconds
         if (sstTimerDuration_Min < 5000)
             sstTimerDuration_Min = 5000;
@@ -301,7 +312,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         this.store();
     }
 
-    public void setSstTimerDuration_Max(int sstTimerDuration_Max) {
+    public void setSstTimerDuration_Max(int sstTimerDuration_Max) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("SstTimerDuration_Max parameter can be updated only when SCCP stack is running");
+
         // 10-20 minutes
         if (sstTimerDuration_Max < 600000)
             sstTimerDuration_Max = 600000;
@@ -312,7 +326,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         this.store();
     }
 
-    public void setSstTimerDuration_IncreaseFactor(double sstTimerDuration_IncreaseFactor) {
+    public void setSstTimerDuration_IncreaseFactor(double sstTimerDuration_IncreaseFactor) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("SstTimerDuration_IncreaseFactor parameter can be updated only when SCCP stack is running");
+
         // acceptable factor from 1 to 4
         if (sstTimerDuration_IncreaseFactor < 1)
             sstTimerDuration_IncreaseFactor = 1;
@@ -328,7 +345,15 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         return congControl_TIMER_A;
     }
 
-    public void setCongControlTIMER_A(int value) {
+    public void setCongControlTIMER_A(int value) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("CongControlTIMER_A parameter can be updated only when SCCP stack is running");
+
+        if (value < 60)
+            value = 60;
+        if (value > 1000)
+            value = 1000;
+
         congControl_TIMER_A = value;
 
         this.store();
@@ -339,7 +364,15 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         return congControl_TIMER_D;
     }
 
-    public void setCongControlTIMER_D(int value) {
+    public void setCongControlTIMER_D(int value) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("CongControlTIMER_D parameter can be updated only when SCCP stack is running");
+
+        if (value < 500)
+            value = 500;
+        if (value > 10000)
+            value = 10000;
+
         congControl_TIMER_D = value;
 
         this.store();
@@ -369,22 +402,28 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         return congControl_Algo;
     }
 
-    public void setCongControl_Algo(SccpCongestionControlAlgo value) {
-        congControl_Algo = value;
+    public void setCongControl_Algo(SccpCongestionControlAlgo value) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("CongControl_Algo parameter can be updated only when SCCP stack is running");
+
+        if (value != null)
+            congControl_Algo = value;
 
         this.store();
     }
 
-    public boolean isCongControl_blockingOutgoungScpMessages() {
-        return congControl_blockingOutgoungScpMessages;
+    public boolean isCongControl_blockingOutgoungSccpMessages() {
+        return congControl_blockingOutgoungSccpMessages;
     }
 
-    public void setCongControl_blockingOutgoungScpMessages(boolean value) {
-        congControl_blockingOutgoungScpMessages = value;
+    public void setCongControl_blockingOutgoungSccpMessages(boolean value) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("CongControl_blockingOutgoungSccpMessages parameter can be updated only when SCCP stack is running");
+
+        congControl_blockingOutgoungSccpMessages = value;
 
         this.store();
     }
-
 
     public boolean isRemoveSpc() {
         return this.removeSpc;
@@ -414,7 +453,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         return zMarginXudtMessage;
     }
 
-    public void setZMarginXudtMessage(int zMarginXudtMessage) {
+    public void setZMarginXudtMessage(int zMarginXudtMessage) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("ZMarginXudtMessage parameter can be updated only when SCCP stack is running");
+
         // value from 160 to 255 bytes
         if (zMarginXudtMessage < 160)
             zMarginXudtMessage = 160;
@@ -429,7 +471,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         return maxDataMessage;
     }
 
-    public void setMaxDataMessage(int maxDataMessage) {
+    public void setMaxDataMessage(int maxDataMessage) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("MaxDataMessage parameter can be updated only when SCCP stack is running");
+
         // from 2560 to 3952 bytes
         if (maxDataMessage < 2560)
             maxDataMessage = 2560;
@@ -444,7 +489,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         return this.reassemblyTimerDelay;
     }
 
-    public void setReassemblyTimerDelay(int reassemblyTimerDelay) {
+    public void setReassemblyTimerDelay(int reassemblyTimerDelay) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("ReassemblyTimerDelay parameter can be updated only when SCCP stack is running");
+
         // from 10 to 20 seconds
         if (reassemblyTimerDelay < 10000)
             reassemblyTimerDelay = 10000;
@@ -580,6 +628,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         // stateLock.unlock();
         // }
 
+    }
+
+    public boolean isStarted() {
+        return this.state == State.RUNNING;
     }
 
     public Router getRouter() {
@@ -1082,6 +1134,14 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             writer.write(this.previewMode, PREVIEW_MODE, Boolean.class);
             if (this.sccpProtocolVersion != null)
                 writer.write(this.sccpProtocolVersion.toString(), SCCP_PROTOCOL_VERSION, String.class);
+
+            writer.write(this.congControl_TIMER_A, CONG_CONTROL_TIMER_A, Integer.class);
+            writer.write(this.congControl_TIMER_D, CONG_CONTROL_TIMER_D, Integer.class);
+            if (this.congControl_Algo != null)
+                writer.write(this.congControl_Algo.toString(), CONG_CONTROL_ALGO, String.class);
+            writer.write(this.congControl_blockingOutgoungSccpMessages, CONG_CONTROL_BLOCKING_OUTGOUNG_SCCP_MESSAGES,
+                    Boolean.class);
+
             writer.write(this.sstTimerDuration_Min, SST_TIMER_DURATION_MIN, Integer.class);
             writer.write(this.sstTimerDuration_Max, SST_TIMER_DURATION_MAX, Integer.class);
             writer.write(this.sstTimerDuration_IncreaseFactor, SST_TIMER_DURATION_INCREASE_FACTOR, Double.class);
@@ -1115,6 +1175,19 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             String s1 = reader.read(SCCP_PROTOCOL_VERSION, String.class);
             if (s1 != null)
                 this.sccpProtocolVersion = Enum.valueOf(SccpProtocolVersion.class, s1);
+
+            Integer vali = reader.read(CONG_CONTROL_TIMER_A, Integer.class);
+            if (vali != null)
+                this.congControl_TIMER_A = vali;
+            vali = reader.read(CONG_CONTROL_TIMER_D, Integer.class);
+            if (vali != null)
+                this.congControl_TIMER_D = vali;
+            s1 = reader.read(CONG_CONTROL_ALGO, String.class);
+            if (s1 != null)
+                this.congControl_Algo = Enum.valueOf(SccpCongestionControlAlgo.class, s1);
+            b1 = reader.read(CONG_CONTROL_BLOCKING_OUTGOUNG_SCCP_MESSAGES, Boolean.class);
+            if (b1 != null)
+                this.congControl_blockingOutgoungSccpMessages = b1;
 
             this.sstTimerDuration_Min = reader.read(SST_TIMER_DURATION_MIN, Integer.class);
             this.sstTimerDuration_Max = reader.read(SST_TIMER_DURATION_MAX, Integer.class);

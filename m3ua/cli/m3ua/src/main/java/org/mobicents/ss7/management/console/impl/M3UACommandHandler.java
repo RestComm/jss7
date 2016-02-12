@@ -55,15 +55,16 @@ public class M3UACommandHandler extends CommandHandlerWithHelp {
         route.addChild("show");
 
         Node set = parent.addChild("set");
-//        set.addChild("maxsequencenumber");
-//        set.addChild("maxasforroute");
         set.addChild("heartbeattime");
+        set.addChild("uselsbforlinksetselection");
 
         Node get = parent.addChild("get");
+        get.addChild("heartbeattime");
+        get.addChild("uselsbforlinksetselection");
         get.addChild("maxsequencenumber");
         get.addChild("maxasforroute");
-        get.addChild("heartbeattime");
-
+        get.addChild("routinglabelformat");
+        get.addChild("deliverymessagethreadcount");
     };
 
     public M3UACommandHandler() {

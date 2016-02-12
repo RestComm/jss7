@@ -93,9 +93,16 @@ public class SccpCommandHandler extends CommandHandlerWithHelp {
         set.addChild("ssttimerduration_max");
         set.addChild("ssttimerduration_increasefactor");
         Node sccpprotocolversion = set.addChild("sccpprotocolversion");
+        set.addChild("cc_timer_a");
+        set.addChild("cc_timer_d");
+        Node cc_algo = set.addChild("cc_algo");
+        set.addChild("cc_blockingoutgoungsccpmessages");
 
         sccpprotocolversion.addChild("ITU");
         sccpprotocolversion.addChild("ANSI");
+
+        cc_algo.addChild("international");
+        cc_algo.addChild("levelDepended");
 
         Node get = parent.addChild("get");
         get.addChild("zmarginxudtmessage");
@@ -107,6 +114,10 @@ public class SccpCommandHandler extends CommandHandlerWithHelp {
         get.addChild("ssttimerduration_max");
         get.addChild("ssttimerduration_increasefactor");
         get.addChild("sccpprotocolversion");
+        get.addChild("cc_timer_a");
+        get.addChild("cc_timer_d");
+        get.addChild("cc_algo");
+        get.addChild("cc_blockingoutgoungsccpmessages");
 
     };
 

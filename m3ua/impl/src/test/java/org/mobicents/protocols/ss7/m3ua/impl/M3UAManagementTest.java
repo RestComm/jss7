@@ -568,5 +568,77 @@ public class M3UAManagementTest {
             return false;
         }
 
+        @Override
+        public double getCongControl_BackToNormalDelayThreshold_1() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public double getCongControl_BackToNormalDelayThreshold_2() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public double getCongControl_BackToNormalDelayThreshold_3() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public double getCongControl_DelayThreshold_1() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public double getCongControl_DelayThreshold_2() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public double getCongControl_DelayThreshold_3() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setCongControl_BackToNormalDelayThreshold_1(double arg0) throws Exception {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setCongControl_BackToNormalDelayThreshold_2(double arg0) throws Exception {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setCongControl_BackToNormalDelayThreshold_3(double arg0) throws Exception {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setCongControl_DelayThreshold_1(double arg0) throws Exception {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setCongControl_DelayThreshold_2(double arg0) throws Exception {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setCongControl_DelayThreshold_3(double arg0) throws Exception {
+            // TODO Auto-generated method stub
+            
+        }
+
     }
 }

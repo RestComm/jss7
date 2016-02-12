@@ -44,14 +44,20 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 
     private static final String LICENSE_PRODUCT_NAME = "Mobicents-jSS7";
 
+    protected static final String ROUTING_LABEL_FORMAT = "routingLabelFormat";
+    protected static final String USE_LSB_FOR_LINKSET_SELECTION = "useLsbForLinksetSelection";
+
     private int maxSls = 32;
     private int slsFilter = 0x1F;
 
     // The count of threads that will be used for message delivering to
     // Mtp3UserPartListener's
     // For single thread model this value should be equal 1
-    // TODO: make it configurable
     protected int deliveryTransferMessageThreadCount = 1;
+    // RoutingLabeFormat option
+    private RoutingLabelFormat routingLabelFormat = RoutingLabelFormat.ITU;
+    // If set to true, lowest bit of SLS is used for loadbalancing between Linkset else highest bit of SLS is used.
+    private boolean useLsbForLinksetSelection = false;
 
     protected boolean isStarted = false;
 
@@ -63,11 +69,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
     private int[] slsTable = null;
     private ExecutorCongestionMonitor executorCongestionMonitor = null;
 
-    private RoutingLabelFormat routingLabelFormat = RoutingLabelFormat.ITU;
-
     private Mtp3TransferPrimitiveFactory mtp3TransferPrimitiveFactory = null;
-
-    private boolean useLsbForLinksetSelection = false;
 
     private final String productName;
 
@@ -83,8 +85,8 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
         return this.deliveryTransferMessageThreadCount;
     }
 
-    public void setDeliveryMessageThreadCount(int deliveryMessageThreadCount) {
-        if (deliveryMessageThreadCount > 0)
+    public void setDeliveryMessageThreadCount(int deliveryMessageThreadCount) throws Exception {
+        if (deliveryMessageThreadCount > 0 && deliveryMessageThreadCount <= 100)
             this.deliveryTransferMessageThreadCount = deliveryMessageThreadCount;
     }
 
@@ -96,6 +98,27 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
     @Override
     public void removeMtp3UserPartListener(Mtp3UserPartListener listener) {
         this.userListeners.remove(listener);
+    }
+
+    @Override
+    public RoutingLabelFormat getRoutingLabelFormat() {
+        return this.routingLabelFormat;
+    }
+
+    @Override
+    public void setRoutingLabelFormat(RoutingLabelFormat routingLabelFormat) throws Exception {
+        if (routingLabelFormat != null)
+            this.routingLabelFormat = routingLabelFormat;
+    }
+
+    @Override
+    public boolean isUseLsbForLinksetSelection() {
+        return useLsbForLinksetSelection;
+    }
+
+    @Override
+    public void setUseLsbForLinksetSelection(boolean useLsbForLinksetSelection) throws Exception {
+        this.useLsbForLinksetSelection = useLsbForLinksetSelection;
     }
 
     /*
@@ -121,28 +144,8 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
     }
 
     @Override
-    public RoutingLabelFormat getRoutingLabelFormat() {
-        return this.routingLabelFormat;
-    }
-
-    @Override
-    public void setRoutingLabelFormat(RoutingLabelFormat routingLabelFormat) {
-        this.routingLabelFormat = routingLabelFormat;
-    }
-
-    @Override
     public Mtp3TransferPrimitiveFactory getMtp3TransferPrimitiveFactory() {
         return this.mtp3TransferPrimitiveFactory;
-    }
-
-    @Override
-    public boolean isUseLsbForLinksetSelection() {
-        return useLsbForLinksetSelection;
-    }
-
-    @Override
-    public void setUseLsbForLinksetSelection(boolean useLsbForLinksetSelection) {
-        this.useLsbForLinksetSelection = useLsbForLinksetSelection;
     }
 
     public void start() throws Exception {

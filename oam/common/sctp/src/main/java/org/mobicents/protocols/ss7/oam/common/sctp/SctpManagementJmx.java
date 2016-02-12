@@ -243,6 +243,66 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
     }
 
     @Override
+    public double getCongControl_BackToNormalDelayThreshold_1() {
+        return this.wrappedSctpManagement.getCongControl_BackToNormalDelayThreshold_1();
+    }
+
+    @Override
+    public double getCongControl_BackToNormalDelayThreshold_2() {
+        return this.wrappedSctpManagement.getCongControl_BackToNormalDelayThreshold_2();
+    }
+
+    @Override
+    public double getCongControl_BackToNormalDelayThreshold_3() {
+        return this.wrappedSctpManagement.getCongControl_BackToNormalDelayThreshold_3();
+    }
+
+    @Override
+    public double getCongControl_DelayThreshold_1() {
+        return this.wrappedSctpManagement.getCongControl_DelayThreshold_1();
+    }
+
+    @Override
+    public double getCongControl_DelayThreshold_2() {
+        return this.wrappedSctpManagement.getCongControl_DelayThreshold_2();
+    }
+
+    @Override
+    public double getCongControl_DelayThreshold_3() {
+        return this.wrappedSctpManagement.getCongControl_DelayThreshold_3();
+    }
+
+    @Override
+    public void setCongControl_BackToNormalDelayThreshold_1(double val) throws Exception {
+        this.wrappedSctpManagement.setCongControl_BackToNormalDelayThreshold_1(val);
+    }
+
+    @Override
+    public void setCongControl_BackToNormalDelayThreshold_2(double val) throws Exception {
+        this.wrappedSctpManagement.setCongControl_BackToNormalDelayThreshold_2(val);
+    }
+
+    @Override
+    public void setCongControl_BackToNormalDelayThreshold_3(double val) throws Exception {
+        this.wrappedSctpManagement.setCongControl_BackToNormalDelayThreshold_3(val);
+    }
+
+    @Override
+    public void setCongControl_DelayThreshold_1(double val) throws Exception {
+        this.wrappedSctpManagement.setCongControl_DelayThreshold_1(val);
+    }
+
+    @Override
+    public void setCongControl_DelayThreshold_2(double val) throws Exception {
+        this.wrappedSctpManagement.setCongControl_DelayThreshold_2(val);
+    }
+
+    @Override
+    public void setCongControl_DelayThreshold_3(double val) throws Exception {
+        this.wrappedSctpManagement.setCongControl_DelayThreshold_3(val);
+    }
+
+    @Override
     public void setServerListener(ServerListener arg0) {
         // TODO Auto-generated method stub
 

@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.tcapAnsi;
 import io.netty.util.concurrent.DefaultThreadFactory;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
@@ -1111,7 +1112,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         }
     }
 
-    private class NetworkIdStateListUpdater implements Runnable {
+    private class NetworkIdStateListUpdater implements Runnable, Serializable {
         private boolean isCancelled;
 
         public void cancel() {

@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import org.mobicents.protocols.ss7.sccp.SccpCongestionControlAlgo;
 import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.SccpManagement;
+import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 
 /**
  *
@@ -60,11 +61,11 @@ public class SccpCongestionControl {
     }
 
     public int getCongControlN() {
-        return sccpStack.getCongControlN();
+        return ((SccpStackImpl) sccpStack).getCongControlN();
     }
 
     public int getCongControlM() {
-        return sccpStack.getCongControlM();
+        return ((SccpStackImpl) sccpStack).getCongControlM();
     }
 
     public SccpCongestionControlAlgo getCongControl_Algo() {
@@ -72,7 +73,7 @@ public class SccpCongestionControl {
     }
 
     public boolean isCongControl_blockingOutgoungScpMessages() {
-        return sccpStack.isCongControl_blockingOutgoungScpMessages();
+        return sccpStack.isCongControl_blockingOutgoungSccpMessages();
     }
 
     public static int generateSccpUserCongLevel(int restrictionLevel) {

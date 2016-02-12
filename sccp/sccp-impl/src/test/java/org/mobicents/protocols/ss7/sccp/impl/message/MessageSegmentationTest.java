@@ -76,7 +76,7 @@ public class MessageSegmentationTest {
     }
 
     @BeforeMethod
-    public void setUp() {
+    public void setUp() throws Exception {
         this.stack.setPersistDir(Util.getTmpTestDir());
         this.stack.start();
         this.messageFactory = new MessageFactoryImpl(stack);

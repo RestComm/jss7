@@ -608,43 +608,19 @@ public class RouterTest {
         }
 
         @Override
-        public int getCongControlN() {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
-        @Override
-        public void setCongControlN(int value) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        @Override
-        public int getCongControlM() {
-            // TODO Auto-generated method stub
-            return 0;
-        }
-
-        @Override
-        public void setCongControlM(int value) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        @Override
         public SccpCongestionControlAlgo getCongControl_Algo() {
             // TODO Auto-generated method stub
             return null;
         }
 
         @Override
-        public boolean isCongControl_blockingOutgoungScpMessages() {
+        public boolean isCongControl_blockingOutgoungSccpMessages() {
             // TODO Auto-generated method stub
             return false;
         }
 
         @Override
-        public void setCongControl_blockingOutgoungScpMessages(boolean value) {
+        public void setCongControl_blockingOutgoungSccpMessages(boolean value) {
             // TODO Auto-generated method stub
             
         }
@@ -653,6 +629,12 @@ public class RouterTest {
         public void setCongControl_Algo(SccpCongestionControlAlgo value) {
             // TODO Auto-generated method stub
             
+        }
+
+        @Override
+        public boolean isStarted() {
+            // TODO Auto-generated method stub
+            return false;
         }
 
     }
@@ -711,6 +693,18 @@ public class RouterTest {
         public void setUseLsbForLinksetSelection(boolean arg0) {
             // TODO Auto-generated method stub
 
+        }
+
+        @Override
+        public int getDeliveryMessageThreadCount() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setDeliveryMessageThreadCount(int deliveryMessageThreadCount) {
+            // TODO Auto-generated method stub
+            
         }
 
     }

@@ -43,6 +43,7 @@ import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.Rule;
 import org.mobicents.protocols.ss7.sccp.RuleType;
+import org.mobicents.protocols.ss7.sccp.SccpCongestionControlAlgo;
 import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
@@ -1918,6 +1919,21 @@ public class SccpExecutor implements ShellExecutor {
             SccpProtocolVersion spv = Enum.valueOf(SccpProtocolVersion.class, options[3]);
             if (spv != null)
                 this.sccpStack.setSccpProtocolVersion(spv);
+
+        } else if (parName.equals("cc_timer_a")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setCongControlTIMER_A(val);
+        } else if (parName.equals("cc_timer_d")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setCongControlTIMER_D(val);
+        } else if (parName.equals("cc_algo")) {
+            String vals = options[3];
+            SccpCongestionControlAlgo algo = Enum.valueOf(SccpCongestionControlAlgo.class, vals);
+            this.sccpStack.setCongControl_Algo(algo);
+        } else if (parName.equals("cc_blockingoutgoungsccpmessages")) {
+            boolean valb = Boolean.parseBoolean(options[3]);
+            this.sccpStack.setCongControl_blockingOutgoungSccpMessages(valb);
+
         } else {
             return SccpOAMMessage.INVALID_COMMAND;
         }
@@ -1956,6 +1972,16 @@ public class SccpExecutor implements ShellExecutor {
                 sb.append(this.sccpStack.getSstTimerDuration_IncreaseFactor());
             } else if (parName.equals("sccpprotocolversion")) {
                 sb.append(this.sccpStack.getSccpProtocolVersion());
+
+            } else if (parName.equals("cc_timer_a")) {
+                sb.append(this.sccpStack.getCongControlTIMER_A());
+            } else if (parName.equals("cc_timer_d")) {
+                sb.append(this.sccpStack.getCongControlTIMER_D());
+            } else if (parName.equals("cc_algo")) {
+                sb.append(this.sccpStack.getCongControl_Algo());
+            } else if (parName.equals("cc_blockingoutgoungsccpmessages")) {
+                sb.append(this.sccpStack.isCongControl_blockingOutgoungSccpMessages());
+
             } else {
                 return SccpOAMMessage.INVALID_COMMAND;
             }
@@ -2009,6 +2035,22 @@ public class SccpExecutor implements ShellExecutor {
 
                 sb.append("sccpprotocolversion = ");
                 sb.append(managementImplTmp.getSccpProtocolVersion());
+                sb.append("\n");
+
+                sb.append("cc_timer_a = ");
+                sb.append(managementImplTmp.getCongControlTIMER_A());
+                sb.append("\n");
+
+                sb.append("cc_timer_d = ");
+                sb.append(managementImplTmp.getCongControlTIMER_D());
+                sb.append("\n");
+
+                sb.append("cc_algo = ");
+                sb.append(managementImplTmp.getCongControl_Algo());
+                sb.append("\n");
+
+                sb.append("cc_blockingoutgoungsccpmessages = ");
+                sb.append(managementImplTmp.isCongControl_blockingOutgoungSccpMessages());
                 sb.append("\n");
 
                 sb.append("*******************");

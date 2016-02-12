@@ -46,20 +46,6 @@ public interface Mtp3UserPart {
     void removeMtp3UserPartListener(Mtp3UserPartListener listener);
 
     /**
-     * return PointCodeFormat
-     *
-     * @return
-     */
-    RoutingLabelFormat getRoutingLabelFormat();
-
-    /**
-     * Set PointCodeFormat
-     *
-     * @param length
-     */
-    void setRoutingLabelFormat(RoutingLabelFormat routingLabelFormat);
-
-    /**
      * Get the Mtp3TransferPrimitiveFactory
      *
      * @return
@@ -82,12 +68,20 @@ public interface Mtp3UserPart {
      */
     void sendMessage(Mtp3TransferPrimitive msg) throws IOException;
 
+
     /**
-     * If set to true, lowest bit of SLS is used for loadbalancing between Linkset else highest bit of SLS is used.
+     * return PointCodeFormat
      *
-     * @param useLsbForLinksetSelection
+     * @return
      */
-    void setUseLsbForLinksetSelection(boolean useLsbForLinksetSelection);
+    RoutingLabelFormat getRoutingLabelFormat();
+
+    /**
+     * Set PointCodeFormat
+     *
+     * @param length
+     */
+    void setRoutingLabelFormat(RoutingLabelFormat routingLabelFormat) throws Exception;
 
     /**
      * Returns true if lowest bit of SLS is used for loadbalancing between Linkset else returns false
@@ -95,5 +89,22 @@ public interface Mtp3UserPart {
      * @return
      */
     boolean isUseLsbForLinksetSelection();
+
+    /**
+     * If set to true, lowest bit of SLS is used for loadbalancing between Linkset else highest bit of SLS is used.
+     *
+     * @param useLsbForLinksetSelection
+     */
+    void setUseLsbForLinksetSelection(boolean useLsbForLinksetSelection) throws Exception;
+
+    /**
+     * @return
+     */
+    int getDeliveryMessageThreadCount();
+
+    /**
+     * @param deliveryMessageThreadCount
+     */
+    void setDeliveryMessageThreadCount(int deliveryMessageThreadCount) throws Exception;
 
 }

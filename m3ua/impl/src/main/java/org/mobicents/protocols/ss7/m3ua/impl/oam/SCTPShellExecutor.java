@@ -572,12 +572,24 @@ public class SCTPShellExecutor implements ShellExecutor {
         if (parName.equals("connectdelay")) {
             int val = Integer.parseInt(options[3]);
             this.sctpManagement.setConnectDelay(val);
-//        } else if (parName.equals("singlethread")) {
-//            boolean val = Boolean.parseBoolean(options[3]);
-//            this.sctpManagement.setSingleThread(val);
-//        } else if (parName.equals("workerthreads")) {
-//            int val = Integer.parseInt(options[3]);
-//            this.sctpManagement.setWorkerThreads(val);
+        } else if (parName.equals("cc_delaythreshold_1")) {
+            double val = Double.parseDouble(options[3]);
+            this.sctpManagement.setCongControl_DelayThreshold_1(val);
+        } else if (parName.equals("cc_delaythreshold_2")) {
+            double val = Double.parseDouble(options[3]);
+            this.sctpManagement.setCongControl_DelayThreshold_2(val);
+        } else if (parName.equals("cc_delaythreshold_3")) {
+            double val = Double.parseDouble(options[3]);
+            this.sctpManagement.setCongControl_DelayThreshold_3(val);
+        } else if (parName.equals("cc_backtonormal_delaythreshold_1")) {
+            double val = Double.parseDouble(options[3]);
+            this.sctpManagement.setCongControl_BackToNormalDelayThreshold_1(val);
+        } else if (parName.equals("cc_backtonormal_delaythreshold_2")) {
+            double val = Double.parseDouble(options[3]);
+            this.sctpManagement.setCongControl_BackToNormalDelayThreshold_2(val);
+        } else if (parName.equals("cc_backtonormal_delaythreshold_3")) {
+            double val = Double.parseDouble(options[3]);
+            this.sctpManagement.setCongControl_BackToNormalDelayThreshold_3(val);
         } else {
             return M3UAOAMMessages.INVALID_COMMAND;
         }
@@ -605,16 +617,25 @@ public class SCTPShellExecutor implements ShellExecutor {
             sb.append(" = ");
             if (parName.equals("connectdelay")) {
                 sb.append(this.sctpManagement.getConnectDelay());
-            } else if (parName.equals("singlethread")) {
-                sb.append(this.sctpManagement.isSingleThread());
-            } else if (parName.equals("workerthreads")) {
-                sb.append(this.sctpManagement.getWorkerThreads());
+            } else if (parName.equals("cc_delaythreshold_1")) {
+                sb.append(this.sctpManagement.getCongControl_DelayThreshold_1());
+            } else if (parName.equals("cc_delaythreshold_2")) {
+                sb.append(this.sctpManagement.getCongControl_DelayThreshold_2());
+            } else if (parName.equals("cc_delaythreshold_3")) {
+                sb.append(this.sctpManagement.getCongControl_DelayThreshold_3());
+            } else if (parName.equals("cc_backtonormal_delaythreshold_1")) {
+                sb.append(this.sctpManagement.getCongControl_BackToNormalDelayThreshold_1());
+            } else if (parName.equals("cc_backtonormal_delaythreshold_2")) {
+                sb.append(this.sctpManagement.getCongControl_BackToNormalDelayThreshold_2());
+            } else if (parName.equals("cc_backtonormal_delaythreshold_3")) {
+                sb.append(this.sctpManagement.getCongControl_BackToNormalDelayThreshold_3());
             } else {
                 return M3UAOAMMessages.INVALID_COMMAND;
             }
 
             return sb.toString();
         } else {
+            this.setDefaultValue();
 
             StringBuilder sb = new StringBuilder();
             for (FastMap.Entry<String, Management> e = this.sctpManagements.head(), end = this.sctpManagements.tail(); (e = e
@@ -633,12 +654,28 @@ public class SCTPShellExecutor implements ShellExecutor {
                 sb.append(managementImplTmp.getConnectDelay());
                 sb.append("\n");
 
-                sb.append("singlethread = ");
-                sb.append(managementImplTmp.isSingleThread());
+                sb.append("cc_delaythreshold_1 = ");
+                sb.append(this.sctpManagement.getCongControl_DelayThreshold_1());
                 sb.append("\n");
 
-                sb.append("workerthreads = ");
-                sb.append(managementImplTmp.getWorkerThreads());
+                sb.append("cc_delaythreshold_2 = ");
+                sb.append(this.sctpManagement.getCongControl_DelayThreshold_2());
+                sb.append("\n");
+
+                sb.append("cc_delaythreshold_3 = ");
+                sb.append(this.sctpManagement.getCongControl_DelayThreshold_3());
+                sb.append("\n");
+
+                sb.append("cc_backtonormal_delaythreshold_1 = ");
+                sb.append(this.sctpManagement.getCongControl_BackToNormalDelayThreshold_1());
+                sb.append("\n");
+
+                sb.append("cc_backtonormal_delaythreshold_2 = ");
+                sb.append(this.sctpManagement.getCongControl_BackToNormalDelayThreshold_2());
+                sb.append("\n");
+
+                sb.append("cc_backtonormal_delaythreshold_3 = ");
+                sb.append(this.sctpManagement.getCongControl_BackToNormalDelayThreshold_3());
                 sb.append("\n");
 
                 sb.append("*******************");

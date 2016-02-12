@@ -944,5 +944,17 @@ public class SccpExecutorTest {
         public void setUseLsbForLinksetSelection(boolean arg0) {
 
         }
+
+        @Override
+        public int getDeliveryMessageThreadCount() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setDeliveryMessageThreadCount(int deliveryMessageThreadCount) {
+            // TODO Auto-generated method stub
+            
+        }
     }
 }

@@ -44,6 +44,7 @@ import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
 import org.mobicents.protocols.ss7.m3ua.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
+import org.mobicents.protocols.ss7.mtp.RoutingLabelFormat;
 import org.mobicents.ss7.management.console.ShellExecutor;
 
 /**
@@ -759,16 +760,16 @@ public class M3UAShellExecutor implements ShellExecutor {
 
         String parName = options[2].toLowerCase();
 
-//        if (parName.equals("maxsequencenumber")) {
-//            int val = Integer.parseInt(options[3]);
-//            this.m3uaManagement.setMaxSequenceNumber(val);
-//        } else if (parName.equals("maxasforroute")) {
-//            int val = Integer.parseInt(options[3]);
-//            this.m3uaManagement.setMaxAsForRoute(val);
-//        } else
         if (parName.equals("heartbeattime")) {
             int val = Integer.parseInt(options[3]);
             this.m3uaManagement.setHeartbeatTime(val);
+        } else if (parName.equals("routinglabelformat")) {
+            String vals = options[3];
+            RoutingLabelFormat rlf = Enum.valueOf(RoutingLabelFormat.class, vals);
+            this.m3uaManagement.setRoutingLabelFormat(rlf);
+        } else if (parName.equals("uselsbforlinksetselection")) {
+            Boolean valb = Boolean.parseBoolean(options[3]);
+            this.m3uaManagement.setUseLsbForLinksetSelection(valb);
         } else {
             return M3UAOAMMessages.INVALID_COMMAND;
         }
@@ -799,6 +800,12 @@ public class M3UAShellExecutor implements ShellExecutor {
                 sb.append(this.m3uaManagement.getMaxAsForRoute());
             } else if (parName.equals("heartbeattime")) {
                 sb.append(this.m3uaManagement.getHeartbeatTime());
+            } else if (parName.equals("routinglabelformat")) {
+                sb.append(this.m3uaManagement.getRoutingLabelFormat());
+            } else if (parName.equals("uselsbforlinksetselection")) {
+                sb.append(this.m3uaManagement.isUseLsbForLinksetSelection());
+            } else if (parName.equals("deliverymessagethreadcount")) {
+                sb.append(this.m3uaManagement.getDeliveryMessageThreadCount());
             } else {
                 return M3UAOAMMessages.INVALID_COMMAND;
             }
@@ -828,6 +835,18 @@ public class M3UAShellExecutor implements ShellExecutor {
 
                 sb.append("heartbeattime = ");
                 sb.append(managementImplTmp.getHeartbeatTime());
+                sb.append("\n");
+
+                sb.append("routinglabelformat = ");
+                sb.append(managementImplTmp.getRoutingLabelFormat());
+                sb.append("\n");
+
+                sb.append("uselsbforlinksetselection = ");
+                sb.append(managementImplTmp.isUseLsbForLinksetSelection());
+                sb.append("\n");
+
+                sb.append("deliverymessagethreadcount = ");
+                sb.append(managementImplTmp.getDeliveryMessageThreadCount());
                 sb.append("\n");
 
                 sb.append("*******************");

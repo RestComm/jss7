@@ -30,6 +30,7 @@ import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
  * @author amit bhayani
  * @author baranowb
  * @author kulikov
+ * @author sergey vetyutnev
  */
 public interface SccpStack {
     int UDT_ONLY = 1;
@@ -49,6 +50,8 @@ public interface SccpStack {
      * @throws org.mobicents.protocols.StartFailedException
      */
     void stop();
+
+    boolean isStarted();
 
     /**
      * Returns the name of this stack
@@ -83,7 +86,7 @@ public interface SccpStack {
      *
      * @param removeSpc
      */
-    void setRemoveSpc(boolean removeSpc);
+    void setRemoveSpc(boolean removeSpc) throws Exception;
 
     /**
      * Get the remove signaling point code flag
@@ -97,7 +100,7 @@ public interface SccpStack {
      *
      * @param previewMode
      */
-    void setPreviewMode(boolean previewMode);
+    void setPreviewMode(boolean previewMode) throws Exception;
 
     /**
      * Returns if previeMode is enabled
@@ -110,7 +113,7 @@ public interface SccpStack {
      * Protocol version that is processed by SCCP (ITU / ANSI)
      * @param sccpProtocolVersion
      */
-    void setSccpProtocolVersion(SccpProtocolVersion sccpProtocolVersion);
+    void setSccpProtocolVersion(SccpProtocolVersion sccpProtocolVersion) throws Exception;
 
     /**
      * Returns if SccpProtocolVersion
@@ -138,7 +141,7 @@ public interface SccpStack {
      *
      * @param sstTimerDuration_Min
      */
-    void setSstTimerDuration_Min(int sstTimerDuration_Min);
+    void setSstTimerDuration_Min(int sstTimerDuration_Min) throws Exception;
 
     /**
      * Returns Max (after increasing) SST sending interval.
@@ -153,7 +156,7 @@ public interface SccpStack {
      *
      * @param sstTimerDuration_Max
      */
-    void setSstTimerDuration_Max(int sstTimerDuration_Max);
+    void setSstTimerDuration_Max(int sstTimerDuration_Max) throws Exception;
 
     /**
      * Returns Multiplicator of SST sending interval
@@ -168,7 +171,7 @@ public interface SccpStack {
      *
      * @param sstTimerDuration_IncreaseFactor
      */
-    void setSstTimerDuration_IncreaseFactor(double sstTimerDuration_IncreaseFactor);
+    void setSstTimerDuration_IncreaseFactor(double sstTimerDuration_IncreaseFactor) throws Exception;
 
     /**
      * Returns the segmentation length
@@ -185,7 +188,7 @@ public interface SccpStack {
      *
      * @param zMarginXudtMessage
      */
-    void setZMarginXudtMessage(int zMarginXudtMessage);
+    void setZMarginXudtMessage(int zMarginXudtMessage) throws Exception;
 
     /**
      * Reurns Max available SCCP message data for all message types
@@ -201,7 +204,7 @@ public interface SccpStack {
      *
      * @param maxDataMessage
      */
-    void setMaxDataMessage(int maxDataMessage);
+    void setMaxDataMessage(int maxDataMessage) throws Exception;
 
     /**
      * Returns SCCP segmented message reassembling timeout (in milliseconds).
@@ -217,7 +220,7 @@ public interface SccpStack {
      *
      * @param reassemblyTimerDelay
      */
-    void setReassemblyTimerDelay(int reassemblyTimerDelay);
+    void setReassemblyTimerDelay(int reassemblyTimerDelay) throws Exception;
 
     /**
      * Set the underlying MTP3 layer
@@ -258,7 +261,7 @@ public interface SccpStack {
      * @param value Timer Ta value - started at next MTP-STATUS(cong) primitive coming; during this timer no more
      *        MTP-STATUS(cong) are accepted
      */
-    void setCongControlTIMER_A(int value);
+    void setCongControlTIMER_A(int value) throws Exception;
 
     /**
      * @return Timer Td value - started after last MTP-STATUS(cong) primitive coming; after end of this timer (without new
@@ -270,27 +273,7 @@ public interface SccpStack {
      * @param value Timer Td value - started after last MTP-STATUS(cong) primitive coming; after end of this timer (without new
      *        coming MTP-STATUS(cong)) RSLM will be reduced
      */
-    void setCongControlTIMER_D(int value);
-
-    /**
-     * @return SCCP congestion control - the count of levels for restriction level - RLM
-     */
-    int getCongControlN();
-
-    /**
-     * @param value SCCP congestion control - the count of levels for restriction level - RLM
-     */
-    void setCongControlN(int value);
-
-    /**
-     * @return SCCP congestion control - the count of sublevels for restriction level - RSLM
-     */
-    int getCongControlM();
-
-    /**
-     * @param value SCCP congestion control - the count of sublevels for restriction level - RSLM
-     */
-    void setCongControlM(int value);
+    void setCongControlTIMER_D(int value) throws Exception;
 
     /**
      * @return getting sccp congestion control international: international algorithm - only one level is provided by MTP3 level
@@ -303,17 +286,17 @@ public interface SccpStack {
     /**
      * @param value setting sccp congestion control
      */
-    void setCongControl_Algo(SccpCongestionControlAlgo value);
+    void setCongControl_Algo(SccpCongestionControlAlgo value) throws Exception;
 
     /**
      * @return getting if true outgoing SCCP messages will be blocked (depending on message type, UDP messages from level N=6)
      */
-    boolean isCongControl_blockingOutgoungScpMessages();
+    boolean isCongControl_blockingOutgoungSccpMessages();
 
     /**
      * @param value setting if true outgoing SCCP messages will be blocked (depending on message type, UDP messages from level
      *        N=6)
      */
-    void setCongControl_blockingOutgoungScpMessages(boolean value);
+    void setCongControl_blockingOutgoungSccpMessages(boolean value) throws Exception;
 
 }
