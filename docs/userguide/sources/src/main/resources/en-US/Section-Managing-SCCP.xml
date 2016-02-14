@@ -110,8 +110,6 @@ EXAMPLES
                 <para>On SCCP management page, click on pencil against the 'ReservedForNationalUseValue of AddressIndicator' property and text box becomes editable. Change value and save.</para>
         </section>          
     </section>      
-
-
 		
 	<section id="sccp_property_maxdatamessage">
 		<title>Maximum Data Message</title>
@@ -332,7 +330,7 @@ EXAMPLES
 	<section id="sccp_property_ssttimerduration_max">
 		<title>SST Timer Duration Max</title>
 		
-			<section id="sccp_property_ssttimerduration_max_CLI">
+	<section id="sccp_property_ssttimerduration_max_CLI">
 			<title>Using CLI</title>
 				<para>
 					You can set the 'ssttimerduration_max' by issuing the command <command>sccp set ssttimerduration_max</command> with appropriate parameters as described below. 
