@@ -11,7 +11,7 @@
 
 	<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
 	<artifactId>restcomm-ss7-oam-common</artifactId>
-	<name>Restcomm jSS7 :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: ${project.artifactId}</name>
 
 	<modules>
 		<module>jmx</module>

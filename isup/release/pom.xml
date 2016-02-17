@@ -10,7 +10,7 @@
 	</parent>
 	
 	<artifactId>isup-release</artifactId>
-	<name>Restcomm jSS7 :: ISUP :: Release :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: ISUP :: Release :: ${project.artifactId}</name>
 	<profiles>
 		<profile>
 			<id>release</id>

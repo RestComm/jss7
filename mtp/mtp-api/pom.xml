@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>mtp-api</artifactId>
-	<name>Restcomm jSS7 :: MTP :: Impl :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: MTP :: Impl :: ${project.artifactId}</name>
 
 
 	<dependencies>

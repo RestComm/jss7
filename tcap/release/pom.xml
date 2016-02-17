@@ -15,7 +15,7 @@
 
 
 	<artifactId>tcap-release</artifactId>
-	<name>Restcomm jSS7 :: TCAP :: Release :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: TCAP :: Release :: ${project.artifactId}</name>
 	<profiles>
 		<profile>
 			<id>release</id>

@@ -9,7 +9,7 @@
 
 	<artifactId>statistics-oam-parent</artifactId>
 	<packaging>pom</packaging>
-	<name>Restcomm jSS7 :: Statistic-oam :: Parent :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Statistic-oam :: Parent :: ${project.artifactId}</name>
 
 	<modules>
 		<module>api</module>
@@ -49,6 +49,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<version>
+					${maven-surefire-plugin.version}
+				</version>
 				<configuration>
 					<excludes>
 						<!-- Exclude load tests, they are suppose to be done manually -->

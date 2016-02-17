@@ -8,5 +8,5 @@
 	</parent>
 
 	<artifactId>shell-server-api</artifactId>
-	<name>Restcomm jSS7 :: Management :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Management :: ${project.artifactId}</name>
 </project>

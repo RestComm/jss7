@@ -9,7 +9,7 @@
 
 	<artifactId>new-ui</artifactId>
 	
-	<name>Restcomm jSS7 :: Management :: UI :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Management :: UI :: ${project.artifactId}</name>
 	<packaging>war</packaging>
 
 	<properties>

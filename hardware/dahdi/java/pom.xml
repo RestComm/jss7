@@ -12,7 +12,7 @@
 	<artifactId>restcomm-dahdi</artifactId>
 	
 	<name>
-		Restcomm jSS7 :: Hardware :: ${pom.artifactId}
+		Restcomm jSS7 :: Hardware :: ${project.artifactId}
 	</name>
 
 	<dependencies>
@@ -46,7 +46,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.4.2</version>
+				<version>
+					${maven-surefire-plugin.version}
+				</version>
 				<configuration>
 					<forkMode>pertest</forkMode>
 					<!-- So we dont have to juse xxxTest.java.bak "_" -->

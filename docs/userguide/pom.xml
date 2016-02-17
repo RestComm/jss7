@@ -11,7 +11,7 @@
 
 	<artifactId>restcomm-ss7-userguide</artifactId>
 	<groupId>org.mobicents.protocols.ss7.docs.userguide</groupId>
-	<name>Restcomm jSS7 :: Docs :: User Guide :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Docs :: User Guide :: ${project.artifactId}</name>
 	<packaging>pom</packaging>
 
 	<properties>

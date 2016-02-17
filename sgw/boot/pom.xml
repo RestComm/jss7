@@ -8,11 +8,11 @@
 
 	<artifactId>boot</artifactId>
 
-	<name>Restcomm jSS7 :: SGW :: Boot :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: SGW :: Boot :: ${project.artifactId}</name>
 
 	<dependencies>
 		<dependency>
-			<groupId>${pom.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>gateway</artifactId>
 			<version>${project.version}</version>
 		</dependency>

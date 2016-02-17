@@ -11,7 +11,7 @@
 
 	<artifactId>restcomm-ss7-releasenotes</artifactId>
 	<groupId>org.mobicents.protocols.ss7.docs.releasenotes</groupId>
-	<name>Restcomm jSS7 :: Docs :: Release Notes :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Docs :: Release Notes :: ${project.artifactId}</name>
 	<packaging>pom</packaging>
 
 	<properties>

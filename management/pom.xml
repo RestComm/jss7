@@ -9,7 +9,7 @@
 
 	<groupId>org.mobicents.protocols.ss7.management</groupId>
 	<artifactId>management</artifactId>
-	<name>Restcomm jSS7 :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: ${project.artifactId}</name>
 
 
 	<modules>
@@ -20,7 +20,7 @@
 	</modules>
 
 	<build>
-		<finalName>${pom.artifactId}-${project.version}</finalName>
+		<finalName>${project.artifactId}-${project.version}</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
@@ -47,6 +47,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<version>
+					${maven-surefire-plugin.version}
+				</version>
 				<configuration>
 					<systemProperties>
 						<property>

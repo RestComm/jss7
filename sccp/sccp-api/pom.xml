@@ -10,7 +10,7 @@
 
 	<artifactId>sccp-api</artifactId>
 
-	<name>Restcomm jSS7 :: SCCP :: Api :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: SCCP :: Api :: ${project.artifactId}</name>
 
 	<properties>
 		<maven.test.skip>false</maven.test.skip>
@@ -40,6 +40,6 @@
 	</dependencies>
 
 	<build>
-		<finalName>${pom.artifactId}-${project.version}</finalName>
+		<finalName>${project.artifactId}-${project.version}</finalName>
 	</build>
 </project>
