@@ -862,16 +862,19 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         }
 
         SccpMessageImpl msg = null;
+        int dpc = mtp3Msg.getDpc();
+        int opc = mtp3Msg.getOpc();
+
         try {
             // checking if incoming dpc is local
-            if (!this.isPreviewMode() && !this.router.spcIsLocal(mtp3Msg.getDpc())) {
+            if (!this.isPreviewMode() && !this.router.spcIsLocal(dpc)) {
 
                 // incoming dpc is not local - trying to find the target SAP and
                 // send a message to MTP3 (MTP transit function)
-                int dpc = mtp3Msg.getDpc();
                 int sls = mtp3Msg.getSls();
 
                 RemoteSignalingPointCode remoteSpc = this.getSccpResource().getRemoteSpcByPC(dpc);
+                Mtp3ServiceAccessPoint sap = this.router.findMtp3ServiceAccessPoint(opc, sls);
                 if (remoteSpc == null) {
                     if (logger.isEnabledFor(Level.WARN)) {
                         logger.warn(String.format("Incoming Mtp3 Message for nonlocal dpc=%d. But RemoteSpc is not found", dpc));
@@ -883,17 +886,26 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
                         logger.warn(String
                                 .format("Incoming Mtp3 Message for nonlocal dpc=%d. But RemoteSpc is Prohibited", dpc));
                     }
+                    // TODO: ***** SSP should we send SSP message to a peer ?
                     return;
                 }
-                Mtp3ServiceAccessPoint sap = this.router.findMtp3ServiceAccessPoint(dpc, sls);
-                if (sap == null) {
+                if (remoteSpc.getCurrentRestrictionLevel() > 1) {
+                    if (logger.isEnabledFor(Level.WARN)) {
+                        logger.warn(String
+                                .format("Incoming Mtp3 Message for nonlocal dpc=%d. But RemoteSpc is Congested", dpc));
+                    }
+                    // TODO: ***** SSC should we send SSC message to a peer ?
+                    return;
+                }
+                Mtp3ServiceAccessPoint sap2 = this.router.findMtp3ServiceAccessPoint(dpc, sls);
+                if (sap2 == null) {
                     if (logger.isEnabledFor(Level.WARN)) {
                         logger.warn(String.format("Incoming Mtp3 Message for nonlocal dpc=%d / sls=%d. But SAP is not found",
                                 dpc, sls));
                     }
                     return;
                 }
-                Mtp3UserPart mup = this.getMtp3UserPart(sap.getMtp3Id());
+                Mtp3UserPart mup = this.getMtp3UserPart(sap2.getMtp3Id());
                 if (mup == null) {
                     if (logger.isEnabledFor(Level.WARN)) {
                         logger.warn(String.format(
@@ -906,8 +918,6 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
                 return;
             }
 
-            int dpc = mtp3Msg.getDpc();
-            int opc = mtp3Msg.getOpc();
             Mtp3ServiceAccessPoint sap = this.router.findMtp3ServiceAccessPointForIncMes(dpc, opc);
             int networkId = 0;
             if (sap == null) {

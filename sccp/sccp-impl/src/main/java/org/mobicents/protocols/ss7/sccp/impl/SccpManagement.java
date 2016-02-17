@@ -252,24 +252,7 @@ public class SccpManagement {
         SccpAddress calledAdd = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, dpc, 1);
         SccpAddress callingAdd = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, affectedPc, 1);
 
-        byte[] data;
-        if (this.sccpStackImpl.getSccpProtocolVersion() == SccpProtocolVersion.ANSI) {
-            data = new byte[6];
-        } else {
-            data = new byte[5];
-        }
-        data[0] = (byte) messageTypeCode;
-        data[1] = (byte) affectedSsn; // affected SSN
-        if (this.sccpStackImpl.getSccpProtocolVersion() == SccpProtocolVersion.ANSI) {
-            data[2] = (byte) (affectedPc & 0x000000ff);
-            data[3] = (byte) ((affectedPc & 0x0000ff00) >> 8);
-            data[4] = (byte) ((affectedPc & 0x00ff0000) >> 16);
-            data[5] = (byte) subsystemMultiplicityIndicator;
-        } else {
-            data[2] = (byte) (affectedPc & 0x000000ff);
-            data[3] = (byte) ((affectedPc & 0x0000ff00) >> 8);
-            data[4] = (byte) subsystemMultiplicityIndicator;
-        }
+        byte[] data = createManagementMessageBody(messageTypeCode, affectedPc, affectedSsn, subsystemMultiplicityIndicator);
         SccpDataMessageImpl msg = (SccpDataMessageImpl) sccpProviderImpl.getMessageFactory().createDataMessageClass0(calledAdd,
                 callingAdd, data, -1, false, null, null);
 
@@ -286,6 +269,44 @@ public class SccpManagement {
         } catch (Exception e) {
             logger.error(String.format("Exception while trying to send SSP message=%s", msg), e);
         }
+    }
+
+    private byte[] createManagementMessageBody(int messageTypeCode, int affectedPc, int affectedSsn,
+            int subsystemMultiplicityIndicator) {
+        return createManagementMessageBody(messageTypeCode, affectedPc, affectedSsn, subsystemMultiplicityIndicator, -1);
+    }
+
+    private byte[] createManagementMessageBody(int messageTypeCode, int affectedPc, int affectedSsn,
+            int subsystemMultiplicityIndicator, int congestionLevel) {
+        byte[] data;
+        if (this.sccpStackImpl.getSccpProtocolVersion() == SccpProtocolVersion.ANSI) {
+            if (congestionLevel >= 0)
+                data = new byte[7];
+            else
+                data = new byte[6];
+        } else {
+            if (congestionLevel >= 0)
+                data = new byte[6];
+            else
+                data = new byte[5];
+        }
+        data[0] = (byte) messageTypeCode;
+        data[1] = (byte) affectedSsn; // affected SSN
+        if (this.sccpStackImpl.getSccpProtocolVersion() == SccpProtocolVersion.ANSI) {
+            data[2] = (byte) (affectedPc & 0x000000ff);
+            data[3] = (byte) ((affectedPc & 0x0000ff00) >> 8);
+            data[4] = (byte) ((affectedPc & 0x00ff0000) >> 16);
+            data[5] = (byte) subsystemMultiplicityIndicator;
+            if (congestionLevel >= 0)
+                data[6] = (byte) congestionLevel;
+        } else {
+            data[2] = (byte) (affectedPc & 0x000000ff);
+            data[3] = (byte) ((affectedPc & 0x0000ff00) >> 8);
+            data[4] = (byte) subsystemMultiplicityIndicator;
+            if (congestionLevel >= 0)
+                data[5] = (byte) congestionLevel;
+        }
+        return data;
     }
 
     private void sendSSA(SccpMessage msg, int affectedSsn) {

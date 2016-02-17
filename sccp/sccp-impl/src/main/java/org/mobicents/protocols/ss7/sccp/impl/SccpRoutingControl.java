@@ -335,7 +335,7 @@ public class SccpRoutingControl {
     }
 
     private enum TranslationAddressCheckingResult {
-        destinationAvailable, destinationUnavailable_SubsystemFailure, destinationUnavailable_MtpFailure, translationFailure;
+        destinationAvailable, destinationUnavailable_SubsystemFailure, destinationUnavailable_MtpFailure, destinationUnavailable_Congestion, translationFailure;
     }
 
     private TranslationAddressCheckingResult checkTranslationAddress(SccpAddressedMessageImpl msg, Rule rule,
@@ -397,6 +397,17 @@ public class SccpRoutingControl {
                         destName, translationAddress.getSignalingPointCode()));
             }
             return TranslationAddressCheckingResult.destinationUnavailable_MtpFailure;
+        }
+
+        // Check if the DPC is congested
+        if (remoteSpc.getCurrentRestrictionLevel() > 1) {
+            if (logger.isEnabledFor(Level.WARN)) {
+                logger.warn(String
+                        .format("Received SccpMessage=%s for Translation but %s Remote Signaling Pointcode = %d is congested with level %d ",
+                                msg, destName, translationAddress.getSignalingPointCode(),
+                                remoteSpc.getCurrentRestrictionLevel()));
+            }
+            return TranslationAddressCheckingResult.destinationUnavailable_Congestion;
         }
 
         if (translationAddress.getAddressIndicator().getRoutingIndicator() == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
@@ -476,6 +487,9 @@ public class SccpRoutingControl {
                     return;
                 case destinationUnavailable_MtpFailure:
                     this.sendSccpError(msg, ReturnCauseValue.MTP_FAILURE);
+                    return;
+                case destinationUnavailable_Congestion:
+                    this.sendSccpError(msg, ReturnCauseValue.NETWORK_CONGESTION);
                     return;
                 default:
                     this.sendSccpError(msg, ReturnCauseValue.SCCP_FAILURE);

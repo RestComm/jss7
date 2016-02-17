@@ -200,17 +200,18 @@ public class MtpPrimitivesTest extends SccpHarness {
 
     @Test(groups = { "mtp", "functional.mgmt" })
     public void testStatus_3() throws Exception {
+        super.setUp();
         sccpStack1.setSccpProtocolVersion(SccpProtocolVersion.ANSI);
         sccpStack2.setSccpProtocolVersion(SccpProtocolVersion.ANSI);
-        
+        super.tearDown();
         super.setUp();
 
         doTestStatus(Mtp3UnavailabiltyCauseType.CAUSE_INACCESSIBLE);
 
-        super.tearDown();
-
         sccpStack1.setSccpProtocolVersion(SccpProtocolVersion.ITU);
         sccpStack2.setSccpProtocolVersion(SccpProtocolVersion.ITU);
+
+        super.tearDown();
     }
 
     protected void doTestStatus(Mtp3UnavailabiltyCauseType type) throws Exception {
@@ -277,7 +278,7 @@ public class MtpPrimitivesTest extends SccpHarness {
         }
         this.mtp3UserPart1.sendStatusMessageToLocalUser(getStack2PC(), cs, 0, 0);
 
-        Thread.sleep(15000);
+        Thread.sleep(15000); // 15000
         stack = (SccpStackImplProxy) sccpStack1;
 
         assertTrue(stack.getManagementProxy().getMtp3Messages().size() == 2, "U1 did not receive Mtp3 Primitve, it should !");
