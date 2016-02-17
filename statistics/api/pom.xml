@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>statistics-api</artifactId>
-	<name>Restcomm jSS7 :: Statistics :: Api :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Statistics :: Api :: ${project.artifactId}</name>
 
 	<dependencies>
 		<dependency>

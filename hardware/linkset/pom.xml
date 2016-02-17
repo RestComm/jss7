@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>linkset</artifactId>
-	<name>Restcomm jSS7 :: Hardware :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Hardware :: ${project.artifactId}</name>
 
 	<dependencies>
 		<!-- shell -->

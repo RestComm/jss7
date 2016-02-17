@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>linkset-cli</artifactId>
-	<name>Restcomm jSS7 :: Hardware :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Hardware :: ${project.artifactId}</name>
 
 	<dependencies>
 		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 
@@ -27,7 +27,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>${pom.artifactId}</finalName>
+		<finalName>${project.artifactId}</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources/archive-files</directory>
@@ -56,7 +56,7 @@
 								</goals>
 								<configuration>
 									<tasks>
-										<copy todir="${jboss.home}/lib" file="${project.build.directory}/${build.finalName}.jar" />
+										<copy todir="${jboss.home}/lib" file="${project.build.directory}/${project.build.finalName}.jar" />
 									</tasks>
 								</configuration>
 							</execution>
@@ -68,7 +68,7 @@
 								</goals>
 								<configuration>
 									<tasks>
-										<delete failonerror="fals" file="${jboss.home}/lib/${build.finalName}.jar" />
+										<delete failonerror="fals" file="${jboss.home}/lib/${project.build.finalName}.jar" />
 									</tasks>
 								</configuration>
 							</execution>

@@ -9,7 +9,7 @@
 
 	<artifactId>inap-impl</artifactId>
 
-	<name>Restcomm jSS7 :: INAP :: Impl :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: INAP :: Impl :: ${project.artifactId}</name>
 	<properties>
 		<log.file.name>tests.log</log.file.name>
 	</properties>
@@ -59,7 +59,7 @@
 			<artifactId>tcap-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>${pom.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>inap-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -83,11 +83,14 @@
 	</dependencies>
 
 	<build>
-		<finalName>${pom.artifactId}-${project.version}</finalName>
+		<finalName>${project.artifactId}-${project.version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<version>
+					${maven-surefire-plugin.version}
+				</version>
 				<!--
 				<configuration>
 					<suiteXmlFiles>

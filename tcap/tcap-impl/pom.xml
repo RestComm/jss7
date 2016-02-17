@@ -9,7 +9,7 @@
 
 	<artifactId>tcap-impl</artifactId>
 
-	<name>Restcomm jSS7 :: TCAP :: Impl :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: TCAP :: Impl :: ${project.artifactId}</name>
 	<dependencies>
 		<dependency>
 			<groupId>concurrent</groupId>
@@ -37,7 +37,7 @@
 			<artifactId>testng</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>${pom.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>tcap-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -53,11 +53,14 @@
 	</dependencies>
 
 	<build>
-		<finalName>${pom.artifactId}-${project.version}</finalName>
+		<finalName>${project.artifactId}-${project.version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<version>
+					${maven-surefire-plugin.version}
+				</version>
 
 				<configuration>
 					<suiteXmlFiles>

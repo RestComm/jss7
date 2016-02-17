@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>restcomm-ss7-userguide-sources-restcomm</artifactId>
-	<name>Restcomm jSS7 :: Docs :: User Guide :: Sources :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Docs :: User Guide :: Sources :: ${project.artifactId}</name>
 	<properties>
 		<THIS.PLATFORM>Restcomm</THIS.PLATFORM>
 		<JEE.PLATFORM>JBoss Application Server</JEE.PLATFORM>
@@ -46,7 +46,7 @@
 						<configuration>
 							<artifactItems>
 								<artifactItem>
-									<groupId>${pom.groupId}</groupId>
+									<groupId>${project.groupId}</groupId>
 									<artifactId>restcomm-ss7-userguide-sources</artifactId>
 									<version>${project.version}</version>
 									<type>jar</type>

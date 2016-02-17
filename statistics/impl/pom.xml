@@ -10,11 +10,11 @@
 	</parent>
 
 	<artifactId>statistics-impl</artifactId>
-	<name>Restcomm jSS7 :: Statistics :: Impl :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Statistics :: Impl :: ${project.artifactId}</name>
 
 	<dependencies>
 		<dependency>
-			<groupId>${pom.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>statistics-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>

@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>sctp-oam</artifactId>
-	<name>Restcomm jSS7 :: Management-sctp-oam :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Management-sctp-oam :: ${project.artifactId}</name>
 
 	<properties>
 		<tool.directory>
@@ -102,6 +102,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<version>
+					${maven-surefire-plugin.version}
+				</version>
 				<configuration>
 					<excludes>
 						<!-- Exclude load tests, they are suppose to be done manually -->

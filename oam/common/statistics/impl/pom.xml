@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>statistics-oam-impl</artifactId>
-	<name>Restcomm jSS7 :: Statistic-oam :: Impl :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Statistic-oam :: Impl :: ${project.artifactId}</name>
 
 	<properties>
 		<tool.directory>

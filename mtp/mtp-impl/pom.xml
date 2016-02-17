@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>mtp</artifactId>
-	<name>Restcomm jSS7 :: MTP :: Impl :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: MTP :: Impl :: ${project.artifactId}</name>
 
 
 	<dependencies>
@@ -47,7 +47,7 @@
 			<artifactId>javolution</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>${pom.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>mtp-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>

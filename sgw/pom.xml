@@ -10,7 +10,7 @@
 	<groupId>org.mobicents.protocols.ss7.sgw</groupId>
 	<artifactId>restcomm-sgw</artifactId>
 
-	<name>Restcomm jSS7 :: SGW :: Parent :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: SGW :: Parent :: ${project.artifactId}</name>
 
 	<modules>
 		<module>gateway</module>

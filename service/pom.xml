@@ -8,7 +8,7 @@
 
 	<artifactId>restcomm-ss7</artifactId>
 
-	<name>Restcomm jSS7 :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: ${project.artifactId}</name>
 
 	<properties>
 		<restcomm.name>restcomm-ss7</restcomm.name>
@@ -221,7 +221,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>${pom.artifactId}-${project.version}</finalName>
+		<finalName>${project.artifactId}-${project.version}</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>

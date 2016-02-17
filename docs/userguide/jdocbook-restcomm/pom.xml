@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>restcomm-ss7-userguide-jdocbook-restcomm</artifactId>
-	<name>Restcomm jSS7 :: Docs :: User Guide :: Sources :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Docs :: User Guide :: Sources :: ${project.artifactId}</name>
 	<modelVersion>4.0.0</modelVersion>
 
 	<packaging>jdocbook</packaging>
@@ -58,7 +58,7 @@
 						<configuration>
 							<artifactItems>
 								<artifactItem>
-									<groupId>${pom.groupId}</groupId>
+									<groupId>${project.groupId}</groupId>
 									<artifactId>restcomm-ss7-userguide-sources-restcomm</artifactId>
 									<version>${project.version}</version>
 									<type>jar</type>

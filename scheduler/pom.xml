@@ -11,7 +11,7 @@
 
 	<groupId>org.mobicents.protocols.ss7.scheduler</groupId>
 	<artifactId>scheduler</artifactId>
-	<name>Restcomm jSS7 :: Scheduler :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Scheduler :: ${project.artifactId}</name>
 
 	<dependencies>
                 <!-- non mobicents -->

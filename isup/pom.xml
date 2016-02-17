@@ -14,7 +14,7 @@
 
 	<packaging>pom</packaging>
 
-	<name>Restcomm jSS7 :: ISUP :: Parent :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: ISUP :: Parent :: ${project.artifactId}</name>
 
 	<modules>
 		<module>isup-api</module>

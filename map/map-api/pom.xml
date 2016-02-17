@@ -9,7 +9,7 @@
 
 	<artifactId>map-api</artifactId>
 
-	<name>Restcomm jSS7 :: MAP :: Api :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: MAP :: Api :: ${project.artifactId}</name>
 
 	<dependencies>
 		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 
@@ -43,6 +43,6 @@
 	</dependencies>
 
 	<build>
-		<finalName>${pom.artifactId}-${project.version}</finalName>
+		<finalName>${project.artifactId}-${project.version}</finalName>
 	</build>
 </project>

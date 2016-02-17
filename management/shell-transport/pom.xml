@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>shell-transport</artifactId>
-	<name>Restcomm jSS7 :: Management :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Management :: ${project.artifactId}</name>
 
 	<dependencies>
 		<dependency>

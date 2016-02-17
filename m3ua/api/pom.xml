@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>m3ua-api</artifactId>
-	<name>Restcomm jSS7 :: M3UA :: Api :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: M3UA :: Api :: ${project.artifactId}</name>
 
 	<dependencies>
 		<!--
@@ -36,6 +36,6 @@
 	</dependencies>
 
 	<build>
-		<finalName>${pom.artifactId}-${project.version}</finalName>
+		<finalName>${project.artifactId}-${project.version}</finalName>
 	</build>
 </project>

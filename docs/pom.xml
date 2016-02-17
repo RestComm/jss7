@@ -10,7 +10,7 @@
 	<groupId>org.mobicents.protocols.ss7.docs</groupId>
 	<artifactId>restcomm-ss7-docs</artifactId>
 
-	<name>Restcomm jSS7 :: Docs :: Parent :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Docs :: Parent :: ${project.artifactId}</name>
 	<packaging>pom</packaging>
 
 	<properties>

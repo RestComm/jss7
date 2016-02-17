@@ -10,11 +10,11 @@
 
 	<artifactId>map-load</artifactId>
 
-	<name>Restcomm jSS7 :: MAP :: LOAD :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: MAP :: LOAD :: ${project.artifactId}</name>
 	<packaging>jar</packaging>
 
 	<properties>
-		<assemble.dir>${pom.build.directory}/load</assemble.dir>
+		<assemble.dir>${project.build.directory}/load</assemble.dir>
 	</properties>
 
 	<dependencies>
@@ -153,7 +153,7 @@
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<build>
-				<finalName>${pom.artifactId}</finalName>
+				<finalName>${project.artifactId}</finalName>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -169,8 +169,8 @@
 									<artifactItems>
 										<!-- this artifact :) -->
 										<artifactItem>
-											<groupId>${pom.groupId}</groupId>
-											<artifactId>${pom.artifactId}</artifactId>
+											<groupId>${project.groupId}</groupId>
+											<artifactId>${project.artifactId}</artifactId>
 											<version>${project.version}</version>
 											<type>jar</type>
 											<overWrite>true</overWrite>

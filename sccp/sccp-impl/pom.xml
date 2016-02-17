@@ -9,12 +9,12 @@
 
 	<artifactId>sccp-impl</artifactId>
 
-	<name>Restcomm jSS7 :: SCCP :: Impl :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: SCCP :: Impl :: ${project.artifactId}</name>
 
 
 	<dependencies>
 		<dependency>
-			<groupId>${pom.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>sccp-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -53,11 +53,14 @@
 	</dependencies>
 
 	<build>
-		<finalName>${pom.artifactId}-${project.version}</finalName>
+		<finalName>${project.artifactId}-${project.version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<version>
+					${maven-surefire-plugin.version}
+				</version>
 
 				<configuration>
 					<suiteXmlFiles>
@@ -85,7 +88,7 @@
 			</plugin>
 			<!-- plugin> <artifactId>maven-assembly-plugin</artifactId> <configuration> 
 				<descriptors> <descriptor> src/main/assembly/pojo.xml </descriptor> </descriptors> 
-				<finalName>a${pom.artifactId}</finalName> </configuration> <executions> <execution> 
+				<finalName>a${project.artifactId}</finalName> </configuration> <executions> <execution> 
 				<phase>package</phase> <goals> <goal>directory-inline</goal> </goals> </execution> 
 				</executions> </plugin -->
 		</plugins>

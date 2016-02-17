@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>restcomm-ss7-userguide-sources</artifactId>
-	<name>Restcomm jSS7 :: Docs :: User Guide :: Sources :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: Docs :: User Guide :: Sources :: ${project.artifactId}</name>
 	<properties>
 
 	</properties>

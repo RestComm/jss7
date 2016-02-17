@@ -14,7 +14,7 @@
 
 	<packaging>pom</packaging>
 
-	<name>Restcomm jSS7 :: MAP :: Parent :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: MAP :: Parent :: ${project.artifactId}</name>
 	<modules>
 		<module>map-api</module>
 		<module>map-impl</module>

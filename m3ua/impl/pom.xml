@@ -9,7 +9,7 @@
 
         <artifactId>m3ua-impl</artifactId>
 
-        <name>Restcomm jSS7 :: M3UA :: Impl :: ${pom.artifactId}</name>
+        <name>Restcomm jSS7 :: M3UA :: Impl :: ${project.artifactId}</name>
 
         <dependencies>
                 <dependency>
@@ -57,11 +57,14 @@
         </dependencies>
 
         <build>
-                <finalName>${pom.artifactId}-${project.version}</finalName>
+                <finalName>${project.artifactId}-${project.version}</finalName>
                 <plugins>
                         <plugin>
                                 <groupId>org.apache.maven.plugins</groupId>
                                 <artifactId>maven-surefire-plugin</artifactId>
+								<version>
+									${maven-surefire-plugin.version}
+								</version>
 
                                 <configuration>
                                         <suiteXmlFiles>

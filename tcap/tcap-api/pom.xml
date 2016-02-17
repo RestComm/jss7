@@ -9,7 +9,7 @@
 
 	<artifactId>tcap-api</artifactId>
 
-	<name>Restcomm jSS7 :: TCAP :: Api :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: TCAP :: Api :: ${project.artifactId}</name>
 
 	<dependencies>
 		<!--
@@ -36,6 +36,6 @@
 	</dependencies>
 
 	<build>
-		<finalName>${pom.artifactId}-${project.version}</finalName>
+		<finalName>${project.artifactId}-${project.version}</finalName>
 	</build>
 </project>

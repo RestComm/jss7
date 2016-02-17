@@ -14,7 +14,7 @@
 
 	<packaging>pom</packaging>
 
-	<name>Restcomm jSS7 :: TCAP :: Parent :: ${pom.artifactId}</name>
+	<name>Restcomm jSS7 :: TCAP :: Parent :: ${project.artifactId}</name>
 	<properties />
 
 	<modules>
