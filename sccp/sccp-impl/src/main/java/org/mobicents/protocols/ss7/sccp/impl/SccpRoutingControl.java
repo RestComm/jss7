@@ -43,7 +43,6 @@ import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.Rule;
 import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
-import org.mobicents.protocols.ss7.sccp.impl.congestion.SccpCongestionControl;
 import org.mobicents.protocols.ss7.sccp.impl.message.EncodingResultData;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpAddressedMessageImpl;
@@ -52,7 +51,6 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpNoticeMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCause;
@@ -480,7 +478,9 @@ public class SccpRoutingControl {
         }
 
         if (resPri != TranslationAddressCheckingResult.destinationAvailable
-                && resSec != TranslationAddressCheckingResult.destinationAvailable) {
+                && resPri != TranslationAddressCheckingResult.destinationUnavailable_Congestion
+                && resSec != TranslationAddressCheckingResult.destinationAvailable
+                && resSec != TranslationAddressCheckingResult.destinationUnavailable_Congestion) {
             switch (resPri) {
                 case destinationUnavailable_SubsystemFailure:
                     this.sendSccpError(msg, ReturnCauseValue.SUBSYSTEM_FAILURE);
@@ -504,6 +504,12 @@ public class SccpRoutingControl {
             translationAddress = translationAddressPri;
         } else if (resPri != TranslationAddressCheckingResult.destinationAvailable
                 && resSec == TranslationAddressCheckingResult.destinationAvailable) {
+            translationAddress = translationAddressSec;
+        } else if (resPri == TranslationAddressCheckingResult.destinationUnavailable_Congestion
+                && resSec != TranslationAddressCheckingResult.destinationAvailable) {
+            translationAddress = translationAddressPri;
+        } else if (resPri != TranslationAddressCheckingResult.destinationAvailable
+                && resSec == TranslationAddressCheckingResult.destinationUnavailable_Congestion) {
             translationAddress = translationAddressSec;
         } else {
             switch (rule.getRuleType()) {

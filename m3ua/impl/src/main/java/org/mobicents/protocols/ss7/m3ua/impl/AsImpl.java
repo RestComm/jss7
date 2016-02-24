@@ -624,6 +624,7 @@ public class AsImpl implements XMLSerializable, As {
                 int aspIndex = (sls & this.aspSlsMask);
                 aspIndex = (aspIndex >> this.aspSlsShiftPlaces);
 
+                AspImpl aspCong = null;
                 for (int i = 0; i < this.appServerProcs.size(); i++) {
 
                     AspImpl aspTemp = (AspImpl) this.appServerProcs.get(this.slsVsAspTable[aspIndex++]);
@@ -637,11 +638,22 @@ public class AsImpl implements XMLSerializable, As {
                     }
 
                     if (AspState.getState(aspFsm.getState().getName()) == AspState.ACTIVE) {
-                        aspTemp.getAspFactory().write(message);
-                        aspFound = true;
-                        break;
+                        if (aspTemp.getAspFactory().getAssociation().getCongestionLevel() > 1) {
+                            aspCong = aspTemp;
+                        } else {
+                            aspTemp.getAspFactory().write(message);
+                            aspFound = true;
+                            break;
+                        }
                     }
                 }// for
+
+                if (!aspFound) {
+                    if (aspCong != null) {
+                        aspCong.getAspFactory().write(message);
+                        aspFound = true;
+                    }
+                }
 
                 if (!aspFound) {
                     // This should never happen.
