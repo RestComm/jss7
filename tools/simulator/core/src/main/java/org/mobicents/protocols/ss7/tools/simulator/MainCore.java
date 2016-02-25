@@ -60,6 +60,10 @@ import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapScfManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapScfStandardManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapSsfManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapSsfStandardManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiClientManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiClientStandardManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiServerManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiServerStandardManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientStandardManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerManMBean;
@@ -195,6 +199,8 @@ public class MainCore {
         ObjectName nameTestCapScfMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestCapScfMan");
         ObjectName nameAtiClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestAtiClientMan");
         ObjectName nameAtiServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestAtiServerMan");
+        ObjectName nameCheckImeiClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestCheckImeiClientMan");
+        ObjectName nameCheckImeiServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestCheckImeiServerMan");
 
         // HtmlAdaptorServer
         HtmlAdaptorServer adapter = null;
@@ -262,6 +268,14 @@ public class MainCore {
             TestAtiServerStandardManMBean atiServerManMBean = new TestAtiServerStandardManMBean(host.getTestAtiServerMan(),
                     TestAtiServerManMBean.class);
             mbs.registerMBean(atiServerManMBean, nameAtiServerManMan);
+
+            TestCheckImeiClientStandardManMBean checkImeiClientManMBean = new TestCheckImeiClientStandardManMBean(host.getTestCheckImeiClientMan(),
+                    TestCheckImeiClientManMBean.class);
+            mbs.registerMBean(checkImeiClientManMBean, nameCheckImeiClientManMan);
+
+            TestCheckImeiServerStandardManMBean checkImeiServerManMBean = new TestCheckImeiServerStandardManMBean(host.getTestCheckImeiServerMan(),
+                    TestCheckImeiServerManMBean.class);
+            mbs.registerMBean(checkImeiServerManMBean, nameCheckImeiServerManMan);
 
             System.out.println("All beans have been loaded...");
 
@@ -337,6 +351,9 @@ public class MainCore {
         mbs.unregisterMBean(nameTestCapScfMan);
         mbs.unregisterMBean(nameAtiClientManMan);
         mbs.unregisterMBean(nameAtiServerManMan);
+        mbs.unregisterMBean(nameCheckImeiClientManMan);
+        mbs.unregisterMBean(nameCheckImeiServerManMan);
+
 
         // Registry.unbind(key);
         UnicastRemoteObject.unexportObject(reg, true);
