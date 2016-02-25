@@ -61,6 +61,9 @@ import org.mobicents.protocols.ss7.tools.simulator.tests.ati.TestAtiClientMan;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ati.TestAtiServerMan;
 import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapScfMan;
 import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapSsfMan;
+import org.mobicents.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiClientConfigurationData;
+import org.mobicents.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiClientMan;
+import org.mobicents.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiServerMan;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.NumberingPlanIdentificationType;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientConfigurationData_OldFormat;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientMan;
@@ -125,6 +128,8 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
     TestCapScfMan testCapScfMan;
     TestAtiClientMan testAtiClientMan;
     TestAtiServerMan testAtiServerMan;
+    TestCheckImeiClientMan testCheckImeiClientMan;
+    TestCheckImeiServerMan testCheckImeiServerMan;
 
     // testers
 
@@ -170,6 +175,12 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
         this.testAtiServerMan = new TestAtiServerMan(appName);
         this.testAtiServerMan.setTesterHost(this);
+
+        this.testCheckImeiClientMan = new TestCheckImeiClientMan(appName);
+        this.testCheckImeiClientMan.setTesterHost(this);
+
+        this.testCheckImeiServerMan = new TestCheckImeiServerMan(appName);
+        this.testCheckImeiServerMan.setTesterHost(this);
 
         this.setupLog4j(appName);
 
@@ -257,6 +268,14 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
     public TestAtiServerMan getTestAtiServerMan() {
         return this.testAtiServerMan;
+    }
+
+    public TestCheckImeiClientMan getTestCheckImeiClientMan() {
+        return this.testCheckImeiClientMan;
+    }
+
+    public TestCheckImeiServerMan getTestCheckImeiServerMan() {
+        return this.testCheckImeiServerMan;
     }
 
     private void setupLog4j(String appName) {
@@ -634,6 +653,28 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
                 }
                 break;
 
+            case Instance_TestTask.VAL_CHECK_IMEI_TEST_CLIENT:
+                if (curMap == null) {
+                    this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing CHECK_IMEI_TEST_CLIENT: No MAP stack is defined at L3",
+                            "", Level.WARN);
+                } else {
+                    this.instance_TestTask_B = this.testCheckImeiClientMan;
+                    this.testCheckImeiClientMan.setMapMan(curMap);
+                    started = this.testCheckImeiClientMan.start();
+                }
+                break;
+
+            case Instance_TestTask.VAL_CHECK_IMEI_TEST_SERVER:
+                if (curMap == null) {
+                    this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing CHECK_IMEI_TEST_SERVER: No MAP stack is defined at L3",
+                            "", Level.WARN);
+                } else {
+                    this.instance_TestTask_B = this.testCheckImeiServerMan;
+                    this.testCheckImeiServerMan.setMapMan(curMap);
+                    started = this.testCheckImeiServerMan.start();
+                }
+                break;
+
             default:
                 // TODO: implement others test tasks ...
                 this.sendNotif(TesterHost.SOURCE_NAME, "Instance_TestTask."
@@ -920,6 +961,20 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
             this.testSmsServerMan.setNumberingPlanIdentification(new NumberingPlanIdentificationType(_TestSmsServerMan
                     .getNumberingPlanIdentification().getCode()));
             this.testSmsServerMan.setSmsCodingType(_TestSmsServerMan.getSmsCodingType());
+
+
+            TestCheckImeiClientConfigurationData _TestCheckImeiClientMan = reader.read(ConfigurationData.TEST_CHECK_IMEI_CLIENT,
+                    TestCheckImeiClientConfigurationData.class);
+            this.testCheckImeiClientMan.setImei(_TestCheckImeiClientMan.getImei());
+            this.testCheckImeiClientMan.setCheckImeiClientAction(_TestCheckImeiClientMan.getCheckImeiClientAction());
+            this.testCheckImeiClientMan.setMapProtocolVersion(_TestCheckImeiClientMan.getMapProtocolVersion());
+            this.testCheckImeiClientMan.setMaxConcurrentDialogs(_TestCheckImeiClientMan.getMaxConcurrentDialogs());
+            this.testCheckImeiClientMan.setOneNotificationFor100Dialogs(_TestCheckImeiClientMan.isOneNotificationFor100Dialogs());
+
+            // FIMXME mnowa: add loading of CheckIMEI data from XML for server
+            /* TestCheckImeiServerConfigurationData _TestCheckImeiServerMan = reader.read(ConfigurationData.TEST_CHECK_IMEI_SERVER,
+                    TestCheckImeiServerConfigurationData.class);
+             */
 
             reader.close();
 
