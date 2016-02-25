@@ -53,14 +53,17 @@
         <para>
 			For outgoing messageflow (when we are sending messages to SS7 network) low level counters are implemented at SCTP library (MTP2 level for the sigtran stack).
 			SCTP library measures delays between message delivering from MTP3 level for delivering and a real sending to the IP network. There are 3 levels of congestion (1, 2 or 3) depending on the delay length.
-			Then m3ua checks this data and issues MTP-PAUSE indications to upper layers (ISUP or SCCP).
-			If we use MTP3 stacks from Dialogic or Dahdi legacy cards, we uses MTP-PAUSE indications that are issued by MTP3 levels of these cards.
+			Then m3ua checks this data and issues MTP-STATUS indications to upper layers (ISUP or SCCP).
+			If we use MTP3 stacks from Dialogic or Dahdi legacy cards, we use MTP-STATUS indications that are issued by MTP3 levels of these cards.
 			SCCP level has a congestion control from SS7 specification, where SCCP by timers TIMER_A and TIMER_D processes a congestion measurement logic.
 			At the SCCP level the blocking of outgoing SCCP messages is also implemented (it is disabled (and not used) by default but can be activated).
         </para>
 		<para>
-			SCCP and M3UA levels use the outgoing congestion control results for sharing of the outgoing SS7 traffic between primary / backup links (when primary (for dominant scenario) or some link (for loadsharing scenario)
-			is congested for at least level 2, then the the traffic will be routed to a backup / another link).
+			SCCP and M3UA levels use the outgoing congestion control results for sharing of the outgoing SS7 traffic between primary / backup links.
+			When primary (for dominant scenario) or some link (for loadsharing scenario) is congested up to at least level 2
+			SCCP stack routes the traffic to a backup / another link.
+			M3UA stack when loadsharing between ASP destinations when some link for loadshare traffic-mode is congested up to at least level 2 also tries to route the traffic to another link.
+			(For loadsharing between AS destinations the congestion levels are not taken into account).
         </para>
 		<para>
 			TCAP level (and upper stack levels) provides methods for the congestion control monitoring for SS7 stack users:
@@ -85,7 +88,7 @@
     NetworkIdState getNetworkIdState(int networkId);
 ]]>
 		</programlisting>
-By these methods the TCAP stack provides the congestion and availability status for a SS7 subnetework for a networkId.
+By these methods the TCAP stack provides the congestion and availability status for a SS7 subnetwork for a networkId.
 NetworkIdState has two parameters:
 		<programlisting
 			language="Java"
