@@ -38,6 +38,8 @@ import org.mobicents.protocols.ss7.tools.simulator.tests.ati.TestAtiClientConfig
 import org.mobicents.protocols.ss7.tools.simulator.tests.ati.TestAtiServerConfigurationData;
 import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapScfConfigurationData;
 import org.mobicents.protocols.ss7.tools.simulator.tests.cap.TestCapSsfConfigurationData;
+import org.mobicents.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiClientConfigurationData;
+import org.mobicents.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiServerConfigurationData;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientConfigurationData;
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerConfigurationData;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientConfigurationData;
@@ -68,6 +70,8 @@ public class ConfigurationData {
     public static final String TEST_CAP_SSF = "testCapSsf";
     public static final String TEST_ATI_CLIENT = "testAtiClient";
     public static final String TEST_ATI_SERVER = "testAtiServer";
+    public static final String TEST_CHECK_IMEI_CLIENT = "testCheckImeiClient";
+    public static final String TEST_CHECK_IMEI_SERVER = "testCheckImeiServer";
 
     private Instance_L1 instance_L1 = new Instance_L1(Instance_L1.VAL_NO);
     private Instance_L2 instance_L2 = new Instance_L2(Instance_L2.VAL_NO);
@@ -88,6 +92,8 @@ public class ConfigurationData {
     private TestCapSsfConfigurationData testCapSsfConfigurationData = new TestCapSsfConfigurationData();
     private TestAtiClientConfigurationData testAtiClientConfigurationData = new TestAtiClientConfigurationData();
     private TestAtiServerConfigurationData testAtiServerConfigurationData = new TestAtiServerConfigurationData();
+    private TestCheckImeiClientConfigurationData testCheckImeiClientConfigurationData = new TestCheckImeiClientConfigurationData();
+    private TestCheckImeiServerConfigurationData testCheckImeiServerConfigurationData = new TestCheckImeiServerConfigurationData();
 
     public Instance_L1 getInstance_L1() {
         return instance_L1;
@@ -225,6 +231,22 @@ public class ConfigurationData {
         this.testAtiServerConfigurationData = testAtiServerConfigurationData;
     }
 
+    public TestCheckImeiClientConfigurationData getTestCheckImeiClientConfigurationData() {
+        return testCheckImeiClientConfigurationData;
+    }
+
+    public void setTestCheckImeiClientConfigurationData(TestCheckImeiClientConfigurationData testCheckImeiClientConfigurationData) {
+        this.testCheckImeiClientConfigurationData = testCheckImeiClientConfigurationData;
+    }
+
+    public TestCheckImeiServerConfigurationData getTestCheckImeiServerConfigurationData() {
+        return testCheckImeiServerConfigurationData;
+    }
+
+    public void setTestCheckImeiServerConfigurationData(TestCheckImeiServerConfigurationData testCheckImeiServerConfigurationData) {
+        this.testCheckImeiServerConfigurationData = testCheckImeiServerConfigurationData;
+    }
+
     /**
      * XML Serialization/Deserialization
      */
@@ -290,6 +312,14 @@ public class ConfigurationData {
             if (capSsf != null)
                 data.setTestCapSsfConfigurationData(capSsf);
 
+            TestCheckImeiClientConfigurationData checkImeiClient = xml.get(TEST_CHECK_IMEI_CLIENT, TestCheckImeiClientConfigurationData.class);
+            if (checkImeiClient != null)
+                data.setTestCheckImeiClientConfigurationData(checkImeiClient);
+
+            TestCheckImeiServerConfigurationData checkImeiServer = xml.get(TEST_CHECK_IMEI_SERVER, TestCheckImeiServerConfigurationData.class);
+            if (checkImeiServer != null)
+                data.setTestCheckImeiServerConfigurationData(checkImeiServer);
+
             // while (xml.hasNext()) {
             // Object o = xml.getNext();
             // }
@@ -316,6 +346,8 @@ public class ConfigurationData {
             xml.add(data.getTestAtiServerConfigurationData(), TEST_ATI_SERVER, TestAtiServerConfigurationData.class);
             xml.add(data.getTestCapScfConfigurationData(), TEST_CAP_SCF, TestCapScfConfigurationData.class);
             xml.add(data.getTestCapSsfConfigurationData(), TEST_CAP_SSF, TestCapSsfConfigurationData.class);
+            xml.add(data.getTestCheckImeiClientConfigurationData(), TEST_CHECK_IMEI_CLIENT, TestCheckImeiClientConfigurationData.class);
+            xml.add(data.getTestCheckImeiServerConfigurationData(), TEST_CHECK_IMEI_SERVER, TestCheckImeiServerConfigurationData.class);
         }
     };
 
