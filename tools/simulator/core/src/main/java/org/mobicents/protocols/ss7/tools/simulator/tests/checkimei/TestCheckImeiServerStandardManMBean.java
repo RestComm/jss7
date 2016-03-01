@@ -45,11 +45,13 @@ public class TestCheckImeiServerStandardManMBean extends StandardMBean {
                 new MBeanAttributeInfo("AutoEquipmentStatus", EquipmentStatusType.class.getName(), "EquipmentStatus parameter to be automatically send in CheckImeiResponse", true, true, false),
                 new MBeanAttributeInfo("AutoEquipmentStatus_Value", String.class.getName(), "EquipmentStatus parameter to be automatically send in CheckImeiResponse", true, false, false),
                 new MBeanAttributeInfo("OneNotificationFor100Dialogs", boolean.class.getName(),
-                        "If true there will be only one notification per every 100 sent dialogs", true, true, true)
+                        "If true there will be only one notification per every 100 sent dialogs", true, true, true),
+                new MBeanAttributeInfo("CurrentRequestDef", String.class.getName(), "Definition of the current request Dialog",
+                        true, false, false),
 
         };
 
-        MBeanParameterInfo[] putAutoEquipmentStatusParam = new MBeanParameterInfo[] { new MBeanParameterInfo("equipmentStatus", String.class.getName(), "EquipmentStatus value") };
+        MBeanParameterInfo[] putAutoEquipmentStatusParam = new MBeanParameterInfo[] { new MBeanParameterInfo("val", String.class.getName(), "EquipmentStatus value") };
 
         MBeanOperationInfo[] operations = new MBeanOperationInfo[] {
                 new MBeanOperationInfo(
