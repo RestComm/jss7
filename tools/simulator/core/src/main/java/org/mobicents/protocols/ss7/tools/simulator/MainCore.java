@@ -127,32 +127,31 @@ public class MainCore {
         // ........................
 
         // parsing arguments, possible values:
-        // name=a1 http=8000 rmi=9999
+        // name=a1 http=8000 rmi=9999,9998
+        // -na1 -t8001 -r9999,9998
         int httpPort = -1;
-        int rmiPort = -1;
-        int rmiPort2 = -1;
+        int[] rmiPort = new int[] { -1, -1 };
         String appName = "main";
         if (args != null && args.length > 0) {
             for (String s : args) {
                 if (s.length() > 5 && s.substring(0, 5).toLowerCase().equals("name=")) {
                     appName = s.substring(5, s.length());
                 }
+                if (s.length() > 2 && s.substring(0, 2).toLowerCase().equals("-n")) {
+                    appName = s.substring(2, s.length());
+                }
                 if (s.length() > 4 && s.substring(0, 4).toLowerCase().equals("rmi=")) {
                     try {
                         String s1 = s.substring(4, s.length());
-                        String[] ss = s1.split(",");
-                        int porta = Integer.parseInt(ss[0]);
-                        if (porta > 0 && porta < 65000)
-                            rmiPort = porta;
-                        else
-                            System.out.println("Bad value of field \"rmi\"");
-                        if (ss.length >= 2) {
-                            int portb = Integer.parseInt(ss[1]);
-                            if (portb > 0 && portb < 65000)
-                                rmiPort2 = portb;
-                            else
-                                System.out.println("Bad value of field \"rmi\" - port 2");
-                        }
+                        parseRmi(rmiPort, s1);
+                    } catch (Exception e) {
+                        System.out.println("Exception when parsing parameter \"rmi\"");
+                    }
+                }
+                if (s.length() > 2 && s.substring(0, 2).toLowerCase().equals("-r")) {
+                    try {
+                        String s1 = s.substring(2, s.length());
+                        parseRmi(rmiPort, s1);
                     } catch (Exception e) {
                         System.out.println("Exception when parsing parameter \"rmi\"");
                     }
@@ -168,12 +167,39 @@ public class MainCore {
                         System.out.println("Exception when parsing parameter \"http\"");
                     }
                 }
+                if (s.length() > 2 && s.substring(0, 2).toLowerCase().equals("-t")) {
+                    try {
+                        int porta = Integer.parseInt(s.substring(2, s.length()));
+                        if (porta > 0 && porta < 65000)
+                            httpPort = porta;
+                        else
+                            System.out.println("Bad value of field \"http\"");
+                    } catch (Exception e) {
+                        System.out.println("Exception when parsing parameter \"http\"");
+                    }
+                }
             }
         }
 
         MainCore main = new MainCore();
-        main.start(appName, httpPort, rmiPort, rmiPort2);
+        main.start(appName, httpPort, rmiPort[0], rmiPort[1]);
 
+    }
+
+    private static void parseRmi(int[] rmiPort, String s1) {
+        String[] ss = s1.split(",");
+        int porta = Integer.parseInt(ss[0]);
+        if (porta > 0 && porta < 65000)
+            rmiPort[0] = porta;
+        else
+            System.out.println("Bad value of field \"rmi\"");
+        if (ss.length >= 2) {
+            int portb = Integer.parseInt(ss[1]);
+            if (portb > 0 && portb < 65000)
+                rmiPort[1] = portb;
+            else
+                System.out.println("Bad value of field \"rmi\" - port 2");
+        }
     }
 
     public void start(String appName, int httpPort, int rmiPort, int rmiPort2) throws MalformedObjectNameException,
