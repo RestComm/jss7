@@ -27,6 +27,7 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -83,6 +84,8 @@ import org.mobicents.protocols.ss7.tcapAnsi.tc.dialog.events.TCResponseIndicatio
 import org.mobicents.protocols.ss7.tcapAnsi.tc.dialog.events.TCPAbortIndicationImpl;
 import org.mobicents.protocols.ss7.tcapAnsi.tc.dialog.events.TCUniIndicationImpl;
 import org.mobicents.protocols.ss7.tcapAnsi.tc.dialog.events.TCUserAbortIndicationImpl;
+import org.mobicents.ss7.congestion.ExecutorCongestionMonitor;
+import org.mobicents.ss7.congestion.MemoryCongestionMonitorImpl;
 
 /**
  * @author amit bhayani
@@ -117,6 +120,11 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     private int seqControl = 0;
     private int ssn;
     private long curDialogId = 0;
+
+    private int cumulativeCongestionLevel = 0;
+    private int executorCongestionLevel = 0;
+    private MemoryCongestionMonitorImpl memoryCongestionMonitor;
+    private FastMap<String, Integer> lstUserPartCongestionLevel = new FastMap<String, Integer>();
 
     protected TCAPProviderImpl(SccpProvider sccpProvider, TCAPStackImpl stack, int ssn) {
         super();
@@ -504,7 +512,11 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         this.sccpProvider.registerSccpListener(ssn, this);
         logger.info("Registered SCCP listener with address " + ssn);
 
+        // congestion caring
         updateNetworkIdStateList();
+        this._EXECUTOR.scheduleWithFixedDelay(new CongestionExecutor(), 1000, 1000, TimeUnit.MILLISECONDS);
+        memoryCongestionMonitor = new MemoryCongestionMonitorImpl();
+        lstUserPartCongestionLevel.clear();
     }
 
     void stop() {
@@ -590,240 +602,285 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             }
 
             switch (tag) {
-            case TCConversationMessage._TAG_CONVERSATION_WITH_PERM:
-            case TCConversationMessage._TAG_CONVERSATION_WITHOUT_PERM:
-                TCConversationMessage tcm = null;
-                try {
-                    tcm = TcapFactory.createTCConversationMessage(ais);
-                } catch (ParseException e) {
-                    logger.error("ParseException when parsing TCConversationMessage: " + e.toString(), e);
+                case TCConversationMessage._TAG_CONVERSATION_WITH_PERM:
+                case TCConversationMessage._TAG_CONVERSATION_WITHOUT_PERM:
+                    TCConversationMessage tcm = null;
+                    try {
+                        tcm = TcapFactory.createTCConversationMessage(ais);
+                    } catch (ParseException e) {
+                        logger.error("ParseException when parsing TCConversationMessage: " + e.toString(), e);
 
-                    // parsing OriginatingTransactionId
-                    ais = new AsnInputStream(data);
-                    tag = ais.readTag();
-                    TCUnidentifiedMessage tcUnidentified = new TCUnidentifiedMessage();
-                    tcUnidentified.decode(ais);
-                    if (tcUnidentified.getOriginatingTransactionId() != null) {
-                        boolean isDP = false;
-                        if (tcUnidentified.isDialogPortionExists()) {
-                            isDP = true;
-                        } else {
-                            Dialog ddi = null;
-                            if (tcUnidentified.getDestinationTransactionId() != null) {
-                                long dialogId = Utils.decodeTransactionId(tcUnidentified.getDestinationTransactionId());
-                                ddi = this.dialogs.get(dialogId);
-                            }
-                            if (ddi != null && ddi.getProtocolVersion() != null)
+                        // parsing OriginatingTransactionId
+                        ais = new AsnInputStream(data);
+                        tag = ais.readTag();
+                        TCUnidentifiedMessage tcUnidentified = new TCUnidentifiedMessage();
+                        tcUnidentified.decode(ais);
+                        if (tcUnidentified.getOriginatingTransactionId() != null) {
+                            boolean isDP = false;
+                            if (tcUnidentified.isDialogPortionExists()) {
                                 isDP = true;
-                        }
-                        if (isDP) {
-                            if (e.getPAbortCauseType() != null) {
-                                this.sendProviderAbort(e.getPAbortCauseType(), tcUnidentified.getOriginatingTransactionId(), remoteAddress, localAddress,
-                                        message.getSls(), message.getNetworkId());
                             } else {
-                                this.sendProviderAbort(PAbortCause.BadlyStructuredDialoguePortion, tcUnidentified.getOriginatingTransactionId(), remoteAddress,
-                                        localAddress, message.getSls(), message.getNetworkId());
+                                Dialog ddi = null;
+                                if (tcUnidentified.getDestinationTransactionId() != null) {
+                                    long dialogId = Utils.decodeTransactionId(tcUnidentified.getDestinationTransactionId());
+                                    ddi = this.dialogs.get(dialogId);
+                                }
+                                if (ddi != null && ddi.getProtocolVersion() != null)
+                                    isDP = true;
                             }
-                        } else {
-                            if (e.getPAbortCauseType() != null) {
-                                this.sendRejectAsProviderAbort(e.getPAbortCauseType(), tcUnidentified.getOriginatingTransactionId(), remoteAddress,
-                                        localAddress, message.getSls(), message.getNetworkId());
+                            if (isDP) {
+                                if (e.getPAbortCauseType() != null) {
+                                    this.sendProviderAbort(e.getPAbortCauseType(),
+                                            tcUnidentified.getOriginatingTransactionId(), remoteAddress, localAddress,
+                                            message.getSls(), message.getNetworkId());
+                                } else {
+                                    this.sendProviderAbort(PAbortCause.BadlyStructuredDialoguePortion,
+                                            tcUnidentified.getOriginatingTransactionId(), remoteAddress, localAddress,
+                                            message.getSls(), message.getNetworkId());
+                                }
                             } else {
-                                this.sendRejectAsProviderAbort(PAbortCause.BadlyStructuredTransactionPortion, tcUnidentified.getOriginatingTransactionId(),
-                                        remoteAddress, localAddress, message.getSls(), message.getNetworkId());
-                            }
-                        }
-                    }
-                    return;
-                }
-
-                long dialogId = Utils.decodeTransactionId(tcm.getDestinationTransactionId());
-                DialogImpl di;
-                if (this.stack.getPreviewMode()) {
-                    PrevewDialogDataKey ky1 = new PrevewDialogDataKey(message.getIncomingDpc(),
-                            (message.getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress().getGlobalTitle().getDigits() : null),
-                            message.getCalledPartyAddress().getSubsystemNumber(), dialogId);
-                    long dId = Utils.decodeTransactionId(tcm.getOriginatingTransactionId());
-                    PrevewDialogDataKey ky2 = new PrevewDialogDataKey(message.getIncomingOpc(),
-                            (message.getCallingPartyAddress().getGlobalTitle() != null ? message.getCallingPartyAddress().getGlobalTitle().getDigits() : null),
-                            message.getCallingPartyAddress().getSubsystemNumber(), dId);
-                    di = (DialogImpl) this.getPreviewDialog(ky1, ky2, localAddress, remoteAddress, seqControl);
-                } else {
-                    di = this.dialogs.get(dialogId);
-                }
-                if (di == null) {
-                    logger.warn("TC-Conversation: No dialog/transaction for id: " + dialogId);
-                    if (tcm.getDialogPortion() != null) {
-                        this.sendProviderAbort(PAbortCause.UnassignedRespondingTransactionID, tcm.getOriginatingTransactionId(), remoteAddress, localAddress,
-                                message.getSls(), message.getNetworkId());
-                    } else {
-                        this.sendRejectAsProviderAbort(PAbortCause.UnassignedRespondingTransactionID, tcm.getOriginatingTransactionId(), remoteAddress,
-                                localAddress, message.getSls(), message.getNetworkId());
-                    }
-                } else {
-                    di.processConversation(tcm, localAddress, remoteAddress, tag == TCConversationMessage._TAG_CONVERSATION_WITH_PERM);
-                }
-
-                break;
-
-            case TCQueryMessage._TAG_QUERY_WITH_PERM:
-            case TCQueryMessage._TAG_QUERY_WITHOUT_PERM:
-                TCQueryMessage tcb = null;
-                try {
-                    tcb = TcapFactory.createTCQueryMessage(ais);
-                } catch (ParseException e) {
-                    logger.error("ParseException when parsing TCQueryMessage: " + e.toString(), e);
-
-                    // parsing OriginatingTransactionId
-                    ais = new AsnInputStream(data);
-                    tag = ais.readTag();
-                    TCUnidentifiedMessage tcUnidentified = new TCUnidentifiedMessage();
-                    tcUnidentified.decode(ais);
-                    if (tcUnidentified.getOriginatingTransactionId() != null) {
-                        if (tcUnidentified.isDialogPortionExists()) {
-                            if (e.getPAbortCauseType() != null) {
-                                this.sendProviderAbort(e.getPAbortCauseType(), tcUnidentified.getOriginatingTransactionId(), remoteAddress, localAddress,
-                                        message.getSls(), message.getNetworkId());
-                            } else {
-                                this.sendProviderAbort(PAbortCause.BadlyStructuredDialoguePortion, tcUnidentified.getOriginatingTransactionId(), remoteAddress,
-                                        localAddress, message.getSls(), message.getNetworkId());
-                            }
-                        } else {
-                            if (e.getPAbortCauseType() != null) {
-                                this.sendRejectAsProviderAbort(e.getPAbortCauseType(), tcUnidentified.getOriginatingTransactionId(), remoteAddress,
-                                        localAddress, message.getSls(), message.getNetworkId());
-                            } else {
-                                this.sendRejectAsProviderAbort(PAbortCause.BadlyStructuredTransactionPortion, tcUnidentified.getOriginatingTransactionId(),
-                                        remoteAddress, localAddress, message.getSls(), message.getNetworkId());
+                                if (e.getPAbortCauseType() != null) {
+                                    this.sendRejectAsProviderAbort(e.getPAbortCauseType(),
+                                            tcUnidentified.getOriginatingTransactionId(), remoteAddress, localAddress,
+                                            message.getSls(), message.getNetworkId());
+                                } else {
+                                    this.sendRejectAsProviderAbort(PAbortCause.BadlyStructuredTransactionPortion,
+                                            tcUnidentified.getOriginatingTransactionId(), remoteAddress, localAddress,
+                                            message.getSls(), message.getNetworkId());
+                                }
                             }
                         }
+                        return;
                     }
-                    return;
-                }
 
-                di = null;
-                try {
+                    if (this.stack.isCongControl_blockingIncomingTcapMessages() && cumulativeCongestionLevel >= 3) {
+                        // rejecting of new incoming TCAP dialogs
+                        this.sendProviderAbort(PAbortCause.ResourceUnavailable, tcm.getOriginatingTransactionId(),
+                                remoteAddress, localAddress, message.getSls(), message.getNetworkId());
+                        return;
+                    }
+
+                    long dialogId = Utils.decodeTransactionId(tcm.getDestinationTransactionId());
+                    DialogImpl di;
                     if (this.stack.getPreviewMode()) {
-                        long dId = Utils.decodeTransactionId(tcb.getOriginatingTransactionId());
-                        PrevewDialogDataKey ky = new PrevewDialogDataKey(message.getIncomingOpc(),
-                                (message.getCallingPartyAddress().getGlobalTitle() != null ? message.getCallingPartyAddress().getGlobalTitle().getDigits()
-                                        : null), message.getCallingPartyAddress().getSubsystemNumber(), dId);
-                        di = (DialogImpl) this.createPreviewDialog(ky, localAddress, remoteAddress, seqControl);
+                        PrevewDialogDataKey ky1 = new PrevewDialogDataKey(message.getIncomingDpc(), (message
+                                .getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress()
+                                .getGlobalTitle().getDigits() : null), message.getCalledPartyAddress().getSubsystemNumber(),
+                                dialogId);
+                        long dId = Utils.decodeTransactionId(tcm.getOriginatingTransactionId());
+                        PrevewDialogDataKey ky2 = new PrevewDialogDataKey(message.getIncomingOpc(), (message
+                                .getCallingPartyAddress().getGlobalTitle() != null ? message.getCallingPartyAddress()
+                                .getGlobalTitle().getDigits() : null), message.getCallingPartyAddress().getSubsystemNumber(),
+                                dId);
+                        di = (DialogImpl) this.getPreviewDialog(ky1, ky2, localAddress, remoteAddress, seqControl);
                     } else {
-                        di = (DialogImpl) this.getNewDialog(localAddress, remoteAddress, message.getSls(), null);
+                        di = this.dialogs.get(dialogId);
+                    }
+                    if (di == null) {
+                        logger.warn("TC-Conversation: No dialog/transaction for id: " + dialogId);
+                        if (tcm.getDialogPortion() != null) {
+                            this.sendProviderAbort(PAbortCause.UnassignedRespondingTransactionID,
+                                    tcm.getOriginatingTransactionId(), remoteAddress, localAddress, message.getSls(),
+                                    message.getNetworkId());
+                        } else {
+                            this.sendRejectAsProviderAbort(PAbortCause.UnassignedRespondingTransactionID,
+                                    tcm.getOriginatingTransactionId(), remoteAddress, localAddress, message.getSls(),
+                                    message.getNetworkId());
+                        }
+                    } else {
+                        di.processConversation(tcm, localAddress, remoteAddress,
+                                tag == TCConversationMessage._TAG_CONVERSATION_WITH_PERM);
                     }
 
-                } catch (TCAPException e) {
+                    break;
+
+                case TCQueryMessage._TAG_QUERY_WITH_PERM:
+                case TCQueryMessage._TAG_QUERY_WITHOUT_PERM:
+                    TCQueryMessage tcb = null;
+                    try {
+                        tcb = TcapFactory.createTCQueryMessage(ais);
+                    } catch (ParseException e) {
+                        logger.error("ParseException when parsing TCQueryMessage: " + e.toString(), e);
+
+                        // parsing OriginatingTransactionId
+                        ais = new AsnInputStream(data);
+                        tag = ais.readTag();
+                        TCUnidentifiedMessage tcUnidentified = new TCUnidentifiedMessage();
+                        tcUnidentified.decode(ais);
+                        if (tcUnidentified.getOriginatingTransactionId() != null) {
+                            if (tcUnidentified.isDialogPortionExists()) {
+                                if (e.getPAbortCauseType() != null) {
+                                    this.sendProviderAbort(e.getPAbortCauseType(),
+                                            tcUnidentified.getOriginatingTransactionId(), remoteAddress, localAddress,
+                                            message.getSls(), message.getNetworkId());
+                                } else {
+                                    this.sendProviderAbort(PAbortCause.BadlyStructuredDialoguePortion,
+                                            tcUnidentified.getOriginatingTransactionId(), remoteAddress, localAddress,
+                                            message.getSls(), message.getNetworkId());
+                                }
+                            } else {
+                                if (e.getPAbortCauseType() != null) {
+                                    this.sendRejectAsProviderAbort(e.getPAbortCauseType(),
+                                            tcUnidentified.getOriginatingTransactionId(), remoteAddress, localAddress,
+                                            message.getSls(), message.getNetworkId());
+                                } else {
+                                    this.sendRejectAsProviderAbort(PAbortCause.BadlyStructuredTransactionPortion,
+                                            tcUnidentified.getOriginatingTransactionId(), remoteAddress, localAddress,
+                                            message.getSls(), message.getNetworkId());
+                                }
+                            }
+                        }
+                        return;
+                    }
+
+                    if (this.stack.isCongControl_blockingIncomingTcapMessages() && cumulativeCongestionLevel >= 2) {
+                        // rejecting of new incoming TCAP dialogs
+                        this.sendProviderAbort(PAbortCause.ResourceUnavailable, tcb.getOriginatingTransactionId(),
+                                remoteAddress, localAddress, message.getSls(), message.getNetworkId());
+                        return;
+                    }
+
+                    di = null;
+                    try {
+                        if (this.stack.getPreviewMode()) {
+                            long dId = Utils.decodeTransactionId(tcb.getOriginatingTransactionId());
+                            PrevewDialogDataKey ky = new PrevewDialogDataKey(message.getIncomingOpc(), (message
+                                    .getCallingPartyAddress().getGlobalTitle() != null ? message.getCallingPartyAddress()
+                                    .getGlobalTitle().getDigits() : null), message.getCallingPartyAddress()
+                                    .getSubsystemNumber(), dId);
+                            di = (DialogImpl) this.createPreviewDialog(ky, localAddress, remoteAddress, seqControl);
+                        } else {
+                            di = (DialogImpl) this.getNewDialog(localAddress, remoteAddress, message.getSls(), null);
+                        }
+
+                    } catch (TCAPException e) {
+                        if (tcb.getDialogPortion() != null) {
+                            this.sendProviderAbort(PAbortCause.ResourceUnavailable, tcb.getOriginatingTransactionId(),
+                                    remoteAddress, localAddress, message.getSls(), message.getNetworkId());
+                        } else {
+                            this.sendRejectAsProviderAbort(PAbortCause.ResourceUnavailable, tcb.getOriginatingTransactionId(),
+                                    remoteAddress, localAddress, message.getSls(), message.getNetworkId());
+                        }
+                        logger.error("Can not add a new dialog when receiving TCBeginMessage: " + e.getMessage(), e);
+                        return;
+                    }
+
                     if (tcb.getDialogPortion() != null) {
-                        this.sendProviderAbort(PAbortCause.ResourceUnavailable, tcb.getOriginatingTransactionId(), remoteAddress, localAddress,
-                                message.getSls(), message.getNetworkId());
-                    } else {
-                        this.sendRejectAsProviderAbort(PAbortCause.ResourceUnavailable, tcb.getOriginatingTransactionId(), remoteAddress, localAddress,
-                                message.getSls(), message.getNetworkId());
+                        if (tcb.getDialogPortion().getProtocolVersion() != null) {
+                            di.setProtocolVersion(tcb.getDialogPortion().getProtocolVersion());
+                        } else {
+                            ProtocolVersion pv = TcapFactory.createProtocolVersionEmpty();
+                            di.setProtocolVersion(pv);
+                        }
                     }
-                    logger.error("Can not add a new dialog when receiving TCBeginMessage: " + e.getMessage(), e);
-                    return;
-                }
 
-                if (tcb.getDialogPortion() != null) {
-                    if (tcb.getDialogPortion().getProtocolVersion() != null) {
-                        di.setProtocolVersion(tcb.getDialogPortion().getProtocolVersion());
-                    } else {
-                        ProtocolVersion pv = TcapFactory.createProtocolVersionEmpty();
-                        di.setProtocolVersion(pv);
+                    if (this.stack.getStatisticsEnabled()) {
+                        this.stack.getCounterProviderImpl().updateAllRemoteEstablishedDialogsCount();
+                        this.stack.getCounterProviderImpl().updateAllEstablishedDialogsCount();
                     }
-                }
-
-                if (this.stack.getStatisticsEnabled()) {
-                    this.stack.getCounterProviderImpl().updateAllRemoteEstablishedDialogsCount();
-                    this.stack.getCounterProviderImpl().updateAllEstablishedDialogsCount();
-                }
-                di.setNetworkId(message.getNetworkId());
-                di.processQuery(tcb, localAddress, remoteAddress, tag == TCQueryMessage._TAG_QUERY_WITH_PERM);
-
-                if (this.stack.getPreviewMode()) {
-                    di.getPrevewDialogData().setLastACN(di.getApplicationContextName());
-                    di.getPrevewDialogData().setOperationsSentB(di.operationsSent);
-                    di.getPrevewDialogData().setOperationsSentA(di.operationsSentA);
-                }
-
-                break;
-
-            case TCResponseMessage._TAG_RESPONSE:
-                TCResponseMessage teb = null;
-                try {
-                    teb = TcapFactory.createTCResponseMessage(ais);
-                } catch (ParseException e) {
-                    logger.error("ParseException when parsing TCResponseMessage: " + e.toString(), e);
-                    return;
-                }
-
-                dialogId = Utils.decodeTransactionId(teb.getDestinationTransactionId());
-                if (this.stack.getPreviewMode()) {
-                    PrevewDialogDataKey ky = new PrevewDialogDataKey(message.getIncomingDpc(),
-                            (message.getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress().getGlobalTitle().getDigits() : null),
-                            message.getCalledPartyAddress().getSubsystemNumber(), dialogId);
-                    di = (DialogImpl) this.getPreviewDialog(ky, null, localAddress, remoteAddress, seqControl);
-                } else {
-                    di = this.dialogs.get(dialogId);
-                }
-                if (di == null) {
-                    logger.warn("TC-Response: No dialog/transaction for id: " + dialogId);
-                } else {
-                    di.processResponse(teb, localAddress, remoteAddress);
+                    di.setNetworkId(message.getNetworkId());
+                    di.processQuery(tcb, localAddress, remoteAddress, tag == TCQueryMessage._TAG_QUERY_WITH_PERM);
 
                     if (this.stack.getPreviewMode()) {
-                        this.removePreviewDialog(di);
+                        di.getPrevewDialogData().setLastACN(di.getApplicationContextName());
+                        di.getPrevewDialogData().setOperationsSentB(di.operationsSent);
+                        di.getPrevewDialogData().setOperationsSentA(di.operationsSentA);
                     }
-                }
-                break;
 
-            case TCAbortMessage._TAG_ABORT:
-                TCAbortMessage tub = null;
-                try {
-                    tub = TcapFactory.createTCAbortMessage(ais);
-                } catch (ParseException e) {
-                    logger.error("ParseException when parsing TCAbortMessage: " + e.toString(), e);
-                    return;
-                }
+                    break;
 
-                dialogId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
-                if (this.stack.getPreviewMode()) {
-                    long dId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
-                    PrevewDialogDataKey ky = new PrevewDialogDataKey(message.getIncomingDpc(),
-                            (message.getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress().getGlobalTitle().getDigits() : null),
-                            message.getCalledPartyAddress().getSubsystemNumber(), dId);
-                    di = (DialogImpl) this.getPreviewDialog(ky, null, localAddress, remoteAddress, seqControl);
-                } else {
-                    di = this.dialogs.get(dialogId);
-                }
-                if (di == null) {
-                    logger.warn("TC-ABORT: No dialog/transaction for id: " + dialogId);
-                } else {
-                    di.processAbort(tub, localAddress, remoteAddress);
+                case TCResponseMessage._TAG_RESPONSE:
+                    TCResponseMessage teb = null;
+                    try {
+                        teb = TcapFactory.createTCResponseMessage(ais);
+                    } catch (ParseException e) {
+                        logger.error("ParseException when parsing TCResponseMessage: " + e.toString(), e);
+                        return;
+                    }
 
+                    if (this.stack.isCongControl_blockingIncomingTcapMessages() && cumulativeCongestionLevel >= 3) {
+                        // rejecting of new incoming TCAP dialogs
+                        return;
+                    }
+
+                    dialogId = Utils.decodeTransactionId(teb.getDestinationTransactionId());
                     if (this.stack.getPreviewMode()) {
-                        this.removePreviewDialog(di);
+                        PrevewDialogDataKey ky = new PrevewDialogDataKey(message.getIncomingDpc(), (message
+                                .getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress()
+                                .getGlobalTitle().getDigits() : null), message.getCalledPartyAddress().getSubsystemNumber(),
+                                dialogId);
+                        di = (DialogImpl) this.getPreviewDialog(ky, null, localAddress, remoteAddress, seqControl);
+                    } else {
+                        di = this.dialogs.get(dialogId);
                     }
-                }
-                break;
+                    if (di == null) {
+                        logger.warn("TC-Response: No dialog/transaction for id: " + dialogId);
+                    } else {
+                        di.processResponse(teb, localAddress, remoteAddress);
 
-            case TCUniMessage._TAG_UNI:
-                TCUniMessage tcuni;
-                try {
-                    tcuni = TcapFactory.createTCUniMessage(ais);
-                } catch (ParseException e) {
-                    logger.error("ParseException when parsing TCUniMessage: " + e.toString(), e);
-                    return;
-                }
+                        if (this.stack.getPreviewMode()) {
+                            this.removePreviewDialog(di);
+                        }
+                    }
+                    break;
 
-                DialogImpl uniDialog = (DialogImpl) this.getNewUnstructuredDialog(localAddress, remoteAddress);
-                uniDialog.processUni(tcuni, localAddress, remoteAddress);
-                break;
+                case TCAbortMessage._TAG_ABORT:
+                    TCAbortMessage tub = null;
+                    try {
+                        tub = TcapFactory.createTCAbortMessage(ais);
+                    } catch (ParseException e) {
+                        logger.error("ParseException when parsing TCAbortMessage: " + e.toString(), e);
+                        return;
+                    }
 
-            default:
-                unrecognizedPackageType(message, localAddress, remoteAddress, ais, tag, message.getNetworkId());
-                break;
+                    if (this.stack.isCongControl_blockingIncomingTcapMessages() && cumulativeCongestionLevel >= 3) {
+                        // rejecting of new incoming TCAP dialogs
+                        return;
+                    }
+
+                    dialogId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
+                    if (this.stack.getPreviewMode()) {
+                        long dId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
+                        PrevewDialogDataKey ky = new PrevewDialogDataKey(message.getIncomingDpc(), (message
+                                .getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress()
+                                .getGlobalTitle().getDigits() : null), message.getCalledPartyAddress().getSubsystemNumber(),
+                                dId);
+                        di = (DialogImpl) this.getPreviewDialog(ky, null, localAddress, remoteAddress, seqControl);
+                    } else {
+                        di = this.dialogs.get(dialogId);
+                    }
+                    if (di == null) {
+                        logger.warn("TC-ABORT: No dialog/transaction for id: " + dialogId);
+                    } else {
+                        di.processAbort(tub, localAddress, remoteAddress);
+
+                        if (this.stack.getPreviewMode()) {
+                            this.removePreviewDialog(di);
+                        }
+                    }
+                    break;
+
+                case TCUniMessage._TAG_UNI:
+                    TCUniMessage tcuni;
+                    try {
+                        tcuni = TcapFactory.createTCUniMessage(ais);
+                    } catch (ParseException e) {
+                        logger.error("ParseException when parsing TCUniMessage: " + e.toString(), e);
+                        return;
+                    }
+
+                    if (this.stack.isCongControl_blockingIncomingTcapMessages() && cumulativeCongestionLevel >= 3) {
+                        // rejecting of new incoming TCAP dialogs
+                        return;
+                    }
+
+                    DialogImpl uniDialog = (DialogImpl) this.getNewUnstructuredDialog(localAddress, remoteAddress);
+                    uniDialog.processUni(tcuni, localAddress, remoteAddress);
+                    break;
+
+                default:
+                    unrecognizedPackageType(message, localAddress, remoteAddress, ais, tag, message.getNetworkId());
+                    break;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1059,7 +1116,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         networkIdStateList = this.sccpProvider.getNetworkIdStateList();
     }
 
-
     protected class PrevewDialogDataKey {
         public int dpc;
         public String sccpDigits;
@@ -1127,4 +1183,139 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             updateNetworkIdStateList();
         }
     }
+
+    private class CongestionExecutor implements Runnable {
+
+        @Override
+        public void run() {
+            // MTP3 Executor monitors
+            ExecutorCongestionMonitor[] lst = sccpProvider.getExecutorCongestionMonitorList();
+            int maxExecutorCongestionLevel = 0;
+            for (ExecutorCongestionMonitor ecm : lst) {
+                int level = ecm.getAlarmLevel();
+                if (maxExecutorCongestionLevel < level)
+                    maxExecutorCongestionLevel = level;
+                try {
+                    ecm.setDelayThreshold_1(stack.getCongControl_ExecutorDelayThreshold_1());
+                    ecm.setDelayThreshold_2(stack.getCongControl_ExecutorDelayThreshold_2());
+                    ecm.setDelayThreshold_3(stack.getCongControl_ExecutorDelayThreshold_3());
+                    ecm.setBackToNormalDelayThreshold_1(stack.getCongControl_ExecutorBackToNormalDelayThreshold_1());
+                    ecm.setBackToNormalDelayThreshold_2(stack.getCongControl_ExecutorBackToNormalDelayThreshold_2());
+                    ecm.setBackToNormalDelayThreshold_3(stack.getCongControl_ExecutorBackToNormalDelayThreshold_3());
+                } catch (Exception e) {
+                    // this must not be
+                }
+            }
+            executorCongestionLevel = maxExecutorCongestionLevel;
+
+            // MemoryMonitor
+            memoryCongestionMonitor.monitor();
+            memoryCongestionMonitor.setMemoryThreshold1(stack.getCongControl_MemoryThreshold_1());
+            memoryCongestionMonitor.setMemoryThreshold2(stack.getCongControl_MemoryThreshold_2());
+            memoryCongestionMonitor.setMemoryThreshold3(stack.getCongControl_MemoryThreshold_3());
+            memoryCongestionMonitor.setBackToNormalMemoryThreshold1(stack.getCongControl_BackToNormalMemoryThreshold_1());
+            memoryCongestionMonitor.setBackToNormalMemoryThreshold2(stack.getCongControl_BackToNormalMemoryThreshold_2());
+            memoryCongestionMonitor.setBackToNormalMemoryThreshold3(stack.getCongControl_BackToNormalMemoryThreshold_3());
+
+            // cumulativeCongestionLevel
+            int newCumulativeCongestionLevel = getCumulativeCongestionLevel();
+            if (cumulativeCongestionLevel != newCumulativeCongestionLevel) {
+                cumulativeCongestionLevel = newCumulativeCongestionLevel;
+                logger.warn("Outgoing congestion control: Changing of internal congestion level: "
+                        + newCumulativeCongestionLevel + "->" + cumulativeCongestionLevel + "\n"
+                        + getCumulativeCongestionLevelString());
+            }
+        }
+    }
+
+    @Override
+    public synchronized void setUserPartCongestionLevel(String congObject, int level) {
+        if (congObject != null) {
+            if (level > 0) {
+                lstUserPartCongestionLevel.put(congObject, level);
+            } else {
+                lstUserPartCongestionLevel.remove(congObject);
+            }
+        }
+    }
+
+    @Override
+    public int getMemoryCongestionLevel() {
+        return memoryCongestionMonitor.getAlarmLevel();
+    }
+
+    @Override
+    public int getExecutorCongestionLevel() {
+        return executorCongestionLevel;
+    }
+
+    @Override
+    public int getCumulativeCongestionLevel() {
+        int level = 0;
+        for (Integer lev : lstUserPartCongestionLevel.values()) {
+            if (level < lev) {
+                level = lev;
+            }
+        }
+        int lev2 = getMemoryCongestionLevel();
+        if (level < lev2) {
+            level = lev2;
+        }
+        lev2 = getExecutorCongestionLevel();
+        if (level < lev2) {
+            level = lev2;
+        }
+
+        return level;
+    }
+
+    protected String getCumulativeCongestionLevelString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("CongestionLevel=[");
+
+        int i1 = 0;
+        int lev2 = getMemoryCongestionLevel();
+        if (lev2 > 0) {
+            sb.append("MemoryCongestionLevel=");
+            sb.append(lev2);
+        }
+        lev2 = getExecutorCongestionLevel();
+        if (lev2 > 0) {
+            if (i1 == 0)
+                i1 = 1;
+            else
+                sb.append(", ");
+            sb.append("ExecutorCongestionLevel=");
+            sb.append(lev2);
+        }
+        for (Entry<String, Integer> entry : lstUserPartCongestionLevel.entrySet()) {
+            lev2 = entry.getValue();
+            if (lev2 > 0) {
+                if (i1 == 0)
+                    i1 = 1;
+                else
+                    sb.append(", ");
+                sb.append("UserPartCongestion=");
+                sb.append(entry.getKey());
+                sb.append("-");
+                sb.append(lev2);
+            }
+        }
+
+        if (this.stack.isCongControl_blockingIncomingTcapMessages()) {
+            lev2 = getCumulativeCongestionLevel();
+            if (lev2 == 3) {
+                sb.append(", all incoming TCAP messages will be rejected");
+            }
+            if (lev2 == 2) {
+                sb.append(", new incoming TCAP dialogs will be rejected");
+            }
+        }
+
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 }

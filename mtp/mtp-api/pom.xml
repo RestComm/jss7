@@ -16,6 +16,11 @@
 			<groupId>org.mobicents.protocols.stream</groupId>
 			<artifactId>stream</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.congestion</groupId>
+			<artifactId>congestion</artifactId>
+		</dependency>
+
 		<!-- non restcomm -->
 		<dependency>
 			<groupId>log4j</groupId>

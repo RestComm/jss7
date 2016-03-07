@@ -31,6 +31,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
+import org.mobicents.ss7.congestion.ExecutorCongestionMonitor;
+import org.mobicents.ss7.congestion.ExecutorCongestionMonitorImpl;
 
 /**
  *
@@ -67,7 +69,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
     // a thread for delivering PAUSE, RESUME and STATUS messages
     private ScheduledExecutorService msgDeliveryExecutorSystem;
     private int[] slsTable = null;
-    private ExecutorCongestionMonitor executorCongestionMonitor = null;
+    private ExecutorCongestionMonitorImpl executorCongestionMonitor = null;
 
     private Mtp3TransferPrimitiveFactory mtp3TransferPrimitiveFactory = null;
 
@@ -148,6 +150,11 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
         return this.mtp3TransferPrimitiveFactory;
     }
 
+    @Override
+    public ExecutorCongestionMonitor getExecutorCongestionMonitor() {
+        return executorCongestionMonitor;
+    }
+
     public void start() throws Exception {
         if (this.isStarted)
             return;
@@ -187,7 +194,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
         this.msgDeliveryExecutorSystem = Executors.newSingleThreadScheduledExecutor(new DefaultThreadFactory(
                 "Mtp3-DeliveryExecutorSystem"));
 
-        this.executorCongestionMonitor = new ExecutorCongestionMonitor(productName, msgDeliveryExecutors);
+        this.executorCongestionMonitor = new ExecutorCongestionMonitorImpl(productName, msgDeliveryExecutors);
 
         this.isStarted = true;
 
@@ -209,7 +216,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
     }
 
     private void startThreadMonitoring() {
-        ExecutorCongestionMonitor monitor = this.executorCongestionMonitor;
+        ExecutorCongestionMonitorImpl monitor = this.executorCongestionMonitor;
         if (isStarted && monitor != null) {
             monitor.monitor();
             ExecutorCongestionMonitorHandler handler = new ExecutorCongestionMonitorHandler();

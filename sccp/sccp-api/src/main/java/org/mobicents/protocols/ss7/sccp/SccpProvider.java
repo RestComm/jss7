@@ -31,6 +31,7 @@ import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.ss7.congestion.ExecutorCongestionMonitor;
 
 /**
  *
@@ -101,5 +102,11 @@ public interface SccpProvider extends Serializable {
      * @return The collection of pairs: netwokId value - NetworkIdState (prohibited / congested state)
      */
     FastMap<Integer, NetworkIdState> getNetworkIdStateList();
+
+    /**
+     * @return ExecutorCongestionMonitor list that are responsible for measuring of congestion of the thread Executor that
+     *         processes incoming messages at mtp3 levels
+     */
+    ExecutorCongestionMonitor[] getExecutorCongestionMonitorList();
 
 }

@@ -103,4 +103,33 @@ public interface TCAPProvider extends Serializable {
      */
     NetworkIdState getNetworkIdState(int networkId);
 
+    /**
+     * Setting of a congestion level for a TCAP user "congObject"
+     *
+     * @param congObject a String with the name of an object
+     * @param level a congestion level for this object
+     */
+    void setUserPartCongestionLevel(String congObject, int level);
+
+    /**
+     * Returns a congestion level of a Memory congestion monitor
+     *
+     * @return
+     */
+    int getMemoryCongestionLevel();
+
+    /**
+     * Returns a congestion level of thread Executors for processing of incoming messages
+     *
+     * @return
+     */
+    int getExecutorCongestionLevel();
+
+    /**
+     * Returns a max congestion level for UserPartCongestion, MemoryCongestion and ExecutorCongestionLevel
+     *
+     * @return
+     */
+    int getCumulativeCongestionLevel();
+
 }

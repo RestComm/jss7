@@ -49,6 +49,7 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCNoticeIndicat
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCPAbortIndication;
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCUniIndication;
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCUserAbortIndication;
+import org.mobicents.ss7.congestion.ExecutorCongestionMonitor;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -571,6 +572,12 @@ public class PreviewModeFunctionalTest {
 
         @Override
         public FastMap<Integer, NetworkIdState> getNetworkIdStateList() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public ExecutorCongestionMonitor[] getExecutorCongestionMonitorList() {
             // TODO Auto-generated method stub
             return null;
         }

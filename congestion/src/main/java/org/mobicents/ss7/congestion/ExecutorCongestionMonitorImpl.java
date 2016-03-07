@@ -20,20 +20,17 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.mtp;
+package org.mobicents.ss7.congestion;
 
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
-
-import org.mobicents.ss7.congestion.BaseCongestionMonitor;
-import org.mobicents.ss7.congestion.CongestionTicketImpl;
 
 /**
  *
  * @author sergey vetyutnev
  *
  */
-public class ExecutorCongestionMonitor extends BaseCongestionMonitor {
+public class ExecutorCongestionMonitorImpl extends BaseCongestionMonitor implements ExecutorCongestionMonitor {
     private static final String SOURCE = "EXECUTOR_";
 
     private String productName;
@@ -42,9 +39,9 @@ public class ExecutorCongestionMonitor extends BaseCongestionMonitor {
     private ExecutorService[] executors;
 
     private double[] delayThreshold = new double[] { 1, 6, 12 };
-    private double[] backToNormalMemoryThreshold = new double[] { 0.5, 3, 8 };
+    private double[] backToNormalDelayThreshold = new double[] { 0.5, 3, 8 };
 
-    public ExecutorCongestionMonitor(String productName, ExecutorService[] executors) {
+    public ExecutorCongestionMonitorImpl(String productName, ExecutorService[] executors) {
         this.productName = productName;
         this.executors = executors;
 
@@ -68,7 +65,7 @@ public class ExecutorCongestionMonitor extends BaseCongestionMonitor {
     }
 
     @Override
-    protected int getAlarmLevel() {
+    public int getAlarmLevel() {
         return currentAlarmLevel;
     }
 
@@ -77,12 +74,68 @@ public class ExecutorCongestionMonitor extends BaseCongestionMonitor {
         currentAlarmLevel = val;
     }
 
-    private void registerResults(double maxValue) {
-        // ..................
-        // this.logger.error("*****************: " + maxValue);
-        // ..................
+    @Override
+    public double getDelayThreshold_1() {
+        return delayThreshold[0];
+    }
 
-        super.applyNewValue(currentAlarmLevel, maxValue, delayThreshold, backToNormalMemoryThreshold, true);
+    @Override
+    public double getDelayThreshold_2() {
+        return delayThreshold[1];
+    }
+
+    @Override
+    public double getDelayThreshold_3() {
+        return delayThreshold[2];
+    }
+
+    @Override
+    public double getBackToNormalDelayThreshold_1() {
+        return backToNormalDelayThreshold[0];
+    }
+
+    @Override
+    public double getBackToNormalDelayThreshold_2() {
+        return backToNormalDelayThreshold[1];
+    }
+
+    @Override
+    public double getBackToNormalDelayThreshold_3() {
+        return backToNormalDelayThreshold[2];
+    }
+
+    @Override
+    public void setDelayThreshold_1(double value) throws Exception {
+        delayThreshold[0] = value;
+    }
+
+    @Override
+    public void setDelayThreshold_2(double value) throws Exception {
+        delayThreshold[1] = value;
+    }
+
+    @Override
+    public void setDelayThreshold_3(double value) throws Exception {
+        delayThreshold[2] = value;
+    }
+
+    @Override
+    public void setBackToNormalDelayThreshold_1(double value) throws Exception {
+        backToNormalDelayThreshold[0] = value;
+    }
+
+    @Override
+    public void setBackToNormalDelayThreshold_2(double value) throws Exception {
+        backToNormalDelayThreshold[1] = value;
+    }
+
+    @Override
+    public void setBackToNormalDelayThreshold_3(double value) throws Exception {
+        backToNormalDelayThreshold[2] = value;
+    }
+
+    private void registerResults(double maxValue) {
+        super.applyNewValue(currentAlarmLevel, maxValue, delayThreshold, backToNormalDelayThreshold, true);
     }
 
     public class TestMonitor {
@@ -141,4 +194,5 @@ public class ExecutorCongestionMonitor extends BaseCongestionMonitor {
             return finished;
         }
     }
+
 }

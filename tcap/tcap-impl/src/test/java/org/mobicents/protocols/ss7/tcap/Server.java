@@ -101,4 +101,10 @@ public class Server extends EventTestHarness {
     public void sendContinue2() throws TCAPSendException, TCAPException {
         super.sendContinue();
     }
+
+    public void releaseDialog() {
+        if (this.dialog != null)
+            this.dialog.release();
+        this.dialog = null;
+    }
 }

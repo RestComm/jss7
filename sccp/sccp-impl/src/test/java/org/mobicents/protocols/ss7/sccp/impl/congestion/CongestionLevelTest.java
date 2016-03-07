@@ -60,6 +60,7 @@ import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.ss7.congestion.ExecutorCongestionMonitor;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -470,6 +471,12 @@ public class CongestionLevelTest {
         public void setDeliveryMessageThreadCount(int deliveryMessageThreadCount) {
             // TODO Auto-generated method stub
             
+        }
+
+        @Override
+        public ExecutorCongestionMonitor getExecutorCongestionMonitor() {
+            // TODO Auto-generated method stub
+            return null;
         }
         
     }

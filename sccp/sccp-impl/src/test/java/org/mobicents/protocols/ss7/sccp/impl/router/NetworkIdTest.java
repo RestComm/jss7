@@ -60,6 +60,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
 import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.ss7.congestion.ExecutorCongestionMonitor;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -302,6 +303,12 @@ public class NetworkIdTest implements SccpListener {
         public void setDeliveryMessageThreadCount(int deliveryMessageThreadCount) {
             // TODO Auto-generated method stub
             
+        }
+
+        @Override
+        public ExecutorCongestionMonitor getExecutorCongestionMonitor() {
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 

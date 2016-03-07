@@ -27,34 +27,34 @@ package org.mobicents.ss7.congestion;
 * @author sergey vetyutnev
 *
 */
-public interface MemoryCongestionMonitor {
+public interface ExecutorCongestionMonitor {
 
     String getSource();
 
     int getAlarmLevel();
 
-    double getMemoryThreshold_1();
+    double getDelayThreshold_1();
 
-    double getMemoryThreshold_2();
+    double getDelayThreshold_2();
 
-    double getMemoryThreshold_3();
+    double getDelayThreshold_3();
 
-    void setMemoryThreshold_1(double value) throws Exception;
+    double getBackToNormalDelayThreshold_1();
 
-    void setMemoryThreshold_2(double value) throws Exception;
+    double getBackToNormalDelayThreshold_2();
 
-    void setMemoryThreshold_3(double value) throws Exception;
+    double getBackToNormalDelayThreshold_3();
 
-    double getBackToNormalMemoryThreshold_1();
+    void setDelayThreshold_1(double value) throws Exception;
 
-    double getBackToNormalMemoryThreshold_2();
+    void setDelayThreshold_2(double value) throws Exception;
 
-    double getBackToNormalMemoryThreshold_3();
+    void setDelayThreshold_3(double value) throws Exception;
 
-    void setBackToNormalMemoryThreshold_1(double value) throws Exception;
+    void setBackToNormalDelayThreshold_1(double value) throws Exception;
 
-    void setBackToNormalMemoryThreshold_2(double value) throws Exception;
+    void setBackToNormalDelayThreshold_2(double value) throws Exception;
 
-    void setBackToNormalMemoryThreshold_3(double value) throws Exception;
+    void setBackToNormalDelayThreshold_3(double value) throws Exception;
 
 }

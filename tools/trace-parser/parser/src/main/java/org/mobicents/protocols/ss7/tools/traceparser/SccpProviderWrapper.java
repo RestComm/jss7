@@ -38,6 +38,7 @@ import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.ss7.congestion.ExecutorCongestionMonitor;
 
 /**
  *
@@ -107,6 +108,12 @@ public class SccpProviderWrapper implements SccpProvider {
 
     @Override
     public FastMap<Integer, NetworkIdState> getNetworkIdStateList() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ExecutorCongestionMonitor[] getExecutorCongestionMonitorList() {
         // TODO Auto-generated method stub
         return null;
     }

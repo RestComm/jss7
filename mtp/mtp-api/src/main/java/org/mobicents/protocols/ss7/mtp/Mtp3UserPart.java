@@ -24,6 +24,8 @@ package org.mobicents.protocols.ss7.mtp;
 
 import java.io.IOException;
 
+import org.mobicents.ss7.congestion.ExecutorCongestionMonitor;
+
 /**
  * @author amit bhayani
  * @author sergey vetyutnev
@@ -106,5 +108,11 @@ public interface Mtp3UserPart {
      * @param deliveryMessageThreadCount
      */
     void setDeliveryMessageThreadCount(int deliveryMessageThreadCount) throws Exception;
+
+    /**
+     * @return ExecutorCongestionMonitor that is responsible for measuring of congestion of the thread Executor that processes
+     *         incoming messages (may be null if mtp3 is not started)
+     */
+    ExecutorCongestionMonitor getExecutorCongestionMonitor();
 
 }

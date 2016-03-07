@@ -200,6 +200,136 @@ public class TcapManagementJmx implements TcapManagementJmxMBean, CounterMediato
         return this.wrappedTCAPStack.getStatisticsEnabled();
     }
 
+    @Override
+    public boolean isCongControl_blockingIncomingTcapMessages() {
+        return this.wrappedTCAPStack.isCongControl_blockingIncomingTcapMessages();
+    }
+
+    @Override
+    public void setCongControl_blockingIncomingTcapMessages(boolean value) throws Exception {
+        this.wrappedTCAPStack.setCongControl_blockingIncomingTcapMessages(value);
+    }
+
+    @Override
+    public double getCongControl_ExecutorDelayThreshold_1() {
+        return this.wrappedTCAPStack.getCongControl_ExecutorDelayThreshold_1();
+    }
+
+    @Override
+    public double getCongControl_ExecutorDelayThreshold_2() {
+        return this.wrappedTCAPStack.getCongControl_ExecutorDelayThreshold_2();
+    }
+
+    @Override
+    public double getCongControl_ExecutorDelayThreshold_3() {
+        return this.wrappedTCAPStack.getCongControl_ExecutorDelayThreshold_3();
+    }
+
+    @Override
+    public void setCongControl_ExecutorDelayThreshold_1(double value) throws Exception {
+        this.wrappedTCAPStack.setCongControl_ExecutorDelayThreshold_1(value);
+    }
+
+    @Override
+    public void setCongControl_ExecutorDelayThreshold_2(double value) throws Exception {
+        this.wrappedTCAPStack.setCongControl_ExecutorDelayThreshold_2(value);
+    }
+
+    @Override
+    public void setCongControl_ExecutorDelayThreshold_3(double value) throws Exception {
+        this.wrappedTCAPStack.setCongControl_ExecutorDelayThreshold_3(value);
+    }
+
+    @Override
+    public double getCongControl_ExecutorBackToNormalDelayThreshold_1() {
+        return this.wrappedTCAPStack.getCongControl_ExecutorBackToNormalDelayThreshold_1();
+    }
+
+    @Override
+    public double getCongControl_ExecutorBackToNormalDelayThreshold_2() {
+        return this.wrappedTCAPStack.getCongControl_ExecutorBackToNormalDelayThreshold_2();
+    }
+
+    @Override
+    public double getCongControl_ExecutorBackToNormalDelayThreshold_3() {
+        return this.wrappedTCAPStack.getCongControl_ExecutorBackToNormalDelayThreshold_3();
+    }
+
+    @Override
+    public void setCongControl_ExecutorBackToNormalDelayThreshold_1(double value) throws Exception {
+        this.wrappedTCAPStack.setCongControl_ExecutorBackToNormalDelayThreshold_1(value);
+    }
+
+    @Override
+    public void setCongControl_ExecutorBackToNormalDelayThreshold_2(double value) throws Exception {
+        this.wrappedTCAPStack.setCongControl_ExecutorBackToNormalDelayThreshold_2(value);
+    }
+
+    @Override
+    public void setCongControl_ExecutorBackToNormalDelayThreshold_3(double value) throws Exception {
+        this.wrappedTCAPStack.setCongControl_ExecutorBackToNormalDelayThreshold_3(value);
+    }
+
+    @Override
+    public double getCongControl_MemoryThreshold_1() {
+        return this.wrappedTCAPStack.getCongControl_MemoryThreshold_1();
+    }
+
+    @Override
+    public double getCongControl_MemoryThreshold_2() {
+        return this.wrappedTCAPStack.getCongControl_MemoryThreshold_2();
+    }
+
+    @Override
+    public double getCongControl_MemoryThreshold_3() {
+        return this.wrappedTCAPStack.getCongControl_MemoryThreshold_3();
+    }
+
+    @Override
+    public void setCongControl_MemoryThreshold_1(double value) throws Exception {
+        this.wrappedTCAPStack.setCongControl_MemoryThreshold_1(value);
+    }
+
+    @Override
+    public void setCongControl_MemoryThreshold_2(double value) throws Exception {
+        this.wrappedTCAPStack.setCongControl_MemoryThreshold_2(value);
+    }
+
+    @Override
+    public void setCongControl_MemoryThreshold_3(double value) throws Exception {
+        this.wrappedTCAPStack.setCongControl_MemoryThreshold_3(value);
+    }
+
+    @Override
+    public double getCongControl_BackToNormalMemoryThreshold_1() {
+        return this.wrappedTCAPStack.getCongControl_BackToNormalMemoryThreshold_1();
+    }
+
+    @Override
+    public double getCongControl_BackToNormalMemoryThreshold_2() {
+        return this.wrappedTCAPStack.getCongControl_BackToNormalMemoryThreshold_2();
+    }
+
+    @Override
+    public double getCongControl_BackToNormalMemoryThreshold_3() {
+        return this.wrappedTCAPStack.getCongControl_BackToNormalMemoryThreshold_3();
+    }
+
+    @Override
+    public void setCongControl_BackToNormalMemoryThreshold_1(double value) throws Exception {
+        this.wrappedTCAPStack.setCongControl_BackToNormalMemoryThreshold_1(value);
+    }
+
+    @Override
+    public void setCongControl_BackToNormalMemoryThreshold_2(double value) throws Exception {
+        this.wrappedTCAPStack.setCongControl_BackToNormalMemoryThreshold_2(value);
+    }
+
+    @Override
+    public void setCongControl_BackToNormalMemoryThreshold_3(double value) throws Exception {
+        this.wrappedTCAPStack.setCongControl_BackToNormalMemoryThreshold_3(value);
+    }
+
     // Statistics part
 
     @Override
