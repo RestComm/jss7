@@ -46,30 +46,33 @@ public class MemoryCongestionMonitorImpl extends BaseCongestionMonitor implement
      * @param backToNormalPercentageOfMemoryUsed setting the Threshold 1 of alarm clearing
      */
     public void setBackToNormalMemoryThreshold1(double backToNormalMemoryThreshold1) {
-        this.backToNormalMemoryThreshold[0] = backToNormalMemoryThreshold1;
-        if (logger.isInfoEnabled()) {
-            logger.info("MemoryCongestionMonitor: Back To Normal Memory threshold 1 set to " + backToNormalMemoryThreshold1 + "%");
+        if (Math.abs(this.backToNormalMemoryThreshold[0] - backToNormalMemoryThreshold1) > 0.001 && logger.isInfoEnabled()) {
+            logger.info("MemoryCongestionMonitor: Back To Normal Memory threshold 1 set to " + backToNormalMemoryThreshold1
+                    + "%");
         }
+        this.backToNormalMemoryThreshold[0] = backToNormalMemoryThreshold1;
     }
 
     /**
      * @param backToNormalPercentageOfMemoryUsed setting the Threshold 2 of alarm clearing
      */
     public void setBackToNormalMemoryThreshold2(double backToNormalMemoryThreshold2) {
-        this.backToNormalMemoryThreshold[1] = backToNormalMemoryThreshold2;
-        if (logger.isInfoEnabled()) {
-            logger.info("MemoryCongestionMonitor: Back To Normal Memory threshold 2 set to " + backToNormalMemoryThreshold2 + "%");
+        if (Math.abs(this.backToNormalMemoryThreshold[1] - backToNormalMemoryThreshold2) > 0.001 && logger.isInfoEnabled()) {
+            logger.info("MemoryCongestionMonitor: Back To Normal Memory threshold 2 set to " + backToNormalMemoryThreshold2
+                    + "%");
         }
+        this.backToNormalMemoryThreshold[1] = backToNormalMemoryThreshold2;
     }
 
     /**
      * @param backToNormalPercentageOfMemoryUsed setting the Threshold 3 of alarm clearing
      */
     public void setBackToNormalMemoryThreshold3(double backToNormalMemoryThreshold3) {
-        this.backToNormalMemoryThreshold[2] = backToNormalMemoryThreshold3;
-        if (logger.isInfoEnabled()) {
-            logger.info("MemoryCongestionMonitor: Back To Normal Memory threshold 3 set to " + backToNormalMemoryThreshold3 + "%");
+        if (Math.abs(this.backToNormalMemoryThreshold[2] - backToNormalMemoryThreshold3) > 0.001 && logger.isInfoEnabled()) {
+            logger.info("MemoryCongestionMonitor: Back To Normal Memory threshold 3 set to " + backToNormalMemoryThreshold3
+                    + "%");
         }
+        this.backToNormalMemoryThreshold[2] = backToNormalMemoryThreshold3;
     }
 
     /**
@@ -97,30 +100,30 @@ public class MemoryCongestionMonitorImpl extends BaseCongestionMonitor implement
      * @param memoryThreshold the memoryThreshold the Threshold 1 to alarm set
      */
     public void setMemoryThreshold1(double memoryThreshold1) {
-        this.memoryThreshold[0] = memoryThreshold1;
-        if (logger.isInfoEnabled()) {
+        if (Math.abs(this.memoryThreshold[0] - memoryThreshold1) > 0.001 && logger.isInfoEnabled()) {
             logger.info("MemoryCongestionMonitor: Memory threshold 1 set to " + memoryThreshold1 + "%");
         }
+        this.memoryThreshold[0] = memoryThreshold1;
     }
 
     /**
      * @param memoryThreshold the memoryThreshold the Threshold 2 to alarm set
      */
     public void setMemoryThreshold2(double memoryThreshold2) {
-        this.memoryThreshold[1] = memoryThreshold2;
-        if (logger.isInfoEnabled()) {
+        if (Math.abs(this.memoryThreshold[1] - memoryThreshold2) > 0.001 && logger.isInfoEnabled()) {
             logger.info("MemoryCongestionMonitor: Memory threshold 2 set to " + memoryThreshold2 + "%");
         }
+        this.memoryThreshold[1] = memoryThreshold2;
     }
 
     /**
      * @param memoryThreshold the memoryThreshold the Threshold 3 to alarm set
      */
     public void setMemoryThreshold3(double memoryThreshold3) {
-        this.memoryThreshold[2] = memoryThreshold3;
-        if (logger.isInfoEnabled()) {
+        if (Math.abs(this.memoryThreshold[2] - memoryThreshold3) > 0.001 && logger.isInfoEnabled()) {
             logger.info("MemoryCongestionMonitor: Memory threshold 3 set to " + memoryThreshold3 + "%");
         }
+        this.memoryThreshold[2] = memoryThreshold3;
     }
 
     /**
