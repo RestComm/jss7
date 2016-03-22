@@ -55,7 +55,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
     // The count of threads that will be used for message delivering to
     // Mtp3UserPartListener's
     // For single thread model this value should be equal 1
-    protected int deliveryTransferMessageThreadCount = 1;
+    protected int deliveryTransferMessageThreadCount = Runtime.getRuntime().availableProcessors() * 2;
     // RoutingLabeFormat option
     private RoutingLabelFormat routingLabelFormat = RoutingLabelFormat.ITU;
     // If set to true, lowest bit of SLS is used for loadbalancing between Linkset else highest bit of SLS is used.
