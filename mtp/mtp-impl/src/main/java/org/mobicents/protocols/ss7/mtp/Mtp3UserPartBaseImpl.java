@@ -47,7 +47,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
     // Mtp3UserPartListener's
     // For single thread model this value should be equal 1
     // TODO: make it configurable
-    protected int deliveryTransferMessageThreadCount = 1;
+    protected int deliveryTransferMessageThreadCount = Runtime.getRuntime().availableProcessors() * 2;
 
     protected boolean isStarted = false;
 
