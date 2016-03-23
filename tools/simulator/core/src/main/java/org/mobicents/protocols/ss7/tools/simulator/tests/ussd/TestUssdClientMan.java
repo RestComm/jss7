@@ -1065,9 +1065,6 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
                 switch (curDialog.getApplicationContext().getApplicationContextVersion()) {
                 case version1:
                     Boolean mwdSet = null;
-//                    if (this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getSRIInformServiceCenter().intValue() == SRIInformServiceCenter.MWD_mnrf
-//                            || this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getSRIInformServiceCenter().intValue() == SRIInformServiceCenter.MWD_mcef_mnrf)
-//                        mwdSet = true;
                     mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageAbsentSubscriber(mwdSet);
                     break;
                 case version2:

@@ -27,12 +27,16 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
+import org.mobicents.protocols.ss7.map.api.errors.AbsentSubscriberDiagnosticSM;
+import org.mobicents.protocols.ss7.map.api.errors.CallBarringCause;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdFixedLength;
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdOrLAI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.NetworkResource;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobilityListener;
@@ -111,6 +115,7 @@ public class TestAtiServerMan extends TesterBase implements TestAtiServerManMBea
     private String currentRequestDef = "";
     private boolean needSendSend = false;
     private boolean needSendClose = false;
+    private int countErrSent = 0;
 
     public TestAtiServerMan() {
         super(SOURCE_NAME);
@@ -136,6 +141,29 @@ public class TestAtiServerMan extends TesterBase implements TestAtiServerManMBea
     }
 
     @Override
+    public ATIReaction getATIReaction() {
+        return this.testerHost.getConfigurationData().getTestAtiServerConfigurationData().getATIReaction();
+    }
+
+    @Override
+    public String getATIReaction_Value() {
+        return this.testerHost.getConfigurationData().getTestAtiServerConfigurationData().getATIReaction().toString();
+    }
+
+    @Override
+    public void setATIReaction(ATIReaction val) {
+        this.testerHost.getConfigurationData().getTestAtiServerConfigurationData().setATIReaction(val);
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public void putATIReaction(String val) {
+        ATIReaction x = ATIReaction.createInstance(val);
+        if (x != null)
+            this.setATIReaction(x);
+    }
+
+    @Override
     public String getState() {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
@@ -145,6 +173,8 @@ public class TestAtiServerMan extends TesterBase implements TestAtiServerManMBea
         sb.append(countAtiReq);
         sb.append(", countAtiResp-");
         sb.append(countAtiResp);
+        sb.append(", countErrSent-");
+        sb.append(countErrSent);
         sb.append("</html>");
         return sb.toString();
     }
@@ -152,6 +182,7 @@ public class TestAtiServerMan extends TesterBase implements TestAtiServerManMBea
     public boolean start() {
         this.countAtiReq = 0;
         this.countAtiResp = 0;
+        this.countErrSent = 0;
 
         MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
         mapProvider.getMAPServiceMobility().acivate();
@@ -192,94 +223,133 @@ public class TestAtiServerMan extends TesterBase implements TestAtiServerManMBea
 
         RequestedInfo ri = ind.getRequestedInfo();
         try {
-            LocationInformation locationInformation = null;
-            LocationInformationGPRS locationInformationGPRS = null;
-            if (ri.getLocationInformation()) {
-                if (ri.getCurrentLocation()) {
-                    // TODO: process this if needed
-                }
-                int ageOfLocationInformation = 5;
-                CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI = null;
-                GeographicalInformation geographicalInformation = mapProvider.getMAPParameterFactory().createGeographicalInformation(55.55, 44.44, 0.01);
-                boolean saiPresent = false;
-                GeodeticInformation geodeticInformation = null;
-                boolean currentLocationRetrieved = false;
-                if (ri.getRequestedDomain() == null || ri.getRequestedDomain() == DomainType.csDomain) {
-                    ISDNAddressString vlrNumber = mapProvider.getMAPParameterFactory().createISDNAddressString(AddressNature.international_number,
-                            NumberingPlan.ISDN, "5555555666");
-                    LocationNumberMap locationNumber = null;
-                    LSAIdentity selectedLSAId = null;
-                    ISDNAddressString mscNumber = null;
-                    LocationInformationEPS locationInformationEPS = null;
-                    UserCSGInformation userCSGInformation = null;
+            ATIReaction atiReaction = this.testerHost.getConfigurationData().getTestAtiServerConfigurationData()
+                    .getATIReaction();
 
-                    int mcc = 250;
-                    int mnc = 1;
-                    int lac = 32000;
-                    int cellId = 221;
-                    CellGlobalIdOrServiceAreaIdFixedLength cellGlobalIdOrServiceAreaIdFixedLength = mapProvider.getMAPParameterFactory()
-                            .createCellGlobalIdOrServiceAreaIdFixedLength(mcc, mnc, lac, cellId);
-                    cellGlobalIdOrServiceAreaIdOrLAI = mapProvider.getMAPParameterFactory().createCellGlobalIdOrServiceAreaIdOrLAI(
-                            cellGlobalIdOrServiceAreaIdFixedLength);
-                    locationInformation = mapProvider.getMAPParameterFactory().createLocationInformation(ageOfLocationInformation, geographicalInformation,
-                            vlrNumber, locationNumber, cellGlobalIdOrServiceAreaIdOrLAI, null, selectedLSAId, mscNumber, geodeticInformation,
-                            currentLocationRetrieved, saiPresent, locationInformationEPS, userCSGInformation);
-                } else {
-                    RAIdentity routeingAreaIdentity = null;
-                    ISDNAddressString sgsnNumber = mapProvider.getMAPParameterFactory().createISDNAddressString(AddressNature.international_number,
-                            NumberingPlan.ISDN, "5555555777");
-                    LSAIdentity selectedLSAIdentity = null;
-                    locationInformationGPRS = mapProvider.getMAPParameterFactory().createLocationInformationGPRS(cellGlobalIdOrServiceAreaIdOrLAI,
-                            routeingAreaIdentity, geographicalInformation, sgsnNumber, selectedLSAIdentity, null, saiPresent, geodeticInformation,
-                            currentLocationRetrieved, ageOfLocationInformation);
-                }
-            }
-            SubscriberState subscriberState = null;
-            PSSubscriberState psSubscriberState = null;
-            if (ri.getSubscriberState()) {
-                // if
-                // (this.testerHost.getConfigurationData().getTestAtiServerConfigurationData().getAtiServerType().intValue()
-                // == AtiServerType.VALUE_VLR) {
-                if (ri.getRequestedDomain() == null || ri.getRequestedDomain() == DomainType.csDomain) {
-                    subscriberState = mapProvider.getMAPParameterFactory().createSubscriberState(SubscriberStateChoice.assumedIdle, null);
-                } else {
-                    psSubscriberState = mapProvider.getMAPParameterFactory().createPSSubscriberState(PSSubscriberStateChoice.psDetached, null, null);
-                }
-            }
-            IMEI imei = null;
-            if (ri.getImei()) {
-                imei = mapProvider.getMAPParameterFactory().createIMEI("123456789012345");
-            }
-            MSClassmark2 msClassmark2 = null;
-            GPRSMSClass gprsMSClass = null;
-            if (ri.getMsClassmark()) {
-                // TODO: implement classmark for GSM and GPRS
-                if (ri.getRequestedDomain() == null || ri.getRequestedDomain() == DomainType.csDomain) {
-                    // msClassmark2 =
-                    // mapProvider.getMAPParameterFactory().createMSClassmark2(data);
-                } else {
-                    // gprsMSClass =
-                    // mapProvider.getMAPParameterFactory().createGPRSMSClass(mSNetworkCapability,
-                    // mSRadioAccessCapability);
-                }
-            }
-            MNPInfoRes mnpInfoRes = null;
-            if (ri.getMnpRequestedInfo()) {
-                RouteingNumber routeingNumber = mapProvider.getMAPParameterFactory().createRouteingNumber("5555555888");
-                IMSI imsi = null;
-                ISDNAddressString msisdn = null;
-                NumberPortabilityStatus numberPortabilityStatus = null;
-                mnpInfoRes = mapProvider.getMAPParameterFactory().createMNPInfoRes(routeingNumber, imsi, msisdn, numberPortabilityStatus, null);
-            }
+            switch (atiReaction.intValue()) {
+                case ATIReaction.VAL_RETURN_SUCCESS:
+                    LocationInformation locationInformation = null;
+                    LocationInformationGPRS locationInformationGPRS = null;
+                    if (ri.getLocationInformation()) {
+                        if (ri.getCurrentLocation()) {
+                            // TODO: process this if needed
+                        }
+                        int ageOfLocationInformation = 5;
+                        CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI = null;
+                        GeographicalInformation geographicalInformation = mapProvider.getMAPParameterFactory().createGeographicalInformation(55.55, 44.44, 0.01);
+                        boolean saiPresent = false;
+                        GeodeticInformation geodeticInformation = null;
+                        boolean currentLocationRetrieved = false;
+                        if (ri.getRequestedDomain() == null || ri.getRequestedDomain() == DomainType.csDomain) {
+                            ISDNAddressString vlrNumber = mapProvider.getMAPParameterFactory().createISDNAddressString(AddressNature.international_number,
+                                    NumberingPlan.ISDN, "5555555666");
+                            LocationNumberMap locationNumber = null;
+                            LSAIdentity selectedLSAId = null;
+                            ISDNAddressString mscNumber = null;
+                            LocationInformationEPS locationInformationEPS = null;
+                            UserCSGInformation userCSGInformation = null;
 
-            SubscriberInfo subscriberInfo = mapProvider.getMAPParameterFactory().createSubscriberInfo(locationInformation, subscriberState, null,
-                    locationInformationGPRS, psSubscriberState, imei, msClassmark2, gprsMSClass, mnpInfoRes);
+                            int mcc = 250;
+                            int mnc = 1;
+                            int lac = 32000;
+                            int cellId = 221;
+                            CellGlobalIdOrServiceAreaIdFixedLength cellGlobalIdOrServiceAreaIdFixedLength = mapProvider.getMAPParameterFactory()
+                                    .createCellGlobalIdOrServiceAreaIdFixedLength(mcc, mnc, lac, cellId);
+                            cellGlobalIdOrServiceAreaIdOrLAI = mapProvider.getMAPParameterFactory().createCellGlobalIdOrServiceAreaIdOrLAI(
+                                    cellGlobalIdOrServiceAreaIdFixedLength);
+                            locationInformation = mapProvider.getMAPParameterFactory().createLocationInformation(ageOfLocationInformation, geographicalInformation,
+                                    vlrNumber, locationNumber, cellGlobalIdOrServiceAreaIdOrLAI, null, selectedLSAId, mscNumber, geodeticInformation,
+                                    currentLocationRetrieved, saiPresent, locationInformationEPS, userCSGInformation);
+                        } else {
+                            RAIdentity routeingAreaIdentity = null;
+                            ISDNAddressString sgsnNumber = mapProvider.getMAPParameterFactory().createISDNAddressString(AddressNature.international_number,
+                                    NumberingPlan.ISDN, "5555555777");
+                            LSAIdentity selectedLSAIdentity = null;
+                            locationInformationGPRS = mapProvider.getMAPParameterFactory().createLocationInformationGPRS(cellGlobalIdOrServiceAreaIdOrLAI,
+                                    routeingAreaIdentity, geographicalInformation, sgsnNumber, selectedLSAIdentity, null, saiPresent, geodeticInformation,
+                                    currentLocationRetrieved, ageOfLocationInformation);
+                        }
+                    }
+                    SubscriberState subscriberState = null;
+                    PSSubscriberState psSubscriberState = null;
+                    if (ri.getSubscriberState()) {
+                        // if
+                        // (this.testerHost.getConfigurationData().getTestAtiServerConfigurationData().getAtiServerType().intValue()
+                        // == AtiServerType.VALUE_VLR) {
+                        if (ri.getRequestedDomain() == null || ri.getRequestedDomain() == DomainType.csDomain) {
+                            subscriberState = mapProvider.getMAPParameterFactory().createSubscriberState(SubscriberStateChoice.assumedIdle, null);
+                        } else {
+                            psSubscriberState = mapProvider.getMAPParameterFactory().createPSSubscriberState(PSSubscriberStateChoice.psDetached, null, null);
+                        }
+                    }
+                    IMEI imei = null;
+                    if (ri.getImei()) {
+                        imei = mapProvider.getMAPParameterFactory().createIMEI("123456789012345");
+                    }
+                    MSClassmark2 msClassmark2 = null;
+                    GPRSMSClass gprsMSClass = null;
+                    if (ri.getMsClassmark()) {
+                        // TODO: implement classmark for GSM and GPRS
+                        if (ri.getRequestedDomain() == null || ri.getRequestedDomain() == DomainType.csDomain) {
+                            // msClassmark2 =
+                            // mapProvider.getMAPParameterFactory().createMSClassmark2(data);
+                        } else {
+                            // gprsMSClass =
+                            // mapProvider.getMAPParameterFactory().createGPRSMSClass(mSNetworkCapability,
+                            // mSRadioAccessCapability);
+                        }
+                    }
+                    MNPInfoRes mnpInfoRes = null;
+                    if (ri.getMnpRequestedInfo()) {
+                        RouteingNumber routeingNumber = mapProvider.getMAPParameterFactory().createRouteingNumber("5555555888");
+                        IMSI imsi = null;
+                        ISDNAddressString msisdn = null;
+                        NumberPortabilityStatus numberPortabilityStatus = null;
+                        mnpInfoRes = mapProvider.getMAPParameterFactory().createMNPInfoRes(routeingNumber, imsi, msisdn, numberPortabilityStatus, null);
+                    }
 
-            curDialog.addAnyTimeInterrogationResponse(invokeId, subscriberInfo, null);
+                    SubscriberInfo subscriberInfo = mapProvider.getMAPParameterFactory().createSubscriberInfo(locationInformation, subscriberState, null,
+                            locationInformationGPRS, psSubscriberState, imei, msClassmark2, gprsMSClass, mnpInfoRes);
 
-            this.countAtiResp++;
-            uData = this.createAtiRespData(curDialog.getLocalDialogId());
-            this.testerHost.sendNotif(SOURCE_NAME, "Sent: atiResp", uData, Level.DEBUG);
+                    curDialog.addAnyTimeInterrogationResponse(invokeId, subscriberInfo, null);
+
+                    this.countAtiResp++;
+                    uData = this.createAtiRespData(curDialog.getLocalDialogId());
+                    this.testerHost.sendNotif(SOURCE_NAME, "Sent: atiResp", uData, Level.DEBUG);
+                    break;
+
+                case ATIReaction.VAL_ERROR_ABSENT_SUBSCRIBER:
+                    MAPErrorMessage mapErrorMessage = null;
+                    mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageAbsentSubscriberSM(
+                            AbsentSubscriberDiagnosticSM.IMSIDetached, null, null);
+
+                    curDialog.sendErrorComponent(invokeId, mapErrorMessage);
+
+                    this.countErrSent++;
+                    uData = this.createErrorData(curDialog.getLocalDialogId(), (int) invokeId, mapErrorMessage);
+                    this.testerHost.sendNotif(SOURCE_NAME, "Sent: errAbsSubs", uData, Level.DEBUG);
+                    break;
+
+                case ATIReaction.VAL_ERROR_CALL_BARRED:
+                    mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageCallBarred(
+                            (long) curDialog.getApplicationContext().getApplicationContextVersion().getVersion(), CallBarringCause.operatorBarring, null, null);
+                    curDialog.sendErrorComponent(invokeId, mapErrorMessage);
+
+                    this.countErrSent++;
+                    uData = this.createErrorData(curDialog.getLocalDialogId(), (int) invokeId, mapErrorMessage);
+                    this.testerHost.sendNotif(SOURCE_NAME, "Sent: errCallBarr", uData, Level.DEBUG);
+                    break;
+
+                case ATIReaction.VAL_ERROR_SYSTEM_FAILURE:
+                    mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageSystemFailure(
+                            (long) curDialog.getApplicationContext().getApplicationContextVersion().getVersion(), NetworkResource.hlr, null, null);
+                    curDialog.sendErrorComponent(invokeId, mapErrorMessage);
+
+                    this.countErrSent++;
+                    uData = this.createErrorData(curDialog.getLocalDialogId(), (int) invokeId, mapErrorMessage);
+                    this.testerHost.sendNotif(SOURCE_NAME, "Sent: errSysFail", uData, Level.DEBUG);
+                    break;
+            }
 
             this.needSendClose = true;
 
@@ -307,6 +377,18 @@ public class TestAtiServerMan extends TesterBase implements TestAtiServerManMBea
         StringBuilder sb = new StringBuilder();
         sb.append("dialogId=");
         sb.append(dialogId);
+        return sb.toString();
+    }
+
+    private String createErrorData(long dialogId, int invokeId, MAPErrorMessage mapErrorMessage) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("dialogId=");
+        sb.append(dialogId);
+        sb.append(",\n invokeId=");
+        sb.append(invokeId);
+        sb.append(",\n mapErrorMessage=");
+        sb.append(mapErrorMessage);
+        sb.append(",\n");
         return sb.toString();
     }
 

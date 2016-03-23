@@ -44,9 +44,8 @@ public class TestAtiServerStandardManMBean extends StandardMBean {
     public MBeanInfo getMBeanInfo() {
 
         MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[] {
-//                new MBeanAttributeInfo("AtiServerType", AtiServerType.class.getName(), "ATI server type - VLR or SGSN", true, true, false),
-//                new MBeanAttributeInfo("AtiServerType_Value", String.class.getName(), "ATI server type - VLR or SGSN", true, false, false),
-                };
+                new MBeanAttributeInfo("ATIReaction", ATIReaction.class.getName(), "ATI response type", true, true, false),
+                new MBeanAttributeInfo("ATIReaction_Value", String.class.getName(), "ATI response type", true, false, false), };
 
         MBeanParameterInfo[] signString = new MBeanParameterInfo[] { new MBeanParameterInfo("val", String.class.getName(), "Index number or value") };
 
@@ -57,7 +56,9 @@ public class TestAtiServerStandardManMBean extends StandardMBean {
 //                new MBeanOperationInfo("performAtiRequest", "Send ATI request", performATIParam, String.class.getName(), MBeanOperationInfo.ACTION),
 //                new MBeanOperationInfo("closeCurrentDialog", "Closing the current dialog", null, String.class.getName(), MBeanOperationInfo.ACTION),
 
-//        new MBeanOperationInfo("putAtiServerType", "ATI server type: 1:VLR,2:SGSN", signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
+                new MBeanOperationInfo("putATIReaction", "ATI response type: "
+                        + "1:ReturnSuccess,3:ReturnSystemFailureError,4:ReturnCallBarredError,5:ReturnAbsentSubscriberError",
+                        signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
                 };
 
         return new MBeanInfo(TestAtiServerMan.class.getName(), "AtiServer test parameters management", attributes, null, operations, null);
