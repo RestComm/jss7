@@ -29,14 +29,14 @@ package org.mobicents.protocols.ss7.tools.simulator.tests.ati;
 */
 public interface TestAtiServerManMBean {
 
-//    AtiServerType getAtiServerType();
-//
-//    String getAtiServerType_Value();
-//
-//    void setAtiServerType(AtiServerType val);
-//
-//
-//    void putAtiServerType(String val);
+    ATIReaction getATIReaction();
+
+    String getATIReaction_Value();
+
+    void setATIReaction(ATIReaction val);
+
+
+    void putATIReaction(String val);
 
 
     String getCurrentRequestDef();

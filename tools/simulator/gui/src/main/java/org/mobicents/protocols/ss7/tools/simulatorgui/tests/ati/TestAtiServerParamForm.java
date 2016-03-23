@@ -25,10 +25,17 @@ package org.mobicents.protocols.ss7.tools.simulatorgui.tests.ati;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
+import org.mobicents.protocols.ss7.tools.simulator.tests.ati.ATIReaction;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ati.TestAtiServerManMBean;
+import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
+
 import javax.swing.JButton;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
+import javax.swing.JLabel;
+import javax.swing.JComboBox;
 
 /**
  *
@@ -40,6 +47,8 @@ public class TestAtiServerParamForm extends JDialog {
     private static final long serialVersionUID = -6495066621733616114L;
 
     private TestAtiServerManMBean atiServer;
+
+    private JComboBox cbATIReaction = new JComboBox();
 
     public TestAtiServerParamForm(JFrame owner) {
         super(owner, true);
@@ -96,6 +105,14 @@ public class TestAtiServerParamForm extends JDialog {
         });
         button_4.setBounds(10, 157, 144, 23);
         getContentPane().add(button_4);
+        
+        JLabel lblReactionForAti = new JLabel("Reaction for ATI request");
+        lblReactionForAti.setBounds(10, 14, 290, 14);
+        getContentPane().add(lblReactionForAti);
+        
+        cbATIReaction = new JComboBox();
+        cbATIReaction.setBounds(310, 11, 309, 20);
+        getContentPane().add(cbATIReaction);
     }
 
     public void setData(TestAtiServerManMBean atiServer) {
@@ -109,9 +126,11 @@ public class TestAtiServerParamForm extends JDialog {
     }
 
     private void reloadData() {
+        M3uaForm.setEnumeratedBaseComboBox(cbATIReaction, this.atiServer.getATIReaction());
     }
 
     private void loadDataA() {
+        M3uaForm.setEnumeratedBaseComboBox(cbATIReaction, new ATIReaction(ATIReaction.VAL_RETURN_SUCCESS));
     }
 
     private void loadDataB() {
@@ -119,8 +138,8 @@ public class TestAtiServerParamForm extends JDialog {
     }
 
     private boolean saveData() {
+        this.atiServer.setATIReaction((ATIReaction) cbATIReaction.getSelectedItem());
 
         return true;
     }
-
 }

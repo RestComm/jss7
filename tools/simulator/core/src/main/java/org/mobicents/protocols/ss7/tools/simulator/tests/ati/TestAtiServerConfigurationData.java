@@ -32,27 +32,28 @@ import javolution.xml.stream.XMLStreamException;
 */
 public class TestAtiServerConfigurationData {
 
-//    protected static final String ATI_SERVER_TYPE = "atiServerType";
-//
-//    private AtiServerType atiServerType = new AtiServerType(AtiServerType.VALUE_VLR);
-//
-//    public AtiServerType getAtiServerType() {
-//        return atiServerType;
-//    }
-//
-//    public void setAtiServerType(AtiServerType atiServerType) {
-//        this.atiServerType = atiServerType;
-//    }
+    protected static final String ATI_REACTION = "atiReaction";
 
-    protected static final XMLFormat<TestAtiServerConfigurationData> XML = new XMLFormat<TestAtiServerConfigurationData>(TestAtiServerConfigurationData.class) {
+    protected ATIReaction atiReaction = new ATIReaction(ATIReaction.VAL_RETURN_SUCCESS);
+
+    public ATIReaction getATIReaction() {
+        return atiReaction;
+    }
+
+    public void setATIReaction(ATIReaction val) {
+        atiReaction = val;
+    }
+
+    protected static final XMLFormat<TestAtiServerConfigurationData> XML = new XMLFormat<TestAtiServerConfigurationData>(
+            TestAtiServerConfigurationData.class) {
 
         public void write(TestAtiServerConfigurationData clt, OutputElement xml) throws XMLStreamException {
-//            xml.add(clt.atiServerType.toString(), ATI_SERVER_TYPE, String.class);
+            xml.add(clt.atiReaction.toString(), ATI_REACTION, String.class);
         }
 
         public void read(InputElement xml, TestAtiServerConfigurationData clt) throws XMLStreamException {
-//            String ast = (String) xml.get(ATI_SERVER_TYPE, String.class);
-//            clt.atiServerType = new AtiServerType(ast);
+            String sriR = (String) xml.get(ATI_REACTION, String.class);
+            clt.atiReaction = ATIReaction.createInstance(sriR);
         }
     };
 
