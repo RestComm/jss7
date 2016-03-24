@@ -37,8 +37,8 @@ public class ATIReaction extends EnumeratedBase {
 
     public static final int VAL_RETURN_SUCCESS = 1;
     public static final int VAL_ERROR_SYSTEM_FAILURE = 3;
-    public static final int VAL_ERROR_CALL_BARRED = 4;
-    public static final int VAL_ERROR_ABSENT_SUBSCRIBER = 5;
+    public static final int VAL_DATA_MISSING = 4;
+    public static final int VAL_ERROR_UNKNOWN_SUBSCRIBER = 5;
 
     private static Hashtable<String, Integer> stringMap = new Hashtable<String, Integer>();
     private static Hashtable<Integer, String> intMap = new Hashtable<Integer, String>();
@@ -46,13 +46,13 @@ public class ATIReaction extends EnumeratedBase {
     static {
         intMap.put(VAL_RETURN_SUCCESS, "Return success");
         intMap.put(VAL_ERROR_SYSTEM_FAILURE, "Return error system failure");
-        intMap.put(VAL_ERROR_CALL_BARRED, "Return error call barred");
-        intMap.put(VAL_ERROR_ABSENT_SUBSCRIBER, "Return error absent subscriber");
+        intMap.put(VAL_DATA_MISSING, "Return error data missing");
+        intMap.put(VAL_ERROR_UNKNOWN_SUBSCRIBER, "Return error unknown subscriber");
 
         stringMap.put("Return success", VAL_RETURN_SUCCESS);
         stringMap.put("Return error system failure", VAL_ERROR_SYSTEM_FAILURE);
-        stringMap.put("Return error call barred", VAL_ERROR_CALL_BARRED);
-        stringMap.put("Return error absent subscriber", VAL_ERROR_ABSENT_SUBSCRIBER);
+        stringMap.put("Return error data missing", VAL_DATA_MISSING);
+        stringMap.put("Return error unknown subscriber", VAL_ERROR_UNKNOWN_SUBSCRIBER);
     }
 
     public ATIReaction() {
