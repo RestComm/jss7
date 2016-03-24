@@ -27,9 +27,9 @@ import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
-import org.mobicents.protocols.ss7.map.api.errors.AbsentSubscriberDiagnosticSM;
-import org.mobicents.protocols.ss7.map.api.errors.CallBarringCause;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorCode;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.errors.UnknownSubscriberDiagnostic;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdFixedLength;
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdOrLAI;
@@ -318,26 +318,32 @@ public class TestAtiServerMan extends TesterBase implements TestAtiServerManMBea
                     this.testerHost.sendNotif(SOURCE_NAME, "Sent: atiResp", uData, Level.DEBUG);
                     break;
 
-                case ATIReaction.VAL_ERROR_ABSENT_SUBSCRIBER:
+                case ATIReaction.VAL_ERROR_UNKNOWN_SUBSCRIBER:
                     MAPErrorMessage mapErrorMessage = null;
-                    mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageAbsentSubscriberSM(
-                            AbsentSubscriberDiagnosticSM.IMSIDetached, null, null);
+
+                    // MAPUserAbortChoice mapUserAbortChoice = new MAPUserAbortChoiceImpl();
+                    // mapUserAbortChoice.setProcedureCancellationReason(ProcedureCancellationReason.handoverCancellation);
+                    // curDialog.abort(mapUserAbortChoice);
+                    // return;
+
+                    mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageUnknownSubscriber(null,
+                            UnknownSubscriberDiagnostic.imsiUnknown);
 
                     curDialog.sendErrorComponent(invokeId, mapErrorMessage);
 
                     this.countErrSent++;
                     uData = this.createErrorData(curDialog.getLocalDialogId(), (int) invokeId, mapErrorMessage);
-                    this.testerHost.sendNotif(SOURCE_NAME, "Sent: errAbsSubs", uData, Level.DEBUG);
+                    this.testerHost.sendNotif(SOURCE_NAME, "Sent: errUnknSubs", uData, Level.DEBUG);
                     break;
 
-                case ATIReaction.VAL_ERROR_CALL_BARRED:
-                    mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageCallBarred(
-                            (long) curDialog.getApplicationContext().getApplicationContextVersion().getVersion(), CallBarringCause.operatorBarring, null, null);
+                case ATIReaction.VAL_DATA_MISSING:
+                    mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageExtensionContainer(
+                            (long) MAPErrorCode.dataMissing, null);
                     curDialog.sendErrorComponent(invokeId, mapErrorMessage);
 
                     this.countErrSent++;
                     uData = this.createErrorData(curDialog.getLocalDialogId(), (int) invokeId, mapErrorMessage);
-                    this.testerHost.sendNotif(SOURCE_NAME, "Sent: errCallBarr", uData, Level.DEBUG);
+                    this.testerHost.sendNotif(SOURCE_NAME, "Sent: errDataMissing", uData, Level.DEBUG);
                     break;
 
                 case ATIReaction.VAL_ERROR_SYSTEM_FAILURE:
