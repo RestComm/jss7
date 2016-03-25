@@ -1,0 +1,20 @@
+[[_design_multitenancy]]
+= Multi tenancy support
+
+Multi tenancy allows same instance of {this-platform} {this-application} to connect to different operators, each having its own  links and point-codes. 
+
+Multi tenancy is achieved by having a model of SS7 network as a splitted to several logical networks.
+Each logical network has a corresponded key "networkId". It is digital one and default value (if we do not specify it) - 0.
+ 
+
+NetworkId value is assigned for a configurable objects: 
+
+* SCCP SAP
+* SCCP Rule        
+
+NetworkId is also assigned to activities: 
+
+* SccpMessage (assigned by Service Acess Point - SAP for SS7 originated messages, assigned by TCAP Dialog for TCAP originated messages)
+* TCAP Dialog (assigned by SccpMessage for SCCP originated messages, assigned by upper Dialog for user messages)
+* MAP / CAP Dialog (same as TCAP Dialog)
+* SCCP rule is taken into account only when SCCP rule networkId == SccpMessage networkId        

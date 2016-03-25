@@ -1,0 +1,1028 @@
+
+[[_shell_sccp_management]]
+= SCCP Management Commands
+
+SCCP provides connectionless and connection-oriented network services.
+This includes address(GTT) translation and routing, flow control segmentation and reassembly.
+ 
+
+A global title is an address (e.g., a dialed 800 number, calling card number, or mobile subscriber identification number) which is translated by SCCP into a destination point code and subsystem number.
+A subsystem number uniquely identifies an application at the destination signaling point.  is used as the transport layer for 			-based services 
+
+The first step for SCCP configuring is a service access points (sap) definition.
+This step is mandatory.
+Each SCCP stack can use one or more Mtp3UserPart (Refer <<_configuring_sccp>> about Mtp3UserPart setting). A sap is a logical definition of the Mtp3UserPart (corresponded local SPC, network indicator (NI) and a set of destinations (remote SPC list)). The index of a sap must correspont to the index of the sap.
+ 
+
+The second step is a definition of a list of available remote signaling pointcodes (SPC - rsp) and  a list of available remote Sub-Systems (SNN - rss). This step is also mandatory.
+If routing only by GlobalTytle is used the remote Sub-Systems configuring is not required. 
+
+As  acts as message router, it requires means to configure routing information.
+Rules (rule), primary (primary_add) and backup (backup_add) (if backup addresses are available) addresses should be configured. 
+
+If XUDT and LUDT messages are availavle in the SS7 network, user should config a set of long message rules (lmr) that will allow long messages.
+This step is not mandatory.
+If no long message rule is configured only UDT messages will be used. 
+
+The last step is also optional.
+A user can configure a set of concerned signaling point codes (csp). Each point code will be announced when local SCCP user becomes (un)available. 
+
+User can also configure general SCCP parameters (Refer <<_shell_sccp_param>> about general parameters setting). 
+
+[[_sap_management]]
+== Service access points and destinations management
+
+SCCP service access points (sap) and destinations (dest)  are managed by `sccp sap` and `sccp dest` commands.
+They allows to perform following:
+
+* `sccp sap create`
+* `sccp sap modify`
+* `sccp sap delete`
+* `sccp sap show`
+* `sccp dest create`
+* `sccp dest modify`
+* `sccp dest delete`
+* `sccp dest show`
+
+[[_shell_sccpsap_create]]
+=== Create service access point
+
+Sap can be created by issuing command with following structure:
+
+[source]
+----
+sccp sap create <id> <mtp3-id> <opc> <ni>
+----
+
+<id>::
+  A unique number to identify this sap
+
+<mtp3-id>::
+  A Mtp3UserPart index that is used as an index of mtp3UserPart property for SccpStack bean.
+  Refer to <<_configuring_sccp>> for details.
+  For each Mtp3UserPart a sap must be configured.
+
+<opc>::
+  Specifies the local signaling point code.
+
+<ni>::
+  Specifies the network indicator that forms  the part of service information octet (SIO)
+
+For each of sap one or more destinations should be configured.
+Refer to <<_shell_sccpdest_create>> for details.
+
+.SCCP sap creation
+====
+----
+
+telscale(10.65.208.215:3435)>sccp sap create 1 1 101 2 
+telscale(10.65.208.215:3435)>sccp sap create 2 2 102 2
+----
+====
+
+[[_shell_sccpsap_modify]]
+=== Modify existing sap
+
+Sap can be modified by issuing command with following structure:
+
+[source]
+----
+sccp sap modify <id> <mtp3-id> <opc> <ni>
+----
+
+Meaning of parameters is the same.
+
+[[_shell_sccp_sap_delete]]
+=== Delete SCCP service access point
+
+SCCP sap can be deleted by issuing command with following structure:
+
+[source]
+----
+sccp sap delete <id>
+----
+
+Where:
+
+<id>::
+  is id set during sap creation
+
+.SCCP sap Removal
+====
+----
+
+telscale(10.65.208.215:3435)>sccp sap delete 1
+Service access point successfully removed
+----
+====
+
+[[_shell_sccp_sap_show]]
+=== Show SCCP service access point
+
+Saps can be viewed by issuing command with following structure:
+
+[source]
+----
+sccp sap show <id>
+----
+
+Where:
+
+<id>::
+  id is optional.
+  If passed only sap matching the id will be shown, else all the saps will be shown
+
+[[_shell_sccpdest_create]]
+=== Create destination for service access point
+
+Destination can be created by issuing command with following structure:
+
+[source]
+----
+sccp dest create <sap-id> <id> <first-dpc> <last-dpc> <first-sls> <last-sls> <sls-mask>
+----
+
+<sap-id>::
+  An identifier of the sap for which the destination is being created
+
+<id>::
+  A number to identify this destination.
+  The number must be unique for each sap.
+
+<first-dpc>::
+  Specifies the first value of the remote signaling point codes range.
+
+<last-dpc>::
+  Specifies the last value of the remote signaling point codes range.
+  If destination specifies a single signaling point code, this value must be equal first-dpc
+
+<first-sls>::
+  Specifies the first value of the SLS range.
+
+<last-sls>::
+  Specifies the last value of the SLS range.
+
+<sls-mask>::
+  Specifies the mask value.
+  SLS af a message will be exposed by bitwise AND operation with this mask  before comparing with first-sls and last-sls valuers.
+
+SLS value range is from 0 to 255.
+If the destination cover all possible SLS's use first-sls=0, last-sls=255, sls-mask=255
+
+.SCCP destination creation
+====
+----
+
+telscale(10.65.208.215:3435)>sccp dest create 1 1 201 201 0 7 7 
+telscale(10.65.208.215:3435)>sccp dest create 2 1 300 399 0 255 255
+----
+====
+
+[[_shell_sccpdest_modify]]
+=== Modify existing destination for service access point
+
+Destination can be modified by issuing command with following structure:
+
+[source]
+----
+sccp dest modify <sap-id> <id> <first-dpc> <last-dpc> <first-sls> <last-sls> <sls-mask>
+----
+
+Meaning of parameters is the same.
+
+[[_shell_sccp_dest_delete]]
+=== Delete SCCP destination for service access point
+
+SCCP destination can be deleted by issuing command with following structure:
+
+[source]
+----
+sccp dest delete <sap-id> <id>
+----
+
+Where:
+
+<sap-id>::
+  An identifier of the sap for which the destination has been created
+
+<id>::
+  is id set during destination creation
+
+.SCCP destination Removal
+====
+----
+
+telscale(10.65.208.215:3435)>sccp destination delete 1 1
+Destination definition successfully deleted
+----
+====
+
+[[_shell_sccp_dest_show]]
+=== Show SCCP destination for service access point
+
+Destinations can be viewed by issuing command with following structure:
+
+[source]
+----
+sccp dest show <sap-id> <id>
+----
+
+Where:
+
+<sap-id>::
+  An identifier of the sap for which the destination has been created
+
+<id>::
+  id is optional.
+  If passed only destination matching the id will be shown, else all destinations of the saps will be shown
+
+== Rule Management
+
+SCCP routing rules are managed by `sccp rule` command.
+It allows to perform following:
+
+* `sccp rule create`
+* `sccp rule modify`
+* `sccp rule delete`
+* `sccp rule show`
+
+[[_shell_sccprule_create]]
+=== Create Rule
+
+A Rule can be created by issuing command with following structure:
+
+[source]
+----
+
+sccp rule create <id> <mask> <address-indicator> <point-code> <subsystem-number> <translation-type> <numbering-plan>  
+<nature-of-address-indicator> <digits> <ruleType> <primary-address-id> <backup-address-id> <loadsharing-algorithm>
+----
+
+This command should be specified after `primary_add` and `backup_add` are configured.
+Please refer  <<_address_management>> on how to configure `primary_add` and `backup_add`
+
+<id>::
+  A unique number to identify this rule
+
+<mask>::
+  mask defines which part of the originally dialed digits remains in the translated digits and which part  is replaced by the digits from primary or backup address.
+  mask is divided into sections by separator /. The number of sections in mask should be equal to sections in digits passed in this command and sections in primary or backup address						 
+
+<address-indicator>::
+  The address indicator is the first field in SCCP Party Address(called/calling) and is one octet in length.
+  Its function is to indicate which information elements are present so that the address can be interpreted, in other words, it indicates the type of addressing information that is to be found in the address field.
+  The addressing information from original global title is then compared with passed address information to match the rule.
+   
+
+<point-code>::
+  Point code.
+  This is ignored if bit 0 of address-indicator is not set.
+   
+
+<subsystem-number>::
+  Subsystem Number.
+  This is ignored if bit 1 of address-indicator is not set.
+   
+
+<translation-type>::
+  Translation type.
+  This is ignored if GT Indicator is 0000 or 0001
+
+<numbering-plan>::
+  The Number Plan (NP) field specifies the numbering plan that the address information follows.
+  This is ignored if GT Indicator is 0000, 0001 or 0010
+
+<nature-of-address-indicator>::
+  The Nature of Address Indicator (NAI) field defines the address range for a specific numbering plan.
+  This is only used if GT Indicator is 0100
+
+<digits>::
+  Specifies the string of digits divided into subsections using separator '/' depending on if mask contains separator.
+  The dialed digits should match with theses digits as per rule specified bellow
+
+<ruleType>::
+  Rule type.
+  One of following values is possible.
+
+<primary-address-id>::
+  Identifies the SCCP Address used as the primary translation
+
+<backup-address-id>::
+  Identifies the SCCP Address used as the backup translation in case if pointcode specified by primary address is not available.
+  Backup address is optional and is used only with dominant and loadshared address types
+
+<loadsharing-algorithm>::
+  This parameter is mandatory only if <ruleType> parameter is "loadshared". 						Loadsharing algorithm is configured here.
+  Possible values of the parameter: 						 
+
+.SCCP Rule creation
+====
+----
+
+telscale(10.65.208.215:3435)>sccp rule create 1 R 71 2 8 0 0 3 123456789 solitary 1 
+telscale(10.65.208.215:3435)>sccp rule create 2 R 71 2 8 0 0 3 123456789 dominant 1 1
+telscale(10.65.208.215:3435)>sccp rule create 2 R 71 2 8 0 0 3 123456789 loadshared 1 1 bit4
+----
+====
+
+[[_shell_sccprule_modify]]
+=== Modify existing Rule
+
+Rule can be modified by issuing command with following structure:
+
+[source]
+----
+sccp rule modify <id> <mask> <address-indicator> <point-code> <subsystem-number> <translation-type> <numbering-plan>  
+<nature-of-address-indicator> <digits> <ruleType> <primary-address-id> <backup-address-id>
+----
+
+Meaning of parameters is the same.
+
+[[_shell_sccp_rule_delete]]
+=== Delete SCCP Rule
+
+SCCP Rule can be deleted by issuing command with following structure:
+
+[source]
+----
+
+sccp rule delete  <id>
+----
+
+Where:
+
+<id>::
+  is id set during rule creation
+
+.SCCP Rule Removal
+====
+----
+
+telscale(10.65.208.215:3435)>sccp rule delete 1
+Rule successfully removed
+----
+====
+
+[[_shell_sccp_rule_show]]
+=== Show SCCP Rule
+
+Rule's can be viewed by issuing command with following structure:
+
+[source]
+----
+
+sccp rule show <id>
+----
+
+Where:
+
+<id>::
+  id is optional.
+  If passed only rule matching the id will be shown, else all the rules will be shown
+
+== Address Management
+
+The command is used to define primary or backup address of translation.
+The global title address information of this command is combined with the global title being translated by examining the mask provided in the `sccp rule create` command.The syntax remains same except for primary address `sccp primary_add` is used and for backup address `sccp backup_add` is used 
+
+* `sccp primary_add create`
++
+`sccp backup_add create`
+
+* `sccp primary_add modify`
++
+`sccp backup_add modify`
+
+* `sccp primary_add delete`
++
+`sccp backup_add delete`
+
+* `sccp primary_add show`
++
+`sccp backup_add show`
+
+
+[[_shell_sccpaddress_create]]
+=== Create Address
+
+Address can be created by issuing command with following structure:
+
+* For primary address
++
+[source]
+----
+
+sccp primary_add create <id> <address-indicator> <point-code> <subsystem-number> <translation-type> <numbering-plan>  
+<nature-of-address-indicator> <digits>
+----
+
+* For backup address
++
+[source]
+----
+
+sccp backup_add create <id> <address-indicator> <point-code> <subsystem-number> <translation-type> <numbering-plan>  
+<nature-of-address-indicator> <digits>
+----
+
+
+<id>::
+  A unique number to identify this address
+
+<address-indicator>::
+  The address indicator is the first field in SCCP Party Address(called/calling) and is one octet in length.
+  Its function is to indicate which information elements are present so that the address can be interpreted, in other words, it indicates the type of addressing information that is to be found in the address field.
+  The addressing information from original global title is then compared with passed address information to match the rule.
+   
+
+<point-code>::
+  Point code.
+  This is ignored if bit 0 of address-indicator is not set.
+   
+
+<subsystem-number>::
+  Subsystem Number.
+  This is ignored if bit 1 of address-indicator is not set.
+   
+
+<translation-type>::
+  Translation type.
+  This is ignored if GT Indicator is 0000 or 0001
+
+<numbering-plan>::
+  The Number Plan (NP) field specifies the numbering plan that the address information follows.
+  This is ignored if GT Indicator is 0000, 0001 or 0010
+
+<nature-of-address-indicator>::
+  The Nature of Address Indicator (NAI) field defines the address range for a specific numbering plan.
+  This is only used if GT Indicator is 0100
+
+<digits>::
+  The global title address information to translate to, specified as string of digits divided into subsections using separator '/' depending on if mask contains separator. 
+
+.SCCP Primary Address creation
+====
+----
+
+telscale(10.65.208.215:3435)>sccp primary_add create 1 71 2 8 0 0 3 123456789
+----
+====
+
+.SCCP Backup Address creation
+====
+----
+
+telscale(10.65.208.215:3435)>sccp backup_add create 1 71 3 8 0 0 3 123456789
+----
+====
+
+[[_shell_sccpaddress_modify]]
+=== Modify existing Address
+
+Address can be modified by issuing command with following structure:
+
+* For primary address
++
+[source]
+----
+
+sccp primary_add modify <id> <address-indicator> <point-code> <subsystem-number> <translation-type> <numbering-plan>  
+<nature-of-address-indicator> <digits>
+----
+
+* For backup address
++
+[source]
+----
+
+sccp backup_add modify <id> <address-indicator> <point-code> <subsystem-number> <translation-type> <numbering-plan>  
+<nature-of-address-indicator> <digits>
+----
+
+
+Meaning of parameters is the same.
+
+[[_shell_sccp_address_delete]]
+=== Delete Address
+
+* For primary address
++
+[source]
+----
+
+sccp primary_add delete <id>
+----
+
+* For backup address
++
+[source]
+----
+
+sccp backup_add delete <id>
+----
+
+
+Where:
+
+<id>::
+  is id set during address creation
+
+.Primary Address Removal
+====
+----
+
+telscale(10.65.208.215:3435)>sccp primary_add delete 1
+Rule successfully removed
+----
+====
+
+.Backup Address Removal
+====
+----
+
+telscale(10.65.208.215:3435)>sccp backup_add delete 1
+Rule successfully removed
+----
+====
+
+[[_shell_sccp_address_show]]
+=== Show Address
+
+Address's can be viewed by issuing command with following structure:
+
+* For primary address
++
+[source]
+----
+
+sccp primary_add show <id>
+----
+
+* For backup address
++
+[source]
+----
+
+sccp backup_add show <id>
+----
+
+
+Where:
+
+<id>::
+  id is optional.
+  If passed only address matching the id will be shown, else all the addresses will be shown
+
+[[_resource_rsp_management]]
+== Remote Signaling Point Management
+
+SCCP resources includes remote signaling point and remote subsystem.
+Each remote signaling point that SCCP can communicate with must be configured using `sccp rsp` command 
+
+* `sccp rsp create`
+* `sccp rsp modify`
+* `sccp rsp delete`
+* `sccp rsp show`
+
+[[_shell_sccprsp_create]]
+=== Create Remote Signaling Point
+
+Remote signaling point can be create by issuing command with following structure:
+
+[source]
+----
+
+sccp rsp create <id> <remote-spc> <rspc-flag> <mask>
+----
+
+<id>::
+  A unique number to identify this remote signaling point
+
+<remote-spc>::
+  The remote signaling point						  
+
+<rspc-flag>::
+  32 bit value.
+  Not used for now.
+  Reserved for future
+
+<mask>::
+  32 bit value.
+  Not used for now.
+  Reserved for future
+
+.Remote Signalin Point creation
+====
+----
+
+telscale(10.65.208.215:3435)>sccp rsp create 1 6477 0 0
+----
+====
+
+[[_shell_sccprsp_modify]]
+=== Modify existing Remote Signaling Point
+
+Remote Signaling Point can be modified by issuing command with following structure:
+
+[source]
+----
+sccp rsp modify <id> <remote-spc> <rspc-flag> <mask>
+----
+
+Meaning of parameters is the same.
+
+[[_shell_sccp_rsp_delete]]
+=== Delete Remote Signaling Point
+
+[source]
+----
+
+sccp rsp delete <id>
+----
+
+Where:
+
+<id>::
+  is id set during remote signaling point creation
+
+.Remote Signaling Point removal
+====
+----
+
+telscale(10.65.208.215:3435)>sccp rsp delete 1
+----
+====
+
+[[_shell_sccp_rsp_show]]
+=== Show Remote Signaling Point/s
+
+Remote signaling point can be viewed by issuing command with following structure:
+
+[source]
+----
+
+sccp rsp show <id>
+----
+
+Where:
+
+<id>::
+  id is optional.
+  If passed only remote signaling point matching the id will be shown,  else all the addresses will be shown
+
+[[_resource_rss_management]]
+== Remote Sub-System Management
+
+SCCP resources includes remote signaling point and remote subsytem.
+Each remote subsystem that SCCP can communicate with must be configured using `sccp rss` command 
+
+* `sccp rss create`
+* `sccp rss modify`
+* `sccp rss delete`
+* `sccp rss show`
+
+This command should be specified after remote signaling point is configured.
+Please refer <<_resource_rsp_management>> on how to configure remote signaling point
+
+[[_shell_sccprss_create]]
+=== Create Remote Sub-System
+
+Remote subsystem can be created by issuing command with following structure:
+
+[source]
+----
+
+sccp rss create <id> <remote-spc> <remote-ssn> <rss-flag> <mark-prohibited-when-spc-resuming>
+----
+
+<id>::
+  A unique number to identify this remote subsystem
+
+<remote-spc>::
+  The remote signaling point where this remote susbsytem is deployed						  
+
+<remote-ssn>::
+  The remote subsystem number
+
+<rss-flag>::
+  32 bit value.
+  Not used for now.
+  Reserved for future
+
+<mark-prohibited-when-spc-resuming>::
+  This parameter is optional, its possible value is: prohibitedWhenSpcResuming.
+  When this parameter is present configured subsystem is marked as prohibited when its corresponded signaling point code has been resumed.
+
+.Remote Sub-System creation
+====
+----
+
+telscale(10.65.208.215:3435)>sccp rss create 1 6477 8 0 prohibitedWhenSpcResuming
+----
+====
+
+[[_shell_sccprss_modify]]
+=== Modify existing Remote Sub-System
+
+Remote Sub-System can be modified by issuing command with following structure:
+
+[source]
+----
+sccp rss modify <id> <remote-spc> <remote-ssn> <rss-flag> <mark-prohibited-when-spc-resuming>
+----
+
+Meaning of parameters is the same.
+
+[[_shell_sccp_rss_delete]]
+=== Delete Remote Sub-System
+
+[source]
+----
+
+sccp rss delete <id>
+----
+
+Where:
+
+<id>::
+  is id set during remote subsystem creation
+
+.Remote Sub-System removal
+====
+----
+
+telscale(10.65.208.215:3435)>sccp rss delete 1
+----
+====
+
+[[_shell_sccp_rss_show]]
+=== Show Remote Sub-System/s
+
+Remote subsystem can be viewed by issuing command with following structure:
+
+[source]
+----
+
+sccp rss show <id>
+----
+
+Where:
+
+<id>::
+  id is optional.
+  If passed only remote subsystem matching the id will be shown,  else all will be shown
+
+[[_shell_sccp_lmr_management]]
+== Long message rules Management
+
+Long message rules describe which message types (UDT/XUDT/LUDT) will be used for outgoing message encoding depends on dpc.
+If no long message rules is configured only UDT messages will be used. 
+
+* `sccp lmr create`
+* `sccp lmr modify`
+* `sccp lmr delete`
+* `sccp lmr show`
+
+[[_shell_sccplmr_create]]
+=== Create Long message rule
+
+Long message rule can be created by issuing command with following structure:
+
+[source]
+----
+
+sccp lmr create <id> <first-spc> <last-spc> <long-message-rule-type>
+----
+
+<id>::
+  A unique number to identify this Long message rule
+
+<first-spc>::
+  Specifies the first value of the remote signaling point codes range.
+  (for which Long message rule will apply) 
+
+<last-spc>::
+  Specifies the last value of the remote signaling point codes range.
+  If Long message rule specifies a single signaling point code, this value must be equal first-spc.
+
+<long-message-rule-type>::
+  Specifies which message types will be used for the remote signaling point codes range.
+  Possible values are: udt, xudt and ludt.
+
+.Long message rule creation
+====
+----
+
+telscale(10.65.208.215:3435)>sccp lmr create 1 201 201 xudt
+telscale(10.65.208.215:3435)>sccp lmr create 2 230 239 udt
+----
+====
+
+[[_shell_sccplmr_modify]]
+=== Modify existing Long message rule
+
+Long message rule can be modified by issuing command with following structure:
+
+[source]
+----
+sccp lmr modify <id> <first-spc> <last-spc> <long-message-rule-type>
+----
+
+Meaning of parameters is the same.
+
+[[_shell_sccp_lmr_delete]]
+=== Delete Modify existing Long
+
+[source]
+----
+
+sccp lmr delete <id>
+----
+
+Where:
+
+<id>::
+  is id set during Long message rule creation
+
+.Long message rule removal
+====
+----
+
+telscale(10.65.208.215:3435)>sccp lmr delete 1
+----
+====
+
+[[_shell_sccp_lmr_show]]
+=== Show Long message rule/s
+
+Long message rule can be viewed by issuing command with following structure:
+
+[source]
+----
+
+sccp lmr show <id>
+----
+
+Where:
+
+<id>::
+  id is optional.
+  If passed only Long message rule matching the id will be shown,  else all the rules will be shown
+
+[[_shell_sccp_csp_management]]
+== Concerned signaling point codes Management
+
+Concerned signaling point codes define a DPC list which will be noticed when local SSN is registered (SSA messages) or unregistered (SSP messages). 
+
+* `sccp csp create`
+* `sccp csp modify`
+* `sccp csp delete`
+* `sccp csp show`
+
+[[_shell_sccpcsp_create]]
+=== Create Concerned signaling point code
+
+Concerned signaling point codes can be created by issuing command with following structure:
+
+[source]
+----
+
+sccp csp create <id> <spc>
+----
+
+<id>::
+  A unique number to identify this Concerned signaling point code
+
+<spc>::
+  Specifies the value of the remote signaling point code, which will be noticed. 
+
+.Concerned signaling point code creation
+====
+----
+
+telscale(10.65.208.215:3435)>sccp csp create 1 201
+telscale(10.65.208.215:3435)>sccp csp create 2 202
+----
+====
+
+[[_shell_sccpcsp_modify]]
+=== Modify existing Concerned signaling point code
+
+Concerned signaling point code can be modified by issuing command with following structure:
+
+[source]
+----
+sccp csp modify <id> <spc>
+----
+
+Meaning of parameters is the same.
+
+[[_shell_sccp_csp_delete]]
+=== Delete Concerned signaling point code
+
+[source]
+----
+
+sccp csp delete <id>
+----
+
+Where:
+
+<id>::
+  is id set during Concerned signaling point code creation
+
+.Concerned signaling point code removal
+====
+----
+
+telscale(10.65.208.215:3435)>sccp csp delete 1
+----
+====
+
+[[_shell_sccp_csp_show]]
+=== Show Concerned signaling point code/s
+
+Concerned signaling point code can be viewed by issuing command with following structure:
+
+[source]
+----
+
+sccp csp show <id>
+----
+
+Where:
+
+<id>::
+  id is optional.
+  If passed only Concerned signaling point code matching the id will be shown,  else all the codes will be shown
+
+[[_shell_sccp_param]]
+== General parameters
+
+User can set several general parameters that influence the whole SCCP stack.
+
+.SCCP general parameters
+[cols="1,1,1,1", frame="all", options="header"]
+|===
+| Mnemonic name
+| Function
+| Value range
+| Default value
+
+
+
+
+
+
+|===
+
+[[_shell_sccp_param_set]]
+=== General parameters setting
+
+General parameter can be set by issuing command with following structure:
+
+[source]
+----
+
+sccp set <parameter-name> <parameter-value>
+----
+
+<parameter-name>::
+  A mnemonic name of a parameter.
+
+<parameter-value>::
+  A value of a parameter. 
+
+.General parameters setting
+====
+----
+
+telscale(10.65.208.215:3435)>sccp set zMarginXudtMessage 230
+telscale(10.65.208.215:3435)>sccp set removeSpc false
+----
+====
+
+[[_shell_sccp_param_get]]
+=== General parameters getting
+
+General parameter can be got by issuing command with following structure:
+
+[source]
+----
+
+sccp get <parameter-name>
+----
+
+<parameter-name>::
+  A mnemonic name of a parameter.
+  This parameter is optional.
+  If a mnemonic name is absent all parameter values will be returned.
+
+.General parameters getting
+====
+----
+
+telscale(10.65.208.215:3435)>sccp get zMarginXudtMessage
+telscale(10.65.208.215:3435)>sccp get
+----
+====

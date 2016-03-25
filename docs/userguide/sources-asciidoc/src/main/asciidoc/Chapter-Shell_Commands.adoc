@@ -1,0 +1,25 @@
+[[_shell_commands]]
+= Shell - Command Line Interface
+
+== Command Reference
+
+This section describes the Shell commands, their syntax and provide examples of usage.
+This information is also available at run-time in the Shell and can be referenced by issuing any command using the `--help` option. 
+
+:leveloffset: +1
+
+include::Section-Shell_Linkset.adoc[]
+
+:leveloffset: -1
+
+:leveloffset: +1
+
+include::Section-Shell_Sccp.adoc[]
+
+:leveloffset: -1
+
+:leveloffset: +1
+
+include::Section-Shell_M3UA.adoc[]
+
+:leveloffset: -1

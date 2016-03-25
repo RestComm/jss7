@@ -1,0 +1,23 @@
+= Introduction
+
+{this-platform} {this-application} (Java SS7) is the only Open Source Java based implementation of the SS7 protocol stack.
+It provides implementation for `MTP2`, `MTP3`,  `ISUP`, `SCCP`, `TCAP`, `CAMEL (Phase I and Phase II)` and `MAP` protocols for a dedicated equipment and also has in-built support for `SIGTRAN (M3UA)` over IP. {this-platform}  {this-application}  strictly adheres to the standards and specifications defined by the  International Telecommunications Union (ITU). 
+
+The platform offers developers with a flexible API set that hides the lower layer details (legacy SS7 links or SIGTRAN) and therefore makes it simple and easy to develop SS7 applications as well as to  migrate your applications from TDM equipments to M3UA. {this-platform} {this-application} is based on an easily scalable and configurable load-balancing architecture. 
+
+{this-platform} {this-application} supports TDM hardware offered by major vendors in the market, namely Intel family boards (Dialogic) and  Zaptel/Dahdi (Digium, Sangoma). Though for production we recommend Dialogic boards with MTP2 and MTP3 on-board only.
+ 
+
+If you intend to use only `M3UA` you can install the {this-application}  on any Operating System that supports Java.
+However if you wish to use SS7 cards, the native libaries for these are only  compiled for Linux at the moment. 
+
+{this-platform} {this-application} comes with JSLEE TCAP, MAP, CAP and ISUP Resource Adaptors (RA) that enable developers to build SS7  applications with ease.
+Developers only require an understanding of Resource Adaptors and can focus on building applications quickly and efficiently rather than worry about the SS7 stack.
+If you wish to use JSLEE Resource Adapters, the Command Line Interface (CLI - Shell Management tool) or the GUI for run-time configuration, then you must have JBoss Application Server installed and running.
+However if you do not wish to use the Resource Adaptors or CLI then {this-platform} {this-application} can work as a standalone library. 
+
+The Open Source Software gives you the flexibility to understand the readily available source code and customise the product for your Enterprise needs. 
+
+This guide will assist you in installing {this-platform} {this-application} .
+For more details on configuring and using the platform or for information regarding the supported protocols and compliant standards, please refer to the {this-platform} {this-application} User Guide.
+ 
