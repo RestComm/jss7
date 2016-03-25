@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javolution.xml.XMLSerializable;
 import org.mobicents.protocols.ss7.sccp.message.ParseException;
 import org.mobicents.protocols.ss7.sccp.parameter.EncodingScheme;
 import org.mobicents.protocols.ss7.sccp.parameter.EncodingSchemeType;
@@ -33,7 +34,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.EncodingSchemeType;
  * Default impl which supports simple encoding.
  * @author baranowb
  */
-public class DefaultEncodingScheme implements EncodingScheme {
+public class DefaultEncodingScheme implements EncodingScheme, XMLSerializable {
     public static final EncodingScheme INSTANCE = new DefaultEncodingScheme();
     public static final int SCHEMA_CODE = 0;
     public DefaultEncodingScheme() {
