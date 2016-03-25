@@ -1,0 +1,12 @@
+
+[[_managing_alarms]]
+= Alarms
+
+The GUI will allow you to view the Alarms (Critical, Major, Minor, Warning) in the system and filter them based on the severity.
+Open a Web Browser and navigate to http://localhost:8080/jss7-management-console/. Click on the 'Alarms' link in the left panel.
+The main panel will display all the currently raised alarms.
+You can filter the view by using the checkboxes at the top to select/deselect the severity options and accordingly filter the display.
+
+You will notice that as soon as the problem is resolved, the corresponding alarm will disappear from the view.
+In future releases, there will be an option to persist this alarms data and hence you will be able to view a history of alarms raised and resolved.
+But as of now, only currently active alarms will be displayed in this window. 

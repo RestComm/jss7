@@ -228,21 +228,43 @@
                         <include name="*.pdf" />
                 </fileset>
         </copy>
-        <copy todir="${docs.dir}" failonerror="true">
+
+	<copy todir="${docs.dir}/userguide/html-book" failonerror="true">
+		<fileset dir="${jss7.dir}/docs/adminguide/sources-asciidoc/target/generated-docs/html-book/">
+			<include name="**" />
+		</fileset>
+	</copy>
+	<copy todir="${docs.dir}/installationguide/html-book" failonerror="true">
+		<fileset dir="${jss7.dir}/docs/installationguide/sources-asciidoc/target/generated-docs/html-book/">
+			<include name="**" />
+		</fileset>
+	</copy>
+	<copy todir="${docs.dir}/userguide/pdf" failonerror="true">
+		<fileset dir="${jss7.dir}/docs/userguide/sources-asciidoc/target/generated-docs/pdf/">
+			<include name="**" />
+		</fileset>
+	</copy>
+	<copy todir="${docs.dir}/installationguide/pdf" failonerror="true">
+		<fileset dir="${jss7.dir}/docs/installationguide/sources-asciidoc/target/generated-docs/pdf/">
+			<include name="**" />
+		</fileset>
+	</copy>
+	
+        <!--copy todir="${docs.dir}" failonerror="true">
                 <fileset dir="${jss7.dir}/docs/userguide/jdocbook-restcomm/target/docbook/publish/en-US/pdf">
                         <include name="*.pdf" />
                 </fileset>
-        </copy>
+        </copy-->
         <copy todir="${docs.dir}" failonerror="true">
                 <fileset dir="${jss7.dir}/docs/releasenotes/jdocbook-restcomm/target/docbook/publish/en-US/pdf">
                         <include name="*.pdf" />
                 </fileset>
         </copy>
-        <copy todir="${docs.dir}" failonerror="true">
+        <!--copy todir="${docs.dir}" failonerror="true">
                 <fileset dir="${jss7.dir}/docs/installationguide/jdocbook-restcomm/target/docbook/publish/en-US/pdf">
                         <include name="*.pdf" />
                 </fileset>
-        </copy>
+        </copy-->
 	</target>
 
 

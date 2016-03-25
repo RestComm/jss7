@@ -1,0 +1,162 @@
+[[_setup_running]]
+= Installing {this-platform} {this-application} 
+
+== Installation Options
+
+The {this-platform} {this-application} is logically divided into two sections - lower and upper.
+The lower section provides implementation for SS7 Level 2 and Level 3 and is therefore influenced by the type of SS7 hardware (Level 1) used.
+The upper section provides implementation for SS7 Level 4 and above. {this-platform} {this-application} gives you the flexibility to install and use the Levels 2,3 and 4 in the same JVM and machine where SS7 Hardware (Level 1) is installed.
+Alternately, you can also install Level 1,2 and 3 in one machine and install Level 4 on a separate machine.
+In the second scenario, `M3UA` over `SCTP` is used for communication between Level 3 and Level 4 (on different machines) and this is referred to as {this-platform}  Signaling Gateway.
+
+{this-platform} {this-application} can be installed to function as a standalone component if you do not wish to use JBoss Application Server.
+However if you intend to use JSLEE Resource Adaptors or Shell (CLI), then you must deploy it as a JBoss AS Service.
+The sections below provide instructions for installing the Stack for use with JBoss AS or as a standalone component. 
+
+[[_running_with_jboss]]
+=== {this-platform} {this-application}  as a JBoss AS Service
+
+{this-platform} SS7 Service can be deployed in any container that supports `JMX` and exposes `JNDI`.
+By using the {this-platform}  SS7 Service you will be able to configure the SS7 stack using CLI (Command Line Interface) commands.
+The SS7 Service wraps SS7 Level 4 (i.e., MAP, CAP and ISUP) and the lower layers and exposes via JNDI, such that the layer above can perform the look-up and use it in any application.
+ 
+
+.Procedure: Installing {this-platform}  SS7 Service
+. Pre-Requisites:
++
+* The {this-platform} SS7 Service binary requires that you have JBoss Application Server installed and `JBOSS_HOME` Environment variable set properly.
+  For more details on setting the `JBOSS_HOME` variable, please refer to the section <<_jboss_home_setup>>. 
+* Ant 1.6 (or higher) must be used to install the binary.
+  Instructions for using Ant, including install, can be found at http://ant.apache.org/.
+* If you are using the SS7 board on server, you must ensure that the `java.library.path` variable is set to point to the directory containing the native component.
+  Alternatively you can copy it to the JBoss native library path manually. 
+
+. Deploying the SS7 Service:
++
+* You can now deploy the service using the `ant deploy` command as shown below: 
++
+[source]
+----
+
+[usr1]$ cd -/ss7
+[usr1]$ ant deploy
+----      
+
+. Result:
++
+* If the service has been deployed successfully, you will find the below message appear on screen:
++
+[source]
+----
+
+Buildfile: /home/vinu/Downloads/restcomm-jss7-3.0.0/ss7/build.xml
+
+deploy:
+     [copy] Copying 38 files to /home/vinu/Downloads/restcomm-jss7-3.0.0/ss7/${system.JBOSS_HOME}/server/default/deploy/restcomm-ss7-service
+     [copy] Copying 2 files to /home/vinu/Downloads/restcomm-jss7-3.0.0/ss7/${system.JBOSS_HOME}/bin
+     [copy] Copying 9 files to /home/vinu/Downloads/restcomm-jss7-3.0.0/ss7/${system.JBOSS_HOME}/lib
+
+BUILD SUCCESSFUL
+----
+
+* You have now deployed {this-platform} SS7 Service successfully.
+  Note that this procedure will also install the Shell Components (shell scripts and libraries) on this machine.
+
+
+[[_restcomm_ss7_sgw]]
+=== {this-platform} {this-application}  as a Signaling Gateway
+
+{this-platform} {this-application} can function as a standalone Signaling Gateway installed on any machine.
+It acts as a signaling agent that receives/sends Switched Circuit Network (SCN) native signaling at the edge of an IP network.
+Installing the Signaling Gateway is straightforward. 
+
+.Procedure: Installing Signaling Gateway
+. Pre-Requisites:
++
+* You must have JDK 1.7 and lksctp library installed on your machine. 
+
+. Copy [path]_{this-platform}-{this-application}-{project-version}/ss7/restcomm-ss7-sgw_ to any folder of your choice in any machine that supports the requirements specified.
+  Your Signaling Gateway is now ready to be used.
+
+[[_restcomm_ss7_shell]]
+=== Shell - Command Line Interface (CLI)
+
+Once you have installed {this-platform} SS7 Service and the Signaling Gateway, you can configure and manage them both using Shell commands. {this-platform} {this-application} comes with a Shell Management Interface that enables easy run-time configuration.
+You can install the Shell (CLI) Component on any machine (usually remote) and easily connect to and manage the Stack on a remote machine with simple commands.
+For more details on using the Shell and the commands available, please refer to the {this-platform} {this-application} User Guide. 
+
+.Procedure: Installing CLI
+. Pre-Requisites
++
+* You must have JBoss Application Server installed and `JBOSS_HOME` Environment variable set properly.
+  For more details on setting the `JBOSS_HOME` variable, please refer to the section <<_jboss_home_setup>>. 
+* Ant 1.6 (or higher) must be used to install the binary.
+  Instructions for using Ant, including install, can be found at http://ant.apache.org/.
+
+. Copy [path]_{this-platform}-{this-application}-{project-version}/ss7_ to any folder of your choice in any machine that supports the requirements specified. 
+. You can now deploy using the `ant deploy` command as shown below: 
++
+[source]
+----
+[usr1]$ cd -/ss7
+[usr1]$ ant deploy
+----      
+. Result:
++
+* If the Shell has been deployed successfully, you will find the below message appear on screen:
++
+[source]
+----
+
+Buildfile: /home/vinu/Downloads/restcomm-jss7-3.0.0/ss7/build.xml
+
+deploy:
+     [copy] Copying 38 files to /home/vinu/Downloads/restcomm-jss7-3.0.0/ss7/${system.JBOSS_HOME}/server/default/deploy/restcomm-ss7-service
+     [copy] Copying 2 files to /home/vinu/Downloads/restcomm-jss7-3.0.0/ss7/${system.JBOSS_HOME}/bin
+     [copy] Copying 9 files to /home/vinu/Downloads/restcomm-jss7-3.0.0/ss7/${system.JBOSS_HOME}/lib
+
+BUILD SUCCESSFUL
+----
+
+* You have now deployed the Shell Components (shell scripts and libraries) successfully on this machine.
+  You can now Start the Shell and connect it to any SS7 service instance and manage the Stack from the Command Line.
+
+
+[[_restcomm_ss7_simulator]]
+=== Installing the {this-platform} {this-application}  Simulator
+
+{this-platform} {this-application} Simulator can function as a standalone component installed on any machine.
+The Simulator module will enable you to test and understand the functionality of the Stack.
+ 
+
+.Procedure: Installing Simulator
+. Pre-Requisites:
++
+* You must have JDK 1.7 installed on your machine. 
+
+. Copy [path]_{this-platform}-{this-application}-{project-version}/ss7/restcomm-ss7-simulator_	to any folder of your choice in any machine that supports the requirements specified.
+  Your Simulator is now ready to be used.
+
+[[_running_without_jboss]]
+=== {this-platform} {this-application}  as a Standalone Component
+
+{this-platform} {this-application} can be installed as a standalone Java library without any dependency on JBoss, Restcomm JSLEE or any other container.
+The {this-platform} {this-application} User Guide will assist you in implemeting this and also give some details of how jSS7 layers can be configured.
+If you do not intend to use it with JBoss AS, then you must follow the regular way of initializing jSS7 Stack, which is to build each of the protocols, configure individually and bind them together. 
+
+[[_setup_configuration]]
+== Post Installation Configuration
+
+Now that you have installed {this-platform} {this-application} to suit your needs, you can go ahead and configure the Stack to meet your requirements.
+The User Guide (available along with this Installation Guide) in the [path]_{this-platform}-{this-application}-{project-version}/docs_ folder will assist you in configuring and managing the Stack.
+The Shell Management module will enable you to easily configure the Stack using the Command Line Interface (CLI) tool. 
+
+=== Memory Settings
+
+You should fine tune the JVM memory settings based on your needs but we recommend you allocate a minimum of 3 GB for initial and maximum heap size. 
+
+-Xms3072m::
+  Initial heap size, set in megabytes
+
+-Xmx3072m::
+  Maximum heap size, set in megabytes

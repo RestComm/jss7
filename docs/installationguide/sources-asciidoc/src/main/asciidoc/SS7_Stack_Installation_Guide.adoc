@@ -1,0 +1,73 @@
+= Installation Guide to {this-platform} {this-application} {project-version} 
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+
+:leveloffset: 1
+
+include::Book_Info.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Common_Content/Preface.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-Introduction.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-Pre-Requisites.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-Setup_Hardware.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-Download_Install.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-Post_Installation_Setup.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-Setup_Uninstalling.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Common_Content/Java_Development_Kit-Installing_Configuring_and_Running.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Common_Content/Setting_the_JBOSS_HOME_Environment_Variable.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Revision_History.adoc[]
+
+:leveloffset: 0

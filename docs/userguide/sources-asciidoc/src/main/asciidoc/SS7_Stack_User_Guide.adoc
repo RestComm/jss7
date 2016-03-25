@@ -1,0 +1,127 @@
+= User Guide to {this-platform} {this-application} {project-version} 
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+
+:leveloffset: 1
+
+include::Book_Info.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Common_Content/Preface.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-Introduction.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-Design.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-TechNotes.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-Running.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-Configuring-jboss-beans.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-Standalone.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-Managing.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-M3UA.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-ISUP.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-SCCP.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-TCAP.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-MAP.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-CAP.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-Simulator.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Chapter-Traceparser.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Common_Content/Java_Development_Kit-Installing_Configuring_and_Running.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Common_Content/Setting_the_JBOSS_HOME_Environment_Variable.adoc[]
+
+:leveloffset: 0
+
+:leveloffset: 1
+
+include::Revision_History.adoc[]
+
+:leveloffset: 0

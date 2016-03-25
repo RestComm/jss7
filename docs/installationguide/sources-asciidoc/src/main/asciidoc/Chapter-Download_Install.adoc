@@ -1,0 +1,168 @@
+[[_setup_downloading]]
+= Downloading
+
+Installing {this-platform} {this-application} is easy and quick with the binary download.
+You can either download the binary release or download the source code and set up from source.
+
+[[_downloading_binary]]
+== Binary Download
+
+The binary release is available for download at TeleStax Customer Support Portal {this-release-binary-url} 
+
+.Procedure: Binary Download
+. Download the zip file [path]_-.zip_ to any folder of your choice. 
+. Extract the contents of the zip file. 
++
+----
+Downloads]$ unzip -.zip
+----						
+. Verify the contents of the newly created directory.
+
+When you download the binary release, you will notice that the top level directory is named [path]_-_ and immediately below this are five sub-directories named [path]_asn_, [path]__docs_, [path]_oam_, [path]_sctp_ and [path]_ss7_,  encompassing the major services and libraries that make up {this-platform}  {this-application} .
+For details on what is included in the sub-directories, please refer to the {this-platform}  {this-application}  User Guide. 
+
+The major functional modules of the {this-application} are: 
+
+. SS7 Service [dir: [path]_restcomm-ss7-service_]
+. Signaling Gateway [dir: [path]_restcomm-ss7-sgw_]
+. Shell [dir: [path]_shell_]
+. SS7 Simulator [dir: [path]_restcomm-ss7-simulator_]
+
+
+----
+
+|- restcomm-jss7-<version>
+		|- asn	
+
+		|- _docs
+	
+		|- oam
+
+		|- sctp	
+
+		|- ss7
+				|+ native
+				|+ protocols
+				|+ shell
+				|+ restcomm-ss7-service
+				|+ restcomm-ss7-sgw
+				|+ restcomm-ss7-simulator
+----
+
+[[_source_code]]
+== Setup from Source 
+
+{this-platform} {this-application} is an open source project and you have the freedom to build from source.
+Building from source means you can stay on top with the latest features.
+Whilst aspects of {this-platform} {this-application} are quite  complicated, you may find ways to become contributors.
+
+{this-platform} {this-application} works with JDK1.7 or above.
+In addition you must have the following tools installed.
+
+.Pre-Requisites for Building from Source
+
+* `Git Client` : Instructions for using GIT, including install, can be found at http://git-scm.com/book
+* `Maven 3.2.X` : Instructions for using Maven, including install, can be found at http://maven.apache.org/
+* `Ant 1.9.X` : Instructions for using Ant, including install, can be found at http://ant.apache.org
+* `jmxtools:jar` :  This library is required to build the Simulator source code. The library com.sun.jdmk:jmxtools:jar:1.2.1 must be downloaded manually and placed in your maven repository. Instructions are provided below.
+
+Instructions to Download `jmxtools:jar` for building Simulator source code are as follows: 
+
+* The file can be downloaded from Oracle's website.
+  The link is: http://www.oracle.com/technetwork/java/javasebusiness/downloads/java-archive-downloads-java-plat-419418.html#7657-jmx-1.2.1-oth-JPR&usg=AFQjCNGOqUaCB1ULVG7cMULio9u70MKocA. 
+* The webpage will display a list of Java Platform Technology Downloads.
+  From the list, select "Java Management Extension (JMX) 1.2.1" 
+* Read and understand the License Agreement and then press "Accept License Agreement". 
+* Download the [path]_jmx-1_2_1-ri.zip_ file. 
+* Extract [path]_lib/jmxtools:jar_					
+* Once extracted, place this file in your maven repository as [path]_.m2/repository/com/sun/jdmk/jmxtools/1.2.1/jmxtools-1.2.1.jar_ file if [path]_.m2/repository_ is a root of this repository.
+  Alternatively you can register it. 
+
+[[_source_building]]
+=== Release Source Code Building
+
+
+. Downloading the source code
++
+Checkout a specific release source using GIT.
+The base URL to clone from is &THIS.TRUNK_SOURCE_CODE_URL;.
+Then add the specific release version, in the below example we are downloading the version release-2.0.0.BETA3. 
++
+[source]
+----
+
+[usr]$ git clone 
+[usr]$ cd jss7
+[usr]$ git checkout release-2.0.0.BETA3
+----
+
+. Building the source code
++
+Now that we have the source code, the next step is to build and install the source. {this-platform} {this-application} uses Maven 2 to build the system.
+There are three build profiles namely default, dahdilinux and dialogiclinux.
+The Default profile builds only the java source code.
+The other two profiles "dahdilinux" and "dialogiclinux" compile relevant native modules in addition to building the java source.
++
+NOTE: At the moment, native modules are supported only for Linux OS. 
++
+* Building using "default" Build profile
++
+To build {this-platform} {this-application} without building any native libraries use the default profile as shown below.
++
+[source]
+----
+
+[usr]$ cd jss7
+[usr]$ mvn install
+----
++
+NOTE: If you are using {this-platform} {this-application} without any native dependencies, {this-platform} {this-application} can run on any OS. 
+
+* Building using "dahdilinux" profile
++
+Use this profile only if the linux server on which this code is built has `dahdi` module installed.
+Make sure you pass the "include.zap" system property with a value pointing to the directory where `dahdi` is installed
++
+[source]
+----
+
+[usr]$ cd jss7
+[usr]$ mvn install -Pdahdilinux -Dinclude.zap=/usr/include/dahdi
+----
+
+* Building using "dialogiclinux" profile
++
+Use this profile only if the linux server on which this code is built has `dialogic` module installed.
+Make sure you pass the "include.dialogic" and "include.dialogic.gctlib" system properties with values pointing to appropriate directories.
+The "include.dialogic" property must point to the directory where `dialogic` libraries are installed.
+The "include.dialogic.gctlib" property must point to the directory where `gctload` is present (generally /opt/dpklnx for linux OS).
++
+[source]
+----
+
+[usr]$ cd jss7
+[usr]$ mvn install -Pdialogclinux -Dinclude.dialogic=/opt/dpklnx/INC -Dinclude.dialogic.gctlib=/opt/dpklnx
+----
+
+
+. Use Ant to build the binary.
++
+[source]
+----
+
+[usr]$ cd jss7/release
+[usr]$ ant
+----
+
+
+[[_trunk_source_building]]
+=== Development Trunk Source Building
+
+To build from development trunk source, follow the same procedure as above but at the time of checkout do not switch to the specific release tag. 
+[source]
+----
+[usr]$ git clone 
+[usr]$ cd jss7
+[usr]$ git checkout
+----  
+The rest of the steps are as outlined in the above section <<_source_building>>		 

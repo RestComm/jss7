@@ -1,0 +1,48 @@
+[[_managing]]
+= Managing {this-platform} {this-application} 
+
+{this-platform} {this-application} comes with a convenient user-friendly Graphical User Interface (GUI) and a Command Line Interface (CLI) that will allow you to configure, monitor and manage the Stack.
+While the CLI tool allows complete configuration and control of the Stack, the GUI-based management enhances the usability of the platform and gives you the ability to create different SS7 configurations and manage the platform dynamically.
+This chapter will explain how to manage the Stack effectively using both the GUI and the CLI. 
+
+:leveloffset: +1
+
+include::Section-Managing-linksets.adoc[]
+
+:leveloffset: -1
+
+:leveloffset: +1
+
+include::Section-Managing-SCTP.adoc[]
+
+:leveloffset: -1
+
+:leveloffset: +1
+
+include::Section-Managing-M3UA.adoc[]
+
+:leveloffset: -1
+
+:leveloffset: +1
+
+include::Section-Managing-SCCP.adoc[]
+
+:leveloffset: -1
+
+:leveloffset: +1
+
+include::Section-Managing-TCAP.adoc[]
+
+:leveloffset: -1
+
+:leveloffset: +1
+
+include::Section-Managing-Stats.adoc[]
+
+:leveloffset: -1
+
+:leveloffset: +1
+
+include::Section-Managing-Alarms.adoc[]
+
+:leveloffset: -1

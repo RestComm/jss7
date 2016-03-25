@@ -1,0 +1,21 @@
+= Pre-Requisites
+
+{this-platform} {this-application} 's core requirement is Java.
+The following table details the Hardware, Operating System and Software requirements for a clean installation of {this-platform} {this-application} .
+ 
+
+.Installation Pre-Requisites
+[cols="1,1,1", frame="all", options="header"]
+|===
+| Component | Requirement | Notes
+| System Requirements | Intel Pentium 1 GHz or faster for simple applications. Hard disk space of at least 20MB. RAM of at least 1.5 GB | Higher the RAM and processing power, better is the throughput
+| TDM Hardware | For legacy SS7 links, you must have dahdi or dialogic cards installed along with their native libraries. |  You do not require any specific hardware for SIGTRAN (M3UA)
+| Operating System | The platform can be installed on any OS that supports Java and SCTP. But native libraries for SS7 cards are compiled only for Linux at the moment and therefore supported only on Linux Operating System. | The libraries will be compiled for Windows in future releases.
+| Java | You must have a working Java Runtime Environment (JRE) or Java Development Kit (JDK) installed on your system and it must be version 5 or higher. If you intend to use SIGTRAN (M3UA) then you must have JDK 7 installed. M3UA uses Java SCTP which is available only from JDK 7 onwards. | If you are using M3UA, then you must use JDK 7 to run the stack as well as to compile the source code.
+| JBoss Application Server | Restcomm jSS7 Stack can work as a standalone library if you do not require JSLEE Resource Adaptors and the Shell Management Tool (Command Line Interface) for run-time configuration of the platform. But if you wish to avail of these, then you must have JBoss Application Server (version 5.1.0.GA or above) installed on your machine. | Refer to the appendix section for more details.
+| SCTP libraries | If you intend to use SIGTRAN (M3UA), you must have the lksctp library installed. The Linux Kernel Stream Control Transmission Protocol (lksctp) library provides SCTP implementation. | For more details on downloading and installing lksctp, please refer to http://lksctp.sourceforge.net/
+|===
+
+
+IMPORTANT: You must ensure that the `JAVA_HOME` and `JBOSS_HOME` Environment variables are set properly for the user account(s) that will run the server.
+For more details on setting these variables, please refer to the sections <<_jdk_installing_configuring_and_running>> and <<_jboss_home_setup>>. 

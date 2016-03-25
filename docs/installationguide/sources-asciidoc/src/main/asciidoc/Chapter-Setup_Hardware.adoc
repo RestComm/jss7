@@ -1,0 +1,35 @@
+[[_setup_hardware]]
+= Hardware Setup
+
+You do not require any specific hardware if you intend to use only SIGTRAN (M3UA). But if you wish to use legacy SS7 links, then you must have relevant SS7 cards installed along with their native libraries. 
+
+{this-platform} {this-application} supports `dahdi` based SS7 cards like `diguim` and `sangoma` as well as `dialogic` cards.
+Since `dahdi` based SS7 crads do not have MTP2/MTP3 support on board they rely on external software to provide these services.
+But `dialogic` based SS7 cards have on board support for MTP2/MTP3 and recommended. 
+
+This guide does not provide installation instructions for SS7 hardware.
+You must refer to respective vendor documentation for installing and configuring the hardware cards.
+The following external links point to information that will assist you in setting up the hardware.
+ 
+
+* Sangoma: http://wiki.sangoma.com/
+* Diguim: http://www.digium.com/en/products/digital/
+* Dialogic: http://www.dialogic.com/
+
+[NOTE]
+====
+The corresponding native libraries for `dialogic` and `dahdi` from folder  `restcomm-jss7-<version>/ss7/native/32` or `restcomm-jss7-<version>/ss7/native/64` should be copied  to `$JBOSS_HOME/bin/META-INF/lib/linux2/x86` if OS is 32 bit or copied to  `$JBOSS_HOME/bin/META-INF/lib/linux2/x64` if OS is 64 bit.
+ 
+
+libraries are compiled only for linux OS for now. 
+
+`restcomm-jss7-<version>/ss7/native/32` and `restcomm-jss7-<version>/ss7/native/64` folders carries  libraries compiled for 32 bit and 64 bit linux OS. 
+
+
+
+libgctjni::
+  Native library for Dialogic
+
+libmobicents-dahdi-linux::
+  Native library for `dahdi` based cards - Diguim and Sangoma	                	 
+====

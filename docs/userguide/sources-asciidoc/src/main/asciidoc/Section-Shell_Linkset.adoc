@@ -1,0 +1,307 @@
+
+[[_shell_linkset]]
+= Linkset Management Commands
+
+You can manage Linksets using the `linkset`			command.
+It allows you to perform the following operations: 
+
+* create linkset
+* delete linkset
+* activate linkset
+* deactivate linkset
+* create link
+* delete link
+* activate link
+* deactivate link
+* list state of linksets and present links
+
+[[_shell_linkset_create]]
+== Create Linkset
+
+Linkset can be created by issuing the `linkset` command with following structure:
+
+[source]
+----
+
+linkset create <linkset-type> opc <point-code> apc <point-code> ni <network-id> <linkset-name>
+----
+
+or in case of dialogic:
+
+[source]
+----
+
+linkset create dialogic opc <point-code> apc <point-code> ni <network-id> srcmod <src-mode> destmod <dest-mode> <linkset-name>
+----
+
+or in case of M3UA:
+
+[source]
+----
+
+linkset create m3ua opc <point-code> apc <point-code> ni <network-id> as <as-name> <linkset-name>
+----
+
+Where:
+
+linkset-type::
+  refers to type of linkset to be created, ie. `dahdi`							, `dialogic`							or `m3ua`							. Correct values depend on which linkset factories have been deployed. 						
+
+point-code::
+  is simply `MTP`							point - either local( `opc`							) or remote( `dpc`							) 
+
+ni::
+  is simply network identifier.
+  It can have following values:
+
+linkset-name::
+  simple string name, which identifies linkset
+
+as-name::
+  Name of AS that M3UALinkset wrapps.
+  Make sure that AS is already created as explained in <<_shell_m3ua_as_side_create>> 
+
+.Linkset creation
+====
+----
+
+mobicents(10.65.208.215:3435)>linkset create dahdi opc 1 apc 2 ni 0 linkset1
+LinkSet successfully added
+mobicents(10.65.208.215:3435)>linkset create dialogic opc 3 apc 4 ni 3 srcmod 1 destmod 2 linkset2
+LinkSet successfully added
+----
+====
+
+[[_shell_linkset_delete]]
+== Remove Linkset
+
+Linkset can be deleted by issuing command with following structure:
+
+[source]
+----
+
+linkset delete  <linkset-name>
+----
+
+Where:
+
+linkset-name::
+  is name set during link creation
+
+.Linkset Removal
+====
+----
+
+mobicents(10.65.208.215:3435)>linkset delete linkset1
+LinkSet successfully deleted
+----
+====
+
+[[_shell_linkset_activate]]
+== Activate Linkset
+
+Linkset can be activated by issuing command with following structure:
+
+[source]
+----
+
+linkset activate  <linkset-name>
+----
+
+Where:
+
+linkset-name::
+  is name set during link creation
+
+.Linkset Activation
+====
+----
+
+mobicents(10.65.208.215)>linkset activate linkset1
+LinkSet activated successfully
+----
+====
+
+[[_shell_linkset_deactivate]]
+== Deactivate Linkset
+
+Linkset can be deactivated by issuing command with following structure:
+
+[source]
+----
+
+linkset deactivate  <linkset-name>
+----
+
+Where:
+
+linkset-name::
+  is name set during link creation
+
+.Linkset Deactivateion
+====
+----
+
+mobicents(10.65.208.215)>linkset deactivate linkset1
+LinkSet deactivated successfully
+----
+====
+
+[[_shell_linkset_link_create]]
+== Create Link
+
+`Link`				can be created in `Linkset`				by issuing command with following structure: 
+
+[source]
+----
+
+linkset link create span <span-num> code <code-num> channel <channel-num> <linkset-name> <link-name>
+----
+
+Where:
+
+span-num::
+  integer number.
+  It represents port number in card(indexed from 0).
+
+code-num::
+  link code(sls assigned to this link).
+
+channel-num::
+  integer number indicating time slot number(TDM time slot). 
+
+linkset-name::
+  is name set during link creation.
+
+link-name::
+  name which identifies link in linkset.
+
+.
+====
+----
+
+mobicents(10.65.208.215:3435)>linkset link create span 1 code 1 channel 1 linkset1 link1
+Link successfully added
+----
+====
+
+[[_shell_linkset_link_delete]]
+== Remove Link
+
+`Link`				can be removed from in `Linkset`				by issuing command with following structure: 
+
+[source]
+----
+
+linkset link delete <linkset-name> <link-name>
+----
+
+Where:
+
+linkset-name::
+  is name set during link creation
+
+link-name::
+  name which identifies link in linkset
+
+.Link Removal
+====
+----
+
+mobicents(10.65.208.215:3435)>linkset link delete linkset1 link1
+Link successfully deleted
+----
+====
+
+[[_shell_linkset_link_activate]]
+== Activate Link
+
+Link can be activated by issuing command with following structure:
+
+[source]
+----
+
+linkset link activate <linkset-name> <link-name>
+----
+
+Where:
+
+linkset-name::
+  is name set during link creation
+
+link-name::
+  name which identifies link in linkset
+
+.Link Activation
+====
+----
+
+mobicents(10.65.208.215:3435)>linkset link activate linkset1 link1
+Link activated successfully
+----
+====
+
+[[_shell_linkset_link_deactivate]]
+== Deactivate Link
+
+Link can be deactivated by issuing command with following structure:
+
+[source]
+----
+
+linkset link deactivate <linkset-name> <link-name>
+----
+
+Where:
+
+linkset-name::
+  is name set during link creation
+
+link-name::
+  name which identifies link in linkset
+
+.Link Deactivateion
+====
+----
+
+mobicents(10.65.208.215:3435)>linkset link deactivate linkset1 link1
+Link deactivated successfully
+----
+====
+
+[[_shell_linkset_show]]
+== Show status
+
+Linkset and Link's status can be viewed by issuing command with following structure:
+
+[source]
+----
+
+linkset show
+----
+
+.Linkset Status
+====
+----
+
+mobicents(10.65.208.215:3435)>linkset show
+linkset1      dahdi    opc=1           apc=2           ni=0    state=UNAVAILABLE
+    link1       span=1   channelId=1   code=1  state=UNAVAILABLE
+----
+====
+
+The possible state of Linkset are 
+
+* UNAVAILABLE : Indicates the linkset does not have any "`available`" links and cannot transport traffic
+* SHUTDOWN : Indicates the linkset has been shutdown in the configuration
+* AVAILABLE : Indicates the linkset has at least one available link and can carry traffic
+
+The possible state of Link are 
+
+* UNAVAILABLE : Indicates the link is not available to carry traffic.
+  This can occur if the link is remotely or locally inhibited by a user.
+  It can also be unavailable if MTP2 has not been able to successfully activate the link connection.
+* SHUTDOWN : Indicates the link has been shutdown in the configuration.
+* AVAILABLE : Indicates the link is active and able to transport traffic
+* FAILED : A link is FAILED when the link is not shutdown but is unavailable at layer2 for some reason.
+  For example Initial Alignment failed or the link test messages sent by MTP3 are not being acknowledged.
