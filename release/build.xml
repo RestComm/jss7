@@ -232,7 +232,7 @@
 	<mkdir dir="${docs.dir}/installationguide"/>
 	<mkdir dir="${docs.dir}/userguide/html-book"/>
 	<copy todir="${docs.dir}/userguide/html-book" failonerror="true">
-		<fileset dir="${jss7.dir}/docs/adminguide/sources-asciidoc/target/generated-docs/html-book/">
+		<fileset dir="${jss7.dir}/docs/userguide/sources-asciidoc/target/generated-docs/html-book/">
 			<include name="**" />
 		</fileset>
 	</copy>
