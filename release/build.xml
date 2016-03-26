@@ -228,22 +228,27 @@
                         <include name="*.pdf" />
                 </fileset>
         </copy>
-
+	<mkdir dir="${docs.dir}/userguide"/>
+	<mkdir dir="${docs.dir}/installationguide"/>
+	<mkdir dir="${docs.dir}/userguide/html-book"/>
 	<copy todir="${docs.dir}/userguide/html-book" failonerror="true">
 		<fileset dir="${jss7.dir}/docs/adminguide/sources-asciidoc/target/generated-docs/html-book/">
 			<include name="**" />
 		</fileset>
 	</copy>
+	<mkdir dir="${docs.dir}/installationguide/html-book"/>
 	<copy todir="${docs.dir}/installationguide/html-book" failonerror="true">
 		<fileset dir="${jss7.dir}/docs/installationguide/sources-asciidoc/target/generated-docs/html-book/">
 			<include name="**" />
 		</fileset>
 	</copy>
+	<mkdir dir="${docs.dir}/userguide/pdf"/>
 	<copy todir="${docs.dir}/userguide/pdf" failonerror="true">
 		<fileset dir="${jss7.dir}/docs/userguide/sources-asciidoc/target/generated-docs/pdf/">
 			<include name="**" />
 		</fileset>
 	</copy>
+	<mkdir dir="${docs.dir}/installationguide/pdf"/>
 	<copy todir="${docs.dir}/installationguide/pdf" failonerror="true">
 		<fileset dir="${jss7.dir}/docs/installationguide/sources-asciidoc/target/generated-docs/pdf/">
 			<include name="**" />
