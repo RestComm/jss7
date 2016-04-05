@@ -74,6 +74,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationNumberMap;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MNPInfoRes;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSClassmark2;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NotReachableReason;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NumberPortabilityStatus;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberState;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberStateChoice;
@@ -316,6 +317,20 @@ public class TestAtiServerMan extends TesterBase implements TestAtiServerManMBea
                     this.countAtiResp++;
                     uData = this.createAtiRespData(curDialog.getLocalDialogId());
                     this.testerHost.sendNotif(SOURCE_NAME, "Sent: atiResp", uData, Level.DEBUG);
+                    break;
+
+                case ATIReaction.VAL_RETURN_SUCCESS_SUBSCRIBER_STATE:
+                    subscriberState = mapProvider.getMAPParameterFactory().createSubscriberState(
+                            SubscriberStateChoice.netDetNotReachable, NotReachableReason.notRegistered);
+
+                    subscriberInfo = mapProvider.getMAPParameterFactory().createSubscriberInfo(null, subscriberState, null,
+                            null, null, null, null, null, null);
+
+                    curDialog.addAnyTimeInterrogationResponse(invokeId, subscriberInfo, null);
+
+                    this.countAtiResp++;
+                    uData = this.createAtiRespData(curDialog.getLocalDialogId());
+                    this.testerHost.sendNotif(SOURCE_NAME, "Sent: atiRespSubscriberState", uData, Level.DEBUG);
                     break;
 
                 case ATIReaction.VAL_ERROR_UNKNOWN_SUBSCRIBER:

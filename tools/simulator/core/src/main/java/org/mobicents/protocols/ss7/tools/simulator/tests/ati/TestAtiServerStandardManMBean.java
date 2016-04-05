@@ -57,7 +57,7 @@ public class TestAtiServerStandardManMBean extends StandardMBean {
 //                new MBeanOperationInfo("closeCurrentDialog", "Closing the current dialog", null, String.class.getName(), MBeanOperationInfo.ACTION),
 
                 new MBeanOperationInfo("putATIReaction", "ATI response type: "
-                        + "1:ReturnSuccess,3:ReturnSystemFailureError,4:ReturnDataMissingError,5:ReturnUnknownSubscriberError",
+                        + "1:ReturnSuccess,2:ReturnSuccessSubscriberState,3:ReturnSystemFailureError,4:ReturnDataMissingError,5:ReturnUnknownSubscriberError",
                         signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
                 };
 

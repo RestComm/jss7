@@ -36,6 +36,7 @@ public class ATIReaction extends EnumeratedBase {
     private static final long serialVersionUID = -4059517194931173303L;
 
     public static final int VAL_RETURN_SUCCESS = 1;
+    public static final int VAL_RETURN_SUCCESS_SUBSCRIBER_STATE = 2;
     public static final int VAL_ERROR_SYSTEM_FAILURE = 3;
     public static final int VAL_DATA_MISSING = 4;
     public static final int VAL_ERROR_UNKNOWN_SUBSCRIBER = 5;
@@ -45,11 +46,13 @@ public class ATIReaction extends EnumeratedBase {
 
     static {
         intMap.put(VAL_RETURN_SUCCESS, "Return success");
+        intMap.put(VAL_RETURN_SUCCESS_SUBSCRIBER_STATE, "Return success - subscriber state");
         intMap.put(VAL_ERROR_SYSTEM_FAILURE, "Return error system failure");
         intMap.put(VAL_DATA_MISSING, "Return error data missing");
         intMap.put(VAL_ERROR_UNKNOWN_SUBSCRIBER, "Return error unknown subscriber");
 
         stringMap.put("Return success", VAL_RETURN_SUCCESS);
+        stringMap.put("Return success - subscriber state", VAL_RETURN_SUCCESS_SUBSCRIBER_STATE);
         stringMap.put("Return error system failure", VAL_ERROR_SYSTEM_FAILURE);
         stringMap.put("Return error data missing", VAL_DATA_MISSING);
         stringMap.put("Return error unknown subscriber", VAL_ERROR_UNKNOWN_SUBSCRIBER);
