@@ -4,7 +4,7 @@
 You do not require any specific hardware if you intend to use only SIGTRAN (M3UA). But if you wish to use legacy SS7 links, then you must have relevant SS7 cards installed along with their native libraries. 
 
 {this-platform} {this-application} supports `dahdi` based SS7 cards like `diguim` and `sangoma` as well as `dialogic` cards.
-Since `dahdi` based SS7 crads do not have MTP2/MTP3 support on board they rely on external software to provide these services.
+Since `dahdi` based SS7 cards do not have MTP2/MTP3 support on board they rely on external software to provide these services.
 But `dialogic` based SS7 cards have on board support for MTP2/MTP3 and recommended. 
 
 This guide does not provide installation instructions for SS7 hardware.
@@ -18,6 +18,9 @@ The following external links point to information that will assist you in settin
 
 [NOTE]
 ====
+Before JSS7 stack can interoperate with an installed card you need to provide extra native libs for both Dialogic and dahdi cards. The way where you can obtain native libs is explains ....................
+
+
 The corresponding native libraries for `dialogic` and `dahdi` from folder  `restcomm-jss7-<version>/ss7/native/32` or `restcomm-jss7-<version>/ss7/native/64` should be copied  to `$JBOSS_HOME/bin/META-INF/lib/linux2/x86` if OS is 32 bit or copied to  `$JBOSS_HOME/bin/META-INF/lib/linux2/x64` if OS is 64 bit.
  
 
