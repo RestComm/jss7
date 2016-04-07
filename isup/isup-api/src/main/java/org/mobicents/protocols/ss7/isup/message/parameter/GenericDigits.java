@@ -83,6 +83,7 @@ public interface GenericDigits extends ISUPParameter {
 
     void setEncodedDigits(byte[] digits);
 
-    // TODO: add public String getDecodedDigits() ;
-    // TODO: add public void setDecodedDigits(int encodingScheme, String digits) ;
+    String getDecodedDigits() ;
+
+    void setDecodedDigits(int encodingScheme, String digits) ;
 }
