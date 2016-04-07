@@ -41,12 +41,12 @@ The major functional modules of the {this-application} are:
 		|- sctp	
 
 		|- ss7
-				|+ native
 				|+ protocols
 				|+ shell
 				|+ restcomm-ss7-service
 				|+ restcomm-ss7-sgw
 				|+ restcomm-ss7-simulator
+				|+ restcomm-ss7-trace-parser
 ----
 
 [[_source_code]]
