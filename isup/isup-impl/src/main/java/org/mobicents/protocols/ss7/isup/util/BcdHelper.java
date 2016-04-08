@@ -1,38 +1,35 @@
-/**
- *  Copyright 2016 Grzegorz Figiel
+/*
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2011-2016, Telestax Inc and individual contributors
+ * by the @authors tag.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation; either version 3 of
+ * the License, or (at your option) any later version.
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 package org.mobicents.protocols.ss7.isup.util;
 
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
+
+import java.io.UnsupportedEncodingException;
+
 /**
- * Modification of the BCD Conversion in java (BCD.java Source Copyright 2010 Firat Salgur) as to:
- * <ul>
- * <li>change nibbles order in BCD encoded bytes table.</li>
- * <li>add String digits support</li>
- * <li>add support for ODD and EVEN digits number</li>
- * </ul>
- * @see <a href="https://gist.github.com/neuro-sys/953548">https://gist.github.com/neuro-sys/953548</a>
+ * <p>
+ * This class implements support for BCD encoding and decoding string represention of digits.
+ * Only BCD_EVEN and BCD_ODD encoding is supported currently
  *
  * @author <a href="mailto:grzegorz.figiel@pro-ids.com"> Grzegorz Figiel (ProIDS sp. z o.o.)</a>
  */
 public class BcdHelper {
-
-    public static byte[] stringToBCD(String bcdString) {
-        long num = Long.parseLong(bcdString);
-        return decimalToBCD(num);
-    }
 
     public static String getBinString(byte[] bytes) {
         String result = "";
@@ -43,77 +40,134 @@ public class BcdHelper {
         return result;
     }
 
-    public static byte[] decimalToBCD(long num) {
-        int digits = 0;
 
-        long temp = num;
-        while (temp != 0) {
-            digits++;
-            temp /= 10;
+    /**
+     * Converts telco char according to statement
+     * If the BCD even or BCD odd encoding scheme is used, then the following encoding shall be applied for the
+     * non-decimal characters: 1011 (*), 1100 (#).
+     * 11=b=*
+     * 12=c=#
+     *
+     * @param ch character to be checked and converted
+     * @return hex cher representing the telco char
+     */
+    public static char convertTelcoCharToHexDigit(char ch) {
+        switch (ch) {
+            case '*':
+                return 'b';
+            case '#':
+                return 'c';
+            default:
+                return ch;
         }
-
-        boolean isOdd = digits % 2 == 0 ? false : true;
-        if (isOdd) {
-            digits++;
-        }
-        int byteLen = digits / 2;
-
-        byte bcd[] = new byte[byteLen];
-
-        for (int i = 0; i < digits; i++) {
-            byte tmp = (byte) (num % 10);
-            if(isOdd && i==0) {
-                bcd[i / 2] = tmp;
-                num /= 10;
-                i++;
-                continue;
-            }
-            if (i % 2 == 0) {
-                bcd[i / 2] = (byte) (tmp << 4);
-            } else {
-                bcd[i / 2] |= tmp;
-            }
-
-            num /= 10;
-        }
-
-        for (int i = 0; i < byteLen / 2; i++) {
-            byte tmp = bcd[i];
-            bcd[i] = bcd[byteLen - i - 1];
-            bcd[byteLen - i - 1] = tmp;
-        }
-
-        return bcd;
     }
 
-    public static long bcdToDecimal(boolean isOdd, byte[] bcd) {
-        return Long.valueOf(bcdToString(isOdd, bcd));
-    }
-
-    public static String bcdToString(byte bcd) {
-        StringBuffer sb = new StringBuffer();
-
-        byte high = (byte) (bcd & 0xf0);
-        high >>>= (byte) 4;
-        high = (byte) (high & 0x0f);
-        byte low = (byte) (bcd & 0x0f);
-
-        sb.append(low);
-        sb.append(high);
-
+    public static String convertTelcoCharsToHexDigits(String telcoDigits) {
+        StringBuilder sb = new StringBuilder();
+        char[] chars = telcoDigits.toCharArray();
+        for (char c : chars) {
+            sb.append(convertTelcoCharToHexDigit(c));
+        }
         return sb.toString();
     }
 
-    public static String bcdToString(boolean isOdd, byte[] bcd) {
-        StringBuffer sb = new StringBuffer();
+    /**
+     * Converts byte into telco specific char according to statement
+     * If the BCD even or BCD odd encoding scheme is used, then the following encoding shall be applied for the
+     * non-decimal characters: 1011 (*), 1100 (#).
+     * 11=b=*
+     * 12=c=#
+     *
+     * @param byteValue byte value to convert into char
+     * @return
+     */
+    public static String convertHexByteToTelcoChar(byte byteValue) {
+        switch (byteValue) {
+            case 11:
+                return "*";
+            case 12:
+                return "#";
+            default:
+                return String.format("%1x", Byte.valueOf(byteValue));
+        }
+    }
 
-        for (int i = 0; i < bcd.length; i++) {
-            sb.append(bcdToString(bcd[i]));
+
+    /**
+     * Encodes hex digits string into BCD digits. Supports specific telco chars '*' and '#'.
+     *
+     * @param hexString hex digit string to be encoded
+     * @return BCD even or odd encoded digits
+     */
+    public static byte[] encodeHexStringToBCD(String hexString) {
+        hexString=hexString.toLowerCase();
+        int noOfDigits = hexString.length();
+
+        boolean isOdd = noOfDigits % 2 == 0 ? false : true;
+        int noOfBytes = noOfDigits / 2;
+        if (isOdd) {
+            noOfBytes++;
+        }
+        byte bcdDigits[] = new byte[noOfBytes];
+
+        char[] chars = hexString.toCharArray();
+        int digit = -1;
+        for (int i = 0; i< noOfDigits; i++) {
+            digit = Character.digit(convertTelcoCharToHexDigit(chars[i]), 16);
+            byte tmpByte = (byte) digit;
+            if (i % 2 == 0) {
+                bcdDigits[i / 2] = tmpByte;
+            } else {
+                bcdDigits[i / 2] |= (byte) (tmpByte << 4);
+            }
         }
 
-        if(isOdd) {
+        return bcdDigits;
+    }
+
+    /**
+     * Converts single BCD encoded byte into String Hex representation.
+     *
+     * @param bcdByte
+     * @return String representation of BCD digits (two hex digits returned)
+     */
+    public static String bcdToHexString(int encodingScheme, byte bcdByte) throws UnsupportedEncodingException {
+        StringBuilder sb = new StringBuilder();
+        byte leftNibble = (byte) (bcdByte & 0xf0);
+        leftNibble = (byte) (leftNibble >>> 4);
+        leftNibble = (byte) (leftNibble & 0x0f);
+        byte rightNibble = (byte) (bcdByte & 0x0f);
+
+        switch (encodingScheme) {
+            case GenericDigits._ENCODING_SCHEME_BCD_EVEN:
+            case GenericDigits._ENCODING_SCHEME_BCD_ODD:
+                sb.append(convertHexByteToTelcoChar(rightNibble));
+                sb.append(convertHexByteToTelcoChar(leftNibble));
+                break;
+            default:
+                throw new UnsupportedEncodingException("Specified GenericDigits encoding: " + encodingScheme + " is unsupported");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Decoded BCD encoded string into Hex digits string.
+     *
+     * @param encodingScheme  BCD endcoding scheme to be used
+     * @param bcdBytes bytes table to decode.
+     * @return hex string representation of BCD encoded digits
+     */
+    public static String bcdDecodeToHexString(int encodingScheme, byte[] bcdBytes) throws UnsupportedEncodingException {
+        StringBuilder sb = new StringBuilder();
+
+        for (byte b : bcdBytes) {
+            sb.append(bcdToHexString(encodingScheme, b));
+        }
+        if (GenericDigits._ENCODING_SCHEME_BCD_ODD == encodingScheme) {
             sb.deleteCharAt(sb.length()-1);
         }
+
         return sb.toString();
     }
+
 }

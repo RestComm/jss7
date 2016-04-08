@@ -29,6 +29,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
 import org.mobicents.protocols.ss7.isup.util.BcdHelper;
 
 import javax.xml.bind.DatatypeConverter;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Start time:12:24:47 2009-03-31<br>
@@ -65,7 +66,7 @@ public class GenericDigitsImpl extends AbstractISUPParameter implements GenericD
         super();
         this.encodingScheme = encodingScheme;
         this.typeOfDigits = typeOfDigits;
-        this.setEncodedDigits(BcdHelper.stringToBCD(digits));
+        this.setEncodedDigits(BcdHelper.encodeHexStringToBCD(digits));
     }
 
     public GenericDigitsImpl() {
@@ -73,19 +74,25 @@ public class GenericDigitsImpl extends AbstractISUPParameter implements GenericD
 
     }
 
-    public String getDecodedDigits() {
-        boolean isOdd = this.encodingScheme == GenericDigits._ENCODING_SCHEME_BCD_ODD ? true : false;
-        String result = BcdHelper.bcdToString(isOdd, digits);
-        return result;
+    public String getDecodedDigits() throws UnsupportedEncodingException {
+        return BcdHelper.bcdDecodeToHexString(encodingScheme, digits);
     }
 
-    public void setDecodedDigits(int encodingScheme, String digits) {
+    public void setDecodedDigits(int encodingScheme, String digits) throws UnsupportedEncodingException {
         if (digits == null || digits.length() < 1) {
             throw new IllegalArgumentException("Digits must not be null");
         }
         //TODO: analyse if encoding scheme is correctly set (ODD/EVEN) vs number of digits
-        this.encodingScheme = encodingScheme;
-        this.setEncodedDigits(BcdHelper.stringToBCD(digits));
+        switch (encodingScheme) {
+            case GenericDigits._ENCODING_SCHEME_BCD_EVEN:
+            case GenericDigits._ENCODING_SCHEME_BCD_ODD:
+                this.encodingScheme = encodingScheme;
+                break;
+            default:
+                //TODO: add other encoding schemas support
+                throw new UnsupportedEncodingException("Specified GenericDigits encoding: " + encodingScheme + " is unsupported");
+        }
+        this.setEncodedDigits(BcdHelper.encodeHexStringToBCD(digits));
     }
 
     public int decode(byte[] b) throws ParameterException {
