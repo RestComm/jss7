@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
+import org.mobicents.protocols.ss7.isup.util.BcdHelper;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
@@ -149,6 +150,21 @@ public class GenericDigitsTest {
         encodedData = prim.encode();
         assertTrue(Arrays.equals(data, encodedData));
     }
+
+    @Test(groups = { "functional.decode", "parameter" })
+    public void testSetDecodedHexDigits() throws Exception {
+        String hexString = "0123456789abcdef*#";
+        System.out.println("Test input digits: " + hexString);
+        GenericDigitsImpl prim = new GenericDigitsImpl();
+        prim.setDecodedDigits(GenericDigits._ENCODING_SCHEME_BCD_EVEN, hexString );
+        prim.setTypeOfDigits(GenericDigits._TOD_BGCI);
+        String decodedDigitsString = prim.getDecodedDigits();
+        System.out.println("Decoded  digits: " + decodedDigitsString);
+        String convertedDigits = BcdHelper.convertTelcoCharsToHexDigits(decodedDigitsString);
+        assertTrue(BcdHelper.convertTelcoCharsToHexDigits(hexString).equals(convertedDigits));
+    }
+
+
 
     @Test(groups = { "functional.xml.serialize", "parameter" })
     public void testXMLSerialize() throws Exception {
