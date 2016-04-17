@@ -5,10 +5,14 @@ SYNOPSIS
 	tcap set invoketimeout <invoketimeout> stackname <stack-name>
 
 DESCRIPTION
-	Sets the Invoke timeout for this invoke. Peer should respond back 
-	within invoke timeout, else stack will callback TCListener
-	for application to take corrective. invoketimeout should always be 
-	less than dialogidletimeout
+	Sets the Invoke timeout for this invoke. This property specifies,
+	by default, how long Invoke will wait for a response from a peer
+	before a timeout occurs.
+	If a TCAP-User does not specify a custom Invoke timeout when
+	sending a new Invoke, this default value will be used for outgoing
+	Invoke timeout. When this timeout occurs `TCListener.onInvokeTimeout()`
+	will be invoked.
+	invoketimeout should always be less than dialogidletimeout.
 	
 PARAMETERS
 

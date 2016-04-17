@@ -7,6 +7,10 @@ SYNOPSIS
 DESCRIPTION
 	Sets millisecond value for dialog timeout. It specifies how long 
 	dialog can be idle - not receive/send any messages
+	When a timeout occurs the method `TCListener.onDialogTimeout()` will be
+	invoked. If a TCAP-User does not invoke `Dialog.keepAlive()` inside
+	the method `TCListener.onDialogTimeout()`, the TCAP Dialog will be
+	released.
 	
 PARAMETERS
 
