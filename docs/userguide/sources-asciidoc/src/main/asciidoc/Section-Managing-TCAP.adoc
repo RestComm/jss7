@@ -52,7 +52,11 @@ SYNOPSIS
 
 DESCRIPTION
 	Sets millisecond value for dialog timeout. It specifies how long 
-	dialog can be idle - not receive/send any messages
+	dialog can be idle - not receive/send any messages.
+	When a timeout occurs the method `TCListener.onDialogTimeout()` will be
+	invoked. If a TCAP-User does not invoke `Dialog.keepAlive()` inside
+	the method `TCListener.onDialogTimeout()`, the TCAP Dialog will be
+	released.
 	
 PARAMETERS
 
@@ -77,7 +81,15 @@ On TCAP management page, click on pencil against the 'Dialog Idle Timeout' prope
 Change value and save. 
 
 [[_tcap_property_dialogidrangeend]]
-=== Dialog Id Rang End
+=== Dialog Id Range End
+
+TCAP stack can be configured to use a range of local DialogId values.
+You may install a set of TCAP Stack instances with different DialogId ranges.
+These ranges can be used for loadsharing of SS7 traffic between the TCAP instances.
+All the outgoing Dialogs will have id starting with `dialogIdRangeStart`.
+This value of `dialogIdRangeStart` cannt be greater than `dialogIdRangeEnd`.
+In addition, the value of `dialogIdRangeEnd - dialogIdRangeStart` must always be less than the value of `maxDialogs`. 
+
 
 [[_tcap_property_dialogidrangeend_cli]]
 ==== Using CLI
@@ -222,10 +234,14 @@ SYNOPSIS
 	tcap set invoketimeout <invoketimeout> stackname <stack-name>
 
 DESCRIPTION
-	Sets the Invoke timeout for this invoke. Peer should respond back 
-	within invoke timeout, else stack will callback TCListener
-	for application to take corrective. invoketimeout should always be 
-	less than dialogidletimeout
+	Sets the Invoke timeout for this invoke. This property specifies,
+	by default, how long Invoke will wait for a response from a peer
+	before a timeout occurs.
+	If a TCAP-User does not specify a custom Invoke timeout when
+	sending a new Invoke, this default value will be used for outgoing
+	Invoke timeout. When this timeout occurs `TCListener.onInvokeTimeout()`
+	will be invoked.
+	invoketimeout should always be less than dialogidletimeout.
 	
 PARAMETERS
 

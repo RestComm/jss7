@@ -18,21 +18,5 @@ The following external links point to information that will assist you in settin
 
 [NOTE]
 ====
-Before JSS7 stack can interoperate with an installed card you need to provide extra native libs for both Dialogic and dahdi cards. The way where you can obtain native libs is explains ....................
-
-
-The corresponding native libraries for `dialogic` and `dahdi` from folder  `restcomm-jss7-<version>/ss7/native/32` or `restcomm-jss7-<version>/ss7/native/64` should be copied  to `$JBOSS_HOME/bin/META-INF/lib/linux2/x86` if OS is 32 bit or copied to  `$JBOSS_HOME/bin/META-INF/lib/linux2/x64` if OS is 64 bit.
- 
-
-libraries are compiled only for linux OS for now. 
-
-`restcomm-jss7-<version>/ss7/native/32` and `restcomm-jss7-<version>/ss7/native/64` folders carries  libraries compiled for 32 bit and 64 bit linux OS. 
-
-
-
-libgctjni::
-  Native library for Dialogic
-
-libmobicents-dahdi-linux::
-  Native library for `dahdi` based cards - Diguim and Sangoma	                	 
+Before JSS7 stack can interoperate with an installed card you need to provide extra native libs for both Dialogic and dahdi cards. The way where you can obtain native libs is explained in <<_restcomm_ss7_install_hardware_libraries>>.
 ====
