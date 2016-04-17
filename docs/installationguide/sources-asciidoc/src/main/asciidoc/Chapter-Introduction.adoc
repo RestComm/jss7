@@ -1,7 +1,8 @@
 = Introduction
 
-{this-platform} {this-application} (Java SS7) is the only Open Source Java based implementation of the SS7 protocol stack.
-It provides implementation for `MTP2`, `MTP3`,  `ISUP`, `SCCP`, `TCAP`, `CAMEL` and `MAP` protocols for a dedicated equipment and also has in-built support for `SIGTRAN (M3UA)` over IP. {this-platform}  {this-application}  strictly adheres to the standards and specifications defined by the  International Telecommunications Union (ITU). 
+{this-platform} {this-application} is the only Open Source Java based implementation of the SS7 protocol stack.
+It provides implementation for `MTP2`, `MTP3`, `ISUP`, `SCCP`, `TCAP`, `CAMEL (Phase I, Phase II, Phase III and Phase IV)` and `MAP` protocols for a dedicated equipment.
+It also has in-built support for `SIGTRAN (M3UA)` over IP and strictly adheres to the standards and specifications defined by the International Telecommunications Union (ITU) and American National Standards Institute (ANSI). The platform offers developers with a flexible API set that hides the lower layer details (legacy SS7 links or SIGTRAN) and therefore makes it simple and easy to develop SS7 applications as well as to migrate your applications from TDM equipments to M3UA. {this-platform}  {this-application}  is based on an easily scalable and configurable load-balancing architecture.
 
 The platform offers developers with a flexible API set that hides the lower layer details (legacy SS7 links or SIGTRAN) and therefore makes it simple and easy to develop SS7 applications as well as to  migrate your applications from TDM equipments to M3UA. {this-platform} {this-application} is based on an easily scalable and configurable load-balancing architecture. 
 

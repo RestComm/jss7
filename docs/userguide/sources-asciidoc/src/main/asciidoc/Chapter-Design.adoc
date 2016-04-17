@@ -57,13 +57,13 @@ All the functional modules of the Stack reside in the [path]_ss7_ folder.
 		|- sctp	
 
 		|- ss7
-				|+ native
 				|+ protocols
 				|+ shell
 				|+ restcomm-ss7-service
 				|+ restcomm-ss7-sgw
 				|+ restcomm-ss7-simulator 
 				|+ restcomm-ss7-traceparser
+				|+ template
 ----
 
 The following is a description of the important services and libraries that make up {this-platform} {this-application} 
@@ -95,12 +95,12 @@ The sub-directories included in the [path]_ss7_ folder are:
 * [path]_restcomm-ss7-simulator_ : SS7 Simulator is an application for testing the SS7 stack and displaying its functionality.
   It is also a good example of how to use this stack.
 * [path]_restcomm-ss7-traceparser_ : mobicents jSS7 Stack Trace Parser is a simple tool that can parse trace capture data files (of some formats) and log its content in some log file in a text form			 
-* [path]_native_ : This folder contains the native libraries to interact with the SS7 Cards installed on the server.
-  As of now, native libraries are compiled and available only for linux OS.
 * [path]_protocols_ : {this-platform}  {this-application}  User Protocols libraries.
   Your application will directly  call the APIs exposed by these libraries.
   Depending on the application, you may be interested in either `TCAP` or `MAP`, or both, or `ISUP` libraries.
-  * [path]_shell_ : This holds the Command Line Interface (CLI) module to manage the {this-platform}  {this-application} .								
+* [path]_shell_ : This holds the Command Line Interface (CLI) module to manage the {this-platform}  {this-application} .								
+* [path]_template_ : This folder contains templates that are needed for JSS7 stack configuring.
+  As of now, native libraries are compiled and available only for linux OS.
 
 == Functional Blocks
 
@@ -231,3 +231,5 @@ Depending on your testing goals, you can configure each of these layers separate
 * CAP SCF test
 * MAP ATI client test
 * MAP ATI server test
+* MAP Check IMEI client test
+* MAP Check IMEI server test
