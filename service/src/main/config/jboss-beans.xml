@@ -8,7 +8,6 @@
 			<parameter>SCTPManagement</parameter>
 		</constructor>
 		<property name="persistDir">${jboss.server.data.dir}</property>
-		<property name="singleThread">true</property>
 	</bean>
 
 	<bean name="SCTPShellExecutor" class="org.mobicents.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
@@ -204,7 +203,7 @@
 			</map>
 		</property>
 	</bean>
-	
+
 	<!-- ==================================================================== -->
 	<!-- Shell Service -->
 	<!-- ==================================================================== -->
@@ -279,7 +278,7 @@
 		</property>
 	</bean>
 	<!-- ==================================================================== -->
-	<!-- Mobicents SS7 Service -->
+	<!-- RestComm SS7 Service -->
 	<!-- ==================================================================== -->
 	<bean name="TCAPSS7Service" class="org.mobicents.ss7.SS7Service">
 		<constructor>
