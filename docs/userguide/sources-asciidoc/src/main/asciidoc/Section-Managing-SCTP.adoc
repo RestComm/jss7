@@ -81,118 +81,75 @@ EXAMPLES
 On SCTP management page, click on pencil against the 'Connect Delay' property and text box becomes editable.
 Change value and save. 
 
-[[_sctp_property_singlethread]]
-=== Single Thread
+[[_sctp_property_cc_delaythreshold]]
+=== Thresholds for outgoing congestion control
 
-You can modify the settings for the parameter 'singlethread' only when the SCTP Stack is not running.
-In addition, this parameter cannot be modified through the CLI or GUI.
-You will have to invoke the setter function directly from the source code.
- 
-
-If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file [path]_jboss-beans.xml_, which is located at [path]_$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF_, where [app]`profile_name` is the server profile name. 
-----
-
-/*Add property for the parameter 'singleThread' to jboss-beans.xml file and specify settings to true or false*/ 
-<property name="singleThread">true</property>
-----		 
-
-The current settings of the parameter can be viewed in the GUI or by invoking the appropriate CLI command as described below. 
-
-[[_sctp_property_singlethread_cli]]
+[[_sctp_property_cc_delaythreshold_cli]]
 ==== Using CLI
 
-You can retrieve the current settings of the parameter 'singlethread' by issuing the command `sctp get singlethread`.
-However as explained above, you cannot modify the settings through the CLI. 
+SCTP library measures delays between the time when an outgoing message had been delivered from SS7 stack for sending and and the time when the message was sent to SCTP/TCP channel.
+The more time this delay the more we have a congestion level. 
+
+The delay thresholds when the congestion level is increased to level 1, 2 and 3 is configured by parameters cc_delaythreshold_1, cc_delaythreshold_2 and cc_delaythreshold_3 (in milliseconds). 				
+
+The delay thresholds when the congestion level is decreased to level 0, 1, and 2 is configured by parameters cc_backtonormal_delaythreshold_1, cc_backtonormal_delaythreshold_2 and cc_backtonormal_delaythreshold_3 (in milliseconds). 				
+
+You can set the thresholds (in milliseconds) by issuing the commands `sctp set cc_delaythreshold_1`, `sctp set cc_delaythreshold_2`, `sctp set cc_delaythreshold_3`, `sctp set cc_backtonormal_delaythreshold_1`, `sctp set cc_backtonormal_delaythreshold_2` or `sctp set cc_backtonormal_delaythreshold_3` with appropriate parameters as described below.
+You can verify this by issuing the commands `sctp get cc_delaythreshold_1`, `sctp get cc_delaythreshold_2`, `sctp get cc_delaythreshold_3`, `sctp get cc_backtonormal_delaythreshold_1`, `sctp get cc_backtonormal_delaythreshold_2` or `sctp get cc_backtonormal_delaythreshold_3`  which will display the value set for this property. 
 
 ----
 
 Name
-	sctp get singlethread 
+	sctp set cc_delaythreshold_1 
+	sctp set cc_delaythreshold_2 
+	sctp set cc_delaythreshold_3 
+	sctp set cc_backtonormal_delaythreshold_1
+	sctp set cc_backtonormal_delaythreshold_2
+	sctp set cc_backtonormal_delaythreshold_3
 
 SYNOPSIS
-	sctp get singlethread
+	sctp set cc_delaythreshold_1 <threshold> stackname <stack-name>
+	sctp set cc_delaythreshold_2 <threshold> stackname <stack-name>
+	sctp set cc_delaythreshold_3 <threshold> stackname <stack-name>
+	sctp set cc_backtonormal_delaythreshold_1 <threshold> stackname <stack-name>
+	sctp set cc_backtonormal_delaythreshold_2 <threshold> stackname <stack-name>
+	sctp set cc_backtonormal_delaythreshold_3 <threshold> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to retrieve the current settings of the parameter
-	'singlethread'. The 'singlethread' parameter is used to specify if there
-	can be more than one worker threads dedicated to call the applications
-	above SCTP. 
+	For outgoing messages congestion control stack needs to have 3 thresholds
+	- delays of outgoing messages before it will be sent to IP channel (3
+	levels - 1, 2, 3). If a delay time in seconds becomes more then value for
+	level 1, 2 or 3, the Association's congestion level becomes to 1, 2 or 3.
+	Default values:
+	for cc_delaythreshold_1 is 2.5 seconds.
+	for cc_delaythreshold_2 is 8   seconds.
+	for cc_delaythreshold_3 is 14 seconds.
+	for cc_backtonormal_delaythreshold_1 is 1.5 seconds.
+	for cc_backtonormal_delaythreshold_2 is 5.5 seconds.
+	for cc_backtonormal_delaythreshold_3 is 10  seconds.
+
+PARAMETERS
 	
-	The default settings will dedicate only one thread for calling applications
-	above SCTP. If you wish to assign multiple worker threads, then the value of
-	the paramter 'singlethread' must be set to false before you can change the
-	number of worker threads to more than one.
-	
-	The settings can be modified only when the SCTP Stack is not running.
-	To modify this parameter you must invoke the setter function
-	directly from the code or if you are using the JBoss AS, you can add a 
-	property to the XML descriptor file jboss-beans.xml. You cannot change the
-	settings through the CLI.
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sctp set cc_delaythreshold_1 2.5
+	sctp set cc_delaythreshold_2 8
+	sctp set cc_delaythreshold_3 14
+	sctp set cc_backtonormal_delaythreshold_1 1.5
+	sctp set cc_backtonormal_delaythreshold_2 5.5
+	sctp set cc_backtonormal_delaythreshold_3 10
 ----
 
-[[_sctp_property_singlethread_gui]]
+[[_sctp_property_cc_delaythreshold_gui]]
 ==== Using GUI
 
-In the SCTP management page, you can view the current settings of the 'Single Thread' property.
-But as explained above, you cannot change the settings in the GUI.
-But as explained above, you cannot change the settings in the GUI.
-For more details about this parameter, refer to the detailed description about the parameter in the above section for CLI.
-
-[[_sctp_property_workerthreads]]
-=== Worker Threads
-
-You can modify the settings for the parameter 'workerthreads' only when the SCTP Stack is not running.
-In addition, this parameter cannot be modified through the CLI or GUI.
-You will have to invoke the setter function directly from the source code.
- 
-
-If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file [path]_jboss-beans.xml_, which is located at [path]_$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF_, where [app]`profile_name` is the server profile name. 
-----
-
-/*Add property for the parameter 'workerthreads' to jboss-beans.xml file and specify the value*/ 
-<property name="workerThreads">4</property>
-----		 
-
-The current settings of the parameter can be viewed in the GUI or by invoking the appropriate CLI command as described below. 
-
-[[_sctp_property_workerthreads_cli]]
-==== Using CLI
-
-You can retrieve the current settings of the parameter 'workerthreads' by issuing the command `sctp get workerthreads`.
-However as explained above, you cannot modify the settings through the CLI. 
-
-----
-
-Name
-	sctp get workerthreads 
-
-SYNOPSIS
-	sctp get workerthreads
-
-DESCRIPTION	
-	This command is used to retrieve the current settings of the parameter
-	'workerthreads'. The 'workerthreads' parameter is used to specify the number
-	of worker threads dedicated to call the applications above SCTP. 
-	
-	The default settings will dedicate only one thread for I/O and one thread
-	for calling applications above SCTP. If you wish to assign multiple 
-	worker threads, then the value of the paramter 'singlethread' must be
-	set to false and the number of worker threads must be set using this parameter
-	'workerthreads'. 
-	
-	The settings can be modified only when the SCTP Stack is not running.
-	To modify this parameter you must invoke the setter function
-	directly from the code or if you are using the JBoss AS, you can add a 
-	property to the XML descriptor file jboss-beans.xml. You cannot change the
-	settings through the CLI.
-----
-
-[[_sctp_property_workerthreads_gui]]
-==== Using GUI
-
-In the SCTP management page, you can view the current settings of the 'Worker Threads' property.
-But as explained above, you cannot change the settings in the GUI.
-For more details about this parameter, refer to the detailed description about the parameter in the above section for CLI.
+On SCTP management page, click on pencil against the 'cc_delaythreshold_1' or other needed property and text box becomes editable.
+Change value and save. 
 
 [[_show_sctp_server]]
 == View all SCTP (or TCP) Server Instances

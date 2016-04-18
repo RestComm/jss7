@@ -56,7 +56,7 @@ The current settings of the parameter can be viewed in the GUI or by invoking th
 [[_m3ua_property_maxsequencenumber_cli]]
 ==== Using CLI
 
-You can retrieve the current settings of the parameter 'maxsequencenumber' by issuing the command `sctp get maxsequencenumber`.
+You can retrieve the current settings of the parameter 'maxsequencenumber' by issuing the command `m3ua get maxsequencenumber`.
 However as explained above, you cannot modify the settings through the CLI. 
 
 ----
@@ -65,7 +65,7 @@ Name
 	m3ua get maxsequencenumber 
 
 SYNOPSIS
-	m3ua get maxsequencenumber
+	m3ua get maxsequencenumber stackname <stack-name>
 
 DESCRIPTION	
 	This command is used to retrieve the current settings of the parameter
@@ -99,7 +99,7 @@ In addition, this parameter cannot be modified through the CLI or GUI.
 You will have to invoke the setter function directly from the source code.
  
 
-If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file [path]_jboss-beans.xml_, which is located at [path]_$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF_, where [app]`profile_name` is the server profile name. 
+If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file [path]_jboss-beans.xml_, which is located at [path]_$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF_, where [app]`profile_name` is the server profile name. 
 ----
 
 /*Add property for the parameter 'maxasforroute' to jboss-beans.xml file and specify the value*/ 
@@ -111,7 +111,7 @@ The current settings of the parameter can be viewed in the GUI or by invoking th
 [[_m3ua_property_maxasforroute_cli]]
 ==== Using CLI
 
-You can retrieve the current settings of the parameter 'maxasforroute' by issuing the command `sctp get maxasforroute`.
+You can retrieve the current settings of the parameter 'maxasforroute' by issuing the command `m3ua get maxasforroute`.
 However as explained above, you cannot modify the settings through the CLI. 
 
 ----
@@ -120,7 +120,7 @@ Name
 	m3ua get maxasforroute 
 
 SYNOPSIS
-	m3ua get maxasforroute 
+	m3ua get maxasforroute stackname <stack-name>
 
 DESCRIPTION
 	This command is used to retrieve the current settings of the parameter
@@ -196,6 +196,151 @@ EXAMPLES
 
 On M3UA management page, click on pencil against the 'Worker Threads' property and text box becomes editable.
 Change value and save. 
+
+[[_m3ua_property_deliverymessagethreadcount]]
+=== Threads count for processing of incoming messages
+
+You can modify the settings for the parameter 'deliverymessagethreadcount' only when the M3UA Stack is not running.
+In addition, this parameter cannot be modified through the CLI or GUI.
+You will have to invoke the setter function directly from the source code.
+ 
+
+If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file [path]_jboss-beans.xml_, which is located at [path]_$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF_, where [app]`profile_name` is the server profile name. 
+----
+
+/*Add property for the parameter 'deliverymessagethreadcount' to jboss-beans.xml file and specify the value*/ 
+<property name="deliveryTransferMessageThreadCount">4</property>
+----		 
+
+The current settings of the parameter can be viewed in the GUI or by invoking the appropriate CLI command as described below. 
+
+[[_m3ua_property_deliverymessagethreadcount_cli]]
+==== Using CLI
+
+You can retrieve the current settings of the parameter 'deliverymessagethreadcount' by issuing the command `m3ua get deliverymessagethreadcount`.
+However as explained above, you cannot modify the settings through the CLI. 
+
+----
+
+Name
+	m3ua get deliverymessagethreadcount 
+
+SYNOPSIS
+	m3ua get deliverymessagethreadcount 
+
+DESCRIPTION
+	Returns the count of threads that will be used for message delivering
+	to Mtp3UserPartListener's. Messages from SS7 peers (incoming messages)
+	are processed by these threads. Messages to SS7 peers (outgoing messages)
+	are processed by threads from user applications (not these threads).
+
+	For single thread model this value should be equal 1.
+----
+
+[[_m3ua_property_deliverymessagethreadcount_gui]]
+==== Using GUI
+
+In the M3UA management page, you can view the current settings of the 'Max As for Route' property.
+But as explained above, you cannot change the settings in the GUI.
+For more details about this parameter, refer to the detailed description about the parameter in the above section for CLI.
+
+[[_m3ua_property_routinglabelformat]]
+=== MTP3 RoutingLabel Format
+
+You can modify the settings for the parameter 'routinglabelformat' only when the M3UA Stack is not running.
+In addition, this parameter cannot be modified through the CLI or GUI.
+You will have to invoke the setter function directly from the source code.
+ 
+
+If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file [path]_jboss-beans.xml_, which is located at [path]_$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF_, where [app]`profile_name`		 and also an extra separate bean - RoutingLabelFormat (to which we refer from ). is the server profile name. 
+----
+
+/*Extra bean for RoutingLabelFormat Enum*/
+	<bean name="RoutingLabelFormat" class="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat">
+		<constructor factoryClass="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat"
+			factoryMethod="getInstance">
+			<parameter>ITU</parameter>
+		</constructor>
+	</bean>
+
+/*Add property for the parameter 'routinglabelformat' to jboss-beans.xml file and specify the value into M3UAManagementImpl mbean*/ 
+		<property name="routingLabelFormat">
+			<inject bean="RoutingLabelFormat" />
+		</property>
+----		 
+
+The current settings of the parameter can be viewed in the GUI or by invoking the appropriate CLI command as described below. 
+
+[[_m3ua_property_routinglabelformat_cli]]
+==== Using CLI
+
+You can retrieve the current settings of the parameter 'routinglabelformat' by issuing the command `m3ua get routinglabelformat`.
+However as explained above, you cannot modify the settings through the CLI. 
+
+----
+
+Name
+	m3ua get routinglabelformat 
+
+SYNOPSIS
+	m3ua get routinglabelformat stackname <stack-name>
+
+DESCRIPTION
+	Returns RoutingLabelFormat option. Possible values are: ITU, ANSI_Sls8Bit,
+	ANSI_Sls5Bit, Japan_TTC_DDI, Japan_NTT, China.
+----
+
+[[_m3ua_property_routinglabelformat_gui]]
+==== Using GUI
+
+In the M3UA management page, you can view the current settings of the 'MTP3 RoutingLabel Format' property.
+But as explained above, you cannot change the settings in the GUI.
+For more details about this parameter, refer to the detailed description about the parameter in the above section for CLI.
+
+[[_m3ua_property_uselsbforlinksetselection]]
+=== Bit of SLS for loadbalancing between Linksets
+
+[[_m3ua_property_uselsbforlinksetselection_cli]]
+==== Using CLI
+
+You can set the 'uselsbforlinksetselection' by issuing the command `m3ua set uselsbforlinksetselection` with appropriate parameters as described below.
+You can verify this by issuing the command `m3ua get uselsbforlinksetselection` which will display the value set for this property. 
+
+----
+
+Name
+	m3ua set uselsbforlinksetselection
+
+SYNOPSIS
+	m3ua set uselsbforlinksetselection <true | false> stackname <stack-name>
+
+DESCRIPTION
+	Possible values are false or true. Sets which bit of SLS will be used
+	for loadbalancing between Linkset.
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<true | false>	-	True value means lowest bit of SLS is used for
+						loadbalancing between Linkset, false value means
+						highest bit of SLS is used. Default value is false.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	m3ua set uselsbforlinksetselection false
+----
+
+[[_m3ua_property_uselsbforlinksetselection_gui]]
+==== Using GUI
+
+On M3UA management page, click on pencil against the 'Worker Threads' property and text box becomes editable.
+Change value and save.
 
 [[_managing_show_m3ua_asp]]
 == View all M3UA Application Server Processes
@@ -737,12 +882,11 @@ EXAMPLES
 
 .Procedure: Assign an ASP to an AS using GUI
 . Navigate to the 'ApplicationServers' tab in the M3UA Management Unit window, locate the row corresponding to the AS you wish to assign an ASP and click on the name of the AS.
-. This will launch the AS details page where all the properties of the AS will be displayed.
+This will launch the AS details page where all the properties of the AS will be displayed.
 Switch to the second tab in this view called "Application Server Processes". As shown in the figure below, you will find a list of all currently assigned ASPs to this selected AS. 
-+
-.GUI - M3UA Management - Assign ASP to an AS
-image::images/GUI_M3UA_Management_ASP_Assign.png[]				
 
+.GUI - M3UA Management - Assign ASP to an AS
+. image::images/GUI_M3UA_Management_ASP_Assign.png[]				
 . Click on the 'Add ASP' button at the bottom.
   This will launch a pop-up named 'Add ASP' where all available ASPs will be listed in a drop down box.
 . Click on the 'Create' button to add the selected ASP to this AS.

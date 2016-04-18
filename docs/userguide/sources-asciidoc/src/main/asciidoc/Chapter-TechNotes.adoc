@@ -1,5 +1,8 @@
+[[_technical_notes]]
+= Technical notes
+
 [[_design_multitenancy]]
-= Multi tenancy support
+== Multi tenancy support
 
 Multi tenancy allows same instance of {this-platform} {this-application} to connect to different operators, each having its own  links and point-codes. 
 
@@ -14,7 +17,59 @@ NetworkId value is assigned for a configurable objects:
 
 NetworkId is also assigned to activities: 
 
-* SccpMessage (assigned by Service Acess Point - SAP for SS7 originated messages, assigned by TCAP Dialog for TCAP originated messages)
+* SccpMessage (assigned by Service Access Point (SAP) for SS7 originated messages, assigned by TCAP Dialog for TCAP originated messages)
 * TCAP Dialog (assigned by SccpMessage for SCCP originated messages, assigned by upper Dialog for user messages)
 * MAP / CAP Dialog (same as TCAP Dialog)
 * SCCP rule is taken into account only when SCCP rule networkId == SccpMessage networkId        
+
+When an SCCP message comes to SCCP stack the a networkId is assigned to the SCCP message depending on DPC and OPC values of the message.
+In order to SCCP stack can properly assign a networkId value, then at least either DPC or DPC of messages for different networkId subnetworks must be different  and SAPs / Destinations for SAPs were configured for unintersected intervals. 
+
+[[_design_cong_control]]
+== Congestion support for outgoing messageflow
+
+For outgoing messageflow (when we are sending messages to SS7 network) low level counters are implemented at SCTP library (MTP2 level for the sigtran stack). SCTP library measures delays between message delivering from MTP3 level for delivering and a real sending to the IP network.
+There are 3 levels of congestion (1, 2 or 3) depending on the delay length.
+Then m3ua checks this data and issues MTP-STATUS indications to upper layers (ISUP or SCCP). If we use MTP3 stacks from Dialogic or Dahdi legacy cards, we use MTP-STATUS indications that are issued by MTP3 levels of these cards.
+SCCP level has a congestion control from SS7 specification, where SCCP by timers TIMER_A and TIMER_D processes a congestion measurement logic.
+At the SCCP level the blocking of outgoing SCCP messages is also implemented (it is disabled (and not used) by default but can be activated). 
+
+SCCP and M3UA levels use the outgoing congestion control results for sharing of the outgoing SS7 traffic between primary / backup links.
+When primary (for dominant scenario) or some link (for loadsharing scenario) is congested up to at least level 2 SCCP stack routes the traffic to a backup / another link.
+M3UA stack when loadsharing between ASP destinations when some link for loadshare traffic-mode is congested up to at least level 2 also tries to route the traffic to another link.
+(For loadsharing between AS destinations the congestion levels are not taken into account). 
+
+TCAP level (and upper stack levels) provides methods for the congestion control monitoring for SS7 stack users: 
+[source,java]
+----
+
+    /**
+     * The collection of netwokIds that are marked as prohibited or congested.
+     * 
+     * @return The collection of pairs: netwokId value - NetworkIdState (prohibited / congested state)
+     */
+    FastMap<Integer, NetworkIdState> getNetworkIdStateList();
+
+    /**
+     * Returns the state of availability / congestion for a networkId subnetwork.
+     * Returns null if there is no info (we need to
+     * treat it as available)
+     *
+     * @param networkId
+     * @return
+     */
+    NetworkIdState getNetworkIdState(int networkId);
+----
+By these methods the TCAP stack provides the congestion and availability status for a SS7 subnetwork for a networkId.
+NetworkIdState has two parameters: 
+[source,java]
+----
+
+    boolean isAvailavle();
+    int getCongLevel();
+----
+and helps us to understand if the networkId is not available (connected) / not available (down) or congested / not.
+Then TCAP / CAP / MAP user can check it and reduce / temporary block the outgoing traffic. 
+
+At the SCTP and SCCP levels we have several congestion control parameters that should be tuned depending on connection type (legacy / sigtran) and capacity for the best productivity.
+See chapter <<_sctp_property_cc_delaythreshold>> for configuring of congestion control settings for SCTP level and chapters <<_sccp_property_cc_timer_a>>, <<_sccp_property_cc_timer_d>>, <<_sccp_property_cc_algo>> and <<_sccp_property_cc_blockingoutgoungsccpmessages>> for configuring of congestion control settings for SCCP level. 
