@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.isup.message.parameter;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * Start time:12:37:11 2009-07-23<br>
  * Project: mobicents-isup-stack<br>
@@ -83,6 +85,7 @@ public interface GenericDigits extends ISUPParameter {
 
     void setEncodedDigits(byte[] digits);
 
-    // TODO: add public String getDecodedDigits() ;
-    // TODO: add public void setDecodedDigits(int encodingScheme, String digits) ;
+    String getDecodedDigits() throws UnsupportedEncodingException;
+
+    void setDecodedDigits(int encodingScheme, String digits) throws UnsupportedEncodingException;
 }
