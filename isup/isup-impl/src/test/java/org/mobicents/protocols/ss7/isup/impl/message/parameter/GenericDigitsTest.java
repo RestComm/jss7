@@ -77,9 +77,15 @@ public class GenericDigitsTest {
         return new byte[] { 0x21, 0x43, 0x65, 0x07 };
     }
 
+    private byte[] getIA5Data() {
+        return new byte[] { 67, 65, 66, 97, 98, 49, 50 }; // "ABab12"
+    }
+
     private String digitsEvenString = "123456";
 
     private String digitsOddString = "1234567";
+
+    private String digitsIA5String = "ABab12";
 
     @Test(groups = { "functional.decode", "parameter" })
     public void testDecodeEven() throws Exception {
@@ -90,6 +96,7 @@ public class GenericDigitsTest {
         assertEquals(prim.getEncodingScheme(), GenericDigits._ENCODING_SCHEME_BCD_EVEN);
         assertEquals(prim.getTypeOfDigits(), GenericDigits._TOD_BGCI);
         assertEquals(prim.getEncodedDigits(), getEncodedEvenData());
+        assertEquals(prim.getDecodedDigits(), "123456");
     }
 
     @Test(groups = { "functional.decode", "parameter" })
@@ -101,6 +108,7 @@ public class GenericDigitsTest {
         assertEquals(prim.getEncodingScheme(), GenericDigits._ENCODING_SCHEME_BCD_ODD);
         assertEquals(prim.getTypeOfDigits(), GenericDigits._TOD_BGCI);
         assertEquals(prim.getEncodedDigits(), getEncodedOddData());
+        assertEquals(prim.getDecodedDigits(), "1234567");
     }
 
     @Test(groups = { "functional.encode", "parameter" })
@@ -113,6 +121,11 @@ public class GenericDigitsTest {
         byte[] data = getEvenData();
         byte[] encodedData = prim.encode();
 
+        assertTrue(Arrays.equals(data, encodedData));
+
+
+        prim = new GenericDigitsImpl(GenericDigits._ENCODING_SCHEME_BCD_EVEN, GenericDigits._TOD_BGCI, "123456");
+        encodedData = prim.encode();
         assertTrue(Arrays.equals(data, encodedData));
 
     }
@@ -129,6 +142,10 @@ public class GenericDigitsTest {
 
         assertTrue(Arrays.equals(data, encodedData));
 
+
+        prim = new GenericDigitsImpl(GenericDigits._ENCODING_SCHEME_BCD_ODD, GenericDigits._TOD_BGCI, "1234567");
+        encodedData = prim.encode();
+        assertTrue(Arrays.equals(data, encodedData));
     }
 
     @Test(groups = { "functional.encode", "parameter" })
@@ -164,6 +181,24 @@ public class GenericDigitsTest {
         assertTrue(BcdHelper.convertTelcoCharsToHexDigits(hexString).equals(convertedDigits));
     }
 
+    @Test(groups = { "functional.encode", "parameter" })
+    public void testEncodingIA5() throws Exception {
+        GenericDigitsImpl prim = new GenericDigitsImpl();
+        prim.setDecodedDigits(GenericDigits._ENCODING_SCHEME_IA5, digitsIA5String);
+        prim.setTypeOfDigits(GenericDigits._TOD_BGCI);
+
+        assertEquals(getIA5Data(), prim.encode());
+    }
+
+    @Test(groups = { "functional.decode", "parameter" })
+    public void testDecodingIA5() throws Exception {
+        GenericDigitsImpl prim = new GenericDigitsImpl();
+        prim.decode(getIA5Data());
+
+        assertEquals(prim.getEncodingScheme(), GenericDigits._ENCODING_SCHEME_IA5);
+        assertEquals(prim.getTypeOfDigits(), GenericDigits._TOD_BGCI);
+        assertEquals(prim.getDecodedDigits(), digitsIA5String);
+    }
 
 
     @Test(groups = { "functional.xml.serialize", "parameter" })
@@ -192,5 +227,6 @@ public class GenericDigitsTest {
         assertEquals(copy.getEncodingScheme(), original.getEncodingScheme());
         assertEquals(copy.getTypeOfDigits(), original.getTypeOfDigits());
         assertEquals(copy.getEncodedDigits(), original.getEncodedDigits());
+        assertEquals(copy.getDecodedDigits(), original.getDecodedDigits());
     }
 }

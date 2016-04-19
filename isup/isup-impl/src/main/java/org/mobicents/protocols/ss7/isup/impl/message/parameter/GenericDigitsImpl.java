@@ -24,12 +24,15 @@ package org.mobicents.protocols.ss7.isup.impl.message.parameter;
 
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
 import org.mobicents.protocols.ss7.isup.util.BcdHelper;
 
 import javax.xml.bind.DatatypeConverter;
+
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 /**
  * Start time:12:24:47 2009-03-31<br>
@@ -43,6 +46,7 @@ public class GenericDigitsImpl extends AbstractISUPParameter implements GenericD
     private static final String ENCODING_SCHEME = "encodingScheme";
     private static final String TYPE_OF_DIGITS = "typeOfDigits";
     private static final String DIGITS = "digits";
+    private static final Charset asciiCharset = Charset.forName("ASCII");
 
     private static final int DEFAULT_VALUE = 0;
 
@@ -62,11 +66,10 @@ public class GenericDigitsImpl extends AbstractISUPParameter implements GenericD
         this.setEncodedDigits(digits);
     }
 
-    public GenericDigitsImpl(int encodingScheme, int typeOfDigits, String digits) {
+    public GenericDigitsImpl(int encodingScheme, int typeOfDigits, String digits) throws UnsupportedEncodingException {
         super();
-        this.encodingScheme = encodingScheme;
         this.typeOfDigits = typeOfDigits;
-        this.setEncodedDigits(BcdHelper.encodeHexStringToBCD(digits));
+        setDecodedDigits(encodingScheme, digits);
     }
 
     public GenericDigitsImpl() {
@@ -75,24 +78,44 @@ public class GenericDigitsImpl extends AbstractISUPParameter implements GenericD
     }
 
     public String getDecodedDigits() throws UnsupportedEncodingException {
-        return BcdHelper.bcdDecodeToHexString(encodingScheme, digits);
+        switch (encodingScheme) {
+            case GenericDigits._ENCODING_SCHEME_BCD_EVEN:
+            case GenericDigits._ENCODING_SCHEME_BCD_ODD:
+                return BcdHelper.bcdDecodeToHexString(encodingScheme, digits);
+            case GenericDigits._ENCODING_SCHEME_IA5:
+                return new String(digits, asciiCharset);
+            default:
+                //TODO: add other encoding schemas support
+                throw new UnsupportedEncodingException("Specified GenericDigits encoding: " + encodingScheme + " is unsupported");
+        }
+
     }
 
     public void setDecodedDigits(int encodingScheme, String digits) throws UnsupportedEncodingException {
         if (digits == null || digits.length() < 1) {
-            throw new IllegalArgumentException("Digits must not be null");
+            throw new IllegalArgumentException("Digits must not be null or zero length");
         }
-        //TODO: analyse if encoding scheme is correctly set (ODD/EVEN) vs number of digits
         switch (encodingScheme) {
             case GenericDigits._ENCODING_SCHEME_BCD_EVEN:
             case GenericDigits._ENCODING_SCHEME_BCD_ODD:
+                if ((digits.length() % 2) == 0) {
+                    if (encodingScheme == GenericDigits._ENCODING_SCHEME_BCD_ODD)
+                        throw new UnsupportedEncodingException("SCHEME_BCD_ODD is possible only for odd digits count");
+                } else {
+                    if (encodingScheme == GenericDigits._ENCODING_SCHEME_BCD_EVEN)
+                        throw new UnsupportedEncodingException("SCHEME_BCD_EVEN is possible only for odd digits count");
+                }
                 this.encodingScheme = encodingScheme;
+                this.setEncodedDigits(BcdHelper.encodeHexStringToBCD(digits));
+                break;
+            case GenericDigits._ENCODING_SCHEME_IA5:
+                this.encodingScheme = encodingScheme;
+                this.setEncodedDigits(digits.getBytes(asciiCharset));
                 break;
             default:
                 //TODO: add other encoding schemas support
                 throw new UnsupportedEncodingException("Specified GenericDigits encoding: " + encodingScheme + " is unsupported");
         }
-        this.setEncodedDigits(BcdHelper.encodeHexStringToBCD(digits));
     }
 
     public int decode(byte[] b) throws ParameterException {
@@ -165,6 +188,14 @@ public class GenericDigitsImpl extends AbstractISUPParameter implements GenericD
             sb.append(", encodedDigits=[");
             sb.append(DatatypeConverter.printHexBinary(digits));
             sb.append("]");
+
+            try {
+                String s = getDecodedDigits();
+                sb.append(", decodedDigits=[");
+                sb.append(s);
+                sb.append("]");
+            } catch (Exception e) {
+            }
         }
         sb.append("]");
 
