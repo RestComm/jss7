@@ -6,7 +6,7 @@
 		class="org.mobicents.ss7.hardware.dialogic.oam.DialogicLinksetFactory">
 	</bean>
 
-	<bean name="SCTPManagement" class="org.mobicents.protocols.sctp.ManagementImpl">
+	<bean name="SCTPManagement" class="org.mobicents.protocols.sctp.netty.NettySctpManagementImpl">
 		<constructor>
 			<parameter>SCTPManagement</parameter>
 		</constructor>
@@ -32,6 +32,12 @@
 			<parameter>Restcomm-jSS7</parameter>
 		</constructor>
 		<property name="persistDir">${sgw.home.dir}/ss7</property>
+		<property name="maxSequenceNumber">256</property>
+		<property name="maxAsForRoute">2</property>
+		<property name="deliveryMessageThreadCount">1</property>
+		<property name="routingLabelFormat">
+			<inject bean="RoutingLabelFormat" />
+		</property>
 		<property name="transportManagement">
 			<inject bean="SCTPManagement" />
 		</property>

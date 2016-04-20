@@ -771,7 +771,7 @@ SGW will expose the SS7 signals received from legacy network to IP network over 
 [source,xml]
 ----
 
-    <bean name="SCTPManagement" class="org.mobicents.protocols.sctp.ManagementImpl">
+    <bean name="SCTPManagement" class="org.mobicents.protocols.sctp.netty.NettySctpManagementImpl">
         <constructor>
             <parameter>SCTPManagement</parameter>
         </constructor>

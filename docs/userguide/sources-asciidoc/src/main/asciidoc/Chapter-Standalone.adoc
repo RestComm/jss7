@@ -10,7 +10,7 @@ This is an example of a typical SCTP startup procedure, in one line of code, usi
 [source]
 ----
     org.mobicents.protocols.api.Management sctpManagement = null;
-    sctpManagement = new org.mobicents.protocols.sctp.ManagementImpl("Client");
+    sctpManagement = new org.mobicents.protocols.sctp.netty.NettySctpManagementImpl("Client");
     sctpManagement.setPersistDir("<your directory path>");
 
     sctpManagement.start();
