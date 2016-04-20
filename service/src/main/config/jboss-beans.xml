@@ -48,6 +48,7 @@
 		<property name="maxSequenceNumber">256</property>
 		<property name="maxAsForRoute">2</property>
 		<property name="useLsbForLinksetSelection">false</property>
+		<property name="deliveryMessageThreadCount">8</property>
 		<property name="transportManagement">
 			<inject bean="SCTPManagement" />
 		</property>
