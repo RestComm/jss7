@@ -133,3 +133,11 @@ docs/sources-*/src
 /Client_sctp.xml
 /maplog.txt
 /MsgLog.pcap
+/TCAPCongestionTest1_management.xml
+/TCAPCongestionTest2_management.xml
+/TCAPCongestionTestSccpStack1_management2.xml
+/TCAPCongestionTestSccpStack1_sccpresource2.xml
+/TCAPCongestionTestSccpStack1_sccprouter2.xml
+/TCAPCongestionTestSccpStack2_management2.xml
+/TCAPCongestionTestSccpStack2_sccpresource2.xml
+/TCAPCongestionTestSccpStack2_sccprouter2.xml
