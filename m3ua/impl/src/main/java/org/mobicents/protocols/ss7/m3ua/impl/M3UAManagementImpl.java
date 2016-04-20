@@ -228,6 +228,14 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
     }
 
     @Override
+    public void setRoutingLabelFormat(RoutingLabelFormat routingLabelFormat) throws Exception {
+        if (this.isStarted)
+            throw new Exception("RoutingLabelFormat parameter can be updated only when M3UA stack is NOT running");
+
+        super.setRoutingLabelFormat(routingLabelFormat);
+    }
+
+    @Override
     public void setDeliveryMessageThreadCount(int deliveryMessageThreadCount) throws Exception {
         if (this.isStarted)
             throw new Exception("DeliveryMessageThreadCount parameter can be updated only when M3UA stack is NOT running");
@@ -986,12 +994,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
             // writer.setReferenceResolver(new XMLReferenceResolver());
             writer.setIndentation(TAB_INDENT);
 
-//            writer.write(this.maxSequenceNumber, MAX_SEQUENCE_NUMBER_PROP, Integer.class);
-//            writer.write(this.maxAsForRoute, MAX_AS_FOR_ROUTE_PROP, Integer.class);
             writer.write(this.timeBetweenHeartbeat, HEART_BEAT_TIME_PROP, Integer.class);
-
-            if (this.getRoutingLabelFormat() != null)
-                writer.write(this.getRoutingLabelFormat().toString(), ROUTING_LABEL_FORMAT, String.class);
             writer.write(this.isUseLsbForLinksetSelection(), USE_LSB_FOR_LINKSET_SELECTION, Boolean.class);
 
             writer.write(aspfactories, ASP_FACTORY_LIST, FastList.class);
@@ -1041,8 +1044,6 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
 
     private void loadActualData(XMLObjectReader reader ) throws XMLStreamException, IOException{
         try {
-            // this.maxSequenceNumber = reader.read(MAX_SEQUENCE_NUMBER_PROP, Integer.class);
-            // this.maxAsForRoute = reader.read(MAX_AS_FOR_ROUTE_PROP, Integer.class);
             Integer vali = reader.read(MAX_SEQUENCE_NUMBER_PROP, Integer.class);
             vali = reader.read(MAX_AS_FOR_ROUTE_PROP, Integer.class);
 
@@ -1053,13 +1054,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
             logger.error("Errro while reading attribute", e);
         }
 
-        String vals = reader.read(ROUTING_LABEL_FORMAT, String.class);
-        if (vals != null) {
-            try {
-                super.setRoutingLabelFormat(Enum.valueOf(RoutingLabelFormat.class, vals));
-            } catch (Exception e) {
-            }
-        }
+        String vals = reader.read(ROUTING_LABEL_FORMAT, String.class); // we do not store it - for backup compatibility
         Boolean valb = reader.read(USE_LSB_FOR_LINKSET_SELECTION, Boolean.class);
         if (valb != null) {
             try {
