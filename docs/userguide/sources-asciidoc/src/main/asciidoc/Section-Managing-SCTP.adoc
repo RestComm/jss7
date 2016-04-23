@@ -90,9 +90,9 @@ Change value and save.
 SCTP library measures delays between the time when an outgoing message had been delivered from SS7 stack for sending and and the time when the message was sent to SCTP/TCP channel.
 The more time this delay the more we have a congestion level. 
 
-The delay thresholds when the congestion level is increased to level 1, 2 and 3 is configured by parameters cc_delaythreshold_1, cc_delaythreshold_2 and cc_delaythreshold_3 (in milliseconds). 				
+The delay thresholds when the congestion level is increased to level 1, 2 and 3 is configured by parameters cc_delaythreshold_1, cc_delaythreshold_2 and cc_delaythreshold_3 (in seconds). 				
 
-The delay thresholds when the congestion level is decreased to level 0, 1, and 2 is configured by parameters cc_backtonormal_delaythreshold_1, cc_backtonormal_delaythreshold_2 and cc_backtonormal_delaythreshold_3 (in milliseconds). 				
+The delay thresholds when the congestion level is decreased to level 0, 1, and 2 is configured by parameters cc_backtonormal_delaythreshold_1, cc_backtonormal_delaythreshold_2 and cc_backtonormal_delaythreshold_3 (in seconds). 		
 
 You can set the thresholds (in milliseconds) by issuing the commands `sctp set cc_delaythreshold_1`, `sctp set cc_delaythreshold_2`, `sctp set cc_delaythreshold_3`, `sctp set cc_backtonormal_delaythreshold_1`, `sctp set cc_backtonormal_delaythreshold_2` or `sctp set cc_backtonormal_delaythreshold_3` with appropriate parameters as described below.
 You can verify this by issuing the commands `sctp get cc_delaythreshold_1`, `sctp get cc_delaythreshold_2`, `sctp get cc_delaythreshold_3`, `sctp get cc_backtonormal_delaythreshold_1`, `sctp get cc_backtonormal_delaythreshold_2` or `sctp get cc_backtonormal_delaythreshold_3`  which will display the value set for this property. 
@@ -148,7 +148,7 @@ EXAMPLES
 [[_sctp_property_cc_delaythreshold_gui]]
 ==== Using GUI
 
-On SCTP management page, click on pencil against the 'cc_delaythreshold_1' or other needed property and text box becomes editable.
+On SCTP management page, click on pencil against the 'SCTP congestion Threshold 1' or other needed property and text box becomes editable.
 Change value and save. 
 
 [[_show_sctp_server]]

@@ -415,3 +415,196 @@ EXAMPLES
 
 On TCAP management page, click on pencil against the 'Statistics Enabled' property and text box becomes editable.
 Change value and save. 
+
+
+[[_tcap_property_executordelaythreshold]]
+=== Thresholds Executors congestion control
+
+[[_tcap_property_executordelaythreshold_cli]]
+==== Using CLI
+
+TCAP stack and lower level stacks measure delays between the time when an incoming message has come from a peer for processing and scheduled for execution and the time when the execution of the message starts. The more time this delay the more we have a congestion level at Thread executors side.
+
+The delay thresholds when the congestion level is increased to level 1, 2 and 3 is configured by parameters executordelaythreshold_1, executordelaythreshold_2 and executordelaythreshold_3 (in seconds).
+
+The delay thresholds when the congestion level is decreased to level 0, 1, and 2 is configured by parameters executorbacktonormaldelaythreshold_1, executorbacktonormaldelaythreshold_2 and executorbacktonormaldelaythreshold_3 (in seconds).
+
+You can set the thresholds (in seconds) by issuing the commands `tcap set executordelaythreshold_1`, `tcap set executordelaythreshold_2`, `tcap set executordelaythreshold_3`, `tcap set executorbacktonormaldelaythreshold_1`, `tcap set executorbacktonormaldelaythreshold_2` or `tcap set executorbacktonormaldelaythreshold_3` with appropriate parameters as described below. You can verify this by issuing the commands `tcap get executordelaythreshold_1`, `tcap get executordelaythreshold_2`, `tcap get executordelaythreshold_3`, `tcap get executorbacktonormaldelaythreshold_1`, `tcap get executorbacktonormaldelaythreshold_2` or `tcap get executorbacktonormaldelaythreshold_3` which will display the value set for this property.
+
+----
+
+Name
+	tcap set executordelaythreshold_1
+	tcap set executordelaythreshold_2
+	tcap set executordelaythreshold_3
+	tcap set executorbacktonormaldelaythreshold_1
+	tcap set executorbacktonormaldelaythreshold_2
+	tcap set executorbacktonormaldelaythreshold_3
+
+SYNOPSIS
+	tcap set executordelaythreshold_1 <executordelaythreshold_1> stackname <stack-name>
+	tcap set executordelaythreshold_2 <executordelaythreshold_2> stackname <stack-name>
+	tcap set executordelaythreshold_3 <executordelaythreshold_3> stackname <stack-name>
+	tcap set executorbacktonormaldelaythreshold_1 <executorbacktonormaldelaythreshold_1> stackname <stack-name>
+	tcap set executorbacktonormaldelaythreshold_2 <executorbacktonormaldelaythreshold_2> stackname <stack-name>
+	tcap set executorbacktonormaldelaythreshold_3 <executorbacktonormaldelaythreshold_3> stackname <stack-name>
+
+DESCRIPTION
+    For Thresholds Executors congestion control stack needs to have 3 thresholds
+	- delays in seconds between the time when an incoming message has come from a peer
+	and scheduled for execution and the time when the execution of the message starts
+	(3 levels - 1, 2, 3). If a delay time in seconds becomes more then value for
+	level 1, 2 or 3, the Executors' congestion level becomes to 1, 2 or 3.
+	Default values:
+	for executordelaythreshold_1 is 1 second
+	for executordelaythreshold_2 is 6 seconds
+	for executordelaythreshold_3 is 12 seconds
+	for executorbacktonormaldelaythreshold_1 is 0.5 seconds
+	for executorbacktonormaldelaythreshold_2 is 3 seconds
+	for executorbacktonormaldelaythreshold_3 is 8 seconds
+
+PARAMETERS
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap set executordelaythreshold_1 1
+	tcap set executordelaythreshold_2 6
+	tcap set executordelaythreshold_3 12
+	tcap set executorbacktonormaldelaythreshold_1 0.5
+	tcap set executorbacktonormaldelaythreshold_2 3
+	tcap set executorbacktonormaldelaythreshold_3 8
+----
+
+[[_tcap_property_executordelaythreshold_gui]]
+==== Using GUI
+
+On TCAP management page, click on pencil against the 'Executor congestion Threshold 1' property or other needed property and text box becomes editable.
+Change value and save. 
+
+
+[[_tcap_property_memorythreshold]]
+=== Memory congestion control
+
+[[_tcap_property_memorythreshold_cli]]
+==== Using CLI
+
+TCAP stack and lower level stacks measure the percentage of message usage. The more memory we use the more we have a congestion level at memory resourse consuming.
+
+The memory thresholds when the congestion level is increased to level 1, 2 and 3 is configured by parameters memorythreshold_1, memorythreshold_2 and memorythreshold_3 (in percents).
+
+The memory thresholds when the congestion level is decreased to level 0, 1, and 2 is configured by parameters backtonormalmemorythreshold_1, backtonormalmemorythreshold_2 and backtonormalmemorythreshold_3 (in percents).
+
+You can set the thresholds (in percents) by issuing the commands `tcap set memorythreshold_1`, `tcap set memorythreshold_2`, `tcap set memorythreshold_3`, `tcap set backtonormalmemorythreshold_1`, `tcap set backtonormalmemorythreshold_2` or `tcap set backtonormalmemorythreshold_3` with appropriate parameters as described below. You can verify this by issuing the commands `tcap get memorythreshold_1`, `tcap get memorythreshold_2`, `tcap get memorythreshold_3`, `tcap get backtonormalmemorythreshold_1`, `tcap get backtonormalmemorythreshold_2` or `tcap get backtonormalmemorythreshold_3` which will display the value set for this property.
+
+----
+
+Name
+	tcap set memorythreshold_1
+	tcap set memorythreshold_2
+	tcap set memorythreshold_3
+	tcap set backtonormalmemorythreshold_1
+	tcap set backtonormalmemorythreshold_2
+	tcap set backtonormalmemorythreshold_3
+
+SYNOPSIS
+	tcap set memorythreshold_1 <memorythreshold_1> stackname <stack-name>
+	tcap set memorythreshold_2 <memorythreshold_2> stackname <stack-name>
+	tcap set memorythreshold_3 <memorythreshold_3> stackname <stack-name>
+	tcap set backtonormalmemorythreshold_1 <backtonormalmemorythreshold_1> stackname <stack-name>
+	tcap set backtonormalmemorythreshold_2 <backtonormalmemorythreshold_2> stackname <stack-name>
+	tcap set backtonormalmemorythreshold_3 <backtonormalmemorythreshold_3> stackname <stack-name>
+
+DESCRIPTION
+    For Memory congestion control stack needs to have 3 thresholds
+	- the percentage of memory usage (3 levels - 1, 2, 3). If memory usage becomes more then value for
+	level 1, 2 or 3, the Memory congestion level becomes to 1, 2 or 3.
+	Default values:
+	for memorythreshold_1 is 77 percents
+	for memorythreshold_2 is 87 percents
+	for memorythreshold_3 is 97 percents
+	for backtonormalmemorythreshold_1 is 72 percents
+	for backtonormalmemorythreshold_2 is 82 percents
+	for backtonormalmemorythreshold_3 is 92 percents
+
+PARAMETERS
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap set memorythreshold_1 77
+	tcap set memorythreshold_2 87
+	tcap set memorythreshold_3 97
+	tcap set backtonormalmemorythreshold_1 72
+	tcap set backtonormalmemorythreshold_2 82
+	tcap set backtonormalmemorythreshold_3 92
+----
+
+
+[[_tcap_property_memorythreshold_gui]]
+==== Using GUI
+
+On TCAP management page, click on pencil against the 'Memory congestion Threshold 1' property or other needed property and text box becomes editable.
+Change value and save. 
+
+[[_tcap_property_blockingincomingtcapmessages]]
+=== Blocking of incoming messages in congestion case
+
+[[_tcap_property_blockingincomingtcapmessages_cli]]
+==== Using CLI
+
+You can set the 'blockingincomingtcapmessages' by issuing the command `tcap set blockingincomingtcapmessages` with appropriate parameters as described below.
+You can verify this by issuing the command `tcap get blockingincomingtcapmessages` which will display the value set for this property. 
+
+----
+
+Name
+	tcap set blockingincomingtcapmessages
+
+SYNOPSIS
+	tcap set blockingincomingtcapmessages <true | false> stackname <stack-name>
+
+DESCRIPTION
+	If sets to true then incoming TCAP messages will be blocked
+	(depending on congestion level, from level 2 - new incoming dialogs are
+	rejected, from level 3 - all incoming messages are rejected.
+	Default value: false
+
+PARAMETERS
+
+	Standard Parameters
+
+	<blockingincomingtcapmessages> - if true messages was rejected in
+					congestion case.
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap set blockingincomingtcapmessages false
+----
+
+[[_tcap_property_blockingincomingtcapmessages_gui]]
+==== Using GUI
+
+On TCAP management page, click on pencil against the 'Blocking of incoming messages in congestion case' property and text box becomes editable.
+Change value and save. 
+
+
+
+
+
+
+
+
