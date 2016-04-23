@@ -45,6 +45,19 @@ public class TcapCommandHandler extends CommandHandlerWithHelp {
 //        set.addChild("previewmode");
         set.addChild("donotsendprotocolversion");
         set.addChild("statisticsenabled");
+        set.addChild("executordelaythreshold_1");
+        set.addChild("executordelaythreshold_2");
+        set.addChild("executordelaythreshold_3");
+        set.addChild("executorbacktonormaldelaythreshold_1");
+        set.addChild("executorbacktonormaldelaythreshold_2");
+        set.addChild("executorbacktonormaldelaythreshold_3");
+        set.addChild("memorythreshold_1");
+        set.addChild("memorythreshold_2");
+        set.addChild("memorythreshold_3");
+        set.addChild("backtonormalmemorythreshold_1");
+        set.addChild("backtonormalmemorythreshold_2");
+        set.addChild("backtonormalmemorythreshold_3");
+        set.addChild("blockingincomingtcapmessages");
 
         Node get = parent.addChild("get");
         get.addChild("dialogidletimeout");
@@ -56,6 +69,19 @@ public class TcapCommandHandler extends CommandHandlerWithHelp {
         get.addChild("donotsendprotocolversion");
         get.addChild("statisticsenabled");
         get.addChild("ssn");
+        get.addChild("executordelaythreshold_1");
+        get.addChild("executordelaythreshold_2");
+        get.addChild("executordelaythreshold_3");
+        get.addChild("executorbacktonormaldelaythreshold_1");
+        get.addChild("executorbacktonormaldelaythreshold_2");
+        get.addChild("executorbacktonormaldelaythreshold_3");
+        get.addChild("memorythreshold_1");
+        get.addChild("memorythreshold_2");
+        get.addChild("memorythreshold_3");
+        get.addChild("backtonormalmemorythreshold_1");
+        get.addChild("backtonormalmemorythreshold_2");
+        get.addChild("backtonormalmemorythreshold_3");
+        get.addChild("blockingincomingtcapmessages");
 
     };
 

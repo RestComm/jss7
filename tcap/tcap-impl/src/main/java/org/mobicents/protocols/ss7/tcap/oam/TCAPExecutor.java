@@ -184,6 +184,51 @@ public class TCAPExecutor implements ShellExecutor {
         } else if (parName.equals("statisticsenabled")) {
             boolean val = Boolean.parseBoolean(options[3]);
             this.tcapStack.setStatisticsEnabled(val);
+
+        } else if (parName.equals("executordelaythreshold_1")) {
+            double val = Double.parseDouble(options[3]);
+            this.tcapStack.setCongControl_ExecutorDelayThreshold_1(val);
+        } else if (parName.equals("executordelaythreshold_2")) {
+            double val = Double.parseDouble(options[3]);
+            this.tcapStack.setCongControl_ExecutorDelayThreshold_2(val);
+        } else if (parName.equals("executordelaythreshold_3")) {
+            double val = Double.parseDouble(options[3]);
+            this.tcapStack.setCongControl_ExecutorDelayThreshold_3(val);
+
+        } else if (parName.equals("executorbacktonormaldelaythreshold_1")) {
+            double val = Double.parseDouble(options[3]);
+            this.tcapStack.setCongControl_ExecutorBackToNormalDelayThreshold_1(val);
+        } else if (parName.equals("executorbacktonormaldelaythreshold_2")) {
+            double val = Double.parseDouble(options[3]);
+            this.tcapStack.setCongControl_ExecutorBackToNormalDelayThreshold_2(val);
+        } else if (parName.equals("executorbacktonormaldelaythreshold_3")) {
+            double val = Double.parseDouble(options[3]);
+            this.tcapStack.setCongControl_ExecutorBackToNormalDelayThreshold_3(val);
+
+        } else if (parName.equals("memorythreshold_1")) {
+            double val = Double.parseDouble(options[3]);
+            this.tcapStack.setCongControl_MemoryThreshold_1(val);
+        } else if (parName.equals("memorythreshold_2")) {
+            double val = Double.parseDouble(options[3]);
+            this.tcapStack.setCongControl_MemoryThreshold_2(val);
+        } else if (parName.equals("memorythreshold_3")) {
+            double val = Double.parseDouble(options[3]);
+            this.tcapStack.setCongControl_MemoryThreshold_3(val);
+
+        } else if (parName.equals("backtonormalmemorythreshold_1")) {
+            double val = Double.parseDouble(options[3]);
+            this.tcapStack.setCongControl_BackToNormalMemoryThreshold_1(val);
+        } else if (parName.equals("backtonormalmemorythreshold_2")) {
+            double val = Double.parseDouble(options[3]);
+            this.tcapStack.setCongControl_BackToNormalMemoryThreshold_2(val);
+        } else if (parName.equals("backtonormalmemorythreshold_3")) {
+            double val = Double.parseDouble(options[3]);
+            this.tcapStack.setCongControl_BackToNormalMemoryThreshold_3(val);
+
+        } else if (parName.equals("blockingincomingtcapmessages")) {
+            boolean val = Boolean.parseBoolean(options[3]);
+            this.tcapStack.setCongControl_blockingIncomingTcapMessages(val);
+
         } else {
             return TCAPOAMMessage.INVALID_COMMAND;
         }
@@ -230,6 +275,38 @@ public class TCAPExecutor implements ShellExecutor {
                 sb.append(this.tcapStack.getStatisticsEnabled());
             } else if (parName.equals("ssn")) {
                 sb.append(this.tcapStack.getSubSystemNumber());
+
+            } else if (parName.equals("executordelaythreshold_1")) {
+                sb.append(this.tcapStack.getCongControl_ExecutorDelayThreshold_1());
+            } else if (parName.equals("executordelaythreshold_2")) {
+                sb.append(this.tcapStack.getCongControl_ExecutorDelayThreshold_2());
+            } else if (parName.equals("executordelaythreshold_3")) {
+                sb.append(this.tcapStack.getCongControl_ExecutorDelayThreshold_3());
+
+            } else if (parName.equals("executorbacktonormaldelaythreshold_1")) {
+                sb.append(this.tcapStack.getCongControl_ExecutorBackToNormalDelayThreshold_1());
+            } else if (parName.equals("executorbacktonormaldelaythreshold_2")) {
+                sb.append(this.tcapStack.getCongControl_ExecutorBackToNormalDelayThreshold_2());
+            } else if (parName.equals("executorbacktonormaldelaythreshold_3")) {
+                sb.append(this.tcapStack.getCongControl_ExecutorBackToNormalDelayThreshold_3());
+
+            } else if (parName.equals("memorythreshold_1")) {
+                sb.append(this.tcapStack.getCongControl_MemoryThreshold_1());
+            } else if (parName.equals("memorythreshold_2")) {
+                sb.append(this.tcapStack.getCongControl_MemoryThreshold_2());
+            } else if (parName.equals("memorythreshold_3")) {
+                sb.append(this.tcapStack.getCongControl_MemoryThreshold_3());
+
+            } else if (parName.equals("backtonormalmemorythreshold_1")) {
+                sb.append(this.tcapStack.getCongControl_BackToNormalMemoryThreshold_1());
+            } else if (parName.equals("backtonormalmemorythreshold_2")) {
+                sb.append(this.tcapStack.getCongControl_BackToNormalMemoryThreshold_2());
+            } else if (parName.equals("backtonormalmemorythreshold_3")) {
+                sb.append(this.tcapStack.getCongControl_BackToNormalMemoryThreshold_3());
+
+            } else if (parName.equals("blockingincomingtcapmessages")) {
+                sb.append(this.tcapStack.isCongControl_blockingIncomingTcapMessages());
+
             } else {
                 return TCAPOAMMessage.INVALID_COMMAND;
             }
@@ -284,6 +361,59 @@ public class TCAPExecutor implements ShellExecutor {
                 sb.append("subsystemnumber = ");
                 sb.append(tcapStackImpl.getSubSystemNumber());
                 sb.append("\n");
+
+                sb.append("executordelaythreshold_1 = ");
+                sb.append(tcapStackImpl.getCongControl_ExecutorDelayThreshold_1());
+                sb.append("\n");
+
+                sb.append("executordelaythreshold_2 = ");
+                sb.append(tcapStackImpl.getCongControl_ExecutorDelayThreshold_2());
+                sb.append("\n");
+
+                sb.append("executordelaythreshold_3 = ");
+                sb.append(tcapStackImpl.getCongControl_ExecutorDelayThreshold_3());
+                sb.append("\n");
+
+                sb.append("executorbacktonormaldelaythreshold_1 = ");
+                sb.append(tcapStackImpl.getCongControl_ExecutorBackToNormalDelayThreshold_1());
+                sb.append("\n");
+
+                sb.append("executorbacktonormaldelaythreshold_2 = ");
+                sb.append(tcapStackImpl.getCongControl_ExecutorBackToNormalDelayThreshold_2());
+                sb.append("\n");
+
+                sb.append("executorbacktonormaldelaythreshold_3 = ");
+                sb.append(tcapStackImpl.getCongControl_ExecutorBackToNormalDelayThreshold_3());
+                sb.append("\n");
+
+                sb.append("memorythreshold_1 = ");
+                sb.append(tcapStackImpl.getCongControl_MemoryThreshold_1());
+                sb.append("\n");
+
+                sb.append("memorythreshold_2 = ");
+                sb.append(tcapStackImpl.getCongControl_MemoryThreshold_2());
+                sb.append("\n");
+
+                sb.append("memorythreshold_3 = ");
+                sb.append(tcapStackImpl.getCongControl_MemoryThreshold_3());
+                sb.append("\n");
+
+                sb.append("backtonormalmemorythreshold_1 = ");
+                sb.append(tcapStackImpl.getCongControl_BackToNormalMemoryThreshold_1());
+                sb.append("\n");
+
+                sb.append("backtonormalmemorythreshold_2 = ");
+                sb.append(tcapStackImpl.getCongControl_BackToNormalMemoryThreshold_2());
+                sb.append("\n");
+
+                sb.append("backtonormalmemorythreshold_3 = ");
+                sb.append(tcapStackImpl.getCongControl_BackToNormalMemoryThreshold_3());
+                sb.append("\n");
+
+                sb.append("blockingincomingtcapmessages = ");
+                sb.append(tcapStackImpl.isCongControl_blockingIncomingTcapMessages());
+                sb.append("\n");
+
                 sb.append("*******************");
                 sb.append("\n");
                 sb.append("\n");

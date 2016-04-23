@@ -1,0 +1,22 @@
+Name
+	tcap get blockingincomingtcapmessages 
+
+SYNOPSIS
+	tcap get blockingincomingtcapmessages stackname <stack-name>
+
+DESCRIPTION
+	Get the value if TCAP stack will reject incoming TCAP messages in
+	case of congestion (true) or not (false). 
+	This depends of the congestion level, from level 2 - new incoming dialogs
+	are rejected, from level 3 - all incoming messages are rejected.
+
+PARAMETERS
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap get blockingincomingtcapmessages

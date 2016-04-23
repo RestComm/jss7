@@ -22,12 +22,14 @@
 
 package org.mobicents.ss7.congestion;
 
+import java.io.Serializable;
+
 /**
  * @author amit bhayani
  * @author sergey vetyutnev
  *
  */
-public class MemoryCongestionMonitorImpl extends BaseCongestionMonitor implements MemoryCongestionMonitor {
+public class MemoryCongestionMonitorImpl extends BaseCongestionMonitor implements MemoryCongestionMonitor, Serializable {
     private static final String SOURCE = "MEMORY";
 
     private double maxMemory;

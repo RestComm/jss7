@@ -1,0 +1,27 @@
+Name
+	tcap set blockingincomingtcapmessages 
+
+SYNOPSIS
+	tcap set blockingincomingtcapmessages <false|true> stackname <stack-name>
+
+DESCRIPTION
+	If sets to true then incoming TCAP messages will be blocked
+	(depending on congestion level, from level 2 - new incoming dialogs are
+	rejected, from level 3 - all incoming messages are rejected.
+	Default value: false
+
+PARAMETERS
+
+	Standard Parameters
+
+	<blockingincomingtcapmessages> - Sets the status if TCAP stack
+					will reject incoming messages in congestion case.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap set blockingincomingtcapmessages false

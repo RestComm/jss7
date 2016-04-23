@@ -1,0 +1,21 @@
+Name
+	tcap set memorythreshold_3 
+
+SYNOPSIS
+	tcap set memorythreshold_3 <memorythreshold_1> stackname <stack-name>
+
+DESCRIPTION
+	Sets MemoryMonitor Thresholds: a percent of occupied memory after which
+	MemoryMonitor becomes the congestion level 3
+	Default value is 97 percents.
+	
+PARAMETERS
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap set memorythreshold_3 97

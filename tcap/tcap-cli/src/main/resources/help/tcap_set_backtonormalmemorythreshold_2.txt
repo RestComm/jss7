@@ -1,0 +1,21 @@
+Name
+	tcap set backtonormalmemorythreshold_2
+
+SYNOPSIS
+	tcap set backtonormalmemorythreshold_2 <backtonormalmemorythreshold_2> stackname <stack-name>
+
+DESCRIPTION
+	Sets MemoryMonitor Thresholds: a percent of occupied memory after which
+	MemoryMonitor resumes to the congestion level 1.
+	Default value is 82 percents.
+
+PARAMETERS
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap set backtonormalmemorythreshold_2 82
