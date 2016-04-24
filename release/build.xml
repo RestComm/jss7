@@ -191,10 +191,10 @@
 			<arg line="clean install -Dmaven.test.skip=true" />
 		</exec>
 	</target>
-	
+
 	<target name="build-docs">
 		<exec failonerror="true" executable="${mvn.executable}" dir="${base.dir}/../docs">
-			<arg line="clean install -Prestcomm" />
+			<arg line="clean install -Prestcomm -Pall" />
 		</exec>
 	</target>
 
