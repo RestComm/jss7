@@ -74,6 +74,7 @@ import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculateLudtFieldsLengthWithoutData;
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculateXudtFieldsLengthWithoutData;
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculateXudtFieldsLengthWithoutData2;
@@ -961,21 +962,37 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));
 
             reader.setBinding(binding);
-            this.zMarginXudtMessage = reader.read(Z_MARGIN_UDT_MSG, Integer.class);
-            this.reassemblyTimerDelay = reader.read(REASSEMBLY_TIMER_DELAY, Integer.class);
-            this.maxDataMessage = reader.read(MAX_DATA_MSG, Integer.class);
-            this.removeSpc = reader.read(REMOVE_SPC, Boolean.class);
-            Boolean b1 = reader.read(PREVIEW_MODE, Boolean.class);
-            if (b1 != null)
-                this.previewMode = b1;
-            b1 = reader.read(RESERVED_FOR_NATIONAL_USE_VALUE_ADDRESS_INDICATOR, Boolean.class);
+
+            Integer vali = reader.read(Z_MARGIN_UDT_MSG, Integer.class);
+            if (vali != null)
+                this.zMarginXudtMessage = vali;
+            vali = reader.read(REASSEMBLY_TIMER_DELAY, Integer.class);
+            if (vali != null)
+                this.reassemblyTimerDelay = vali;
+            vali = reader.read(MAX_DATA_MSG, Integer.class);
+            if (vali != null)
+                this.maxDataMessage = vali;
+
+            Boolean volb = reader.read(REMOVE_SPC, Boolean.class);
+            if (volb != null)
+                this.removeSpc = volb;
+            volb = reader.read(PREVIEW_MODE, Boolean.class);
+            if (volb != null)
+                this.previewMode = volb;
+            volb = reader.read(RESERVED_FOR_NATIONAL_USE_VALUE_ADDRESS_INDICATOR, Boolean.class);
             String s1 = reader.read(SCCP_PROTOCOL_VERSION, String.class);
             if (s1 != null)
                 this.sccpProtocolVersion = Enum.valueOf(SccpProtocolVersion.class, s1);
 
-            this.sstTimerDuration_Min = reader.read(SST_TIMER_DURATION_MIN, Integer.class);
-            this.sstTimerDuration_Max = reader.read(SST_TIMER_DURATION_MAX, Integer.class);
-            this.sstTimerDuration_IncreaseFactor = reader.read(SST_TIMER_DURATION_INCREASE_FACTOR, Double.class);
+            vali = reader.read(SST_TIMER_DURATION_MIN, Integer.class);
+            if (vali != null)
+                this.sstTimerDuration_Min = vali;
+            vali = reader.read(SST_TIMER_DURATION_MAX, Integer.class);
+            if (vali != null)
+                this.sstTimerDuration_Max = vali;
+            Double vald = reader.read(SST_TIMER_DURATION_INCREASE_FACTOR, Double.class);
+            if (vald != null)
+                this.sstTimerDuration_IncreaseFactor = vald;
 
             reader.close();
         } catch (XMLStreamException ex) {
