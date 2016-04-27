@@ -12,6 +12,8 @@
 
 
 	<dependencies>
+		<!-- lic dep -->
+
 		<dependency>
 		   <groupId>org.apache.commons</groupId>
 		   <artifactId>commons-email</artifactId>

@@ -61,6 +61,8 @@
 
 			    <include>org.apache.commons:commons-email</include>
 
+				<!-- lic dep -->
+
 			</includes>
 		</dependencySet>
 	</dependencySets>

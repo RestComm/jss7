@@ -31,6 +31,9 @@
 		<pathelement location="${assemble.dir}/restcomm-congestion.jar" />
 		<pathelement location="${assemble.dir}/commons.jar" />
 		<pathelement location="${assemble.dir}/commons-email.jar" />
+
+		<!-- lic dep -->
+
 		<!-- Stats -->
 		<pathelement location="${assemble.dir}/statistics-api.jar" />
 		<pathelement location="${assemble.dir}/statistics-impl.jar" />

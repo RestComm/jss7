@@ -63,6 +63,8 @@
               	<include>org.mobicents.protocols.ss7.statistics:statistics-impl</include>
 			    <include>org.apache.commons:commons-email</include>				
 
+				<!-- lic dep -->
+
 			</includes>
 		</dependencySet>
 	</dependencySets>

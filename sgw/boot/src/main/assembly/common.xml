@@ -36,6 +36,8 @@
 			<outputDirectory>/lib</outputDirectory>
 			<unpack>false</unpack>
 			<scope>runtime</scope>
+
+			<!-- lic dep -->
 		</dependencySet>
 	</dependencySets>
 </component>

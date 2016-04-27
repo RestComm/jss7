@@ -132,7 +132,9 @@
 		   <artifactId>commons-email</artifactId>
 		   <version>1.3.2</version>
 		</dependency>
-		
+
+		<!-- lic dep -->
+
 		<!-- SS7 stats -->
 		<dependency>
 			<artifactId>statistics-api</artifactId>
