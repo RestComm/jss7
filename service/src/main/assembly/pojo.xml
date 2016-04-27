@@ -73,12 +73,14 @@
 				<include>org.mobicents.protocols.ss7.oam.common:linkset-oam</include>
 				<include>org.mobicents.protocols.ss7.oam.common:tcap-oam</include>
 			    <include>org.apache.commons:commons-email</include>
-			    
+
 			    <!-- Dialogic -->
-			    <include>com.vendor.dialogic:gctapi</include>
+				<!-- <include>com.vendor.dialogic:gctapi</include> -->
 
 			    <!-- netty -->
 			    <include>io.netty:netty-all</include>
+
+				<!-- lic dep -->
 
 			</includes>
 		</dependencySet>

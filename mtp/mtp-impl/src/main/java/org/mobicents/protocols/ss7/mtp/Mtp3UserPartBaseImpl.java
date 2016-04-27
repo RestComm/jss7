@@ -34,6 +34,8 @@ import org.apache.log4j.Logger;
 import org.mobicents.ss7.congestion.ExecutorCongestionMonitor;
 import org.mobicents.ss7.congestion.ExecutorCongestionMonitorImpl;
 
+// lic dep 1
+
 /**
  *
  * @author amit bhayani
@@ -156,6 +158,8 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
     }
 
     public void start() throws Exception {
+        // lic dep 2
+
         if (this.isStarted)
             return;
 
