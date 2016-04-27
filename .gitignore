@@ -141,3 +141,7 @@ docs/sources-*/src
 /TCAPCongestionTestSccpStack2_management2.xml
 /TCAPCongestionTestSccpStack2_sccpresource2.xml
 /TCAPCongestionTestSccpStack2_sccprouter2.xml
+/CreateDialogTest_management.xml
+/SccpStack_management2.xml
+/SccpStack_sccpresource2.xml
+/SccpStack_sccprouter2.xml
