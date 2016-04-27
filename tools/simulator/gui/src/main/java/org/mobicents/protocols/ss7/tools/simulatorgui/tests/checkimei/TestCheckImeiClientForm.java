@@ -187,7 +187,7 @@ public class TestCheckImeiClientForm extends TestingForm {
         super.sendNotif(notif);
 
         String msg = notif.getMessage();
-        final String prefixes [] = new String [] { "Rcvd: CheckImeiResp: ", "Sent: CheckImeiRequest: "};
+        final String[] prefixes = new String [] { "Rcvd: CheckImeiResp: ", "Sent: CheckImeiRequest: "};
         if (msg != null) {
             for (String prefix: prefixes) {
                 if (msg.startsWith(prefix)) {

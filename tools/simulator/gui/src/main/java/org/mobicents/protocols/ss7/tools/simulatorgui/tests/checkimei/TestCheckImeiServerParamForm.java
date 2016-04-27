@@ -20,7 +20,6 @@
 package org.mobicents.protocols.ss7.tools.simulatorgui.tests.checkimei;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -31,7 +30,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
 
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.EquipmentStatus;
 import org.mobicents.protocols.ss7.tools.simulator.tests.checkimei.EquipmentStatusType;

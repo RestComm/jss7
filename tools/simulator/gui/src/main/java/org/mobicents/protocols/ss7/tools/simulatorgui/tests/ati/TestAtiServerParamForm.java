@@ -105,11 +105,11 @@ public class TestAtiServerParamForm extends JDialog {
         });
         button_4.setBounds(10, 157, 144, 23);
         getContentPane().add(button_4);
-        
+
         JLabel lblReactionForAti = new JLabel("Reaction for ATI request");
         lblReactionForAti.setBounds(10, 14, 290, 14);
         getContentPane().add(lblReactionForAti);
-        
+
         cbATIReaction = new JComboBox();
         cbATIReaction.setBounds(310, 11, 309, 20);
         getContentPane().add(cbATIReaction);
