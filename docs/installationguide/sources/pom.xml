@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.docs.installguide</groupId>
 		<artifactId>restcomm-ss7-installguide</artifactId>
-		<version>3.0.0-SNAPSHOT</version>
+		<version>3.1.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>restcomm-ss7-installguide-sources</artifactId>
