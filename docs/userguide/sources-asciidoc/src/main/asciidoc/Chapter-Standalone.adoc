@@ -241,7 +241,7 @@ All above snippet of code refers to below defined constants:
 ----
 
 Once you have completed development of your application, next thing is setting the classpath, compiling and starting application.
-You must set the classpath to point to  restcomm-jss7-X.Y.Z/ss7/restcomm-ss7-service/lib.
+You must set the classpath to point to  {this-folder}-jss7-X.Y.Z/ss7/{this-folder}-ss7-service/lib.
 It has all the libraries needed to compile and start your application.
 Don't forget to include your compiled Application class file in classpath before starting the Application.
  

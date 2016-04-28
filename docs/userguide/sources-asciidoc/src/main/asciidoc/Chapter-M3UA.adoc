@@ -123,20 +123,20 @@ Similarly FSM for ASP at SGW side (or IPSP server side) is referred to as PeerFS
 Figure below shows the various state of ASP at AS and SGW side.
 In below example only Single Exchange of messages are considered for handshake mechanism  
 
-.Restcomm M3UA Stack ASP state machine
+.{this-platform} M3UA Stack ASP state machine
 image::images/M3UAStateASPSE.jpg[]
 
 Figure below shows the various state of AS at AS and SGW side.
 In below example only Single Exchange of messages are considered for handshake mechanism  
 
-.Restcomm M3UA Stack AS state machine for AS - SGW
+.{this-platform} M3UA Stack AS state machine for AS - SGW
 image::images/M3UAStateASSE.jpg[]
 
 For IPSP, the ASP state machine remains same as AS-SGW, however for AS the state machine changes a bit as there is no exchange of Notify (NTFY) messages.
 Figure below shows the various state of AS at IPSP Client and Server side.
 In below example only Single Exchange of messages are considered for handshake mechanism  
 
-.Restcomm M3UA Stack AS state machine for IPSP Client - Server
+.{this-platform} M3UA Stack AS state machine for IPSP Client - Server
 image::images/M3UAStateIPSPASPSE.jpg[]
 
 In Double Exhcnage handshake mechanism both Local and Peer FSM exist in ASP and AS at each side.
