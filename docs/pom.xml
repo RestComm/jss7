@@ -22,14 +22,14 @@
 		<docs.this.trunk.source.code.url>https://github.com/Restcomm/jss7</docs.this.trunk.source.code.url>
 		<docs.this.release.binary.url>https://github.com/RestComm/jss7/releases/latest</docs.this.release.binary.url>
 		<docs.slee.binary.url>https://github.com/RestComm/jain-slee/releases/latest</docs.slee.binary.url>
-
+<!--
 		<docs.this.platform.telscale>Telscale</docs.this.platform.telscale>
 		<docs.this.issue.tracker.url.telscale>https://github.com/Restcomm/jss7/issues</docs.this.issue.tracker.url.telscale>
 		<docs.this.release.source.code.url.telscale>https://bitbucket.org/telestax/telscale-jss7</docs.this.release.source.code.url.telscale>
 		<docs.this.trunk.source.code.url.telscale>https://bitbucket.org/telestax/telscale-jss7</docs.this.trunk.source.code.url.telscale>
 		<docs.this.release.binary.url.telscale>https://telestax.zendesk.com/hc/en-us/sections/201838506-Product-Downloads</docs.this.release.binary.url.telscale>
 		<docs.slee.binary.url.telscale>https://telestax.zendesk.com/hc/en-us/sections/201838506-Product-Downloads</docs.slee.binary.url.telscale>
-
+-->
 		<docs.jee.platform>JBoss Application Server</docs.jee.platform>
 	</properties>
 

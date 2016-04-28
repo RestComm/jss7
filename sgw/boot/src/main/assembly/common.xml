@@ -37,7 +37,10 @@
 			<unpack>false</unpack>
 			<scope>runtime</scope>
 
-			<!-- lic dep -->
+			<excludes>
+				<!-- lic dep -->
+				<exclude>com.vendor.dialogic:gctapi:jar</exclude>
+			</excludes>
 		</dependencySet>
 	</dependencySets>
 </component>
