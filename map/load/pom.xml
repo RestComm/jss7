@@ -523,6 +523,8 @@
 												statistics-impl.jar
 											</destFileName>
 										</artifactItem>																													
+
+										<!-- lic dep 2 -->
 																				
 										<!-- <artifactItem> <groupId>org.mobicents.external.appframework</groupId> 
 											<artifactId>appframework</artifactId> <type>jar</type> <overWrite>true</overWrite> 
