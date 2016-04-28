@@ -685,15 +685,27 @@ public class TCAPStackImpl implements TCAPStack {
 
             reader.setBinding(binding);
 
-            this.dialogTimeout = reader.read(DIALOG_IDLE_TIMEOUT, Long.class);
-            this.invokeTimeout = reader.read(INVOKE_TIMEOUT, Long.class);
-            this.maxDialogs = reader.read(MAX_DIALOGS, Integer.class);
-            this.dialogIdRangeStart = reader.read(DIALOG_ID_RANGE_START, Long.class);
-            this.dialogIdRangeEnd = reader.read(DIALOG_ID_RANGE_END, Long.class);
-//            this.previewMode = reader.read(PREVIEW_MODE, Boolean.class);
+            Long vall = reader.read(DIALOG_IDLE_TIMEOUT, Long.class);
+            if (vall != null)
+                this.dialogTimeout = vall;
+            vall = reader.read(INVOKE_TIMEOUT, Long.class);
+            if (vall != null)
+                this.invokeTimeout = vall;
+            Integer vali = reader.read(MAX_DIALOGS, Integer.class);
+            if (vali != null)
+                this.maxDialogs = vali;
+            vall = reader.read(DIALOG_ID_RANGE_START, Long.class);
+            if (vall != null)
+                this.dialogIdRangeStart = vall;
+            vall = reader.read(DIALOG_ID_RANGE_END, Long.class);
+            if (vall != null)
+                this.dialogIdRangeEnd = vall;
+
             Boolean volb = reader.read(PREVIEW_MODE, Boolean.class);
 
-            this.doNotSendProtocolVersion = reader.read(DO_NOT_SEND_PROTOCOL_VERSION, Boolean.class);
+            volb = reader.read(DO_NOT_SEND_PROTOCOL_VERSION, Boolean.class);
+            if (volb != null)
+                this.doNotSendProtocolVersion = volb;
 
             Boolean valb = reader.read(CONG_CONTROL_BLOCKING_INCOMING_TCAP_MESSAGES, Boolean.class);
             if (valb != null)
@@ -733,7 +745,9 @@ public class TCAPStackImpl implements TCAPStack {
                 this.congControl_BackToNormalMemoryThreshold[2] = valTB3;
             }
 
-            this.statisticsEnabled = reader.read(STATISTICS_ENABLED, Boolean.class);
+            volb = reader.read(STATISTICS_ENABLED, Boolean.class);
+            if (volb != null)
+                this.statisticsEnabled = volb;
 
             reader.close();
         } catch (XMLStreamException ex) {

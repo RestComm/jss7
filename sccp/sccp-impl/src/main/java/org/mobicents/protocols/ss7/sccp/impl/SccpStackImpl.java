@@ -1174,19 +1174,30 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));
 
             reader.setBinding(binding);
-            this.zMarginXudtMessage = reader.read(Z_MARGIN_UDT_MSG, Integer.class);
-            this.reassemblyTimerDelay = reader.read(REASSEMBLY_TIMER_DELAY, Integer.class);
-            this.maxDataMessage = reader.read(MAX_DATA_MSG, Integer.class);
-            this.removeSpc = reader.read(REMOVE_SPC, Boolean.class);
-            Boolean b1 = reader.read(PREVIEW_MODE, Boolean.class);
-            if (b1 != null)
-                this.previewMode = b1;
-            b1 = reader.read(RESERVED_FOR_NATIONAL_USE_VALUE_ADDRESS_INDICATOR, Boolean.class);
+
+            Integer vali = reader.read(Z_MARGIN_UDT_MSG, Integer.class);
+            if (vali != null)
+                this.zMarginXudtMessage = vali;
+            vali = reader.read(REASSEMBLY_TIMER_DELAY, Integer.class);
+            if (vali != null)
+                this.reassemblyTimerDelay = vali;
+            vali = reader.read(MAX_DATA_MSG, Integer.class);
+            if (vali != null)
+                this.maxDataMessage = vali;
+
+            Boolean volb = reader.read(REMOVE_SPC, Boolean.class);
+            if (volb != null)
+                this.removeSpc = volb;
+            volb = reader.read(PREVIEW_MODE, Boolean.class);
+            if (volb != null)
+                this.previewMode = volb;
+            volb = reader.read(RESERVED_FOR_NATIONAL_USE_VALUE_ADDRESS_INDICATOR, Boolean.class);
+
             String s1 = reader.read(SCCP_PROTOCOL_VERSION, String.class);
             if (s1 != null)
                 this.sccpProtocolVersion = Enum.valueOf(SccpProtocolVersion.class, s1);
 
-            Integer vali = reader.read(CONG_CONTROL_TIMER_A, Integer.class);
+            vali = reader.read(CONG_CONTROL_TIMER_A, Integer.class);
             if (vali != null)
                 this.congControl_TIMER_A = vali;
             vali = reader.read(CONG_CONTROL_TIMER_D, Integer.class);
@@ -1195,13 +1206,19 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             s1 = reader.read(CONG_CONTROL_ALGO, String.class);
             if (s1 != null)
                 this.congControl_Algo = Enum.valueOf(SccpCongestionControlAlgo.class, s1);
-            b1 = reader.read(CONG_CONTROL_BLOCKING_OUTGOUNG_SCCP_MESSAGES, Boolean.class);
-            if (b1 != null)
-                this.congControl_blockingOutgoungSccpMessages = b1;
+            volb = reader.read(CONG_CONTROL_BLOCKING_OUTGOUNG_SCCP_MESSAGES, Boolean.class);
+            if (volb != null)
+                this.congControl_blockingOutgoungSccpMessages = volb;
 
-            this.sstTimerDuration_Min = reader.read(SST_TIMER_DURATION_MIN, Integer.class);
-            this.sstTimerDuration_Max = reader.read(SST_TIMER_DURATION_MAX, Integer.class);
-            this.sstTimerDuration_IncreaseFactor = reader.read(SST_TIMER_DURATION_INCREASE_FACTOR, Double.class);
+            vali = reader.read(SST_TIMER_DURATION_MIN, Integer.class);
+            if (vali != null)
+                this.sstTimerDuration_Min = vali;
+            vali = reader.read(SST_TIMER_DURATION_MAX, Integer.class);
+            if (vali != null)
+                this.sstTimerDuration_Max = vali;
+            Double vald = reader.read(SST_TIMER_DURATION_INCREASE_FACTOR, Double.class);
+            if (vald != null)
+                this.sstTimerDuration_IncreaseFactor = vald;
 
             reader.close();
         } catch (XMLStreamException ex) {
