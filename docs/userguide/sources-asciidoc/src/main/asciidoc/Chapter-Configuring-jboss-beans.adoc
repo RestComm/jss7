@@ -4,7 +4,7 @@
 [[_configuring]]
 == Configuring {this-platform}  SS7 Service
 
-Configuration is done through an XML descriptor file named [path]_jboss-beans.xml_ located at [path]_$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF_, where  `profile_name` is the name of the server profile.
+Configuration is done through an XML descriptor file named [path]_jboss-beans.xml_ located at [path]_$JBOSS_HOME/server/profile_name/deploy/{this-folder}-ss7-service/META-INF_, where  `profile_name` is the name of the server profile.
 
 {this-platform} SS7 Layer 4 (`SCCP, ISUP`) leverages either of the following `MTP`  layers to exchange signaling messages with remote signaling points:  
 
@@ -755,11 +755,11 @@ jSS7 Managemenet Service provides some extra functionality for stack management 
 [[_configuring_sgw]]
 == Configuring {this-platform}  Signaling Gateway
 
-Configuration is done through an XML descriptor named [path]_sgw-beans.xml_ and is  located at [path]_restcomm-ss7-sgw/deploy_ 
+Configuration is done through an XML descriptor named [path]_sgw-beans.xml_ and is  located at [path]_{this-folder}-ss7-sgw/deploy_ 
 
 [NOTE]
 ====
-Before {this-platform} Signaling Gateway is configured the corresponding native libraries for `dahdi` or `dialogic` should be copied to `restcomm-ss7-sgw/native/32` or `restcomm-ss7-sgw/native/64` folders and gctApi library to `restcomm-ss7-sgw/lib` folder. See more details for where to get native libraries in <<_configuring_dahdi>> and <<_configuring_dialogic>>.
+Before {this-platform} Signaling Gateway is configured the corresponding native libraries for `dahdi` or `dialogic` should be copied to `{this-folder}-ss7-sgw/native/32` or `{this-folder}-ss7-sgw/native/64` folders and gctApi library to `{this-folder}-ss7-sgw/lib` folder. See more details for where to get native libraries in <<_configuring_dahdi>> and <<_configuring_dialogic>>.
 ====
 
 

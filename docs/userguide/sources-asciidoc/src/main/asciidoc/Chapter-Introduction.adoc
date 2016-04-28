@@ -111,6 +111,6 @@ Technical Specifications:::
 The only restricting factor is memory + CPU capacity of the host servers.
  
 
-* Restcomm SCTP supports as many associations as supported by the underlying Operating System.
-* Restcomm M3UA can be confgured to have as many ASP's / IPSP's as needed by the system.
-* Restcomm SCCP can be confgured to have virtually unlimited Global Title Translation rules and also supports wild characters for partial matching of Global Title digits.		 	 
+* {this-platform} SCTP supports as many associations as supported by the underlying Operating System.
+* {this-platform} M3UA can be confgured to have as many ASP's / IPSP's as needed by the system.
+* {this-platform} SCCP can be confgured to have virtually unlimited Global Title Translation rules and also supports wild characters for partial matching of Global Title digits.		 	 

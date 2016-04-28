@@ -45,9 +45,10 @@ For more details regarding installation, please refer to the {this-platform} {th
 The top-level directory is named [path]_-_ and immediately below this are five sub-directories named [path]_asn_, [path]__docs_, [path]_oam_, [path]_sctp_ and [path]_ss7_.
 All the functional modules of the Stack reside in the [path]_ss7_ folder.
 
+[subs="attributes"]
 ----
 
-|- restcomm-jss7-<version>
+|- {this-folder}-jss7-<version>
 		|- asn	
 
 		|- docs
@@ -59,10 +60,10 @@ All the functional modules of the Stack reside in the [path]_ss7_ folder.
 		|- ss7
 				|+ protocols
 				|+ shell
-				|+ restcomm-ss7-service
-				|+ restcomm-ss7-sgw
-				|+ restcomm-ss7-simulator 
-				|+ restcomm-ss7-traceparser
+				|+ {this-folder}-ss7-service
+				|+ {this-folder}-ss7-sgw
+				|+ {this-folder}-ss7-simulator 
+				|+ {this-folder}-ss7-traceparser
 				|+ template
 ----
 
@@ -89,12 +90,12 @@ The following is a description of the important services and libraries that make
 This folder contains the core protocol libraries that will be used by end applications as well as by the SS7 Service deployed in JBoss AS.
 The sub-directories included in the [path]_ss7_ folder are:  
 
-* [path]_restcomm-ss7-sgw_ : Standalone Signaling Gateway 														 
-* [path]_restcomm-ss7-service_ : SS7 service is the core engine and is used in conjunction with JBoss AS.
+* [path]_{this-folder}-ss7-sgw_ : Standalone Signaling Gateway 														 
+* [path]_{this-folder}-ss7-service_ : SS7 service is the core engine and is used in conjunction with JBoss AS.
   The installation guide will teach you to install the Stack as a standalone component if you do not wish to run it as a JBoss AS Service. 							 
-* [path]_restcomm-ss7-simulator_ : SS7 Simulator is an application for testing the SS7 stack and displaying its functionality.
+* [path]_{this-folder}-ss7-simulator_ : SS7 Simulator is an application for testing the SS7 stack and displaying its functionality.
   It is also a good example of how to use this stack.
-* [path]_restcomm-ss7-traceparser_ : mobicents jSS7 Stack Trace Parser is a simple tool that can parse trace capture data files (of some formats) and log its content in some log file in a text form			 
+* [path]_{this-folder}-ss7-traceparser_ : mobicents jSS7 Stack Trace Parser is a simple tool that can parse trace capture data files (of some formats) and log its content in some log file in a text form			 
 * [path]_protocols_ : {this-platform}  {this-application}  User Protocols libraries.
   Your application will directly  call the APIs exposed by these libraries.
   Depending on the application, you may be interested in either `TCAP` or `MAP`, or both, or `ISUP` libraries.
@@ -106,11 +107,11 @@ The sub-directories included in the [path]_ss7_ folder are:
 
 The major functional modules of the {this-application} are: 
 
-. SS7 Service [path]_[dir: restcomm-ss7-service]_
-. Signaling Gateway [path]_[dir: restcomm-ss7-sgw]_
+. SS7 Service [path]_[dir: {this-folder}-ss7-service]_
+. Signaling Gateway [path]_[dir: {this-folder}-ss7-sgw]_
 . Shell [path]_[dir: shell]_
 . GUI [path]_[dir: ui]_
-. SS7 Simulator [path]_restcomm-ss7-simulator]_
+. SS7 Simulator [path]_{this-folder}-ss7-simulator]_
 
 The following sub-sections discuss in detail about the functionality of these individual components. 
 
@@ -127,15 +128,15 @@ Following services are bound:
 [cols="1,1,1", frame="all", options="header"]
 |===
 | Stack Name | JNDI Name | Comments
-| TCAP | java:/mobicents/ss7/tcap | Exposes TCAP Stack via JNDI
-| MAP | java:/mobicents/ss7/map	Exposes | MAP Stack via JNDI
-| CAP | java:/mobicents/ss7/cap	Exposes | CAP Stack via JNDI
-| ISUP | java:/mobicents/ss7/isup | Exposes ISUP stack via JNDI
+| TCAP | java:/restcomm/ss7/tcap | Exposes TCAP Stack via JNDI
+| MAP | java:/restcomm/ss7/map	Exposes | MAP Stack via JNDI
+| CAP | java:/restcomm/ss7/cap	Exposes | CAP Stack via JNDI
+| ISUP | java:/restcomm/ss7/isup | Exposes ISUP stack via JNDI
 |===
 
 The figure below depicts the elements that are deployed as part of the SS7 MAP Service. 
 
-.Restcomm jSS7 Stack Service Elements
+.{this-platform} jSS7 Stack Service Elements
 image::images/ss7-design-overview3.jpg[]
 
 SS7 Service Elements serve the following purposes:
@@ -148,7 +149,7 @@ Expose management interface:::
 
 The figure below depicts the elements that are deployed as part of SS7 Service. 
 
-.Restcomm jSS7 Stack Service Elements
+.{this-platform} jSS7 Stack Service Elements
 image::images/ss7-design-overview3.jpg[]
 
 For more details on Running and Configuring the SS7 Service Elements, please refer to the chapter <<_running_jss7>>.
@@ -158,7 +159,7 @@ For more details on Running and Configuring the SS7 Service Elements, please ref
 
 The figure below depicts how {this-platform} {this-application} is used. 
 
-.Restcomm jSS7 Stack General Design
+.{this-platform} jSS7 Stack General Design
 image::images/ss7-design-overview2.jpg[]
 
 [[_mobicents_signaling_gateway]]
@@ -169,7 +170,7 @@ image::images/ss7-design-overview2.jpg[]
 The figure below shows the components included in {this-platform} Signaling Gateway.
 Configuring the Signaling Gateway is explained in the chapter <<_running_jss7>>. 
 
-.Restcomm Signaling Gateway Components
+.{this-platform} Signaling Gateway Components
 image::images/MobicentsSS7Gateway.jpg[]
 
 [[_design_overview_shell]]

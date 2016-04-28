@@ -74,7 +74,7 @@ Installing the Signaling Gateway is straightforward.
 +
 * You must have JDK 1.7 and lksctp library installed on your machine. 
 
-. Copy [path]_{this-platform}-{this-application}-{project-version}/ss7/restcomm-ss7-sgw_ to any folder of your choice in any machine that supports the requirements specified.
+. Copy [path]_{this-platform}-{this-application}-{project-version}/ss7/{this-folder}-ss7-sgw_ to any folder of your choice in any machine that supports the requirements specified.
   Your Signaling Gateway is now ready to be used.
 
 
@@ -134,13 +134,13 @@ The Simulator module will enable you to test and understand the functionality of
 +
 * You must have JDK 1.7 installed on your machine. 
 
-. Copy [path]_{this-platform}-{this-application}-{project-version}/ss7/restcomm-ss7-simulator_	to any folder of your choice in any machine that supports the requirements specified.
+. Copy [path]_{this-platform}-{this-application}-{project-version}/ss7/{this-folder}-ss7-simulator_  to any folder of your choice in any machine that supports the requirements specified.
   Your Simulator is now ready to be used.
 
 [[_running_without_jboss]]
 === {this-platform} {this-application}  as a Standalone Component
 
-{this-platform} {this-application} can be installed as a standalone Java library without any dependency on JBoss, Restcomm JSLEE or any other container.
+{this-platform} {this-application} can be installed as a standalone Java library without any dependency on JBoss, {this-platform} JSLEE or any other container.
 The {this-platform} {this-application} User Guide will assist you in implemeting this and also give some details of how jSS7 layers can be configured.
 If you do not intend to use it with JBoss AS, then you must follow the regular way of initializing jSS7 Stack, which is to build each of the protocols, configure individually and bind them together. 
 

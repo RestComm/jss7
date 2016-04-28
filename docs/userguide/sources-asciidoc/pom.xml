@@ -77,6 +77,7 @@
 								<project-version>${docs.project.version}</project-version>
 								<this-application>${docs.this.application}</this-application>
 								<this-platform>${docs.this.platform}</this-platform>
+								<this-folder>${docs.this.folder}</this-folder>
 								<jee-platform>${docs.jee.platform}</jee-platform>
 								<this-issue-tracker-url>${docs.this.issue.tracker.url}</this-issue-tracker-url>
 								<this-release-source-code-url>${docs.this.release.source.code.url}</this-release-source-code-url>
@@ -111,6 +112,7 @@
 								<project-version>${docs.project.version}</project-version>
 								<this-application>${docs.this.application}</this-application>
 								<this-platform>${docs.this.platform}</this-platform>
+								<this-folder>${docs.this.folder}</this-folder>
 								<jee-platform>${docs.jee.platform}</jee-platform>
 								<this-issue-tracker-url>${docs.this.issue.tracker.url}</this-issue-tracker-url>
 								<this-release-source-code-url>${docs.this.release.source.code.url}</this-release-source-code-url>
@@ -183,6 +185,7 @@
 										<project-version>${docs.project.version}</project-version>
 										<this-application>${docs.this.application}</this-application>
 										<this-platform>${docs.this.platform}</this-platform>
+										<this-folder>${docs.this.folder}</this-folder>
 										<jee-platform>${docs.jee.platform}</jee-platform>
 										<this-issue-tracker-url>${docs.this.issue.tracker.url}</this-issue-tracker-url>
 										<this-release-source-code-url>${docs.this.release.source.code.url}</this-release-source-code-url>

@@ -16,7 +16,7 @@ Components are a means of invoking an operation at a remote node.
 
 The UML Class Diagram is depicted in the figure below: 
 
-.Restcomm jSS7 Stack TCAP Class Diagram
+.{this-platform} jSS7 Stack TCAP Class Diagram
 image::images/TCAPClassDiagram.png[]
 
 The [class]`org.mobicents.protocols.ss7.tcap.TCAPStackImpl` is a concrete implementation of [class]`TCAPStack`.

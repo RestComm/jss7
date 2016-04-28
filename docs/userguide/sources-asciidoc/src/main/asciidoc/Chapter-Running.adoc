@@ -68,20 +68,23 @@ Halting VM
 .Procedure: Start the {this-platform}  Signaling Gateway on 
 . Change the working directory to the installation directory (the one into which the zip file's contents was extracted to) 
 +
+[subs="attributes"]
 ----
-downloads]$ cd restcomm-jss7-<version>/ss7/restcomm-ss7-sgw
+downloads]$ cd {this-folder}-jss7-<version>/ss7/{this-folder}-ss7-sgw
 ----
 
 . (Optional) Ensure that the [path]_bin/run.sh_							start script is executable. 
 +
+[subs="attributes"]
 ----
-restcomm-ss7-sgw$ chmod +x bin/run.sh
+{this-folder}-ss7-sgw$ chmod +x bin/run.sh
 ----
 
 . Execute the [path]_run.sh_							Bourne shell script. 
 +
+[subs="attributes"]
 ----
-restcomm-ss7-sgw$ ./bin/run.sh
+{this-folder}-ss7-sgw$ ./bin/run.sh
 ----
 
 . In the Linux terminal, the {this-platform} Signaling Gateway has started successfully if the last line of output is similar to the following 
@@ -93,14 +96,15 @@ restcomm-ss7-sgw$ ./bin/run.sh
 
 
 .Procedure: Start the {this-platform}  Signaling Gateway on 
-. Using Windows Explorer, navigate to the [path]_restcomm-jss7-<version>/ss7/restcomm-ss7-sgw/bin_ subfolder in the installation directory. 
+. Using Windows Explorer, navigate to the [path]_{this-folder}-jss7-<version>/ss7/{this-folder}-ss7-sgw/bin_ subfolder in the installation directory. 
 . The preferred way to start the {this-platform} Signaling Gateway is from the Command Prompt.
   The command line interface displays details of the startup process, including any problems encountered during the startup process. 
 +
 Open the Command Prompt via the [label]#Start# menu and navigate to the correct folder: 
 +
+[subs="attributes"]
 ----
-C:\Users\<user>\My	Downloads>cd "restcomm-jss7-<version>\ss7\restcomm-ss7-sgw"
+C:\Users\<user>\My	Downloads>cd "{this-folder}-jss7-<version>\ss7\{this-folder}-ss7-sgw"
 ----
 
 . Start the Gateway by executing the [path]_run.bat_ file: 
@@ -123,8 +127,9 @@ Using `run.sh` without any arguments binds the gateway to `127.0.0.1`.
 To bind the Gateway to a different IP, pass the IP address as value to the `-b` command line option.
 For example to bind the server to `115.252.103.220` you will use the command as below: 
 
+[subs="attributes"]
 ----
-restcomm-ss7-sgw$ ./bin/run.sh -b 115.252.103.220
+{this-folder}-ss7-sgw$ ./bin/run.sh -b 115.252.103.220
 ----
 
 [[_running_standalone]]
@@ -231,7 +236,7 @@ The default implementation of the declarative security model is based on Java Au
 
 
 .Procedure: Enable Security
-. Add a new parameter named "`securityDomain`" to the "ShellExecutor" bean in the configuration file [path]_jboss-5.1.0.GA/server/default/deploy/restcomm-ss7-service/META-INF/jboss-beans.xml_ and save the changes. 
+. Add a new parameter named "`securityDomain`" to the "ShellExecutor" bean in the configuration file [path]_jboss-5.1.0.GA/server/default/deploy/{this-folder}-ss7-service/META-INF/jboss-beans.xml_ and save the changes. 
 +
 ----
 
@@ -241,7 +246,7 @@ The default implementation of the declarative security model is based on Java Au
 . Create entries for user id and password in the file [path]_ jboss-5.1.0.GA/server/default/conf/props/jmx-console-users.properties_ for every user allowed to access the CLI.	 
 
 .Procedure: Disable Security
-. Delete all configurations created as mentioned above and remove the parameter "`securityDomain`" from the "Shell Executor" bean defined in [path]_jboss-5.1.0.GA/server/default/deploy/restcomm-ss7-service/META-INF/jboss-beans.xml_.			 
+. Delete all configurations created as mentioned above and remove the parameter "`securityDomain`" from the "Shell Executor" bean defined in [path]_jboss-5.1.0.GA/server/default/deploy/{this-folder}-ss7-service/META-INF/jboss-beans.xml_.			 
 
 If you would like to read more about the JBoss Security Framework, please refer to the JBoss Admin Guide available in their website. 
 
@@ -409,8 +414,9 @@ If you are intending to run the Simulator remotely, then you can do so using RMI
 . Pre-requisite: You must have SS7 Simulator installed locally in the machine.
 . Change the working directory to the bin folder in the Simulator's installation directory. 
 +
+[subs="attributes"]
 ----
-downloads]$ cd restcomm-jss7-<version>/ss7/restcomm-ss7-simulator/bin
+downloads]$ cd {this-folder}-jss7-<version>/ss7/{this-folder}-ss7-simulator/bin
 ----
 
 . (Optional) Ensure that the [path]_run.sh_							start script is executable. 
@@ -477,8 +483,9 @@ But prior to launching the Simulator remotely, you must first run a tester host 
 . Pre-requisite: You must have SS7 Simulator installed locally in the host machine.
 . Change the working directory to the bin folder in the Simulator's installation directory. 
 +
+[subs="attributes"]
 ----
-downloads]$ cd restcomm-jss7-<version>/ss7/restcomm-ss7-simulator/bin
+downloads]$ cd {this-folder}-jss7-<version>/ss7/{this-folder}-ss7-simulator/bin
 ----
 
 . (Optional) Ensure that the [path]_run.sh_ start script is executable. 

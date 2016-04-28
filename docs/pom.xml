@@ -15,6 +15,7 @@
 
 	<properties>
 		<docs.this.platform>Restcomm</docs.this.platform>
+		<docs.this.folder>restcomm</docs.this.folder>
 		<docs.this.application>jSS7</docs.this.application>
 		<docs.project.version>${project.version}</docs.project.version>
 		<docs.this.issue.tracker.url>https://github.com/Restcomm/jss7/issues</docs.this.issue.tracker.url>
