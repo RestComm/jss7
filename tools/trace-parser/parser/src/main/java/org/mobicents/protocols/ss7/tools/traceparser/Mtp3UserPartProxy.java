@@ -101,7 +101,7 @@ public class Mtp3UserPartProxy implements Mtp3UserPart {
     @Override
     public void setDeliveryMessageThreadCount(int deliveryMessageThreadCount) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override

@@ -28,7 +28,6 @@ import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
-import org.mobicents.ss7.congestion.CongestionListener;
 
 /**
  *

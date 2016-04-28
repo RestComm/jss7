@@ -107,7 +107,7 @@ public interface CAPProvider extends Serializable {
 
     /**
      * The collection of netwokIds that are marked as prohibited or congested.
-     * 
+     *
      * @return The collection of pairs: netwokId value - NetworkIdState (prohibited / congested state)
      */
     FastMap<Integer, NetworkIdState> getNetworkIdStateList();

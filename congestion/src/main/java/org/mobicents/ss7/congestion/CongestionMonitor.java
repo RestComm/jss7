@@ -58,7 +58,7 @@ public interface CongestionMonitor {
 
     /**
      * Return the list of the actual congestion tickets or null if no
-     * 
+     *
      * @return
      */
     CongestionTicket[] getCongestionTicketsList();

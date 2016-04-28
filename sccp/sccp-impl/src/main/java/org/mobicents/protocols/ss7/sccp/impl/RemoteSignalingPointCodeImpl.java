@@ -201,7 +201,7 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSign
 
     /**
      * Do not use this method directly except of debugging. Use clearCongLevel(), increaseCongLevel(), decreaseCongLevel()
-     * 
+     *
      * @param value
      */
     protected void setCurrentRestrictionLevel(int value) {

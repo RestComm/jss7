@@ -191,7 +191,7 @@ public class SccpRoutingControl {
     }
 
     private long lastCongAnnounseTime;
-    
+
     protected ReturnCauseValue send(SccpMessageImpl message) throws Exception {
 
         int dpc = message.getOutgoingDpc();

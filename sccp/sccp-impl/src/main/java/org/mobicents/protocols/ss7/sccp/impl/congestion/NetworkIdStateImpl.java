@@ -83,6 +83,16 @@ public class NetworkIdStateImpl implements NetworkIdState {
     }
 
     @Override
+    public int hashCode() {
+        int res = this.congLevel;
+        if (this.affectedByPc)
+            res += 100;
+        if (this.available)
+            res += 1000;
+        return res;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 

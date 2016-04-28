@@ -1064,20 +1064,20 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     @Override
     public void onCoordResponse(int ssn, int multiplicityIndicator) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void onState(int dpc, int ssn, boolean inService, int multiplicityIndicator) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void onPcState(int dpc, SignallingPointStatus status, Integer restrictedImportanceLevel,
             RemoteSccpStatus remoteSccpStatus) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override

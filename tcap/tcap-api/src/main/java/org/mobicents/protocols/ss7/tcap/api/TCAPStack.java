@@ -202,7 +202,7 @@ public interface TCAPStack {
      * Setting of ExecutorMonitor Threshold 1: delays in seconds (between the time when an incoming message has come from a peer
      * and scheduled for execution and the time when the execution of the message starts) after which ExecutorMonitor becomes
      * the congestion level 1
-     * 
+     *
      * @param value
      */
     void setCongControl_ExecutorDelayThreshold_1(double value) throws Exception;
@@ -211,7 +211,7 @@ public interface TCAPStack {
      * Setting of ExecutorMonitor Threshold 2: delays in seconds (between the time when an incoming message has come from a peer
      * and scheduled for execution and the time when the execution of the message starts) after which ExecutorMonitor becomes
      * the congestion level 2
-     * 
+     *
      * @param value
      */
     void setCongControl_ExecutorDelayThreshold_2(double value) throws Exception;
@@ -220,7 +220,7 @@ public interface TCAPStack {
      * Setting of ExecutorMonitor Threshold 3: delays in seconds (between the time when an incoming message has come from a peer
      * and scheduled for execution and the time when the execution of the message starts) after which ExecutorMonitor becomes
      * the congestion level 3
-     * 
+     *
      * @param value
      */
     void setCongControl_ExecutorDelayThreshold_3(double value) throws Exception;
@@ -250,7 +250,7 @@ public interface TCAPStack {
      * Setting of ExecutorMonitor Threshold 1: delays in seconds (between the time when an incoming message has come from a peer
      * and scheduled for execution and the time when the execution of the message starts) after which ExecutorMonitor resumes to
      * the congestion level 0
-     * 
+     *
      * @param value
      */
     void setCongControl_ExecutorBackToNormalDelayThreshold_1(double value) throws Exception;
@@ -259,7 +259,7 @@ public interface TCAPStack {
      * Setting of ExecutorMonitor Threshold 2: delays in seconds (between the time when an incoming message has come from a peer
      * and scheduled for execution and the time when the execution of the message starts) after which ExecutorMonitor resumes to
      * the congestion level 1
-     * 
+     *
      * @param value
      */
     void setCongControl_ExecutorBackToNormalDelayThreshold_2(double value) throws Exception;
@@ -268,7 +268,7 @@ public interface TCAPStack {
      * Setting of ExecutorMonitor Threshold 3: delays in seconds (between the time when an incoming message has come from a peer
      * and scheduled for execution and the time when the execution of the message starts) after which ExecutorMonitor resumes to
      * the congestion level 2
-     * 
+     *
      * @param value
      */
     void setCongControl_ExecutorBackToNormalDelayThreshold_3(double value) throws Exception;
@@ -291,7 +291,7 @@ public interface TCAPStack {
     /**
      * Setting of MemoryMonitor Threshold 1: a percent of occupied memory after which MemoryMonitor becomes the congestion level
      * 1
-     * 
+     *
      * @param value
      */
     void setCongControl_MemoryThreshold_1(double value) throws Exception;
@@ -299,7 +299,7 @@ public interface TCAPStack {
     /**
      * Setting of MemoryMonitor Threshold 2: a percent of occupied memory after which MemoryMonitor becomes the congestion level
      * 2
-     * 
+     *
      * @param value
      */
     void setCongControl_MemoryThreshold_2(double value) throws Exception;
@@ -307,7 +307,7 @@ public interface TCAPStack {
     /**
      * Setting of MemoryMonitor Threshold 3: a percent of occupied memory after which MemoryMonitor becomes the congestion level
      * 3
-     * 
+     *
      * @param value
      */
     void setCongControl_MemoryThreshold_3(double value) throws Exception;
@@ -333,7 +333,7 @@ public interface TCAPStack {
     /**
      * Setting of MemoryMonitor Threshold 1: a percent of occupied memory after which MemoryMonitor resumes to the congestion
      * level 0
-     * 
+     *
      * @param value
      */
     void setCongControl_BackToNormalMemoryThreshold_1(double value) throws Exception;
@@ -341,7 +341,7 @@ public interface TCAPStack {
     /**
      * Setting of MemoryMonitor Threshold 2: a percent of occupied memory after which MemoryMonitor resumes to the congestion
      * level 1
-     * 
+     *
      * @param value
      */
     void setCongControl_BackToNormalMemoryThreshold_2(double value) throws Exception;
@@ -349,7 +349,7 @@ public interface TCAPStack {
     /**
      * Setting of MemoryMonitor Threshold 3: a percent of occupied memory after which MemoryMonitor resumes to the congestion
      * level 2
-     * 
+     *
      * @param value
      */
     void setCongControl_BackToNormalMemoryThreshold_3(double value) throws Exception;

@@ -114,8 +114,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     private static final String CONG_CONTROL_TIMER_A = "congControl_TIMER_A";
     private static final String CONG_CONTROL_TIMER_D = "congControl_TIMER_D";
     private static final String CONG_CONTROL_ALGO = "congControl_Algo";
-    private static final String CONG_CONTROL_BLOCKING_OUTGOUNG_SCCP_MESSAGES = "congControl_blockingOutgoungSccpMessages";    
-    
+    private static final String CONG_CONTROL_BLOCKING_OUTGOUNG_SCCP_MESSAGES = "congControl_blockingOutgoungSccpMessages";
+
     /**
      * Interval in milliseconds in which new coming for an affected PC MTP-STATUS messages will be logged
      */
