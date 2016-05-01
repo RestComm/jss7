@@ -2,7 +2,7 @@
 	<parent>
 		<artifactId>simulator-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7.tools.simulator</groupId>
-		<version>3.0.0-SNAPSHOT</version>
+		<version>3.0.1356</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
