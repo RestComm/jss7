@@ -5,7 +5,7 @@
 :icons: font
 :experimental:
 :sourcedir: .
-:toclevels: 4
+:toclevels: {toclevels-value}
 :sectnumlevels: 4
 
 :leveloffset: 1

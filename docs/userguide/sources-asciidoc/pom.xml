@@ -84,6 +84,7 @@
 								<this-trunk-source-code-url>${docs.this.trunk.source.code.url}</this-trunk-source-code-url>
 								<this-release-binary-url>${docs.this.release.binary.url}</this-release-binary-url>
 								<slee-binary-url>${docs.slee.binary.url}</slee-binary-url>
+								<toclevels-value>2</toclevels-value>
 							</attributes>
 							<preserveDirectories>true</preserveDirectories>
 						</configuration>
@@ -119,6 +120,7 @@
 								<this-trunk-source-code-url>${docs.this.trunk.source.code.url}</this-trunk-source-code-url>
 								<this-release-binary-url>${docs.this.release.binary.url}</this-release-binary-url>
 								<slee-binary-url>${docs.slee.binary.url}</slee-binary-url>
+								<toclevels-value>2</toclevels-value>
 							</attributes>
 							<preserveDirectories>true</preserveDirectories>
 						</configuration>
@@ -131,6 +133,7 @@
 	<profiles>
 		<profile>
 			<id>all</id>			
+
 			<build>
 				<resources>
 					<resource>
@@ -192,6 +195,7 @@
 										<this-trunk-source-code-url>${docs.this.trunk.source.code.url}</this-trunk-source-code-url>
 										<this-release-binary-url>${docs.this.release.binary.url}</this-release-binary-url>
 										<slee-binary-url>${docs.slee.binary.url}</slee-binary-url>
+										<toclevels-value>6</toclevels-value>
 									</attributes>
 								</configuration>
 							</execution>
