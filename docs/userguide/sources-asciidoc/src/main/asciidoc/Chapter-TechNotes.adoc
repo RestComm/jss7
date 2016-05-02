@@ -25,8 +25,10 @@ NetworkId is also assigned to activities:
 When an SCCP message comes to SCCP stack the a networkId is assigned to the SCCP message depending on DPC and OPC values of the message.
 In order to SCCP stack can properly assign a networkId value, then at least either DPC or DPC of messages for different networkId subnetworks must be different  and SAPs / Destinations for SAPs were configured for unintersected intervals. 
 
-[[_design_cong_control]]
-== Congestion support for outgoing messageflow
+[[_design_out_cong_control]]
+== Congestion control for outgoing messageflow
+
+The target of outgoing congestion control is to report to upper stacks that SS7 links are congested (or down) so upper stacks / SS7 users can reduce traffic load or stop of message sending. Overload / disconnection cases are calculated per a networkID area.
 
 For outgoing messageflow (when we are sending messages to SS7 network) low level counters are implemented at SCTP library (MTP2 level for the sigtran stack). SCTP library measures delays between message delivering from MTP3 level for delivering and a real sending to the IP network.
 There are 3 levels of congestion (1, 2 or 3) depending on the delay length.
@@ -73,3 +75,59 @@ Then TCAP / CAP / MAP user can check it and reduce / temporary block the outgoin
 
 At the SCTP and SCCP levels we have several congestion control parameters that should be tuned depending on connection type (legacy / sigtran) and capacity for the best productivity.
 See chapter <<_sctp_property_cc_delaythreshold>> for configuring of congestion control settings for SCTP level and chapters <<_sccp_property_cc_timer_a>>, <<_sccp_property_cc_timer_d>>, <<_sccp_property_cc_algo>> and <<_sccp_property_cc_blockingoutgoungsccpmessages>> for configuring of congestion control settings for SCCP level. 
+
+
+[[_design_in_cong_control]]
+== Congestion control for incoming messageflow
+
+The target of incoming congestion control is to measure of server load and prevent of accepting new incoming from a peer new dialogs / messages. This load info can also be used by SS7 stack users for reduce of generating of traffic load.
+
+There are following sources of load measuring:
+
+- ExecutorCongestionMonitor - measuring of how much time events wait at a Executor queue before processing start. This CongestionMonitors are added at the MTP stack levels and reports results to TCAP level.
+- MemoryCongestionMonitor - measuring a percentage of usege of memory.
+- UserPartCongestionMonitor - TCAP users can provide to TCAP level extra info of congestion to some external for SS7 stack resourse.
+
+Then TCAP level calculate a cumulative congestion level (the maximul level is taken). There are 4 levels of congestion (0-3). 0 level means no congestion, 3 level means max congetion. When <<_tcap_property_blockingincomingtcapmessages>> option is turned on (disabled by default) the in case of 2 congestion level all incoming new dialogs are rejected and in case of 3 congestion level - all incoming TCAP messages are rejected.
+
+By a following method of TCAPProvider interface upper levels can provide a congestion level of a TCAP user part:
+
+[source,java]
+----
+    /**
+     * Setting of a congestion level for a TCAP user "congObject"
+     *
+     * @param congObject a String with the name of an object
+     * @param level a congestion level for this object
+     */
+    void setUserPartCongestionLevel(String congObject, int level);
+----
+
+By a following methods of TCAPProvider interface upper levels can get info of a congestion level:
+
+[source,java]
+----
+    /**
+     * Returns a congestion level of a Memory congestion monitor
+     *
+     * @return
+     */
+    int getMemoryCongestionLevel();
+
+    /**
+     * Returns a congestion level of thread Executors for processing of incoming messages
+     *
+     * @return
+     */
+    int getExecutorCongestionLevel();
+
+    /**
+     * Returns a max congestion level for UserPartCongestion, MemoryCongestion and ExecutorCongestionLevel
+     *
+     * @return
+     */
+    int getCumulativeCongestionLevel();
+----
+
+See configuring parameters of Executors congestion control in <<_tcap_property_executordelaythreshold>> chapter and configuring parameters of Memory congestion control in
+<<_tcap_property_memorythreshold>> chapter.

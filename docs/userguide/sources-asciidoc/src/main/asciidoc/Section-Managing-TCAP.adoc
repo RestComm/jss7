@@ -418,7 +418,7 @@ Change value and save.
 
 
 [[_tcap_property_executordelaythreshold]]
-=== Thresholds Executors congestion control
+=== Thresholds for Executors congestion control
 
 [[_tcap_property_executordelaythreshold_cli]]
 ==== Using CLI
@@ -488,7 +488,7 @@ Change value and save.
 
 
 [[_tcap_property_memorythreshold]]
-=== Memory congestion control
+=== Thresholds for Memory congestion control
 
 [[_tcap_property_memorythreshold_cli]]
 ==== Using CLI
@@ -600,11 +600,5 @@ EXAMPLES
 
 On TCAP management page, click on pencil against the 'Blocking of incoming messages in congestion case' property and text box becomes editable.
 Change value and save. 
-
-
-
-
-
-
 
 
