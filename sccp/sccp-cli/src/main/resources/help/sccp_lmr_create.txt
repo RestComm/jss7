@@ -29,7 +29,7 @@ PARAMETERS
 
 	<long-message-rule-type>-	Message types used for the remote signaling
 					point codes range.
-					Possible values : udt, xudt and ludt.
+					Possible values : udt, xudt, ludt and ludt_segm.
 					
 	Optional Parameters
 

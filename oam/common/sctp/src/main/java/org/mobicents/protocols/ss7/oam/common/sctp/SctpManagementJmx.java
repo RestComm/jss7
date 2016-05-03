@@ -90,7 +90,7 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
     public Association addSctpAssociation(String hostAddress, int hostPort, String peerAddress, int peerPort, String assocName,
             IpChannelType ipChannelType, String extraHostAddresses) throws Exception {
         this.wrappedSctpManagement.addAssociation(hostAddress, hostPort, peerAddress, peerPort, assocName, ipChannelType,
-                extraHostAddresses != null ? extraHostAddresses.split(",") : null);
+                (extraHostAddresses != null && !extraHostAddresses.isEmpty()) ? extraHostAddresses.split(",") : null);
         return null;
     }
 
@@ -126,7 +126,8 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
     public Server addSctpServer(String serverName, String hostAddress, int port, IpChannelType ipChannelType,
             boolean acceptAnonymousConnections, int maxConcurrentConnectionsCount, String extraHostAddresses) throws Exception {
         this.wrappedSctpManagement.addServer(serverName, hostAddress, port, ipChannelType, acceptAnonymousConnections,
-                maxConcurrentConnectionsCount, extraHostAddresses != null ? extraHostAddresses.split(",") : null);
+                maxConcurrentConnectionsCount,
+                (extraHostAddresses != null && !extraHostAddresses.isEmpty()) ? extraHostAddresses.split(",") : null);
         return null;
     }
 

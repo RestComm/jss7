@@ -73,8 +73,8 @@ public class SccpManagementJmx implements SccpManagementJmxMBean {
     }
 
     @Override
-    public Mtp3UserPart getMtp3UserPart(int arg0) {
-        return this.wrappedSccpStack.getMtp3UserPart(arg0);
+    public Mtp3UserPart getMtp3UserPart(int id) {
+        return this.wrappedSccpStack.getMtp3UserPart(id);
     }
 
     @Override
@@ -138,13 +138,13 @@ public class SccpManagementJmx implements SccpManagementJmxMBean {
     }
 
     @Override
-    public void setPersistDir(String arg0) {
-        this.wrappedSccpStack.setPersistDir(arg0);
+    public void setPersistDir(String persistDir) {
+        this.wrappedSccpStack.setPersistDir(persistDir);
     }
 
     @Override
-    public void setRemoveSpc(boolean arg0) {
-        this.wrappedSccpStack.setRemoveSpc(arg0);
+    public void setRemoveSpc(boolean removeSpc) {
+        this.wrappedSccpStack.setRemoveSpc(removeSpc);
     }
 
     @Override
