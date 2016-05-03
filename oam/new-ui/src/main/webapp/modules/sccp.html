@@ -1824,13 +1824,13 @@
 																	'							</div>'+
 
 																	'							<div class="control-group">'+
-																	'   							<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="mandatory if <ruleType> is loadshared. The Loadsharing algorithm is configured here. Possible values of the parameter are bit4 : if( (SLS & 0x10) == 0 ) <route to primary> else <route to backup> This algorithm is the best if all traffic is local (mobicents stack) originated. bit3 : if( (SLS & 0x08) == 0 ) <route to primary> else <route to backup> This algorithm can be used if not all traffic is local (mobicents stack) originated. But only 8 links are acceptable in both linksets. bit2 : if( (SLS & 0x04) == 0 ) <route to primary> else <route to backup> This algorithm can be used if not all traffic is local (mobicents stack) originated. But only 8 links are acceptable in both linksets. bit1 : if( (SLS & 0x02) == 0 ) <route to primary> else <route to backup> This algorithm can be used if not all traffic is local (mobicents stack) originated. But only 8 links are acceptable in both linksets. bit0: if( (SLS & 0x01) == 0 ) <route to primary> else <route to backup> This algorithm can be used if not all traffic is local (mobicents stack) originated. But only 8 links are acceptable in both linksets.">'+
-																	'       							<span class="add-on">Load Sharing Algorithm</span>'+
+																	'   							<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="Message types used for the remote signaling point codes range. Possible values : udt, xudt and ludt.">'+
+																	'       							<span class="add-on">Long message rule type</span>'+
 																	'   								<select id="lmrtypeInput'+name+'" >'+
-																	'   									<option value="LongMessagesForbidden">udt</option>'+
-																	'       								<option value="XudtEnabled">xudt</option>'+
-																	'       								<option value="LudtEnabled">ludt</option>'+
-																	'       								<option value="LudtEnabled_WithSegmentationField">ludt_segm</option>'+
+																	'   									<option value="LONG_MESSAGE_FORBBIDEN">udt</option>'+
+																	'       								<option value="XUDT_ENABLED">xudt</option>'+
+																	'       								<option value="LUDT_ENABLED">ludt</option>'+
+																	'       								<option value="LUDT_ENABLED_WITH_SEGMENTATION">ludt_segm</option>'+
 																	'       							</select>'+
 																	'   							</span>'+	
 																	'							</div>'+																	
