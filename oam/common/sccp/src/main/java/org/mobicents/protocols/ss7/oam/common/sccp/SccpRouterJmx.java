@@ -60,8 +60,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * org.mobicents.protocols.ss7.sccp.LongMessageRuleType)
      */
     @Override
-    public void addLongMessageRule(int arg0, int arg1, int arg2, LongMessageRuleType arg3) throws Exception {
-        this.wrappedRouter.addLongMessageRule(arg0, arg1, arg2, arg3);
+    public void addLongMessageRule(int id, int firstSpc, int lastSpc, LongMessageRuleType ruleType) throws Exception {
+        this.wrappedRouter.addLongMessageRule(id, firstSpc, lastSpc, ruleType);
     }
 
     /*
@@ -70,8 +70,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.Router#addMtp3Destination(int, int, int, int, int, int, int)
      */
     @Override
-    public void addMtp3Destination(int arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6) throws Exception {
-        this.wrappedRouter.addMtp3Destination(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+    public void addMtp3Destination(int sapId, int destId, int firstDpc, int lastDpc, int firstSls, int lastSls, int slsMask) throws Exception {
+        this.wrappedRouter.addMtp3Destination(sapId, destId, firstDpc, lastDpc, firstSls, lastSls, slsMask);
     }
 
     /*
@@ -80,8 +80,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.Router#addMtp3ServiceAccessPoint(int, int, int, int)
      */
     @Override
-    public void addMtp3ServiceAccessPoint(int arg0, int arg1, int arg2, int arg3, int networkId) throws Exception {
-        this.wrappedRouter.addMtp3ServiceAccessPoint(arg0, arg1, arg2, arg3, networkId);
+    public void addMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni, int networkId) throws Exception {
+        this.wrappedRouter.addMtp3ServiceAccessPoint(id, mtp3Id, opc, ni, networkId);
     }
 
     /*
@@ -91,8 +91,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * org.mobicents.protocols.ss7.sccp.parameter.SccpAddress)
      */
     @Override
-    public void addRoutingAddress(int arg0, SccpAddress arg1) throws Exception {
-        this.wrappedRouter.addRoutingAddress(arg0, arg1);
+    public void addRoutingAddress(int id, SccpAddress routingAddress) throws Exception {
+        this.wrappedRouter.addRoutingAddress(id, routingAddress);
     }
 
     /*
@@ -103,9 +103,11 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * org.mobicents.protocols.ss7.sccp.parameter.SccpAddress, java.lang.String, int, int, java.lang.Integer)
      */
     @Override
-    public void addRule(int arg0, RuleType arg1, LoadSharingAlgorithm arg2, OriginationType arg3, SccpAddress arg4,
-            String arg5, int arg6, int arg7, Integer arg8, int networkId) throws Exception {
-        this.wrappedRouter.addRule(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, networkId);
+    public void addRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType,
+            SccpAddress pattern, String mask, int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId,
+            int networkId) throws Exception {
+        this.wrappedRouter.addRule(id, ruleType, algo, originationType, pattern, mask, pAddressId, sAddressId,
+                newCallingPartyAddressAddressId, networkId);
     }
 
     /*
@@ -114,8 +116,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.Router#getLongMessageRule(int)
      */
     @Override
-    public LongMessageRule getLongMessageRule(int arg0) {
-        return this.wrappedRouter.getLongMessageRule(arg0);
+    public LongMessageRule getLongMessageRule(int id) {
+        return this.wrappedRouter.getLongMessageRule(id);
     }
 
     /*
@@ -134,8 +136,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.Router#getMtp3ServiceAccessPoint(int)
      */
     @Override
-    public Mtp3ServiceAccessPoint getMtp3ServiceAccessPoint(int arg0) {
-        return this.wrappedRouter.getMtp3ServiceAccessPoint(arg0);
+    public Mtp3ServiceAccessPoint getMtp3ServiceAccessPoint(int id) {
+        return this.wrappedRouter.getMtp3ServiceAccessPoint(id);
     }
 
     /*
@@ -154,8 +156,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.Router#getRoutingAddress(int)
      */
     @Override
-    public SccpAddress getRoutingAddress(int arg0) {
-        return this.wrappedRouter.getRoutingAddress(arg0);
+    public SccpAddress getRoutingAddress(int id) {
+        return this.wrappedRouter.getRoutingAddress(id);
     }
 
     /*
@@ -174,8 +176,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.Router#getRule(int)
      */
     @Override
-    public Rule getRule(int arg0) {
-        return this.wrappedRouter.getRule(arg0);
+    public Rule getRule(int id) {
+        return this.wrappedRouter.getRule(id);
     }
 
     /*
@@ -195,8 +197,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * org.mobicents.protocols.ss7.sccp.LongMessageRuleType)
      */
     @Override
-    public void modifyLongMessageRule(int arg0, int arg1, int arg2, LongMessageRuleType arg3) throws Exception {
-        this.wrappedRouter.modifyLongMessageRule(arg0, arg1, arg2, arg3);
+    public void modifyLongMessageRule(int id, int firstSpc, int lastSpc, LongMessageRuleType ruleType) throws Exception {
+        this.wrappedRouter.modifyLongMessageRule(id, firstSpc, lastSpc, ruleType);
     }
 
     /*
@@ -205,8 +207,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.Router#modifyMtp3Destination(int, int, int, int, int, int, int)
      */
     @Override
-    public void modifyMtp3Destination(int arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6) throws Exception {
-        this.wrappedRouter.modifyMtp3Destination(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+    public void modifyMtp3Destination(int sapId, int destId, int firstDpc, int lastDpc, int firstSls, int lastSls, int slsMask) throws Exception {
+        this.wrappedRouter.modifyMtp3Destination(sapId, destId, firstDpc, lastDpc, firstSls, lastSls, slsMask);
     }
 
     /*
@@ -215,8 +217,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.Router#modifyMtp3ServiceAccessPoint(int, int, int, int)
      */
     @Override
-    public void modifyMtp3ServiceAccessPoint(int arg0, int arg1, int arg2, int arg3, int networkId) throws Exception {
-        this.wrappedRouter.modifyMtp3ServiceAccessPoint(arg0, arg1, arg2, arg3, networkId);
+    public void modifyMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni, int networkId) throws Exception {
+        this.wrappedRouter.modifyMtp3ServiceAccessPoint(id, mtp3Id, opc, ni, networkId);
     }
 
     /*
@@ -226,8 +228,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * org.mobicents.protocols.ss7.sccp.parameter.SccpAddress)
      */
     @Override
-    public void modifyRoutingAddress(int arg0, SccpAddress arg1) throws Exception {
-        this.wrappedRouter.modifyRoutingAddress(arg0, arg1);
+    public void modifyRoutingAddress(int routingAddressId, SccpAddress routingAddress) throws Exception {
+        this.wrappedRouter.modifyRoutingAddress(routingAddressId, routingAddress);
     }
 
     /*
@@ -238,9 +240,11 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * org.mobicents.protocols.ss7.sccp.parameter.SccpAddress, java.lang.String, int, int, java.lang.Integer)
      */
     @Override
-    public void modifyRule(int arg0, RuleType arg1, LoadSharingAlgorithm arg2, OriginationType arg3, SccpAddress arg4,
-            String arg5, int arg6, int arg7, Integer arg8, int networkId) throws Exception {
-        this.wrappedRouter.modifyRule(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, networkId);
+    public void modifyRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType,
+            SccpAddress pattern, String mask, int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId,
+            int networkId) throws Exception {
+        this.wrappedRouter.modifyRule(id, ruleType, algo, originationType, pattern, mask, pAddressId, sAddressId,
+                newCallingPartyAddressAddressId, networkId);
     }
 
     /*
@@ -249,8 +253,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.Router#removeLongMessageRule(int)
      */
     @Override
-    public void removeLongMessageRule(int arg0) throws Exception {
-        this.wrappedRouter.removeLongMessageRule(arg0);
+    public void removeLongMessageRule(int id) throws Exception {
+        this.wrappedRouter.removeLongMessageRule(id);
     }
 
     /*
@@ -259,8 +263,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.Router#removeMtp3Destination(int, int)
      */
     @Override
-    public void removeMtp3Destination(int arg0, int arg1) throws Exception {
-        this.wrappedRouter.removeMtp3Destination(arg0, arg1);
+    public void removeMtp3Destination(int sapId, int destId) throws Exception {
+        this.wrappedRouter.removeMtp3Destination(sapId, destId);
     }
 
     /*
@@ -269,8 +273,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.Router#removeMtp3ServiceAccessPoint(int)
      */
     @Override
-    public void removeMtp3ServiceAccessPoint(int arg0) throws Exception {
-        this.wrappedRouter.removeMtp3ServiceAccessPoint(arg0);
+    public void removeMtp3ServiceAccessPoint(int id) throws Exception {
+        this.wrappedRouter.removeMtp3ServiceAccessPoint(id);
     }
 
     /*
@@ -279,8 +283,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.Router#removeRoutingAddress(int)
      */
     @Override
-    public void removeRoutingAddress(int arg0) throws Exception {
-        this.wrappedRouter.removeRoutingAddress(arg0);
+    public void removeRoutingAddress(int id) throws Exception {
+        this.wrappedRouter.removeRoutingAddress(id);
     }
 
     /*
@@ -289,8 +293,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.Router#removeRule(int)
      */
     @Override
-    public void removeRule(int arg0) throws Exception {
-        this.wrappedRouter.removeRule(arg0);
+    public void removeRule(int id) throws Exception {
+        this.wrappedRouter.removeRule(id);
     }
 
     @Override
