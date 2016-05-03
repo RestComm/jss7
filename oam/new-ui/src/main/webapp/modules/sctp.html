@@ -712,7 +712,7 @@
 																'<td><a href="#" onclick="showInternalPageDetails(\''+name+'-server-'+sctpServerName+'\',\''+sctpServerName+'\')">' + sctpServerName + '</a></td>' + 
 																'<td>' + (sctpServerStarted ? 'STARTED' : 'STOPPED') + '</td>' + 
 																'<td style="font-size: 16px; vertical-align: middle; text-align: center; width: 100px;">' + 
-																'<button class="btn btn-small btn-' + (sctpServerStarted ? 'success' : 'warning') + '" data-toggle="tooltip" title="Start ASP" data-placement="bottom" onclick="changeServerState(\'' + name +  '\',\'' + sctpServerName +  '\',\'' + sctpServerStarted +  '\')">' + (sctpServerStarted ? 'Stop' : 'Start') + '</i></button> ' +
+																'<button class="btn btn-small btn-' + (sctpServerStarted ? 'success' : 'warning') + '" data-toggle="tooltip" title="Start/stop Server" data-placement="bottom" onclick="changeServerState(\'' + name +  '\',\'' + sctpServerName +  '\',\'' + sctpServerStarted +  '\')">' + (sctpServerStarted ? 'Stop' : 'Start') + '</i></button> ' +
 															    '</td>' +
 																'<td style="font-size: 16px; vertical-align: middle; text-align: center; width: 100px;">' + 
 																'<button class="btn btn-small btn-danger"' + (sctpServerStarted ? 'disabled' : '') + ' data-toggle="tooltip" title="Remove Server" data-placement="bottom" onclick="' + (sctpServerStarted ? '#' : 'removeServer(\'' + name +  '\',\'' + sctpServerName +  '\')') + '"><i class="icon-remove"> </i></button> ' +
