@@ -33,6 +33,13 @@
 			<groupId>org.mobicents.protocols.sctp</groupId>
 			<artifactId>sctp-api</artifactId>
 		</dependency>		
+
+		<!-- netty -->
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>${netty.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
