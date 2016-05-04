@@ -22,12 +22,9 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
-import java.io.Serializable;
-
 import javolution.text.CharArray;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
@@ -50,6 +47,8 @@ import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle0010;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle0011;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle0100;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+
+import java.io.Serializable;
 
 /**
  * @author amit bhayani
@@ -137,14 +136,14 @@ public class RuleImpl implements Rule, Serializable {
     /**
      * @return the ruleId
      */
-    protected int getRuleId() {
+    public int getRuleId() {
         return ruleId;
     }
 
     /**
      * @param ruleId the ruleId to set
      */
-    protected void setRuleId(int ruleId) {
+    public void setRuleId(int ruleId) {
         this.ruleId = ruleId;
     }
 
@@ -298,9 +297,19 @@ public class RuleImpl implements Rule, Serializable {
     }
     public boolean matches(SccpAddress address, boolean isMtpOriginated, int msgNetworkId) {
 
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Matching rule Id=%s Rule=[%s]", this.getRuleId(), this.toString()));
+        }
+
         // checking NetworkId
-        if (this.networkId != msgNetworkId)
+        if (this.networkId != msgNetworkId) {
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("networkId didn't match. Pattern networkId=%s Address networkId=%s Return  False",
+                                           this.networkId, msgNetworkId));
+            }
+
             return false;
+        }
 
         // Rule is for GTT only
         if (address.getAddressIndicator().getRoutingIndicator() == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
@@ -311,10 +320,25 @@ public class RuleImpl implements Rule, Serializable {
         }
 
         // checking firstly about rule OriginationType
-        if (this.getOriginationType() == OriginationType.LOCAL && isMtpOriginated)
+        boolean isOrigitnationTypeCorrect = true;
+        if (this.getOriginationType() == OriginationType.LOCAL && isMtpOriginated) {
+            isOrigitnationTypeCorrect =  false;
+        }
+        if (this.getOriginationType() == OriginationType.REMOTE && !isMtpOriginated) {
+            isOrigitnationTypeCorrect =  false;
+        }
+        if(!isOrigitnationTypeCorrect) {
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("OriginationType didn't match. Pattern OriginationType=%s Address isMtpOriginated=%s Return  False",
+                                           this.getOriginationType(), isMtpOriginated));
+            }
             return false;
-        if (this.getOriginationType() == OriginationType.REMOTE && !isMtpOriginated)
+        }
+
+        //SSN if present flag is set in pattern - must match address SSN & flag
+        if( !isSsnMatch(address, pattern) ) {
             return false;
+        }
 
         // Routing on GTT
         GlobalTitleIndicator gti = address.getAddressIndicator().getGlobalTitleIndicator();
@@ -470,6 +494,31 @@ public class RuleImpl implements Rule, Serializable {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Checks if SSN matches between rule address pattern and provided address
+     * @param address - a provided address to match
+     * @param pattern - a rule pattern address
+     * @return true if SSN is present in both patern and received addresses and they are the same
+     *              or pattern has SSN flag unset in AI (bit 7)(isSsnPresent = false for pattern)
+     */
+    private boolean isSsnMatch(SccpAddress address, SccpAddress pattern) {
+        if(pattern.getAddressIndicator().isSSNPresent() && address.getAddressIndicator().isSSNPresent()) {
+           if(address.getSubsystemNumber() == pattern.getSubsystemNumber()) {
+               return true;
+           }
+        } else if(!pattern.getAddressIndicator().isSSNPresent()) {
+            return true;
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("SSN didn't match. Pattern: isSsnPresent=%s, SSN=%s Address: isSsnPresent=%s, SSN=%s Return  False",
+                                       pattern.getAddressIndicator().isSSNPresent(), pattern.getSubsystemNumber(),
+                                       address.getAddressIndicator().isSSNPresent(), address.getSubsystemNumber()));
+        }
+
+        return false;
     }
 
     private String translateDigits(String digits, String[] masks, String[] patternDigits, String[] addressDigits) {
