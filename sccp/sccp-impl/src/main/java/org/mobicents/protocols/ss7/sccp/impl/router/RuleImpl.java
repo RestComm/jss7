@@ -320,14 +320,14 @@ public class RuleImpl implements Rule, Serializable {
         }
 
         // checking firstly about rule OriginationType
-        boolean isOrigitnationTypeCorrect = true;
+        boolean isOriginationTypeCorrect = true;
         if (this.getOriginationType() == OriginationType.LOCAL && isMtpOriginated) {
-            isOrigitnationTypeCorrect =  false;
+            isOriginationTypeCorrect =  false;
         }
         if (this.getOriginationType() == OriginationType.REMOTE && !isMtpOriginated) {
-            isOrigitnationTypeCorrect =  false;
+            isOriginationTypeCorrect =  false;
         }
-        if(!isOrigitnationTypeCorrect) {
+        if(!isOriginationTypeCorrect) {
             if (logger.isDebugEnabled()) {
                 logger.debug(String.format("OriginationType didn't match. Pattern OriginationType=%s Address isMtpOriginated=%s Return  False",
                                            this.getOriginationType(), isMtpOriginated));
