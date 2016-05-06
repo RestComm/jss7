@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
-import java.io.Serializable;
-
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
@@ -40,7 +38,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  * @author sergey vetyutnev
  *
  */
-public interface IstCommandRequest extends Serializable {
+public interface IstCommandRequest extends CallHandlingMessage {
 
      IMSI getImsi();
 
