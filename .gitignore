@@ -116,6 +116,7 @@ docs/sources-*/src
 /Client_m3ua1.xml
 /Client_sctp.xml
 /maplog.txt
+/maplog2.txt
 /MsgLog.pcap
 /TCAPCongestionTest1_management.xml
 /TCAPCongestionTest2_management.xml
