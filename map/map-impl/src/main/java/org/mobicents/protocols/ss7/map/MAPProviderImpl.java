@@ -165,7 +165,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
 
     protected MAPProviderImpl() {
-
+        this.loger = Logger.getLogger(MAPStackImpl.class.getCanonicalName());
     }
 
     /**
