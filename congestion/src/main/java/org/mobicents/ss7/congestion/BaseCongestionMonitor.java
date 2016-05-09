@@ -89,8 +89,8 @@ public abstract class BaseCongestionMonitor implements CongestionMonitor {
             this.setAlarmLevel(newAlarmLevel);
 
         if (newAlarmLevel < currentAlarmLevel) {
-            String msg = "CongestionMonitor-" + this.getSource() + ": congestion increase up to level " + newAlarmLevel
-                    + ", couter value=" + newValue;
+            String msg = "CongestionMonitor-" + this.getSource() + ": congestion decrease down to level " + newAlarmLevel
+                    + ", couter value=" + newValue + ", description=" + this.getAlarmDescription();
             if (newAlarmLevel == 3)
                 logger.error(msg);
             else
@@ -104,8 +104,8 @@ public abstract class BaseCongestionMonitor implements CongestionMonitor {
             }
         }
         if (newAlarmLevel > currentAlarmLevel) {
-            String msg = "CongestionMonitor-" + this.getSource() + ": congestion decrease down to level " + newAlarmLevel
-                    + ", couter value=" + newValue;
+            String msg = "CongestionMonitor-" + this.getSource() + ": congestion increase up to level " + newAlarmLevel
+                    + ", couter value=" + newValue + ", description=" + this.getAlarmDescription();
             if (currentAlarmLevel == 3)
                 logger.error(msg);
             else
@@ -123,6 +123,8 @@ public abstract class BaseCongestionMonitor implements CongestionMonitor {
     protected abstract int getAlarmLevel();
 
     protected abstract void setAlarmLevel(int val);
+
+    protected abstract String getAlarmDescription();
 
     @Override
     public CongestionTicket[] getCongestionTicketsList() {

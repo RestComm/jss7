@@ -41,6 +41,8 @@ public class ExecutorCongestionMonitorImpl extends BaseCongestionMonitor impleme
     private double[] delayThreshold = new double[] { 1, 6, 12 };
     private double[] backToNormalDelayThreshold = new double[] { 0.5, 3, 8 };
 
+    protected double calculatedMaxValue;
+
     public ExecutorCongestionMonitorImpl(String productName, ExecutorService[] executors) {
         this.productName = productName;
         this.executors = executors;
@@ -135,7 +137,16 @@ public class ExecutorCongestionMonitorImpl extends BaseCongestionMonitor impleme
     }
 
     private void registerResults(double maxValue) {
+        calculatedMaxValue = maxValue;
         super.applyNewValue(currentAlarmLevel, maxValue, delayThreshold, backToNormalDelayThreshold, true);
+    }
+
+    @Override
+    protected String getAlarmDescription() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Last measured max delay between delivering an IP message for sending and a moment when the message was transferred via an IP channel (seconds): ");
+        sb.append(calculatedMaxValue);
+        return sb.toString();
     }
 
     public class TestMonitor {

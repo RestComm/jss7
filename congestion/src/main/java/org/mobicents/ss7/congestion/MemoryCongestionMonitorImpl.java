@@ -40,6 +40,10 @@ public class MemoryCongestionMonitorImpl extends BaseCongestionMonitor implement
     private double[] memoryThreshold = new double[] { 77, 87, 97 };
     private double[] backToNormalMemoryThreshold = new double[] { 72, 82, 92 };
 
+    protected double calculatedAllocatedMemory;
+    protected double calculatedFreeMemory;
+    protected double calculatedTotalFreeMemory;
+
     public MemoryCongestionMonitorImpl() {
         maxMemory = Runtime.getRuntime().maxMemory() / (double) 1024;
     }
@@ -163,6 +167,10 @@ public class MemoryCongestionMonitorImpl extends BaseCongestionMonitor implement
 
         double totalFreeMemory = freeMemory + (maxMemory - allocatedMemory);
 
+        calculatedAllocatedMemory = allocatedMemory;
+        calculatedFreeMemory = freeMemory;
+        calculatedTotalFreeMemory = totalFreeMemory;
+
         this.percentageOfMemoryUsed = (((double) 100) - ((totalFreeMemory / maxMemory) * ((double) 100)));
 
         super.applyNewValue(memoryAlarmLevel, percentageOfMemoryUsed, memoryThreshold, backToNormalMemoryThreshold, true);
@@ -250,6 +258,22 @@ public class MemoryCongestionMonitorImpl extends BaseCongestionMonitor implement
     @Override
     public void setBackToNormalMemoryThreshold_3(double value) throws Exception {
         backToNormalMemoryThreshold[2] = value;
+    }
+
+    @Override
+    protected String getAlarmDescription() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("maxMemory=");
+        sb.append(maxMemory);
+        sb.append(", allocatedMemory=");
+        sb.append(calculatedAllocatedMemory);
+        sb.append(", freeMemory=");
+        sb.append(calculatedFreeMemory);
+        sb.append(", totalFreeMemory=");
+        sb.append(calculatedTotalFreeMemory);
+        sb.append(",  percentageOfMemoryUsed=");
+        sb.append(percentageOfMemoryUsed);
+        return sb.toString();
     }
 
 }

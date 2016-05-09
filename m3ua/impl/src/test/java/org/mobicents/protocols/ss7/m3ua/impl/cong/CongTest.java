@@ -143,6 +143,11 @@ public class CongTest {
         protected void setAlarmLevel(int val) {
             alarmLevel = val;
         }
+
+        @Override
+        protected String getAlarmDescription() {
+            return "Test error description";
+        }
     }
 
     class CongestionListenerProxy implements CongestionListener {
