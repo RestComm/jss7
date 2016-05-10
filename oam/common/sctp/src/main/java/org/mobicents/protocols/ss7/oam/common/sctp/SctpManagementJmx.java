@@ -47,6 +47,8 @@ import org.mobicents.protocols.ss7.oam.common.alarm.CurrentAlarmListImpl;
 import org.mobicents.protocols.ss7.oam.common.jmx.MBeanHost;
 import org.mobicents.protocols.ss7.oam.common.jmxss7.Ss7Layer;
 
+import com.sun.nio.sctp.SctpStandardSocketOptions.InitMaxStreams;
+
 /**
  *
  * @author sergey vetyutnev
@@ -317,6 +319,76 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
     @Override
     public void setWorkerThreads(int workerThreads) throws Exception {
         this.wrappedSctpManagement.setWorkerThreads(workerThreads);
+    }
+
+    @Override
+    public Boolean getOptionSctpDisableFragments() {
+        return this.wrappedSctpManagement.getOptionSctpDisableFragments();
+    }
+
+    @Override
+    public Integer getOptionSctpFragmentInterleave() {
+        return this.wrappedSctpManagement.getOptionSctpFragmentInterleave();
+    }
+
+    @Override
+    public InitMaxStreams getOptionSctpInitMaxstreams() {
+        return this.wrappedSctpManagement.getOptionSctpInitMaxstreams();
+    }
+
+    @Override
+    public Boolean getOptionSctpNodelay() {
+        return this.wrappedSctpManagement.getOptionSctpNodelay();
+    }
+
+    @Override
+    public Integer getOptionSoLinger() {
+        return this.wrappedSctpManagement.getOptionSoLinger();
+    }
+
+    @Override
+    public Integer getOptionSoRcvbuf() {
+        return this.wrappedSctpManagement.getOptionSoRcvbuf();
+    }
+
+    @Override
+    public Integer getOptionSoSndbuf() {
+        return this.wrappedSctpManagement.getOptionSoSndbuf();
+    }
+
+    @Override
+    public void setOptionSctpDisableFragments(Boolean val) {
+        this.wrappedSctpManagement.setOptionSctpDisableFragments(val);
+    }
+
+    @Override
+    public void setOptionSctpFragmentInterleave(Integer val) {
+        this.wrappedSctpManagement.setOptionSctpFragmentInterleave(val);
+    }
+
+    @Override
+    public void setOptionSctpInitMaxstreams(InitMaxStreams val) {
+        this.wrappedSctpManagement.setOptionSctpInitMaxstreams(val);
+    }
+
+    @Override
+    public void setOptionSctpNodelay(Boolean val) {
+        this.wrappedSctpManagement.setOptionSctpNodelay(val);
+    }
+
+    @Override
+    public void setOptionSoLinger(Integer val) {
+        this.wrappedSctpManagement.setOptionSoLinger(val);
+    }
+
+    @Override
+    public void setOptionSoRcvbuf(Integer val) {
+        this.wrappedSctpManagement.setOptionSoRcvbuf(val);
+    }
+
+    @Override
+    public void setOptionSoSndbuf(Integer val) {
+        this.wrappedSctpManagement.setOptionSoSndbuf(val);
     }
 
     @Override

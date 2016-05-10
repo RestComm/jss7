@@ -58,6 +58,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.sun.nio.sctp.SctpStandardSocketOptions.InitMaxStreams;
+
 /**
  * Test the serialization/de-serialization
  *
@@ -636,6 +638,90 @@ public class M3UAManagementTest {
 
         @Override
         public void setCongControl_DelayThreshold_3(double arg0) throws Exception {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public Boolean getOptionSctpDisableFragments() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Integer getOptionSctpFragmentInterleave() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public InitMaxStreams getOptionSctpInitMaxstreams() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Boolean getOptionSctpNodelay() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Integer getOptionSoLinger() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Integer getOptionSoRcvbuf() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Integer getOptionSoSndbuf() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public void setOptionSctpDisableFragments(Boolean arg0) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setOptionSctpFragmentInterleave(Integer arg0) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setOptionSctpInitMaxstreams(InitMaxStreams arg0) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setOptionSctpNodelay(Boolean arg0) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setOptionSoLinger(Integer arg0) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setOptionSoRcvbuf(Integer arg0) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setOptionSoSndbuf(Integer arg0) {
             // TODO Auto-generated method stub
             
         }
