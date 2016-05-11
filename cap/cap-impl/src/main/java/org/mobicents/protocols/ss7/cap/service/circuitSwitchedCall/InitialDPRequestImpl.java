@@ -24,9 +24,6 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import java.io.IOException;
 
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -96,6 +93,9 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.Su
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CUGIndexImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CUGInterlockImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 /**
  *
@@ -831,7 +831,7 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
         public void read(javolution.xml.XMLFormat.InputElement xml, InitialDPRequestImpl initialDP) throws XMLStreamException {
             CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, initialDP);
 
-            initialDP.isCAPVersion3orLater = xml.getAttribute(IS_CAP_VERSION_3_OR_LATER, false);
+            initialDP.capVersion = CAPApplicationContextVersion.valueOf(xml.getAttribute(CAP_VERSION).toString());
 
             initialDP.serviceKey = xml.get(SERVICE_KEY, Integer.class);
             initialDP.calledPartyNumber = xml.get(CALLED_PARTY_NUMBER, CalledPartyNumberCapImpl.class);
@@ -884,7 +884,7 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
         public void write(InitialDPRequestImpl initialDP, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
             CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(initialDP, xml);
 
-            xml.setAttribute(IS_CAP_VERSION_3_OR_LATER, initialDP.isCAPVersion3orLater);
+            xml.setAttribute(CAP_VERSION, initialDP.capVersion.toString());
 
             xml.add((Integer) initialDP.getServiceKey(), SERVICE_KEY, Integer.class);
             if (initialDP.getCalledPartyNumber() != null)

@@ -285,7 +285,7 @@ public class InitialDPRequestTest {
 
         data = this.getData3();
         ais = new AsnInputStream(data);
-        elem = new InitialDPRequestImpl(false);
+        elem = new InitialDPRequestImpl(CAPApplicationContextVersion.version2);
         tag = ais.readTag();
         elem.decodeAll(ais);
         assertEquals(elem.getServiceKey(), 110);
@@ -403,7 +403,7 @@ public class InitialDPRequestTest {
         CUGInterlock cugInterlock = new CUGInterlockImpl(getCUGInterlock());
         elem = new InitialDPRequestImpl(110, calledPartyNumberCap2, null, null, CGEncountered.scpOverload, null, null, null, null, null, null, null, null,
                 null, null, cause, serviceInteractionIndicatorsTwo, carrier, cugIndex, cugInterlock, true, null, null, null, null, null, null, null, null,
-                false, null, false);
+                false, null, CAPApplicationContextVersion.version2);
         aos = new AsnOutputStream();
         elem.encodeAll(aos);
         a1 = this.getData3();
@@ -591,7 +591,7 @@ public class InitialDPRequestTest {
         CUGInterlock cugInterlock = new CUGInterlockImpl(getCUGInterlock());
         original = new InitialDPRequestImpl(110, calledPartyNumberCap2, null, null, CGEncountered.scpOverload, null, null, null, null, null, null, null, null,
                 null, null, cause, serviceInteractionIndicatorsTwo, carrier, cugIndex, cugInterlock, true, null, null, null, null, null, null, null, null,
-                false, null, false);
+                false, null, CAPApplicationContextVersion.version2);
         original.setInvokeId(12);
 
         // Writes the area to a file.

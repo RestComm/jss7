@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.tools.simulator.tests.cap;
 import java.util.ArrayList;
 
 import org.apache.log4j.Level;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
@@ -300,7 +301,7 @@ public class TestCapScfMan extends TesterBase implements TestCapScfManMBean, Sto
 
         try {
             CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics = capProvider.getCAPParameterFactory()
-                    .createCAMELAChBillingChargingCharacteristics(1000, false, null, null, null, false);
+                    .createCAMELAChBillingChargingCharacteristics(1000, false, null, null, null, CAPApplicationContextVersion.version2);
             SendingSideID partyToCharge = capProvider.getCAPParameterFactory().createSendingSideID(LegType.leg1);
             curDialog.addApplyChargingRequest(aChBillingChargingCharacteristics, partyToCharge, null, null);
 

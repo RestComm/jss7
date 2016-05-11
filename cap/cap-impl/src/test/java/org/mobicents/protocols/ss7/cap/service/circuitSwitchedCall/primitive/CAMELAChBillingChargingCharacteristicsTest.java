@@ -30,9 +30,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
-import javolution.xml.XMLObjectReader;
-import javolution.xml.XMLObjectWriter;
-
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -40,6 +37,9 @@ import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AudibleIndicator;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsTest;
 import org.testng.annotations.Test;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 /**
  *
@@ -141,7 +141,7 @@ public class CAMELAChBillingChargingCharacteristicsTest {
 
 
         AudibleIndicator audibleIndicator = new AudibleIndicatorImpl(true);
-        elem = new CAMELAChBillingChargingCharacteristicsImpl(10000, true, 1000L, audibleIndicator, null, true);
+        elem = new CAMELAChBillingChargingCharacteristicsImpl(10000, true, 1000L, audibleIndicator, null, CAPApplicationContextVersion.version3);
         aos = new AsnOutputStream();
         elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData4()));
@@ -183,7 +183,7 @@ public class CAMELAChBillingChargingCharacteristicsTest {
 
 
         AudibleIndicator audibleIndicator = new AudibleIndicatorImpl(true);
-        original = new CAMELAChBillingChargingCharacteristicsImpl(12000, true, 8000L, audibleIndicator, null, true);
+        original = new CAMELAChBillingChargingCharacteristicsImpl(12000, true, 8000L, audibleIndicator, null, CAPApplicationContextVersion.version3);
 
         // Writes the area to a file.
         baos = new ByteArrayOutputStream();
