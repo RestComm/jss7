@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.service.callhandling;
 
-import java.util.ArrayList;
-
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.map.MAPDialogImpl;
 import org.mobicents.protocols.ss7.map.MAPProviderImpl;
@@ -71,9 +69,12 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 
+import java.util.ArrayList;
+
 /*
  *
  * @author cristian veliscu
+ * @author eva ogallar
  *
  */
 public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements MAPDialogCallHandling {
@@ -351,4 +352,82 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements MAPDialo
 
     }
 
+    @Override
+    public Long addIstCommandRequest(IMSI imsi, MAPExtensionContainer extensionContainer) throws MAPException {
+        return this.addIstCommandRequest(_Timer_Default, imsi, extensionContainer);
+    }
+
+    @Override
+    public Long addIstCommandRequest(int customInvokeTimeout, IMSI imsi, MAPExtensionContainer extensionContainer) throws MAPException {
+        MAPApplicationContextVersion vers = this.appCntx.getApplicationContextVersion();
+        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.ServiceTerminationContext)
+                || (vers != MAPApplicationContextVersion.version1 && vers != MAPApplicationContextVersion.version2 && vers != MAPApplicationContextVersion.version3))
+            throw new MAPException(
+                    "Bad application context name for addIstCommandRequest: must be ServiceTerminationContext _V1, V2 or V3");
+
+        Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+        if (customInvokeTimeout == _Timer_Default)
+            invoke.setTimeout(_Timer_m);
+        else
+            invoke.setTimeout(customInvokeTimeout);
+
+        OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+        oc.setLocalOperationCode((long) MAPOperationCode.istCommand);
+        invoke.setOperationCode(oc);
+
+        IstCommandRequestImpl req = new IstCommandRequestImpl(imsi, extensionContainer);
+        AsnOutputStream aos = new AsnOutputStream();
+        req.encodeData(aos);
+
+        Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+        p.setTagClass(req.getTagClass());
+        p.setPrimitive(req.getIsPrimitive());
+        p.setTag(req.getTag());
+        p.setData(aos.toByteArray());
+        invoke.setParameter(p);
+
+        Long invokeId;
+        try {
+            invokeId = this.tcapDialog.getNewInvokeId();
+            invoke.setInvokeId(invokeId);
+        } catch (TCAPException e) {
+            throw new MAPException(e.getMessage(), e);
+        }
+
+        this.sendInvokeComponent(invoke);
+        return invokeId;
+
+    }
+
+    @Override
+    public void addIstCommandResponse(long invokeId, MAPExtensionContainer extensionContainer) throws MAPException {
+
+        MAPApplicationContextVersion vers = this.appCntx.getApplicationContextVersion();
+        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.ServiceTerminationContext)
+                || (vers != MAPApplicationContextVersion.version1 && vers != MAPApplicationContextVersion.version2 && vers != MAPApplicationContextVersion.version3))
+            throw new MAPException(
+                    "Bad application context name for addIstCommandResponse: must be ServiceTerminationContext_V1, V2 or V3");
+
+        ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
+                .createTCResultLastRequest();
+        resultLast.setInvokeId(invokeId);
+
+        // Operation Code
+        OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+        oc.setLocalOperationCode((long) MAPOperationCode.istCommand);
+        resultLast.setOperationCode(oc);
+
+        IstCommandResponseImpl res = new IstCommandResponseImpl(extensionContainer);
+        AsnOutputStream aos = new AsnOutputStream();
+        res.encodeData(aos);
+
+        Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+        p.setTagClass(res.getTagClass());
+        p.setPrimitive(res.getIsPrimitive());
+        p.setTag(res.getTag());
+        p.setData(aos.toByteArray());
+        resultLast.setParameter(p);
+
+        this.sendReturnResultLastComponent(resultLast);
+    }
 }
