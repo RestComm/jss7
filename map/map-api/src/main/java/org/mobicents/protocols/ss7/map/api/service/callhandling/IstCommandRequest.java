@@ -26,8 +26,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
- *
- MAP V3:
+ * MAP V3:
  *
  * ist-Command OPERATION::= { --Timer m ARGUMENT IST-CommandArg RESULT IST-CommandRes -- optional ERRORS { unexpectedDataValue |
  * resourceLimitation | unknownSubscriber | systemFailure | facilityNotSupported} CODE local:88 }
