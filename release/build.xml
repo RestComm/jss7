@@ -12,7 +12,7 @@
 
 	<!--Versions -->
 	<property name="checkout.asn.version" value="release-2.0.3.FINAL" />
-	<property name="checkout.sctp.version" value="1.7.4" /> <!-- release-1.7.0-SNAPSHOT , netty-2 -->
+	<property name="checkout.sctp.version" value="1.7.7" /> <!-- release-1.7.0-SNAPSHOT , netty-2 -->
 	<property name="release.version" value="${jSS7.release.version}"/>
 
 
