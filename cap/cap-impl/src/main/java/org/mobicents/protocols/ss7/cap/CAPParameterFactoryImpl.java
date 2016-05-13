@@ -57,6 +57,7 @@ import org.mobicents.protocols.ss7.cap.EsiSms.OSmsFailureSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiSms.OSmsSubmissionSpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiSms.TSmsDeliverySpecificInfoImpl;
 import org.mobicents.protocols.ss7.cap.EsiSms.TSmsFailureSpecificInfoImpl;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.EsiBcsm.CallAcceptedSpecificInfo;

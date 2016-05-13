@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.cap.CAPDialogImpl;
 import org.mobicents.protocols.ss7.cap.CAPProviderImpl;
 import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
@@ -417,7 +418,7 @@ public class Client extends EventTestHarness {
 
             InitialDPRequestImpl res = new InitialDPRequestImpl(321, calledPartyNumberCap, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null, null, null, null, false, null, null, null, null,
-                    null, null, null, null, false, null, false);
+                    null, null, null, null, false, null, CAPApplicationContextVersion.version2);
 
             return res;
         } catch (CAPException e) {

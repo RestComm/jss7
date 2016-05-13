@@ -167,7 +167,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
                 redirectionInformation, cause, serviceInteractionIndicatorsTwo, carrier, cugIndex, cugInterlock,
                 cugOutgoingAccess, imsi, subscriberState, locationInformation, extBasicServiceCode, callReferenceNumber,
                 mscAddress, calledPartyBCDNumber, timeAndTimezone, callForwardingSSPending, initialDPArgExtension, this.appCntx
-                        .getVersion().getVersion() >= 3);
+                        .getVersion());
         AsnOutputStream aos = new AsnOutputStream();
         req.encodeData(aos);
 

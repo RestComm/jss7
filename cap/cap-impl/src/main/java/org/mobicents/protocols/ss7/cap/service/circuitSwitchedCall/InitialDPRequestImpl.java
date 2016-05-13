@@ -669,7 +669,7 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
                         this.callForwardingSSPending = true;
                         break;
                     case _ID_initialDPArgExtension:
-                        this.initialDPArgExtension = new InitialDPArgExtensionImpl(this.isCAPVersion3orLater);
+                        this.initialDPArgExtension = new InitialDPArgExtensionImpl(this.capVersion);
                         ((InitialDPArgExtensionImpl) this.initialDPArgExtension).decodeAll(ais);
                         break;
 
@@ -827,7 +827,7 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
         StringBuilder sb = new StringBuilder();
         sb.append(_PrimitiveName);
         sb.append(" [");
-		this.addInvokeIdInfo(sb);
+        this.addInvokeIdInfo(sb);
         sb.append(capVersion);
 
         sb.append(", serviceKey=");
@@ -1009,7 +1009,7 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
             initialDP.mscAddress = xml.get(MSC_ADDRESS, ISDNAddressStringImpl.class);
             initialDP.calledPartyBCDNumber = xml.get(CALLED_PARTY_BCD_NUMBER, CalledPartyBCDNumberImpl.class);
             initialDP.timeAndTimezone = xml.get(TIME_AND_TIMEZONE, TimeAndTimezoneImpl.class);
-            Boolean bval = xml.get(CALL_FORWARDING_SS_PENDING, Boolean.class);
+            bval = xml.get(CALL_FORWARDING_SS_PENDING, Boolean.class);
             if (bval != null)
                 initialDP.callForwardingSSPending = bval;
             initialDP.initialDPArgExtension = xml.get(INITIAL_DP_ARG_EXTENSION, InitialDPArgExtensionImpl.class);

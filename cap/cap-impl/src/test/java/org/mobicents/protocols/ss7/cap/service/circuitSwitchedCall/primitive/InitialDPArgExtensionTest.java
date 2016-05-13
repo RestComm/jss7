@@ -133,7 +133,7 @@ public class InitialDPArgExtensionTest {
 
         data = this.getData2();
         ais = new AsnInputStream(data);
-        elem = new InitialDPArgExtensionImpl(true);
+        elem = new InitialDPArgExtensionImpl(CAPApplicationContextVersion.version4);
         tag = ais.readTag();
         assertEquals(tag, Tag.SEQUENCE);
         assertEquals(ais.getTagClass(), Tag.CLASS_UNIVERSAL);
@@ -162,7 +162,7 @@ public class InitialDPArgExtensionTest {
 
         data = this.getData3();
         ais = new AsnInputStream(data);
-        elem = new InitialDPArgExtensionImpl(true);
+        elem = new InitialDPArgExtensionImpl(CAPApplicationContextVersion.version4);
         tag = ais.readTag();
         assertEquals(tag, Tag.SEQUENCE);
         assertEquals(ais.getTagClass(), Tag.CLASS_UNIVERSAL);
@@ -233,7 +233,7 @@ public class InitialDPArgExtensionTest {
         UUIndicator uuIndicator = new UUIndicatorImpl(129);
         UUData uuData = new UUDataImpl(uuIndicator, null, false, null);
         elem = new InitialDPArgExtensionImpl(null, null, msClassmark2, imei, supportedCamelPhases, offeredCamel4Functionalities, bearerCapability2,
-                extBasicServiceCode2, highLayerCompatibility2, lowLayerCompatibility, lowLayerCompatibility2, true, uuData, true);
+                extBasicServiceCode2, highLayerCompatibility2, lowLayerCompatibility, lowLayerCompatibility2, true, uuData, false, false, CAPApplicationContextVersion.version4);
         aos = new AsnOutputStream();
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData3()));
@@ -313,7 +313,7 @@ public class InitialDPArgExtensionTest {
         UUIndicator uuIndicator = new UUIndicatorImpl(129);
         UUData uuData = new UUDataImpl(uuIndicator, null, false, null);
         original = new InitialDPArgExtensionImpl(null, null, msClassmark2, imei, supportedCamelPhases, offeredCamel4Functionalities, bearerCapability2,
-                extBasicServiceCode2, highLayerCompatibility2, lowLayerCompatibility, lowLayerCompatibility2, true, uuData, true);
+                extBasicServiceCode2, highLayerCompatibility2, lowLayerCompatibility, lowLayerCompatibility2, true, uuData, false, false, CAPApplicationContextVersion.version4);
 
         // Writes the area to a file.
         baos = new ByteArrayOutputStream();

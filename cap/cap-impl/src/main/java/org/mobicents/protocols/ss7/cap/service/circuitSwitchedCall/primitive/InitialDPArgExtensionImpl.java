@@ -24,16 +24,13 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import java.io.IOException;
 
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
-import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InitialDPArgExtension;
@@ -61,12 +58,15 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.OfferedCamel4FunctionalitiesImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.SupportedCamelPhasesImpl;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author sergey vetyutnev
  *
  */
-public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnPrimitive {
+public class InitialDPArgExtensionImpl extends SequenceBase implements InitialDPArgExtension {
 
     public static final int _ID_gmscAddress = 0;
     public static final int _ID_forwardingDestinationNumber = 1;
@@ -129,7 +129,7 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
     }
 
     public InitialDPArgExtensionImpl(CAPApplicationContextVersion capVersion) {
-		super("InitialDPArgExtension");
+        super("InitialDPArgExtension");
         this.capVersion = capVersion;
     }
 
@@ -138,7 +138,7 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
             OfferedCamel4Functionalities offeredCamel4Functionalities, BearerCapability bearerCapability2,
             ExtBasicServiceCode extBasicServiceCode2, HighLayerCompatibilityInap highLayerCompatibility2,
             LowLayerCompatibility lowLayerCompatibility, LowLayerCompatibility lowLayerCompatibility2,
-            boolean enhancedDialledServicesAllowed, UUData uuData, CAPApplicationContextVersion capVersion) {
+            boolean enhancedDialledServicesAllowed, UUData uuData, boolean collectInformationAllowed, boolean releaseCallArgExtensionAllowed, CAPApplicationContextVersion capVersion) {
         super("InitialDPArgExtension");
 
         this.gmscAddress = gmscAddress;
@@ -247,43 +247,8 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
         return false;
     }
 
-    @Override
-    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
-
-        try {
-            int length = ansIS.readLength();
-            this._decode(ansIS, length);
-        } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        } catch (MAPParsingComponentException e) {
-            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-        }
-    }
-
-    @Override
-    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
-
-        try {
-            this._decode(ansIS, length);
-        } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        } catch (MAPParsingComponentException e) {
-            throw new CAPParsingComponentException("MAPParsingComponentException when decoding " + _PrimitiveName + ": "
-                    + e.getMessage(), e, CAPParsingComponentExceptionReason.MistypedParameter);
-        }
-    }
-
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException,
-            IOException, AsnException {
+    protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, MAPParsingComponentException, INAPParsingComponentException,
+        IOException, AsnException {
 
         this.gmscAddress = null;
         this.forwardingDestinationNumber = null;
@@ -378,7 +343,14 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
                     this.uuData = new UUDataImpl();
                     ((UUDataImpl) this.uuData).decodeAll(ais);
                     break;
-
+                case _ID_collectInformationAllowed:
+                    this.collectInformationAllowed = true;
+                    ais.readNull();
+                    break;
+                case _ID_releaseCallArgExtensionAllowed:
+                    this.releaseCallArgExtensionAllowed = true;
+                    ais.readNull();
+                    break;
                 default:
                     ais.advanceElement();
                     break;
@@ -462,6 +434,12 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
             if (uuData != null) {
                 ((UUDataImpl) this.uuData).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_uu_Data);
             }
+            if (collectInformationAllowed) {
+                aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_collectInformationAllowed);
+            }
+            if (releaseCallArgExtensionAllowed) {
+                aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_releaseCallArgExtensionAllowed);
+            }
         } catch (IOException e) {
             throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         } catch (AsnException e) {
@@ -531,7 +509,12 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
             sb.append(", uuData=");
             sb.append(uuData.toString());
         }
-
+        if (this.collectInformationAllowed) {
+            sb.append(", collectInformationAllowed");
+        }
+        if (this.releaseCallArgExtensionAllowed) {
+            sb.append(", releaseCallArgExtensionAllowed");
+        }
         sb.append("]");
 
         return sb.toString();
@@ -611,7 +594,7 @@ public class InitialDPArgExtensionImpl implements InitialDPArgExtension, CAPAsnP
                 xml.add(initialDPArgExtension.enhancedDialledServicesAllowed, ENHANCED_DIALLED_SERVICES_ALLOWED, Boolean.class);
             if (initialDPArgExtension.uuData != null)
                 xml.add((UUDataImpl) initialDPArgExtension.uuData, UU_DATA, UUDataImpl.class);
- 			if (initialDPArgExtension.collectInformationAllowed)
+            if (initialDPArgExtension.collectInformationAllowed)
                 xml.add(initialDPArgExtension.collectInformationAllowed, COLLECT_INFORMATION_ALLOWED, Boolean.class);
             if (initialDPArgExtension.releaseCallArgExtensionAllowed)
                 xml.add(initialDPArgExtension.releaseCallArgExtensionAllowed, RELEASE_CALL_ARG_EXTENSION_ALLOWED,
