@@ -74,8 +74,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.sun.nio.sctp.SctpStandardSocketOptions.InitMaxStreams;
-
 /**
  * Tests for FSM of IPSP acting as CLIENT
  *
@@ -1048,12 +1046,6 @@ public class IPSPClientFSMTest {
         }
 
         @Override
-        public InitMaxStreams getOptionSctpInitMaxstreams() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
         public Boolean getOptionSctpNodelay() {
             // TODO Auto-generated method stub
             return null;
@@ -1090,12 +1082,6 @@ public class IPSPClientFSMTest {
         }
 
         @Override
-        public void setOptionSctpInitMaxstreams(InitMaxStreams arg0) {
-            // TODO Auto-generated method stub
-            
-        }
-
-        @Override
         public void setOptionSctpNodelay(Boolean arg0) {
             // TODO Auto-generated method stub
             
@@ -1115,6 +1101,30 @@ public class IPSPClientFSMTest {
 
         @Override
         public void setOptionSoSndbuf(Integer arg0) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public Integer getOptionSctpInitMaxstreams_MaxInStreams() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Integer getOptionSctpInitMaxstreams_MaxOutStreams() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public void setOptionSctpInitMaxstreams_MaxInStreams(Integer arg0) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void setOptionSctpInitMaxstreams_MaxOutStreams(Integer arg0) {
             // TODO Auto-generated method stub
             
         }

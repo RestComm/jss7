@@ -8,6 +8,16 @@
 			<parameter>SCTPManagement</parameter>
 		</constructor>
 		<property name="persistDir">${jboss.server.data.dir}</property>
+<!-- extra options for SCTP channel parameters configuring
+		<property name="optionSctpDisableFragments">true</property>
+		<property name="optionSctpFragmentInterleave">0</property>
+		<property name="optionSctpNodelay">true</property>
+		<property name="optionSoSndbuf">4000</property>
+		<property name="optionSoRcvbuf">4000</property>
+		<property name="optionSoLinger">-1</property>
+		<property name="optionSctpInitMaxstreams_MaxOutStreams">8</property>
+		<property name="optionSctpInitMaxstreams_MaxInStreams">10</property>
+-->
 	</bean>
 
 	<bean name="SCTPShellExecutor" class="org.mobicents.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">

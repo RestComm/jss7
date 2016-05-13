@@ -47,8 +47,6 @@ import org.mobicents.protocols.ss7.oam.common.alarm.CurrentAlarmListImpl;
 import org.mobicents.protocols.ss7.oam.common.jmx.MBeanHost;
 import org.mobicents.protocols.ss7.oam.common.jmxss7.Ss7Layer;
 
-import com.sun.nio.sctp.SctpStandardSocketOptions.InitMaxStreams;
-
 /**
  *
  * @author sergey vetyutnev
@@ -332,11 +330,6 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
     }
 
     @Override
-    public InitMaxStreams getOptionSctpInitMaxstreams() {
-        return this.wrappedSctpManagement.getOptionSctpInitMaxstreams();
-    }
-
-    @Override
     public Boolean getOptionSctpNodelay() {
         return this.wrappedSctpManagement.getOptionSctpNodelay();
     }
@@ -367,11 +360,6 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
     }
 
     @Override
-    public void setOptionSctpInitMaxstreams(InitMaxStreams val) {
-        this.wrappedSctpManagement.setOptionSctpInitMaxstreams(val);
-    }
-
-    @Override
     public void setOptionSctpNodelay(Boolean val) {
         this.wrappedSctpManagement.setOptionSctpNodelay(val);
     }
@@ -389,6 +377,26 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
     @Override
     public void setOptionSoSndbuf(Integer val) {
         this.wrappedSctpManagement.setOptionSoSndbuf(val);
+    }
+
+    @Override
+    public Integer getOptionSctpInitMaxstreams_MaxInStreams() {
+        return this.wrappedSctpManagement.getOptionSctpInitMaxstreams_MaxInStreams();
+    }
+
+    @Override
+    public Integer getOptionSctpInitMaxstreams_MaxOutStreams() {
+        return this.wrappedSctpManagement.getOptionSctpInitMaxstreams_MaxOutStreams();
+    }
+
+    @Override
+    public void setOptionSctpInitMaxstreams_MaxInStreams(Integer val) {
+        this.wrappedSctpManagement.setOptionSctpInitMaxstreams_MaxInStreams(val);
+    }
+
+    @Override
+    public void setOptionSctpInitMaxstreams_MaxOutStreams(Integer val) {
+        this.wrappedSctpManagement.setOptionSctpInitMaxstreams_MaxOutStreams(val);
     }
 
     @Override
