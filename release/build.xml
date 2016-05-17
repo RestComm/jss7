@@ -45,7 +45,7 @@
 		</exec>
 
 		<exec failonerror="true" executable="${mvn.executable}" dir="${checkout.asn.dir}">
-			<arg line="clean install -Dmaven.test.skip=true" />
+			<arg line="clean install -Dmaven.test.skip=true -Pall" />
 		</exec>
 	</target>
 	
@@ -61,7 +61,7 @@
 		</exec>
 
 		<exec failonerror="true" executable="${mvn.executable}" dir="${checkout.sctp.dir}">
-			<arg line="clean install -Dmaven.test.skip=true -Prelease" />
+			<arg line="clean install -Dmaven.test.skip=true -Prelease,all" />
 		</exec>
 	</target>
 
@@ -73,7 +73,7 @@
                 </fileset>
        	</copy>
 	</target>
-	
+
 	<target name="copy-sctp">
         <echo>Copy SCTP</echo>
         <copy todir="${restcomm.jss7.dist}/sctp/" failonerror="true">
@@ -218,43 +218,74 @@
 		<echo>copying documentation</echo>
 		<mkdir dir="${docs.dir}"/>
 
-        <copy todir="${docs.dir}" failonerror="true">
-                <fileset dir="${checkout.asn.dir}/docs/jdocbook-mobicents/target/docbook/publish/en-US/pdf">
-                        <include name="*.pdf" />
+		<mkdir dir="${docs.dir}/ASNLibrary"/>
+		<mkdir dir="${docs.dir}/ASNLibrary/html-book"/>
+		<copy todir="${docs.dir}/ASNLibrary/html-book" failonerror="true">
+			<fileset dir="${checkout.asn.dir}/docs/sources-asciidoc/target/generated-docs/html-book/">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<mkdir dir="${docs.dir}/ASNLibrary/pdf"/>
+		<copy todir="${docs.dir}/ASNLibrary/pdf" failonerror="true">
+			<fileset dir="${checkout.asn.dir}/docs/sources-asciidoc/target/generated-docs/pdf/">
+				<include name="**" />
+			</fileset>
+		</copy>
+
+		<mkdir dir="${docs.dir}/SCTPLibrary"/>
+		<mkdir dir="${docs.dir}/SCTPLibrary/html-book"/>
+		<copy todir="${docs.dir}/SCTPLibrary/html-book" failonerror="true">
+			<fileset dir="${checkout.sctp.dir}/docs/sources-asciidoc/target/generated-docs/html-book/">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<mkdir dir="${docs.dir}/SCTPLibrary/pdf"/>
+		<copy todir="${docs.dir}/SCTPLibrary/pdf" failonerror="true">
+			<fileset dir="${checkout.sctp.dir}/docs/sources-asciidoc/target/generated-docs/pdf/">
+				<include name="**" />
+			</fileset>
+		</copy>
+
+<!--
+		<copy todir="${docs.dir}" failonerror="true">
+                <fileset dir="${checkout.asn.dir}/docs/sources-asciidoc/target/generated-docs">
+                        <include name="*.*" />
                 </fileset>
         </copy>
 		<copy todir="${docs.dir}" failonerror="true">
-                <fileset dir="${checkout.sctp.dir}/docs/jdocbook-mobicents/target/docbook/publish/en-US/pdf">
+                <fileset dir="${checkout.sctp.dir}/docs/sources-asciidoc/target/generated-docs">
                         <include name="*.pdf" />
                 </fileset>
         </copy>
-	<mkdir dir="${docs.dir}/userguide"/>
-	<mkdir dir="${docs.dir}/installationguide"/>
-	<mkdir dir="${docs.dir}/userguide/html-book"/>
-	<copy todir="${docs.dir}/userguide/html-book" failonerror="true">
-		<fileset dir="${jss7.dir}/docs/userguide/sources-asciidoc/target/generated-docs/html-book/">
+-->
+
+		<mkdir dir="${docs.dir}/userguide"/>
+		<mkdir dir="${docs.dir}/installationguide"/>
+		<mkdir dir="${docs.dir}/userguide/html-book"/>
+		<copy todir="${docs.dir}/userguide/html-book" failonerror="true">
+			<fileset dir="${jss7.dir}/docs/userguide/sources-asciidoc/target/generated-docs/html-book/">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<mkdir dir="${docs.dir}/installationguide/html-book"/>
+		<copy todir="${docs.dir}/installationguide/html-book" failonerror="true">
+			<fileset dir="${jss7.dir}/docs/installationguide/sources-asciidoc/target/generated-docs/html-book/">
 			<include name="**" />
 		</fileset>
-	</copy>
-	<mkdir dir="${docs.dir}/installationguide/html-book"/>
-	<copy todir="${docs.dir}/installationguide/html-book" failonerror="true">
-		<fileset dir="${jss7.dir}/docs/installationguide/sources-asciidoc/target/generated-docs/html-book/">
-			<include name="**" />
-		</fileset>
-	</copy>
-	<mkdir dir="${docs.dir}/userguide/pdf"/>
-	<copy todir="${docs.dir}/userguide/pdf" failonerror="true">
-		<fileset dir="${jss7.dir}/docs/userguide/sources-asciidoc/target/generated-docs/pdf/">
-			<include name="**" />
-		</fileset>
-	</copy>
-	<mkdir dir="${docs.dir}/installationguide/pdf"/>
-	<copy todir="${docs.dir}/installationguide/pdf" failonerror="true">
-		<fileset dir="${jss7.dir}/docs/installationguide/sources-asciidoc/target/generated-docs/pdf/">
-			<include name="**" />
-		</fileset>
-	</copy>
-	
+		</copy>
+		<mkdir dir="${docs.dir}/userguide/pdf"/>
+		<copy todir="${docs.dir}/userguide/pdf" failonerror="true">
+			<fileset dir="${jss7.dir}/docs/userguide/sources-asciidoc/target/generated-docs/pdf/">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<mkdir dir="${docs.dir}/installationguide/pdf"/>
+		<copy todir="${docs.dir}/installationguide/pdf" failonerror="true">
+			<fileset dir="${jss7.dir}/docs/installationguide/sources-asciidoc/target/generated-docs/pdf/">
+				<include name="**" />
+			</fileset>
+		</copy>
+
         <!--copy todir="${docs.dir}" failonerror="true">
                 <fileset dir="${jss7.dir}/docs/userguide/jdocbook-restcomm/target/docbook/publish/en-US/pdf">
                         <include name="*.pdf" />
