@@ -387,10 +387,12 @@
 													
 													var name = response.value.Name;
 													var started = response.value.Started;
-													var workerThreads = response.value.WorkerThreads;
-													var singleThread = response.value.SingleThread;
 													var connectDelay = response.value.ConnectDelay;
 													var persistDir = response.value.PersistDir;
+
+													var congControl_DelayThreshold_1 = response.value.CongControl_DelayThreshold_1;
+													var congControl_DelayThreshold_2 = response.value.CongControl_DelayThreshold_2;
+													var congControl_DelayThreshold_3 = response.value.CongControl_DelayThreshold_3;
 													
 													var isSctpStarted = true;
 													
@@ -440,22 +442,8 @@
 															'					<td style="font-size: 0.9em; padding: 0;">' + started + '</td>'+
 															'					<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
 															'					</tr>'+
-															
-																				'<tr data-toggle="tooltip" title="if true SCTP uses multi threads for I/O. Its better to leave this as single threaded. This property cannot be updated while stack is running. Set this value in jboss-beans.xml">'+
-																				'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
-																				'<td style="font-size: 0.9em;">Single Thread</td>'+
-																				'<td style="font-size: 0.9em; padding: 0;">'+ singleThread + '</td>'+
-																				'<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
-																			    '</tr>'+
-																			    
-																				'<tr data-toggle="tooltip" title="if SCTP stack is multi threaded, how many threads should be used for IO. Its better to use as many threads as CPU. This property cannot be updated while stack is running. Set this value in jboss-beans.xml">'+
-																				'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
-																				'<td style="font-size: 0.9em;">Worker Threads</td>'+
-																				'<td style="font-size: 0.9em; padding: 0;">'+ workerThreads + '</td>'+
-																				'<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
-																			    '</tr>'+		
-																			    
-																				'<tr data-toggle="tooltip" title=" if SCTP Association is client side, SCTP stack will try to initiate socket connect request after every connectdelay milli seconds till connection is successful.">'+
+
+																				'<tr data-toggle="tooltip" title="if SCTP Association is client side, SCTP stack will try to initiate socket connect request after every connectdelay milli seconds till connection is successful.">'+
 																				'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
 																				'<td style="font-size: 0.9em;">Connect Delay</td>'+
 																				'<td style="font-size: 0.9em; padding: 0;">'+
@@ -472,6 +460,56 @@
 																				'</td>'+
 																			    '</tr>'+																			    
 															
+																				'<tr data-toggle="tooltip" title="For outgoing messages congestion control stack needs to have 3 thresholds - delays of outgoing messages before it will be sent to IP channel (3 levels - 1, 2, 3). If a delay time in seconds becomes more then value for level 1, 2 or 3, the Association\'s congestion level becomes to 1, 2 or 3. This is Threshold level 1.">'+
+																				'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																				'<td style="font-size: 0.9em;">Congestion control delay threshold 1</td>'+
+																				'<td style="font-size: 0.9em; padding: 0;">'+
+																					'<div id="div-' + name +'congControl_DelayThreshold_1-input" class="control-group">'+
+																					'<span id="' + name +'congControl_DelayThreshold_1-input" style="display: none;">'+
+																						'<input type="text" class="input-small" value="' + congControl_DelayThreshold_1 + '" /> ' +
+																						'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControl_DelayThreshold_1\', \'' + name+"congControl_DelayThreshold_1" + '\')"></i> ' +
+																						'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_DelayThreshold_1"+']\').toggle(); $(\'input[id^='+name+"congControl_DelayThreshold_1"+']\').focus();"></i>' + 
+																					'</span>'+
+																					'</div>' +
+																					'<span id="' +name + 'congControl_DelayThreshold_1-text">' + congControl_DelayThreshold_1 + '</span>'+
+																				'</td>'+
+																				'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_DelayThreshold_1"+']\').toggle(); $(\'input[id^='+name+"congControl_DelayThreshold_1"+']\').focus();"></i>' +
+																				'</td>'+
+																			    '</tr>'+																			    
+															
+																				'<tr data-toggle="tooltip" title="For outgoing messages congestion control stack needs to have 3 thresholds - delays of outgoing messages before it will be sent to IP channel (3 levels - 1, 2, 3). If a delay time in seconds becomes more then value for level 1, 2 or 3, the Association\'s congestion level becomes to 1, 2 or 3. This is Threshold level 2.">'+
+																				'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																				'<td style="font-size: 0.9em;">Congestion control delay threshold 2</td>'+
+																				'<td style="font-size: 0.9em; padding: 0;">'+
+																					'<div id="div-' + name +'congControl_DelayThreshold_2-input" class="control-group">'+
+																					'<span id="' + name +'congControl_DelayThreshold_2-input" style="display: none;">'+
+																						'<input type="text" class="input-small" value="' + congControl_DelayThreshold_2 + '" /> ' +
+																						'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControl_DelayThreshold_2\', \'' + name+"congControl_DelayThreshold_2" + '\')"></i> ' +
+																						'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_DelayThreshold_2"+']\').toggle(); $(\'input[id^='+name+"congControl_DelayThreshold_2"+']\').focus();"></i>' + 
+																					'</span>'+
+																					'</div>' +
+																					'<span id="' +name + 'congControl_DelayThreshold_2-text">' + congControl_DelayThreshold_2 + '</span>'+
+																				'</td>'+
+																				'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_DelayThreshold_2"+']\').toggle(); $(\'input[id^='+name+"congControl_DelayThreshold_2"+']\').focus();"></i>' +
+																				'</td>'+
+																			    '</tr>'+																			    
+															
+																				'<tr data-toggle="tooltip" title="For outgoing messages congestion control stack needs to have 3 thresholds - delays of outgoing messages before it will be sent to IP channel (3 levels - 1, 2, 3). If a delay time in seconds becomes more then value for level 1, 2 or 3, the Association\'s congestion level becomes to 1, 2 or 3. This is Threshold level 3.">'+
+																				'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																				'<td style="font-size: 0.9em;">Congestion control delay threshold 3</td>'+
+																				'<td style="font-size: 0.9em; padding: 0;">'+
+																					'<div id="div-' + name +'congControl_DelayThreshold_3-input" class="control-group">'+
+																					'<span id="' + name +'congControl_DelayThreshold_3-input" style="display: none;">'+
+																						'<input type="text" class="input-small" value="' + congControl_DelayThreshold_3 + '" /> ' +
+																						'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControl_DelayThreshold_3\', \'' + name+"congControl_DelayThreshold_3" + '\')"></i> ' +
+																						'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_DelayThreshold_3"+']\').toggle(); $(\'input[id^='+name+"congControl_DelayThreshold_3"+']\').focus();"></i>' + 
+																					'</span>'+
+																					'</div>' +
+																					'<span id="' +name + 'congControl_DelayThreshold_3-text">' + congControl_DelayThreshold_3 + '</span>'+
+																				'</td>'+
+																				'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_DelayThreshold_3"+']\').toggle(); $(\'input[id^='+name+"congControl_DelayThreshold_3"+']\').focus();"></i>' +
+																				'</td>'+
+																			    '</tr>'+																			    
 
 															'				</tbody>'+
 															'			</table>'+ 											
