@@ -201,7 +201,7 @@
 	
 	
 	<target name="make-final-zip" depends="set-time-stamp">
-		<zip destfile="${base.dir}/restcomm-jss7-${release.version}-${time.stamp}.zip" filesonly="false">
+		<zip destfile="${base.dir}/restcomm-jss7-${release.version}.zip" filesonly="false">
 			<zipfileset dir="${restcomm.jss7.dist}" prefix="restcomm-jss7-${release.version}">
 				<include name="**" />
 			</zipfileset>
@@ -228,7 +228,7 @@
 		<mkdir dir="${docs.dir}/ASNLibrary/pdf"/>
 		<copy todir="${docs.dir}/ASNLibrary/pdf" failonerror="true">
 			<fileset dir="${checkout.asn.dir}/docs/sources-asciidoc/target/generated-docs/pdf/">
-				<include name="**" />
+				<include name="**.pdf" />
 			</fileset>
 		</copy>
 
@@ -242,7 +242,7 @@
 		<mkdir dir="${docs.dir}/SCTPLibrary/pdf"/>
 		<copy todir="${docs.dir}/SCTPLibrary/pdf" failonerror="true">
 			<fileset dir="${checkout.sctp.dir}/docs/sources-asciidoc/target/generated-docs/pdf/">
-				<include name="**" />
+				<include name="**.pdf" />
 			</fileset>
 		</copy>
 
@@ -276,13 +276,13 @@
 		<mkdir dir="${docs.dir}/userguide/pdf"/>
 		<copy todir="${docs.dir}/userguide/pdf" failonerror="true">
 			<fileset dir="${jss7.dir}/docs/userguide/sources-asciidoc/target/generated-docs/pdf/">
-				<include name="**" />
+				<include name="**.pdf" />
 			</fileset>
 		</copy>
 		<mkdir dir="${docs.dir}/installationguide/pdf"/>
 		<copy todir="${docs.dir}/installationguide/pdf" failonerror="true">
 			<fileset dir="${jss7.dir}/docs/installationguide/sources-asciidoc/target/generated-docs/pdf/">
-				<include name="**" />
+				<include name="**.pdf" />
 			</fileset>
 		</copy>
 
