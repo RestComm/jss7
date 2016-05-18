@@ -497,7 +497,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     void start() {
         logger.info("Starting TCAP Provider");
 
-        this._EXECUTOR = Executors.newScheduledThreadPool(4);
+        this._EXECUTOR = Executors.newScheduledThreadPool(4, new NamingThreadFactory("tcap_provider_impl_executor"));
         this.sccpProvider.registerSccpListener(ssn, this);
         logger.info("Registered SCCP listener with address " + ssn);
     }
