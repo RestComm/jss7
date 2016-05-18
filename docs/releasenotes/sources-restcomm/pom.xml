@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.docs.releasenotes</groupId>
 		<artifactId>restcomm-ss7-releasenotes</artifactId>
-		<version>7.0.0-SNAPSHOT</version>
+		<version>7.0.1366</version>
 	</parent>
 
 	<artifactId>restcomm-ss7-releasenotes-sources-restcomm</artifactId>
