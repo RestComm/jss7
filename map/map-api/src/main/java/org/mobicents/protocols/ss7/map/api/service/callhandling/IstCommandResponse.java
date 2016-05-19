@@ -22,19 +22,19 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
-import java.io.Serializable;
-
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
  *
+<code>
  IST-CommandRes ::= SEQUENCE{ extensionContainer ExtensionContainer OPTIONAL, ...}
+</code>
  *
  *
  * @author sergey vetyutnev
  *
  */
-public interface IstCommandResponse extends Serializable {
+public interface IstCommandResponse extends CallHandlingMessage {
 
     MAPExtensionContainer getExtensionContainer();
 

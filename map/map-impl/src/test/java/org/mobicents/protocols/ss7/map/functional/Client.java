@@ -22,10 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.functional;
 
-import static org.testng.Assert.assertNull;
-
-import java.util.ArrayList;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
@@ -177,6 +173,10 @@ import org.mobicents.protocols.ss7.tcap.asn.OperationCodeImpl;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+
+import java.util.ArrayList;
+
+import static org.testng.Assert.assertNull;
 
 /**
  *
@@ -1147,6 +1147,27 @@ public class Client extends EventTestHarness {
         clientDialogCallHandling.send();
 
     }
+
+    public void sendIstCommand() throws Exception {
+
+        this.mapProvider.getMAPServiceCallHandling().acivate();
+
+        MAPApplicationContext appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.ServiceTerminationContext,
+                MAPApplicationContextVersion.version3);
+
+        clientDialogCallHandling = this.mapProvider.getMAPServiceCallHandling().createNewDialog(appCnt, this.thisAddress, null,
+                this.remoteAddress, null);
+
+        IMSI imsi = new IMSIImpl("011220200198227");
+
+        MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
+
+        clientDialogCallHandling.addIstCommandRequest(imsi, extensionContainer);
+        this.observerdEvents.add(TestEvent.createSentEvent(EventType.IstCommand, null, sequence++));
+        clientDialogCallHandling.send();
+
+    }
+
 
     public void sendAnyTimeInterrogation() throws Exception {
 

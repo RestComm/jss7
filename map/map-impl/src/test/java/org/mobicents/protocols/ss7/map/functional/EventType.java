@@ -37,7 +37,7 @@ public enum EventType {
     CheckImei, CheckImeiResp,
 
     // Call Handling Service
-    ProvideRoamingNumber, ProvideRoamingNumberResp, SendRoutingInformation, SendRoutingInformationResp,
+    ProvideRoamingNumber, ProvideRoamingNumberResp, SendRoutingInformation, SendRoutingInformationResp, IstCommand, IstCommandResp,
 
     // lsm EventType
     ProvideSubscriberLocation, ProvideSubscriberLocationResp, SubscriberLocationReport, SubscriberLocationReportResp, SendRoutingInfoForLCS, SendRoutingInfoForLCSResp,
