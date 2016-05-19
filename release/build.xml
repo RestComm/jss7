@@ -151,23 +151,24 @@
 	        </copy>
     	
 
-            <echo>Copy Shell</echo>
-            <copy todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true">
-                    <fileset dir="${jss7.dir}/management/shell-client/target/restcomm-cli/lib">
-                            <include name="**" />
-                    </fileset>
-            </copy>
-            <copy todir="${restcomm.jss7.dist}/ss7/shell/bin" failonerror="true">
-                    <fileset dir="${jss7.dir}/management/shell-client/target/restcomm-cli/bin">
-                            <include name="**" />
-                    </fileset>
-            </copy>
-            <copy file="${jss7.dir}/hardware/cli/target/linkset-cli.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
-            <copy file="${jss7.dir}/m3ua/cli/m3ua/target/m3ua-cli-m3ua.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
-            <copy file="${jss7.dir}/m3ua/cli/sctp/target/m3ua-cli-sctp.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
-            <copy file="${jss7.dir}/sccp/sccp-cli/target/sccp-cli.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
-            <copy file="${jss7.dir}/tcap/tcap-cli/target/tcap-cli.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
-            <copy file="${jss7.dir}/release/release-build.xml" tofile="${restcomm.jss7.dist}/ss7/build.xml" failonerror="true" />
+		<echo>Copy Shell</echo>
+		<copy todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true">
+			<fileset dir="${jss7.dir}/management/shell-client/target/restcomm-cli/lib">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<copy todir="${restcomm.jss7.dist}/ss7/shell/bin" failonerror="true">
+			<fileset dir="${jss7.dir}/management/shell-client/target/restcomm-cli/bin">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<copy file="${jss7.dir}/hardware/cli/target/linkset-cli.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
+		<copy file="${jss7.dir}/m3ua/cli/m3ua/target/m3ua-cli-m3ua.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
+		<copy file="${jss7.dir}/m3ua/cli/sctp/target/m3ua-cli-sctp.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
+		<copy file="${jss7.dir}/sccp/sccp-cli/target/sccp-cli.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
+		<copy file="${jss7.dir}/tcap/tcap-cli/target/tcap-cli.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
+		<copy file="${jss7.dir}/tcap-ansi/tcap-ansi-cli/target/tcap-ansi-cli.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
+		<copy file="${jss7.dir}/release/release-build.xml" tofile="${restcomm.jss7.dist}/ss7/build.xml" failonerror="true" />
 
         <copy todir="${restcomm.jss7.dist}/ss7/restcomm-ss7-service" failonerror="true">
                 <fileset dir="${jss7.dir}/service/target/restcomm-ss7-service">
@@ -182,9 +183,9 @@
                 </fileset>
         </copy>
 
-        <echo>Copy Modified Jolokia War</echo>
-	<copy file="./jolokia.war" todir="${restcomm.jss7.dist}/oam/new-ui" failonerror="true" />
-    </target>
+		<echo>Copy Modified Jolokia War</echo>
+		<copy file="./jolokia.war" todir="${restcomm.jss7.dist}/oam/new-ui" failonerror="true" />
+	</target>
 
 	<target name="build-jss7">
 		<exec failonerror="true" executable="${mvn.executable}" dir="${base.dir}/../">
