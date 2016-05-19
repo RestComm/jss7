@@ -48,6 +48,10 @@ public class IstCommandRequestImpl extends CallHandlingMessageImpl implements Is
 
     public static final String _PrimitiveName = "IstCommandRequest";
 
+    private static final int TAG_imsi = 0;
+    private static final int TAG_extensionContainer = 1;
+
+
     private IMSI imsi;
 
     private MAPExtensionContainer extensionContainer;
@@ -127,31 +131,49 @@ public class IstCommandRequestImpl extends CallHandlingMessageImpl implements Is
         this.imsi = null;
 
         AsnInputStream ais = ansIS.readSequenceStreamData(length);
-        int num = 0;
         while (true) {
-            if (ais.available() == 0)
+            if (ais.available() == 0) {
                 break;
+            }
 
             int tag = ais.readTag();
 
-            if (tag == Tag.SEQUENCE && ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
-                if (ais.isTagPrimitive())
-                    throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                            + ": Parameter extensionContainer is primitive",
-                            MAPParsingComponentExceptionReason.MistypedParameter);
-                this.extensionContainer = new MAPExtensionContainerImpl();
-                ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
-            } else if (tag == Tag.STRING_OCTET && ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
-                if (!ais.isTagPrimitive())
-                    throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                            + ": Parameter imsi is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
-                this.imsi = new IMSIImpl();
-                ((IMSIImpl) this.imsi).decodeAll(ais);
-            } else {
-                ais.advanceElement();
+            switch (ais.getTagClass()) {
+                case Tag.CLASS_CONTEXT_SPECIFIC:
+                    switch (tag) {
+                        case TAG_imsi:
+                            if (!ais.isTagPrimitive()) {
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ".imsi: is not primitive", MAPParsingComponentExceptionReason.MistypedParameter);
+                            }
+                            this.imsi = new IMSIImpl();
+                            ((IMSIImpl) this.imsi).decodeAll(ais);
+                            break;
+                        case TAG_extensionContainer:
+                            if (ais.isTagPrimitive()) {
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ".extensionContainer: is primitive",
+                                        MAPParsingComponentExceptionReason.MistypedParameter);
+                            }
+                            this.extensionContainer = new MAPExtensionContainerImpl();
+                            ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                            break;
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+                    break;
+
+                default:
+                    ais.advanceElement();
+                    break;
             }
 
-            num++;
+        }
+
+        if (this.imsi == null) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": Parament imsi is mandatory but does not found", MAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
 
@@ -174,10 +196,15 @@ public class IstCommandRequestImpl extends CallHandlingMessageImpl implements Is
 
     @Override
     public void encodeData(AsnOutputStream asnOs) throws MAPException {
+        if (this.imsi == null)
+            throw new MAPException("Error while encoding " + _PrimitiveName + " the mandatory parameter IMSI is not defined");
+
+        ((IMSIImpl) this.imsi).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, TAG_imsi);
+
         if (this.extensionContainer != null)
-            ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
-        if (this.imsi != null)
-            ((IMSIImpl) this.imsi).encodeAll(asnOs);
+            ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC,
+                    TAG_extensionContainer);
+
     }
 
     @Override

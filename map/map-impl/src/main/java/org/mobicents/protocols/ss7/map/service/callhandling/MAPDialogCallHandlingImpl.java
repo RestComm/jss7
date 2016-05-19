@@ -361,9 +361,9 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements MAPDialo
     public Long addIstCommandRequest(int customInvokeTimeout, IMSI imsi, MAPExtensionContainer extensionContainer) throws MAPException {
         MAPApplicationContextVersion vers = this.appCntx.getApplicationContextVersion();
         if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.ServiceTerminationContext)
-                || (vers != MAPApplicationContextVersion.version1 && vers != MAPApplicationContextVersion.version2 && vers != MAPApplicationContextVersion.version3))
+                || (vers != MAPApplicationContextVersion.version3))
             throw new MAPException(
-                    "Bad application context name for addIstCommandRequest: must be ServiceTerminationContext _V1, V2 or V3");
+                    "Bad application context name for addIstCommandRequest: must be ServiceTerminationContext_V3");
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
@@ -404,9 +404,9 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements MAPDialo
 
         MAPApplicationContextVersion vers = this.appCntx.getApplicationContextVersion();
         if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.ServiceTerminationContext)
-                || (vers != MAPApplicationContextVersion.version1 && vers != MAPApplicationContextVersion.version2 && vers != MAPApplicationContextVersion.version3))
+                || (vers != MAPApplicationContextVersion.version3))
             throw new MAPException(
-                    "Bad application context name for addIstCommandResponse: must be ServiceTerminationContext_V1, V2 or V3");
+                    "Bad application context name for addIstCommandResponse: must be ServiceTerminationContext_V3");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCResultLastRequest();
@@ -417,17 +417,18 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements MAPDialo
         oc.setLocalOperationCode((long) MAPOperationCode.istCommand);
         resultLast.setOperationCode(oc);
 
-        IstCommandResponseImpl res = new IstCommandResponseImpl(extensionContainer);
-        AsnOutputStream aos = new AsnOutputStream();
-        res.encodeData(aos);
+        if (extensionContainer!=null) {
+            IstCommandResponseImpl res = new IstCommandResponseImpl(extensionContainer);
+            AsnOutputStream aos = new AsnOutputStream();
+            res.encodeData(aos);
 
-        Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
-        p.setTagClass(res.getTagClass());
-        p.setPrimitive(res.getIsPrimitive());
-        p.setTag(res.getTag());
-        p.setData(aos.toByteArray());
-        resultLast.setParameter(p);
-
+            Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+            p.setTagClass(res.getTagClass());
+            p.setPrimitive(res.getIsPrimitive());
+            p.setTag(res.getTag());
+            p.setData(aos.toByteArray());
+            resultLast.setParameter(p);
+        }
         this.sendReturnResultLastComponent(resultLast);
     }
 }

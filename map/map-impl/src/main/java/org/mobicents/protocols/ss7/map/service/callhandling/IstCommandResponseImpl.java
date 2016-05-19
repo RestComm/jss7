@@ -44,7 +44,7 @@ import java.io.IOException;
  */
 public class IstCommandResponseImpl extends CallHandlingMessageImpl implements IstCommandResponse {
 
-    public static final String _PrimitiveName = "IstCommandRequest";
+    public static final String _PrimitiveName = "IstCommandResponse";
 
     private MAPExtensionContainer extensionContainer;
 
@@ -62,7 +62,7 @@ public class IstCommandResponseImpl extends CallHandlingMessageImpl implements I
 
     @Override
     public MAPMessageType getMessageType() {
-        return MAPMessageType.istCommand_Request;
+        return MAPMessageType.istCommand_Response;
     }
 
     @Override
@@ -116,7 +116,6 @@ public class IstCommandResponseImpl extends CallHandlingMessageImpl implements I
         this.extensionContainer = null;
 
         AsnInputStream ais = ansIS.readSequenceStreamData(length);
-        int num = 0;
         while (true) {
             if (ais.available() == 0)
                 break;
@@ -134,7 +133,6 @@ public class IstCommandResponseImpl extends CallHandlingMessageImpl implements I
                 ais.advanceElement();
             }
 
-            num++;
         }
     }
 
