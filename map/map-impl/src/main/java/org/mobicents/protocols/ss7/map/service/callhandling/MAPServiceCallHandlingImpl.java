@@ -54,7 +54,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 /*
  *
  * @author cristian veliscu
- *
+ * @author eva ogallar
  */
 public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MAPServiceCallHandling {
     private static final Logger loger = Logger.getLogger(MAPServiceCallHandlingImpl.class);
@@ -125,7 +125,7 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
                     return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
                 }
             case ServiceTerminationContext:
-                if (vers >= 1 && vers <= 3) {
+                if (vers == 3) {
                     return new ServingCheckDataImpl(ServingCheckResult.AC_Serving);
                 } else {
                     return new ServingCheckDataImpl(ServingCheckResult.AC_VersionIncorrect);
@@ -143,9 +143,6 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
                         MAPApplicationContextVersion.version1);
             case MAPOperationCode.provideRoamingNumber:
                 return MAPApplicationContext.getInstance(MAPApplicationContextName.roamingNumberEnquiryContext,
-                        MAPApplicationContextVersion.version1);
-            case MAPOperationCode.istCommand:
-                return MAPApplicationContext.getInstance(MAPApplicationContextName.ServiceTerminationContext,
                         MAPApplicationContextVersion.version1);
         }
 
@@ -345,7 +342,6 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
 
     private void istCommandRequest(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId)
             throws MAPParsingComponentException {
-        long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
         IstCommandRequestImpl ind = new IstCommandRequestImpl();
 
         if (parameter == null)
@@ -378,31 +374,19 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
 
     private void istCommandResponse(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId)
             throws MAPParsingComponentException {
-        long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
         IstCommandResponseImpl ind = new IstCommandResponseImpl();
 
-        if (parameter == null)
-            throw new MAPParsingComponentException(
-                    "Error while decoding ProvideRoamingNumberResponseIndication: Parameter is mandatory but not found",
-                    MAPParsingComponentExceptionReason.MistypedParameter);
-
-        if (version >= 3) {
-            if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive())
+        if (parameter != null) {
+            if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive()) {
                 throw new MAPParsingComponentException(
-                        "Error while decoding ProvideRoamingNumberResponseIndication: Bad tag or tagClass or parameter is primitive, received tag="
+                        "Error while decoding IstCommandResponse: Bad tag or tagClass or parameter is primitive, received tag="
                                 + parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
-        } else {
-            if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL
-                    || !parameter.isPrimitive())
-                throw new MAPParsingComponentException(
-                        "Error while decoding ProvideRoamingNumberResponseIndication: Bad tag or tagClass or parameter is primitive, received tag="
-                                + parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
+            }
+            byte[] buf = parameter.getData();
+            AsnInputStream ais = new AsnInputStream(buf, parameter.getTagClass(), parameter.isPrimitive(), parameter.getTag());
+            ind.decodeData(ais, buf.length);
         }
 
-        byte[] buf = parameter.getData();
-        AsnInputStream ais = new AsnInputStream(buf, parameter.getTagClass(), parameter.isPrimitive(), parameter.getTag());
-
-        ind.decodeData(ais, buf.length);
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
 
@@ -411,7 +395,7 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
                 serLis.onMAPMessage(ind);
                 ((MAPServiceCallHandlingListener) serLis).onIstCommandResponse(ind);
             } catch (Exception e) {
-                loger.error("Error processing ProvideRoamingNumberResponseIndication: " + e.getMessage(), e);
+                loger.error("Error processing IstCommandResponse: " + e.getMessage(), e);
             }
         }
     }
