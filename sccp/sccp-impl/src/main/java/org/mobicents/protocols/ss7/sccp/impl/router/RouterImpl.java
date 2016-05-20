@@ -273,9 +273,6 @@ public class RouterImpl implements Router {
         for (FastMap.Entry<Integer, Rule> e = this.rulesMap.head(), end = this.rulesMap.tail(); (e = e.getNext()) != end;) {
             Rule rule = e.getValue();
             if (rule.matches(calledParty, isMtpOriginated, msgNetworkId)) {
-                if(logger.isDebugEnabled()) {
-                    logger.debug("Matched SCCP rule ID: " + rule.getRuleId());
-                }
                 return rule;
             }
         }

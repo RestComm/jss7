@@ -22,19 +22,9 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 import javolution.xml.XMLBinding;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
-
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
@@ -47,15 +37,15 @@ import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
-import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle0100;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+import static org.testng.Assert.*;
 
 /**
  * @author amit bhayani
@@ -424,6 +414,58 @@ public class RuleTest {
         assertEquals(translatedAddress2.getSignalingPointCode(), 2186);
         assertEquals(translatedAddress2.getSubsystemNumber(), 146);
         assertEquals(translatedAddress2.getGlobalTitle().getDigits(), "92300001009");
+    }
+
+    @Test(groups = { "router", "functional.translate" })
+    public void testTranslate11() throws Exception {
+        // Match any digits and pattern SSN=0 (management message) keep the digits in the and add a PC(123) & SSN (8).
+
+        SccpAddress pattern = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("*", 1), 0, 0);
+
+        SccpAddress primaryAddress = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, factory.createGlobalTitle("-"), 123, 146);
+
+        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K", 0);
+        rule.setPrimaryAddressId(1);
+
+        SccpAddress address = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("4414257897897", 1), 0, 146);
+
+        assertTrue(rule.matches(address, false, 0));
+
+        SccpAddress translatedAddress = rule.translate(address, primaryAddress);
+
+        assertEquals(translatedAddress.getAddressIndicator().getRoutingIndicator(),
+                RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN);
+        assertEquals(translatedAddress.getAddressIndicator().getGlobalTitleIndicator(),
+                GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_ONLY);
+        assertEquals(translatedAddress.getSignalingPointCode(), 123);
+        assertEquals(translatedAddress.getSubsystemNumber(), 146);
+        assertEquals(translatedAddress.getGlobalTitle().getDigits(), "4414257897897");
+    }
+
+    @Test(groups = { "router", "functional.translate" })
+    public void testTranslate12() throws Exception {
+        // Match any digits and pattern SSN>0 - pattern SSN present flag must be set.
+
+        SccpAddress pattern = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("*", 1), 0, 146);
+
+        SccpAddress primaryAddress = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, factory.createGlobalTitle("-"), 123, 146);
+
+        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K", 0);
+        rule.setPrimaryAddressId(1);
+
+        SccpAddress address = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("4414257897897", 1), 0, 146);
+
+        assertTrue(rule.matches(address, false, 0));
+
+        SccpAddress translatedAddress = rule.translate(address, primaryAddress);
+
+        assertEquals(translatedAddress.getAddressIndicator().getRoutingIndicator(),
+                RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN);
+        assertEquals(translatedAddress.getAddressIndicator().getGlobalTitleIndicator(),
+                GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_ONLY);
+        assertEquals(translatedAddress.getSignalingPointCode(), 123);
+        assertEquals(translatedAddress.getSubsystemNumber(), 146);
+        assertEquals(translatedAddress.getGlobalTitle().getDigits(), "4414257897897");
     }
 
     @Test(groups = { "router", "functional.encode" })
