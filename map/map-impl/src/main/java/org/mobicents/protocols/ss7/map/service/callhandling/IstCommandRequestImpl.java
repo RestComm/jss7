@@ -213,14 +213,14 @@ public class IstCommandRequestImpl extends CallHandlingMessageImpl implements Is
         sb.append(_PrimitiveName);
         sb.append(" [");
 
-        if (this.extensionContainer != null) {
-            sb.append(", extensionContainer=");
-            sb.append(this.extensionContainer.toString());
-        }
         if (this.imsi != null) {
             sb.append("imsi=");
             sb.append(imsi);
             sb.append(", ");
+        }
+        if (this.extensionContainer != null) {
+            sb.append(", extensionContainer=");
+            sb.append(this.extensionContainer.toString());
         }
 
         sb.append("]");

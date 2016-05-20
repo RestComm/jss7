@@ -88,6 +88,7 @@ public class IstCommandRequestTest {
         assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 
         // extensionContainer
+        assertEquals(prim.getImsi().getData(), "29113123311");
         assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(prim.getExtensionContainer()));
 
     }

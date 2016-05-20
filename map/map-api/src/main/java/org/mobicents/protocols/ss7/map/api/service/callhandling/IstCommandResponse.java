@@ -27,7 +27,10 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 /**
  *
 <code>
- IST-CommandRes ::= SEQUENCE{ extensionContainer ExtensionContainer OPTIONAL, ...}
+IST-CommandRes ::= SEQUENCE{
+  extensionContainer ExtensionContainer OPTIONAL,
+  ...
+}
 </code>
  *
  *
