@@ -385,13 +385,25 @@ public class TCAPStackImpl implements TCAPStack {
 
             reader.setBinding(binding);
 
-            this.dialogTimeout = reader.read(DIALOG_IDLE_TIMEOUT, Long.class);
-            this.invokeTimeout = reader.read(INVOKE_TIMEOUT, Long.class);
-            this.maxDialogs = reader.read(MAX_DIALOGS, Integer.class);
-            this.dialogIdRangeStart = reader.read(DIALOG_ID_RANGE_START, Long.class);
-            this.dialogIdRangeEnd = reader.read(DIALOG_ID_RANGE_END, Long.class);
+            Long vall = reader.read(DIALOG_IDLE_TIMEOUT, Long.class);
+            if (vall != null)
+                this.dialogTimeout = vall;
+            vall = reader.read(INVOKE_TIMEOUT, Long.class);
+            if (vall != null)
+                this.invokeTimeout = vall;
+            Integer vali = reader.read(MAX_DIALOGS, Integer.class);
+            if (vali != null)
+                this.maxDialogs = vali;
+            vall = reader.read(DIALOG_ID_RANGE_START, Long.class);
+            if (vall != null)
+                this.dialogIdRangeStart = vall;
+            vall = reader.read(DIALOG_ID_RANGE_END, Long.class);
+            if (vall != null)
+                this.dialogIdRangeEnd = vall;
 
-            this.statisticsEnabled = reader.read(STATISTICS_ENABLED, Boolean.class);
+            Boolean volb = reader.read(STATISTICS_ENABLED, Boolean.class);
+            if (volb != null)
+                this.statisticsEnabled = volb;
 
             reader.close();
         } catch (XMLStreamException ex) {

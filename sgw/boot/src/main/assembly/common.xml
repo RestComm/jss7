@@ -36,6 +36,11 @@
 			<outputDirectory>/lib</outputDirectory>
 			<unpack>false</unpack>
 			<scope>runtime</scope>
+
+			<excludes>
+				<!-- lic dep -->
+				<exclude>com.vendor.dialogic:gctapi:jar</exclude>
+			</excludes>
 		</dependencySet>
 	</dependencySets>
 </component>

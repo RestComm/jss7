@@ -108,7 +108,7 @@ public class BcdHelper {
         if (isOdd) {
             noOfBytes++;
         }
-        byte bcdDigits[] = new byte[noOfBytes];
+        byte[] bcdDigits = new byte[noOfBytes];
 
         char[] chars = hexString.toCharArray();
         int digit = -1;

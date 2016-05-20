@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
-import java.io.Serializable;
-
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
 /**
@@ -34,7 +32,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  * @author sergey vetyutnev
  *
  */
-public interface ReleaseResourcesResponse extends Serializable {
+public interface ReleaseResourcesResponse extends CallHandlingMessage {
 
     MAPExtensionContainer getExtensionContainer();
 

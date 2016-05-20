@@ -11,8 +11,8 @@
 	<property name="docs.dir" location="${restcomm.jss7.dist}/_docs" />
 
 	<!--Versions -->
-	<property name="checkout.asn.version" value="release-2.0.3.FINAL" />
-	<property name="checkout.sctp.version" value="release-1.6.0.FINAL" />
+	<property name="checkout.asn.version" value="2.1.5" />
+	<property name="checkout.sctp.version" value="1.7.8" />
 	<property name="release.version" value="${jSS7.release.version}"/>
 
 
@@ -28,7 +28,7 @@
 
 	<target name="release" depends="clean,build-asn,build-sctp,build-jss7,build-docs,copy-asn,copy-sctp,copy-jss7,copy-documentation,make-final-zip" />
 	
-  	<target name="release-restcomm" depends="build-asn,build-sctp,build-docs,copy-asn,copy-sctp,copy-jss7,copy-documentation,make-final-zip" />
+  	<target name="release-restcomm" depends="clean,build-asn,build-sctp,build-docs,copy-asn,copy-sctp,copy-jss7,copy-documentation,make-final-zip" />
 	
 
 	<!-- Build dependencies-->
@@ -45,7 +45,7 @@
 		</exec>
 
 		<exec failonerror="true" executable="${mvn.executable}" dir="${checkout.asn.dir}">
-			<arg line="clean install -Dmaven.test.skip=true" />
+			<arg line="clean install -Dmaven.test.skip=true -Pall" />
 		</exec>
 	</target>
 	
@@ -61,7 +61,7 @@
 		</exec>
 
 		<exec failonerror="true" executable="${mvn.executable}" dir="${checkout.sctp.dir}">
-			<arg line="clean install -Dmaven.test.skip=true -Prelease" />
+			<arg line="clean install -Dmaven.test.skip=true -Prelease,all" />
 		</exec>
 	</target>
 
@@ -73,7 +73,7 @@
                 </fileset>
        	</copy>
 	</target>
-	
+
 	<target name="copy-sctp">
         <echo>Copy SCTP</echo>
         <copy todir="${restcomm.jss7.dist}/sctp/" failonerror="true">
@@ -151,23 +151,24 @@
 	        </copy>
     	
 
-            <echo>Copy Shell</echo>
-            <copy todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true">
-                    <fileset dir="${jss7.dir}/management/shell-client/target/restcomm-cli/lib">
-                            <include name="**" />
-                    </fileset>
-            </copy>
-            <copy todir="${restcomm.jss7.dist}/ss7/shell/bin" failonerror="true">
-                    <fileset dir="${jss7.dir}/management/shell-client/target/restcomm-cli/bin">
-                            <include name="**" />
-                    </fileset>
-            </copy>
-            <copy file="${jss7.dir}/hardware/cli/target/linkset-cli.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
-            <copy file="${jss7.dir}/m3ua/cli/m3ua/target/m3ua-cli-m3ua.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
-            <copy file="${jss7.dir}/m3ua/cli/sctp/target/m3ua-cli-sctp.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
-            <copy file="${jss7.dir}/sccp/sccp-cli/target/sccp-cli.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
-            <copy file="${jss7.dir}/tcap/tcap-cli/target/tcap-cli.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
-            <copy file="${jss7.dir}/release/release-build.xml" tofile="${restcomm.jss7.dist}/ss7/build.xml" failonerror="true" />
+		<echo>Copy Shell</echo>
+		<copy todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true">
+			<fileset dir="${jss7.dir}/management/shell-client/target/restcomm-cli/lib">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<copy todir="${restcomm.jss7.dist}/ss7/shell/bin" failonerror="true">
+			<fileset dir="${jss7.dir}/management/shell-client/target/restcomm-cli/bin">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<copy file="${jss7.dir}/hardware/cli/target/linkset-cli.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
+		<copy file="${jss7.dir}/m3ua/cli/m3ua/target/m3ua-cli-m3ua.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
+		<copy file="${jss7.dir}/m3ua/cli/sctp/target/m3ua-cli-sctp.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
+		<copy file="${jss7.dir}/sccp/sccp-cli/target/sccp-cli.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
+		<copy file="${jss7.dir}/tcap/tcap-cli/target/tcap-cli.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
+		<copy file="${jss7.dir}/tcap/tcap-cli/target/tcap-cli.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
+		<copy file="${jss7.dir}/release/release-build.xml" tofile="${restcomm.jss7.dist}/ss7/build.xml" failonerror="true" />
 
         <copy todir="${restcomm.jss7.dist}/ss7/restcomm-ss7-service" failonerror="true">
                 <fileset dir="${jss7.dir}/service/target/restcomm-ss7-service">
@@ -191,17 +192,17 @@
 			<arg line="clean install -Dmaven.test.skip=true" />
 		</exec>
 	</target>
-	
+
 	<target name="build-docs">
 		<exec failonerror="true" executable="${mvn.executable}" dir="${base.dir}/../docs">
-			<arg line="clean install -Prestcomm" />
+			<arg line="clean install -Prestcomm -Pall" />
 		</exec>
 	</target>
 
 	
 	
 	<target name="make-final-zip" depends="set-time-stamp">
-		<zip destfile="${base.dir}/restcomm-jss7-${release.version}-${time.stamp}.zip" filesonly="false">
+		<zip destfile="${base.dir}/restcomm-jss7-${release.version}.zip" filesonly="false">
 			<zipfileset dir="${restcomm.jss7.dist}" prefix="restcomm-jss7-${release.version}">
 				<include name="**" />
 			</zipfileset>
@@ -218,43 +219,74 @@
 		<echo>copying documentation</echo>
 		<mkdir dir="${docs.dir}"/>
 
-        <copy todir="${docs.dir}" failonerror="true">
-                <fileset dir="${checkout.asn.dir}/docs/jdocbook-mobicents/target/docbook/publish/en-US/pdf">
-                        <include name="*.pdf" />
+		<mkdir dir="${docs.dir}/ASNLibrary"/>
+		<mkdir dir="${docs.dir}/ASNLibrary/html-book"/>
+		<copy todir="${docs.dir}/ASNLibrary/html-book" failonerror="true">
+			<fileset dir="${checkout.asn.dir}/docs/sources-asciidoc/target/generated-docs/html-book/">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<mkdir dir="${docs.dir}/ASNLibrary/pdf"/>
+		<copy todir="${docs.dir}/ASNLibrary/pdf" failonerror="true">
+			<fileset dir="${checkout.asn.dir}/docs/sources-asciidoc/target/generated-docs/pdf/">
+				<include name="**.pdf" />
+			</fileset>
+		</copy>
+
+		<mkdir dir="${docs.dir}/SCTPLibrary"/>
+		<mkdir dir="${docs.dir}/SCTPLibrary/html-book"/>
+		<copy todir="${docs.dir}/SCTPLibrary/html-book" failonerror="true">
+			<fileset dir="${checkout.sctp.dir}/docs/sources-asciidoc/target/generated-docs/html-book/">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<mkdir dir="${docs.dir}/SCTPLibrary/pdf"/>
+		<copy todir="${docs.dir}/SCTPLibrary/pdf" failonerror="true">
+			<fileset dir="${checkout.sctp.dir}/docs/sources-asciidoc/target/generated-docs/pdf/">
+				<include name="**.pdf" />
+			</fileset>
+		</copy>
+
+<!--
+		<copy todir="${docs.dir}" failonerror="true">
+                <fileset dir="${checkout.asn.dir}/docs/sources-asciidoc/target/generated-docs">
+                        <include name="*.*" />
                 </fileset>
         </copy>
 		<copy todir="${docs.dir}" failonerror="true">
-                <fileset dir="${checkout.sctp.dir}/docs/jdocbook-mobicents/target/docbook/publish/en-US/pdf">
+                <fileset dir="${checkout.sctp.dir}/docs/sources-asciidoc/target/generated-docs">
                         <include name="*.pdf" />
                 </fileset>
         </copy>
-	<mkdir dir="${docs.dir}/userguide"/>
-	<mkdir dir="${docs.dir}/installationguide"/>
-	<mkdir dir="${docs.dir}/userguide/html-book"/>
-	<copy todir="${docs.dir}/userguide/html-book" failonerror="true">
-		<fileset dir="${jss7.dir}/docs/userguide/sources-asciidoc/target/generated-docs/html-book/">
+-->
+
+		<mkdir dir="${docs.dir}/userguide"/>
+		<mkdir dir="${docs.dir}/installationguide"/>
+		<mkdir dir="${docs.dir}/userguide/html-book"/>
+		<copy todir="${docs.dir}/userguide/html-book" failonerror="true">
+			<fileset dir="${jss7.dir}/docs/userguide/sources-asciidoc/target/generated-docs/html-book/">
+				<include name="**" />
+			</fileset>
+		</copy>
+		<mkdir dir="${docs.dir}/installationguide/html-book"/>
+		<copy todir="${docs.dir}/installationguide/html-book" failonerror="true">
+			<fileset dir="${jss7.dir}/docs/installationguide/sources-asciidoc/target/generated-docs/html-book/">
 			<include name="**" />
 		</fileset>
-	</copy>
-	<mkdir dir="${docs.dir}/installationguide/html-book"/>
-	<copy todir="${docs.dir}/installationguide/html-book" failonerror="true">
-		<fileset dir="${jss7.dir}/docs/installationguide/sources-asciidoc/target/generated-docs/html-book/">
-			<include name="**" />
-		</fileset>
-	</copy>
-	<mkdir dir="${docs.dir}/userguide/pdf"/>
-	<copy todir="${docs.dir}/userguide/pdf" failonerror="true">
-		<fileset dir="${jss7.dir}/docs/userguide/sources-asciidoc/target/generated-docs/pdf/">
-			<include name="**" />
-		</fileset>
-	</copy>
-	<mkdir dir="${docs.dir}/installationguide/pdf"/>
-	<copy todir="${docs.dir}/installationguide/pdf" failonerror="true">
-		<fileset dir="${jss7.dir}/docs/installationguide/sources-asciidoc/target/generated-docs/pdf/">
-			<include name="**" />
-		</fileset>
-	</copy>
-	
+		</copy>
+		<mkdir dir="${docs.dir}/userguide/pdf"/>
+		<copy todir="${docs.dir}/userguide/pdf" failonerror="true">
+			<fileset dir="${jss7.dir}/docs/userguide/sources-asciidoc/target/generated-docs/pdf/">
+				<include name="**.pdf" />
+			</fileset>
+		</copy>
+		<mkdir dir="${docs.dir}/installationguide/pdf"/>
+		<copy todir="${docs.dir}/installationguide/pdf" failonerror="true">
+			<fileset dir="${jss7.dir}/docs/installationguide/sources-asciidoc/target/generated-docs/pdf/">
+				<include name="**.pdf" />
+			</fileset>
+		</copy>
+
         <!--copy todir="${docs.dir}" failonerror="true">
                 <fileset dir="${jss7.dir}/docs/userguide/jdocbook-restcomm/target/docbook/publish/en-US/pdf">
                         <include name="*.pdf" />

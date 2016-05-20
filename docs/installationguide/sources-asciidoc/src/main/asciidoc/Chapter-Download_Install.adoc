@@ -23,15 +23,15 @@ For details on what is included in the sub-directories, please refer to the {thi
 
 The major functional modules of the {this-application} are: 
 
-. SS7 Service [dir: [path]_restcomm-ss7-service_]
-. Signaling Gateway [dir: [path]_restcomm-ss7-sgw_]
+. SS7 Service [dir: [path]_{this-folder}-ss7-service_]
+. Signaling Gateway [dir: [path]_{this-folder}-ss7-sgw_]
 . Shell [dir: [path]_shell_]
-. SS7 Simulator [dir: [path]_restcomm-ss7-simulator_]
+. SS7 Simulator [dir: [path]_{this-folder}-ss7-simulator_]
 
-
+[subs="attributes"]
 ----
 
-|- restcomm-jss7-<version>
+|- {this-folder}-jss7-<version>
 		|- asn	
 
 		|- _docs
@@ -43,10 +43,10 @@ The major functional modules of the {this-application} are:
 		|- ss7
 				|+ protocols
 				|+ shell
-				|+ restcomm-ss7-service
-				|+ restcomm-ss7-sgw
-				|+ restcomm-ss7-simulator
-				|+ restcomm-ss7-trace-parser
+				|+ {this-folder}-ss7-service
+				|+ {this-folder}-ss7-sgw
+				|+ {this-folder}-ss7-simulator
+				|+ {this-folder}-ss7-trace-parser
 				|+ template
 ----
 

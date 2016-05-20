@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.api.service.callhandling;
 
-import java.util.ArrayList;
-
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
@@ -45,9 +43,12 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.supplementary.ForwardingReason;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 
+import java.util.ArrayList;
+
 /*
  *
  * @author cristian veliscu
+ * @author eva ogallar
  *
  */
 public interface MAPDialogCallHandling extends MAPDialog {
@@ -116,4 +117,10 @@ public interface MAPDialogCallHandling extends MAPDialog {
      void addProvideRoamingNumberResponse(long invokeId, ISDNAddressString roamingNumber,
             MAPExtensionContainer extensionContainer, boolean releaseResourcesSupported, ISDNAddressString vmscAddress)
             throws MAPException;
+
+     Long addIstCommandRequest(IMSI imsi, MAPExtensionContainer extensionContainer) throws MAPException;
+
+     Long addIstCommandRequest(int customInvokeTimeout, IMSI imsi, MAPExtensionContainer extensionContainer) throws MAPException;
+
+     void addIstCommandResponse(long invokeId, MAPExtensionContainer extensionContainer) throws MAPException;
 }

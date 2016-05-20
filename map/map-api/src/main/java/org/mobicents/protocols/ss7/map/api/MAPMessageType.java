@@ -43,7 +43,7 @@ public enum MAPMessageType {
     sendRoutingInfoForLCS_Request, sendRoutingInfoForLCS_Response, provideSubscriberLocation_Request, provideSubscriberLocation_Response, subscriberLocationReport_Request, subscriberLocationReport_Response,
 
     // -- call handling
-    sendRoutingInfo_Request, sendRoutingInfo_Response, provideRoamingNumber_Request, privideRoamingNumber_Response,
+    sendRoutingInfo_Request, sendRoutingInfo_Response, provideRoamingNumber_Request, privideRoamingNumber_Response, istCommand_Request, istCommand_Response,
 
     // -- oam
     sendIMSI_Request, sendIMSI_Response, activateTraceMode_Request, activateTraceMode_Response,

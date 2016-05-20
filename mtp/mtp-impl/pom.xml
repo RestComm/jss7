@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.mtp</groupId>
 		<artifactId>mtp-parent</artifactId>
-		<version>3.0.0-SNAPSHOT</version>
+		<version>7.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mtp</artifactId>
@@ -12,6 +12,8 @@
 
 
 	<dependencies>
+		<!-- lic dep -->
+
 		<dependency>
 		   <groupId>org.apache.commons</groupId>
 		   <artifactId>commons-email</artifactId>

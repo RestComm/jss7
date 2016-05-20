@@ -221,8 +221,8 @@ public class SignalingNetworkManagementHandler extends MessageHandler {
                         int[] affectedPcs = affectedPcObjs.getPointCodes();
 
                         for (int i = 0; i < affectedPcs.length; i++) {
-                            Mtp3PausePrimitive mtpPausePrimi = new Mtp3PausePrimitive(affectedPcs[i]);
-                            ((AsImpl) aspImpl.getAs()).getM3UAManagement().sendPauseMessageToLocalUser(mtpPausePrimi);
+                            Mtp3ResumePrimitive mtpResumePrimi = new Mtp3ResumePrimitive(affectedPcs[i]);
+                            ((AsImpl) aspImpl.getAs()).getM3UAManagement().sendResumeMessageToLocalUser(mtpResumePrimi);
                         }
                     } else {
                         logger.error(String.format("Rx : DAVA for RoutingContext=%d. But ASP State=%s. Message=%s", rcs[count],

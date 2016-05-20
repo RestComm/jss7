@@ -22,18 +22,7 @@
 
 package org.mobicents.protocols.ss7.tools.traceparser;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import javolution.util.FastMap;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -48,40 +37,7 @@ import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestResponse;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.AssistRequestInstructionsRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallListener;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationReportRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CancelRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CollectInformationRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectToResourceRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueWithArgumentRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionWithArgumentRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectLegRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectLegResponse;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EstablishTemporaryConnectionRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.FurnishChargingInformationRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitiateCallAttemptRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitiateCallAttemptResponse;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.MoveLegRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.MoveLegResponse;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PlayAnnouncementRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationResponse;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ReleaseCallRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.*;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.ActivityTestGPRSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.ActivityTestGPRSResponse;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.ApplyChargingGPRSRequest;
@@ -131,6 +87,8 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.IstCommandRequest;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.IstCommandResponse;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.MAPServiceCallHandlingListener;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.ProvideRoamingNumberRequest;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.ProvideRoamingNumberResponse;
@@ -273,6 +231,16 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -2254,6 +2222,16 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
     public void onProvideRoamingNumberResponse(ProvideRoamingNumberResponse response) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public void onIstCommandRequest(IstCommandRequest request) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onIstCommandResponse(IstCommandResponse response) {
+        // TODO Auto-generated method stub
     }
 
     @Override

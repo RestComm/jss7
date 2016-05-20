@@ -47,8 +47,8 @@ public class SccpResourceJmx implements SccpResourceJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.SccpResource#addConcernedSpc(int, int)
      */
     @Override
-    public void addConcernedSpc(int arg0, int arg1) throws Exception {
-        this.wrappedSccpResource.addConcernedSpc(arg0, arg1);
+    public void addConcernedSpc(int concernedSpcId, int remoteSpc) throws Exception {
+        this.wrappedSccpResource.addConcernedSpc(concernedSpcId, remoteSpc);
     }
 
     /*
@@ -57,8 +57,8 @@ public class SccpResourceJmx implements SccpResourceJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.SccpResource#addRemoteSpc(int, int, int, int)
      */
     @Override
-    public void addRemoteSpc(int arg0, int arg1, int arg2, int arg3) throws Exception {
-        this.wrappedSccpResource.addRemoteSpc(arg0, arg1, arg2, arg3);
+    public void addRemoteSpc(int remoteSpcId, int remoteSpc, int remoteSpcFlag, int mask) throws Exception {
+        this.wrappedSccpResource.addRemoteSpc(remoteSpcId, remoteSpc, remoteSpcFlag, mask);
     }
 
     /*
@@ -67,8 +67,9 @@ public class SccpResourceJmx implements SccpResourceJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.SccpResource#addRemoteSsn(int, int, int, int, boolean)
      */
     @Override
-    public void addRemoteSsn(int arg0, int arg1, int arg2, int arg3, boolean arg4) throws Exception {
-        this.wrappedSccpResource.addRemoteSsn(arg0, arg1, arg2, arg3, arg4);
+    public void addRemoteSsn(int remoteSsnid, int remoteSpc, int remoteSsn, int remoteSsnFlag,
+            boolean markProhibitedWhenSpcResuming) throws Exception {
+        this.wrappedSccpResource.addRemoteSsn(remoteSsnid, remoteSpc, remoteSsn, remoteSsnFlag, markProhibitedWhenSpcResuming);
     }
 
     /*
@@ -77,8 +78,8 @@ public class SccpResourceJmx implements SccpResourceJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.SccpResource#getConcernedSpc(int)
      */
     @Override
-    public ConcernedSignalingPointCode getConcernedSpc(int arg0) {
-        return this.wrappedSccpResource.getConcernedSpc(arg0);
+    public ConcernedSignalingPointCode getConcernedSpc(int concernedSpcId) {
+        return this.wrappedSccpResource.getConcernedSpc(concernedSpcId);
     }
 
     /*
@@ -87,8 +88,8 @@ public class SccpResourceJmx implements SccpResourceJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.SccpResource#getConcernedSpcByPC(int)
      */
     @Override
-    public ConcernedSignalingPointCode getConcernedSpcByPC(int arg0) {
-        return this.wrappedSccpResource.getConcernedSpcByPC(arg0);
+    public ConcernedSignalingPointCode getConcernedSpcByPC(int remotePC) {
+        return this.wrappedSccpResource.getConcernedSpcByPC(remotePC);
     }
 
     /*
@@ -107,8 +108,8 @@ public class SccpResourceJmx implements SccpResourceJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.SccpResource#getRemoteSpc(int)
      */
     @Override
-    public RemoteSignalingPointCode getRemoteSpc(int arg0) {
-        return this.wrappedSccpResource.getRemoteSpc(arg0);
+    public RemoteSignalingPointCode getRemoteSpc(int remoteSpcId) {
+        return this.wrappedSccpResource.getRemoteSpc(remoteSpcId);
     }
 
     /*
@@ -117,8 +118,8 @@ public class SccpResourceJmx implements SccpResourceJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.SccpResource#getRemoteSpcByPC(int)
      */
     @Override
-    public RemoteSignalingPointCode getRemoteSpcByPC(int arg0) {
-        return this.wrappedSccpResource.getRemoteSpcByPC(arg0);
+    public RemoteSignalingPointCode getRemoteSpcByPC(int remotePC) {
+        return this.wrappedSccpResource.getRemoteSpcByPC(remotePC);
     }
 
     /*
@@ -137,8 +138,8 @@ public class SccpResourceJmx implements SccpResourceJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.SccpResource#getRemoteSsn(int)
      */
     @Override
-    public RemoteSubSystem getRemoteSsn(int arg0) {
-        return this.wrappedSccpResource.getRemoteSsn(arg0);
+    public RemoteSubSystem getRemoteSsn(int remoteSsnid) {
+        return this.wrappedSccpResource.getRemoteSsn(remoteSsnid);
     }
 
     /*
@@ -147,8 +148,8 @@ public class SccpResourceJmx implements SccpResourceJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.SccpResource#getRemoteSsn(int, int)
      */
     @Override
-    public RemoteSubSystem getRemoteSsn(int arg0, int arg1) {
-        return this.wrappedSccpResource.getRemoteSsn(arg0, arg1);
+    public RemoteSubSystem getRemoteSsn(int spc, int remoteSsn) {
+        return this.wrappedSccpResource.getRemoteSsn(spc, remoteSsn);
     }
 
     /*
@@ -167,8 +168,8 @@ public class SccpResourceJmx implements SccpResourceJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.SccpResource#modifyConcernedSpc(int, int)
      */
     @Override
-    public void modifyConcernedSpc(int arg0, int arg1) throws Exception {
-        this.wrappedSccpResource.modifyConcernedSpc(arg0, arg1);
+    public void modifyConcernedSpc(int concernedSpcId, int remoteSpc) throws Exception {
+        this.wrappedSccpResource.modifyConcernedSpc(concernedSpcId, remoteSpc);
     }
 
     /*
@@ -177,8 +178,8 @@ public class SccpResourceJmx implements SccpResourceJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.SccpResource#modifyRemoteSpc(int, int, int, int)
      */
     @Override
-    public void modifyRemoteSpc(int arg0, int arg1, int arg2, int arg3) throws Exception {
-        this.wrappedSccpResource.modifyRemoteSpc(arg0, arg1, arg2, arg3);
+    public void modifyRemoteSpc(int remoteSpcId, int remoteSpc, int remoteSpcFlag, int mask) throws Exception {
+        this.wrappedSccpResource.modifyRemoteSpc(remoteSpcId, remoteSpc, remoteSpcFlag, mask);
     }
 
     /*
@@ -187,8 +188,10 @@ public class SccpResourceJmx implements SccpResourceJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.SccpResource#modifyRemoteSsn(int, int, int, int, boolean)
      */
     @Override
-    public void modifyRemoteSsn(int arg0, int arg1, int arg2, int arg3, boolean arg4) throws Exception {
-        this.wrappedSccpResource.modifyRemoteSsn(arg0, arg1, arg2, arg3, arg4);
+    public void modifyRemoteSsn(int remoteSsnid, int remoteSpc, int remoteSsn, int remoteSsnFlag,
+            boolean markProhibitedWhenSpcResuming) throws Exception {
+        this.wrappedSccpResource.modifyRemoteSsn(remoteSsnid, remoteSpc, remoteSsn, remoteSsnFlag,
+                markProhibitedWhenSpcResuming);
     }
 
     /*
@@ -197,8 +200,8 @@ public class SccpResourceJmx implements SccpResourceJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.SccpResource#removeConcernedSpc(int)
      */
     @Override
-    public void removeConcernedSpc(int arg0) throws Exception {
-        this.wrappedSccpResource.removeConcernedSpc(arg0);
+    public void removeConcernedSpc(int concernedSpcId) throws Exception {
+        this.wrappedSccpResource.removeConcernedSpc(concernedSpcId);
     }
 
     /*
@@ -207,8 +210,8 @@ public class SccpResourceJmx implements SccpResourceJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.SccpResource#removeRemoteSpc(int)
      */
     @Override
-    public void removeRemoteSpc(int arg0) throws Exception {
-        this.wrappedSccpResource.removeRemoteSpc(arg0);
+    public void removeRemoteSpc(int remoteSpcId) throws Exception {
+        this.wrappedSccpResource.removeRemoteSpc(remoteSpcId);
     }
 
     /*
@@ -217,8 +220,8 @@ public class SccpResourceJmx implements SccpResourceJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.SccpResource#removeRemoteSsn(int)
      */
     @Override
-    public void removeRemoteSsn(int arg0) throws Exception {
-        this.wrappedSccpResource.removeRemoteSsn(arg0);
+    public void removeRemoteSsn(int remoteSsnid) throws Exception {
+        this.wrappedSccpResource.removeRemoteSsn(remoteSsnid);
     }
 
 }

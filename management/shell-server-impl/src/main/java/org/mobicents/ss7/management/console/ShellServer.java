@@ -42,8 +42,6 @@ import org.jboss.security.audit.AuditLevel;
 import org.jboss.security.plugins.JaasSecurityManager;
 import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.mobicents.protocols.ss7.scheduler.Task;
-import org.mobicents.ss7.management.console.ShellExecutor;
-import org.mobicents.ss7.management.console.Version;
 import org.mobicents.ss7.management.transceiver.ChannelProvider;
 import org.mobicents.ss7.management.transceiver.ChannelSelectionKey;
 import org.mobicents.ss7.management.transceiver.ChannelSelector;

@@ -1589,6 +1589,7 @@
 																	'					<th>Pattern SccpAddress</th>'+
 																	'					<th>Primary Address ID</th>'+
 																	'					<th>Secondary Address ID</th>'+
+																	'					<th>New CallingParty Address ID</th>'+
 																	'					<th>Origination Type</th>'+
 																	'					<th>Network Id</th>'+
 																	'					<th>Action</th>'+
@@ -1824,13 +1825,13 @@
 																	'							</div>'+
 
 																	'							<div class="control-group">'+
-																	'   							<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="mandatory if <ruleType> is loadshared. The Loadsharing algorithm is configured here. Possible values of the parameter are bit4 : if( (SLS & 0x10) == 0 ) <route to primary> else <route to backup> This algorithm is the best if all traffic is local (mobicents stack) originated. bit3 : if( (SLS & 0x08) == 0 ) <route to primary> else <route to backup> This algorithm can be used if not all traffic is local (mobicents stack) originated. But only 8 links are acceptable in both linksets. bit2 : if( (SLS & 0x04) == 0 ) <route to primary> else <route to backup> This algorithm can be used if not all traffic is local (mobicents stack) originated. But only 8 links are acceptable in both linksets. bit1 : if( (SLS & 0x02) == 0 ) <route to primary> else <route to backup> This algorithm can be used if not all traffic is local (mobicents stack) originated. But only 8 links are acceptable in both linksets. bit0: if( (SLS & 0x01) == 0 ) <route to primary> else <route to backup> This algorithm can be used if not all traffic is local (mobicents stack) originated. But only 8 links are acceptable in both linksets.">'+
-																	'       							<span class="add-on">Load Sharing Algorithm</span>'+
+																	'   							<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="Message types used for the remote signaling point codes range. Possible values : udt, xudt and ludt.">'+
+																	'       							<span class="add-on">Long message rule type</span>'+
 																	'   								<select id="lmrtypeInput'+name+'" >'+
-																	'   									<option value="LongMessagesForbidden">udt</option>'+
-																	'       								<option value="XudtEnabled">xudt</option>'+
-																	'       								<option value="LudtEnabled">ludt</option>'+
-																	'       								<option value="LudtEnabled_WithSegmentationField">ludt_segm</option>'+
+																	'   									<option value="LONG_MESSAGE_FORBBIDEN">udt</option>'+
+																	'       								<option value="XUDT_ENABLED">xudt</option>'+
+																	'       								<option value="LUDT_ENABLED">ludt</option>'+
+																	'       								<option value="LUDT_ENABLED_WITH_SEGMENTATION">ludt_segm</option>'+
 																	'       							</select>'+
 																	'   							</span>'+	
 																	'							</div>'+																	
@@ -2104,6 +2105,7 @@
 																var loadSharingAlgorithm = value.loadSharingAlgorithm;
 																var primaryAddressId = value.primaryAddressId;
 																var secondaryAddressId = value.secondaryAddressId;
+																var newcgpartyAddressid = value.newCallingPartyAddressId;
 																var newCallingPartyAddressId = value.newCallingPartyAddressId;
 																var originationType = value.originationType;
 																
@@ -2154,6 +2156,7 @@
 																		'<td>' + gtType + '</td>' + 
 																		'<td>' + primaryAddressId + '</td>' + 
 																		'<td>' + secondaryAddressId + '</td>' + 
+																		'<td>' + newcgpartyAddressid + '</td>' + 
 																		'<td>' + originationType + '</td>' + 
 																		'<td>' + nid + '</td>' + 
 																		'<td style="font-size: 16px; vertical-align: middle; text-align: center; width: 100px;">' + 

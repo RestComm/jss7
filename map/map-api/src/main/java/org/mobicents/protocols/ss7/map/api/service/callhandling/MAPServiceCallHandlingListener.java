@@ -37,4 +37,8 @@ public interface MAPServiceCallHandlingListener extends MAPServiceListener {
      void onProvideRoamingNumberRequest(ProvideRoamingNumberRequest request);
 
      void onProvideRoamingNumberResponse(ProvideRoamingNumberResponse response);
+
+     void onIstCommandRequest(IstCommandRequest request);
+
+     void onIstCommandResponse(IstCommandResponse response);
 }
