@@ -74,10 +74,6 @@ public class IstCommandResponseTest {
         return new byte[] { 48, 0 };
     }
 
-    public byte[] getData2() {
-        return new byte[] { 48, 0 };
-    }
-
     @Test(groups = { "functional.decode", "service.callhandling" })
     public void testDecode() throws Exception {
 
@@ -92,19 +88,31 @@ public class IstCommandResponseTest {
 
         assertNull(prim.getExtensionContainer());
 
+
+        data = this.getMAPParameterTestData();
+        asn = new AsnInputStream(data);
+        tag = asn.readTag();
+        prim = new IstCommandResponseImpl();
+        prim.decodeAll(asn);
+
+        assertEquals(tag, Tag.SEQUENCE);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(prim.getExtensionContainer()));
+
     }
 
     @Test(groups = { "functional.encode", "service.callhandling" })
     public void testEncode() throws Exception {
         byte[] data = getData1();
 
-        IstCommandResponseImpl sri = new IstCommandResponseImpl();
+        IstCommandResponseImpl sri = new IstCommandResponseImpl(null);
 
         AsnOutputStream asnOS = new AsnOutputStream();
         sri.encodeAll(asnOS);
 
         byte[] encodedData = asnOS.toByteArray();
-        assertTrue(Arrays.equals(data, encodedData));
+        assertEquals(data, encodedData);
 
         // extensionContainer
         MAPExtensionContainer extensionContainer = MAPExtensionContainerTest.GetTestExtensionContainer();
@@ -114,9 +122,7 @@ public class IstCommandResponseTest {
         asnOS = new AsnOutputStream();
         prim.encodeAll(asnOS);
 
-        assertTrue(Arrays.equals(getMAPParameterTestData(), asnOS.toByteArray()));
-
-
+        assertEquals(getMAPParameterTestData(), asnOS.toByteArray());
     }
 
     @Test(groups = { "functional.serialize", "service.callhandling" })
