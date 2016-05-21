@@ -141,7 +141,7 @@ public class SccpExecutorTest {
 
         assertEquals(
                 result,
-                "key=1  Rule=ruleType(Solitary);originatingType(All);patternSccpAddress(pc=2,ssn=8,AI=71,gt=GlobalTitle0001Impl [digits=123456789, natureOfAddress=NATIONAL, encodingScheme=BCDOddEncodingScheme[type=BCD_ODD, code=1]]);paddress(1);saddress(-1);mask(R);networkId(0)\n");
+                "key=1  Rule=ruleId(1);ruleType(Solitary);originatingType(All);patternSccpAddress(pc=2,ssn=8,AI=71,gt=GlobalTitle0001Impl [digits=123456789, natureOfAddress=NATIONAL, encodingScheme=BCDOddEncodingScheme[type=BCD_ODD, code=1]]);paddress(1);saddress(-1);mask(R);networkId(0)\n");
 
         // TODO: this update for fixing "sccp rule create needs not zero pc"
 //        createRuleCmd = "sccp rule create 2 K 18 0 180 0 1 4 * solitary 1";
