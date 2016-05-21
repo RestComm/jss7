@@ -74,6 +74,7 @@ public class RuleImpl implements Rule, Serializable {
      */
     private static final long serialVersionUID = 2147449454267320237L;
 
+    private static final String RULEID = "ruleId";
     private static final String RULETYPE = "ruleType";
     private static final String ORIGINATING_TYPE = "originatingType";
     private static final String LS_ALGO = "loadSharingAlgo";
@@ -655,6 +656,9 @@ public class RuleImpl implements Rule, Serializable {
 
     public String toString() {
         StringBuffer buff = new StringBuffer();
+        buff.append(RULEID);
+        buff.append(ruleId);
+        buff.append(SEPARATOR);
         buff.append(RULETYPE);
         buff.append(OPEN_BRACKET);
         buff.append(ruleType.getValue());
