@@ -22,11 +22,7 @@
 
 package org.mobicents.protocols.ss7.sccp.impl;
 
-import java.io.IOException;
-import java.util.Map;
-
 import javolution.util.FastMap;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
@@ -56,6 +52,9 @@ import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCause;
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  *
@@ -510,7 +509,7 @@ public class SccpRoutingControl {
         msg.setCalledPartyAddress(address);
 
         if (logger.isDebugEnabled()) {
-            logger.debug(String.format("CalledPartyAddress after translation = %s", address));
+            logger.debug(String.format("CalledPartyAddress after translation = %s SCCP Rule applied: %s ", address, rule));
         }
 
         // routing procedures then continue's

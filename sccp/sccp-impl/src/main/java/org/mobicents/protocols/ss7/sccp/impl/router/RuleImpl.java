@@ -22,12 +22,9 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
-import java.io.Serializable;
-
 import javolution.text.CharArray;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
@@ -50,6 +47,8 @@ import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle0010;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle0011;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle0100;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+
+import java.io.Serializable;
 
 /**
  * @author amit bhayani
@@ -75,6 +74,7 @@ public class RuleImpl implements Rule, Serializable {
      */
     private static final long serialVersionUID = 2147449454267320237L;
 
+    private static final String RULEID = "ruleId";
     private static final String RULETYPE = "ruleType";
     private static final String ORIGINATING_TYPE = "originatingType";
     private static final String LS_ALGO = "loadSharingAlgo";
@@ -107,6 +107,9 @@ public class RuleImpl implements Rule, Serializable {
 
     private String[] maskPattern = null;
 
+    public static final int MIN_SIGNIFICANT_SSN = 1;
+    public static final int MAX_SIGNIFICANT_SSN = 255;
+
     public RuleImpl() {
 
     }
@@ -137,14 +140,14 @@ public class RuleImpl implements Rule, Serializable {
     /**
      * @return the ruleId
      */
-    protected int getRuleId() {
+    public int getRuleId() {
         return ruleId;
     }
 
     /**
      * @param ruleId the ruleId to set
      */
-    protected void setRuleId(int ruleId) {
+    public void setRuleId(int ruleId) {
         this.ruleId = ruleId;
     }
 
@@ -298,9 +301,19 @@ public class RuleImpl implements Rule, Serializable {
     }
     public boolean matches(SccpAddress address, boolean isMtpOriginated, int msgNetworkId) {
 
+        if (logger.isTraceEnabled()) {
+            logger.trace(String.format("Matching rule Id=%s Rule=[%s]", this.getRuleId(), this.toString()));
+        }
+
         // checking NetworkId
-        if (this.networkId != msgNetworkId)
+        if (this.networkId != msgNetworkId) {
+            if (logger.isTraceEnabled()) {
+                logger.trace(String.format("networkId didn't match. Pattern networkId=%s Address networkId=%s Return  False",
+                                           this.networkId, msgNetworkId));
+            }
+
             return false;
+        }
 
         // Rule is for GTT only
         if (address.getAddressIndicator().getRoutingIndicator() == RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN) {
@@ -311,10 +324,25 @@ public class RuleImpl implements Rule, Serializable {
         }
 
         // checking firstly about rule OriginationType
-        if (this.getOriginationType() == OriginationType.LOCAL && isMtpOriginated)
+        boolean isOriginationTypeCorrect = true;
+        if (this.getOriginationType() == OriginationType.LOCAL && isMtpOriginated) {
+            isOriginationTypeCorrect =  false;
+        }
+        if (this.getOriginationType() == OriginationType.REMOTE && !isMtpOriginated) {
+            isOriginationTypeCorrect =  false;
+        }
+        if(!isOriginationTypeCorrect) {
+            if (logger.isTraceEnabled()) {
+                logger.trace(String.format("OriginationType didn't match. Pattern OriginationType=%s Address isMtpOriginated=%s Return  False",
+                                           this.getOriginationType(), isMtpOriginated));
+            }
             return false;
-        if (this.getOriginationType() == OriginationType.REMOTE && !isMtpOriginated)
+        }
+
+        //SSN if present flag is set in pattern - must match address SSN & flag
+        if( !isSsnMatch(address, pattern) ) {
             return false;
+        }
 
         // Routing on GTT
         GlobalTitleIndicator gti = address.getAddressIndicator().getGlobalTitleIndicator();
@@ -472,6 +500,49 @@ public class RuleImpl implements Rule, Serializable {
         }
     }
 
+    /**
+     * Checks if SSN matches between rule address pattern and provided destination address.
+     * SSN is assumed to always match in case it has insignificant value or pattern AI SSNPresent flag is set to false.
+     *
+     * @param address - a provided address to match
+     * @param pattern - a rule pattern address
+     * @return true if SSN is present in both pattern and received addresses and they are the same
+     *              or pattern has SSN flag unset in AI (bit 7)(isSsnPresent = false for pattern) or pattern SSN value is insignificant
+     */
+    private boolean isSsnMatch(SccpAddress address, SccpAddress pattern) {
+        if (!isSsnSignificant(pattern.getSubsystemNumber()) || !pattern.getAddressIndicator().isSSNPresent()) {
+            if (logger.isTraceEnabled()) {
+                logger.trace(String.format("SSN is not present or insignificant [%s]. Assume SSN matches. Return True",
+                        pattern.getSubsystemNumber()) );
+            }
+            return true;
+        }
+        if(pattern.getAddressIndicator().isSSNPresent() && address.getAddressIndicator().isSSNPresent()) {
+           if( address.getSubsystemNumber() == pattern.getSubsystemNumber()) {
+               return true;
+           }
+        }
+
+        if (logger.isTraceEnabled()) {
+            logger.trace(String.format("SSN didn't match. Pattern: isSsnPresent=%s, SSN=%s Address: isSsnPresent=%s, SSN=%s Return  False",
+                                       pattern.getAddressIndicator().isSSNPresent(), pattern.getSubsystemNumber(),
+                                       address.getAddressIndicator().isSSNPresent(), address.getSubsystemNumber()));
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if provided SSN value is a meaningful value = between 1 and 255.
+     * SSN=0 is for management messages and is not perceived as significant value
+     *
+     * @param ssn SSN value to check
+     * @return true if SSN value is within significant range
+     */
+    private boolean isSsnSignificant(int ssn) {
+        return ( MIN_SIGNIFICANT_SSN <= ssn && ssn <= MAX_SIGNIFICANT_SSN);
+    }
+
     private String translateDigits(String digits, String[] masks, String[] patternDigits, String[] addressDigits) {
         StringBuffer translatedDigits = new StringBuffer();
         String[] digitComponents = new String[patternDigits.length];
@@ -585,6 +656,11 @@ public class RuleImpl implements Rule, Serializable {
 
     public String toString() {
         StringBuffer buff = new StringBuffer();
+        buff.append(RULEID);
+        buff.append(OPEN_BRACKET);
+        buff.append(ruleId);
+        buff.append(CLOSE_BRACKET);
+        buff.append(SEPARATOR);
         buff.append(RULETYPE);
         buff.append(OPEN_BRACKET);
         buff.append(ruleType.getValue());

@@ -30,6 +30,8 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  */
 public interface Rule {
 
+    int getRuleId();
+
     String getMask();
 
     RuleType getRuleType();

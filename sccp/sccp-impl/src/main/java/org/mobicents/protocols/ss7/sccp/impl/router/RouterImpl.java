@@ -22,25 +22,12 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import javolution.text.TextBuilder;
 import javolution.util.FastMap;
 import javolution.xml.XMLBinding;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 import javolution.xml.stream.XMLStreamException;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.LongMessageRule;
@@ -58,8 +45,19 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.GlobalTitle0011Impl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.GlobalTitle0100Impl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.NoGlobalTitle;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
-
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>
