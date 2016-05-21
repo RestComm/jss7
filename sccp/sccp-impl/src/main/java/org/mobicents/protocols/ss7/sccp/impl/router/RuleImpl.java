@@ -657,7 +657,9 @@ public class RuleImpl implements Rule, Serializable {
     public String toString() {
         StringBuffer buff = new StringBuffer();
         buff.append(RULEID);
+        buff.append(OPEN_BRACKET);
         buff.append(ruleId);
+        buff.append(CLOSE_BRACKET);
         buff.append(SEPARATOR);
         buff.append(RULETYPE);
         buff.append(OPEN_BRACKET);
