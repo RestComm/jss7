@@ -105,6 +105,9 @@ public class CUGIndexImpl implements MAPAsnPrimitive, CUGIndex {
         this.data = 0;
 
         this.data = (int) asnIS.readIntegerData(length);
+        if (data < 0 || data > 32767)
+            throw new MAPParsingComponentException(_PrimitiveName + " value out of range: " + data,
+                    MAPParsingComponentExceptionReason.MistypedParameter);
     }
 
     public void encodeAll(AsnOutputStream asnOs) throws MAPException {
@@ -112,6 +115,9 @@ public class CUGIndexImpl implements MAPAsnPrimitive, CUGIndex {
     }
 
     public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
+        if (data < 0 || data > 32767)
+            throw new MAPException("Cannot encode invalid " + _PrimitiveName + " data value: " + data);
+
         try {
             asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
             int pos = asnOs.StartContentDefiniteLength();
