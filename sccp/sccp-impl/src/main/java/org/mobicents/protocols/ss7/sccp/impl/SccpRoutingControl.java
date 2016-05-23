@@ -559,7 +559,7 @@ public class SccpRoutingControl {
         msg.setCalledPartyAddress(address);
 
         if (logger.isDebugEnabled()) {
-            logger.debug(String.format("CalledPartyAddress after translation = %s", address));
+            logger.debug(String.format("Matching rule found: [%s] CalledPartyAddress after translation = %s", rule, address));
         }
 
         // routing procedures then continue's
