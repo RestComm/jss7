@@ -31,7 +31,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
  *
 <code>
 ist-Command OPERATION::= {
-  --Timer m 
+  --Timer m
   ARGUMENT IST-CommandArg
   RESULT IST-CommandRes -- optional
   ERRORS { unexpectedDataValue | resourceLimitation | unknownSubscriber | systemFailure | facilityNotSupported}
