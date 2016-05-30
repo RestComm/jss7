@@ -22,10 +22,16 @@
 
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -34,6 +40,7 @@ import org.testng.annotations.Test;
 /**
  *
  * @author sergey vetyutnev
+ * @author kiss.balazs@alerant.hu
  *
  */
 public class SpecializedResourceReportRequestTest {
@@ -97,4 +104,45 @@ public class SpecializedResourceReportRequestTest {
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData3()));
     }
+
+    @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
+    public void testXMLSerialize() throws Exception {
+
+        SpecializedResourceReportRequestImpl original = new SpecializedResourceReportRequestImpl(false, true, true);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "specializedResourceReport", SpecializedResourceReportRequestImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+        System.out.flush();
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        SpecializedResourceReportRequestImpl copy = reader.read("specializedResourceReport",
+                SpecializedResourceReportRequestImpl.class);
+
+        assertEquals(original.getAllAnnouncementsComplete(), copy.getAllAnnouncementsComplete());
+        assertEquals(original.getFirstAnnouncementStarted(), copy.getFirstAnnouncementStarted());
+        assertTrue(isEqual(original, copy));
+    }
+
+    private boolean isEqual(SpecializedResourceReportRequestImpl o1, SpecializedResourceReportRequestImpl o2) {
+        if (o1 == o2)
+            return true;
+        if (o1 == null && o2 != null || o1 != null && o2 == null)
+            return false;
+        if (o1 == null && o2 == null)
+            return true;
+        if (!o1.toString().equals(o2.toString()))
+            return false;
+        return true;
+    }
+
 }

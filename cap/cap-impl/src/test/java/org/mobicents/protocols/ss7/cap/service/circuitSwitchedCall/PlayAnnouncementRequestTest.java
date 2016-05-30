@@ -26,15 +26,31 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.InbandInfo;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.MessageID;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Tone;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.VariablePart;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsTest;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.InbandInfoImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.InformationToSendImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.MessageIDImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.ToneImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.VariableMessageImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.VariablePartDateImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.VariablePartImpl;
+import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.VariablePartTimeImpl;
 import org.testng.annotations.Test;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 /**
  *
@@ -83,5 +99,51 @@ public class PlayAnnouncementRequestTest {
         // InformationToSend informationToSend, boolean disconnectFromIPForbidden,
         // boolean requestAnnouncementCompleteNotification, CAPExtensions extensions, Integer callSegmentID, boolean
         // requestAnnouncementStartedNotification
+    }
+
+    @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
+    public void testXMLSerialize() throws Exception {
+
+        ArrayList<VariablePart> aL = new ArrayList<VariablePart>();
+        aL.add(new VariablePartImpl(new VariablePartDateImpl(2015, 6, 27)));
+        aL.add(new VariablePartImpl(new VariablePartTimeImpl(15, 10)));
+        aL.add(new VariablePartImpl(new Integer(145)));
+        VariableMessageImpl vm = new VariableMessageImpl(145, aL);
+        MessageIDImpl mi = new MessageIDImpl(vm);
+        InbandInfoImpl inbandInfo = new InbandInfoImpl(mi, new Integer(5), new Integer(8), new Integer(2));
+        InformationToSendImpl informationToSend = new InformationToSendImpl(inbandInfo);
+
+        PlayAnnouncementRequestImpl original = new PlayAnnouncementRequestImpl(informationToSend, Boolean.TRUE, Boolean.TRUE,
+                null, new Integer(1), Boolean.FALSE);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(original, "playAnnouncementArg", PlayAnnouncementRequestImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        PlayAnnouncementRequestImpl copy = reader.read("playAnnouncementArg", PlayAnnouncementRequestImpl.class);
+
+        assertTrue(isEqual(original, copy));
+    }
+
+    private boolean isEqual(PlayAnnouncementRequestImpl o1, PlayAnnouncementRequestImpl o2) {
+        if (o1 == o2)
+            return true;
+        if (o1 == null && o2 != null || o1 != null && o2 == null)
+            return false;
+        if (o1 == null && o2 == null)
+            return true;
+        if (!o1.toString().equals(o2.toString()))
+            return false;
+        return true;
     }
 }
