@@ -71,7 +71,18 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.T
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UESRVCCCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UsedRATType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.CAMELSubscriptionInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.CallBarringData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.CallForwardingData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.CallHoldData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.CallWaitingData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.ClipData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.ClirData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.EctData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSISDNBS;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.ODBInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedSubscriptionInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.AccessRestrictionData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.CSAllocationRetentionPriority;
@@ -136,6 +147,8 @@ import org.mobicents.protocols.ss7.map.service.mobility.oam.ActivateTraceModeReq
 import org.mobicents.protocols.ss7.map.service.mobility.oam.ActivateTraceModeResponseImpl_Mobility;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationResponseImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeSubscriptionInterrogationRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeSubscriptionInterrogationResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.ProvideSubscriberInfoRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.ProvideSubscriberInfoResponseImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.DeleteSubscriberDataRequestImpl;
@@ -534,6 +547,94 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         resultLast.setOperationCode(oc);
 
         AnyTimeInterrogationResponseImpl req = new AnyTimeInterrogationResponseImpl(subscriberInfo, extensionContainer);
+        AsnOutputStream aos = new AsnOutputStream();
+        req.encodeData(aos);
+
+        Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+        p.setTagClass(req.getTagClass());
+        p.setPrimitive(req.getIsPrimitive());
+        p.setTag(req.getTag());
+        p.setData(aos.toByteArray());
+        resultLast.setParameter(p);
+
+        this.sendReturnResultLastComponent(resultLast);
+    }
+
+    public long addAnyTimeSubscriptionInterrogationRequest(SubscriberIdentity subscriberIdentity,
+            RequestedSubscriptionInfo requestedSubscriptionInfo, ISDNAddressString gsmSCFAddress,
+            MAPExtensionContainer extensionContainer, boolean isLongFTNSupported) throws MAPException {
+        return this.addAnyTimeSubscriptionInterrogationRequest(_Timer_Default, subscriberIdentity, requestedSubscriptionInfo,
+                gsmSCFAddress, extensionContainer, isLongFTNSupported);
+    }
+
+    public long addAnyTimeSubscriptionInterrogationRequest(int customTimeout, SubscriberIdentity subscriberIdentity,
+            RequestedSubscriptionInfo requestedSubscriptionInfo, ISDNAddressString gsmSCFAddress, MAPExtensionContainer extensionContainer,
+            boolean isLongFTNSupported) throws MAPException {
+        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.anyTimeInfoHandlingContext)
+                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+            throw new MAPException(
+                    "Bad application context name for AnyTimeSubscriptionInterrogationRequest: must be networkLocUpContext_V3");
+
+        Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
+        if (customTimeout == _Timer_Default)
+            invoke.setTimeout(_Timer_m);
+        else
+            invoke.setTimeout(customTimeout);
+
+        // Operation Code
+        OperationCode oc = TcapFactory.createOperationCode();
+        oc.setLocalOperationCode((long) MAPOperationCode.anyTimeSubscriptionInterrogation);
+        invoke.setOperationCode(oc);
+
+        AnyTimeSubscriptionInterrogationRequestImpl req = new AnyTimeSubscriptionInterrogationRequestImpl(subscriberIdentity, requestedSubscriptionInfo, gsmSCFAddress, extensionContainer, isLongFTNSupported);
+        AsnOutputStream aos = new AsnOutputStream();
+        req.encodeData(aos);
+
+        Parameter p = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+        p.setTagClass(req.getTagClass());
+        p.setPrimitive(req.getIsPrimitive());
+        p.setTag(req.getTag());
+        p.setData(aos.toByteArray());
+        invoke.setParameter(p);
+
+        Long invokeId;
+        try {
+            invokeId = this.tcapDialog.getNewInvokeId();
+            invoke.setInvokeId(invokeId);
+        } catch (TCAPException e) {
+            throw new MAPException(e.getMessage(), e);
+        }
+
+        this.sendInvokeComponent(invoke);
+
+        return invokeId;
+    }
+
+    public void addAnyTimeSubscriptionInterrogationResponse(long invokeId, CallForwardingData callForwardingData,
+            CallBarringData callBarringData, ODBInfo odbInfo, CAMELSubscriptionInfo camelSubscriptionInfo,
+            SupportedCamelPhases supportedVlrCamelPhases, SupportedCamelPhases supportedSgsnCamelPhases, MAPExtensionContainer extensionContainer,
+            OfferedCamel4CSIs offeredCamel4CSIsInVlr, OfferedCamel4CSIs offeredCamel4CSIsInSgsn, ArrayList<MSISDNBS> msisdnBsList,
+            ArrayList<CSGSubscriptionData> csgSubscriptionDataList, CallWaitingData callWaitingData, CallHoldData callHoldData, ClipData clipData,
+            ClirData clirData, EctData ectData) throws MAPException {
+
+        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.anyTimeInfoHandlingContext)
+                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+            throw new MAPException(
+                    "Bad application context name for AnyTimeSubscriptionInterrogationRequest: must be networkLocUpContext_V3");
+
+        ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
+                .createTCResultLastRequest();
+
+        resultLast.setInvokeId(invokeId);
+
+        // Operation Code
+        OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+        oc.setLocalOperationCode((long) MAPOperationCode.anyTimeSubscriptionInterrogation);
+        resultLast.setOperationCode(oc);
+
+        AnyTimeSubscriptionInterrogationResponseImpl req = new AnyTimeSubscriptionInterrogationResponseImpl(callForwardingData, callBarringData, odbInfo,
+                camelSubscriptionInfo, supportedVlrCamelPhases, supportedSgsnCamelPhases, extensionContainer, offeredCamel4CSIsInVlr, offeredCamel4CSIsInSgsn,
+                msisdnBsList, csgSubscriptionDataList, callWaitingData, callHoldData, clipData, clirData, ectData);
         AsnOutputStream aos = new AsnOutputStream();
         req.encodeData(aos);
 

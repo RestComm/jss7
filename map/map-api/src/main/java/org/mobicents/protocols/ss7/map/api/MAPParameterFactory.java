@@ -148,8 +148,18 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.V
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.IMSIWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeSubscriptionInterrogationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeSubscriptionInterrogationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.CAMELSubscriptionInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.CallBarringData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.CallForwardingData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.CallHoldData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.CallWaitingData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.ClipData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.ClirData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.DomainType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.EUtranCgi;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.EctData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GPRSChargingID;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GPRSMSClass;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeodeticInformation;
@@ -161,16 +171,19 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationNumberMap;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MNPInfoRes;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSClassmark2;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSISDNBS;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSNetworkCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.MSRadioAccessCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NotReachableReason;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NumberPortabilityStatus;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.ODBInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PDPContext;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PDPContextInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberState;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberStateChoice;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RAIdentity;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedSubscriptionInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RouteingNumber;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SIPTOPermission;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
@@ -680,6 +693,16 @@ public interface MAPParameterFactory {
 
     AnyTimeInterrogationResponse createAnyTimeInterrogationResponse(SubscriberInfo subscriberInfo,
             MAPExtensionContainer extensionContainer);
+
+    AnyTimeSubscriptionInterrogationRequest createAnyTimeSubscriptionInterrogationRequest(SubscriberIdentity subscriberIdentity,
+            RequestedSubscriptionInfo requestedSubscriptionInfo, ISDNAddressString gsmSCFAddress, MAPExtensionContainer mapExtensionContainer,
+            boolean isLongFTNSupported);
+
+    AnyTimeSubscriptionInterrogationResponse createAnyTimeSubscriptionInterrogationResponse(CallForwardingData callForwardingData,
+            CallBarringData callBarringData, ODBInfo odbInfo, CAMELSubscriptionInfo camelSubscriptionInfo, SupportedCamelPhases supportedVlrCamelPhases,
+            SupportedCamelPhases supportedSgsnCamelPhases, MAPExtensionContainer extensionContainer, OfferedCamel4CSIs offeredCamel4CSIsInVlr,
+            OfferedCamel4CSIs offeredCamel4CSIsInSgsn, ArrayList<MSISDNBS> msisdnBsList, ArrayList<CSGSubscriptionData> csgSubscriptionDataList,
+            CallWaitingData cwData, CallHoldData chData, ClipData clipData, ClirData clirData, EctData imsi);
 
     DiameterIdentity createDiameterIdentity(byte[] data);
 
