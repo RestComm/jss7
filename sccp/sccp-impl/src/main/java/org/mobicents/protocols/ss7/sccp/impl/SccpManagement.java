@@ -35,6 +35,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.mtp.Mtp3StatusCause;
+import org.mobicents.protocols.ss7.mtp.NamingThreadFactory;
 import org.mobicents.protocols.ss7.sccp.ConcernedSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
 import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
@@ -812,7 +813,7 @@ public class SccpManagement {
         synchronized (dpcVsSst) {
             this.dpcVsSst.clear();
         }
-        managementExecutors = Executors.newScheduledThreadPool(1);
+        managementExecutors = Executors.newScheduledThreadPool(1,  new NamingThreadFactory("SCCP-MGMT"));
 
     }
 

@@ -41,6 +41,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
     private static final Logger logger = Logger.getLogger(Mtp3UserPartBaseImpl.class);
 
     private static final String LICENSE_PRODUCT_NAME = "Mobicents-jSS7";
+    private static final AtomicInteger WORKER_POOL_INDEX = new AtomicInteger(0);
 
     private int maxSls = 32;
     private int slsFilter = 0x1F;
@@ -177,9 +178,9 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 
         this.msgDeliveryExecutors = new ExecutorService[this.deliveryTransferMessageThreadCount];
         for (int i = 0; i < this.deliveryTransferMessageThreadCount; i++) {
-            this.msgDeliveryExecutors[i] = Executors.newFixedThreadPool(1);
+            this.msgDeliveryExecutors[i] = Executors.newFixedThreadPool(1, new NamingThreadFactory("MTP3-" + WORKER_POOL_INDEX.incrementAndGet()));
         }
-        this.msgDeliveryExecutorSystem = Executors.newFixedThreadPool(1);
+        this.msgDeliveryExecutorSystem = Executors.newFixedThreadPool(1, new NamingThreadFactory("MTP3-MGMT"));
 
         this.isStarted = true;
     }
