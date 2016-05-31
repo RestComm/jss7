@@ -583,7 +583,7 @@ SS7Service acts as core engine binding all the components together.
         <constructor><parameter>TCAP</parameter></constructor>
         <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=TCAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
         </annotation>
-        <property name="jndiName">java:/mobicents/ss7/tcap</property>
+        <property name="jndiName">java:/restcomm/ss7/tcap</property>
         <property name="stack">
             <inject bean="TcapStack" property="provider" />
         </property>
@@ -592,7 +592,7 @@ SS7Service acts as core engine binding all the components together.
         <constructor><parameter>MAP</parameter></constructor>
         <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=MAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
         </annotation>
-        <property name="jndiName">java:/mobicents/ss7/map</property>
+        <property name="jndiName">java:/restcomm/ss7/map</property>
         <property name="stack">
             <inject bean="MapStack" property="MAPProvider" />
         </property>
@@ -601,7 +601,7 @@ SS7Service acts as core engine binding all the components together.
         <constructor><parameter>CAP</parameter></constructor>
         <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=CAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
         </annotation>
-        <property name="jndiName">java:/mobicents/ss7/cap</property>
+        <property name="jndiName">java:/restcomm/ss7/cap</property>
         <property name="stack">
             <inject bean="CapStack" property="CAPProvider" />
         </property>
@@ -610,20 +610,20 @@ SS7Service acts as core engine binding all the components together.
         <constructor><parameter>ISUP</parameter></constructor>
         <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=ISUPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
         </annotation>
-        <property name="jndiName">java:/mobicents/ss7/isup</property>
+        <property name="jndiName">java:/restcomm/ss7/isup</property>
         <property name="stack">
             <inject bean="IsupStack" property="isupProvider" />
         </property>
     </bean>
 ----
 
-TCAPSS7Service binds TcapStack to JNDI `java:/mobicents/ss7/tcap`. 
+TCAPSS7Service binds TcapStack to JNDI `java:/restcomm/ss7/tcap`. 
 
-MAPSS7Service binds MapStack to JNDI `java:/mobicents/ss7/map`. 
+MAPSS7Service binds MapStack to JNDI `java:/restcomm/ss7/map`. 
 
-CAPSS7Service binds CapStack to JNDI `java:/mobicents/ss7/cap`. 
+CAPSS7Service binds CapStack to JNDI `java:/restcomm/ss7/cap`. 
 
-ISUPSS7Service binds IsupStack to JNDI `java:/mobicents/ss7/isup`. 
+ISUPSS7Service binds IsupStack to JNDI `java:/restcomm/ss7/isup`. 
 
 The JNDI name can be configured to any valid JNDI name specific to your application.
 

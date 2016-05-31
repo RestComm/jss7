@@ -49,7 +49,7 @@ The [class]`org.mobicents.protocols.ss7.cap.CAPStackImpl`  is a concrete impleme
 
 [source,java]
 ----
-String providerJndiName = "java:/mobicents/ss7/cap";
+String providerJndiName = "java:/restcomm/ss7/cap";
 this.capProvider = ((CAPProvider) ctx.lookup(providerJndiName));
 ...
 ----
@@ -194,7 +194,7 @@ void CAPDialogListener.onDialogRequest(CAPDialog capDialog,
 ----
 
 This is the request for CAP Dialog processing.
-A CAP-User can reject the Dialog by invoking `capDialog.refuse()` method. 
+A CAP-User can reject the Dialog by invoking `capDialog.abort(CAPUserAbortReason abortReason)` method. 
 
 Then the incoming primitives corresponding events (one or more) occur.
 In this case it is 
@@ -489,7 +489,7 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	public CallSsfExample() throws NamingException {
 		InitialContext ctx = new InitialContext();
 		try {
-			String providerJndiName = "java:/mobicents/ss7/cap";
+			String providerJndiName = "java:/restcomm/ss7/cap";
 			this.capProvider = ((CAPProvider) ctx.lookup(providerJndiName));
 		} finally {
 			ctx.close();
@@ -899,7 +899,7 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	public CallScfExample() throws NamingException {
 		InitialContext ctx = new InitialContext();
 		try {
-			String providerJndiName = "java:/mobicents/ss7/cap";
+			String providerJndiName = "java:/restcomm/ss7/cap";
 			this.capProvider = ((CAPProvider) ctx.lookup(providerJndiName));
 		} finally {
 			ctx.close();
