@@ -170,6 +170,17 @@
 		<copy file="${jss7.dir}/tcap/tcap-cli/target/tcap-cli.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
 		<copy file="${jss7.dir}/release/release-build.xml" tofile="${restcomm.jss7.dist}/ss7/build.xml" failonerror="true" />
 
+        <copy todir="${restcomm.jss7.dist}/ss7/template/config-dialogic/" failonerror="true">
+                <fileset dir="${jss7.dir}/service/src/main/config-dialogic">
+                        <include name="**" />
+                </fileset>
+        </copy>
+        <copy todir="${restcomm.jss7.dist}/ss7/template/config-m3ua-dialogic/" failonerror="true">
+                <fileset dir="${jss7.dir}/service/src/main/config-m3ua-dialogic">
+                        <include name="**" />
+                </fileset>
+        </copy>
+
         <copy todir="${restcomm.jss7.dist}/ss7/restcomm-ss7-service" failonerror="true">
                 <fileset dir="${jss7.dir}/service/target/restcomm-ss7-service">
                         <include name="**" />
