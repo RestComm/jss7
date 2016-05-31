@@ -123,7 +123,7 @@ Saps can be viewed by issuing command with following structure:
 
 [source]
 ----
-sccp sap show <id>
+sccp sap show id <id>
 ----
 
 Where:
@@ -224,7 +224,7 @@ Destinations can be viewed by issuing command with following structure:
 
 [source]
 ----
-sccp dest show <sap-id> <id>
+sccp dest show <sap-id> id <id>
 ----
 
 Where:

@@ -2,7 +2,7 @@ Name
 	sccp rss show
 
 SYNOPSIS
-	sccp rss show <id> stackname <stack-name>
+	sccp rss show id <id> stackname <stack-name>
 
 DESCRIPTION
 	This command is used to view the details of all configured Remote Sub-Systems. 

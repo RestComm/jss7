@@ -2,7 +2,7 @@ Name
 	sccp dest show
 
 SYNOPSIS
-	sccp dest show <sap-id> <id> stackname <stack-name>
+	sccp dest show <sap-id> id <id> stackname <stack-name>
 
 DESCRIPTION
 	This command is used to view the details of all Destinations specified for a 
