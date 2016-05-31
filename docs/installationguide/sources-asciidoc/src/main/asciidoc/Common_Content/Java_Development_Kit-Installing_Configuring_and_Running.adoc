@@ -6,7 +6,7 @@
 = Java Development Kit (): Installing, Configuring and Running
 
 The [app]` Platform` is written in Java; therefore, before running any [app]`` server, you must have a working Java Runtime Environment () or Java Development Kit () installed on your system.
-In addition, the JRE or JDK you are using to run [app]`` must be version 5 or higher (version 7 is recommended, version 8 is not supported now) footnote:[At this point in time, it is possible to run most  servers, such as the JAIN SLEE, using a Java 6 JRE or JDK. Be aware, however, that presently the XML Document Management Server does not run on Java 6. We suggest checking the  web site, forums or discussion pages if you need to inquire about the status of running the XML Document Management Server with Java 6.]. 
+In addition, the JRE or JDK you are using to run [app]`` must be version 7 (version 8 is not supported now, Oracle JDK 64-bit is recommended).
 
 .Should I Install the JRE or JDK?
 Although you can run [app]`` servers using the Java Runtime Environment, we assume that most users are developers interested in developing Java-based, [app]``-driven solutions.
@@ -71,7 +71,7 @@ Setting the [var]`JAVA_HOME` Environment Variable on Windows::
   For information on how to set environment variables in Windows, refer to http://support.microsoft.com/kb/931715. 
 
 .Testing
-Finally, to make sure that you are using the correct JDK or Java version (5 or higher), and that the java executable is in your [var]`PATH`, run the `java -version` command in the terminal from your home directory: 
+Finally, to make sure that you are using the correct JDK or Java version (7), and that the java executable is in your [var]`PATH`, run the `java -version` command in the terminal from your home directory: 
 
 ----
 ~]$ java -version
