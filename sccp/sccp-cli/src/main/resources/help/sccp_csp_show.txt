@@ -2,7 +2,7 @@ Name
 	sccp csp show
 
 SYNOPSIS
-	sccp csp show <id> stackname <stack-name>
+	sccp csp show id <id> stackname <stack-name>
 
 DESCRIPTION
 	This command is used to view the details of all configured Concerned Signaling 

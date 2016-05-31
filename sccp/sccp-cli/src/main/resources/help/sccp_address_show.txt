@@ -2,7 +2,7 @@ Name
 	sccp address show
 
 SYNOPSIS
-	sccp address show <id> stackname <stack-name>
+	sccp address show id <id> stackname <stack-name>
 
 DESCRIPTION
 	This command is used to view the details of all configured addresses. 

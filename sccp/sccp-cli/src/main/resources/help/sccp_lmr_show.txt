@@ -2,7 +2,7 @@ Name
 	sccp lmr show
 
 SYNOPSIS
-	sccp lmr show <id> stackname <stack-name>
+	sccp lmr show id <id> stackname <stack-name>
 
 DESCRIPTION
 	This command is used to view the details of all configured Long Message Rules. 
