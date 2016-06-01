@@ -26,6 +26,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,6 +41,7 @@ import org.mobicents.protocols.ss7.cap.primitives.ReceivingSideIDImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.TimeDurationChargingResultImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.TimeInformationImpl;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
+import org.mobicents.protocols.ss7.inap.primitives.LegIDImpl;
 import org.testng.annotations.Test;
 
 /**
@@ -69,7 +71,8 @@ public class ApplyChargingReportRequestTest {
         assertFalse(elem.getTimeDurationChargingResult().getLegActive());
         assertFalse(elem.getTimeDurationChargingResult().getCallLegReleasedAtTcpExpiry());
         assertNull(elem.getTimeDurationChargingResult().getExtensions());
-        assertNull(elem.getTimeDurationChargingResult().getAChChargingAddress());
+        assertNotNull(elem.getTimeDurationChargingResult().getAChChargingAddress());
+        assertEquals(elem.getTimeDurationChargingResult().getAChChargingAddress().getLegID(), new LegIDImpl(false, LegType.leg1));
     }
 
     @Test(groups = { "functional.encode", "circuitSwitchedCall" })

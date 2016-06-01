@@ -165,6 +165,8 @@ public class TimeDurationChargingResultImpl extends SequenceBase implements Time
                         ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
                         break;
                     case _ID_aChChargingAddress:
+                        ais2 = ais.readSequenceStream();
+                        ais2.readTag();
                         this.aChChargingAddress = new AChChargingAddressImpl();
                         ((AChChargingAddressImpl) this.aChChargingAddress).decodeAll(ais);
                         break;
@@ -212,7 +214,10 @@ public class TimeDurationChargingResultImpl extends SequenceBase implements Time
                 ((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, _ID_extensions);
 
             if (this.aChChargingAddress != null) {
-                ((AChChargingAddressImpl) this.aChChargingAddress).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,_ID_aChChargingAddress);
+                aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_aChChargingAddress);
+                pos = aos.StartContentDefiniteLength();
+                ((AChChargingAddressImpl) this.aChChargingAddress).encodeAll(aos);
+                aos.FinalizeContent(pos);
             }
         } catch (IOException e) {
             throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
@@ -237,7 +242,9 @@ public class TimeDurationChargingResultImpl extends SequenceBase implements Time
             sb.append(timeInformation.toString());
         }
 
-        sb.append(", legActive=").append(legActive);
+        if (this.legActive) {
+            sb.append(", legActive");
+        }
 
         if (this.callLegReleasedAtTcpExpiry) {
             sb.append(", callLegReleasedAtTcpExpiry");

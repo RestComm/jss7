@@ -23,6 +23,8 @@
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
@@ -80,7 +82,9 @@ public class CAMELAChBillingChargingCharacteristicsTest {
         assertEquals(elem.getMaxCallPeriodDuration(), 12000);
         assertTrue(elem.getReleaseIfdurationExceeded());
         assertNull(elem.getTariffSwitchInterval());
-        assertNull(elem.getAudibleIndicator());
+        //audibleIndicator           [3] AudibleIndicator DEFAULT tone: FALSE,
+        assertNotNull(elem.getAudibleIndicator());
+        assertFalse(elem.getAudibleIndicator().getTone());
         assertNull(elem.getExtensions());
 
         data = this.getData2();
@@ -91,7 +95,9 @@ public class CAMELAChBillingChargingCharacteristicsTest {
         assertEquals(elem.getMaxCallPeriodDuration(), 10000);
         assertTrue(elem.getReleaseIfdurationExceeded());
         assertEquals((int) (long) elem.getTariffSwitchInterval(), 1000);
-        assertNull(elem.getAudibleIndicator());
+        //audibleIndicator           [3] AudibleIndicator DEFAULT tone: FALSE,
+        assertNotNull(elem.getAudibleIndicator());
+        assertFalse(elem.getAudibleIndicator().getTone());
         assertTrue(CAPExtensionsTest.checkTestCAPExtensions(elem.getExtensions()));
 
         data = this.getData3();
@@ -102,7 +108,9 @@ public class CAMELAChBillingChargingCharacteristicsTest {
         assertEquals(elem.getMaxCallPeriodDuration(), 10000);
         assertTrue(elem.getReleaseIfdurationExceeded());
         assertEquals((int) (long) elem.getTariffSwitchInterval(), 1000);
-        assertNull(elem.getAudibleIndicator());
+        //audibleIndicator           [3] AudibleIndicator DEFAULT tone: FALSE,
+        assertNotNull(elem.getAudibleIndicator());
+        assertFalse(elem.getAudibleIndicator().getTone());
         assertTrue(CAPExtensionsTest.checkTestCAPExtensions(elem.getExtensions()));
 
 
@@ -125,6 +133,7 @@ public class CAMELAChBillingChargingCharacteristicsTest {
                 null, null, CAPApplicationContextVersion.version2);
         AsnOutputStream aos = new AsnOutputStream();
         elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
+        System.out.println("CAMELAChBillingChargingCharacteristicsTest.testEncode-1:" + aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 
         elem = new CAMELAChBillingChargingCharacteristicsImpl(10000, true, 1000L, null,

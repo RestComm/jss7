@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
@@ -44,6 +45,7 @@ import org.mobicents.protocols.ss7.cap.primitives.AChChargingAddressImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsTest;
 import org.mobicents.protocols.ss7.cap.primitives.ReceivingSideIDImpl;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
+import org.mobicents.protocols.ss7.inap.primitives.LegIDImpl;
 import org.testng.annotations.Test;
 
 /**
@@ -81,7 +83,9 @@ public class TimeDurationChargingResultTest {
         assertFalse(elem.getLegActive());
         assertFalse(elem.getCallLegReleasedAtTcpExpiry());
         assertNull(elem.getExtensions());
-        assertNull(elem.getAChChargingAddress());
+        //aChChargingAddress  [5] AChChargingAddress {bound} DEFAULT legID:receivingSideID:leg1,
+        assertNotNull(elem.getAChChargingAddress());
+        assertEquals(elem.getAChChargingAddress().getLegID(), new LegIDImpl(false, LegType.leg1));  
 
 
         data = this.getData2();
@@ -94,7 +98,10 @@ public class TimeDurationChargingResultTest {
         assertTrue(elem.getLegActive());
         assertTrue(elem.getCallLegReleasedAtTcpExpiry());
         assertTrue(CAPExtensionsTest.checkTestCAPExtensions(elem.getExtensions()));
-        assertNull(elem.getAChChargingAddress());
+        //aChChargingAddress  [5] AChChargingAddress {bound} DEFAULT legID:receivingSideID:leg1,
+        assertNotNull(elem.getAChChargingAddress());
+        assertEquals(elem.getAChChargingAddress().getLegID(), new LegIDImpl(false, LegType.leg1));
+        
 
 
         data = this.getData3();
@@ -142,6 +149,7 @@ public class TimeDurationChargingResultTest {
         elem = new TimeDurationChargingResultImpl(partyToCharge, ti, false, false, null, aChChargingAddress);
         aos = new AsnOutputStream();
         elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
+        System.out.println("TimeDurationChargingResultTest-testEncode-3:" + aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData3()));
     }
 

@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -43,6 +44,7 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsTest;
 import org.mobicents.protocols.ss7.cap.primitives.SendingSideIDImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristicsImpl;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
+import org.mobicents.protocols.ss7.inap.primitives.LegIDImpl;
 import org.testng.annotations.Test;
 
 /**
@@ -78,14 +80,18 @@ public class ApplyChargingRequestTest {
         elem.decodeAll(ais);
 
         assertEquals((long) elem.getAChBillingChargingCharacteristics().getMaxCallPeriodDuration(), 36000);
-        assertNull(elem.getAChBillingChargingCharacteristics().getAudibleIndicator());
+        //AudibleIndicator DEFAULT tone: FALSE
+        assertNotNull(elem.getAChBillingChargingCharacteristics().getAudibleIndicator());
+        assertFalse(elem.getAChBillingChargingCharacteristics().getAudibleIndicator().getTone());
         assertNull(elem.getAChBillingChargingCharacteristics().getExtensions());
         assertFalse(elem.getAChBillingChargingCharacteristics().getReleaseIfdurationExceeded());
         assertNull(elem.getAChBillingChargingCharacteristics().getTariffSwitchInterval());
         assertEquals(elem.getPartyToCharge().getSendingSideID(), LegType.leg1);
         assertNull(elem.getExtensions());
-        assertNull(elem.getAChChargingAddress());
-
+        // AChChargingAddress {bound} DEFAULT legID:sendingSideID:leg1,
+        assertNotNull(elem.getAChChargingAddress());
+        assertEquals(elem.getAChChargingAddress().getLegID(), new LegIDImpl(true, LegType.leg1));
+        
         data = this.getData2();
         ais = new AsnInputStream(data);
         elem = new ApplyChargingRequestImpl();
@@ -93,13 +99,17 @@ public class ApplyChargingRequestTest {
         elem.decodeAll(ais);
 
         assertEquals((long) elem.getAChBillingChargingCharacteristics().getMaxCallPeriodDuration(), 36000);
-        assertNull(elem.getAChBillingChargingCharacteristics().getAudibleIndicator());
+        //AudibleIndicator DEFAULT tone: FALSE
+        assertNotNull(elem.getAChBillingChargingCharacteristics().getAudibleIndicator());
+        assertFalse(elem.getAChBillingChargingCharacteristics().getAudibleIndicator().getTone());        
         assertNull(elem.getAChBillingChargingCharacteristics().getExtensions());
         assertFalse(elem.getAChBillingChargingCharacteristics().getReleaseIfdurationExceeded());
         assertNull(elem.getAChBillingChargingCharacteristics().getTariffSwitchInterval());
         assertEquals(elem.getPartyToCharge().getSendingSideID(), LegType.leg1);
         assertTrue(CAPExtensionsTest.checkTestCAPExtensions(elem.getExtensions()));
-        assertNull(elem.getAChChargingAddress());
+        // AChChargingAddress {bound} DEFAULT legID:sendingSideID:leg1,
+        assertNotNull(elem.getAChChargingAddress());
+        assertEquals(elem.getAChChargingAddress().getLegID(), new LegIDImpl(true, LegType.leg1));      
 
 
         data = this.getData3();
@@ -109,7 +119,9 @@ public class ApplyChargingRequestTest {
         elem.decodeAll(ais);
 
         assertEquals((long) elem.getAChBillingChargingCharacteristics().getMaxCallPeriodDuration(), 36000);
-        assertNull(elem.getAChBillingChargingCharacteristics().getAudibleIndicator());
+        //AudibleIndicator DEFAULT tone: FALSE
+        assertNotNull(elem.getAChBillingChargingCharacteristics().getAudibleIndicator());
+        assertFalse(elem.getAChBillingChargingCharacteristics().getAudibleIndicator().getTone());                       
         assertNull(elem.getAChBillingChargingCharacteristics().getExtensions());
         assertFalse(elem.getAChBillingChargingCharacteristics().getReleaseIfdurationExceeded());
         assertNull(elem.getAChBillingChargingCharacteristics().getTariffSwitchInterval());
