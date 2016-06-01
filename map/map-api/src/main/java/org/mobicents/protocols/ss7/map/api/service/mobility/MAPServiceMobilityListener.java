@@ -47,6 +47,8 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.oam.ActivateTraceMod
 import org.mobicents.protocols.ss7.map.api.service.mobility.oam.ActivateTraceModeResponse_Mobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeSubscriptionInterrogationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeSubscriptionInterrogationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.ProvideSubscriberInfoRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.ProvideSubscriberInfoResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.DeleteSubscriberDataRequest;
@@ -104,6 +106,10 @@ public interface MAPServiceMobilityListener extends MAPServiceListener {
     void onAnyTimeInterrogationRequest(AnyTimeInterrogationRequest request);
 
     void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse response);
+
+    void onAnyTimeSubscriptionInterrogationRequest(AnyTimeSubscriptionInterrogationRequest request);
+
+    void onAnyTimeSubscriptionInterrogationResponse(AnyTimeSubscriptionInterrogationResponse response);
 
     void onProvideSubscriberInfoRequest(ProvideSubscriberInfoRequest request);
 
