@@ -4,7 +4,8 @@
 [[_configuring]]
 == Configuring {this-platform}  SS7 Service
 
-Configuration is done through an XML descriptor file named [path]_jboss-beans.xml_ located at [path]_$JBOSS_HOME/server/profile_name/deploy/{this-folder}-ss7-service/META-INF_, where  `profile_name` is the name of the server profile.
+Configuration is done through an XML descriptor file named [path]_jboss-beans.xml_ located at [path]_$JBOSS_HOME/server/profile_name/deploy/{this-folder}-ss7-service/META-INF_, where  `profile_name` is the name of the server profile. Default [path]_jboss-beans.xml_ contains only m3ua usage. Templates for usage of Dialogic boards or m3ua and Dialogic boards together can be found in the release binaries in folders: [path]_ss7/template/META-INF-dialogic_ and [path]_ss7/template/META-INF-m3ua-dialogic_
+
 
 {this-platform} SS7 Layer 4 (`SCCP, ISUP`) leverages either of the following `MTP`  layers to exchange signaling messages with remote signaling points:  
 
