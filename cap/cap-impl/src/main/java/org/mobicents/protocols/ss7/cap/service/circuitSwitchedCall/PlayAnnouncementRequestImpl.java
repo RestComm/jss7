@@ -330,25 +330,14 @@ public class PlayAnnouncementRequestImpl extends CircuitSwitchedCallMessageImpl 
             CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, playAnnouncementRequest);
 
             playAnnouncementRequest.informationToSend = xml.get(INFORMATION_TO_SEND, InformationToSendImpl.class);
-            Boolean disconnectFromIPForbidden = xml.get(DISCONNECT_FROM_IP_FORBIDDEN, Boolean.class);
-            if (disconnectFromIPForbidden != null) {
-                playAnnouncementRequest.disconnectFromIPForbidden = disconnectFromIPForbidden;
-            }
-
-            Boolean requestAnnouncementCompleteNotification = xml.get(REQUEST_ANNOUNCEMENT_COMPLETE_NOTIFICATION,
+            playAnnouncementRequest.disconnectFromIPForbidden = xml.get(DISCONNECT_FROM_IP_FORBIDDEN, Boolean.class);
+            playAnnouncementRequest.requestAnnouncementCompleteNotification = xml.get(REQUEST_ANNOUNCEMENT_COMPLETE_NOTIFICATION,
                     Boolean.class);
-            if (requestAnnouncementCompleteNotification != null) {
-                playAnnouncementRequest.requestAnnouncementCompleteNotification = requestAnnouncementCompleteNotification;
-            }
 
             playAnnouncementRequest.extensions = xml.get(EXTENSIONS, CAPExtensionsImpl.class);
             playAnnouncementRequest.callSegmentID = xml.get(CALL_SEGMENT_ID, Integer.class);
 
-            Boolean requestAnnouncementStartedNotification = xml.get(REQUEST_ANNOUNCEMENT_STARTED_NOTIFICATION, Boolean.class);
-            if (requestAnnouncementStartedNotification != null) {
-                playAnnouncementRequest.requestAnnouncementStartedNotification = requestAnnouncementStartedNotification;
-            }
-
+            playAnnouncementRequest.requestAnnouncementStartedNotification = xml.get(REQUEST_ANNOUNCEMENT_STARTED_NOTIFICATION, Boolean.class);
         }
 
         @Override

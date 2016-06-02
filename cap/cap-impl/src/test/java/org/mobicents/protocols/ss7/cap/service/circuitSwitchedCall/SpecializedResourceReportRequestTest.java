@@ -109,6 +109,7 @@ public class SpecializedResourceReportRequestTest {
     public void testXMLSerialize() throws Exception {
 
         SpecializedResourceReportRequestImpl original = new SpecializedResourceReportRequestImpl(false, true, true);
+        original.setLinkedId(12L);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
         // writer.setBinding(binding); // Optional.

@@ -50,6 +50,7 @@ public class SpecializedResourceReportRequestImpl extends CircuitSwitchedCallMes
 
     private static final String ALL_ANNOUNCEMENTS_COMPLETE = "allAnnouncementsComplete";
     private static final String FIRST_ANNOUNCEMENT_STARTED = "firstAnnouncementStarted";
+    private static final String LINKED_ID = "linkedId";
 
     public static final int _ID_allAnnouncementsComplete = 50;
     public static final int _ID_firstAnnouncementStarted = 51;
@@ -243,7 +244,6 @@ public class SpecializedResourceReportRequestImpl extends CircuitSwitchedCallMes
         if (this.linkedId != null) {
             sb.append(", linkedId=");
             sb.append(this.linkedId);
-            sb.append(", ");
         }
         if (this.isAllAnnouncementsComplete) {
             sb.append(", isAllAnnouncementsComplete");
@@ -266,28 +266,31 @@ public class SpecializedResourceReportRequestImpl extends CircuitSwitchedCallMes
 
             CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, specializedResourceReportRequest);
             Boolean annComp = xml.get(ALL_ANNOUNCEMENTS_COMPLETE, Boolean.class);
+            Boolean fnnComp = xml.get(FIRST_ANNOUNCEMENT_STARTED, Boolean.class);
 
             if (annComp != null && annComp) {
-                specializedResourceReportRequest.isAllAnnouncementsComplete = annComp;
-                specializedResourceReportRequest.isCAPVersion4orLater = true;
-            } else {
-                // one of them is true...
-                specializedResourceReportRequest.isFirstAnnouncementStarted = xml.get(FIRST_ANNOUNCEMENT_STARTED,
-                        Boolean.class);
+                specializedResourceReportRequest.isAllAnnouncementsComplete = true;
                 specializedResourceReportRequest.isCAPVersion4orLater = true;
             }
+            if (fnnComp != null && fnnComp) {
+                specializedResourceReportRequest.isFirstAnnouncementStarted = true;
+                specializedResourceReportRequest.isCAPVersion4orLater = true;
+            }
+            specializedResourceReportRequest.linkedId = xml.get(LINKED_ID, Long.class);
         }
 
         @Override
-        public void write(SpecializedResourceReportRequestImpl obj, javolution.xml.XMLFormat.OutputElement xml)
+        public void write(SpecializedResourceReportRequestImpl specializedResourceReportRequest, javolution.xml.XMLFormat.OutputElement xml)
                 throws XMLStreamException {
 
-            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(obj, xml);
-            if (obj.getAllAnnouncementsComplete()) {
-                xml.add(obj.getAllAnnouncementsComplete(), ALL_ANNOUNCEMENTS_COMPLETE, Boolean.class);
-                return;
+            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(specializedResourceReportRequest, xml);
+            if (specializedResourceReportRequest.getAllAnnouncementsComplete()) {
+                xml.add(true, ALL_ANNOUNCEMENTS_COMPLETE, Boolean.class);
             } else {
                 xml.add(true, FIRST_ANNOUNCEMENT_STARTED, Boolean.class);
+            }
+            if (specializedResourceReportRequest.getLinkedId() != null) {
+                xml.add(specializedResourceReportRequest.getLinkedId(), LINKED_ID, Long.class);
             }
         }
 

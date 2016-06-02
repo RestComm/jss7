@@ -26,14 +26,24 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 
 /**
  *
- specializedResourceReport OPERATION ::= { ARGUMENT SpecializedResourceReportArg RETURN RESULT FALSE ALWAYS RESPONDS FALSE
- * CODE opcode-specializedResourceReport} -- Direction: gsmSRF -> gsmSCF, Timer: Tsrr -- This operation is used as the response
- * to a PlayAnnouncement operation when the announcement -- completed report indication is set.
- *
- * CAP V2 & V3: SpecializedResourceReportArg::=NULL
- *
- * CAP V4: SpecializedResourceReportArg ::= CHOICE { allAnnouncementsComplete [50] NULL, firstAnnouncementStarted [51] NULL }
- *
+<code>
+specializedResourceReport OPERATION ::= {
+  ARGUMENT SpecializedResourceReportArg
+  RETURN RESULT FALSE
+  ALWAYS RESPONDS FALSE
+  CODE opcode-specializedResourceReport
+}
+-- Direction: gsmSRF -> gsmSCF, Timer: Tsrr
+-- This operation is used as the response to a PlayAnnouncement operation when the announcement
+-- completed report indication is set.
+
+CAP V2 & V3: SpecializedResourceReportArg::=NULL
+
+CAP V4: SpecializedResourceReportArg ::= CHOICE {
+  allAnnouncementsComplete [50] NULL,
+  firstAnnouncementStarted [51] NULL
+}
+</code>
  *
  * @author sergey vetyutnev
  *

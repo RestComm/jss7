@@ -267,23 +267,27 @@ public class ResetTimerRequestImpl extends CircuitSwitchedCallMessageImpl implem
             ResetTimerRequestImpl.class) {
 
         @Override
-        public void write(ResetTimerRequestImpl obj, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+        public void write(ResetTimerRequestImpl resetTimerRequest, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(resetTimerRequest, xml);
+
             // mandatory elements
-            xml.setAttribute(TIMER_ID, obj.timerID.name());
-            xml.add(obj.timerValue, TIMER_VALUE, Integer.class);
+            xml.setAttribute(TIMER_ID, resetTimerRequest.timerID.name());
+            xml.add(resetTimerRequest.timerValue, TIMER_VALUE, Integer.class);
             // optional elements. add method ignores null values
-            xml.add((CAPExtensionsImpl) obj.extensions, EXTENSIONS, CAPExtensionsImpl.class);
-            xml.add(obj.callSegmentID, CALL_SEGMENT_ID, Integer.class);
+            xml.add((CAPExtensionsImpl) resetTimerRequest.extensions, EXTENSIONS, CAPExtensionsImpl.class);
+            xml.add(resetTimerRequest.callSegmentID, CALL_SEGMENT_ID, Integer.class);
         }
 
         @Override
-        public void read(javolution.xml.XMLFormat.InputElement xml, ResetTimerRequestImpl obj) throws XMLStreamException {
+        public void read(javolution.xml.XMLFormat.InputElement xml, ResetTimerRequestImpl resetTimerRequest) throws XMLStreamException {
+            CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, resetTimerRequest);
+
             // mandatory elements
-            obj.timerID = TimerID.valueOf(xml.getAttribute(TIMER_ID, TimerID.tssf.name()));
-            obj.timerValue = xml.get(TIMER_VALUE, Integer.class);
+            resetTimerRequest.timerID = TimerID.valueOf(xml.getAttribute(TIMER_ID, TimerID.tssf.name()));
+            resetTimerRequest.timerValue = xml.get(TIMER_VALUE, Integer.class);
             // optional elements
-            obj.extensions = xml.get(EXTENSIONS, CAPExtensionsImpl.class);
-            obj.callSegmentID = xml.get(CALL_SEGMENT_ID, Integer.class);
+            resetTimerRequest.extensions = xml.get(EXTENSIONS, CAPExtensionsImpl.class);
+            resetTimerRequest.callSegmentID = xml.get(CALL_SEGMENT_ID, Integer.class);
         }
 
     };
