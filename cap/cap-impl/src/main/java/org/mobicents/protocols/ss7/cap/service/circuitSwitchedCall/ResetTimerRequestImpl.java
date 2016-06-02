@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -41,16 +44,21 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
 /**
  *
  * @author sergey vetyutnev
- *
+ * @author alerant appngin
  */
 public class ResetTimerRequestImpl extends CircuitSwitchedCallMessageImpl implements ResetTimerRequest {
+
+    private static final String TIMER_ID = "timerID";
+    private static final String TIMER_VALUE = "timervalue";
+    private static final String EXTENSIONS = "extensions";
+    private static final String CALL_SEGMENT_ID = "callSegmentID";
 
     public static final int _ID_timerID = 0;
     public static final int _ID_timervalue = 1;
     public static final int _ID_extensions = 2;
     public static final int _ID_callSegmentID = 3;
 
-    public static final String _PrimitiveName = "ConnectToResourceIndication";
+    public static final String _PrimitiveName = "ResetTimerRequest";
 
     private TimerID timerID;
     private int timerValue;
@@ -253,4 +261,30 @@ public class ResetTimerRequestImpl extends CircuitSwitchedCallMessageImpl implem
 
         return sb.toString();
     }
+
+    /** XML serialization */
+    protected static final XMLFormat<ResetTimerRequestImpl> RESET_TIMER_XML = new XMLFormat<ResetTimerRequestImpl>(
+            ResetTimerRequestImpl.class) {
+
+        @Override
+        public void write(ResetTimerRequestImpl obj, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            // mandatory elements
+            xml.setAttribute(TIMER_ID, obj.timerID.name());
+            xml.add(obj.timerValue, TIMER_VALUE, Integer.class);
+            // optional elements. add method ignores null values
+            xml.add((CAPExtensionsImpl) obj.extensions, EXTENSIONS, CAPExtensionsImpl.class);
+            xml.add(obj.callSegmentID, CALL_SEGMENT_ID, Integer.class);
+        }
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, ResetTimerRequestImpl obj) throws XMLStreamException {
+            // mandatory elements
+            obj.timerID = TimerID.valueOf(xml.getAttribute(TIMER_ID, TimerID.tssf.name()));
+            obj.timerValue = xml.get(TIMER_VALUE, Integer.class);
+            // optional elements
+            obj.extensions = xml.get(EXTENSIONS, CAPExtensionsImpl.class);
+            obj.callSegmentID = xml.get(CALL_SEGMENT_ID, Integer.class);
+        }
+
+    };
 }
