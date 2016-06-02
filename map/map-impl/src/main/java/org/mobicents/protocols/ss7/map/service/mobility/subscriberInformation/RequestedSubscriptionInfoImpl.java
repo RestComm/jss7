@@ -31,7 +31,6 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedCAMELSubscriptionInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedSubscriptionInfo;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSForBSCode;
-import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.primitives.SequenceBase;
 import org.mobicents.protocols.ss7.map.service.supplementary.SSForBSCodeImpl;
@@ -98,9 +97,63 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
         this.isEctInfo = isEctInfo;
     }
 
-    protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-        AsnInputStream ais = ansIS.readSequenceStreamData(length);
+    public SSForBSCode getRequestedSSInfo() {
+        return this.ssForBSCode;
+    }
 
+    public boolean getOdb() {
+        return this.isOdb;
+    }
+
+    public RequestedCAMELSubscriptionInfo getRequestedCAMELSubscriptionInfo() {
+        return this.requestedCAMELSubscriptionInfo;
+    }
+
+    public boolean getSupportedVlrCamelPhases() {
+        return this.isSupportedVlrCamelPhases;
+    }
+
+    public boolean getSupportedSgsnCamelPhases() {
+        return this.isSupportedSgsnCamelPhases;
+    }
+
+    public MAPExtensionContainer getExtensionContainer() {
+        return this.extensionContainer;
+    }
+
+    public AdditionalRequestedCAMELSubscriptionInfo getAdditionalRequestedCamelSubscriptionInfo() {
+        return this.additionalRequestedCAMELSubscriptionInfo;
+    }
+
+    public boolean getMsisdnBsList() {
+        return this.isMsisdnBsList;
+    }
+
+    public boolean getCsgSubscriptionDataRequested() {
+        return this.isCsgSubscriptionDataRequested;
+    }
+
+    public boolean getCwInfo() {
+        return this.isCwInfo;
+    }
+
+    public boolean getClipInfo() {
+        return this.isClipInfo;
+    }
+
+    public boolean getClirInfo() {
+        return this.isClirInfo;
+    }
+
+    public boolean getHoldInfo() {
+        return this.isHoldInfo;
+    }
+
+    public boolean getEctInfo() {
+        return this.isEctInfo;
+    }
+
+    protected void _decode(AsnInputStream ansIS, int length) throws MAPParsingComponentException, IOException, AsnException {
         ssForBSCode = null;
         isOdb = false;
         requestedCAMELSubscriptionInfo = null;
@@ -116,6 +169,7 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
         isHoldInfo = false;
         isEctInfo = false;
 
+        AsnInputStream ais = ansIS.readSequenceStreamData(length);
         while (true) {
             if (ais.available() == 0)
                 break;
@@ -127,7 +181,7 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
                     case _ID_requested_SS_info:
                         if (ais.isTagPrimitive())
                             throw new MAPParsingComponentException(
-                                    "Error while decoding RequestedInfo: Parameter is primitive",
+                                    "Error while decoding RequestedInfo: Parameter ssForBSCode is primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
                         this.ssForBSCode = new SSForBSCodeImpl();
                         ((SSForBSCodeImpl)this.ssForBSCode).decodeAll(ais);
@@ -135,7 +189,7 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
                     case _ID_odb:
                         if (!ais.isTagPrimitive())
                             throw new MAPParsingComponentException(
-                                    "Error while decoding RequestedInfo: Parameter is not primitive",
+                                    "Error while decoding RequestedInfo: Parameter isOdb is not primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
                         ais.readNull();
                         this.isOdb = Boolean.TRUE;
@@ -143,7 +197,7 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
                     case _ID_requested_CAMEL_subscription_info:
                         if (!ais.isTagPrimitive())
                             throw new MAPParsingComponentException(
-                                    "Error while decoding RequestedInfo: Parameter is not primitive",
+                                    "Error while decoding RequestedInfo: Parameter requestedCAMELSubscriptionInfo is not primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
                         int requestedInfo = (int)ais.readInteger();
                         this.requestedCAMELSubscriptionInfo = RequestedCAMELSubscriptionInfo.getInstance(requestedInfo);
@@ -151,7 +205,7 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
                     case _ID_supported_VLR_CAMEL_phases:
                         if (!ais.isTagPrimitive())
                             throw new MAPParsingComponentException(
-                                    "Error while decoding RequestedInfo: Parameter is not primitive",
+                                    "Error while decoding RequestedInfo: Parameter isSupportedVlrCamelPhases is not primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
                         ais.readNull();
                         this.isSupportedVlrCamelPhases = Boolean.TRUE;
@@ -159,7 +213,7 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
                     case _ID_supported_SGSN_CAMEL_phases:
                         if (!ais.isTagPrimitive())
                             throw new MAPParsingComponentException(
-                                    "Error while decoding RequestedInfo: Parameter is not primitive",
+                                    "Error while decoding RequestedInfo: Parameter isSupportedSgsnCamelPhases is not primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
                         ais.readNull();
                         this.isSupportedSgsnCamelPhases = Boolean.TRUE;
@@ -167,7 +221,7 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
                     case _ID_extension_container:
                         if (ais.isTagPrimitive())
                             throw new MAPParsingComponentException(
-                                    "Error while decoding RequestedInfo: Parameter is primitive",
+                                    "Error while decoding RequestedInfo: Parameter extensionContainer is primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
                         extensionContainer = new MAPExtensionContainerImpl();
                         ((MAPExtensionContainerImpl) extensionContainer).decodeAll(ais);
@@ -175,7 +229,7 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
                     case _ID_additional_requested_CAMEL_subscription_info:
                         if (!ais.isTagPrimitive())
                             throw new MAPParsingComponentException(
-                                    "Error while decoding RequestedInfo: Parameter is not primitive",
+                                    "Error while decoding RequestedInfo: Parameter additionalRequestedCAMELSubscriptionInfo is not primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
                         int requestedAdditionalInfo = (int)ais.readInteger();
                         this.additionalRequestedCAMELSubscriptionInfo = AdditionalRequestedCAMELSubscriptionInfo.getInstance(requestedAdditionalInfo);
@@ -183,7 +237,7 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
                     case _ID_msisdn_BS_list:
                         if (!ais.isTagPrimitive())
                             throw new MAPParsingComponentException(
-                                    "Error while decoding RequestedInfo: Parameter is not primitive",
+                                    "Error while decoding RequestedInfo: Parameter isMsisdnBsList is not primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
                         ais.readNull();
                         this.isMsisdnBsList = Boolean.TRUE;
@@ -191,7 +245,7 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
                     case _ID_csg_subscription_data_requested:
                         if (!ais.isTagPrimitive())
                             throw new MAPParsingComponentException(
-                                    "Error while decoding RequestedInfo: Parameter is not primitive",
+                                    "Error while decoding RequestedInfo: Parameter isCsgSubscriptionDataRequested is not primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
                         ais.readNull();
                         this.isCsgSubscriptionDataRequested = Boolean.TRUE;
@@ -199,7 +253,7 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
                     case _ID_cw_info:
                         if (!ais.isTagPrimitive())
                             throw new MAPParsingComponentException(
-                                    "Error while decoding RequestedInfo: Parameter is not primitive",
+                                    "Error while decoding RequestedInfo: Parameter isCwInfo is not primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
                         ais.readNull();
                         this.isCwInfo = Boolean.TRUE;
@@ -207,7 +261,7 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
                     case _ID_clip_info:
                         if (!ais.isTagPrimitive())
                             throw new MAPParsingComponentException(
-                                    "Error while decoding RequestedInfo: Parameter is not primitive",
+                                    "Error while decoding RequestedInfo: Parameter isClipInfo is not primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
                         ais.readNull();
                         this.isClipInfo = Boolean.TRUE;
@@ -215,7 +269,7 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
                     case _ID_clir_info:
                         if (!ais.isTagPrimitive())
                             throw new MAPParsingComponentException(
-                                    "Error while decoding RequestedInfo: Parameter is not primitive",
+                                    "Error while decoding RequestedInfo: Parameter isClirInfo is not primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
                         ais.readNull();
                         this.isClirInfo = Boolean.TRUE;
@@ -223,7 +277,7 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
                     case _ID_hold_info:
                         if (!ais.isTagPrimitive())
                             throw new MAPParsingComponentException(
-                                    "Error while decoding RequestedInfo: Parameter is not primitive",
+                                    "Error while decoding RequestedInfo: Parameter isHoldInfo is not primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
                         ais.readNull();
                         this.isHoldInfo = Boolean.TRUE;
@@ -231,7 +285,7 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
                     case _ID_ect_info:
                         if (!ais.isTagPrimitive())
                             throw new MAPParsingComponentException(
-                                    "Error while decoding RequestedInfo: Parameter is not primitive",
+                                    "Error while decoding RequestedInfo: Parameter isEctInfo is not primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
                         ais.readNull();
                         this.isEctInfo = Boolean.TRUE;
@@ -376,62 +430,6 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
         }
     }
 
-    public SSForBSCode getRequestedSSInfo() {
-        return this.ssForBSCode;
-    }
-
-    public boolean getOdb() {
-        return this.isOdb;
-    }
-
-    public RequestedCAMELSubscriptionInfo getRequestedCAMELSubscriptionInfo() {
-        return this.requestedCAMELSubscriptionInfo;
-    }
-
-    public boolean getSupportedVlrCamelPhases() {
-        return this.isSupportedVlrCamelPhases;
-    }
-
-    public boolean getSupportedSgsnCamelPhases() {
-        return this.isSupportedSgsnCamelPhases;
-    }
-
-    public MAPExtensionContainer getExtensionContainer() {
-        return this.extensionContainer;
-    }
-
-    public AdditionalRequestedCAMELSubscriptionInfo getAdditionalRequestedCamelSubscriptionInfo() {
-        return this.additionalRequestedCAMELSubscriptionInfo;
-    }
-
-    public boolean getMsisdnBsList() {
-        return this.isMsisdnBsList;
-    }
-
-    public boolean getCsgSubscriptionDataRequested() {
-        return this.isCsgSubscriptionDataRequested;
-    }
-
-    public boolean getCwInfo() {
-        return this.isCwInfo;
-    }
-
-    public boolean getClipInfo() {
-        return this.isClipInfo;
-    }
-
-    public boolean getClirInfo() {
-        return this.isClirInfo;
-    }
-
-    public boolean getHoldInfo() {
-        return this.isHoldInfo;
-    }
-
-    public boolean getEctInfo() {
-        return this.isEctInfo;
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -442,16 +440,19 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
             sb.append("ssForBSCode=");
             sb.append(this.ssForBSCode);
         }
-        sb.append(", isOdb=");
-        sb.append(this.isOdb);
+        if (this.isOdb) {
+            sb.append(", isOdb");
+        }
         if (this.requestedCAMELSubscriptionInfo != null) {
             sb.append(", requestedCAMELSubscriptionInfo=");
             sb.append(this.requestedCAMELSubscriptionInfo);
         }
-        sb.append(", isSupportedVlrCamelPhases=");
-        sb.append(this.isSupportedVlrCamelPhases);
-        sb.append(", isSupportedSgsnCamelPhases=");
-        sb.append(this.isSupportedSgsnCamelPhases);
+        if (this.isSupportedVlrCamelPhases) {
+            sb.append(", isSupportedVlrCamelPhases");
+        }
+        if (this.isSupportedSgsnCamelPhases) {
+            sb.append(", isSupportedSgsnCamelPhases");
+        }
         if (this.extensionContainer != null) {
             sb.append(", extensionContainer=");
             sb.append(this.extensionContainer);
@@ -460,20 +461,27 @@ public class RequestedSubscriptionInfoImpl extends SequenceBase implements Reque
             sb.append(", additionalRequestedCAMELSubscriptionInfo=");
             sb.append(this.additionalRequestedCAMELSubscriptionInfo);
         }
-        sb.append(", isMsisdnBsList=");
-        sb.append(this.isMsisdnBsList);
-        sb.append(", isCsgSubscriptionDataRequested=");
-        sb.append(this.isCsgSubscriptionDataRequested);
-        sb.append(",isCwInfo =");
-        sb.append(this.isCwInfo);
-        sb.append(", isClipInfo=");
-        sb.append(this.isClipInfo);
-        sb.append(", isClirInfo=");
-        sb.append(this.isClirInfo);
-        sb.append(", isHoldInfo=");
-        sb.append(this.isHoldInfo);
-        sb.append(", isEctInfo=");
-        sb.append(this.isEctInfo);
+        if (this.isMsisdnBsList) {
+            sb.append(", isMsisdnBsList");
+        }
+        if (this.isCsgSubscriptionDataRequested) {
+            sb.append(", isCsgSubscriptionDataRequested");
+        }
+        if (this.isCwInfo) {
+            sb.append(",isCwInfo");
+        }
+        if (this.isClipInfo) {
+            sb.append(", isClipInfo");
+        }
+        if (this.isClirInfo) {
+            sb.append(", isClirInfo");
+        }
+        if (this.isHoldInfo) {
+            sb.append(", isHoldInfo");
+        }
+        if (this.isEctInfo) {
+            sb.append(", isEctInfo");
+        }
 
         sb.append("]");
         return sb.toString();

@@ -119,6 +119,12 @@ public class ClirDataImpl extends SequenceBase implements ClirData {
                 ais.advanceElement();
             }
         }
+
+        if (this.ssStatus == null) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + "ssStatus is mandatory but it is absent",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
     }
 
     public void encodeData(AsnOutputStream asnOs) throws MAPException {
@@ -158,8 +164,9 @@ public class ClirDataImpl extends SequenceBase implements ClirData {
             sb.append(", cliRestrictionOption=");
             sb.append(this.cliRestrictionOption);
         }
-        sb.append(", notificationToCSE=");
-        sb.append(this.notificationToCSE);
+        if (this.notificationToCSE) {
+            sb.append(", notificationToCSE");
+        }
 
         sb.append("]");
         return sb.toString();

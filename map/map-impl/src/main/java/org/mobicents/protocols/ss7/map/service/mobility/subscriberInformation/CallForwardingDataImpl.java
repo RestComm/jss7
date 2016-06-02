@@ -143,6 +143,12 @@ public class CallForwardingDataImpl extends SequenceBase implements CallForwardi
                     break;
             }
         }
+
+        if (this.forwardingFeatureList == null) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + "forwardingFeatureList is mandatory but it is absent",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
     }
 
     public void encodeData(AsnOutputStream asnOs) throws MAPException {
@@ -188,8 +194,9 @@ public class CallForwardingDataImpl extends SequenceBase implements CallForwardi
             sb.append("forwardingFeatureList=");
             sb.append(this.forwardingFeatureList);
         }
-        sb.append(", isNotificationToCSE=");
-        sb.append(this.isNotificationToCSE);
+        if (isNotificationToCSE) {
+            sb.append(", isNotificationToCSE");
+        }
         if (this.extensionContainer != null) {
             sb.append(", extensionContainer=");
             sb.append(this.extensionContainer);

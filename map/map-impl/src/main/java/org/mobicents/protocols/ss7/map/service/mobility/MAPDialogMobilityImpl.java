@@ -573,7 +573,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.anyTimeInfoHandlingContext)
                 || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException(
-                    "Bad application context name for AnyTimeSubscriptionInterrogationRequest: must be networkLocUpContext_V3");
+                    "Bad application context name for AnyTimeSubscriptionInterrogationRequest: must be anyTimeInfoHandlingContext_V3");
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customTimeout == _Timer_Default)
@@ -620,7 +620,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.anyTimeInfoHandlingContext)
                 || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException(
-                    "Bad application context name for AnyTimeSubscriptionInterrogationRequest: must be networkLocUpContext_V3");
+                    "Bad application context name for AnyTimeSubscriptionInterrogationRequest: must be anyTimeInfoHandlingContext_V3");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCResultLastRequest();

@@ -61,6 +61,109 @@ public class MSISDNBSImpl extends SequenceBase implements MSISDNBS {
         this.extensionContainer = extensionContainer;
     }
 
+    public ISDNAddressString getMsisdn() {
+        return this.msisdn;
+    }
+
+    public ArrayList<ExtBasicServiceCode> getBasicServiceList() {
+        return this.basicServiceList;
+    }
+
+    public MAPExtensionContainer getExtensionContainer() {
+        return this.extensionContainer;
+    }
+
+    @Override
+    protected void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
+        this.msisdn = null;
+        this.basicServiceList = null;
+        this.extensionContainer = null;
+
+        AsnInputStream ais = asnIS.readSequenceStreamData(length);
+        while (true) {
+            if (ais.available() == 0)
+                break;
+
+            int tag = ais.readTag();
+            switch (ais.getTagClass()) {
+                case Tag.CLASS_UNIVERSAL:
+                    switch (tag) {
+                        case Tag.STRING_OCTET:
+                            // decode msisdn
+                            if (!ais.isTagPrimitive())
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ": Parameter msisdn is not primitive",
+                                        MAPParsingComponentExceptionReason.MistypedParameter);
+
+                            this.msisdn = new ISDNAddressStringImpl();
+                            ((ISDNAddressStringImpl) this.msisdn).decodeAll(ais);
+                            break;
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+                    break;
+                case Tag.CLASS_CONTEXT_SPECIFIC:
+                    switch (tag) {
+                        case _TAG_BASIC_SERVICE_LIST:
+                            if (ais.isTagPrimitive())
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ".basicServiceList: Parameter basicServiceList is primitive",
+                                        MAPParsingComponentExceptionReason.MistypedParameter);
+
+                            ExtBasicServiceCode extBasicServiceCode;
+                            this.basicServiceList = new ArrayList<ExtBasicServiceCode>();
+                            AsnInputStream ais2 = ais.readSequenceStream();
+                            while (true) {
+                                if (ais2.available() == 0) {
+                                    break;
+                                }
+
+                                if (ais2.readTag() != Tag.SEQUENCE || ais2.getTagClass() != Tag.CLASS_UNIVERSAL
+                                        || ais2.isTagPrimitive()) {
+                                    throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                            + ".extBasicServiceCode: Parameter extBasicServiceCode is primitive",
+                                            MAPParsingComponentExceptionReason.MistypedParameter);
+                                }
+
+                                extBasicServiceCode = new ExtBasicServiceCodeImpl();
+                                ((ExtBasicServiceCodeImpl) extBasicServiceCode).decodeAll(ais2);
+                                this.basicServiceList.add(extBasicServiceCode);
+                            }
+
+                            if (this.basicServiceList.size() < 1 || this.basicServiceList.size() > 70) {
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ": Parameter basicServiceList size must be from 1 to 10, found: "
+                                        + this.basicServiceList.size(), MAPParsingComponentExceptionReason.MistypedParameter);
+                            }
+                            break;
+                        case _TAG_EXTENSION_CONTAINER:
+                            if (ais.isTagPrimitive())
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ".extensionContainer: Parameter extensionContainer is primitive",
+                                        MAPParsingComponentExceptionReason.MistypedParameter);
+
+                            this.extensionContainer = new MAPExtensionContainerImpl();
+                            ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                            break;
+                        default:
+                            ais.advanceElement();
+                            break;
+                    }
+                    break;
+                default:
+                    ais.advanceElement();
+                    break;
+            }
+        }
+
+        if (this.msisdn == null) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + "msisdn is mandatory but it is absent",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+    }
+
     public void encodeData(AsnOutputStream asnOs) throws MAPException {
         if (this.msisdn == null) {
             throw new MAPException("Error while encoding " + _PrimitiveName
@@ -89,97 +192,6 @@ public class MSISDNBSImpl extends SequenceBase implements MSISDNBS {
 
         if (this.extensionContainer != null) {
             ((MAPExtensionContainerImpl)this.extensionContainer).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_EXTENSION_CONTAINER);
-        }
-    }
-
-    public ISDNAddressString getMsisdn() {
-        return this.msisdn;
-    }
-
-    public ArrayList<ExtBasicServiceCode> getBasicServiceList() {
-        return this.basicServiceList;
-    }
-
-    public MAPExtensionContainer getExtensionContainer() {
-        return this.extensionContainer;
-    }
-
-    @Override
-    protected void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
-        this.msisdn = null;
-        this.basicServiceList = null;
-        this.extensionContainer = null;
-
-        AsnInputStream ais = asnIS.readSequenceStreamData(length);
-        int tag = ais.readTag();
-        switch (ais.getTagClass()) {
-            case Tag.CLASS_UNIVERSAL:
-                // decode msisdn
-                if (tag != Tag.SEQUENCE || ais.isTagPrimitive())
-                    throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                            + ": Parameter msisdn is primitive",
-                            MAPParsingComponentExceptionReason.MistypedParameter);
-
-                this.msisdn = new ISDNAddressStringImpl();
-                ((ISDNAddressStringImpl)this.msisdn).decodeAll(ais);
-                break;
-            case Tag.CLASS_CONTEXT_SPECIFIC:
-                while (true) {
-                    if (ais.available() == 0) {
-                        break;
-                    }
-
-                    tag = ais.readTag();
-                    switch (tag) {
-                        case _TAG_BASIC_SERVICE_LIST:
-                            if (ais.isTagPrimitive())
-                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                        + ".basicServiceList: Parameter basicServiceList is primitive",
-                                        MAPParsingComponentExceptionReason.MistypedParameter);
-
-                            ExtBasicServiceCode extBasicServiceCode;
-                            this.basicServiceList = new ArrayList<ExtBasicServiceCode>();
-                            AsnInputStream ais2 = ais.readSequenceStream();
-                            while (true) {
-                                if (ais2.available() == 0) {
-                                    break;
-                                }
-
-                                if (ais2.readTag() != Tag.SEQUENCE || ais2.getTagClass() != Tag.CLASS_UNIVERSAL || ais2.isTagPrimitive()) {
-                                    throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                            + ".extBasicServiceCode: Parameter extBasicServiceCode is primitive",
-                                            MAPParsingComponentExceptionReason.MistypedParameter);
-                                }
-
-                                extBasicServiceCode = new ExtBasicServiceCodeImpl();
-                                ((ExtBasicServiceCodeImpl)extBasicServiceCode).decodeAll(ais2);
-                                this.basicServiceList.add(extBasicServiceCode);
-                            }
-
-                            if (this.basicServiceList.size() < 1 || this.basicServiceList.size() > 70) {
-                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                        + ": Parameter basicServiceList size must be from 1 to 10, found: "
-                                        + this.basicServiceList.size(), MAPParsingComponentExceptionReason.MistypedParameter);
-                            }
-                            break;
-                        case _TAG_EXTENSION_CONTAINER:
-                            if (ais.isTagPrimitive())
-                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                        + ".extensionContainer: Parameter extensionContainer is primitive",
-                                        MAPParsingComponentExceptionReason.MistypedParameter);
-
-                            this.extensionContainer = new MAPExtensionContainerImpl();
-                            ((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
-                            break;
-                        default:
-                            ais.advanceElement();
-                            break;
-                    }
-                }
-                break;
-            default:
-                ais.advanceElement();
-                break;
         }
     }
 

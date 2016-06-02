@@ -91,7 +91,7 @@ public class AnyTimeSubscriptionInterrogationResponseImpl extends MobilityMessag
     private CallHoldData chData;
     private ClipData clipData;
     private ClirData clirData;
-    private EctData imsi;
+    private EctData ectData;
 
     public AnyTimeSubscriptionInterrogationResponseImpl() {
         super();
@@ -101,7 +101,7 @@ public class AnyTimeSubscriptionInterrogationResponseImpl extends MobilityMessag
             CAMELSubscriptionInfo camelSubscriptionInfo, SupportedCamelPhases supportedVlrCamelPhases, SupportedCamelPhases supportedSgsnCamelPhases,
             MAPExtensionContainer extensionContainer, OfferedCamel4CSIs offeredCamel4CSIsInVlr, OfferedCamel4CSIs offeredCamel4CSIsInSgsn,
             ArrayList<MSISDNBS> msisdnBsList, ArrayList<CSGSubscriptionData> csgSubscriptionDataList, CallWaitingData cwData, CallHoldData chData,
-            ClipData clipData, ClirData clirData, EctData imsi) {
+            ClipData clipData, ClirData clirData, EctData ectData) {
         super();
         this.callForwardingData = callForwardingData;
         this.callBarringData = callBarringData;
@@ -118,7 +118,7 @@ public class AnyTimeSubscriptionInterrogationResponseImpl extends MobilityMessag
         this.chData = chData;
         this.clipData = clipData;
         this.clirData = clirData;
-        this.imsi = imsi;
+        this.ectData = ectData;
     }
 
     public CallForwardingData getCallForwardingData() {
@@ -181,8 +181,8 @@ public class AnyTimeSubscriptionInterrogationResponseImpl extends MobilityMessag
         return this.clirData;
     }
 
-    public EctData getImsi() {
-        return this.imsi;
+    public EctData getEctData() {
+        return this.ectData;
     }
 
     public int getTag() throws MAPException {
@@ -238,7 +238,7 @@ public class AnyTimeSubscriptionInterrogationResponseImpl extends MobilityMessag
         this.chData = null;
         this.clipData = null;
         this.clirData = null;
-        this.imsi = null;
+        this.ectData = null;
 
         AsnInputStream ais = ansIS.readSequenceStreamData(length);
         while (true) {
@@ -429,8 +429,8 @@ public class AnyTimeSubscriptionInterrogationResponseImpl extends MobilityMessag
                                     + ": Parameter imsi is primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
 
-                        this.imsi = new EctDataImpl();
-                        ((EctDataImpl)this.imsi).decodeAll(ais);
+                        this.ectData = new EctDataImpl();
+                        ((EctDataImpl)this.ectData).decodeAll(ais);
                         break;
                     default:
                         ais.advanceElement();
@@ -546,8 +546,8 @@ public class AnyTimeSubscriptionInterrogationResponseImpl extends MobilityMessag
             ((ClirDataImpl)this.clirData).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_CLIR_DATA);
         }
 
-        if (this.imsi != null) {
-            ((EctDataImpl)this.imsi).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ECT_DATA);
+        if (this.ectData != null) {
+            ((EctDataImpl)this.ectData).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_ECT_DATA);
         }
     }
 
@@ -625,9 +625,9 @@ public class AnyTimeSubscriptionInterrogationResponseImpl extends MobilityMessag
             sb.append(", clirData=");
             sb.append(this.clirData);
         }
-        if (this.imsi != null) {
+        if (this.ectData != null) {
             sb.append(", imsi=");
-            sb.append(this.imsi);
+            sb.append(this.ectData);
         }
 
         sb.append("]");

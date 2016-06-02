@@ -125,14 +125,14 @@ public class CallBarringDataImpl extends SequenceBase implements CallBarringData
                     + this.callBarringFeatureList.size(), MAPParsingComponentExceptionReason.MistypedParameter);
         }
 
-        if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
-            while (true) {
-                if (ais.available() == 0)
-                    break;
+        while (true) {
+            if (ais.available() == 0)
+                break;
 
-                tag = ais.readTag();
+            tag = ais.readTag();
+            if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
                 switch (tag) {
-                    // decode extensionContainer
+                // decode extensionContainer
                     case Tag.SEQUENCE:
                         if (ais.isTagPrimitive())
                             throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
@@ -147,7 +147,7 @@ public class CallBarringDataImpl extends SequenceBase implements CallBarringData
                                     + ".password: Parameter is not primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
 
-                        ((PasswordImpl)this.password).decodeAll(ais);
+                        ((PasswordImpl) this.password).decodeAll(ais);
                         break;
                     case Tag.INTEGER:
                         if (!ais.isTagPrimitive())
@@ -155,12 +155,12 @@ public class CallBarringDataImpl extends SequenceBase implements CallBarringData
                                     + ".password: Parameter is not primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
 
-                        this.wrongPasswordAttemptsCounter = (int)ais.readInteger();
+                        this.wrongPasswordAttemptsCounter = (int) ais.readInteger();
 
                         if (this.wrongPasswordAttemptsCounter < 0 || this.wrongPasswordAttemptsCounter > 4) {
                             throw new MAPParsingComponentException("Error while encoding " + _PrimitiveName
-                                    + " parameter wrongPasswordAttemptsCounter is out of range (0..4). Actual value: " + this.wrongPasswordAttemptsCounter,
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
+                                    + " parameter wrongPasswordAttemptsCounter is out of range (0..4). Actual value: "
+                                    + this.wrongPasswordAttemptsCounter, MAPParsingComponentExceptionReason.MistypedParameter);
                         }
                         break;
                     case Tag.NULL:
@@ -176,9 +176,9 @@ public class CallBarringDataImpl extends SequenceBase implements CallBarringData
                         ais.advanceElement();
                         break;
                 }
+            } else {
+                ais.advanceElement();
             }
-        } else {
-            ais.advanceElement();
         }
     }
 
@@ -246,8 +246,9 @@ public class CallBarringDataImpl extends SequenceBase implements CallBarringData
             sb.append(", wrongPasswordAttemptsCounter=");
             sb.append(this.wrongPasswordAttemptsCounter);
         }
-        sb.append(", isNotificationToCSE=");
-        sb.append(this.notificationToCSE);
+        if (this.notificationToCSE) {
+            sb.append(", notificationToCSE");
+        }
         if (this.extensionContainer != null) {
             sb.append(", extensionContainer=");
             sb.append(this.extensionContainer);

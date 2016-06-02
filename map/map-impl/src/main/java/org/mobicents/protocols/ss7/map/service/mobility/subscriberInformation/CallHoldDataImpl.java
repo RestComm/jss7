@@ -101,6 +101,12 @@ public class CallHoldDataImpl extends SequenceBase implements CallHoldData {
                 ais.advanceElement();
             }
         }
+
+        if (this.ssStatus == null) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + "ssStatus is mandatory but it is absent",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
     }
 
     public void encodeData(AsnOutputStream asnOs) throws MAPException {

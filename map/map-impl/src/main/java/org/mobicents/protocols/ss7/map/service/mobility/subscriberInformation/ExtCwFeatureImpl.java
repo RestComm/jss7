@@ -105,6 +105,17 @@ public class ExtCwFeatureImpl extends SequenceBase implements ExtCwFeature {
                 ais.advanceElement();
             }
         }
+
+        if (this.basicService == null) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + "basicService is mandatory but it is absent",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+        if (this.ssStatus == null) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + "ssStatus is mandatory but it is absent",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
     }
 
     public void encodeData(AsnOutputStream asnOs) throws MAPException {

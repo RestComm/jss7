@@ -203,11 +203,17 @@ public class AnyTimeSubscriptionInterrogationRequestImpl extends MobilityMessage
             }
         }
 
-        if (this.subscriberIdentity == null || this.requestedSubscriptionInfo == null || this.gsmSCFAddress == null)
-            throw new MAPParsingComponentException(
-                    "Error while decoding "
-                            + _PrimitiveName
-                            + ": subscriberIdentity, requestedInfo and gsmSCFAddress parameters are mandatory but some of them are not found",
+        if (this.subscriberIdentity == null)
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": subscriberIdentity parameter is mandatory but is not found",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        if (this.requestedSubscriptionInfo == null)
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": requestedSubscriptionInfo parameter is mandatory but is not found",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        if (this.gsmSCFAddress == null)
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": gsmSCFAddress parameter is mandatory but is not found",
                     MAPParsingComponentExceptionReason.MistypedParameter);
     }
 
@@ -298,8 +304,9 @@ public class AnyTimeSubscriptionInterrogationRequestImpl extends MobilityMessage
             sb.append(this.mapExtensionContainer);
         }
 
-        sb.append(", isLongFTNSupported=");
-        sb.append(this.isLongFTNSupported);
+        if (this.isLongFTNSupported) {
+            sb.append(", isLongFTNSupported");
+        }
 
         sb.append("]");
         return sb.toString();

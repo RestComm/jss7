@@ -119,6 +119,17 @@ public class ClipDataImpl extends SequenceBase implements ClipData {
                 ais.advanceElement();
             }
         }
+
+        if (this.ssStatus == null) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + "ssStatus is mandatory but it is absent",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
+        if (this.overrideCategory == null) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + "overrideCategory is mandatory but it is absent",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
     }
 
     public void encodeData(AsnOutputStream asnOs) throws MAPException {
@@ -161,8 +172,9 @@ public class ClipDataImpl extends SequenceBase implements ClipData {
             sb.append(", overrideCategory=");
             sb.append(this.overrideCategory);
         }
-        sb.append(", notificationToCSE=");
-        sb.append(this.notificationToCSE);
+        if (this.notificationToCSE) {
+            sb.append(", notificationToCSE");
+        }
 
         sb.append("]");
         return sb.toString();

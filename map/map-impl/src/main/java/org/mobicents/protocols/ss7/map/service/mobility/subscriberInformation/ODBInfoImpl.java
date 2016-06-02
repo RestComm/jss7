@@ -56,29 +56,6 @@ public class ODBInfoImpl extends SequenceBase implements ODBInfo {
         this.extensionContainer = extensionContainer;
     }
 
-    public void encodeData(AsnOutputStream asnOs) throws MAPException {
-        if (odbData == null) {
-            throw new MAPException("Error while encoding " + _PrimitiveName
-                    + " the mandatory parameter odbData is not defined");
-        }
-
-        try {
-            ((ODBDataImpl)this.odbData).encodeAll(asnOs);
-
-            if (this.notificationToCSE) {
-                asnOs.writeNull();
-            }
-
-            if (this.extensionContainer != null) {
-                ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
-            }
-        } catch (IOException e) {
-            throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
-        } catch (AsnException ae) {
-            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + ae.getMessage(), ae);
-        }
-    }
-
     public ODBData getOdbData() {
         return this.odbData;
     }
@@ -118,6 +95,10 @@ public class ODBInfoImpl extends SequenceBase implements ODBInfo {
             if (ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
                 switch (tag) {
                     case Tag.NULL:
+                        if (!ais.isTagPrimitive())
+                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ".notificationToCSE: Parameter is not primitive",
+                                    MAPParsingComponentExceptionReason.MistypedParameter);
                         ais.readNull();
                         this.notificationToCSE = Boolean.TRUE;
                         break;
@@ -139,6 +120,29 @@ public class ODBInfoImpl extends SequenceBase implements ODBInfo {
         }
     }
 
+    public void encodeData(AsnOutputStream asnOs) throws MAPException {
+        if (odbData == null) {
+            throw new MAPException("Error while encoding " + _PrimitiveName
+                    + " the mandatory parameter odbData is not defined");
+        }
+
+        try {
+            ((ODBDataImpl)this.odbData).encodeAll(asnOs);
+
+            if (this.notificationToCSE) {
+                asnOs.writeNull();
+            }
+
+            if (this.extensionContainer != null) {
+                ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOs);
+            }
+        } catch (IOException e) {
+            throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException ae) {
+            throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + ae.getMessage(), ae);
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -149,8 +153,9 @@ public class ODBInfoImpl extends SequenceBase implements ODBInfo {
             sb.append("odbData=");
             sb.append(this.odbData);
         }
-        sb.append(", notificationToCSE=");
-        sb.append(this.notificationToCSE);
+        if (this.notificationToCSE) {
+            sb.append(", notificationToCSE");
+        }
         if (this.extensionContainer != null) {
             sb.append(", extensionContainer=");
             sb.append(this.extensionContainer);

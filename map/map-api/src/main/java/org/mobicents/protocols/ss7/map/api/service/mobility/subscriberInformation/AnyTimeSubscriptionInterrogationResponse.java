@@ -94,6 +94,6 @@ public interface AnyTimeSubscriptionInterrogationResponse extends MobilityMessag
 
     ClirData getClirData();
 
-    EctData getImsi();
+    EctData getEctData();
 
 }

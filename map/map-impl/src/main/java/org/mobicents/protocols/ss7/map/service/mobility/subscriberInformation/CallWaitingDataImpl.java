@@ -122,6 +122,12 @@ public class CallWaitingDataImpl extends SequenceBase implements CallWaitingData
                 ais.advanceElement();
             }
         }
+
+        if (this.cwFeatureList == null) {
+            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + "cwFeatureList is mandatory but it is absent",
+                    MAPParsingComponentExceptionReason.MistypedParameter);
+        }
     }
 
     public void encodeData(AsnOutputStream asnOs) throws MAPException {
@@ -164,8 +170,9 @@ public class CallWaitingDataImpl extends SequenceBase implements CallWaitingData
             sb.append("cwFeatureList=");
             sb.append(this.cwFeatureList);
         }
-        sb.append(", isNotificationToCSE=");
-        sb.append(this.notificationToCSE);
+        if (this.notificationToCSE) {
+            sb.append(", isNotificationToCSE");
+        }
 
         sb.append("]");
         return sb.toString();
