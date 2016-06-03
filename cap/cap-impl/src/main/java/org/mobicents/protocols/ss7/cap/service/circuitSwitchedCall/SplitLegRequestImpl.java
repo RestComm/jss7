@@ -151,6 +151,10 @@ public class SplitLegRequestImpl extends CircuitSwitchedCallMessageImpl implemen
                         break;
                     case _ID_newCallSegment:
                         this.newCallSegment = (int) ais.readInteger();
+                        if (this.newCallSegment < 1 || this.newCallSegment > 127)
+                            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ": newCallSegment value must be 1..127, found: " + newCallSegment,
+                                    CAPParsingComponentExceptionReason.MistypedParameter);
                         break;
                     case _ID_extensions:
                         this.extensions = new CAPExtensionsImpl();
@@ -199,6 +203,9 @@ public class SplitLegRequestImpl extends CircuitSwitchedCallMessageImpl implemen
             aos.FinalizeContent(pos);
 
             if (this.newCallSegment != null) {
+                if (this.newCallSegment < 1 || this.newCallSegment > 127)
+                    throw new CAPException("Error while encoding " + _PrimitiveName
+                            + ": newCallSegment value must be 1..127, found: " + newCallSegment);
                 aos.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_newCallSegment, this.newCallSegment);
             }
 

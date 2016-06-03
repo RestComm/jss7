@@ -483,13 +483,14 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
                 }
                 break;
 
-        case CAPOperationCode.collectInformation:
-            if (acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric || acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
-                if (compType == ComponentType.Invoke) {
-                    collectInformationRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+            case CAPOperationCode.collectInformation:
+                if (acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric
+                        || acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
+                    if (compType == ComponentType.Invoke) {
+                        collectInformationRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+                    }
                 }
-            }
-            break;
+                break;
 
             default:
                 throw new CAPParsingComponentException("", CAPParsingComponentExceptionReason.UnrecognizedOperation);

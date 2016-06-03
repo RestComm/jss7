@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.tools.traceparser;
 
 import javolution.util.FastMap;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -71,6 +72,8 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestRe
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SplitLegRequest;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SplitLegResponse;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.ActivityTestGPRSRequest;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.ActivityTestGPRSResponse;
 import org.mobicents.protocols.ss7.cap.api.service.gprs.ApplyChargingGPRSRequest;
@@ -2985,6 +2988,18 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
     public void onAuthenticationFailureReportResponse(AuthenticationFailureReportResponse arg0) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public void onSplitLegRequest(SplitLegRequest ind) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onSplitLegResponse(SplitLegResponse ind) {
+        // TODO Auto-generated method stub
+        
     }
 
 //    public class DialogMessageChainKey {
