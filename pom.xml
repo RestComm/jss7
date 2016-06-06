@@ -9,7 +9,7 @@
 
 	<artifactId>ss7-parent</artifactId>
 	<groupId>org.mobicents.protocols.ss7</groupId>
-	<version>7.0.0-SNAPSHOT</version>
+	<version>7.0.1382</version>
 
 	<packaging>pom</packaging>
 
