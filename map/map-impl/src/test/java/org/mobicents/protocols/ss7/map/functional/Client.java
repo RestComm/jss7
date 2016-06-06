@@ -89,7 +89,10 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.S
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.TypeOfUpdate;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UESRVCCCapability;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UsedRATType;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AdditionalRequestedCAMELSubscriptionInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedCAMELSubscriptionInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedSubscriptionInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.AccessRestrictionData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BearerServiceCode;
@@ -156,6 +159,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LACIm
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.LocationAreaImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PagingAreaImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SGSNCapabilityImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.RequestedSubscriptionInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.OfferedCamel4CSIsImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.SupportedCamelPhasesImpl;
 import org.mobicents.protocols.ss7.map.service.sms.AlertServiceCentreRequestImpl;
@@ -1191,6 +1195,31 @@ public class Client extends EventTestHarness {
         clientDialogMobility.addAnyTimeInterrogationRequest(subscriberIdentity, requestedInfo, gsmSCFAddress, null);
 
         this.observerdEvents.add(TestEvent.createSentEvent(EventType.AnyTimeInterrogation, null, sequence++));
+        clientDialogMobility.send();
+    }
+
+    public void sendAnyTimeSubscriptionInterrogation() throws Exception {
+        this.mapProvider.getMAPServiceMobility().acivate();
+
+        MAPApplicationContext applicationContext = MAPApplicationContext.getInstance(MAPApplicationContextName.anyTimeInfoHandlingContext,
+                MAPApplicationContextVersion.version3);
+
+        clientDialogMobility = this.mapProvider.getMAPServiceMobility().createNewDialog(applicationContext, this.thisAddress, null,
+                this.remoteAddress, null);
+
+        ISDNAddressString gsmSCFAddress = mapParameterFactory.createISDNAddressString(AddressNature.international_number,
+                NumberingPlan.ISDN, "1234567890");
+        ISDNAddressString subscriberNumber = mapParameterFactory.createISDNAddressString(AddressNature.international_number,
+                NumberingPlan.ISDN, "111222333");
+        SubscriberIdentity subscriberIdentity = mapParameterFactory.createSubscriberIdentity(subscriberNumber);
+        RequestedSubscriptionInfo requestedSubscriptionInfo = new RequestedSubscriptionInfoImpl(null, false,
+                RequestedCAMELSubscriptionInfo.oCSI, true, false, null, AdditionalRequestedCAMELSubscriptionInfo.mtSmsCSI,
+                false, true, false, false, false, false, false);
+
+        clientDialogMobility.addAnyTimeSubscriptionInterrogationRequest(subscriberIdentity, requestedSubscriptionInfo,
+                gsmSCFAddress, null, false);
+
+        this.observerdEvents.add(TestEvent.createSentEvent(EventType.AnyTimeSubscriptionInterrogation, null, sequence++));
         clientDialogMobility.send();
     }
 

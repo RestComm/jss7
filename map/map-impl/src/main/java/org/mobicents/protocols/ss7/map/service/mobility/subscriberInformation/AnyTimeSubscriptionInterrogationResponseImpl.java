@@ -602,12 +602,30 @@ public class AnyTimeSubscriptionInterrogationResponseImpl extends MobilityMessag
             sb.append(this.offeredCamel4CSIsInSgsn);
         }
         if (this.msisdnBsList != null) {
-            sb.append(", msisdnBsList=");
-            sb.append(this.msisdnBsList);
+            sb.append(", msisdnBsList=[");
+            boolean firstItem = true;
+            for (MSISDNBS msisdnbs: msisdnBsList) {
+                if (firstItem) {
+                    firstItem = false;
+                } else {
+                    sb.append(", ");
+                }
+                sb.append(msisdnbs);
+            }
+            sb.append("], ");
         }
         if (this.csgSubscriptionDataList != null) {
-            sb.append(", csgSubscriptionDataList=");
-            sb.append(this.csgSubscriptionDataList);
+            sb.append(", csgSubscriptionDataList=[");
+            boolean firstItem = true;
+            for (CSGSubscriptionData csgSubscriptionData: csgSubscriptionDataList) {
+                if (firstItem) {
+                    firstItem = false;
+                } else {
+                    sb.append(", ");
+                }
+                sb.append(csgSubscriptionData);
+            }
+            sb.append("], ");
         }
         if (this.cwData != null) {
             sb.append(", cwData=");

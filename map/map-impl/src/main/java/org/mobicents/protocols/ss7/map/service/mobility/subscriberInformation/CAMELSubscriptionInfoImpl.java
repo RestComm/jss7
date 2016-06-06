@@ -37,6 +37,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SMSCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SSCSI;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SpecificAPNInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SpecificCSIWithdraw;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TBcsmCamelTdpCriteria;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TCSI;
@@ -466,9 +467,9 @@ public class CAMELSubscriptionInfoImpl extends SequenceBase implements CAMELSubs
                         ((MAPExtensionContainerImpl)this.extensionContainer).decodeAll(ais);
                         break;
                     case _TAG_SPECIFIC_CSI_DELETE_LIST:
-                        if (ais.isTagPrimitive())
+                        if (!ais.isTagPrimitive())
                             throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + ".specificCSIDeletedList: Parameter specificCSIDeletedList is primitive",
+                                    + ".specificCSIDeletedList: Parameter specificCSIDeletedList is not primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
 
                         this.specificCSIDeletedList = new SpecificCSIWithdrawImpl();
@@ -817,8 +818,17 @@ public class CAMELSubscriptionInfoImpl extends SequenceBase implements CAMELSubs
             sb.append(this.oCsi);
         }
         if (this.oBcsmCamelTDPCriteriaList != null) {
-            sb.append(", oBcsmCamelTDPCriteriaList=");
-            sb.append(this.oBcsmCamelTDPCriteriaList);
+            sb.append(", oBcsmCamelTDPCriteriaList=[");
+            boolean firstItem = true;
+            for (OBcsmCamelTdpCriteria oBcsmCamelTdpCriteria: oBcsmCamelTDPCriteriaList) {
+                if (firstItem) {
+                    firstItem = false;
+                } else {
+                    sb.append(", ");
+                }
+                sb.append(oBcsmCamelTdpCriteria);
+            }
+            sb.append("], ");
         }
         if (this.dCsi != null) {
             sb.append(", dCsi=");
@@ -829,16 +839,34 @@ public class CAMELSubscriptionInfoImpl extends SequenceBase implements CAMELSubs
             sb.append(this.tCsi);
         }
         if (this.tBcsmCamelTdpCriteriaList != null) {
-            sb.append(", tBcsmCamelTdpCriteriaList=");
-            sb.append(this.tBcsmCamelTdpCriteriaList);
+            sb.append(", tBcsmCamelTdpCriteriaList=[");
+            boolean firstItem = true;
+            for (TBcsmCamelTdpCriteria tBcsmCamelTdpCriteria: tBcsmCamelTdpCriteriaList) {
+                if (firstItem) {
+                    firstItem = false;
+                } else {
+                    sb.append(", ");
+                }
+                sb.append(tBcsmCamelTdpCriteria);
+            }
+            sb.append("], ");
         }
         if (this.vtCsi != null) {
             sb.append(", vtCsi=");
             sb.append(this.vtCsi);
         }
         if (this.vtBcsmCamelTdpCriteriaList != null) {
-            sb.append(", vtBcsmCamelTdpCriteriaList=");
-            sb.append(this.vtBcsmCamelTdpCriteriaList);
+            sb.append(", vtBcsmCamelTdpCriteriaList=[");
+            boolean firstItem = true;
+            for (TBcsmCamelTdpCriteria vtBcsmCamelTdpCriteria: vtBcsmCamelTdpCriteriaList) {
+                if (firstItem) {
+                    firstItem = false;
+                } else {
+                    sb.append(", ");
+                }
+                sb.append(vtBcsmCamelTdpCriteria);
+            }
+            sb.append("], ");
         }
         sb.append(", tifCsi=");
         sb.append(this.tifCsi);
@@ -873,8 +901,17 @@ public class CAMELSubscriptionInfoImpl extends SequenceBase implements CAMELSubs
             sb.append(this.mtSmsCsi);
         }
         if (this.mtSmsCamelTdpCriteriaList != null) {
-            sb.append(", mtSmsCamelTdpCriteriaList=");
-            sb.append(this.mtSmsCamelTdpCriteriaList);
+            sb.append(", mtSmsCamelTdpCriteriaList=[");
+            boolean firstItem = true;
+            for (MTsmsCAMELTDPCriteria mTsmsCAMELTDPCriteria: mtSmsCamelTdpCriteriaList) {
+                if (firstItem) {
+                    firstItem = false;
+                } else {
+                    sb.append(", ");
+                }
+                sb.append(mTsmsCAMELTDPCriteria);
+            }
+            sb.append("], ");
         }
         if (this.mgCsi != null) {
             sb.append(", mgCsi=");
@@ -885,8 +922,17 @@ public class CAMELSubscriptionInfoImpl extends SequenceBase implements CAMELSubs
             sb.append(this.oImCsi);
         }
         if (this.oImBcsmCamelTdpCriteriaList != null) {
-            sb.append(", oImBcsmCamelTdpCriteriaList=");
-            sb.append(this.oImBcsmCamelTdpCriteriaList);
+            sb.append(", oImBcsmCamelTdpCriteriaList=[");
+            boolean firstItem = true;
+            for (OBcsmCamelTdpCriteria oImBcsmCamelTdpCriteria: oBcsmCamelTDPCriteriaList) {
+                if (firstItem) {
+                    firstItem = false;
+                } else {
+                    sb.append(", ");
+                }
+                sb.append(oImBcsmCamelTdpCriteria);
+            }
+            sb.append("], ");
         }
         if (this.dImCsi != null) {
             sb.append(", dImCsi=");
@@ -897,8 +943,17 @@ public class CAMELSubscriptionInfoImpl extends SequenceBase implements CAMELSubs
             sb.append(this.vtImCsi);
         }
         if (this.vtImBcsmCamelTdpCriteriaList != null) {
-            sb.append(", vtImBcsmCamelTdpCriteriaList=");
-            sb.append(this.vtImBcsmCamelTdpCriteriaList);
+            sb.append(", vtImBcsmCamelTdpCriteriaList=[");
+            boolean firstItem = true;
+            for (TBcsmCamelTdpCriteria tBcsmCamelTdpCriteria: vtImBcsmCamelTdpCriteriaList) {
+                if (firstItem) {
+                    firstItem = false;
+                } else {
+                    sb.append(", ");
+                }
+                sb.append(tBcsmCamelTdpCriteria);
+            }
+            sb.append("], ");
         }
 
         sb.append("]");

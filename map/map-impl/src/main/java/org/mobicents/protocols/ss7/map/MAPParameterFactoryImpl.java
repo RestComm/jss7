@@ -150,6 +150,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.S
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedRATTypes;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
 
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AdditionalRequestedCAMELSubscriptionInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeSubscriptionInterrogationRequest;
@@ -164,6 +165,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.DomainType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.EUtranCgi;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.EctData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.ExtCwFeature;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GPRSChargingID;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GPRSMSClass;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeodeticInformation;
@@ -186,6 +188,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberState;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberStateChoice;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RAIdentity;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedCAMELSubscriptionInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedSubscriptionInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RouteingNumber;
@@ -341,6 +344,18 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeSubscriptionInterrogationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeSubscriptionInterrogationResponseImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.CAMELSubscriptionInfoImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.CallBarringDataImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.CallForwardingDataImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.CallHoldDataImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.CallWaitingDataImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.ClipDataImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.ClirDataImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.EctDataImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.ExtCwFeatureImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.MSISDNBSImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.ODBInfoImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.RequestedSubscriptionInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.AMBRImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.APNConfigurationImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.APNConfigurationProfileImpl;
@@ -1112,23 +1127,6 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
     public AnyTimeInterrogationResponse createAnyTimeInterrogationResponse(SubscriberInfo subscriberInfo,
             MAPExtensionContainer extensionContainer) {
         return new AnyTimeInterrogationResponseImpl(subscriberInfo, extensionContainer);
-    }
-
-    public AnyTimeSubscriptionInterrogationRequest createAnyTimeSubscriptionInterrogationRequest(SubscriberIdentity subscriberIdentity,
-            RequestedSubscriptionInfo requestedSubscriptionInfo, ISDNAddressString gsmSCFAddress, MAPExtensionContainer mapExtensionContainer,
-            boolean isLongFTNSupported) {
-        return new AnyTimeSubscriptionInterrogationRequestImpl(subscriberIdentity, requestedSubscriptionInfo, gsmSCFAddress,
-                mapExtensionContainer, isLongFTNSupported);
-    }
-
-    public AnyTimeSubscriptionInterrogationResponse createAnyTimeSubscriptionInterrogationResponse(CallForwardingData callForwardingData,
-            CallBarringData callBarringData, ODBInfo odbInfo, CAMELSubscriptionInfo camelSubscriptionInfo, SupportedCamelPhases supportedVlrCamelPhases,
-            SupportedCamelPhases supportedSgsnCamelPhases, MAPExtensionContainer extensionContainer, OfferedCamel4CSIs offeredCamel4CSIsInVlr,
-            OfferedCamel4CSIs offeredCamel4CSIsInSgsn, ArrayList<MSISDNBS> msisdnBsList, ArrayList<CSGSubscriptionData> csgSubscriptionDataList,
-            CallWaitingData cwData, CallHoldData chData, ClipData clipData, ClirData clirData, EctData imsi) {
-        return new AnyTimeSubscriptionInterrogationResponseImpl(callForwardingData, callBarringData, odbInfo, camelSubscriptionInfo, supportedVlrCamelPhases,
-                supportedSgsnCamelPhases, extensionContainer, offeredCamel4CSIsInVlr, offeredCamel4CSIsInSgsn, msisdnBsList, csgSubscriptionDataList,
-                cwData, chData, clipData, clirData, imsi);
     }
 
     public DiameterIdentity createDiameterIdentity(byte[] data) {
@@ -2758,6 +2756,78 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
     @Override
     public IMSIWithLMSI createIMSIWithLMSI(IMSI imsi, LMSI lmsi) {
         return new IMSIWithLMSIImpl(imsi, lmsi);
+    }
+
+    public CAMELSubscriptionInfo createCAMELSubscriptionInfo(OCSI oCsi, ArrayList<OBcsmCamelTdpCriteria> oBcsmCamelTdpCriteriaList, DCSI dCsi, TCSI tCsi,
+            ArrayList<TBcsmCamelTdpCriteria> tBcsmCamelTdpCriteriaList, TCSI vtCsi, ArrayList<TBcsmCamelTdpCriteria> vtBcsmCamelTdpCriteriaList,
+            boolean tifCsi, boolean tifCsiNotificationToCSE, GPRSCSI gprsCsi, SMSCSI smsCsi, SSCSI ssCsi, MCSI mCsi, MAPExtensionContainer extensionContainer,
+            SpecificCSIWithdraw specificCSIWithdraw, SMSCSI mtSmsCsi, ArrayList<MTsmsCAMELTDPCriteria> mTsmsCAMELTDPCriteriaList, MGCSI mgCsi, OCSI oImCsi,
+            ArrayList<OBcsmCamelTdpCriteria> oImBcsmCamelTdpCriteriaList, DCSI dImCsi, TCSI vtImCsi, ArrayList<TBcsmCamelTdpCriteria> vtImBcsmCamelTdpCriteriaList) {
+        return new CAMELSubscriptionInfoImpl(oCsi, oBcsmCamelTdpCriteriaList, dCsi, tCsi, tBcsmCamelTdpCriteriaList, vtCsi, vtBcsmCamelTdpCriteriaList,
+                tifCsi, tifCsiNotificationToCSE, gprsCsi, smsCsi, ssCsi, mCsi, extensionContainer, specificCSIWithdraw, mtSmsCsi, mTsmsCAMELTDPCriteriaList,
+                mgCsi, oImCsi, oImBcsmCamelTdpCriteriaList, dImCsi, vtImCsi, vtImBcsmCamelTdpCriteriaList);
+    }
+
+    @Override
+    public CallBarringData createCallBarringData(ArrayList<ExtCallBarringFeature> callBarringFeatureList, Password password, Integer wrongPasswordAttemptsCounter,
+            boolean notificationToCSE, MAPExtensionContainer extensionContainer) {
+        return new CallBarringDataImpl(callBarringFeatureList, password, wrongPasswordAttemptsCounter, notificationToCSE, extensionContainer);
+    }
+
+    @Override
+    public CallForwardingData createCallForwardingData(ArrayList<ExtForwFeature> forwardingFeatureList, boolean notificationToCSE,
+            MAPExtensionContainer extensionContainer) {
+        return new CallForwardingDataImpl(forwardingFeatureList, notificationToCSE, extensionContainer);
+    }
+
+    @Override
+    public CallHoldData createCallHoldData(ExtSSStatus ssStatus, boolean notificationToCSE) {
+        return new CallHoldDataImpl(ssStatus, notificationToCSE);
+    }
+
+    @Override
+    public CallWaitingData createCallWaitingData(ArrayList<ExtCwFeature> cwFeatureList, boolean notificationToCSE) {
+        return new CallWaitingDataImpl(cwFeatureList, notificationToCSE);
+    }
+
+    @Override
+    public ClipData createClipData(ExtSSStatus ssStatus, OverrideCategory overrideCategory, boolean notificationToCSE) {
+        return new ClipDataImpl(ssStatus, overrideCategory, notificationToCSE);
+    }
+
+    @Override
+    public ClirData createClirData(ExtSSStatus ssStatus, CliRestrictionOption cliRestrictionOption, boolean notificationToCSE) {
+        return new ClirDataImpl(ssStatus, cliRestrictionOption, notificationToCSE);
+    }
+
+    @Override
+    public EctData createEctData(ExtSSStatus ssStatus, boolean notificationToCSE) {
+        return new EctDataImpl(ssStatus, notificationToCSE);
+    }
+
+    @Override
+    public ExtCwFeature createExtCwFeature(ExtBasicServiceCode basicService, ExtSSStatus ssStatus) {
+        return new ExtCwFeatureImpl(basicService, ssStatus);
+    }
+
+    @Override
+    public MSISDNBS createMSISDNBS(ISDNAddressString msisdn, ArrayList<ExtBasicServiceCode> basicServiceList, MAPExtensionContainer extensionContainer) {
+        return new MSISDNBSImpl(msisdn, basicServiceList, extensionContainer);
+    }
+
+    @Override
+    public ODBInfo createODBInfo(ODBData odbData, boolean notificationToCSE, MAPExtensionContainer extensionContainer) {
+        return new ODBInfoImpl(odbData, notificationToCSE, extensionContainer);
+    }
+
+    @Override
+    public RequestedSubscriptionInfo createRequestedSubscriptionInfo(SSForBSCode requestedSSInfo, boolean odb,
+            RequestedCAMELSubscriptionInfo requestedCAMELSubscriptionInfo, boolean supportedVlrCamelPhases, boolean supportedSgsnCamelPhases,
+            MAPExtensionContainer extensionContainer, AdditionalRequestedCAMELSubscriptionInfo additionalRequestedCamelSubscriptionInfo, boolean msisdnBsList,
+            boolean csgSubscriptionDataRequested, boolean cwInfo, boolean clipInfo, boolean clirInfo, boolean holdInfo, boolean ectInfo) {
+        return new RequestedSubscriptionInfoImpl(requestedSSInfo, odb, requestedCAMELSubscriptionInfo, supportedVlrCamelPhases, supportedSgsnCamelPhases,
+                extensionContainer, additionalRequestedCamelSubscriptionInfo, msisdnBsList, csgSubscriptionDataRequested, cwInfo, clipInfo,
+                clirInfo, holdInfo, ectInfo);
     }
 }
 
