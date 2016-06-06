@@ -152,6 +152,9 @@ public class DialogicMtp3UserPart extends Mtp3UserPartBaseImpl {
                             byteBuffer.get(b);
                             Mtp3TransferPrimitive msg = getMtp3TransferPrimitiveFactory().createMtp3TransferPrimitive(b);
                             sendTransferMessageToLocalUser(msg, msg.getSls());
+
+                            // we release a message now
+                            GctLib.relm(gctmsg);
                             break;
                         case DIALOGIC_MESSAGE_TYPE_MTP_MSG_PAUSE:
                             Mtp3PausePrimitive msgPause = new Mtp3PausePrimitive((int) BBUtil.getU32(byteBuffer));
