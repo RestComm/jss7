@@ -167,8 +167,17 @@ public class CallWaitingDataImpl extends SequenceBase implements CallWaitingData
         sb.append(" [");
 
         if (this.cwFeatureList != null) {
-            sb.append("cwFeatureList=");
-            sb.append(this.cwFeatureList);
+            sb.append("cwFeatureList=[");
+            boolean firstItem = true;
+            for (ExtCwFeature extCwFeature: cwFeatureList) {
+                if (firstItem) {
+                    firstItem = false;
+                } else {
+                    sb.append(", ");
+                }
+                sb.append(extCwFeature);
+            }
+            sb.append("], ");
         }
         if (this.notificationToCSE) {
             sb.append(", isNotificationToCSE");

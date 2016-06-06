@@ -191,8 +191,17 @@ public class CallForwardingDataImpl extends SequenceBase implements CallForwardi
         sb.append(" [");
 
         if (this.forwardingFeatureList != null) {
-            sb.append("forwardingFeatureList=");
-            sb.append(this.forwardingFeatureList);
+            sb.append("forwardingFeatureList=[");
+            boolean firstItem = true;
+            for (ExtForwFeature extForwFeature: forwardingFeatureList) {
+                if (firstItem) {
+                    firstItem = false;
+                } else {
+                    sb.append(", ");
+                }
+                sb.append(extForwFeature);
+            }
+            sb.append("], ");
         }
         if (isNotificationToCSE) {
             sb.append(", isNotificationToCSE");

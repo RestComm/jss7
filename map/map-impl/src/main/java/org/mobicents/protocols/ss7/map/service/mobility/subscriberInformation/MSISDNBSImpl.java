@@ -119,12 +119,7 @@ public class MSISDNBSImpl extends SequenceBase implements MSISDNBS {
                                     break;
                                 }
 
-                                if (ais2.readTag() != Tag.SEQUENCE || ais2.getTagClass() != Tag.CLASS_UNIVERSAL
-                                        || ais2.isTagPrimitive()) {
-                                    throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                            + ".extBasicServiceCode: Parameter extBasicServiceCode is primitive",
-                                            MAPParsingComponentExceptionReason.MistypedParameter);
-                                }
+                                ais2.readTag();
 
                                 extBasicServiceCode = new ExtBasicServiceCodeImpl();
                                 ((ExtBasicServiceCodeImpl) extBasicServiceCode).decodeAll(ais2);
@@ -206,8 +201,17 @@ public class MSISDNBSImpl extends SequenceBase implements MSISDNBS {
             sb.append(this.msisdn);
         }
         if (this.basicServiceList != null) {
-            sb.append(", basicServiceList=");
-            sb.append(this.basicServiceList);
+            sb.append(", basicServiceList=[");
+            boolean firstItem = true;
+            for (ExtBasicServiceCode extCwFeature: basicServiceList) {
+                if (firstItem) {
+                    firstItem = false;
+                } else {
+                    sb.append(", ");
+                }
+                sb.append(extCwFeature);
+            }
+            sb.append("], ");
         }
         if (this.extensionContainer != null) {
             sb.append(", extensionContainer=");
