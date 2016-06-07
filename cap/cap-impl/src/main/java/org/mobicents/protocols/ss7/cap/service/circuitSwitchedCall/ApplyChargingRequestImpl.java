@@ -190,9 +190,11 @@ public class ApplyChargingRequestImpl extends CircuitSwitchedCallMessageImpl imp
                         ((CAPExtensionsImpl) this.extensions).decodeAll(ais);
                         break;
                     case _ID_aChChargingAddress:
+                        AsnInputStream ais3 = ais.readSequenceStream();
+                        ais3.readTag();
                         this.aChChargingAddress = new AChChargingAddressImpl();
                         ((AChChargingAddressImpl) this.aChChargingAddress)
-                                .decodeAll(ais);
+                                .decodeAll(ais3);
                         break;
 
                     default:

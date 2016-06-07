@@ -72,7 +72,7 @@ public class ApplyChargingReportRequestTest {
         assertFalse(elem.getTimeDurationChargingResult().getCallLegReleasedAtTcpExpiry());
         assertNull(elem.getTimeDurationChargingResult().getExtensions());
         assertNotNull(elem.getTimeDurationChargingResult().getAChChargingAddress());
-        assertEquals(elem.getTimeDurationChargingResult().getAChChargingAddress().getLegID(), new LegIDImpl(false, LegType.leg1));
+        assertEquals(elem.getTimeDurationChargingResult().getAChChargingAddress().getLegID().toString(), new LegIDImpl(false, LegType.leg1).toString());
     }
 
     @Test(groups = { "functional.encode", "circuitSwitchedCall" })

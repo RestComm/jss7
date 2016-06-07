@@ -90,7 +90,7 @@ public class ApplyChargingRequestTest {
         assertNull(elem.getExtensions());
         // AChChargingAddress {bound} DEFAULT legID:sendingSideID:leg1,
         assertNotNull(elem.getAChChargingAddress());
-        assertEquals(elem.getAChChargingAddress().getLegID(), new LegIDImpl(true, LegType.leg1));
+        assertEquals(elem.getAChChargingAddress().getLegID().toString(), new LegIDImpl(true, LegType.leg1).toString());
         
         data = this.getData2();
         ais = new AsnInputStream(data);
@@ -109,7 +109,7 @@ public class ApplyChargingRequestTest {
         assertTrue(CAPExtensionsTest.checkTestCAPExtensions(elem.getExtensions()));
         // AChChargingAddress {bound} DEFAULT legID:sendingSideID:leg1,
         assertNotNull(elem.getAChChargingAddress());
-        assertEquals(elem.getAChChargingAddress().getLegID(), new LegIDImpl(true, LegType.leg1));      
+        assertEquals(elem.getAChChargingAddress().getLegID().toString(), new LegIDImpl(true, LegType.leg1).toString());      
 
 
         data = this.getData3();
@@ -125,7 +125,9 @@ public class ApplyChargingRequestTest {
         assertNull(elem.getAChBillingChargingCharacteristics().getExtensions());
         assertFalse(elem.getAChBillingChargingCharacteristics().getReleaseIfdurationExceeded());
         assertNull(elem.getAChBillingChargingCharacteristics().getTariffSwitchInterval());
-        assertNull(elem.getPartyToCharge());
+        //partyToCharge                       [2] SendingSideID DEFAULT sendingSideID : leg1
+        assertNotNull(elem.getPartyToCharge());
+        assertEquals(elem.getPartyToCharge().getSendingSideID(), new SendingSideIDImpl(LegType.leg1).getSendingSideID());
         assertNull(elem.getExtensions());
         assertEquals(elem.getAChChargingAddress().getSrfConnection(), 10);
     }

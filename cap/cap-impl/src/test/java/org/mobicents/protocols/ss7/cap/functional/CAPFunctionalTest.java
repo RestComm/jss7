@@ -179,6 +179,7 @@ import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
+import org.mobicents.protocols.ss7.inap.primitives.LegIDImpl;
 import org.mobicents.protocols.ss7.inap.primitives.MiscCallInfoImpl;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
@@ -473,7 +474,8 @@ TC-CONTINUE + EventReportBCSMRequest (ODisconnect)
                 assertNull(ind.getAChBillingChargingCharacteristics().getTariffSwitchInterval());
                 assertEquals(ind.getPartyToCharge().getSendingSideID(), LegType.leg1);
                 assertNull(ind.getExtensions());
-                assertNull(ind.getAChChargingAddress());
+                assertNotNull(ind.getAChChargingAddress());
+                assertEquals(ind.getAChChargingAddress().getLegID().toString(), new LegIDImpl(true, LegType.leg1).toString());
                 ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
             }
 
@@ -644,7 +646,7 @@ TC-CONTINUE + EventReportBCSMRequest (ODisconnect)
                 TimeDurationChargingResult tdr = ind.getTimeDurationChargingResult();
                 assertEquals(tdr.getPartyToCharge().getReceivingSideID(), LegType.leg1);
                 assertEquals((int) tdr.getTimeInformation().getTimeIfNoTariffSwitch(), 2000);
-                assertNull(tdr.getAChChargingAddress());
+                assertEquals(tdr.getAChChargingAddress().getLegID(), new LegIDImpl(false, LegType.leg1));
                 assertFalse(tdr.getCallLegReleasedAtTcpExpiry());
                 assertNull(tdr.getExtensions());
                 assertTrue(tdr.getLegActive());

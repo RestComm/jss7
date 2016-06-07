@@ -98,10 +98,9 @@ public class TimeDurationChargingResultTest {
         assertTrue(elem.getLegActive());
         assertTrue(elem.getCallLegReleasedAtTcpExpiry());
         assertTrue(CAPExtensionsTest.checkTestCAPExtensions(elem.getExtensions()));
-        //aChChargingAddress  [5] AChChargingAddress {bound} DEFAULT legID:receivingSideID:leg1,
         assertNotNull(elem.getAChChargingAddress());
-        assertEquals(elem.getAChChargingAddress().getLegID(), new LegIDImpl(false, LegType.leg1));
-        
+        //it should matched the partyToCharge
+        assertEquals(elem.getAChChargingAddress().getLegID(), new LegIDImpl(false, LegType.leg2));
 
 
         data = this.getData3();

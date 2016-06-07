@@ -100,11 +100,7 @@ public class AudibleIndicatorImpl implements AudibleIndicator, CAPAsnPrimitive {
 
     @Override
     public boolean getIsPrimitive() {
-        if (tone != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return false;
     }
 
     @Override
@@ -183,7 +179,8 @@ public class AudibleIndicatorImpl implements AudibleIndicator, CAPAsnPrimitive {
 
     @Override
     public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
+        this.encodeData(asnOs);
+        //this.encodeAll(asnOs, this.getTagClass(), this.getTag());
     }
 
     @Override
@@ -202,17 +199,18 @@ public class AudibleIndicatorImpl implements AudibleIndicator, CAPAsnPrimitive {
     @Override
     public void encodeData(AsnOutputStream asnOs) throws CAPException {
         try {
-            if (tone != null) {
-                asnOs.writeBooleanData(tone);
+            if (this.tone != null) {
+                asnOs.writeBoolean(getTagClass(), getTag(), tone);
                 return;
-            } else if (burstList != null) {
-                ((BurstListImpl) burstList).encodeData(asnOs);
+            } else if (this.burstList != null) {
+                ((CAPAsnPrimitive) this.burstList).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_burstList);
                 return;
             }
         } catch (IOException e) {
             throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
+        } catch (AsnException e) {
+            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         }
-
         throw new CAPException("Error while encoding " + _PrimitiveName + ": no choice is specified");
     }
 

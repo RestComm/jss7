@@ -210,6 +210,7 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
                             this.releaseIfdurationExceeded = ais.readBooleanData(ln);
                         } else { // EXPLICIT - from trace - IN CAP V2
                             this.capVersion=CAPApplicationContextVersion.version2;
+                            this.releaseIfdurationExceeded = true;
                             AsnInputStream ais2 = ais.readSequenceStreamData(ln);
                             int num = 0;
                             while (true) {
@@ -220,7 +221,7 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
                                 boolean parsed = false;
                                 if (num == 0) {
                                     if (tag2 == Tag.BOOLEAN && ais2.getTagClass() == Tag.CLASS_UNIVERSAL) {
-                                        this.releaseIfdurationExceeded = ais2.readBoolean();
+                                        this.audibleIndicator = new AudibleIndicatorImpl(ais2.readBoolean());
                                         parsed = true;
                                     }
                                 }
@@ -246,8 +247,10 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
                             this.audibleIndicator = new AudibleIndicatorImpl(ais.readBoolean());
                         } else { // phase 4
                             this.capVersion = CAPApplicationContextVersion.version4;
+                            AsnInputStream ais2 = ais.readSequenceStream();
+                            ais2.readTag();
                             this.audibleIndicator = new AudibleIndicatorImpl();
-                            ((CAPAsnPrimitive) this.audibleIndicator).decodeAll(ais);
+                            ((AudibleIndicatorImpl) this.audibleIndicator).decodeAll(ais2);
                         }
                         break;
                     case _ID_extensions:
@@ -320,6 +323,10 @@ public class CAMELAChBillingChargingCharacteristicsImpl implements CAMELAChBilli
                         int pos2 = aos.StartContentDefiniteLength();
                         if(this.audibleIndicator!=null && this.audibleIndicator.getTone()!=null) {
                             aos.writeBoolean(this.audibleIndicator.getTone());
+                        } else {
+                            // if releaseIfDurationExceeded structure is present, always include tone value,
+                            // even if it is the default false
+                            aos.writeBoolean(false); // no tone
                         }
                         if (this.extensions != null) {
                             ((CAPExtensionsImpl) this.extensions).encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC,
