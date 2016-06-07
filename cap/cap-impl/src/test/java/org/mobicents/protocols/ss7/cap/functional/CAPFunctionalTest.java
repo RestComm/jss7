@@ -42,6 +42,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.mobicents.protocols.ss7.cap.CAPProviderImpl;
 import org.mobicents.protocols.ss7.cap.CAPStackImpl;
 import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
@@ -178,6 +179,7 @@ import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
 import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
+import org.mobicents.protocols.ss7.inap.primitives.LegIDImpl;
 import org.mobicents.protocols.ss7.inap.primitives.MiscCallInfoImpl;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
@@ -472,7 +474,8 @@ TC-CONTINUE + EventReportBCSMRequest (ODisconnect)
                 assertNull(ind.getAChBillingChargingCharacteristics().getTariffSwitchInterval());
                 assertEquals(ind.getPartyToCharge().getSendingSideID(), LegType.leg1);
                 assertNull(ind.getExtensions());
-                assertNull(ind.getAChChargingAddress());
+                assertNotNull(ind.getAChChargingAddress());
+                assertEquals(ind.getAChChargingAddress().getLegID().toString(), new LegIDImpl(true, LegType.leg1).toString());
                 ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
             }
 
@@ -643,7 +646,7 @@ TC-CONTINUE + EventReportBCSMRequest (ODisconnect)
                 TimeDurationChargingResult tdr = ind.getTimeDurationChargingResult();
                 assertEquals(tdr.getPartyToCharge().getReceivingSideID(), LegType.leg1);
                 assertEquals((int) tdr.getTimeInformation().getTimeIfNoTariffSwitch(), 2000);
-                assertNull(tdr.getAChChargingAddress());
+                assertEquals(tdr.getAChChargingAddress().getLegID(), new LegIDImpl(false, LegType.leg1));
                 assertFalse(tdr.getCallLegReleasedAtTcpExpiry());
                 assertNull(tdr.getExtensions());
                 assertTrue(tdr.getLegActive());
@@ -677,7 +680,7 @@ TC-CONTINUE + EventReportBCSMRequest (ODisconnect)
                                     null, sequence++));
 
                             CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics = this.capParameterFactory
-                                    .createCAMELAChBillingChargingCharacteristics(1000, true, null, null, null, false);
+                                    .createCAMELAChBillingChargingCharacteristics(1000, true, null, null, null, CAPApplicationContextVersion.version2);
                             SendingSideID partyToCharge = this.capParameterFactory.createSendingSideID(LegType.leg1);
                             dlg.addApplyChargingRequest(aChBillingChargingCharacteristics, partyToCharge, null, null);
                             this.observerdEvents.add(TestEvent

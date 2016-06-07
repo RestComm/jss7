@@ -23,6 +23,8 @@
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
@@ -30,15 +32,16 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
-import javolution.xml.XMLObjectReader;
-import javolution.xml.XMLObjectWriter;
-
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AudibleIndicator;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsTest;
 import org.testng.annotations.Test;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 /**
  *
@@ -53,19 +56,24 @@ public class CAMELAChBillingChargingCharacteristicsTest {
     }
 
     public byte[] getData2() {
-        return new byte[] { (byte) 128, 35, (byte) 160, 33, (byte) 128, 2, 39, 16, (byte) 161, 23, 1, 1, (byte) 255,
-                (byte) 170, 18, 48, 5, 2, 1, 2, (byte) 129, 0, 48, 9, 2, 1, 3, 10, 1, 1, (byte) 129, 1, (byte) 255, (byte) 130,
-                2, 3, (byte) 232 };
+        return new byte[] { (byte) 128, 35, (byte) 160, 33, (byte) 128, 2, 39, 16, (byte) 161, 23, 1, 1, (byte) 255, (byte) 170,
+                18, 48, 5, 2, 1, 2, (byte) 129, 0, 48, 9, 2, 1, 3, 10, 1, 1, (byte) 129, 1, (byte) 255, (byte) 130, 2, 3,
+                (byte) 232 };
     }
 
     public byte[] getData3() {
         return new byte[] { (byte) 128, 33, (byte) 160, 31, (byte) 128, 2, 39, 16, (byte) 129, 1, (byte) 255, (byte) 130, 2, 3,
-                (byte) 232, (byte) 164, 18, 48, 5, 2, 1, 2, (byte) 129, 0, 48, 9, 2, 1, 3, 10, 1, 1, (byte) 129, 1, (byte) 255 };
+                (byte) 232, (byte) 164, 18, 48, 5, 2, 1, 2, (byte) 129, 0, 48, 9, 2, 1, 3, 10, 1, 1, (byte) 129, 1,
+                (byte) 255 };
     }
 
     public byte[] getData4() {
-        return new byte[] { (byte) 128, 18, (byte) 160, 16, (byte) 128, 2, 39, 16, (byte) 129, 1, (byte) 255, (byte) 130, 2, 3, (byte) 232, (byte) 163, 3, 1, 1,
-                (byte) 255 };
+        return new byte[] { (byte) 128, 18, (byte) 160, 16, (byte) 128, 2, 39, 16, (byte) 129, 1, (byte) 255, (byte) 130, 2, 3,
+                (byte) 232, (byte) 163, 3, 1, 1, (byte) 255 };
+    }
+
+    public byte[] getData5() {
+        return new byte[] { (byte) 128, 11, (byte) 160, 9, (byte) 128, 2, 46, (byte) 224, (byte) 161, 3, 1, 1, 0 };
     }
 
     @Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
@@ -79,7 +87,8 @@ public class CAMELAChBillingChargingCharacteristicsTest {
         assertEquals(elem.getMaxCallPeriodDuration(), 12000);
         assertTrue(elem.getReleaseIfdurationExceeded());
         assertNull(elem.getTariffSwitchInterval());
-        assertNull(elem.getAudibleIndicator());
+        assertNotNull(elem.getAudibleIndicator());
+        assertTrue(elem.getAudibleIndicator().getTone());
         assertNull(elem.getExtensions());
 
         data = this.getData2();
@@ -90,9 +99,9 @@ public class CAMELAChBillingChargingCharacteristicsTest {
         assertEquals(elem.getMaxCallPeriodDuration(), 10000);
         assertTrue(elem.getReleaseIfdurationExceeded());
         assertEquals((int) (long) elem.getTariffSwitchInterval(), 1000);
-        assertNull(elem.getAudibleIndicator());
+        assertNotNull(elem.getAudibleIndicator());
+        assertTrue(elem.getAudibleIndicator().getTone());
         assertTrue(CAPExtensionsTest.checkTestCAPExtensions(elem.getExtensions()));
-
 
         data = this.getData3();
         ais = new AsnInputStream(data);
@@ -102,9 +111,10 @@ public class CAMELAChBillingChargingCharacteristicsTest {
         assertEquals(elem.getMaxCallPeriodDuration(), 10000);
         assertTrue(elem.getReleaseIfdurationExceeded());
         assertEquals((int) (long) elem.getTariffSwitchInterval(), 1000);
-        assertNull(elem.getAudibleIndicator());
+        // audibleIndicator [3] AudibleIndicator DEFAULT tone: FALSE,
+        assertNotNull(elem.getAudibleIndicator());
+        assertFalse(elem.getAudibleIndicator().getTone());
         assertTrue(CAPExtensionsTest.checkTestCAPExtensions(elem.getExtensions()));
-
 
         data = this.getData4();
         ais = new AsnInputStream(data);
@@ -116,34 +126,43 @@ public class CAMELAChBillingChargingCharacteristicsTest {
         assertEquals((int) (long) elem.getTariffSwitchInterval(), 1000);
         assertTrue(elem.getAudibleIndicator().getTone());
         assertNull(elem.getExtensions());
+
+        data = this.getData5();
+        ais = new AsnInputStream(data);
+        elem = new CAMELAChBillingChargingCharacteristicsImpl();
+        tag = ais.readTag();
+        elem.decodeAll(ais);
+        assertEquals(elem.getMaxCallPeriodDuration(), 12000);
+        assertTrue(elem.getReleaseIfdurationExceeded());
+        assertNull(elem.getTariffSwitchInterval());
+        assertNotNull(elem.getAudibleIndicator());
+        assertFalse(elem.getAudibleIndicator().getTone());
+        assertNull(elem.getExtensions());
     }
 
     @Test(groups = { "functional.encode", "circuitSwitchedCall.primitive" })
     public void testEncode() throws Exception {
 
         CAMELAChBillingChargingCharacteristicsImpl elem = new CAMELAChBillingChargingCharacteristicsImpl(12000, true, null,
-                null, null, false);
+                new AudibleIndicatorImpl(true), null, CAPApplicationContextVersion.version2);
         AsnOutputStream aos = new AsnOutputStream();
         elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 
-
-        elem = new CAMELAChBillingChargingCharacteristicsImpl(10000, true, 1000L, null,
-                CAPExtensionsTest.createTestCAPExtensions(), false);
+        elem = new CAMELAChBillingChargingCharacteristicsImpl(10000, true, 1000L, new AudibleIndicatorImpl(true),
+                CAPExtensionsTest.createTestCAPExtensions(), CAPApplicationContextVersion.version2);
         aos = new AsnOutputStream();
         elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
 
-
         elem = new CAMELAChBillingChargingCharacteristicsImpl(10000, true, 1000L, null,
-                CAPExtensionsTest.createTestCAPExtensions(), true);
+                CAPExtensionsTest.createTestCAPExtensions(), CAPApplicationContextVersion.version3);
         aos = new AsnOutputStream();
         elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData3()));
 
-
-        AudibleIndicator audibleIndicator = new AudibleIndicatorImpl(true);
-        elem = new CAMELAChBillingChargingCharacteristicsImpl(10000, true, 1000L, audibleIndicator, null, true);
+        elem = new CAMELAChBillingChargingCharacteristicsImpl(10000, true, 1000L, new AudibleIndicatorImpl(true), null,
+                CAPApplicationContextVersion.version4);
         aos = new AsnOutputStream();
         elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData4()));
@@ -151,12 +170,19 @@ public class CAMELAChBillingChargingCharacteristicsTest {
         // long maxCallPeriodDuration, boolean releaseIfdurationExceeded, Long
         // tariffSwitchInterval,AudibleIndicator audibleIndicator, CAPExtensions
         // extensions, boolean isCAPVersion3orLater
+
+        elem = new CAMELAChBillingChargingCharacteristicsImpl(12000, true, null, new AudibleIndicatorImpl(false), null,
+                CAPApplicationContextVersion.version2);
+        aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 0);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData5()));
+
     }
 
     @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall.primitive" })
     public void testXMLSerializaion() throws Exception {
-        CAMELAChBillingChargingCharacteristicsImpl original = new CAMELAChBillingChargingCharacteristicsImpl(12000, true,
-                8000L, null, CAPExtensionsTest.createTestCAPExtensions(), false);
+        CAMELAChBillingChargingCharacteristicsImpl original = new CAMELAChBillingChargingCharacteristicsImpl(12000, true, 8000L,
+                null, CAPExtensionsTest.createTestCAPExtensions(), CAPApplicationContextVersion.version2);
 
         // Writes the area to a file.
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -183,9 +209,9 @@ public class CAMELAChBillingChargingCharacteristicsTest {
         assertTrue(CAPExtensionsTest.checkTestCAPExtensions(copy.getExtensions()));
         assertNull(copy.getAudibleIndicator());
 
-
         AudibleIndicator audibleIndicator = new AudibleIndicatorImpl(true);
-        original = new CAMELAChBillingChargingCharacteristicsImpl(12000, true, 8000L, audibleIndicator, null, true);
+        original = new CAMELAChBillingChargingCharacteristicsImpl(12000, true, 8000L, audibleIndicator, null,
+                CAPApplicationContextVersion.version3);
 
         // Writes the area to a file.
         baos = new ByteArrayOutputStream();

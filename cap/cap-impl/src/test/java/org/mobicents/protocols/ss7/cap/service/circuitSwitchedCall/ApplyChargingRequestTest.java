@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -36,12 +37,14 @@ import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.api.primitives.AChChargingAddress;
 import org.mobicents.protocols.ss7.cap.primitives.AChChargingAddressImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsTest;
 import org.mobicents.protocols.ss7.cap.primitives.SendingSideIDImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAMELAChBillingChargingCharacteristicsImpl;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
+import org.mobicents.protocols.ss7.inap.primitives.LegIDImpl;
 import org.testng.annotations.Test;
 
 /**
@@ -77,15 +80,18 @@ public class ApplyChargingRequestTest {
         elem.decodeAll(ais);
 
         assertEquals((long) elem.getAChBillingChargingCharacteristics().getMaxCallPeriodDuration(), 36000);
-        assertNull(elem.getAChBillingChargingCharacteristics().getAudibleIndicator());
+        //AudibleIndicator DEFAULT tone: FALSE
+        assertNotNull(elem.getAChBillingChargingCharacteristics().getAudibleIndicator());
+        assertFalse(elem.getAChBillingChargingCharacteristics().getAudibleIndicator().getTone());
         assertNull(elem.getAChBillingChargingCharacteristics().getExtensions());
         assertFalse(elem.getAChBillingChargingCharacteristics().getReleaseIfdurationExceeded());
         assertNull(elem.getAChBillingChargingCharacteristics().getTariffSwitchInterval());
         assertEquals(elem.getPartyToCharge().getSendingSideID(), LegType.leg1);
         assertNull(elem.getExtensions());
-        assertNull(elem.getAChChargingAddress());
-
-
+        // AChChargingAddress {bound} DEFAULT legID:sendingSideID:leg1,
+        assertNotNull(elem.getAChChargingAddress());
+        assertEquals(elem.getAChChargingAddress().getLegID().toString(), new LegIDImpl(true, LegType.leg1).toString());
+        
         data = this.getData2();
         ais = new AsnInputStream(data);
         elem = new ApplyChargingRequestImpl();
@@ -93,13 +99,17 @@ public class ApplyChargingRequestTest {
         elem.decodeAll(ais);
 
         assertEquals((long) elem.getAChBillingChargingCharacteristics().getMaxCallPeriodDuration(), 36000);
-        assertNull(elem.getAChBillingChargingCharacteristics().getAudibleIndicator());
+        //AudibleIndicator DEFAULT tone: FALSE
+        assertNotNull(elem.getAChBillingChargingCharacteristics().getAudibleIndicator());
+        assertFalse(elem.getAChBillingChargingCharacteristics().getAudibleIndicator().getTone());        
         assertNull(elem.getAChBillingChargingCharacteristics().getExtensions());
         assertFalse(elem.getAChBillingChargingCharacteristics().getReleaseIfdurationExceeded());
         assertNull(elem.getAChBillingChargingCharacteristics().getTariffSwitchInterval());
         assertEquals(elem.getPartyToCharge().getSendingSideID(), LegType.leg1);
         assertTrue(CAPExtensionsTest.checkTestCAPExtensions(elem.getExtensions()));
-        assertNull(elem.getAChChargingAddress());
+        // AChChargingAddress {bound} DEFAULT legID:sendingSideID:leg1,
+        assertNotNull(elem.getAChChargingAddress());
+        assertEquals(elem.getAChChargingAddress().getLegID().toString(), new LegIDImpl(true, LegType.leg1).toString());      
 
 
         data = this.getData3();
@@ -109,11 +119,15 @@ public class ApplyChargingRequestTest {
         elem.decodeAll(ais);
 
         assertEquals((long) elem.getAChBillingChargingCharacteristics().getMaxCallPeriodDuration(), 36000);
-        assertNull(elem.getAChBillingChargingCharacteristics().getAudibleIndicator());
+        //AudibleIndicator DEFAULT tone: FALSE
+        assertNotNull(elem.getAChBillingChargingCharacteristics().getAudibleIndicator());
+        assertFalse(elem.getAChBillingChargingCharacteristics().getAudibleIndicator().getTone());                       
         assertNull(elem.getAChBillingChargingCharacteristics().getExtensions());
         assertFalse(elem.getAChBillingChargingCharacteristics().getReleaseIfdurationExceeded());
         assertNull(elem.getAChBillingChargingCharacteristics().getTariffSwitchInterval());
-        assertNull(elem.getPartyToCharge());
+        //partyToCharge                       [2] SendingSideID DEFAULT sendingSideID : leg1
+        assertNotNull(elem.getPartyToCharge());
+        assertEquals(elem.getPartyToCharge().getSendingSideID(), new SendingSideIDImpl(LegType.leg1).getSendingSideID());
         assertNull(elem.getExtensions());
         assertEquals(elem.getAChChargingAddress().getSrfConnection(), 10);
     }
@@ -122,7 +136,7 @@ public class ApplyChargingRequestTest {
     public void testEncode() throws Exception {
 
         CAMELAChBillingChargingCharacteristicsImpl aChBillingChargingCharacteristics = new CAMELAChBillingChargingCharacteristicsImpl(
-                36000, false, null, null, null, false);
+                36000, false, null, null, null, CAPApplicationContextVersion.version2);
         // long maxCallPeriodDuration, boolean releaseIfdurationExceeded, Long
         // tariffSwitchInterval,
         // AudibleIndicator audibleIndicator, CAPExtensions extensions, boolean
@@ -137,7 +151,6 @@ public class ApplyChargingRequestTest {
         // CAMELAChBillingChargingCharacteristics
         // aChBillingChargingCharacteristics, SendingSideID partyToCharge,
         // CAPExtensions extensions, AChChargingAddress aChChargingAddress
-
 
         elem = new ApplyChargingRequestImpl(aChBillingChargingCharacteristics, partyToCharge,
                 CAPExtensionsTest.createTestCAPExtensions(), null);
@@ -156,7 +169,7 @@ public class ApplyChargingRequestTest {
     @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
     public void testXMLSerializaion() throws Exception {
         CAMELAChBillingChargingCharacteristicsImpl aChBillingChargingCharacteristics = new CAMELAChBillingChargingCharacteristicsImpl(
-                36000, false, null, null, null, false);
+                36000, false, null, null, null, CAPApplicationContextVersion.version2);
         SendingSideIDImpl partyToCharge = new SendingSideIDImpl(LegType.leg1);
         ApplyChargingRequestImpl original = new ApplyChargingRequestImpl(aChBillingChargingCharacteristics, partyToCharge,
                 CAPExtensionsTest.createTestCAPExtensions(), null);

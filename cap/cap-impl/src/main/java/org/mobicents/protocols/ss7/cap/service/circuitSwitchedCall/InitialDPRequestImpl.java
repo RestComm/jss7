@@ -24,13 +24,11 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
 import java.io.IOException;
 
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPMessageType;
 import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
@@ -96,10 +94,13 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CUG
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CUGInterlockImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 /**
  *
  * @author sergey vetyutnev
- *
+ * @author alerant appngin
  */
 public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl implements InitialDPRequest {
 
@@ -135,7 +136,7 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
     public static final int _ID_callForwardingSS_Pending = 58;
     public static final int _ID_initialDPArgExtension = 59;
 
-    private static final String IS_CAP_VERSION_3_OR_LATER = "isCAPVersion3orLater";
+    private static final String CAP_VERSION = "capVersion";
     private static final String SERVICE_KEY = "serviceKey";
     private static final String CALLED_PARTY_NUMBER = "calledPartyNumber";
     private static final String CALLING_PARTY_NUMBER = "callingPartyNumber";
@@ -202,7 +203,7 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
     private boolean callForwardingSSPending;
     private InitialDPArgExtension initialDPArgExtension;
 
-    private boolean isCAPVersion3orLater;
+    private CAPApplicationContextVersion capVersion;
 
     /**
      * This constructor is only for deserialisation purpose
@@ -210,8 +211,8 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
     public InitialDPRequestImpl() {
     }
 
-    public InitialDPRequestImpl(boolean isCAPVersion3orLater) {
-        this.isCAPVersion3orLater = isCAPVersion3orLater;
+    public InitialDPRequestImpl(CAPApplicationContextVersion capVersion) {
+        this.capVersion = capVersion;
     }
 
     public InitialDPRequestImpl(int serviceKey, CalledPartyNumberCap calledPartyNumber,
@@ -226,7 +227,7 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
             LocationInformation locationInformation, ExtBasicServiceCode extBasicServiceCode,
             CallReferenceNumber callReferenceNumber, ISDNAddressString mscAddress, CalledPartyBCDNumber calledPartyBCDNumber,
             TimeAndTimezone timeAndTimezone, boolean callForwardingSSPending, InitialDPArgExtension initialDPArgExtension,
-            boolean isCAPVersion3orLater) {
+            CAPApplicationContextVersion capVersion) {
         this.serviceKey = serviceKey;
         this.calledPartyNumber = calledPartyNumber;
         this.callingPartyNumber = callingPartyNumber;
@@ -258,7 +259,7 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
         this.timeAndTimezone = timeAndTimezone;
         this.callForwardingSSPending = callForwardingSSPending;
         this.initialDPArgExtension = initialDPArgExtension;
-        this.isCAPVersion3orLater = isCAPVersion3orLater;
+        this.capVersion = capVersion;
     }
 
     @Override
@@ -668,7 +669,7 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
                         this.callForwardingSSPending = true;
                         break;
                     case _ID_initialDPArgExtension:
-                        this.initialDPArgExtension = new InitialDPArgExtensionImpl(this.isCAPVersion3orLater);
+                        this.initialDPArgExtension = new InitialDPArgExtensionImpl(this.capVersion.getVersion()>=3);
                         ((InitialDPArgExtensionImpl) this.initialDPArgExtension).decodeAll(ais);
                         break;
 
@@ -830,7 +831,7 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
         public void read(javolution.xml.XMLFormat.InputElement xml, InitialDPRequestImpl initialDP) throws XMLStreamException {
             CIRCUIT_SWITCHED_CALL_MESSAGE_XML.read(xml, initialDP);
 
-            initialDP.isCAPVersion3orLater = xml.getAttribute(IS_CAP_VERSION_3_OR_LATER, false);
+            initialDP.capVersion = CAPApplicationContextVersion.valueOf(xml.getAttribute(CAP_VERSION).toString());
 
             initialDP.serviceKey = xml.get(SERVICE_KEY, Integer.class);
             initialDP.calledPartyNumber = xml.get(CALLED_PARTY_NUMBER, CalledPartyNumberCapImpl.class);
@@ -883,7 +884,7 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
         public void write(InitialDPRequestImpl initialDP, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
             CIRCUIT_SWITCHED_CALL_MESSAGE_XML.write(initialDP, xml);
 
-            xml.setAttribute(IS_CAP_VERSION_3_OR_LATER, initialDP.isCAPVersion3orLater);
+            xml.setAttribute(CAP_VERSION, initialDP.capVersion.toString());
 
             xml.add((Integer) initialDP.getServiceKey(), SERVICE_KEY, Integer.class);
             if (initialDP.getCalledPartyNumber() != null)
@@ -976,6 +977,8 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
         sb.append(_PrimitiveName);
         sb.append(" [");
         this.addInvokeIdInfo(sb);
+
+        sb.append(capVersion);
 
         sb.append(", serviceKey=");
         sb.append(serviceKey);
@@ -1102,14 +1105,5 @@ public class InitialDPRequestImpl extends CircuitSwitchedCallMessageImpl impleme
 
         return sb.toString();
     }
+
 }
-
-// added:
-// CGEncountered
-// Cause
-// serviceInteractionIndicatorsTwo
-// carrier
-// cugIndex
-// cugInterlock
-// cugOutgoingAccess
-

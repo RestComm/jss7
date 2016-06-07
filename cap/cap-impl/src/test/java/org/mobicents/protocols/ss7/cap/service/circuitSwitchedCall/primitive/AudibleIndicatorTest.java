@@ -41,10 +41,10 @@ import org.mobicents.protocols.ss7.cap.primitives.BurstListImpl;
 import org.testng.annotations.Test;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class AudibleIndicatorTest {
 
     public byte[] getData1() {
@@ -53,6 +53,10 @@ public class AudibleIndicatorTest {
 
     public byte[] getData2() {
         return new byte[] { (byte) 161, 8, (byte) 128, 1, 1, (byte) 161, 3, (byte) 128, 1, 2 };
+    }
+
+    public byte[] getData3() {
+        return new byte[] { (byte) 163, 10, (byte) 161, 8, (byte) 128, 1, 1, (byte) 161, 3, (byte) 128, 1, 2 };
     }
 
     @Test(groups = { "functional.decode", "circuitSwitchedCall.primitive" })
@@ -68,7 +72,6 @@ public class AudibleIndicatorTest {
         assertFalse(elem.getTone());
         assertNull(elem.getBurstList());
 
-
         data = this.getData2();
         ais = new AsnInputStream(data);
         elem = new AudibleIndicatorImpl();
@@ -76,6 +79,18 @@ public class AudibleIndicatorTest {
         assertEquals(tag, AudibleIndicatorImpl._ID_burstList);
         assertEquals(ais.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
         elem.decodeAll(ais);
+        assertNull(elem.getTone());
+        assertEquals((int) elem.getBurstList().getWarningPeriod(), 1);
+        assertEquals((int) elem.getBurstList().getBursts().getNumberOfBursts(), 2);
+
+        data = this.getData3();
+        ais = new AsnInputStream(data);
+        elem = new AudibleIndicatorImpl();
+        tag = ais.readTag();
+        assertEquals(tag, CAMELAChBillingChargingCharacteristicsImpl._ID_audibleIndicator);
+        AsnInputStream ais2 = ais.readSequenceStream();
+        ais2.readTag();
+        elem.decodeAll(ais2);
         assertNull(elem.getTone());
         assertEquals((int) elem.getBurstList().getWarningPeriod(), 1);
         assertEquals((int) elem.getBurstList().getBursts().getNumberOfBursts(), 2);
@@ -89,7 +104,6 @@ public class AudibleIndicatorTest {
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 
-
         Burst burst = new BurstImpl(2, null, null, null, null);
         BurstList burstList = new BurstListImpl(1, burst);
         // Integer warningPeriod, Burst burst
@@ -97,6 +111,14 @@ public class AudibleIndicatorTest {
         aos = new AsnOutputStream();
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
+
+        burst = new BurstImpl(2, null, null, null, null);
+        burstList = new BurstListImpl(1, burst);
+        // Integer warningPeriod, Burst burst
+        elem = new AudibleIndicatorImpl(burstList);
+        aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, CAMELAChBillingChargingCharacteristicsImpl._ID_audibleIndicator);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData3()));
     }
 
     @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall.primitive" })
@@ -122,7 +144,6 @@ public class AudibleIndicatorTest {
         assertEquals(copy.getTone(), original.getTone());
         assertNull(copy.getBurstList());
 
-
         Burst burst = new BurstImpl(2, null, null, null, null);
         BurstList burstList = new BurstListImpl(1, burst);
         original = new AudibleIndicatorImpl(burstList);
@@ -145,7 +166,7 @@ public class AudibleIndicatorTest {
 
         assertNull(copy.getTone());
         assertEquals((int) copy.getBurstList().getWarningPeriod(), (int) original.getBurstList().getWarningPeriod());
-        assertEquals((int) copy.getBurstList().getBursts().getNumberOfBursts(), (int) original.getBurstList().getBursts().getNumberOfBursts());
+        assertEquals((int) copy.getBurstList().getBursts().getNumberOfBursts(),
+                (int) original.getBurstList().getBursts().getNumberOfBursts());
     }
-
 }
