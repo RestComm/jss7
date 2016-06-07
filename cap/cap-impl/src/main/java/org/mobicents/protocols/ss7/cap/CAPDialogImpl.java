@@ -101,7 +101,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
         return capTimerDefault.getTimerCircuitSwitchedCallControlMedium();
     }
     public int getTimerCircuitSwitchedCallControlLong() {
-        return capTimerDefault.getTimerCircuitSwitchedCallControlShort();
+        return capTimerDefault.getTimerCircuitSwitchedCallControlLong();
     }
     public int getTimerSmsShort() {
         return capTimerDefault.getTimerSmsShort();
