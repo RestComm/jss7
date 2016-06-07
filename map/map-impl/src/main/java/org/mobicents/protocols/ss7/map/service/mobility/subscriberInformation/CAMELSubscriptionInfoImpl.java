@@ -924,7 +924,7 @@ public class CAMELSubscriptionInfoImpl extends SequenceBase implements CAMELSubs
         if (this.oImBcsmCamelTdpCriteriaList != null) {
             sb.append(", oImBcsmCamelTdpCriteriaList=[");
             boolean firstItem = true;
-            for (OBcsmCamelTdpCriteria oImBcsmCamelTdpCriteria: oBcsmCamelTDPCriteriaList) {
+            for (OBcsmCamelTdpCriteria oImBcsmCamelTdpCriteria: oImBcsmCamelTdpCriteriaList) {
                 if (firstItem) {
                     firstItem = false;
                 } else {
