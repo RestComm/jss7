@@ -29,6 +29,7 @@ import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
+import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorCode;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageParameterless;
 
 /**
@@ -94,7 +95,50 @@ public class CAPErrorMessageParameterlessImpl extends CAPErrorMessageImpl implem
 
     @Override
     public String toString() {
-        return "CAPErrorMessageParameterless [errorCode=" + this.errorCode + "]";
+        return "CAPErrorMessageParameterless [errorCode=" + capErrorCodeName() + "]";
+    }
+
+    private String capErrorCodeName() {
+        if (errorCode == null)
+            return "N/A";
+        switch (errorCode.intValue()) {
+            case CAPErrorCode.canceled:
+                return "canceled";
+            case CAPErrorCode.cancelFailed:
+                return "cancelFailed";
+            case CAPErrorCode.eTCFailed:
+                return "eTCFailed";
+            case CAPErrorCode.improperCallerResponse:
+                return "improperCallerResponse";
+            case CAPErrorCode.missingCustomerRecord:
+                return "missingCustomerRecord";
+            case CAPErrorCode.missingParameter:
+                return "missingParameter";
+            case CAPErrorCode.parameterOutOfRange:
+                return "parameterOutOfRange";
+            case CAPErrorCode.requestedInfoError:
+                return "requestedInfoError";
+            case CAPErrorCode.systemFailure:
+                return "systemFailure";
+            case CAPErrorCode.taskRefused:
+                return "taskRefused";
+            case CAPErrorCode.unavailableResource:
+                return "unavailableResource";
+            case CAPErrorCode.unexpectedComponentSequence:
+                return "unexpectedComponentSequence";
+            case CAPErrorCode.unexpectedDataValue:
+                return "unexpectedDataValue";
+            case CAPErrorCode.unexpectedParameter:
+                return "unexpectedParameter";
+            case CAPErrorCode.unknownCSID:
+                return "unknownCSID";
+            case CAPErrorCode.unknownLegID:
+                return "unknownLegID";
+            case CAPErrorCode.unknownPDPID:
+                return "unknownPDPID";
+            default:
+                return errorCode.toString();
+        }
     }
 
     /**
