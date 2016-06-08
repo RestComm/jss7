@@ -354,4 +354,18 @@ public interface MAPDialog extends Serializable {
      * @param vlrNo
      */
     void addEricssonData(IMSI imsi, AddressString vlrNo);
+
+    /**
+    * Return the value of the IdleTaskTimeout of the TCAP Dialog in milliseconds.
+    *
+    * @return TCAP IdleTaskTimeout value in milliseconds
+    */
+    long getIdleTaskTimeout();
+
+    /**
+     * Set TCAP IdleTaskTimeout in milliseconds.
+     *
+     * @param idleTaskTimeoutMs
+     */
+    void setIdleTaskTimeout(long idleTaskTimeoutMs);
 }
