@@ -72,6 +72,7 @@ ConnectArg {PARAMETERS-BOUND : bound} ::= SEQUENCE {
   naOliInfo                     [57] NAOliInfo OPTIONAL,
   bor-InterrogationRequested    [58] NULL OPTIONAL,
   ...
+  suppress-N-CSI                [59] NULL OPTIONAL
 }
 -- na-Info is included at the discretion of the gsmSCF operator.
 
@@ -85,7 +86,7 @@ OCSIApplicable ::= NULL
  *
  *
  * @author sergey vetyutnev
- *
+ * @author tamas gyorgyey
  */
 public interface ConnectRequest extends CircuitSwitchedCallMessage {
 
@@ -124,5 +125,7 @@ public interface ConnectRequest extends CircuitSwitchedCallMessage {
     NAOliInfo getNAOliInfo();
 
     boolean getBorInterrogationRequested();
+
+    boolean getSuppressNCSI();
 
 }

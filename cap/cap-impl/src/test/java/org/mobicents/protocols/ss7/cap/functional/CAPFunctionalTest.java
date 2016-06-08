@@ -694,7 +694,7 @@ TC-CONTINUE + EventReportBCSMRequest (ODisconnect)
                             DestinationRoutingAddress destinationRoutingAddress = this.capParameterFactory
                                     .createDestinationRoutingAddress(calledPartyNumber);
                             dlg.addConnectRequest(destinationRoutingAddress, null, null, null, null, null, null, null, null,
-                                    null, null, null, null, false, false, false, null, false);
+                                    null, null, null, null, false, false, false, null, false, false);
                             this.observerdEvents.add(TestEvent.createSentEvent(EventType.ConnectRequest, null, sequence++));
                             dlg.send();
 

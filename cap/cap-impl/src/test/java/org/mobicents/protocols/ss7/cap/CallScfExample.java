@@ -175,7 +175,7 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
                             DestinationRoutingAddress destinationRoutingAddress = this.capProvider.getCAPParameterFactory()
                                     .createDestinationRoutingAddress(calledPartyNumber);
                             currentCapDialog.addConnectRequest(destinationRoutingAddress, null, null, null, null, null, null,
-                                    null, null, null, null, null, null, false, false, false, null, false);
+                                    null, null, null, null, null, null, false, false, false, null, false, false);
                         } else {
                             // sending Continue to use the original calledPartyAddress
                             currentCapDialog.addContinueRequest();
