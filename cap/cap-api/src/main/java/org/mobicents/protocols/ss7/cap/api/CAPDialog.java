@@ -286,4 +286,17 @@ public interface CAPDialog extends Serializable {
      * @return
      */
      int getMessageUserDataLengthOnClose(boolean prearrangedEnd) throws CAPException;
+
+     /**
+     *
+     * @return IdleTaskTimeout value in milliseconds
+     */
+     long getIdleTaskTimeout();
+
+     /**
+      * Set IdleTaskTimeout in milliseconds.
+      *
+      * @param idleTaskTimeoutMs
+      */
+     void setIdleTaskTimeout(long idleTaskTimeoutMs);
 }

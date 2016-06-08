@@ -304,4 +304,15 @@ public interface Dialog extends Serializable {
      */
     ReentrantLock getDialogLock();
 
+    /**
+    *
+    * @return IdleTaskTimeout value in milliseconds
+    */
+   long getIdleTaskTimeout();
+
+    /**
+     * Set IdleTaskTimeout in milliseconds.
+     */
+    void setIdleTaskTimeout(long idleTaskTimeoutMs);
+
 }

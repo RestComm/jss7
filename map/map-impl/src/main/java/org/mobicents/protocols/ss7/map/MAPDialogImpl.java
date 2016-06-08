@@ -654,4 +654,12 @@ public abstract class MAPDialogImpl implements MAPDialog {
     protected enum DelayedAreaState {
         No, Continue, End, PrearrangedEnd;
     }
+
+    public long getIdleTaskTimeout() {
+        return tcapDialog.getIdleTaskTimeout();
+    }
+
+    public void setIdleTaskTimeout(long idleTaskTimeoutMs) {
+        tcapDialog.setIdleTaskTimeout(idleTaskTimeoutMs);
+    }
 }
