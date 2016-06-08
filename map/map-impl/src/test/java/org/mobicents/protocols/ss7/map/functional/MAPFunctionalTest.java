@@ -139,20 +139,27 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.U
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.UsedRATType;
 import org.mobicents.protocols.ss7.map.api.service.mobility.oam.ActivateTraceModeRequest_Mobility;
 import org.mobicents.protocols.ss7.map.api.service.mobility.oam.ActivateTraceModeResponse_Mobility;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AdditionalRequestedCAMELSubscriptionInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeSubscriptionInterrogationRequest;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeSubscriptionInterrogationResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.CAMELSubscriptionInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.GeographicalInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformationGPRS;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.NumberPortabilityStatus;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.ProvideSubscriberInfoRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.ProvideSubscriberInfoResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedCAMELSubscriptionInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedInfo;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedSubscriptionInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberState;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberStateChoice;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BearerServiceCodeValue;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Category;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.DefaultCallHandling;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.DeleteSubscriberDataRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.DeleteSubscriberDataResponse;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
@@ -160,6 +167,9 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtTeleserviceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InsertSubscriberDataRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.InsertSubscriberDataResponse;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OBcsmCamelTDPData;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OBcsmTriggerDetectionPoint;
+import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ODBGeneralData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OfferedCamel4CSIs;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.RegionalSubscriptionResponse;
@@ -241,8 +251,13 @@ import org.mobicents.protocols.ss7.map.service.mobility.imei.CheckImeiRequestImp
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.PurgeMSRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.SendIdentificationRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.locationManagement.UpdateGprsLocationRequestImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.CAMELSubscriptionInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.InsertSubscriberDataRequestImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.InsertSubscriberDataResponseImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.OBcsmCamelTDPDataImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.OCSIImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.OfferedCamel4CSIsImpl;
+import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.SupportedCamelPhasesImpl;
 import org.mobicents.protocols.ss7.map.service.oam.SendImsiRequestImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.ProcessUnstructuredSSResponseImpl;
@@ -4821,6 +4836,163 @@ TC-END + anyTimeInterrogationResponse
         client.compareEvents(clientExpectedEvents);
         server.compareEvents(serverExpectedEvents);
 
+    }
+
+    /**
+     <code>
+     TC-BEGIN + anyTimeSubscriptionInterrogationRequest
+     TC-END + anyTimeSubscriptionInterrogationResponse
+     </code>
+     */
+    @Test(groups = { "functional.flow", "dialog" })
+    public void testAyTimeSubscriptionInterrogation() throws Exception {
+        Client client = new Client(stack1, this, peer1Address, peer2Address) {
+            @Override
+            public void onAnyTimeSubscriptionInterrogationResponse(AnyTimeSubscriptionInterrogationResponse ind) {
+                super.onAnyTimeSubscriptionInterrogationResponse(ind);
+
+                OCSI ocsi = ind.getCamelSubscriptionInfo().getOCsi();
+                Assert.assertNotNull(ocsi.getOBcsmCamelTDPDataList());
+                Assert.assertEquals(ocsi.getOBcsmCamelTDPDataList().size(), 1);
+
+                OBcsmCamelTDPData tdpData = ocsi.getOBcsmCamelTDPDataList().get(0);
+                Assert.assertEquals(tdpData.getOBcsmTriggerDetectionPoint(), OBcsmTriggerDetectionPoint.collectedInfo);
+                Assert.assertEquals(tdpData.getServiceKey(), 3);
+                Assert.assertEquals(tdpData.getDefaultCallHandling(), DefaultCallHandling.continueCall);
+
+                ISDNAddressString gsmSCFAddress = tdpData.getGsmSCFAddress();
+                Assert.assertEquals(gsmSCFAddress.getAddressNature(), AddressNature.international_number);
+                Assert.assertEquals(gsmSCFAddress.getNumberingPlan(), NumberingPlan.ISDN);
+                Assert.assertEquals(gsmSCFAddress.getAddress(), "123456789");
+
+                SupportedCamelPhases supportedCamelPhasesVlr = ind.getsupportedVlrCamelPhases();
+                Assert.assertTrue(supportedCamelPhasesVlr.getPhase1Supported());
+                Assert.assertTrue(supportedCamelPhasesVlr.getPhase2Supported());
+                Assert.assertTrue(supportedCamelPhasesVlr.getPhase3Supported());
+                Assert.assertTrue(supportedCamelPhasesVlr.getPhase4Supported());
+
+                OfferedCamel4CSIs offeredCamel4CSIsVlr = ind.getOfferedCamel4CSIsInVlr();
+                Assert.assertTrue(offeredCamel4CSIsVlr.getOCsi());
+                Assert.assertFalse(offeredCamel4CSIsVlr.getDCsi());
+                Assert.assertFalse(offeredCamel4CSIsVlr.getVtCsi());
+                Assert.assertFalse(offeredCamel4CSIsVlr.getTCsi());
+                Assert.assertFalse(offeredCamel4CSIsVlr.getMtSmsCsi());
+                Assert.assertFalse(offeredCamel4CSIsVlr.getMgCsi());
+                Assert.assertFalse(offeredCamel4CSIsVlr.getPsiEnhancements());
+            }
+
+        };
+
+        Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+            @Override
+            public void onAnyTimeSubscriptionInterrogationRequest(AnyTimeSubscriptionInterrogationRequest ind) {
+                super.onAnyTimeSubscriptionInterrogationRequest(ind);
+
+                SubscriberIdentity subscriberIdentity = ind.getSubscriberIdentity();
+                Assert.assertEquals(subscriberIdentity.getMSISDN().getAddress(), "111222333");
+
+                ISDNAddressString gsmSCFAddressReq = ind.getGsmScfAddress();
+                Assert.assertEquals(gsmSCFAddressReq.getAddress(), "1234567890");
+
+                RequestedSubscriptionInfo requestedSubscriptionInfo = ind.getRequestedSubscriptionInfo();
+                Assert.assertNull(requestedSubscriptionInfo.getRequestedSSInfo());
+                Assert.assertFalse(requestedSubscriptionInfo.getOdb());
+                Assert.assertEquals(requestedSubscriptionInfo.getRequestedCAMELSubscriptionInfo(),
+                        RequestedCAMELSubscriptionInfo.oCSI);
+                Assert.assertTrue(requestedSubscriptionInfo.getSupportedVlrCamelPhases());
+                Assert.assertFalse(requestedSubscriptionInfo.getSupportedSgsnCamelPhases());
+                Assert.assertNull(requestedSubscriptionInfo.getExtensionContainer());
+                Assert.assertEquals(requestedSubscriptionInfo.getAdditionalRequestedCamelSubscriptionInfo(),
+                        AdditionalRequestedCAMELSubscriptionInfo.mtSmsCSI);
+                Assert.assertFalse(requestedSubscriptionInfo.getMsisdnBsList());
+                Assert.assertTrue(requestedSubscriptionInfo.getCsgSubscriptionDataRequested());
+                Assert.assertFalse(requestedSubscriptionInfo.getCwInfo());
+                Assert.assertFalse(requestedSubscriptionInfo.getClipInfo());
+                Assert.assertFalse(requestedSubscriptionInfo.getClirInfo());
+                Assert.assertFalse(requestedSubscriptionInfo.getHoldInfo());
+                Assert.assertFalse(requestedSubscriptionInfo.getEctInfo());
+
+                // send response
+                ISDNAddressString gsmSCFAddress = mapProvider.getMAPParameterFactory()
+                        .createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "123456789");
+                final OBcsmCamelTDPData tdpData = new OBcsmCamelTDPDataImpl(OBcsmTriggerDetectionPoint.collectedInfo, 3,
+                        gsmSCFAddress, DefaultCallHandling.continueCall, null);
+
+                OCSI ocsi = new OCSIImpl(new ArrayList<OBcsmCamelTDPData>() {{add(tdpData);}}, null, null, false, true);
+                CAMELSubscriptionInfo camelSubscriptionInfo = new CAMELSubscriptionInfoImpl(ocsi, null, null, null, null,
+                        null, null, false, false, null, null, null, null, null, null, null, null, null, null, null, null,
+                        null, null);
+                SupportedCamelPhases supportedCamelPhasesVlr = new SupportedCamelPhasesImpl(true, true, true, true);
+                OfferedCamel4CSIs offeredCamel4CSIsVlr = new OfferedCamel4CSIsImpl(true, false, false, false, false, false, false);
+
+                MAPDialogMobility d = ind.getMAPDialog();
+                try {
+                    d.addAnyTimeSubscriptionInterrogationResponse(ind.getInvokeId(), null, null, null, camelSubscriptionInfo,
+                            supportedCamelPhasesVlr, null, null, offeredCamel4CSIsVlr, null, null, null, null, null, null,
+                            null ,null);
+                } catch (MAPException e) {
+                    this.error("Error while adding AnyTimeInterrogationResponse", e);
+                    fail("Error while adding AnyTimeInterrogationResponse");
+                }
+            }
+
+            @Override
+            public void onDialogDelimiter(MAPDialog mapDialog) {
+                super.onDialogDelimiter(mapDialog);
+                try {
+                    this.observerdEvents.add(TestEvent.createSentEvent(EventType.AnyTimeSubscriptionInterrogationRes,
+                            null, sequence++));
+                    mapDialog.close(false);
+                } catch (MAPException e) {
+                    this.error("Error while sending the empty AnyTimeSubscriptionInterrogationResponse", e);
+                    fail("Error while sending the empty AnyTimeSubscriptionInterrogationResponse");
+                }
+            }
+        };
+
+        long stamp = System.currentTimeMillis();
+        int count = 0;
+        // Client side events
+        List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+        TestEvent te = TestEvent.createSentEvent(EventType.AnyTimeSubscriptionInterrogation, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.AnyTimeSubscriptionInterrogationRes, null, count++,
+                (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        count = 0;
+        // Server side events
+        List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+        te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.AnyTimeSubscriptionInterrogation, null, count++,
+                (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.AnyTimeSubscriptionInterrogationRes, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        client.sendAnyTimeSubscriptionInterrogation();
+        waitForEnd();
+        client.compareEvents(clientExpectedEvents);
+        server.compareEvents(serverExpectedEvents);
     }
 
     /**

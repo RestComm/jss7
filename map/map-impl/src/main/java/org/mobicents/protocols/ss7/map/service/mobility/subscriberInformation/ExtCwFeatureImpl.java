@@ -78,11 +78,6 @@ public class ExtCwFeatureImpl extends SequenceBase implements ExtCwFeature {
             if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
                 switch (tag) {
                     case _TAG_EXT_BASIC_SERVICE_CODE:
-                        if (!ais.isTagPrimitive())
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + ": Parameter basicService is not primitive",
-                                    MAPParsingComponentExceptionReason.MistypedParameter);
-
                         this.basicService = new ExtBasicServiceCodeImpl();
                         AsnInputStream ais2 = ais.readSequenceStream();
                         ais2.readTag();
