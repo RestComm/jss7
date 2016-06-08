@@ -1,4 +1,4 @@
-/*
+    /*
  * TeleStax, Open Source Cloud Communications  Copyright 2012.
  * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
@@ -75,7 +75,7 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.CUG
 /**
  *
  * @author sergey vetyutnev
- *
+ * @author tamas gyorgyey
  */
 public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implements ConnectRequest {
 
@@ -97,6 +97,7 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
     public static final int _ID_oCSIApplicable = 56;
     public static final int _ID_naOliInfo = 57;
     public static final int _ID_bor_InterrogationRequested = 58;
+    public static final int _ID_suppressNCSI = 59;
 
     private static final String DESTINATION_ROUTING_ADDRESS = "destinationRoutingAddress";
     private static final String ALERTING_PATTERN = "alertingPattern";
@@ -117,6 +118,7 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
     private static final String OCSI_APPLICABLE = "OCSIApplicable";
     private static final String NA_OLI_INFO = "NAOliInfo";
     private static final String BOR_INTERROGATION_REQUESTED = "borInterrogationRequested";
+    private static final String SUPPRESS_N_CSI = "suppressNCSI";
 
     public static final String _PrimitiveName = "ConnectRequestIndication";
 
@@ -138,6 +140,7 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
     private boolean ocsIApplicable;
     private NAOliInfo naoliInfo;
     private boolean borInterrogationRequested;
+    private boolean suppressNCSI;
 
     public ConnectRequestImpl() {
     }
@@ -148,7 +151,7 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
             RedirectionInformationInap redirectionInformation, ArrayList<GenericNumberCap> genericNumbers,
             ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, LocationNumberCap chargeNumber,
             LegID legToBeConnected, CUGInterlock cugInterlock, boolean cugOutgoingAccess, boolean suppressionOfAnnouncement,
-            boolean ocsIApplicable, NAOliInfo naoliInfo, boolean borInterrogationRequested) {
+            boolean ocsIApplicable, NAOliInfo naoliInfo, boolean borInterrogationRequested, boolean suppressNCSI) {
         this.destinationRoutingAddress = destinationRoutingAddress;
         this.alertingPattern = alertingPattern;
         this.originalCalledPartyID = originalCalledPartyID;
@@ -167,6 +170,7 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
         this.ocsIApplicable = ocsIApplicable;
         this.naoliInfo = naoliInfo;
         this.borInterrogationRequested = borInterrogationRequested;
+        this.suppressNCSI = suppressNCSI;
     }
 
     @Override
@@ -270,6 +274,11 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
     }
 
     @Override
+    public boolean getSuppressNCSI() {
+        return suppressNCSI;
+    }
+
+    @Override
     public int getTag() throws CAPException {
         return Tag.SEQUENCE;
     }
@@ -346,6 +355,7 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
         this.ocsIApplicable = false;
         this.naoliInfo = null;
         this.borInterrogationRequested = false;
+        this.suppressNCSI = false;
 
         AsnInputStream ais = ansIS.readSequenceStreamData(length);
         while (true) {
@@ -443,6 +453,10 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
                 case _ID_bor_InterrogationRequested:
                     ais.readNull();
                     this.borInterrogationRequested = true;
+                    break;
+                case _ID_suppressNCSI:
+                    ais.readNull();
+                    this.suppressNCSI = true;
                     break;
 
                 default:
@@ -548,6 +562,9 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
             if (this.borInterrogationRequested) {
                 aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_bor_InterrogationRequested);
             }
+            if (this.suppressNCSI) {
+                aos.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _ID_suppressNCSI);
+            }
 
         } catch (IOException e) {
             throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
@@ -644,6 +661,9 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
         if (this.borInterrogationRequested) {
             sb.append(", borInterrogationRequested");
         }
+        if (this.suppressNCSI) {
+            sb.append(", suppressNCSI");
+        }
 
         sb.append("]");
 
@@ -697,6 +717,10 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
             bval = xml.get(BOR_INTERROGATION_REQUESTED, Boolean.class);
             if (bval != null)
                 connectRequest.borInterrogationRequested = bval;
+            bval = xml.get(SUPPRESS_N_CSI, Boolean.class);
+            if (bval != null)
+                connectRequest.suppressNCSI = bval;
+
         }
 
         @Override
@@ -755,6 +779,8 @@ public class ConnectRequestImpl extends CircuitSwitchedCallMessageImpl implement
 
             if (connectRequest.borInterrogationRequested)
                 xml.add(true, BOR_INTERROGATION_REQUESTED, Boolean.class);
+            if (connectRequest.suppressNCSI)
+                xml.add(true, SUPPRESS_N_CSI, Boolean.class);
         }
     };
 

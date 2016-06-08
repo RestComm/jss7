@@ -90,9 +90,9 @@ public class ConnectRequestTest {
     }
 
     public byte[] getData4() {
-        return new byte[] { 48, 49, (byte) 160, 7, 4, 5, 2, 16, 121, 34, 16, (byte) 139, 4, 11, 12, 13, 14, (byte) 175, 5, (byte) 160, 3, (byte) 129, 1, 2,
+        return new byte[] { 48, 52, (byte) 160, 7, 4, 5, 2, 16, 121, 34, 16, (byte) 139, 4, 11, 12, 13, 14, (byte) 175, 5, (byte) 160, 3, (byte) 129, 1, 2,
                 (byte) 147, 7, 4, 0, 0, 0, 112, 119, 119, (byte) 181, 3, (byte) 128, 1, 5, (byte) 159, 31, 4, 21, 22, 23, 24, (byte) 159, 32, 0, (byte) 159,
-                58, 0 };
+                58, 0, (byte) 159, 59, 0 };
     }
 
     public byte[] getDataGenericNumber() {
@@ -147,6 +147,7 @@ public class ConnectRequestTest {
         assertNull(elem.getCUGInterlock());
         assertFalse(elem.getCugOutgoingAccess());
         assertFalse(elem.getBorInterrogationRequested());
+        assertFalse(elem.getSuppressNCSI());
 
 
         data = this.getData2();
@@ -172,6 +173,7 @@ public class ConnectRequestTest {
         assertNull(elem.getCUGInterlock());
         assertFalse(elem.getCugOutgoingAccess());
         assertFalse(elem.getBorInterrogationRequested());
+        assertFalse(elem.getSuppressNCSI());
 
 
         data = this.getData3();
@@ -206,7 +208,7 @@ public class ConnectRequestTest {
         assertNull(elem.getCUGInterlock());
         assertFalse(elem.getCugOutgoingAccess());
         assertFalse(elem.getBorInterrogationRequested());
-
+        assertFalse(elem.getSuppressNCSI());
 
         data = this.getData4();
         ais = new AsnInputStream(data);
@@ -241,6 +243,7 @@ public class ConnectRequestTest {
         assertEquals(elem.getCUGInterlock().getData(), getCUGInterlockData());
         assertTrue(elem.getCugOutgoingAccess());
         assertTrue(elem.getBorInterrogationRequested());
+        assertTrue(elem.getSuppressNCSI());
     }
 
     @Test(groups = { "functional.encode", "circuitSwitchedCall" })
@@ -253,7 +256,7 @@ public class ConnectRequestTest {
         DestinationRoutingAddressImpl destinationRoutingAddress = new DestinationRoutingAddressImpl(calledPartyNumbers);
 
         ConnectRequestImpl elem = new ConnectRequestImpl(destinationRoutingAddress, null, null, null, null, null, null, null,
-                null, null, null, null, null, false, false, false, null, false);
+                null, null, null, null, null, false, false, false, null, false, false);
         AsnOutputStream aos = new AsnOutputStream();
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
@@ -262,7 +265,7 @@ public class ConnectRequestTest {
         GenericNumberCapImpl genericNumberCap = new GenericNumberCapImpl(getDataGenericNumber());
         genericNumbers.add(genericNumberCap);
         elem = new ConnectRequestImpl(destinationRoutingAddress, null, null, null, null, null, null, null, genericNumbers,
-                null, null, null, null, false, false, false, null, false);
+                null, null, null, null, false, false, false, null, false, false);
         aos = new AsnOutputStream();
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
@@ -278,7 +281,7 @@ public class ConnectRequestTest {
 
         elem = new ConnectRequestImpl(destinationRoutingAddress, alertingPatternCap, originalCalledPartyID,
                 CAPExtensionsTest.createTestCAPExtensions(), null, callingPartysCategory, redirectingPartyID,
-                redirectionInformation, genericNumbers, null, null, null, null, false, true, true, naoliInfo, false);
+                redirectionInformation, genericNumbers, null, null, null, null, false, true, true, naoliInfo, false, false);
         aos = new AsnOutputStream();
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData3()));
@@ -295,7 +298,7 @@ public class ConnectRequestTest {
         LegID legToBeConnected = new LegIDImpl(true, LegType.leg5);
         CUGInterlock cugInterlock = new CUGInterlockImpl(getCUGInterlockData());
         elem = new ConnectRequestImpl(destinationRoutingAddress, null, null, null, carrier, null, null, null, null, serviceInteractionIndicatorsTwo,
-                chargeNumber, legToBeConnected, cugInterlock, true, false, false, null, true);
+                chargeNumber, legToBeConnected, cugInterlock, true, false, false, null, true, true);
         aos = new AsnOutputStream();
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData4()));
@@ -335,7 +338,7 @@ public class ConnectRequestTest {
         ConnectRequestImpl original = new ConnectRequestImpl(destinationRoutingAddress, alertingPatternCap,
                 originalCalledPartyID, CAPExtensionsTest.createTestCAPExtensions(), null, callingPartysCategory,
                 redirectingPartyID, redirectionInformation, genericNumbers, null, null, null, null, false, true, true,
-                naoliInfo, false);
+                naoliInfo, false, false);
         original.setInvokeId(24);
 
         // Writes the area to a file.
@@ -389,7 +392,7 @@ public class ConnectRequestTest {
         LegID legToBeConnected = new LegIDImpl(true, LegType.leg5);
         CUGInterlock cugInterlock = new CUGInterlockImpl(getCUGInterlockData());
         original = new ConnectRequestImpl(destinationRoutingAddress, null, null, null, carrier, null, null, null, null, serviceInteractionIndicatorsTwo,
-                chargeNumber, legToBeConnected, cugInterlock, true, false, false, null, true);
+                chargeNumber, legToBeConnected, cugInterlock, true, false, false, null, true, true);
         original.setInvokeId(24);
 
         // Writes the area to a file.
@@ -436,5 +439,6 @@ public class ConnectRequestTest {
         assertEquals(copy.getCUGInterlock().getData(), original.getCUGInterlock().getData());
         assertEquals(copy.getCugOutgoingAccess(), original.getCugOutgoingAccess());
         assertEquals(copy.getBorInterrogationRequested(), original.getBorInterrogationRequested());
+        assertEquals(copy.getSuppressNCSI(), original.getSuppressNCSI());
     }
 }

@@ -415,12 +415,12 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
             RedirectionInformationInap redirectionInformation, ArrayList<GenericNumberCap> genericNumbers,
             ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, LocationNumberCap chargeNumber,
             LegID legToBeConnected, CUGInterlock cugInterlock, boolean cugOutgoingAccess, boolean suppressionOfAnnouncement,
-            boolean ocsIApplicable, NAOliInfo naoliInfo, boolean borInterrogationRequested) throws CAPException {
+            boolean ocsIApplicable, NAOliInfo naoliInfo, boolean borInterrogationRequested, boolean suppressNCSI) throws CAPException {
 
         return addConnectRequest(_Timer_Default, destinationRoutingAddress, alertingPattern, originalCalledPartyID, extensions,
                 carrier, callingPartysCategory, redirectingPartyID, redirectionInformation, genericNumbers,
                 serviceInteractionIndicatorsTwo, chargeNumber, legToBeConnected, cugInterlock, cugOutgoingAccess,
-                suppressionOfAnnouncement, ocsIApplicable, naoliInfo, borInterrogationRequested);
+                suppressionOfAnnouncement, ocsIApplicable, naoliInfo, borInterrogationRequested, suppressNCSI);
     }
 
     @Override
@@ -430,7 +430,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
             RedirectionInformationInap redirectionInformation, ArrayList<GenericNumberCap> genericNumbers,
             ServiceInteractionIndicatorsTwo serviceInteractionIndicatorsTwo, LocationNumberCap chargeNumber,
             LegID legToBeConnected, CUGInterlock cugInterlock, boolean cugOutgoingAccess, boolean suppressionOfAnnouncement,
-            boolean ocsIApplicable, NAOliInfo naoliInfo, boolean borInterrogationRequested) throws CAPException {
+            boolean ocsIApplicable, NAOliInfo naoliInfo, boolean borInterrogationRequested, boolean suppressNCSI) throws CAPException {
 
         if (this.appCntx != CAPApplicationContext.CapV1_gsmSSF_to_gsmSCF
                 && this.appCntx != CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
@@ -454,7 +454,7 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         ConnectRequestImpl req = new ConnectRequestImpl(destinationRoutingAddress, alertingPattern, originalCalledPartyID,
                 extensions, carrier, callingPartysCategory, redirectingPartyID, redirectionInformation, genericNumbers,
                 serviceInteractionIndicatorsTwo, chargeNumber, legToBeConnected, cugInterlock, cugOutgoingAccess,
-                suppressionOfAnnouncement, ocsIApplicable, naoliInfo, borInterrogationRequested);
+                suppressionOfAnnouncement, ocsIApplicable, naoliInfo, borInterrogationRequested, suppressNCSI);
         AsnOutputStream aos = new AsnOutputStream();
         req.encodeData(aos);
 
