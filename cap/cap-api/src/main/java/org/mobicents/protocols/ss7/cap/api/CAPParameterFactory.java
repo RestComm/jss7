@@ -392,6 +392,27 @@ public interface CAPParameterFactory {
             boolean VoiceInformationSupportedViaSpeechRecognition, boolean VoiceInformationSupportedViaVoiceRecognition,
             boolean GenerationOfVoiceAnnouncementsFromTextSupported, byte[] extraData);
 
+    InitialDPArgExtension createInitialDPArgExtension(
+            ISDNAddressString gmscAddress,
+            CalledPartyNumberCap forwardingDestinationNumber,
+            MSClassmark2 msClassmark2, IMEI imei,
+            SupportedCamelPhases supportedCamelPhases,
+            OfferedCamel4Functionalities offeredCamel4Functionalities,
+            BearerCapability bearerCapability2,
+            ExtBasicServiceCode extBasicServiceCode2,
+            HighLayerCompatibilityInap highLayerCompatibility2,
+            LowLayerCompatibility lowLayerCompatibility,
+            LowLayerCompatibility lowLayerCompatibility2,
+            boolean enhancedDialledServicesAllowed, UUData uuData,
+            boolean collectInformationAllowed,
+            boolean releaseCallArgExtensionAllowed,
+            CAPApplicationContextVersion capVersion);
+
+    /**
+     * If isCapVersion3OrLater is true, the extension is created with CAP version 3. For CAP version 4, see the other factory method.
+     * @see CAPParameterFactory#createInitialDPArgExtension(ISDNAddressString, CalledPartyNumberCap, MSClassmark2, IMEI, SupportedCamelPhases, OfferedCamel4Functionalities, BearerCapability, ExtBasicServiceCode, HighLayerCompatibilityInap, LowLayerCompatibility, LowLayerCompatibility, boolean, UUData, boolean, boolean, CAPApplicationContextVersion)
+     */
+    @Deprecated
     InitialDPArgExtension createInitialDPArgExtension(ISDNAddressString gmscAddress,
             CalledPartyNumberCap forwardingDestinationNumber, MSClassmark2 msClassmark2, IMEI imei,
             SupportedCamelPhases supportedCamelPhases, OfferedCamel4Functionalities offeredCamel4Functionalities,

@@ -34,6 +34,7 @@ import javolution.xml.XMLObjectWriter;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.api.isup.BearerCap;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.BearerCapability;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.LowLayerCompatibility;
@@ -107,7 +108,7 @@ public class InitialDPArgExtensionTest {
 
         byte[] data = this.getData1();
         AsnInputStream ais = new AsnInputStream(data);
-        InitialDPArgExtensionImpl elem = new InitialDPArgExtensionImpl(false);
+        InitialDPArgExtensionImpl elem = new InitialDPArgExtensionImpl(CAPApplicationContextVersion.version2);
         int tag = ais.readTag();
         assertEquals(tag, Tag.SEQUENCE);
         assertEquals(ais.getTagClass(), Tag.CLASS_UNIVERSAL);
@@ -132,7 +133,7 @@ public class InitialDPArgExtensionTest {
 
         data = this.getData2();
         ais = new AsnInputStream(data);
-        elem = new InitialDPArgExtensionImpl(true);
+        elem = new InitialDPArgExtensionImpl(CAPApplicationContextVersion.version4);
         tag = ais.readTag();
         assertEquals(tag, Tag.SEQUENCE);
         assertEquals(ais.getTagClass(), Tag.CLASS_UNIVERSAL);
@@ -161,7 +162,7 @@ public class InitialDPArgExtensionTest {
 
         data = this.getData3();
         ais = new AsnInputStream(data);
-        elem = new InitialDPArgExtensionImpl(true);
+        elem = new InitialDPArgExtensionImpl(CAPApplicationContextVersion.version4);
         tag = ais.readTag();
         assertEquals(tag, Tag.SEQUENCE);
         assertEquals(ais.getTagClass(), Tag.CLASS_UNIVERSAL);
@@ -193,7 +194,7 @@ public class InitialDPArgExtensionTest {
         ISDNAddressStringImpl gmscAddress = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN,
                 "2207750007");
         InitialDPArgExtensionImpl elem = new InitialDPArgExtensionImpl(gmscAddress, null, null, null, null, null, null, null,
-                null, null, null, false, null, false);
+                null, null, null, false, null, false, false, CAPApplicationContextVersion.version2);
         AsnOutputStream aos = new AsnOutputStream();
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
@@ -204,7 +205,7 @@ public class InitialDPArgExtensionTest {
         // int natureOfAddresIndicator, String address, int numberingPlanIndicator, int internalNetworkNumberIndicator
         CalledPartyNumberCapImpl forwardingDestinationNumber = new CalledPartyNumberCapImpl(calledPartyNumber);
         elem = new InitialDPArgExtensionImpl(gmscAddress, forwardingDestinationNumber, null, null, null, null, null, null,
-                null, null, null, false, null, true);
+                null, null, null, false, null, false,false, CAPApplicationContextVersion.version3);
         aos = new AsnOutputStream();
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
@@ -232,7 +233,7 @@ public class InitialDPArgExtensionTest {
         UUIndicator uuIndicator = new UUIndicatorImpl(129);
         UUData uuData = new UUDataImpl(uuIndicator, null, false, null);
         elem = new InitialDPArgExtensionImpl(null, null, msClassmark2, imei, supportedCamelPhases, offeredCamel4Functionalities, bearerCapability2,
-                extBasicServiceCode2, highLayerCompatibility2, lowLayerCompatibility, lowLayerCompatibility2, true, uuData, true);
+                extBasicServiceCode2, highLayerCompatibility2, lowLayerCompatibility, lowLayerCompatibility2, true, uuData, false, false, CAPApplicationContextVersion.version4);
         aos = new AsnOutputStream();
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData3()));
@@ -255,7 +256,7 @@ public class InitialDPArgExtensionTest {
         CalledPartyNumberImpl calledPartyNumber = new CalledPartyNumberImpl(1, "2222", 1, 0);
         CalledPartyNumberCapImpl forwardingDestinationNumber = new CalledPartyNumberCapImpl(calledPartyNumber);
         InitialDPArgExtensionImpl original = new InitialDPArgExtensionImpl(gmscAddress, forwardingDestinationNumber, null,
-                null, null, null, null, null, null, null, null, false, null, false);
+                null, null, null, null, null, null, null, null, false, null, false, false, CAPApplicationContextVersion.version2);
 
         // Writes the area to a file.
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -312,7 +313,7 @@ public class InitialDPArgExtensionTest {
         UUIndicator uuIndicator = new UUIndicatorImpl(129);
         UUData uuData = new UUDataImpl(uuIndicator, null, false, null);
         original = new InitialDPArgExtensionImpl(null, null, msClassmark2, imei, supportedCamelPhases, offeredCamel4Functionalities, bearerCapability2,
-                extBasicServiceCode2, highLayerCompatibility2, lowLayerCompatibility, lowLayerCompatibility2, true, uuData, true);
+                extBasicServiceCode2, highLayerCompatibility2, lowLayerCompatibility, lowLayerCompatibility2, true, uuData, false, false, CAPApplicationContextVersion.version4);
 
         // Writes the area to a file.
         baos = new ByteArrayOutputStream();

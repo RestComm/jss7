@@ -498,8 +498,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
         byte[] buf = parameter.getData();
         AsnInputStream ais = new AsnInputStream(buf);
-        InitialDPRequestImpl ind = new InitialDPRequestImpl(
-                capDialogImpl.getApplicationContext().getVersion().getVersion() >= 3);
+        InitialDPRequestImpl ind = new InitialDPRequestImpl(capDialogImpl.getApplicationContext().getVersion());
         ind.decodeData(ais, buf.length);
 
         ind.setInvokeId(invokeId);

@@ -100,4 +100,7 @@ public interface InitialDPArgExtension extends Serializable {
 
     UUData getUUData();
 
+    boolean getCollectInformationAllowed();
+
+    boolean getReleaseCallArgExtensionAllowed();
 }
