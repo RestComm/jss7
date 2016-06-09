@@ -37,7 +37,6 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.OCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SMSCSI;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SSCSI;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SpecificAPNInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.SpecificCSIWithdraw;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TBcsmCamelTdpCriteria;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TCSI;
