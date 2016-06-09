@@ -21,13 +21,17 @@
  */
 package org.mobicents.protocols.ss7.cap.service.sms.primitive;
 
+import javolution.text.CharArray;
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatDataSMS;
 import org.mobicents.protocols.ss7.cap.primitives.OctetStringBase;
 
 /**
  *
  * @author Lasith Waruna Perera
- *
+ * @author alerant appngin
  */
 public class FreeFormatDataSMSImpl extends OctetStringBase implements FreeFormatDataSMS {
 
@@ -43,4 +47,26 @@ public class FreeFormatDataSMSImpl extends OctetStringBase implements FreeFormat
     public byte[] getData() {
         return data;
     }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<FreeFormatDataSMSImpl> FREE_FORMAT_DATA_SMS_XML = new XMLFormat<FreeFormatDataSMSImpl>(
+            FreeFormatDataSMSImpl.class) {
+
+        // serialize as simple text content
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, FreeFormatDataSMSImpl obj) throws XMLStreamException {
+
+            CharArray arr = xml.getText();
+            obj.data = hexToBytes(arr.array(), arr.offset(), arr.length());
+        }
+
+        @Override
+        public void write(FreeFormatDataSMSImpl obj, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+
+            xml.addText(bytesToHex(obj.data));
+        }
+    };
 }
