@@ -2,7 +2,7 @@ Name
 	sccp sap show
 
 SYNOPSIS
-	sccp sap show <id> stackname <stack-name>
+	sccp sap show id <id> stackname <stack-name>
 
 DESCRIPTION
 	This command is used to view the details of all Service Access Points. If an <id> 

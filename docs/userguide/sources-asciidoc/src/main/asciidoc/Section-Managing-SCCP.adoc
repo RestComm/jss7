@@ -893,7 +893,7 @@ Name
 	sccp address show
 
 SYNOPSIS
-	sccp address show <id> stackname <stack-name>
+	sccp address show id <id> stackname <stack-name>
 
 DESCRIPTION
 	This command is used to view the details of all configured addresses. 
@@ -1335,7 +1335,7 @@ Name
 	sccp rule show
 
 SYNOPSIS
-	sccp rule show <id> stackname <stack-name>
+	sccp rule show id <id> stackname <stack-name>
 
 DESCRIPTION
 	This command is used to view the details of all Rules configured. If an <id> is 
@@ -2201,7 +2201,7 @@ Name
 	sccp rsp show
 
 SYNOPSIS
-	sccp rsp show <id> stackname <stack-name>
+	sccp rsp show id <id> stackname <stack-name>
 
 DESCRIPTION
 	This command is used to view the details of all configured Remote Signaling Points.
@@ -2393,7 +2393,7 @@ Name
 	sccp rss show
 
 SYNOPSIS
-	sccp rss show <id> stackname <stack-name>
+	sccp rss show id <id> stackname <stack-name>
 
 DESCRIPTION
 	This command is used to view the details of all configured Remote Sub-Systems. 
@@ -2608,7 +2608,7 @@ Name
 	sccp lmr show
 
 SYNOPSIS
-	sccp lmr show <id> stackname <stack-name>
+	sccp lmr show id <id> stackname <stack-name>
 
 DESCRIPTION
 	This command is used to view the details of all configured Long Message Rules. 
@@ -2812,7 +2812,7 @@ Name
 	sccp csp show
 
 SYNOPSIS
-	sccp csp show <id> stackname <stack-name>
+	sccp csp show id <id> stackname <stack-name>
 
 DESCRIPTION
 	This command is used to view the details of all configured Concerned Signaling 

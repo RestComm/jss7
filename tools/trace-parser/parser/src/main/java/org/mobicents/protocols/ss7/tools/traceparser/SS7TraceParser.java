@@ -22,18 +22,7 @@
 
 package org.mobicents.protocols.ss7.tools.traceparser;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import javolution.util.FastMap;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -131,6 +120,8 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.IstCommandRequest;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.IstCommandResponse;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.MAPServiceCallHandlingListener;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.ProvideRoamingNumberRequest;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.ProvideRoamingNumberResponse;
@@ -273,6 +264,16 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -2254,6 +2255,16 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
     public void onProvideRoamingNumberResponse(ProvideRoamingNumberResponse response) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public void onIstCommandRequest(IstCommandRequest request) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onIstCommandResponse(IstCommandResponse response) {
+        // TODO Auto-generated method stub
     }
 
     @Override

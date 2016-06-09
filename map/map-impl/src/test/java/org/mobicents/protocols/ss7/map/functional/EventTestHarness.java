@@ -1,11 +1,5 @@
 package org.mobicents.protocols.ss7.map.functional;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.map.api.MAPDialog;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
@@ -19,6 +13,8 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.IstCommandRequest;
+import org.mobicents.protocols.ss7.map.api.service.callhandling.IstCommandResponse;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.MAPServiceCallHandlingListener;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.ProvideRoamingNumberRequest;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.ProvideRoamingNumberResponse;
@@ -110,6 +106,12 @@ import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSR
 import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 /**
  *
@@ -838,4 +840,17 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
         this.observerdEvents.add(te);
     }
 
+    @Override
+    public void onIstCommandRequest(IstCommandRequest request) {
+        this.logger.debug("onSendIstCommandRequest");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.IstCommand, request, sequence++);
+        this.observerdEvents.add(te);
+    }
+
+    @Override
+    public void onIstCommandResponse(IstCommandResponse response) {
+        this.logger.debug("onSendIstCommandResponse");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.IstCommandResp, response, sequence++);
+        this.observerdEvents.add(te);
+    }
 }

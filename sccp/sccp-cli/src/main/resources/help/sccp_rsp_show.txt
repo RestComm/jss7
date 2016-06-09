@@ -2,7 +2,7 @@ Name
 	sccp rsp show
 
 SYNOPSIS
-	sccp rsp show <id> stackname <stack-name>
+	sccp rsp show id <id> stackname <stack-name>
 
 DESCRIPTION
 	This command is used to view the details of all configured Remote Signaling Points.

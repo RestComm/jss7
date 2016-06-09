@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents.protocols.ss7</groupId>
 		<artifactId>ss7-parent</artifactId>
-		<version>3.0.0-SNAPSHOT</version>
+		<version>7.0.0-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.mobicents.protocols.ss7.docs</groupId>
@@ -36,7 +36,9 @@
 
 	<modules>
 		<module>commons</module>
+<!--
 		<module>releasenotes</module>
+-->
 		<module>installationguide</module>
 		<module>userguide</module>
 	</modules>

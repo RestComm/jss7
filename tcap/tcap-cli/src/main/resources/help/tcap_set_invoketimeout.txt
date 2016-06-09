@@ -13,7 +13,11 @@ DESCRIPTION
 	Invoke timeout. When this timeout occurs `TCListener.onInvokeTimeout()`
 	will be invoked.
 	invoketimeout should always be less than dialogidletimeout.
-	
+	This parameter affects if we use TCAP stack as the upperst level or
+	we have implemented our own stack that reuses TCAP stack. 
+	Restcomm MAP and CAP stacks overrides this parameter at their levels
+	and this parameter deos not affect these stacks.
+
 PARAMETERS
 
 	Standard Parameters

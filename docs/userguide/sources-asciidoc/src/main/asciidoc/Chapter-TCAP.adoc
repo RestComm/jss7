@@ -28,7 +28,7 @@ The TCAP User Part gets access to [class]`TCAPProvider` by doing JNDI lookup as 
 	
 		InitialContext ctx = new InitialContext();
 		try {
-			String providerJndiName = "java:/mobicents/ss7/tcap";
+			String providerJndiName = "java:/restcomm/ss7/tcap";
 			this.tcapProvider = ((TCAPProvider) ctx.lookup(providerJndiName));
 		} finally {
 			ctx.close();
@@ -141,7 +141,7 @@ public class ClientTest implements TCListener {
 
 		InitialContext ctx = new InitialContext();
 		try {
-			String providerJndiName = "java:/mobicents/ss7/tcap";
+			String providerJndiName = "java:/restcomm/ss7/tcap";
 			this.tcapProvider = ((TCAPProvider) ctx.lookup(providerJndiName));
 		} finally {
 			ctx.close();
@@ -235,3 +235,52 @@ public class ClientTest implements TCListener {
 	}
 }
 ----
+
+== {this-platform} {this-application} TCAP statistic counters
+
+Below is a list of provided by TCAP Stack statistic counters. Please see the info how to enable statistics in the following chapters: <<_tcap_property_statisticsenabled>>, <<_managing_statistics>>.
+
+.TCAP statistic counters
+[cols="1,1,4", frame="all", options="header"]
+|===
+| CounterType | Id | Description
+| Summary | TcUniReceivedCount | A count of received TC-UNI messages
+| Summary | TcUniSentCount | A count of sent TC-UNI messages
+| Summary | TcBeginReceivedCount | A count of received TC-BEGIN messages
+| Summary | TcBeginSentCount | A count of sent TC-BEGIN messages
+| Summary | TcContinueReceivedCount | A count of received TC-CONTINUE messages
+| Summary | TcContinueSentCount | A count of sent TC-CONTINUE messages
+| Summary | TcEndReceivedCount | A count of received TC-END messages
+| Summary | TcEndSentCount | A count of sent TC-END messages
+| Summary | TcPAbortReceivedCount | A count of received TC-PROVIDER-ABORT messages
+| Summary | TcPAbortSentCount | A count of sent TC-PROVIDER-ABORT messages
+| Summary | TcUserAbortReceivedCount | A count of received TC-USER-ABORT messages
+| Summary | TcUserAbortSentCount | A count of sent TC-USER-ABORT messages
+| Summary | InvokeReceivedCount | A count of received Invoke components
+| Summary | InvokeSentCount | A count of sent Invoke components
+| Summary | ReturnResultReceivedCount | A count of received ReturtResult components
+| Summary | ReturnResultSentCount | A count of sent ReturtResult components
+| Summary | ReturnResultLastReceivedCount | A count of received ReturtResultLast components
+| Summary | ReturnResultLastSentCount | A count of sent ReturtResultLast components
+| Summary | ReturnErrorReceivedCount | A count of received ReturnError components
+| Summary | ReturnErrorSentCount | A count of sent ReturnError components
+| Summary | RejectReceivedCount | A count of received Reject components
+| Summary | RejectSentCount | A count of sent Reject components
+| Summary | DialogTimeoutCount | A count of received DialogTimeouts
+| Summary | DialogReleaseCount | A count of received DialogReleases
+| Summary | AllEstablishedDialogsCount | A count of all established Dialogs
+| Summary | AllLocalEstablishedDialogsCount | A count of all established local originated Dialogs
+| Summary | AllRemoteEstablishedDialogsCount | A count of all established remote originated Dialogs
+| Minimal | MinDialogsCount | A min count of established Dialogs
+| Maximal | MaxDialogsCount | A max count of established Dialogs
+| SummaryDouble | AllDialogsDuration | A total duration of all released Dialogs (in seconds)
+| Average | AverageDialogsDuration | An average duration of all released Dialogs (in seconds)
+| ComplexValue | OutgoingDialogsPerApplicatioContextName | An outgoing Dialogs count per ApplicationContextNames (in string form)
+| ComplexValue | IncomingDialogsPerApplicatioContextName | An incoming Dialogs count per ApplicationContextNames (in string form)
+| ComplexValue | OutgoingInvokesPerOperationCode | An outgoing Invokes count per OperationCodes
+| ComplexValue | IncomingInvokesPerOperationCode | An incoming Invokes count per OperationCodes
+| ComplexValue | OutgoingErrorsPerErrorCode | An outgoing ReturtError count per ErrorCodes
+| ComplexValue | IncomingErrorsPerErrorCode | An incoming ReturtError count per ErrorCodes
+| ComplexValue | OutgoingRejectPerProblem | An outgoing Reject count per Problem
+| ComplexValue | IncomingRejectPerProblem | An incoming Reject count per Problem
+|===
