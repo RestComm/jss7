@@ -868,10 +868,10 @@ public class CAMELSubscriptionInfoImpl extends SequenceBase implements CAMELSubs
             }
             sb.append("], ");
         }
-        sb.append(", tifCsi=");
-        sb.append(this.tifCsi);
-        sb.append(", tifCsiNotificationToCSE=");
-        sb.append(this.tifCsiNotificationToCSE);
+        if (this.tifCsi)
+            sb.append(", tifCsi");
+        if (this.tifCsiNotificationToCSE)
+            sb.append(", tifCsiNotificationToCSE");
         if (this.gprsCsi != null) {
             sb.append(", gprsCsi=");
             sb.append(this.gprsCsi);

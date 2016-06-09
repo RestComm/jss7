@@ -138,8 +138,8 @@ public class CallHoldDataImpl extends SequenceBase implements CallHoldData {
             sb.append("ssStatus=");
             sb.append(this.ssStatus);
         }
-        sb.append(", notificationToCSE=");
-        sb.append(this.notificationToCSE);
+        if (this.notificationToCSE)
+            sb.append(", notificationToCSE");
 
         sb.append("]");
         return sb.toString();

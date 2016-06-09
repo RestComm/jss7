@@ -245,7 +245,7 @@ public class CallBarringDataImpl extends SequenceBase implements CallBarringData
                 }
                 sb.append(extCallBarringFeature);
             }
-            sb.append("], ");
+            sb.append("]");
         }
         if (this.password != null) {
             sb.append(", password=");
