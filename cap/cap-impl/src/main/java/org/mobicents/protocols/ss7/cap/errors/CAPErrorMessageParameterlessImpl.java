@@ -95,7 +95,7 @@ public class CAPErrorMessageParameterlessImpl extends CAPErrorMessageImpl implem
 
     @Override
     public String toString() {
-        return "CAPErrorMessageParameterless [errorCode=" + capErrorCodeName() + "]";
+        return "CAPErrorMessageParameterless [errorCode=" + errorCode + ":" + capErrorCodeName() + "]";
     }
 
     private String capErrorCodeName() {
