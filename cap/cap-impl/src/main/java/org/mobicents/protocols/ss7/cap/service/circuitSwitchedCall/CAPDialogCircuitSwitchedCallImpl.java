@@ -70,7 +70,6 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.SCIBillingChargingCharacteristics;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ServiceInteractionIndicatorsTwo;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeDurationChargingResult;
-import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.FCIBCCCAMELsequence1Impl;
 import org.mobicents.protocols.ss7.inap.api.isup.CallingPartysCategoryInap;
 import org.mobicents.protocols.ss7.inap.api.isup.HighLayerCompatibilityInap;
 import org.mobicents.protocols.ss7.inap.api.isup.RedirectionInformationInap;
@@ -1192,9 +1191,6 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         OperationCode oc = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
         oc.setLocalOperationCode((long) CAPOperationCode.furnishChargingInformation);
         invoke.setOperationCode(oc);
-
-        // set cap phase for correct encoding
-        ((FCIBCCCAMELsequence1Impl) FCIBCCCAMELsequence1).setCapVersion(this.appCntx.getVersion());
 
         FurnishChargingInformationRequestImpl req = new FurnishChargingInformationRequestImpl(FCIBCCCAMELsequence1);
         AsnOutputStream aos = new AsnOutputStream();

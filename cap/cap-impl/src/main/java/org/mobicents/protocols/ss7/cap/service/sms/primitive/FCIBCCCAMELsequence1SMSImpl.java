@@ -191,8 +191,7 @@ public class FCIBCCCAMELsequence1SMSImpl extends SequenceBase implements FCIBCCC
                 throws XMLStreamException {
 
             // default value is overwrite
-            fcibccSms.appendFreeFormatData = AppendFreeFormatData.valueOf(xml.getAttribute(APPEND_FREE_FORMAT_DATA,
-                    "overwrite"));
+            fcibccSms.appendFreeFormatData = AppendFreeFormatData.valueOf(xml.getAttribute(APPEND_FREE_FORMAT_DATA, null));
 
             fcibccSms.freeFormatData = xml.get(FREE_FORMAT_DATA, FreeFormatDataSMSImpl.class);
         }
@@ -201,8 +200,7 @@ public class FCIBCCCAMELsequence1SMSImpl extends SequenceBase implements FCIBCCC
         public void write(FCIBCCCAMELsequence1SMSImpl fcibccSms, javolution.xml.XMLFormat.OutputElement xml)
                 throws XMLStreamException {
 
-            // write non-default value only
-            if (fcibccSms.appendFreeFormatData != AppendFreeFormatData.overwrite) {
+            if (fcibccSms.appendFreeFormatData != null) {
                 xml.setAttribute(APPEND_FREE_FORMAT_DATA, fcibccSms.appendFreeFormatData.name());
             }
 

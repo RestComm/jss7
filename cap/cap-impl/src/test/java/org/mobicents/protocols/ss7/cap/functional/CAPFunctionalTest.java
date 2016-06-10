@@ -459,8 +459,7 @@ TC-CONTINUE + EventReportBCSMRequest (ODisconnect)
                 byte[] freeFormatData = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
                 assertTrue(Arrays.equals(ind.getFCIBCCCAMELsequence1().getFreeFormatData().getData(), freeFormatData));
                 assertEquals(ind.getFCIBCCCAMELsequence1().getPartyToCharge().getSendingSideID(), LegType.leg1);
-                //Since the dialog appCtx is phase2 the appendFreeFormateData should not be encoded and the default value is expected
-                assertEquals(ind.getFCIBCCCAMELsequence1().getAppendFreeFormatData(), AppendFreeFormatData.overwrite);
+                assertEquals(ind.getFCIBCCCAMELsequence1().getAppendFreeFormatData(), AppendFreeFormatData.append);
                 ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
             }
 

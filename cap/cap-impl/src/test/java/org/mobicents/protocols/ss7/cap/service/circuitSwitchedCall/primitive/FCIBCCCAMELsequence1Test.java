@@ -24,7 +24,6 @@ package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -36,7 +35,6 @@ import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.cap.api.CAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FreeFormatData;
 import org.mobicents.protocols.ss7.cap.primitives.SendingSideIDImpl;
@@ -46,16 +44,12 @@ import org.testng.annotations.Test;
 /**
  *
  * @author sergey vetyutnev
- * @author alerant appngin
+ *
  */
 public class FCIBCCCAMELsequence1Test {
 
     public byte[] getData1() {
         return new byte[] { 48, 14, (byte) 128, 4, 4, 5, 6, 7, (byte) 161, 3, (byte) 128, 1, 2, (byte) 130, 1, 1 };
-    }
-
-    public byte[] getData1_CAP2() {
-        return new byte[] { 48, 11, (byte) 128, 4, 4, 5, 6, 7, (byte) 161, 3, (byte) 128, 1, 2 };
     }
 
     public byte[] getDataFFD() {
@@ -68,7 +62,7 @@ public class FCIBCCCAMELsequence1Test {
         byte[] data = this.getData1();
         AsnInputStream ais = new AsnInputStream(data);
         FCIBCCCAMELsequence1Impl elem = new FCIBCCCAMELsequence1Impl();
-        ais.readTag();
+        int tag = ais.readTag();
         elem.decodeAll(ais);
         assertTrue(Arrays.equals(elem.getFreeFormatData().getData(), this.getDataFFD()));
         assertEquals(elem.getPartyToCharge().getSendingSideID(), LegType.leg2);
@@ -81,17 +75,11 @@ public class FCIBCCCAMELsequence1Test {
         SendingSideIDImpl partyToCharge = new SendingSideIDImpl(LegType.leg2);
         FreeFormatData ffd = new FreeFormatDataImpl(getDataFFD());
         FCIBCCCAMELsequence1Impl elem = new FCIBCCCAMELsequence1Impl(ffd, partyToCharge, AppendFreeFormatData.append);
-
-        // encode for default CAP version 4
         AsnOutputStream aos = new AsnOutputStream();
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
 
-        // encode for CAP version 2: no appendFreeFormatData
-        elem.setCapVersion(CAPApplicationContextVersion.version2);
-        aos = new AsnOutputStream();
-        elem.encodeAll(aos);
-        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1_CAP2()));
+        // byte[] freeFormatData, SendingSideID partyToCharge, AppendFreeFormatData appendFreeFormatData
     }
 
     @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
@@ -140,9 +128,7 @@ public class FCIBCCCAMELsequence1Test {
         copy = reader.read("fciBCCCAMELsequence1", FCIBCCCAMELsequence1Impl.class);
 
         assertEquals(copy.getFreeFormatData().getData(), getDataFFD());
-
-        assertNotNull(copy.getPartyToCharge());
-        assertEquals(copy.getPartyToCharge().toString(), new SendingSideIDImpl(LegType.leg1).toString());
-        assertEquals(copy.getAppendFreeFormatData().toString(), "overwrite");
+        assertNull(copy.getPartyToCharge());
+        assertNull(copy.getAppendFreeFormatData());
     }
 }
