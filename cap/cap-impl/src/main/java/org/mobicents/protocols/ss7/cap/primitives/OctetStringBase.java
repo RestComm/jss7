@@ -38,10 +38,8 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
  * Super class for implementing primitives that are OCTET STRING (SIZE (x..y))
  *
  * @author sergey vetyutnev
- * @author alerant appngin
  */
 public class OctetStringBase implements CAPAsnPrimitive {
-    private static final char[] digits = "0123456789ABCDEF".toCharArray();
 
     protected byte[] data;
 
@@ -187,47 +185,4 @@ public class OctetStringBase implements CAPAsnPrimitive {
 
         return sb.toString();
     }
-
-    public static String bytesToHex(byte[] data) {
-        if (data == null)
-            return null;
-        char[] c = new char[data.length * 2];
-        for (int i = 0, j = i; i < data.length; i++, j += 2) {
-            c[j] = digits[data[i] >> 4 & 0x0F];
-            c[j + 1] = digits[data[i] & 0x0F];
-        }
-        return new String(c);
-    }
-
-    public static byte byteFromHexChar(char c) {
-        return (byte)Character.digit(c, 16);
-    }
-
-    public static byte[] hexToBytes(String hex) {
-        if (hex == null)
-            return null;
-        return hexToBytes(hex.toCharArray());
-    }
-
-    public static byte[] hexToBytes(char[] hex) {
-        if (hex == null)
-            return null;
-        return hexToBytes(hex, 0, hex.length);
-    }
-
-    public static byte[] hexToBytes(char[] hex, int offset, int length) {
-        if (hex == null)
-            return null;
-        if (offset < 0 || length < 1 || hex.length - offset - length + 1 < 0)
-            throw new IndexOutOfBoundsException("Array of length " + hex.length + " has no subarray with offset "
-                    + offset + " and length " + length);
-        if ((length & 1) > 0)
-            throw new IllegalArgumentException("Hex string must be 2n characters long!");
-        byte[] b = new byte[length / 2];
-        for (int i = 0, j = offset; i < b.length; i++, j += 2) {
-            b[i] = (byte) ((byteFromHexChar(hex[j]) << 4) + byteFromHexChar(hex[j + 1]));
-        }
-        return b;
-    }
-
 }

@@ -21,12 +21,12 @@
  */
 package org.mobicents.protocols.ss7.cap.service.sms.primitive;
 
-import javolution.text.CharArray;
-import javolution.xml.XMLFormat;
-import javolution.xml.stream.XMLStreamException;
-
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FreeFormatDataSMS;
 import org.mobicents.protocols.ss7.cap.primitives.OctetStringBase;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.ByteArrayContainer;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
 
 /**
  *
@@ -34,6 +34,8 @@ import org.mobicents.protocols.ss7.cap.primitives.OctetStringBase;
  * @author alerant appngin
  */
 public class FreeFormatDataSMSImpl extends OctetStringBase implements FreeFormatDataSMS {
+
+    private static final String DATA = "data";
 
     public FreeFormatDataSMSImpl() {
         super(1, 160, "FreeFormatDataSMS");
@@ -57,16 +59,19 @@ public class FreeFormatDataSMSImpl extends OctetStringBase implements FreeFormat
         // serialize as simple text content
 
         @Override
-        public void read(javolution.xml.XMLFormat.InputElement xml, FreeFormatDataSMSImpl obj) throws XMLStreamException {
-
-            CharArray arr = xml.getText();
-            obj.data = hexToBytes(arr.array(), arr.offset(), arr.length());
+        public void read(javolution.xml.XMLFormat.InputElement xml, FreeFormatDataSMSImpl freeFormatDataSMS) throws XMLStreamException {
+            ByteArrayContainer bc = xml.get(DATA, ByteArrayContainer.class);
+            if (bc != null) {
+                freeFormatDataSMS.data = bc.getData();
+            };
         }
 
         @Override
-        public void write(FreeFormatDataSMSImpl obj, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
-
-            xml.addText(bytesToHex(obj.data));
+        public void write(FreeFormatDataSMSImpl freeFormatDataSMS, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            if (freeFormatDataSMS.data != null) {
+                ByteArrayContainer bac = new ByteArrayContainer(freeFormatDataSMS.data);
+                xml.add(bac, DATA, ByteArrayContainer.class);
+            }
         }
     };
 }
