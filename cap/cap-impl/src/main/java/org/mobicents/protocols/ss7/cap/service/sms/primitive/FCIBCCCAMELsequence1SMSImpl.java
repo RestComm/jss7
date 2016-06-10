@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.service.sms.primitive;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -41,9 +44,12 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 /**
  *
  * @author Lasith Waruna Perera
+ * @author alerant appngin
  *
  */
 public class FCIBCCCAMELsequence1SMSImpl extends SequenceBase implements FCIBCCCAMELsequence1SMS {
+    private static final String FREE_FORMAT_DATA = "freeFormatData";
+    private static final String APPEND_FREE_FORMAT_DATA = "appendFreeFormatData";
 
     public static final int _ID_freeFormatData = 0;
     public static final int _ID_appendFreeFormatData = 1;
@@ -174,4 +180,35 @@ public class FCIBCCCAMELsequence1SMSImpl extends SequenceBase implements FCIBCCC
         return sb.toString();
     }
 
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<FCIBCCCAMELsequence1SMSImpl> FCI_BCC_CAMEL_SEQUENCE1_SMS_XML = new XMLFormat<FCIBCCCAMELsequence1SMSImpl>(
+            FCIBCCCAMELsequence1SMSImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, FCIBCCCAMELsequence1SMSImpl fcibccSms)
+                throws XMLStreamException {
+
+            // default value is overwrite
+            String vals = xml.getAttribute(APPEND_FREE_FORMAT_DATA, null);
+            if (vals != null)
+                fcibccSms.appendFreeFormatData = AppendFreeFormatData.valueOf(vals);
+
+            fcibccSms.freeFormatData = xml.get(FREE_FORMAT_DATA, FreeFormatDataSMSImpl.class);
+        }
+
+        @Override
+        public void write(FCIBCCCAMELsequence1SMSImpl fcibccSms, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+
+            if (fcibccSms.appendFreeFormatData != null) {
+                xml.setAttribute(APPEND_FREE_FORMAT_DATA, fcibccSms.appendFreeFormatData.name());
+            }
+
+            if (fcibccSms.freeFormatData != null) {
+                xml.add((FreeFormatDataSMSImpl) fcibccSms.freeFormatData, FREE_FORMAT_DATA, FreeFormatDataSMSImpl.class);
+            }
+        }
+    };
 }

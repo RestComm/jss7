@@ -26,6 +26,7 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.FCIBCCCAMELsequ
 
 /**
  *
+<code>
 furnishChargingInformationSMS {PARAMETERS-BOUND : bound} OPERATION ::= {
    ARGUMENT FurnishChargingInformationSMSArg {bound}
    RETURN RESULT FALSE ERRORS {
@@ -42,6 +43,7 @@ FCISMSBillingChargingCharacteristics {PARAMETERS-BOUND : bound} ::= OCTET STRING
 -- shall be the result of the BER-encoded value of type - CAMEL-FCISMSBillingChargingCharacteristics {bound}})
 -- This parameter indicates the SMS billing and/or charging characteristics.
 -- The violation of the UserDefinedConstraint shall be handled as an ASN.1 syntax error.
+</code>
  *
  *
  * @author sergey vetyutnev

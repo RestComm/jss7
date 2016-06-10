@@ -25,9 +25,9 @@ import java.io.Serializable;
 
 /**
 *
-
+<code>
 freeFormatData      [0] OCTET STRING (SIZE(1 .. 160))
-
+</code>
 *
 * @author Lasith Waruna Perera
 *
