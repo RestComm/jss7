@@ -349,7 +349,7 @@ public class InitialDPRequestTest {
         ISDNAddressStringImpl gmscAddress = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN,
                 "2207750007");
         InitialDPArgExtensionImpl initialDPArgExtension = new InitialDPArgExtensionImpl(gmscAddress, null, null, null, null,
-                null, null, null, null, null, null, false, null, false);
+                null, null, null, null, null, null, false, null, false, false, false);
 
         InitialDPRequestImpl elem = new InitialDPRequestImpl(110, calledPartyNumber, callingPartyNumber, callingPartysCategory,
                 null, null, null, originalCalledPartyID, null, null, null, bearerCapability, EventTypeBCSM.collectedInfo,
@@ -458,7 +458,7 @@ public class InitialDPRequestTest {
         ISDNAddressStringImpl gmscAddress = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN,
                 "2207750007");
         InitialDPArgExtensionImpl initialDPArgExtension = new InitialDPArgExtensionImpl(gmscAddress, null, null, null, null,
-                null, null, null, null, null, null, false, null, false);
+                null, null, null, null, null, null, false, null, false, false, false);
         IPSSPCapabilitiesImpl IPSSPCapabilities = new IPSSPCapabilitiesImpl(true, true, false, false, true, null);
         LocationNumberImpl ln = new LocationNumberImpl(LocationNumber._NAI_NATIONAL_SN, "12345333111",
                 LocationNumber._NPI_TELEX, LocationNumber._INN_ROUTING_NOT_ALLOWED, LocationNumber._APRI_ALLOWED,

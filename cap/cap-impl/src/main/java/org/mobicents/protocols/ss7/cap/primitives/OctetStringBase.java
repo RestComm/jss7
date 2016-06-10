@@ -38,9 +38,11 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
  * Super class for implementing primitives that are OCTET STRING (SIZE (x..y))
  *
  * @author sergey vetyutnev
+ * @author alerant appngin
  *
  */
 public class OctetStringBase implements CAPAsnPrimitive {
+    private static final char[] digits = "0123456789ABCDEF".toCharArray();
 
     protected byte[] data;
 
@@ -185,5 +187,39 @@ public class OctetStringBase implements CAPAsnPrimitive {
         }
 
         return sb.toString();
+    }
+
+    protected static String bytesToHex(byte[] data) {
+        if (data == null)
+            return null;
+        char[] c = new char[data.length * 2];
+        for (int i = 0, j = i; i < data.length; i++, j += 2) {
+            c[j] = digits[data[i] >> 4 & 0x0F];
+            c[j + 1] = digits[data[i] & 0x0F];
+        }
+        return new String(c);
+    }
+
+    private static byte byteFromHexChar(char c) {
+        if ('0' <= c && c <= '9')
+            return (byte) (c - '0');
+        c = Character.toUpperCase(c);
+        if ('A' <= c && c <= 'F')
+            return (byte) (c - 'A' + 10);
+        else
+            throw new IllegalArgumentException("Invalid hex character: " + c);
+    }
+
+    protected static byte[] hexToBytes(String hex) {
+        if (hex == null)
+            return null;
+        char[] c = hex.toCharArray();
+        if ((c.length & 1) > 0)
+            throw new IllegalArgumentException("Hex string must be 2n characters long!");
+        byte[] b = new byte[c.length / 2];
+        for (int i = 0, j = i; i < b.length; i++, j += 2) {
+            b[i] = (byte) ((byteFromHexChar(c[j]) << 4) + byteFromHexChar(c[j + 1]));
+        }
+        return b;
     }
 }
