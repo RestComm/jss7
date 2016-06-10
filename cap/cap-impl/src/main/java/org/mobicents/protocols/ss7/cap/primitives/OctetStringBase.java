@@ -38,6 +38,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
  * Super class for implementing primitives that are OCTET STRING (SIZE (x..y))
  *
  * @author sergey vetyutnev
+ *
  */
 public class OctetStringBase implements CAPAsnPrimitive {
 
