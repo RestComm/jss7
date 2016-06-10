@@ -122,7 +122,7 @@ public class ApplyChargingRequestTest {
     public void testEncode() throws Exception {
 
         CAMELAChBillingChargingCharacteristicsImpl aChBillingChargingCharacteristics = new CAMELAChBillingChargingCharacteristicsImpl(
-                36000, false, null, null, null, false);
+                36000, false, null, null, null, 2);
         // long maxCallPeriodDuration, boolean releaseIfdurationExceeded, Long
         // tariffSwitchInterval,
         // AudibleIndicator audibleIndicator, CAPExtensions extensions, boolean
@@ -156,7 +156,7 @@ public class ApplyChargingRequestTest {
     @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
     public void testXMLSerializaion() throws Exception {
         CAMELAChBillingChargingCharacteristicsImpl aChBillingChargingCharacteristics = new CAMELAChBillingChargingCharacteristicsImpl(
-                36000, false, null, null, null, false);
+                36000, false, null, null, null, 2);
         SendingSideIDImpl partyToCharge = new SendingSideIDImpl(LegType.leg1);
         ApplyChargingRequestImpl original = new ApplyChargingRequestImpl(aChBillingChargingCharacteristics, partyToCharge,
                 CAPExtensionsTest.createTestCAPExtensions(), null);

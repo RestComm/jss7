@@ -467,9 +467,9 @@ public class CAPParameterFactoryImpl implements CAPParameterFactory {
     @Override
     public CAMELAChBillingChargingCharacteristics createCAMELAChBillingChargingCharacteristics(long maxCallPeriodDuration,
             boolean releaseIfdurationExceeded, Long tariffSwitchInterval, AudibleIndicator audibleIndicator,
-            CAPExtensions extensions, boolean isCAPVersion3orLater) {
+            CAPExtensions extensions, int capVersion) {
         return new CAMELAChBillingChargingCharacteristicsImpl(maxCallPeriodDuration, releaseIfdurationExceeded,
-                tariffSwitchInterval, audibleIndicator, extensions, isCAPVersion3orLater);
+                tariffSwitchInterval, audibleIndicator, extensions, capVersion);
     }
 
     @Override

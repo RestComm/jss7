@@ -41,6 +41,33 @@ AChBillingChargingCharacteristics {PARAMETERS-BOUND : bound} ::= OCTET STRING (S
 -- value.
 -- The violation of the UserDefinedConstraint shall be handled as an ASN.1 syntax error.
 
+CAMEL V2:
+CAMEL-AChBillingChargingCharacteristics ::= CHOICE {
+  timeDurationCharging [0] SEQUENCE {
+    maxCallPeriodDuration      [0] INTEGER (1..864000),
+    releaseIfdurationExceeded  [1] ReleaseIfDurationExceeded OPTIONAL,
+    tariffSwitchInterval       [2] INTEGER (1..86400) OPTIONAL
+  }
+}
+ReleaseIfDurationExceeded ::= SEQUENCE {
+  tone BOOLEAN DEFAULT FALSE,
+  ...,
+  extensions [10] SEQUENCE SIZE(1..numOfExtensions) OF ExtensionField OPTIONAL
+}
+
+CAMEL V3:
+CAMEL-AChBillingChargingCharacteristics {PARAMETERS-BOUND : bound} ::= CHOICE {
+  timeDurationCharging [0] SEQUENCE {
+    maxCallPeriodDuration      [0] INTEGER (1..864000),
+    releaseIfdurationExceeded  [1] BOOLEAN DEFAULT FALSE,
+    tariffSwitchInterval       [2] INTEGER (1..86400) OPTIONAL,
+    tone                       [3] BOOLEAN DEFAULT FALSE,
+    extensions                 [4] Extensions {bound} OPTIONAL,
+    ...
+  }
+}
+
+CAMEL V4:
 CAMEL-AChBillingChargingCharacteristics {PARAMETERS-BOUND : bound} ::= CHOICE {
   timeDurationCharging [0] SEQUENCE {
     maxCallPeriodDuration      [0] INTEGER (1..864000),
@@ -57,6 +84,7 @@ CAMEL-AChBillingChargingCharacteristics {PARAMETERS-BOUND : bound} ::= CHOICE {
  *
  *
  * @author sergey vetyutnev
+ * @author alerant appngin
  *
  */
 public interface CAMELAChBillingChargingCharacteristics extends Serializable {

@@ -258,7 +258,7 @@ public interface CAPParameterFactory {
 
     CAMELAChBillingChargingCharacteristics createCAMELAChBillingChargingCharacteristics(long maxCallPeriodDuration,
             boolean releaseIfdurationExceeded, Long tariffSwitchInterval, AudibleIndicator audibleIndicator,
-            CAPExtensions extensions, boolean isCAPVersion3orLater);
+            CAPExtensions extensions, int capVersion);
 
     DateAndTime createDateAndTime(int year, int month, int day, int hour, int minute, int second);
 

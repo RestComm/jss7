@@ -302,7 +302,7 @@ public class TestCapScfMan extends TesterBase implements TestCapScfManMBean, Sto
 
         try {
             CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics = capProvider.getCAPParameterFactory()
-                    .createCAMELAChBillingChargingCharacteristics(1000, false, null, null, null, false);
+                    .createCAMELAChBillingChargingCharacteristics(1000, false, null, null, null, 2);
             SendingSideID partyToCharge = capProvider.getCAPParameterFactory().createSendingSideID(LegType.leg1);
             curDialog.addApplyChargingRequest(aChBillingChargingCharacteristics, partyToCharge, null, null);
 

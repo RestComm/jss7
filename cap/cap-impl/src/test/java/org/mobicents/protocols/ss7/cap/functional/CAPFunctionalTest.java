@@ -677,7 +677,7 @@ TC-CONTINUE + EventReportBCSMRequest (ODisconnect)
                                     null, sequence++));
 
                             CAMELAChBillingChargingCharacteristics aChBillingChargingCharacteristics = this.capParameterFactory
-                                    .createCAMELAChBillingChargingCharacteristics(1000, true, null, null, null, false);
+                                    .createCAMELAChBillingChargingCharacteristics(1000, true, null, null, null, 2);
                             SendingSideID partyToCharge = this.capParameterFactory.createSendingSideID(LegType.leg1);
                             dlg.addApplyChargingRequest(aChBillingChargingCharacteristics, partyToCharge, null, null);
                             this.observerdEvents.add(TestEvent
