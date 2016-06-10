@@ -371,7 +371,7 @@ public class TestCapScfMan extends TesterBase implements TestCapScfManMBean, Sto
             DestinationRoutingAddress destinationRoutingAddress = capProvider.getCAPParameterFactory()
                     .createDestinationRoutingAddress(calledPartyNumber);
             curDialog.addConnectRequest(destinationRoutingAddress, null, null, null, null, null, null, null, null, null, null,
-                    null, null, false, false, false, null, false);
+                    null, null, false, false, false, null, false, false);
 
             curDialog.send();
 
