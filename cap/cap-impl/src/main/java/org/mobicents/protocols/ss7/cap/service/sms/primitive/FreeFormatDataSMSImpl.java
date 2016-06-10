@@ -63,7 +63,7 @@ public class FreeFormatDataSMSImpl extends OctetStringBase implements FreeFormat
             ByteArrayContainer bc = xml.get(DATA, ByteArrayContainer.class);
             if (bc != null) {
                 freeFormatDataSMS.data = bc.getData();
-            };
+            }
         }
 
         @Override
