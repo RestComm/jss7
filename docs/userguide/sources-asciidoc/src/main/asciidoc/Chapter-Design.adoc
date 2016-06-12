@@ -101,7 +101,6 @@ The sub-directories included in the [path]_ss7_ folder are:
   Depending on the application, you may be interested in either `TCAP` or `MAP`, or both, or `ISUP` libraries.
 * [path]_shell_ : This holds the Command Line Interface (CLI) module to manage the {this-platform}  {this-application} .								
 * [path]_template_ : This folder contains templates that are needed for JSS7 stack configuring.
-  As of now, native libraries are compiled and available only for linux OS.
 
 == Functional Blocks
 

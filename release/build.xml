@@ -170,12 +170,12 @@
 		<copy file="${jss7.dir}/tcap/tcap-cli/target/tcap-cli.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true" />
 		<copy file="${jss7.dir}/release/release-build.xml" tofile="${restcomm.jss7.dist}/ss7/build.xml" failonerror="true" />
 
-        <copy todir="${restcomm.jss7.dist}/ss7/template/config-dialogic/" failonerror="true">
+        <copy todir="${restcomm.jss7.dist}/ss7/template/META-INF-dialogic/" failonerror="true">
                 <fileset dir="${jss7.dir}/service/src/main/config-dialogic">
                         <include name="**" />
                 </fileset>
         </copy>
-        <copy todir="${restcomm.jss7.dist}/ss7/template/config-m3ua-dialogic/" failonerror="true">
+        <copy todir="${restcomm.jss7.dist}/ss7/template/META-INF-m3ua-dialogic/" failonerror="true">
                 <fileset dir="${jss7.dir}/service/src/main/config-m3ua-dialogic">
                         <include name="**" />
                 </fileset>
@@ -302,13 +302,13 @@
                 <fileset dir="${jss7.dir}/docs/userguide/jdocbook-restcomm/target/docbook/publish/en-US/pdf">
                         <include name="*.pdf" />
                 </fileset>
-        </copy-->
+        </copy
         <copy todir="${docs.dir}" failonerror="true">
                 <fileset dir="${jss7.dir}/docs/releasenotes/jdocbook-restcomm/target/docbook/publish/en-US/pdf">
                         <include name="*.pdf" />
                 </fileset>
         </copy>
-        <!--copy todir="${docs.dir}" failonerror="true">
+        copy todir="${docs.dir}" failonerror="true">
                 <fileset dir="${jss7.dir}/docs/installationguide/jdocbook-restcomm/target/docbook/publish/en-US/pdf">
                         <include name="*.pdf" />
                 </fileset>
