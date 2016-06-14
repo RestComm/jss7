@@ -31,7 +31,7 @@ import org.mobicents.protocols.ss7.cap.api.primitives.AppendFreeFormatData;
 <code>
 fCIBCCCAMELsequence1 [0] SEQUENCE {
   freeFormatData        [0] OCTET STRING (SIZE(1 .. 160)),
-  appendFreeFormatData  [1] AppendFreeFormatData DEFAULT overwrite 
+  appendFreeFormatData  [1] AppendFreeFormatData DEFAULT overwrite
 }
 </code>
  *
