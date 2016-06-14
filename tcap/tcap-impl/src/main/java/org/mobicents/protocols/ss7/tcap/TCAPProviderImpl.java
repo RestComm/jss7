@@ -628,19 +628,24 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                     return;
                 }
 
-                long dialogId = Utils.decodeTransactionId(tcm.getDestinationTransactionId());
+                long dialogId;
                 DialogImpl di;
-                if (this.stack.getPreviewMode()) {
-                    PrevewDialogDataKey ky1 = new PrevewDialogDataKey(message.getIncomingDpc(),
-                            (message.getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress().getGlobalTitle().getDigits() : null),
-                            message.getCalledPartyAddress().getSubsystemNumber(), dialogId);
-                    long dId = Utils.decodeTransactionId(tcm.getOriginatingTransactionId());
-                    PrevewDialogDataKey ky2 = new PrevewDialogDataKey(message.getIncomingOpc(),
-                            (message.getCallingPartyAddress().getGlobalTitle() != null ? message.getCallingPartyAddress().getGlobalTitle().getDigits() : null),
-                            message.getCallingPartyAddress().getSubsystemNumber(), dId);
-                    di = (DialogImpl) this.getPreviewDialog(ky1, ky2, localAddress, remoteAddress, seqControl);
-                } else {
-                    di = this.dialogs.get(dialogId);
+
+                synchronized (this.dialogs) {
+                    dialogId = Utils.decodeTransactionId(tcm.getDestinationTransactionId());
+
+                    if (this.stack.getPreviewMode()) {
+                        PrevewDialogDataKey ky1 = new PrevewDialogDataKey(message.getIncomingDpc(),
+                                (message.getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress().getGlobalTitle().getDigits() : null),
+                                message.getCalledPartyAddress().getSubsystemNumber(), dialogId);
+                        long dId = Utils.decodeTransactionId(tcm.getOriginatingTransactionId());
+                        PrevewDialogDataKey ky2 = new PrevewDialogDataKey(message.getIncomingOpc(),
+                                (message.getCallingPartyAddress().getGlobalTitle() != null ? message.getCallingPartyAddress().getGlobalTitle().getDigits() : null),
+                                message.getCallingPartyAddress().getSubsystemNumber(), dId);
+                        di = (DialogImpl) this.getPreviewDialog(ky1, ky2, localAddress, remoteAddress, seqControl);
+                    } else {
+                        di = this.dialogs.get(dialogId);
+                    }
                 }
                 if (di == null) {
                     logger.warn("TC-CONTINUE: No dialog/transaction for id: " + dialogId);
@@ -728,15 +733,16 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                     logger.error("ParseException when parsing TCEndMessage: " + e.toString(), e);
                     return;
                 }
-
-                dialogId = Utils.decodeTransactionId(teb.getDestinationTransactionId());
-                if (this.stack.getPreviewMode()) {
-                    PrevewDialogDataKey ky = new PrevewDialogDataKey(message.getIncomingDpc(),
-                            (message.getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress().getGlobalTitle().getDigits() : null),
-                            message.getCalledPartyAddress().getSubsystemNumber(), dialogId);
-                    di = (DialogImpl) this.getPreviewDialog(ky, null, localAddress, remoteAddress, seqControl);
-                } else {
-                    di = this.dialogs.get(dialogId);
+                synchronized (this.dialogs) {
+                    dialogId = Utils.decodeTransactionId(teb.getDestinationTransactionId());
+                    if (this.stack.getPreviewMode()) {
+                        PrevewDialogDataKey ky = new PrevewDialogDataKey(message.getIncomingDpc(),
+                                (message.getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress().getGlobalTitle().getDigits() : null),
+                                message.getCalledPartyAddress().getSubsystemNumber(), dialogId);
+                        di = (DialogImpl) this.getPreviewDialog(ky, null, localAddress, remoteAddress, seqControl);
+                    } else {
+                        di = this.dialogs.get(dialogId);
+                    }
                 }
                 if (di == null) {
                     logger.warn("TC-END: No dialog/transaction for id: " + dialogId);
@@ -757,16 +763,17 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                     logger.error("ParseException when parsing TCAbortMessage: " + e.toString(), e);
                     return;
                 }
-
-                dialogId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
-                if (this.stack.getPreviewMode()) {
-                    long dId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
-                    PrevewDialogDataKey ky = new PrevewDialogDataKey(message.getIncomingDpc(),
-                            (message.getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress().getGlobalTitle().getDigits() : null),
-                            message.getCalledPartyAddress().getSubsystemNumber(), dId);
-                    di = (DialogImpl) this.getPreviewDialog(ky, null, localAddress, remoteAddress, seqControl);
-                } else {
-                    di = this.dialogs.get(dialogId);
+                synchronized (this.dialogs) {
+                    dialogId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
+                    if (this.stack.getPreviewMode()) {
+                        long dId = Utils.decodeTransactionId(tub.getDestinationTransactionId());
+                        PrevewDialogDataKey ky = new PrevewDialogDataKey(message.getIncomingDpc(),
+                                (message.getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress().getGlobalTitle().getDigits() : null),
+                                message.getCalledPartyAddress().getSubsystemNumber(), dId);
+                        di = (DialogImpl) this.getPreviewDialog(ky, null, localAddress, remoteAddress, seqControl);
+                    } else {
+                        di = this.dialogs.get(dialogId);
+                    }
                 }
                 if (di == null) {
                     logger.warn("TC-ABORT: No dialog/transaction for id: " + dialogId);
