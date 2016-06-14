@@ -792,13 +792,13 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
     @Override
     public void onSplitLegRequest(SplitLegRequest ind) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void onSplitLegResponse(SplitLegResponse ind) {
         // TODO Auto-generated method stub
-        
+
     }
 
 }
