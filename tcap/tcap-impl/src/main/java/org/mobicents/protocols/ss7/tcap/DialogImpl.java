@@ -557,7 +557,7 @@ public class DialogImpl implements Dialog {
                 tcbm.encode(aos);
                 this.setState(TRPseudoState.InitialSent);
                 if (this.provider.getStack().getStatisticsEnabled()) {
-                    this.provider.getStack().getCounterProviderImpl().updateTcBeginSentCount();
+                    this.provider.getStack().getCounterProviderImpl().updateTcBeginSentCount(this);
                 }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
                         this.seqControl, this.networkId);
@@ -637,7 +637,7 @@ public class DialogImpl implements Dialog {
                 try {
                     tcbm.encode(aos);
                     if (this.provider.getStack().getStatisticsEnabled()) {
-                        this.provider.getStack().getCounterProviderImpl().updateTcContinueSentCount();
+                        this.provider.getStack().getCounterProviderImpl().updateTcContinueSentCount(this);
                     }
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
                             this.localAddress, this.seqControl, this.networkId);
@@ -669,7 +669,7 @@ public class DialogImpl implements Dialog {
                 AsnOutputStream aos = new AsnOutputStream();
                 try {
                     tcbm.encode(aos);
-                    this.provider.getStack().getCounterProviderImpl().updateTcContinueSentCount();
+                    this.provider.getStack().getCounterProviderImpl().updateTcContinueSentCount(this);
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
                             this.localAddress, this.seqControl, this.networkId);
                     this.scheduledComponentList.clear();
@@ -795,7 +795,7 @@ public class DialogImpl implements Dialog {
             try {
                 tcbm.encode(aos);
                 if (this.provider.getStack().getStatisticsEnabled()) {
-                    this.provider.getStack().getCounterProviderImpl().updateTcEndSentCount();
+                    this.provider.getStack().getCounterProviderImpl().updateTcEndSentCount(this);
                 }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
                         this.seqControl, this.networkId);
@@ -860,7 +860,7 @@ public class DialogImpl implements Dialog {
             try {
                 msg.encode(aos);
                 if (this.provider.getStack().getStatisticsEnabled()) {
-                    this.provider.getStack().getCounterProviderImpl().updateTcUniSentCount();
+                    this.provider.getStack().getCounterProviderImpl().updateTcUniSentCount(this);
                 }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
                         this.seqControl, this.networkId);
@@ -965,7 +965,7 @@ public class DialogImpl implements Dialog {
                 try {
                     msg.encode(aos);
                     if (this.provider.getStack().getStatisticsEnabled()) {
-                        this.provider.getStack().getCounterProviderImpl().updateTcUserAbortSentCount();
+                        this.provider.getStack().getCounterProviderImpl().updateTcUserAbortSentCount(this);
                     }
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
                             this.localAddress, this.seqControl, this.networkId);
@@ -1003,7 +1003,7 @@ public class DialogImpl implements Dialog {
         if (this.provider.getStack().getStatisticsEnabled()) {
             switch (componentRequest.getType()) {
             case Invoke:
-                this.provider.getStack().getCounterProviderImpl().updateInvokeSentCount();
+                this.provider.getStack().getCounterProviderImpl().updateInvokeSentCount(this, (Invoke) componentRequest);
 
                 Invoke inv = (Invoke) componentRequest;
                 OperationCodeImpl oc = (OperationCodeImpl) inv.getOperationCode();
@@ -1012,13 +1012,13 @@ public class DialogImpl implements Dialog {
                 }
                 break;
             case ReturnResult:
-                this.provider.getStack().getCounterProviderImpl().updateReturnResultSentCount();
+                this.provider.getStack().getCounterProviderImpl().updateReturnResultSentCount(this);
                 break;
             case ReturnResultLast:
-                this.provider.getStack().getCounterProviderImpl().updateReturnResultLastSentCount();
+                this.provider.getStack().getCounterProviderImpl().updateReturnResultLastSentCount(this);
                 break;
             case ReturnError:
-                this.provider.getStack().getCounterProviderImpl().updateReturnErrorSentCount();
+                this.provider.getStack().getCounterProviderImpl().updateReturnErrorSentCount(this);
 
                 ReturnError re = (ReturnError) componentRequest;
                 ErrorCodeImpl ec = (ErrorCodeImpl) re.getErrorCode();
@@ -1027,7 +1027,7 @@ public class DialogImpl implements Dialog {
                 }
                 break;
             case Reject:
-                this.provider.getStack().getCounterProviderImpl().updateRejectSentCount();
+                this.provider.getStack().getCounterProviderImpl().updateRejectSentCount(this);
 
                 Reject rej = (Reject) componentRequest;
                 ProblemImpl prob = (ProblemImpl) rej.getProblem();
@@ -1359,7 +1359,7 @@ public class DialogImpl implements Dialog {
             for (Component comp : comps) {
                 switch (comp.getType()) {
                 case Invoke:
-                    this.provider.getStack().getCounterProviderImpl().updateInvokeReceivedCount();
+                    this.provider.getStack().getCounterProviderImpl().updateInvokeReceivedCount(this, (Invoke) comp);
 
                     Invoke inv = (Invoke) comp;
                     OperationCodeImpl oc = (OperationCodeImpl) inv.getOperationCode();
@@ -1368,13 +1368,13 @@ public class DialogImpl implements Dialog {
                     }
                     break;
                 case ReturnResult:
-                    this.provider.getStack().getCounterProviderImpl().updateReturnResultReceivedCount();
+                    this.provider.getStack().getCounterProviderImpl().updateReturnResultReceivedCount(this);
                     break;
                 case ReturnResultLast:
-                    this.provider.getStack().getCounterProviderImpl().updateReturnResultLastReceivedCount();
+                    this.provider.getStack().getCounterProviderImpl().updateReturnResultLastReceivedCount(this);
                     break;
                 case ReturnError:
-                    this.provider.getStack().getCounterProviderImpl().updateReturnErrorReceivedCount();
+                    this.provider.getStack().getCounterProviderImpl().updateReturnErrorReceivedCount(this);
 
                     ReturnError re = (ReturnError) comp;
                     ErrorCodeImpl ec = (ErrorCodeImpl) re.getErrorCode();
@@ -1385,7 +1385,7 @@ public class DialogImpl implements Dialog {
                 case Reject:
                     Reject rej = (Reject) comp;
                     if (!rej.isLocalOriginated()) {
-                        this.provider.getStack().getCounterProviderImpl().updateRejectReceivedCount();
+                        this.provider.getStack().getCounterProviderImpl().updateRejectReceivedCount(this);
 
                         ProblemImpl prob = (ProblemImpl) rej.getProblem();
                         if (prob != null) {
@@ -1810,7 +1810,7 @@ public class DialogImpl implements Dialog {
                 try {
                     msg.encode(aos);
                     if (this.provider.getStack().getStatisticsEnabled()) {
-                        this.provider.getStack().getCounterProviderImpl().updateTcPAbortSentCount();
+                        this.provider.getStack().getCounterProviderImpl().updateTcPAbortSentCount(this.remoteTransactionId, PAbortCauseType.NoReasonGiven);
                     }
                     this.provider.send(aos.toByteArray(), false, this.remoteAddress, this.localAddress, this.seqControl, this.networkId);
                 } catch (Exception e) {

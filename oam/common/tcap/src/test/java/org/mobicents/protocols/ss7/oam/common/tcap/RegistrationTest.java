@@ -26,6 +26,7 @@ import static org.testng.Assert.*;
 
 import java.util.Date;
 
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.oam.common.alarm.AlarmProvider;
 import org.mobicents.protocols.ss7.oam.common.jmxss7.Ss7Management;
@@ -244,15 +245,15 @@ public class RegistrationTest {
         CounterValueSet cvs1 = counterProvider.getLastCounterValues("camp_01");
         counterProvider.processCampaign("camp_01", tm1);
 
-        tcapStack1.getProvider().getNewDialog(localAddress, localAddress);
-        tcapStack1.getProvider().getNewDialog(localAddress, localAddress);
-        cp.updateTcBeginSentCount();
+        Dialog d1 = tcapStack1.getProvider().getNewDialog(localAddress, localAddress);        
+        Dialog d2 = tcapStack1.getProvider().getNewDialog(localAddress, localAddress);
+        cp.updateTcBeginSentCount(d1);
         cp.updateAllEstablishedDialogsCount();
         cp.updateAllEstablishedDialogsCount();
         cp.updateAllDialogsDuration(1000);
         cp.updateAllDialogsDuration(2000);
-        cp.updateDialogReleaseCount();
-        cp.updateDialogReleaseCount();
+        cp.updateDialogReleaseCount(d1);
+        cp.updateDialogReleaseCount(d2);
         cp.updateOutgoingDialogsPerApplicatioContextName("20.1");
 
         Thread.sleep(500);
