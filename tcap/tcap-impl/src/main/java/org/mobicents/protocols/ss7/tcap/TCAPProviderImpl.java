@@ -23,14 +23,18 @@
 package org.mobicents.protocols.ss7.tcap;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import javolution.util.FastMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -108,12 +112,17 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     private transient TCAPStackImpl stack; // originating TX id ~=Dialog, its direct
     // mapping, but not described
     // explicitly...
-    private transient FastMap<Long, DialogImpl> dialogs = new FastMap<Long, DialogImpl>();
-    protected transient FastMap<PrevewDialogDataKey, PrevewDialogData> dialogPreviewList = new FastMap<PrevewDialogDataKey, PrevewDialogData>();
+    private transient ConcurrentMap<Long, DialogImpl> dialogs = new ConcurrentHashMap<Long, DialogImpl>();
+    private transient AtomicInteger dialogCount = new AtomicInteger(0);
+    protected transient Map<PrevewDialogDataKey, PrevewDialogData> dialogPreviewList = new HashMap<PrevewDialogDataKey, PrevewDialogData>();
 
     private int seqControl = 0;
     private int ssn;
-    private long curDialogId = 0;
+    /**
+     * Warning: Has to be modulo'd with the current range, because this long
+     * grows in theory without limits.
+     */
+    private AtomicLong curDialogId = new AtomicLong(0);
 
     protected TCAPProviderImpl(SccpProvider sccpProvider, TCAPStackImpl stack, int ssn) {
         super();
@@ -155,31 +164,25 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
     }
 
-    private boolean checkAvailableTxId(Long id) {
-        if (!this.dialogs.containsKey(id))
-            return true;
-        else
-            return false;
-    }
-
     // some help methods... crude but will work for first impl.
     private Long getAvailableTxId() throws TCAPException {
-        if (this.dialogs.size() >= this.stack.getMaxDialogs())
+        if (dialogCount.get() >= this.stack.getMaxDialogs())
             throw new TCAPException("Current dialog count exceeds its maximum value");
 
-        while (true) {
-            if (this.curDialogId < this.stack.getDialogIdRangeStart())
-                this.curDialogId = this.stack.getDialogIdRangeStart() - 1;
-            if (++this.curDialogId > this.stack.getDialogIdRangeEnd())
-                this.curDialogId = this.stack.getDialogIdRangeStart();
-            Long id = this.curDialogId;
-            if (checkAvailableTxId(id))
+        long start = stack.getDialogIdRangeStart();
+        long end = stack.getDialogIdRangeEnd();
+        long range = end - start;
+        for (long i = 0; i <= 2 * range; i++) { // Traverse max twice
+            Long id = ((curDialogId.getAndIncrement()) % (end - start)) + start;
+            if (!dialogs.containsKey(id)) {
                 return id;
+            }
         }
+        throw new TCAPException("No available TCAP id found in range " + start + "-" + end + ", dialog count is: " + dialogCount.get());
     }
 
     // get next Seq Control value available
-    private synchronized int getNextSeqControl() {
+    private int getNextSeqControl() {
         seqControl++;
         if (seqControl > 255) {
             seqControl = 0;
@@ -263,33 +266,28 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             throw new NullPointerException("LocalAddress must not be null");
         }
 
-        synchronized (this.dialogs) {
-            if (id == null) {
-                id = this.getAvailableTxId();
-            } else {
-                if (!checkAvailableTxId(id)) {
-                    throw new TCAPException("Suggested local TransactionId is already present in system: " + id);
-                }
+        if (id == null) {
+            id = getAvailableTxId();
+        }
+        DialogImpl di = new DialogImpl(localAddress, remoteAddress, id, structured, this._EXECUTOR, this, seqControl,
+                this.stack.getPreviewMode());
+        if (structured) {
+            DialogImpl prev = dialogs.putIfAbsent(id, di);
+            if (prev != null) {
+                throw new TCAPException("Generated dialog id " + id
+                        + " has been reserved while creating the dialog. Is dialog range wide enough?");
             }
-            if (structured) {
-                DialogImpl di = new DialogImpl(localAddress, remoteAddress, id, structured, this._EXECUTOR, this, seqControl, this.stack.getPreviewMode());
-
-                this.dialogs.put(id, di);
-                if (this.stack.getStatisticsEnabled()) {
-                    this.stack.getCounterProviderImpl().updateMinDialogsCount(this.dialogs.size());
-                    this.stack.getCounterProviderImpl().updateMaxDialogsCount(this.dialogs.size());
-                }
-
-                return di;
-            } else {
-                DialogImpl di = new DialogImpl(localAddress, remoteAddress, id, structured, this._EXECUTOR, this, seqControl, this.stack.getPreviewMode());
-                return di;
+            long count = dialogCount.incrementAndGet();
+            if (this.stack.getStatisticsEnabled()) {
+                this.stack.getCounterProviderImpl().updateMinDialogsCount(count);
+                this.stack.getCounterProviderImpl().updateMaxDialogsCount(count);
             }
         }
+        return di;
     }
 
     protected long getCurrentDialogsCount() {
-        return this.dialogs.size();
+        return dialogCount.get();
     }
 
     public void send(byte[] data, boolean returnMessageOnError, SccpAddress destinationAddress, SccpAddress originatingAddress,
@@ -423,11 +421,12 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         Long did = d.getLocalDialogId();
 
         if (!d.getPreviewMode()) {
-            synchronized (this.dialogs) {
-                this.dialogs.remove(did);
+            DialogImpl removed = this.dialogs.remove(did);
+            if (removed != null) {
+                int count = dialogCount.decrementAndGet();
                 if (this.stack.getStatisticsEnabled()) {
-                    this.stack.getCounterProviderImpl().updateMinDialogsCount(this.dialogs.size());
-                    this.stack.getCounterProviderImpl().updateMaxDialogsCount(this.dialogs.size());
+                    this.stack.getCounterProviderImpl().updateMinDialogsCount(count);
+                    this.stack.getCounterProviderImpl().updateMaxDialogsCount(count);
                 }
             }
 
@@ -507,6 +506,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         this.sccpProvider.deregisterSccpListener(ssn);
 
         this.dialogs.clear();
+        this.dialogCount.set(0);
         this.dialogPreviewList.clear();
     }
 
@@ -899,7 +899,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                 throw new TCAPException("Dialog with trId=" + ky.origTxId + " is already exists - we ignore it and drops curent dialog");
             }
 
-            Long dialogId = this.getAvailableTxIdPreview();
+            Long dialogId = this.getAvailableTxId();
             PrevewDialogData pdd = new PrevewDialogData(this, dialogId);
             this.dialogPreviewList.put(ky, pdd);
             DialogImpl di = new DialogImpl(localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, false);
@@ -908,17 +908,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             pdd.startIdleTimer();
 
             return di;
-        }
-    }
-
-    private Long getAvailableTxIdPreview() throws TCAPException {
-        while (true) {
-            if (this.curDialogId < this.stack.getDialogIdRangeStart())
-                this.curDialogId = this.stack.getDialogIdRangeStart() - 1;
-            if (++this.curDialogId > this.stack.getDialogIdRangeEnd())
-                this.curDialogId = this.stack.getDialogIdRangeStart();
-            Long id = this.curDialogId;
-            return id;
         }
     }
 
