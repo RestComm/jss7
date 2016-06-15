@@ -83,6 +83,8 @@ import org.mobicents.protocols.ss7.tools.simulatorgui.tests.ussd.TestUssdServerF
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.ussd.TestUssdServerParamForm;
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.map.TestMapLcsClientForm;
 import org.mobicents.protocols.ss7.tools.simulator.tests.map.TestMapLcsClientManMBean;
+import org.mobicents.protocols.ss7.tools.simulatorgui.tests.map.TestMapLcsServerForm;
+import org.mobicents.protocols.ss7.tools.simulator.tests.map.TestMapLcsServerManMBean;
 
 /**
  *
@@ -113,6 +115,7 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
     private TestCheckImeiClientManMBean checkImeiClient;
     private TestCheckImeiServerManMBean checkImeiServer;
     private TestMapLcsClientManMBean mapLcsClient;
+    private TestMapLcsServerManMBean mapLcsServer;
 
     private TestingForm testingForm;
 
@@ -445,6 +448,13 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
                 dlg = testMapLcsClientForm;
             }
                 break;
+            case Instance_TestTask.VAL_MAP_LCS_TEST_SERVER: {
+                TestMapLcsServerForm testMapLcsServerForm = new TestMapLcsServerForm(getJFrame());
+                // falonso: change checkImeiClient, do not push until done so
+                testMapLcsServerForm.setData(mapLcsServer);
+                dlg = testMapLcsServerForm;
+            }
+                break;
 
 
         // TODO: other tests form options editing
@@ -488,7 +498,7 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
             TestSmsClientManMBean smsClient, TestSmsServerManMBean smsServer, TestCapScfManMBean capScf, TestCapSsfManMBean capSsf,
             TestAtiClientManMBean atiClient, TestAtiServerManMBean atiServer,
             TestCheckImeiClientManMBean checkImeiClient, TestCheckImeiServerManMBean checkImeiServer,
-            TestMapLcsClientManMBean mapLcsClient) {
+            TestMapLcsClientManMBean mapLcsClient, TestMapLcsServerManMBean mapLcsServer) {
         setTitle(getTitle() + appName);
 
         this.hostImpl = hostImpl;
@@ -510,6 +520,7 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
         this.checkImeiServer = checkImeiServer;
         this.isRemote = isRemote;
         this.mapLcsClient = mapLcsClient;
+        this.mapLcsServer = mapLcsServer;
 
         this.btTermRemote.setEnabled(isRemote);
 

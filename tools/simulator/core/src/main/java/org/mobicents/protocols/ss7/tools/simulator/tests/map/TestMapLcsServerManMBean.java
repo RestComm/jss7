@@ -26,9 +26,9 @@ package org.mobicents.protocols.ss7.tools.simulator.tests.map;
  * @author falonso@csc.com
  *
  */
-public interface TestMapLcsClientManMBean {
+public interface TestMapLcsServerManMBean {
 
-     String sendRoutingInfoForLCSRequest();
+    String sendRoutingInfoForLCSResponse();
 
 
 }

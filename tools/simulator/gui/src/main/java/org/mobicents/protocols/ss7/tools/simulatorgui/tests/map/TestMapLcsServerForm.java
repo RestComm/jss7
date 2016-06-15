@@ -33,8 +33,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-//import org.mobicents.protocols.ss7.tools.simulator.tests.checkimei.CheckImeiClientAction;
-import org.mobicents.protocols.ss7.tools.simulator.tests.map.TestMapLcsClientManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.map.TestMapLcsServerManMBean;
 import org.mobicents.protocols.ss7.tools.simulatorgui.TestingForm;
 
 /**
@@ -42,11 +41,11 @@ import org.mobicents.protocols.ss7.tools.simulatorgui.TestingForm;
 * @author falonso@csc.com
 *
 */
-public class TestMapLcsClientForm extends TestingForm {
+public class TestMapLcsServerForm extends TestingForm {
 
     private static final long serialVersionUID = 6864080004816461791L;
 
-    private TestMapLcsClientManMBean mapLcsClient;
+    private TestMapLcsServerManMBean mapLcsServer;
 
     private JButton btCloseCurrentDialog;
     private JButton btnSendCheckImei;
@@ -61,7 +60,7 @@ public class TestMapLcsClientForm extends TestingForm {
     private JTextField tbSegmCnt;
     private JTextField tbSegmNum;
 
-    public TestMapLcsClientForm(JFrame owner) {
+    public TestMapLcsServerForm(JFrame owner) {
     super(owner);
 
         JPanel panel = new JPanel();
@@ -90,16 +89,15 @@ public class TestMapLcsClientForm extends TestingForm {
         gbc_panel_1.gridy = 3;
         panel.add(panel_1, gbc_panel_1);
 
-        JButton btnSendRoutingInfoForLCSRequest = new JButton("SendRoutingInfoForLCSRequest");
-        btnSendRoutingInfoForLCSRequest.setBounds(12, 0, 249, 25);
-        panel_1.add(btnSendRoutingInfoForLCSRequest);
+        JButton btnSendRoutingInfoForLCSResponse = new JButton("SendRoutingInfoForLCSResponse");
+        btnSendRoutingInfoForLCSResponse.setBounds(12, 0, 249, 25);
+        panel_1.add(btnSendRoutingInfoForLCSResponse);
 
-        btnSendRoutingInfoForLCSRequest.addActionListener(new ActionListener() {
+        btnSendRoutingInfoForLCSResponse.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                sendRoutingInfoForLCSRequest();
+                sendRoutingInfoForLCSResponse();
             }
         });
-
 
         JLabel label_3 = new JLabel("Operation result");
         GridBagConstraints gbc_label_3 = new GridBagConstraints();
@@ -136,32 +134,19 @@ public class TestMapLcsClientForm extends TestingForm {
         panel.add(lbState, gbc_lbState);
     }
 
-    public void setData(TestMapLcsClientManMBean mapLcsClient) {
-        this.mapLcsClient = mapLcsClient;
+    public void setData(TestMapLcsServerManMBean mapLcsServer) {
+        this.mapLcsServer = mapLcsServer;
 
-        /*tbImei.setText(mapLcsClient.getImei());
-
-        if (mapLcsClient.getmapLcsClientAction().intValue() != mapLcsClientAction.VAL_MANUAL_OPERATION) {
-            btnSendCheckImei.setEnabled(false);
-            tbImei.setEnabled(false);
-            btCloseCurrentDialog.setEnabled(false);
-        } else {
-            btnSendCheckImei.setEnabled(true);
-            tbImei.setEnabled(true);
-            btCloseCurrentDialog.setEnabled(true);
-        }*/
     }
 
-    private void sendRoutingInfoForLCSRequest() {
+    private void sendRoutingInfoForLCSResponse() {
         this.lbMessage.setText("");
-        String res = this.mapLcsClient.sendRoutingInfoForLCSRequest();
+        String res = this.mapLcsServer.sendRoutingInfoForLCSResponse();
         this.lbResult.setText(res);
     }
 
     private void closeCurrentDialog() {
         this.lbMessage.setText("");
-        /* String res = this.mapLcsClient.closeCurrentDialog();
-        this.lbResult.setText(res); */
     }
 
     @Override
@@ -185,7 +170,6 @@ public class TestMapLcsClientForm extends TestingForm {
     public void refreshState() {
         super.refreshState();
 
-        //String s1 = this.mapLcsClient.getCurrentRequestDef();
         this.lbState.setText("No op Refreshed");
     }
 }

@@ -46,6 +46,7 @@ public class Instance_TestTask extends EnumeratedBase {
     public static final int VAL_CHECK_IMEI_TEST_CLIENT = 9;
     public static final int VAL_CHECK_IMEI_TEST_SERVER = 10;
     public static final int VAL_MAP_LCS_TEST_CLIENT = 11;
+    public static final int VAL_MAP_LCS_TEST_SERVER = 12;
 
     private static Hashtable<String, Integer> stringMap = new Hashtable<String, Integer>();
     private static Hashtable<Integer, String> intMap = new Hashtable<Integer, String>();
@@ -63,6 +64,7 @@ public class Instance_TestTask extends EnumeratedBase {
         intMap.put(VAL_CHECK_IMEI_TEST_CLIENT, "CHECK_IMEI_TEST_CLIENT");
         intMap.put(VAL_CHECK_IMEI_TEST_SERVER, "CHECK_IMEI_TEST_SERVER");
         intMap.put(VAL_MAP_LCS_TEST_CLIENT, "MAP_LCS_TEST_CLIENT");
+        intMap.put(VAL_MAP_LCS_TEST_SERVER, "MAP_LCS_TEST_SERVER");
 
         stringMap.put("NO", VAL_NO);
         stringMap.put("USSD_TEST_CLIENT", VAL_USSD_TEST_CLIENT);
@@ -76,6 +78,7 @@ public class Instance_TestTask extends EnumeratedBase {
         stringMap.put("CHECK_IMEI_TEST_CLIENT", VAL_CHECK_IMEI_TEST_CLIENT);
         stringMap.put("CHECK_IMEI_TEST_SERVER", VAL_CHECK_IMEI_TEST_SERVER);
         stringMap.put("MAP_LCS_TEST_CLIENT",VAL_MAP_LCS_TEST_CLIENT);
+        stringMap.put("MAP_LCS_TEST_SERVER",VAL_MAP_LCS_TEST_SERVER);
     }
 
     public Instance_TestTask() {

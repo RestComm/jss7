@@ -21,7 +21,10 @@ import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.apache.log4j.Logger;
 
 
-
+/**
+ * @author falonso@csc.com
+ *
+ */
 public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientManMBean, Stoppable {
 
     private static Logger logger = Logger.getLogger(TestMapLcsClientMan.class);
@@ -53,11 +56,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         sb.append("<html>");
         sb.append(SOURCE_NAME);
         sb.append(": CurDialog=");
-        // MAPDialogMobility curDialog = currentDialog;
-        //if (curDialog != null)
-        //    sb.append(curDialog.getLocalDialogId());
-        //else
-            sb.append("No");
+        sb.append("No");
         sb.append("</html>");
         return sb.toString();
     }
@@ -73,8 +72,6 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     @Override
     public String sendRoutingInfoForLCSRequest() {
 
-        // Map Dialog Listener, MapDialog, MapMan and add as listener(this)
-
         MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 
         if (mapProvider== null) {
@@ -87,12 +84,9 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         try {
 
             MAPServiceLsm service = mapProvider.getMAPServiceLsm();
-            
 
             // falonso acivate should be activate, never used before?
             service.acivate();
-
-            // MAPDialogLsm dialog = service.createNewDialog(null,null,null,null,null,null);
 
             MAPApplicationContext appCnt = null;
 
@@ -122,18 +116,6 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         catch(MAPException e) {
             return "Exception "+e.toString();
         }
-
-        // mapProvider.getMAPServiceLsm().createNewDialog().addSendRoutingInfoForLCSRequest()
-
-        // createNewDialog(appCnt, this.thisAddress, null, this.remoteAddress, null);
-
-        /*  MAPDialogLsm createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference,
-            SccpAddress destAddress, AddressString destReference, Long localTrId) throws MAPException;
-
-    MAPDialogLsm createNewDialog(MAPApplicationContext appCntx, SccpAddress origAddress, AddressString origReference,
-            SccpAddress destAddress, AddressString destReference) throws MAPException;
-
-            */
 
         return "sendRoutingInfoForLCSRequest sent";
     }
