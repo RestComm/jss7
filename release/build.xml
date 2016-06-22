@@ -32,11 +32,11 @@
 	
 
 	<!-- Build dependencies-->
-	
+
 	<target name="build-asn">
 		<echo>Building ASN</echo>
 
-		<exec failonerror="true" executable="${mvn.executable}" dir="${checkout.restcomm-smsc.dir}">
+		<exec failonerror="true" executable="${mvn.executable}" dir="${base.dir}">
 			<arg line="-version" />
 		</exec>
 
