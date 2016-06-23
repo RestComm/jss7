@@ -23,7 +23,7 @@ import static org.testng.Assert.assertTrue;
  * @author vadim subbotin
  */
 public class CallWaitingDataTest {
-    private byte[] data = {48, 12, -95, 10, 48, 8, -95, 3, -125, 1, 0, -126, 1, 15};
+    private byte[] data = {48, 14, -95, 10, 48, 8, -95, 3, -125, 1, 0, -126, 1, 15, -126, 0};
 
     @Test(groups = {"functional.decode", "subscriberInformation"})
     public void testDecode() throws Exception {
@@ -38,7 +38,7 @@ public class CallWaitingDataTest {
 
         assertNotNull(callWaitingData.getCwFeatureList());
         assertEquals(callWaitingData.getCwFeatureList().size(), 1);
-        assertFalse(callWaitingData.getNotificationToCSE());
+        assertTrue(callWaitingData.getNotificationToCSE());
 
         ExtCwFeature extCwFeature = callWaitingData.getCwFeatureList().get(0);
         assertNotNull(extCwFeature.getSsStatus());
@@ -53,7 +53,7 @@ public class CallWaitingDataTest {
     public void testEncode() throws Exception {
         ExtBasicServiceCode extBasicServiceCode = new ExtBasicServiceCodeImpl(new ExtTeleserviceCodeImpl(TeleserviceCodeValue.allTeleservices));
         final ExtCwFeatureImpl extCwFeature = new ExtCwFeatureImpl(extBasicServiceCode, new ExtSSStatusImpl(true, true, true, true));
-        CallWaitingDataImpl callWaitingData = new CallWaitingDataImpl(new ArrayList<ExtCwFeature>(){{add(extCwFeature);}}, false);
+        CallWaitingDataImpl callWaitingData = new CallWaitingDataImpl(new ArrayList<ExtCwFeature>(){{add(extCwFeature);}}, true);
 
         AsnOutputStream asnOS = new AsnOutputStream();
         callWaitingData.encodeAll(asnOS);
