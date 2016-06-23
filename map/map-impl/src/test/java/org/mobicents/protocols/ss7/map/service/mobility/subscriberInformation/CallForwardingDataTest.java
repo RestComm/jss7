@@ -11,6 +11,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSStatus;
 import org.mobicents.protocols.ss7.map.primitives.FTNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtForwFeatureImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtSSStatusImpl;
 import org.testng.annotations.Test;
@@ -28,7 +29,9 @@ import static org.testng.Assert.assertTrue;
  * @author vadim subbotin
  */
 public class CallForwardingDataTest {
-    private byte[] data = {48, 24, 48, 22, 48, 20, -124, 1, 5, -123, 6, -111, -119, 103, 69, 35, -15, -121, 1, 5, -118, 4, -111, 33, 67, -11};
+    private byte[] data = {48, 67, 48, 22, 48, 20, -124, 1, 5, -123, 6, -111, -119, 103, 69, 35, -15, -121, 1, 5, -118,
+            4, -111, 33, 67, -11, 5, 0, -96, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42,
+            3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33};
 
     @Test(groups = {"functional.decode", "subscriberInformation"})
     public void testDecode() throws Exception {
@@ -43,8 +46,8 @@ public class CallForwardingDataTest {
 
         assertNotNull(callForwardingData.getForwardingFeatureList());
         assertEquals(callForwardingData.getForwardingFeatureList().size(), 1);
-        assertFalse(callForwardingData.getNotificationToCSE());
-        assertNull(callForwardingData.getExtensionContainer());
+        assertTrue(callForwardingData.getNotificationToCSE());
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(callForwardingData.getExtensionContainer()));
 
         ExtForwFeature extForwFeature = callForwardingData.getForwardingFeatureList().get(0);
         ISDNAddressString forwardedToNumber = extForwFeature.getForwardedToNumber();
@@ -73,7 +76,8 @@ public class CallForwardingDataTest {
         FTNAddressStringImpl longForwardedToNumber = new FTNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "12345");
         final ExtForwFeatureImpl extForwFeature = new ExtForwFeatureImpl(null, new ExtSSStatusImpl(false, true, false, true), forwardedToNumber, null,
                 null, 5, null, longForwardedToNumber);
-        CallForwardingDataImpl callForwardingData = new CallForwardingDataImpl(new ArrayList<ExtForwFeature>(){{add(extForwFeature);}}, false, null);
+        CallForwardingDataImpl callForwardingData = new CallForwardingDataImpl(new ArrayList<ExtForwFeature>(){{add(extForwFeature);}}, true,
+                MAPExtensionContainerTest.GetTestExtensionContainer());
 
         AsnOutputStream asnOS = new AsnOutputStream();
         callForwardingData.encodeAll(asnOS);

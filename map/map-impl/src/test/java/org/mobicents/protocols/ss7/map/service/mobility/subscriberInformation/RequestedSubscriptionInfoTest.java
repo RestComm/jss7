@@ -7,6 +7,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.RequestedCAMELSubscriptionInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.BearerServiceCodeValue;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SupplementaryCodeValue;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.BasicServiceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.BearerServiceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.SSCodeImpl;
@@ -25,8 +26,10 @@ import static org.testng.Assert.assertTrue;
  * @author vadim subbotin
  */
 public class RequestedSubscriptionInfoTest {
-    private byte[] data = {48, 28, -95, 8, 4, 1, 64, -126, 1, 0, -124, 0, -126, 0, -125, 1, 0, -124, 0, -121, 1,
-            0, -120, 0, -119, 0, -118, 0, -117, 0};
+    private byte[] data = {48, 77, -95, 8, 4, 1, 64, -126, 1, 0, -124, 0, -126, 0, -125, 1, 0, -124, 0, -123, 0, -90,
+            39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21,
+            22, 23, 24, 25, 26, -95, 3, 31, 32, 33, -121, 1, 0, -120, 0, -119, 0, -118, 0, -117, 0, -116, 0, -115, 0,
+            -114, 0};
 
     @Test(groups = {"functional.decode", "subscriberInformation"})
     public void testDecode() throws Exception {
@@ -43,17 +46,17 @@ public class RequestedSubscriptionInfoTest {
         assertTrue(requestedSubscriptionInfo.getOdb());
         assertEquals(requestedSubscriptionInfo.getRequestedCAMELSubscriptionInfo(), RequestedCAMELSubscriptionInfo.oCSI);
         assertTrue(requestedSubscriptionInfo.getSupportedVlrCamelPhases());
-        assertFalse(requestedSubscriptionInfo.getSupportedSgsnCamelPhases());
-        assertNull(requestedSubscriptionInfo.getExtensionContainer());
+        assertTrue(requestedSubscriptionInfo.getSupportedSgsnCamelPhases());
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(requestedSubscriptionInfo.getExtensionContainer()));
         assertEquals(requestedSubscriptionInfo.getAdditionalRequestedCamelSubscriptionInfo(),
                 AdditionalRequestedCAMELSubscriptionInfo.mtSmsCSI);
         assertTrue(requestedSubscriptionInfo.getMsisdnBsList());
         assertTrue(requestedSubscriptionInfo.getCsgSubscriptionDataRequested());
         assertTrue(requestedSubscriptionInfo.getCwInfo());
         assertTrue(requestedSubscriptionInfo.getClipInfo());
-        assertFalse(requestedSubscriptionInfo.getClirInfo());
-        assertFalse(requestedSubscriptionInfo.getHoldInfo());
-        assertFalse(requestedSubscriptionInfo.getEctInfo());
+        assertTrue(requestedSubscriptionInfo.getClirInfo());
+        assertTrue(requestedSubscriptionInfo.getHoldInfo());
+        assertTrue(requestedSubscriptionInfo.getEctInfo());
     }
 
     @Test(groups = {"functional.encode", "subscriberInformation"})
@@ -61,9 +64,10 @@ public class RequestedSubscriptionInfoTest {
         BearerServiceCodeImpl bearerServiceCode = new BearerServiceCodeImpl(BearerServiceCodeValue.allBearerServices);
         BasicServiceCodeImpl basicServiceCode = new BasicServiceCodeImpl(bearerServiceCode);
         SSForBSCodeImpl ssForBSCode = new SSForBSCodeImpl(new SSCodeImpl(SupplementaryCodeValue.allCallCompletionSS), basicServiceCode, true);
+
         RequestedSubscriptionInfoImpl requestedSubscriptionInfo = new RequestedSubscriptionInfoImpl(ssForBSCode, true,
-                RequestedCAMELSubscriptionInfo.oCSI, true, false, null, AdditionalRequestedCAMELSubscriptionInfo.mtSmsCSI,
-                true, true, true, true, false, false, false);
+                RequestedCAMELSubscriptionInfo.oCSI, true, true, MAPExtensionContainerTest.GetTestExtensionContainer(),
+                AdditionalRequestedCAMELSubscriptionInfo.mtSmsCSI, true, true, true, true, true, true, true);
 
         AsnOutputStream asnOS = new AsnOutputStream();
         requestedSubscriptionInfo.encodeAll(asnOS);

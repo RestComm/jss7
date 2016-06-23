@@ -5,6 +5,7 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ODBGeneralData;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ODBHPLMNData;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ODBDataImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ODBGeneralDataImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ODBHPLMNDataImpl;
@@ -22,7 +23,10 @@ import static org.testng.Assert.assertTrue;
  * @author vadim subbotin
  */
 public class ODBInfoTest {
-    private byte[] data = {48, 15, 48, 11, 3, 5, 3, -1, -4, 0, 0, 3, 2, 4, -96, 5, 0};
+    private byte[] data = {48, 97, 48, 52, 3, 5, 3, -1, -4, 0, 0, 3, 2, 4, -96, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4,
+            11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32,
+            33, 5, 0, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3,
+            42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33};
 
     @Test(groups = {"functional.decode", "subscriberInformation"})
     public void testDecode() throws Exception {
@@ -37,7 +41,8 @@ public class ODBInfoTest {
 
         assertNotNull(odbInfo.getOdbData());
         assertTrue(odbInfo.getNotificationToCSE());
-        assertNull(odbInfo.getExtensionContainer());
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(odbInfo.getExtensionContainer()));
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(odbInfo.getOdbData().getExtensionContainer()));
 
         ODBGeneralData odbGeneralData = odbInfo.getOdbData().getODBGeneralData();
         assertTrue(odbGeneralData.getAllOGCallsBarred());
@@ -83,8 +88,9 @@ public class ODBInfoTest {
                 true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false,
                 false, false, false, false);
         ODBHPLMNDataImpl odbhplmnData = new ODBHPLMNDataImpl(true, false, true, false);
-        ODBDataImpl odbData = new ODBDataImpl(odbGeneralData, odbhplmnData, null);
-        ODBInfoImpl odbInfo = new ODBInfoImpl(odbData, true, null);
+        ODBDataImpl odbData = new ODBDataImpl(odbGeneralData, odbhplmnData, MAPExtensionContainerTest.GetTestExtensionContainer());
+
+        ODBInfoImpl odbInfo = new ODBInfoImpl(odbData, true, MAPExtensionContainerTest.GetTestExtensionContainer());
 
         AsnOutputStream asnOS = new AsnOutputStream();
         odbInfo.encodeAll(asnOS);

@@ -18,7 +18,7 @@ import static org.testng.Assert.assertTrue;
  * @author vadim subbotin
  */
 public class ClirDataTest {
-    private byte[] data = {48, 6, -127, 1, 10, -126, 1, 0};
+    private byte[] data = {48, 8, -127, 1, 10, -126, 1, 0, -125, 0};
 
     @Test(groups = {"functional.decode", "subscriberInformation"})
     public void testDecode() throws Exception {
@@ -37,12 +37,12 @@ public class ClirDataTest {
         assertTrue(clirData.getSsStatus().getBitR());
         assertFalse(clirData.getSsStatus().getBitA());
         assertEquals(clirData.getCliRestrictionOption(), CliRestrictionOption.permanent);
-        assertFalse(clirData.getNotificationToCSE());
+        assertTrue(clirData.getNotificationToCSE());
     }
 
     @Test(groups = {"functional.encode", "subscriberInformation"})
     public void testEncode() throws Exception {
-        ClirDataImpl clirData = new ClirDataImpl(new ExtSSStatusImpl(true, false, true, false), CliRestrictionOption.permanent, false);
+        ClirDataImpl clirData = new ClirDataImpl(new ExtSSStatusImpl(true, false, true, false), CliRestrictionOption.permanent, true);
 
         AsnOutputStream asnOS = new AsnOutputStream();
         clirData.encodeAll(asnOS);

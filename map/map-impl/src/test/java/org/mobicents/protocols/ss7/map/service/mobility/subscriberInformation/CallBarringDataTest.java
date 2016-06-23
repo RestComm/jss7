@@ -7,10 +7,13 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtBasicServiceCode;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtCallBarringFeature;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtSSStatus;
+import org.mobicents.protocols.ss7.map.api.service.supplementary.Password;
+import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBasicServiceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtBearerServiceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtCallBarringFeatureImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtSSStatusImpl;
+import org.mobicents.protocols.ss7.map.service.supplementary.PasswordImpl;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -28,7 +31,9 @@ import java.util.Arrays;
  *
  */
 public class CallBarringDataTest {
-    private byte[] data = {48, 13, 48, 8, 48, 6, -126, 1, 0, -124, 1, 8, 2, 1, 3};
+    private byte[] data = {48, 62, 48, 8, 48, 6, -126, 1, 0, -124, 1, 8, 18, 4, 48, 48, 48, 48, 2, 1, 3, 5, 0, 48, 39,
+            -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22,
+            23, 24, 25, 26, -95, 3, 31, 32, 33};
 
     @Test(groups = {"functional.decode", "subscriberInformation"})
     public void testDecode() throws Exception {
@@ -40,6 +45,10 @@ public class CallBarringDataTest {
 
         CallBarringDataImpl callBarringData = new CallBarringDataImpl();
         callBarringData.decodeAll(asn);
+
+        assertEquals(callBarringData.getWrongPasswordAttemptsCounter().intValue(), 3);
+        assertTrue(callBarringData.getNotificationToCSE());
+        assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(callBarringData.getExtensionContainer()));
 
         ArrayList<ExtCallBarringFeature> extCallBarringFeatures = callBarringData.getCallBarringFeatureList();
         assertNotNull(extCallBarringFeatures);
@@ -53,10 +62,10 @@ public class CallBarringDataTest {
         assertFalse(extSSStatus.getBitP());
         assertFalse(extSSStatus.getBitR());
         assertFalse(extSSStatus.getBitA());
-        assertNull(callBarringData.getPassword());
-        assertEquals(callBarringData.getWrongPasswordAttemptsCounter().intValue(), 3);
-        assertFalse(callBarringData.getNotificationToCSE());
-        assertNull(callBarringData.getExtensionContainer());
+
+        Password password = callBarringData.getPassword();
+        assertNotNull(password);
+        assertEquals(password.getData(), "0000");
     }
 
     @Test(groups = {"functional.encode", "subscriberInformation"})
@@ -65,7 +74,7 @@ public class CallBarringDataTest {
         final ExtCallBarringFeatureImpl extCallBarringFeature = new ExtCallBarringFeatureImpl(extBasicServiceCode,
                 new ExtSSStatusImpl(true, false, false, false), null);
         CallBarringDataImpl callBarringData = new CallBarringDataImpl(new ArrayList<ExtCallBarringFeature>(){{add(extCallBarringFeature);}},
-                null, 3, false, null);
+                new PasswordImpl("0000"), 3, true, MAPExtensionContainerTest.GetTestExtensionContainer());
 
         AsnOutputStream asnOS = new AsnOutputStream();
         callBarringData.encodeAll(asnOS);

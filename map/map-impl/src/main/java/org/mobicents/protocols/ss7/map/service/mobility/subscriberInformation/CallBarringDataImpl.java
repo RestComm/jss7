@@ -147,6 +147,7 @@ public class CallBarringDataImpl extends SequenceBase implements CallBarringData
                                     + ".password: Parameter is not primitive",
                                     MAPParsingComponentExceptionReason.MistypedParameter);
 
+                        this.password = new PasswordImpl();
                         ((PasswordImpl) this.password).decodeAll(ais);
                         break;
                     case Tag.INTEGER:
