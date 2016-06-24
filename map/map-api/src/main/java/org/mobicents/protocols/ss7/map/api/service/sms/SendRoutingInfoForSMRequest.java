@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TeleserviceCode;
@@ -43,13 +44,16 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
  * MAP V3: RoutingInfoForSM-Arg ::= SEQUENCE { msisdn [0] ISDN-AddressString, sm-RP-PRI [1] BOOLEAN, serviceCentreAddress [2]
  * AddressString, extensionContainer [6] ExtensionContainer OPTIONAL, ... , gprsSupportIndicator [7] NULL OPTIONAL, --
  * gprsSupportIndicator is set only if the SMS-GMSC supports -- receiving of two numbers from the HLR sm-RP-MTI [8] SM-RP-MTI
- * OPTIONAL, sm-RP-SMEA [9] SM-RP-SMEA OPTIONAL }
+ * OPTIONAL, sm-RP-SMEA [9] SM-RP-SMEA OPTIONAL sm-deliveryNotIntended [10] SM-DeliveryNotIntended OPTIONAL,
+ * ip-sm-gwGuidanceIndicator [11] NULL OPTIONAL, imsi [12] IMSI OPTIONAL, t4-Trigger-Indicator [14] NULL OPTIONAL,
+ * singleAttemptDelivery [13] NULL OPTIONAL, correlationID [15] CorrelationID OPTIONAL }}
  *
  * MAP V2: RoutingInfoForSM-Arg ::= SEQUENCE { msisdn [0] ISDN-AddressString, sm-RP-PRI [1] BOOLEAN, serviceCentreAddress [2]
  * AddressString, teleservice [5] TeleserviceCode OPTIONAL, -- teleservice must be absent in version greater 1 ...}
  *
  *
  * @author sergey vetyutnev
+ * @author eva ogallar
  *
  */
 public interface SendRoutingInfoForSMRequest extends SmsMessage {
@@ -70,5 +74,15 @@ public interface SendRoutingInfoForSMRequest extends SmsMessage {
 
     // for MAP V1 only
     TeleserviceCode getTeleservice();
+
+    boolean getIpSmGwGuidanceIndicator();
+
+    boolean getT4TriggerIndicator();
+
+    boolean getSingleAttemptDelivery();
+
+    IMSI getImsi();
+
+    SMDeliveryNotIntended getSmDeliveryNotIntended();
 
 }

@@ -25,7 +25,7 @@ package org.mobicents.protocols.ss7.map.api.primitives;
 import java.io.Serializable;
 
 /**
- *
+ * <code>
 AddressString ::= OCTET STRING (SIZE (1..maxAddressLength))
 -- This type is used to represent a number for addressing
 -- purposes. It is composed of
@@ -68,7 +68,7 @@ TBCD-STRING ::= OCTET STRING
 -- 1010 (*), 1011 (#), 1100 (a), 1101 (b) or 1110 (c); 1111 used
 -- as filler when there is an odd number of digits.
 -- bits 8765 of octet n encoding digit 2n -- bits 4321 of octet n encoding digit 2(n-1) +1
- *
+ * </code>
  *
  * @author amit bhayani
  *
