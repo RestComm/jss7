@@ -1051,7 +1051,7 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
             case SRIReaction.VAL_RETURN_SUCCESS:
             case SRIReaction.VAL_RETURN_SUCCESS_WITH_LMSI:
                 li = mapProvider.getMAPParameterFactory().createLocationInfoWithLMSI(networkNodeNumber, null, null, false, null);
-                curDialog.addSendRoutingInfoForSMResponse(invokeId, imsi, li, null, null);
+                curDialog.addSendRoutingInfoForSMResponse(invokeId, imsi, li, null, null, null);
 
                 this.countSriResp++;
                 if (!this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().isOneNotificationFor100Dialogs()) {
