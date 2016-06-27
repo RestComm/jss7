@@ -2257,13 +2257,13 @@ public class MAPFunctionalTest extends SccpHarness {
                             IMSI imsi = this.mapParameterFactory.createIMSI("777222");
                             LocationInfoWithLMSI locationInfoWithLMSI = this.mapParameterFactory.createLocationInfoWithLMSI(
                                     msisdn, null, null, false, null);
-                            clientDialogSms.addSendRoutingInfoForSMResponse(invokeId1, imsi, locationInfoWithLMSI, null, null);
+                            clientDialogSms.addSendRoutingInfoForSMResponse(invokeId1, imsi, locationInfoWithLMSI, null, null, null);
 
                             this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendRoutingInfoForSMRespIndication,
                                     null, sequence++));
 
                             imsi = this.mapParameterFactory.createIMSI("777222222");
-                            clientDialogSms.addSendRoutingInfoForSMResponse(invokeId1, imsi, locationInfoWithLMSI, null, null);
+                            clientDialogSms.addSendRoutingInfoForSMResponse(invokeId1, imsi, locationInfoWithLMSI, null, null, null);
 
                             this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendRoutingInfoForSMRespIndication,
                                     null, sequence++));
@@ -3972,7 +3972,7 @@ public class MAPFunctionalTest extends SccpHarness {
 
                 try {
                     d.addSendRoutingInfoForSMResponse(sendRoutingInfoForSMInd.getInvokeId(), imsi, locationInfoWithLMSI, null,
-                            null);
+                            null, null);
                     d.addInformServiceCentreRequest(storedMSISDN, mwStatus, null, absentSubscriberDiagnosticSM,
                             additionalAbsentSubscriberDiagnosticSM);
                 } catch (MAPException e) {
