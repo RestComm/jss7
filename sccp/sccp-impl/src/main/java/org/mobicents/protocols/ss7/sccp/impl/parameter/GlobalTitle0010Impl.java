@@ -21,8 +21,6 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.parameter;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,6 +31,7 @@ import javolution.xml.stream.XMLStreamException;
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.message.ParseException;
+import org.mobicents.protocols.ss7.sccp.parameter.EncodingScheme;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle0010;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 
@@ -44,7 +43,6 @@ public class GlobalTitle0010Impl extends AbstractGlobalTitle implements GlobalTi
     private int translationType;
 
     public GlobalTitle0010Impl() {
-        super.encodingScheme = BCDEvenEncodingScheme.INSTANCE;
     }
 
     /**
@@ -58,7 +56,14 @@ public class GlobalTitle0010Impl extends AbstractGlobalTitle implements GlobalTi
         }
         this.translationType = translationType;
         super.digits = digits;
-        super.encodingScheme = super.digits.length() % 2 == 1 ? BCDOddEncodingScheme.INSTANCE : BCDEvenEncodingScheme.INSTANCE;
+        super.encodingScheme = getEncodingScheme(translationType);
+    }
+
+    protected EncodingScheme getEncodingScheme(final int translationType) {
+        // TODO: we need to add here code for national EncodingScheme for GT0010
+        // now we just use even BCD EncodingScheme for encoding/decoding as a default / fake implementing
+
+        return BCDEvenEncodingScheme.INSTANCE;
     }
 
     @Override
@@ -75,7 +80,8 @@ public class GlobalTitle0010Impl extends AbstractGlobalTitle implements GlobalTi
     public void decode(final InputStream in,final ParameterFactory factory, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
         try{
         this.translationType = in.read() & 0xff;
-        super.decode(in,factory, sccpProtocolVersion);
+        super.encodingScheme = getEncodingScheme(translationType);
+        super.digits = this.encodingScheme.decode(in);
         } catch (IOException e) {
             throw new ParseException(e);
         }
@@ -84,35 +90,14 @@ public class GlobalTitle0010Impl extends AbstractGlobalTitle implements GlobalTi
     @Override
     public void encode(final OutputStream out, final boolean removeSpc, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
         try {
-//            boolean odd = (super.digits.length() % 2) != 0;
-//            // encoding first byte
-//            int b = 0x00;
-//            if (odd) {
-//                b = b | (byte) 0x80;
-//            }
-//            // adding nature of address indicator
-//            b = b | (byte) this.translationType;
-//            // write first byte
-//            out.write((byte) b);
-            // encode digits
-
             out.write(this.translationType);
-            super.encode(out, removeSpc, sccpProtocolVersion);
+            if(super.digits == null){
+                throw new IllegalStateException();
+            }
+            this.encodingScheme.encode(digits, out);
         } catch (IOException e) {
             throw new ParseException(e);
         }
-    }
-
-    @Override
-    public void decode(final byte[] b,final ParameterFactory factory, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
-        this.decode(new ByteArrayInputStream(b),factory, sccpProtocolVersion);
-    }
-
-    @Override
-    public byte[] encode(final boolean removeSpc, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        this.encode(baos, removeSpc, sccpProtocolVersion);
-        return baos.toByteArray();
     }
 
     @Override

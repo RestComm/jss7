@@ -55,6 +55,7 @@ public class GT0001Test {
     private byte[] dataEven = new byte[] { 3, 0x09, 0x32, 0x26, 0x59, 0x18 };
     private byte[] dataOdd = new byte[] { (byte) (3 | 0x80), 0x09, 0x32, 0x26, 0x59, 0x08 };
     private ParameterFactoryImpl factory = new ParameterFactoryImpl();
+
     public GT0001Test() {
     }
 

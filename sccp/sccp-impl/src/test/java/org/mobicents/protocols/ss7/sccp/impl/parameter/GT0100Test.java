@@ -55,7 +55,8 @@ public class GT0100Test {
 
     private byte[] dataEven = new byte[] { 0, 0x12, 0x03, 0x09, 0x32, 0x26, 0x59, 0x18 }; // Es.Even -> 0x12 & 0x0F
     private byte[] dataOdd = new byte[] { 0, 0x11, 0x03, 0x09, 0x32, 0x26, 0x59, 0x08 }; // Es.Odd -> 0x11 & 0x0F - thus leading
-    private ParameterFactoryImpl factory = new ParameterFactoryImpl();                                                                     // zero in last hex
+    private byte[] dataHex = new byte[] { 0, 17, 3, 9, -94, -53, 89, 8 };
+    private ParameterFactoryImpl factory = new ParameterFactoryImpl();
 
     public GT0100Test() {
     }
@@ -126,6 +127,34 @@ public class GT0100Test {
         assertEquals(gt1.getTranslationType(), 0);
         assertEquals(gt1.getNumberingPlan(), NumberingPlan.ISDN_TELEPHONY);
         assertEquals(gt1.getDigits(), "902362958");
+    }
+
+    @Test(groups = { "parameter", "functional.encode" })
+    public void testEncodeHex() throws Exception {
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        GlobalTitle0100Impl gt = new GlobalTitle0100Impl("902ABC958",0, BCDOddEncodingScheme.INSTANCE,NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.NATIONAL);
+
+        gt.encode(bout, false, SccpProtocolVersion.ITU);
+
+        byte[] res = bout.toByteArray();
+
+        boolean correct = Arrays.equals(dataHex, res);
+        assertTrue(correct, "Incorrect encoding");
+    }
+
+    @Test(groups = { "parameter", "functional.decode" })
+    public void testDecodeHex() throws Exception {
+        // wrap data with input stream
+        ByteArrayInputStream in = new ByteArrayInputStream(dataHex);
+
+        // create GT object and read data from stream
+        GlobalTitle0100Impl gt1 = new GlobalTitle0100Impl();
+        gt1.decode(in, factory, SccpProtocolVersion.ITU);
+
+        // check results
+        assertEquals(gt1.getTranslationType(), 0);
+        assertEquals(gt1.getNumberingPlan(), NumberingPlan.ISDN_TELEPHONY);
+        assertEquals(gt1.getDigits(), "902ABC958");
     }
 
     /**

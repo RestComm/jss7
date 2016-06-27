@@ -21,8 +21,6 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.parameter;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,14 +38,15 @@ import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 
 /**
  * @author baranowb
+ * @author sergey vetyutnev
  *
  */
 public class GlobalTitle0011Impl extends AbstractGlobalTitle implements GlobalTitle0011 {
 
     private NumberingPlan numberingPlan;
     private int translationType;
+
     public GlobalTitle0011Impl() {
-        // TODO Auto-generated constructor stub
     }
 
     /**
@@ -118,18 +117,6 @@ public class GlobalTitle0011Impl extends AbstractGlobalTitle implements GlobalTi
         } catch (IOException e) {
             throw new ParseException(e);
         }
-    }
-
-    @Override
-    public void decode(final byte[] b,final ParameterFactory factory, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
-        this.decode(new ByteArrayInputStream(b),factory, sccpProtocolVersion);
-    }
-
-    @Override
-    public byte[] encode(final boolean removeSpc, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        this.encode(baos, removeSpc, sccpProtocolVersion);
-        return baos.toByteArray();
     }
 
     @Override

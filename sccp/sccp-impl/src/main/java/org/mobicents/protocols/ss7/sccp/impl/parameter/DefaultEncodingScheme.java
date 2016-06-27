@@ -33,12 +33,13 @@ import org.mobicents.protocols.ss7.sccp.parameter.EncodingSchemeType;
 /**
  * Default impl which supports simple encoding.
  * @author baranowb
+ * @author sergey vetyutnev
  */
 public class DefaultEncodingScheme implements EncodingScheme, XMLSerializable {
     public static final EncodingScheme INSTANCE = new DefaultEncodingScheme();
     public static final int SCHEMA_CODE = 0;
+
     public DefaultEncodingScheme() {
-        // TODO Auto-generated constructor stub
     }
 
     @Override
@@ -59,9 +60,11 @@ public class DefaultEncodingScheme implements EncodingScheme, XMLSerializable {
     @Override
     public void encode(String digits, OutputStream out) throws ParseException {
         try {
-            boolean odd = digits.length() % 2 != 0;
-            if(getSchemeCode() != 0){
+            boolean odd;
+            if (getSchemeCode() != 0) {
                 odd = isOdd();
+            } else {
+                odd = digits.length() % 2 != 0;
             }
 
             int b = 0;
@@ -82,7 +85,7 @@ public class DefaultEncodingScheme implements EncodingScheme, XMLSerializable {
             // if number is odd append last digit with filler
             if (odd) {
                 String ds1 = digits.substring(count, count + 1);
-                int d = Integer.parseInt(ds1);
+                int d = Integer.parseInt(ds1, 16);
 
                 b = (byte) (d & 0x0f);
                 out.write(b);
@@ -96,18 +99,20 @@ public class DefaultEncodingScheme implements EncodingScheme, XMLSerializable {
     public String decode(InputStream is) throws ParseException {
         try {
             int b;
-            String digits = "";
+            StringBuilder digits = new StringBuilder();
 
             while (is.available() > 0) {
                 b = is.read() & 0xff;
-                digits += Integer.toHexString(b & 0x0f) + Integer.toHexString((b & 0xf0) >> 4);
+
+                digits.append(Integer.toHexString(b & 0x0f));
+                digits.append(Integer.toHexString((b & 0xf0) >> 4));
             }
 
             if (isOdd()) {
-                digits = digits.substring(0, digits.length() - 1);
+                digits.deleteCharAt(digits.length() - 1);
             }
 
-            return digits;
+            return digits.toString().toUpperCase();
         } catch (IOException e) {
             throw new ParseException(e);
         }
