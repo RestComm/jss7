@@ -199,9 +199,10 @@ public class MSISDNBSImpl extends SequenceBase implements MSISDNBS {
         if (this.msisdn != null) {
             sb.append("msisdn=");
             sb.append(this.msisdn);
+            sb.append(", ");
         }
         if (this.basicServiceList != null) {
-            sb.append(", basicServiceList=[");
+            sb.append("basicServiceList=[");
             boolean firstItem = true;
             for (ExtBasicServiceCode extCwFeature: basicServiceList) {
                 if (firstItem) {
@@ -214,8 +215,9 @@ public class MSISDNBSImpl extends SequenceBase implements MSISDNBS {
             sb.append("], ");
         }
         if (this.extensionContainer != null) {
-            sb.append(", extensionContainer=");
+            sb.append("extensionContainer=");
             sb.append(this.extensionContainer);
+            sb.append(", ");
         }
 
         sb.append("]");

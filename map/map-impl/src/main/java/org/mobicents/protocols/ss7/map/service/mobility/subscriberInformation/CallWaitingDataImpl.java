@@ -180,7 +180,7 @@ public class CallWaitingDataImpl extends SequenceBase implements CallWaitingData
             sb.append("], ");
         }
         if (this.notificationToCSE) {
-            sb.append(", isNotificationToCSE");
+            sb.append("isNotificationToCSE, ");
         }
 
         sb.append("]");

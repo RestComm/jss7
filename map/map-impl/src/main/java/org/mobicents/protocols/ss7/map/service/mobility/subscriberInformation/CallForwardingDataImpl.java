@@ -204,11 +204,12 @@ public class CallForwardingDataImpl extends SequenceBase implements CallForwardi
             sb.append("], ");
         }
         if (isNotificationToCSE) {
-            sb.append(", isNotificationToCSE");
+            sb.append("isNotificationToCSE, ");
         }
         if (this.extensionContainer != null) {
-            sb.append(", extensionContainer=");
+            sb.append("extensionContainer=");
             sb.append(this.extensionContainer);
+            sb.append(", ");
         }
 
         sb.append("]");
