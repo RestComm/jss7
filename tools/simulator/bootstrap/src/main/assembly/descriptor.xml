@@ -33,6 +33,7 @@
 
 				<!-- Not strictly SS7, But needed by SS7 -->
 				<include>javolution:javolution</include>
+				<include>io.netty:netty-all</include>
 				<include>org.mobicents.protocols.sctp:sctp-api</include>
 				<include>org.mobicents.protocols.sctp:sctp-impl</include>
 				<include>org.mobicents.commons:commons</include>
