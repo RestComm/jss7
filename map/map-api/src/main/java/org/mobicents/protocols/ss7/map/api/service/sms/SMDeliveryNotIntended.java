@@ -24,7 +24,13 @@ package org.mobicents.protocols.ss7.map.api.service.sms;
 
 /**
  *
- * SM-DeliveryNotIntended ::= ENUMERATED { onlyIMSI-requested (0), onlyMCC-MNC-requested (1), ...}
+<code>
+SM-DeliveryNotIntended ::= ENUMERATED {
+  onlyIMSI-requested (0),
+  onlyMCC-MNC-requested (1),
+  ...
+}
+</code>
  *
  *
  * @author eva ogallar

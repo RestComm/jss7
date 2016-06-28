@@ -25,19 +25,9 @@ package org.mobicents.protocols.ss7.map.service.sms;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
-import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
-import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
-import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.testng.annotations.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 import static org.testng.Assert.assertEquals;
@@ -45,17 +35,18 @@ import static org.testng.Assert.assertTrue;
 
 /**
  *
+ * @author eva ogallar
  * @author sergey vetyutnev
  *
  */
 public class IpSmGwGuidanceTest {
 
     private byte[] getEncodedData() {
-        return new byte[] {32,6,2,1,10,2,1,20};
+        return new byte[] {32,6,2,1,30,2,1,40};
     }
 
     private byte[] getEncodedDataFull() {
-        return new byte[] {32,47,2,1,10,2,1,20,48,39,-96,32,48,10,6,3,42,3,4,11,12,13,14,15,
+        return new byte[] {32,47,2,1,30,2,1,40,48,39,-96,32,48,10,6,3,42,3,4,11,12,13,14,15,
                 48,5,6,3,42,3,6,48,11,6,3,42,3,5,21,22,23,24,25,26,-95,3,31,32,33};
     }
 
@@ -72,8 +63,8 @@ public class IpSmGwGuidanceTest {
         assertEquals(tag, 0);
         assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 
-        assertEquals(ipSmGwGuidance.getMinimumDeliveryTimeValue(), new Integer(10));
-        assertEquals(ipSmGwGuidance.getRecommendedDeliveryTimeValue(), new Integer(20));
+        assertEquals(ipSmGwGuidance.getMinimumDeliveryTimeValue(), 30);
+        assertEquals(ipSmGwGuidance.getRecommendedDeliveryTimeValue(), 40);
 
         rawData = getEncodedDataFull();
         asn = new AsnInputStream(rawData);
@@ -85,15 +76,15 @@ public class IpSmGwGuidanceTest {
         assertEquals(tag, 0);
         assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
 
-        assertEquals(ipSmGwGuidance.getMinimumDeliveryTimeValue(), new Integer(10));
-        assertEquals(ipSmGwGuidance.getRecommendedDeliveryTimeValue(), new Integer(20));
+        assertEquals(ipSmGwGuidance.getMinimumDeliveryTimeValue(), 30);
+        assertEquals(ipSmGwGuidance.getRecommendedDeliveryTimeValue(), 40);
         assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(ipSmGwGuidance.getExtensionContainer()));
     }
 
     @Test(groups = { "functional.encode", "service.sms" })
     public void testEncode() throws Exception {
 
-        IpSmGwGuidanceImpl liw = new IpSmGwGuidanceImpl(10, 20, null);
+        IpSmGwGuidanceImpl liw = new IpSmGwGuidanceImpl(30, 40, null);
 
         AsnOutputStream asnOS = new AsnOutputStream();
         liw.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, 0);
@@ -102,7 +93,7 @@ public class IpSmGwGuidanceTest {
         byte[] rawData = getEncodedData();
         assertTrue(Arrays.equals(rawData, encodedData));
 
-        liw = new IpSmGwGuidanceImpl(10, 20, MAPExtensionContainerTest.GetTestExtensionContainer());
+        liw = new IpSmGwGuidanceImpl(30, 40, MAPExtensionContainerTest.GetTestExtensionContainer());
 
         asnOS.reset();
         liw.encodeAll(asnOS, Tag.CLASS_UNIVERSAL, 0);
@@ -111,29 +102,5 @@ public class IpSmGwGuidanceTest {
         rawData = getEncodedDataFull();
         assertTrue(Arrays.equals(rawData, encodedData));
 
-    }
-
-    @Test(groups = { "functional.serialize", "service.sms" })
-    public void testSerialization() throws Exception {
-        ISDNAddressString nnm = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "79033700222");
-        LMSIImpl lmsi = new LMSIImpl(new byte[] { 0, 3, 98, 49 });
-        LocationInfoWithLMSIImpl original = new LocationInfoWithLMSIImpl(nnm, lmsi, null, true, null);
-
-        // serialize
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(out);
-        oos.writeObject(original);
-        oos.close();
-
-        // deserialize
-        byte[] pickled = out.toByteArray();
-        InputStream in = new ByteArrayInputStream(pickled);
-        ObjectInputStream ois = new ObjectInputStream(in);
-        Object o = ois.readObject();
-        LocationInfoWithLMSIImpl copy = (LocationInfoWithLMSIImpl) o;
-
-        // test result
-        assertEquals(copy.getNetworkNodeNumber(), original.getNetworkNodeNumber());
-        assertEquals(copy.getLMSI(), original.getLMSI());
     }
 }

@@ -19,17 +19,17 @@ import java.io.IOException;
  */
 public class IpSmGwGuidanceImpl  extends SequenceBase implements IpSmGwGuidance {
 
-    public static final String PRIMITIVE_NAME = "IP-SM-GW-Guidance";
+    public static final String PRIMITIVE_NAME = "IpSmGwGuidance";
 
+    private int minimumDeliveryTimeValue;
+    private int recommendedDeliveryTimeValue;
     private MAPExtensionContainer extensionContainer;
-    private Integer minimumDeliveryTimeValue;
-    private Integer recommendedDeliveryTimeValue;
 
     public IpSmGwGuidanceImpl() {
         super(PRIMITIVE_NAME);
     }
 
-    public IpSmGwGuidanceImpl(Integer minimumDeliveryTimeValue, Integer recommendedDeliveryTimeValue, MAPExtensionContainer extensionContainer) {
+    public IpSmGwGuidanceImpl(int minimumDeliveryTimeValue, int recommendedDeliveryTimeValue, MAPExtensionContainer extensionContainer) {
         super(PRIMITIVE_NAME);
         this.extensionContainer = extensionContainer;
         this.minimumDeliveryTimeValue = minimumDeliveryTimeValue;
@@ -40,19 +40,20 @@ public class IpSmGwGuidanceImpl  extends SequenceBase implements IpSmGwGuidance 
         return this.extensionContainer;
     }
 
-    public Integer getMinimumDeliveryTimeValue() {
+    public int getMinimumDeliveryTimeValue() {
         return minimumDeliveryTimeValue;
     }
 
-    public Integer getRecommendedDeliveryTimeValue() {
+    public int getRecommendedDeliveryTimeValue() {
         return recommendedDeliveryTimeValue;
     }
 
     @Override
     protected void _decode(AsnInputStream asnIS, int length) throws MAPParsingComponentException, IOException, AsnException {
 
-        this.minimumDeliveryTimeValue = null;
-        this.recommendedDeliveryTimeValue = null;
+        this.minimumDeliveryTimeValue = 0;
+        this.recommendedDeliveryTimeValue = 0;
+        this.extensionContainer = null;
 
         AsnInputStream ais = asnIS.readSequenceStreamData(length);
         int num = 0;
@@ -70,6 +71,11 @@ public class IpSmGwGuidanceImpl  extends SequenceBase implements IpSmGwGuidance 
                                 + ".minimumDeliveryTimeValue: Parameter 0 bad tag or tag class or not primitive",
                                 MAPParsingComponentExceptionReason.MistypedParameter);
                     this.minimumDeliveryTimeValue = (int) ais.readInteger();
+                    if (this.minimumDeliveryTimeValue < 30 || this.minimumDeliveryTimeValue > 600) {
+                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ".minimumDeliveryTimeValue: Parameter must have value 30-600 but found: "
+                                + this.minimumDeliveryTimeValue, MAPParsingComponentExceptionReason.MistypedParameter);
+                    }
                     break;
 
                 case 1:
@@ -79,23 +85,37 @@ public class IpSmGwGuidanceImpl  extends SequenceBase implements IpSmGwGuidance 
                                 + ".recommendedDeliveryTimeValue: Parameter 1 bad tag or tag class or not primitive",
                                 MAPParsingComponentExceptionReason.MistypedParameter);
                     this.recommendedDeliveryTimeValue = (int) ais.readInteger();
+                    if (this.recommendedDeliveryTimeValue < 30 || this.recommendedDeliveryTimeValue > 600) {
+                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                + ".recommendedDeliveryTimeValue: Parameter must have value 30-600 but found: "
+                                + this.recommendedDeliveryTimeValue, MAPParsingComponentExceptionReason.MistypedParameter);
+                    }
                     break;
 
-                default:
-                    switch (tag) {
-                        case Tag.SEQUENCE:
-                            if (ais.isTagPrimitive())
-                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                        + ".extensionContainer: Parameter is not primitive",
-                                        MAPParsingComponentExceptionReason.MistypedParameter);
-                            this.extensionContainer = new MAPExtensionContainerImpl();
-                            ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                default: {
+                    switch (ais.getTagClass()) {
+                        case Tag.CLASS_UNIVERSAL:
+                            switch (tag) {
+                                case Tag.SEQUENCE:
+                                    if (ais.isTagPrimitive())
+                                        throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                                + ".extensionContainer: Parameter is not primitive",
+                                                MAPParsingComponentExceptionReason.MistypedParameter);
+                                    this.extensionContainer = new MAPExtensionContainerImpl();
+                                    ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                                    break;
+                                default:
+                                    ais.advanceElement();
+                                    break;
+                            }
+
                             break;
                         default:
                             ais.advanceElement();
                             break;
                     }
-                break;
+                    break;
+                }
             }
 
             num++;
@@ -109,13 +129,14 @@ public class IpSmGwGuidanceImpl  extends SequenceBase implements IpSmGwGuidance 
 
     }
 
-
     public void encodeData(AsnOutputStream asnOs) throws MAPException {
         try {
-            if (this.minimumDeliveryTimeValue == null)
-                throw new MAPException("minimumDeliveryTimeValue parameter must not be null");
-            if (this.recommendedDeliveryTimeValue == null)
-                throw new MAPException("recommendedDeliveryTimeValue parameter must not be null");
+            if (this.minimumDeliveryTimeValue < 30 || this.minimumDeliveryTimeValue > 600)
+                throw new MAPException("minimumDeliveryTimeValue parameter must have value 30-600 but found: "
+                        + this.minimumDeliveryTimeValue);
+            if (this.recommendedDeliveryTimeValue < 30 || this.recommendedDeliveryTimeValue > 600)
+                throw new MAPException("recommendedDeliveryTimeValue parameter must have value 30-600 but found: "
+                        + this.recommendedDeliveryTimeValue);
 
             asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.INTEGER, this.minimumDeliveryTimeValue);
             asnOs.writeInteger(Tag.CLASS_UNIVERSAL, Tag.INTEGER, this.recommendedDeliveryTimeValue);
@@ -127,5 +148,29 @@ public class IpSmGwGuidanceImpl  extends SequenceBase implements IpSmGwGuidance 
         } catch (AsnException e) {
             throw new MAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_PrimitiveName);
+        sb.append(" [");
+
+        sb.append("minimumDeliveryTimeValue=");
+        sb.append(minimumDeliveryTimeValue);
+        sb.append(", ");
+
+        sb.append("recommendedDeliveryTimeValue=");
+        sb.append(recommendedDeliveryTimeValue);
+        sb.append(", ");
+
+        if (this.extensionContainer != null) {
+            sb.append(", extensionContainer=");
+            sb.append(this.extensionContainer.toString());
+        }
+
+        sb.append("]");
+
+        return sb.toString();
     }
 }

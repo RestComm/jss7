@@ -71,7 +71,7 @@ public class SendRoutingInfoForSMResponseTest {
     }
 
     private byte[] getEncodedData2() {
-        return new byte[] {48,30,4,7,82,0,17,17,17,17,17,-96,8,-127,6,-111,-105,-103,25,17,17,-126,1,0,-91,6,2,1,10,2,1,20};
+        return new byte[] {48,30,4,7,82,0,17,17,17,17,17,-96,8,-127,6,-111,-105,-103,25,17,17,-126,1,0,-91,6,2,1,30,2,1,40};
     }
 
     @Test(groups = { "functional.decode", "service.sms" })
@@ -171,8 +171,8 @@ public class SendRoutingInfoForSMResponseTest {
         assertNull(li.getAdditionalNumber());
         assertNull(ind.getExtensionContainer());
         assertNotNull(ind.getIpSmGwGuidance());
-        assertEquals(ind.getIpSmGwGuidance().getMinimumDeliveryTimeValue(), new Integer(10));
-        assertEquals(ind.getIpSmGwGuidance().getRecommendedDeliveryTimeValue(), new Integer(20));
+        assertEquals(ind.getIpSmGwGuidance().getMinimumDeliveryTimeValue(), 30);
+        assertEquals(ind.getIpSmGwGuidance().getRecommendedDeliveryTimeValue(), 40);
         assertFalse(ind.getMwdSet());
     }
 
@@ -224,7 +224,7 @@ public class SendRoutingInfoForSMResponseTest {
         imsi = new IMSIImpl("25001111111111");
         nnn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "7999911111");
         li = new LocationInfoWithLMSIImpl(nnn, null, null, false, null);
-        IpSmGwGuidanceImpl ipSmGwGuidance = new IpSmGwGuidanceImpl(10, 20, null);
+        IpSmGwGuidanceImpl ipSmGwGuidance = new IpSmGwGuidanceImpl(30, 40, null);
         ind = new SendRoutingInfoForSMResponseImpl(imsi, li, null, false, ipSmGwGuidance);
 
         asnOS = new AsnOutputStream();

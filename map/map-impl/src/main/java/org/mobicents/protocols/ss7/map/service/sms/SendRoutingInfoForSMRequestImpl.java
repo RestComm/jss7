@@ -415,8 +415,10 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
                 asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_sm_RP_MTI, this.sM_RP_MTI.getCode());
             if (this.sM_RP_SMEA != null)
                 this.sM_RP_SMEA.encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_sm_RP_SMEA);
+
             if (this.teleservice != null)
                 ((TeleserviceCodeImpl) this.teleservice).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_teleservice);
+
             if (this.smDeliveryNotIntended != null)
                 asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_smDeliveryNotIntended, this.smDeliveryNotIntended.getCode());
             if (this.ipSmGwGuidanceIndicator == true)
@@ -468,16 +470,10 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
             sb.append(", sM_RP_SMEA=");
             sb.append(this.sM_RP_SMEA.toString());
         }
-        if (this.teleservice != null) {
-            sb.append(", teleservice=");
-            sb.append(this.teleservice.toString());
-        }
+
         if (this.smDeliveryNotIntended != null) {
             sb.append(", smDeliveryNotIntended=");
             sb.append(this.smDeliveryNotIntended.toString());
-        }
-        if (this.ipSmGwGuidanceIndicator) {
-            sb.append(", ipSmGwGuidanceIndicator");
         }
         if (this.ipSmGwGuidanceIndicator) {
             sb.append(", ipSmGwGuidanceIndicator");
@@ -491,6 +487,11 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
         }
         if (this.singleAttemptDelivery) {
             sb.append(", singleAttemptDelivery");
+        }
+
+        if (this.teleservice != null) {
+            sb.append(", teleservice=");
+            sb.append(this.teleservice.toString());
         }
 
         sb.append("]");
