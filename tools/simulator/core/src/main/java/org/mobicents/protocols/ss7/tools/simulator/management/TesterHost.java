@@ -74,8 +74,8 @@ import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientConf
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientMan;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerConfigurationData_OldFormat;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerMan;
-import org.mobicents.protocols.ss7.tools.simulator.tests.map.TestMapLcsClientMan;
-import org.mobicents.protocols.ss7.tools.simulator.tests.map.TestMapLcsServerMan;
+import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientMan;
+import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsServerMan;
 
 /**
  *

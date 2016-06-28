@@ -1,4 +1,4 @@
-package org.mobicents.protocols.ss7.tools.simulator.tests.map;
+package org.mobicents.protocols.ss7.tools.simulator.tests.lcs;
 
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.common.TesterBase;

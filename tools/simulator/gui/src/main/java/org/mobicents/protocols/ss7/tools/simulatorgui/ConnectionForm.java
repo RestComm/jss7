@@ -64,8 +64,8 @@ import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientManMBe
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerManMBean;
-import org.mobicents.protocols.ss7.tools.simulator.tests.map.TestMapLcsClientManMBean;
-import org.mobicents.protocols.ss7.tools.simulator.tests.map.TestMapLcsServerManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsServerManMBean;
 
 /**
  *

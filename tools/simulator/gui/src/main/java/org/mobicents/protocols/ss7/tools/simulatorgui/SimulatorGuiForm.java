@@ -81,10 +81,10 @@ import org.mobicents.protocols.ss7.tools.simulatorgui.tests.ussd.TestUssdClientF
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.ussd.TestUssdClientParamForm;
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.ussd.TestUssdServerForm;
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.ussd.TestUssdServerParamForm;
-import org.mobicents.protocols.ss7.tools.simulatorgui.tests.map.TestMapLcsClientForm;
-import org.mobicents.protocols.ss7.tools.simulator.tests.map.TestMapLcsClientManMBean;
-import org.mobicents.protocols.ss7.tools.simulatorgui.tests.map.TestMapLcsServerForm;
-import org.mobicents.protocols.ss7.tools.simulator.tests.map.TestMapLcsServerManMBean;
+import org.mobicents.protocols.ss7.tools.simulatorgui.tests.lcs.TestMapLcsClientForm;
+import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientManMBean;
+import org.mobicents.protocols.ss7.tools.simulatorgui.tests.lcs.TestMapLcsServerForm;
+import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsServerManMBean;
 
 /**
  *
