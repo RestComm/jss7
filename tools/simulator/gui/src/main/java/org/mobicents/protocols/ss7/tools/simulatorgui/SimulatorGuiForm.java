@@ -83,8 +83,10 @@ import org.mobicents.protocols.ss7.tools.simulatorgui.tests.ussd.TestUssdServerF
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.ussd.TestUssdServerParamForm;
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.lcs.TestMapLcsClientForm;
 import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientManMBean;
+import org.mobicents.protocols.ss7.tools.simulatorgui.tests.lcs.TestMapLcsClientParamForm;
 import org.mobicents.protocols.ss7.tools.simulatorgui.tests.lcs.TestMapLcsServerForm;
 import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsServerManMBean;
+import org.mobicents.protocols.ss7.tools.simulatorgui.tests.lcs.TestMapLcsServerParamForm;
 
 /**
  *
@@ -352,6 +354,18 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
                     case Instance_TestTask.VAL_CHECK_IMEI_TEST_SERVER: {
                         TestCheckImeiServerParamForm frame = new TestCheckImeiServerParamForm(getJFrame());
                         frame.setData(checkImeiServer);
+                        frame.setVisible(true);
+                    }
+                        break;
+                    case Instance_TestTask.VAL_MAP_LCS_TEST_CLIENT: {
+                        TestMapLcsClientParamForm frame = new TestMapLcsClientParamForm(getJFrame());
+                        frame.setData(mapLcsClient);
+                        frame.setVisible(true);
+                    }
+                        break;
+                    case Instance_TestTask.VAL_MAP_LCS_TEST_SERVER: {
+                        TestMapLcsServerParamForm frame = new TestMapLcsServerParamForm(getJFrame());
+                        frame.setData(mapLcsServer);
                         frame.setVisible(true);
                     }
                         break;
