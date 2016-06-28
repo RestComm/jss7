@@ -18,7 +18,7 @@
  */
 
 
-package org.mobicents.protocols.ss7.tools.simulator.tests.map;
+package org.mobicents.protocols.ss7.tools.simulator.tests.lcs;
 
 //import org.mobicents.protocols.ss7.tools.simulator.level3.MapProtocolVersion;
 
@@ -26,9 +26,9 @@ package org.mobicents.protocols.ss7.tools.simulator.tests.map;
  * @author falonso@csc.com
  *
  */
-public interface TestMapLcsClientManMBean {
+public interface TestMapLcsServerManMBean {
 
-     String sendRoutingInfoForLCSRequest();
+    String sendRoutingInfoForLCSResponse();
 
 
 }

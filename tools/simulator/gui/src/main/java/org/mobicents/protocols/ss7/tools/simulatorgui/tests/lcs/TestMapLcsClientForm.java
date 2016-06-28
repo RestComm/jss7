@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package org.mobicents.protocols.ss7.tools.simulatorgui.tests.map;
+package org.mobicents.protocols.ss7.tools.simulatorgui.tests.lcs;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -33,7 +33,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.mobicents.protocols.ss7.tools.simulator.tests.map.TestMapLcsServerManMBean;
+//import org.mobicents.protocols.ss7.tools.simulator.tests.checkimei.CheckImeiClientAction;
+import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulatorgui.TestingForm;
 
 /**
@@ -41,11 +42,11 @@ import org.mobicents.protocols.ss7.tools.simulatorgui.TestingForm;
 * @author falonso@csc.com
 *
 */
-public class TestMapLcsServerForm extends TestingForm {
+public class TestMapLcsClientForm extends TestingForm {
 
     private static final long serialVersionUID = 6864080004816461791L;
 
-    private TestMapLcsServerManMBean mapLcsServer;
+    private TestMapLcsClientManMBean mapLcsClient;
 
     private JButton btCloseCurrentDialog;
     private JButton btnSendCheckImei;
@@ -60,7 +61,7 @@ public class TestMapLcsServerForm extends TestingForm {
     private JTextField tbSegmCnt;
     private JTextField tbSegmNum;
 
-    public TestMapLcsServerForm(JFrame owner) {
+    public TestMapLcsClientForm(JFrame owner) {
     super(owner);
 
         JPanel panel = new JPanel();
@@ -89,15 +90,16 @@ public class TestMapLcsServerForm extends TestingForm {
         gbc_panel_1.gridy = 3;
         panel.add(panel_1, gbc_panel_1);
 
-        JButton btnSendRoutingInfoForLCSResponse = new JButton("SendRoutingInfoForLCSResponse");
-        btnSendRoutingInfoForLCSResponse.setBounds(12, 0, 249, 25);
-        panel_1.add(btnSendRoutingInfoForLCSResponse);
+        JButton btnSendRoutingInfoForLCSRequest = new JButton("SendRoutingInfoForLCSRequest");
+        btnSendRoutingInfoForLCSRequest.setBounds(12, 0, 249, 25);
+        panel_1.add(btnSendRoutingInfoForLCSRequest);
 
-        btnSendRoutingInfoForLCSResponse.addActionListener(new ActionListener() {
+        btnSendRoutingInfoForLCSRequest.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                sendRoutingInfoForLCSResponse();
+                sendRoutingInfoForLCSRequest();
             }
         });
+
 
         JLabel label_3 = new JLabel("Operation result");
         GridBagConstraints gbc_label_3 = new GridBagConstraints();
@@ -134,19 +136,32 @@ public class TestMapLcsServerForm extends TestingForm {
         panel.add(lbState, gbc_lbState);
     }
 
-    public void setData(TestMapLcsServerManMBean mapLcsServer) {
-        this.mapLcsServer = mapLcsServer;
+    public void setData(TestMapLcsClientManMBean mapLcsClient) {
+        this.mapLcsClient = mapLcsClient;
 
+        /*tbImei.setText(mapLcsClient.getImei());
+
+        if (mapLcsClient.getmapLcsClientAction().intValue() != mapLcsClientAction.VAL_MANUAL_OPERATION) {
+            btnSendCheckImei.setEnabled(false);
+            tbImei.setEnabled(false);
+            btCloseCurrentDialog.setEnabled(false);
+        } else {
+            btnSendCheckImei.setEnabled(true);
+            tbImei.setEnabled(true);
+            btCloseCurrentDialog.setEnabled(true);
+        }*/
     }
 
-    private void sendRoutingInfoForLCSResponse() {
+    private void sendRoutingInfoForLCSRequest() {
         this.lbMessage.setText("");
-        String res = this.mapLcsServer.sendRoutingInfoForLCSResponse();
+        String res = this.mapLcsClient.sendRoutingInfoForLCSRequest();
         this.lbResult.setText(res);
     }
 
     private void closeCurrentDialog() {
         this.lbMessage.setText("");
+        /* String res = this.mapLcsClient.closeCurrentDialog();
+        this.lbResult.setText(res); */
     }
 
     @Override
@@ -170,6 +185,7 @@ public class TestMapLcsServerForm extends TestingForm {
     public void refreshState() {
         super.refreshState();
 
+        //String s1 = this.mapLcsClient.getCurrentRequestDef();
         this.lbState.setText("No op Refreshed");
     }
 }
