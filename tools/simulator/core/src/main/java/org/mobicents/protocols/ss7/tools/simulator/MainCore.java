@@ -72,6 +72,10 @@ import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientManM
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientStandardManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerManMBean;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerStandardManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientStandardManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsServerStandardManMBean;
+import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsServerManMBean;
 
 import com.sun.jdmk.comm.HtmlAdaptorServer;
 
@@ -227,6 +231,9 @@ public class MainCore {
         ObjectName nameAtiServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestAtiServerMan");
         ObjectName nameCheckImeiClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestCheckImeiClientMan");
         ObjectName nameCheckImeiServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestCheckImeiServerMan");
+        ObjectName nameMapLcsClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestMapLcsClientMan");
+        ObjectName nameMapLcsServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestMapLcsServerMan");
+
 
         // HtmlAdaptorServer
         HtmlAdaptorServer adapter = null;
@@ -302,6 +309,15 @@ public class MainCore {
             TestCheckImeiServerStandardManMBean checkImeiServerManMBean = new TestCheckImeiServerStandardManMBean(host.getTestCheckImeiServerMan(),
                     TestCheckImeiServerManMBean.class);
             mbs.registerMBean(checkImeiServerManMBean, nameCheckImeiServerManMan);
+
+            TestMapLcsClientStandardManMBean mapLcsClientManMBean = new TestMapLcsClientStandardManMBean(host.getTestMapLcsClientMan(),
+                    TestMapLcsClientManMBean.class);
+            mbs.registerMBean(mapLcsClientManMBean, nameMapLcsClientManMan);
+
+            TestMapLcsServerStandardManMBean mapLcsServerManMBean = new TestMapLcsServerStandardManMBean(host.getTestMapLcsServerMan(),
+                    TestMapLcsServerManMBean.class);
+            mbs.registerMBean(mapLcsServerManMBean, nameMapLcsServerManMan);
+
 
             System.out.println("All beans have been loaded...");
 
