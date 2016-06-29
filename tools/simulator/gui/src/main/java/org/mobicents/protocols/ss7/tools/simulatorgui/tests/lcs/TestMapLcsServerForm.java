@@ -90,12 +90,21 @@ public class TestMapLcsServerForm extends TestingForm {
         panel.add(panel_1, gbc_panel_1);
 
         JButton btnSendRoutingInfoForLCSResponse = new JButton("SendRoutingInfoForLCSResponse");
-        btnSendRoutingInfoForLCSResponse.setBounds(12, 0, 249, 25);
+        btnSendRoutingInfoForLCSResponse.setBounds(0, 0, 249, 25);
         panel_1.add(btnSendRoutingInfoForLCSResponse);
 
         btnSendRoutingInfoForLCSResponse.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 sendRoutingInfoForLCSResponse();
+            }
+        });
+        JButton btnSubscriberLocationReportResponse = new JButton("SubscriberLocationReportResponse");
+        btnSubscriberLocationReportResponse.setBounds(259, 0, 249, 25);
+        panel_1.add(btnSubscriberLocationReportResponse);
+
+        btnSubscriberLocationReportResponse.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                subscriberLocationReportResponse();
             }
         });
 
@@ -134,12 +143,16 @@ public class TestMapLcsServerForm extends TestingForm {
         panel.add(lbState, gbc_lbState);
     }
 
+    private void subscriberLocationReportResponse() {
+        // TODO Auto-generated method stub
+    }
+
     public void setData(TestMapLcsServerManMBean mapLcsServer) {
         this.mapLcsServer = mapLcsServer;
 
     }
 
-    private void sendRoutingInfoForLCSResponse() {
+    protected void sendRoutingInfoForLCSResponse() {
         this.lbMessage.setText("");
         String res = this.mapLcsServer.sendRoutingInfoForLCSResponse();
         this.lbResult.setText(res);
