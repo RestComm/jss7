@@ -166,8 +166,7 @@ echo "========================================================================="
 echo ""
 
       "$JAVA" $JAVA_OPTS \
-         -Djava.ext.dirs="$SGW_ENDORSED_DIRS" \
-         -classpath "$SGW_CLASSPATH" \
+         -classpath "$SGW_CLASSPATH:$SGW_ENDORSED_DIRS/*" \
          org.mobicents.ss7.sgw.boot.Main "$@"
       SGW_STATUS=$?
 
