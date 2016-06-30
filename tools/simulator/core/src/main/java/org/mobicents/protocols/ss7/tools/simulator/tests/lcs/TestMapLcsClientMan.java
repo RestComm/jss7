@@ -138,7 +138,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         return "sendRoutingInfoForLCSRequest sent";
     }
 
-    public String subscriberLocationReportRequest(){
+    public String subscriberLocationReportRequest(String address){
         MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
         if (mapProvider== null) {
             return "mapProvider is null";
@@ -168,7 +168,8 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
             LCSClientID lcsClientID = mapParameterFactory.createLCSClientID(LCSClientType.plmnOperatorServices, null, null,
                     null, null, null, null);
             ISDNAddressString networkNodeNumber = mapParameterFactory.createISDNAddressString(
-                    AddressNature.international_number, NumberingPlan.ISDN, "11113333");
+                    this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getAddressNature(),
+                    this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getNumberingPlanType(), address);
             LCSLocationInfo lcsLocationInfo = mapParameterFactory.createLCSLocationInfo(networkNodeNumber, null, null, false,
                     null, null, null, null, null);
 
