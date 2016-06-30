@@ -119,9 +119,13 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
 
             logger.debug("MAPDialogLsm Created");
 
-            ISDNAddressString mlcNumber = mapParameterFactory.createISDNAddressString(AddressNature.international_number,
-                NumberingPlan.ISDN, "11112222");
-            IMSI imsi = mapParameterFactory.createIMSI("5555544444");
+            ISDNAddressString mlcNumber = mapParameterFactory.createISDNAddressString(
+                AddressNature.getInstance(getAddressNature().intValue()),       // e.g. international_number
+                NumberingPlan.getInstance(getNumberingPlanType().intValue()),   // e.g  ISDN
+                getNumberingPlan());      // e.g. 11112222
+
+            IMSI imsi = mapParameterFactory.createIMSI(
+                getIMSI());               // e.g. 55555
             SubscriberIdentity targetMS = mapParameterFactory.createSubscriberIdentity(imsi);
 
             clientDialogLsm.addSendRoutingInfoForLCSRequest(mlcNumber, targetMS, null);
