@@ -1,6 +1,6 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012.
- * and individual contributors
+ * JBoss, Home of Professional Open Source
+ * Copyright 2011, Red Hat, Inc. and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -22,42 +22,30 @@
 
 package org.mobicents.protocols.ss7.map.api.service.sms;
 
-import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 
+import java.io.Serializable;
+
 /**
- *
 <code>
-RoutingInfoForSM-Res ::= SEQUENCE {
-  imsi                    IMSI,
-  locationInfoWithLMSI    [0] LocationInfoWithLMSI,
-  extensionContainer      [4] ExtensionContainer OPTIONAL,
-  ...,
-  ip-sm-gwGuidance        [5] IP-SM-GW-Guidance OPTIONAL
+IP-SM-GW-Guidance ::= SEQUENCE {
+  minimumDeliveryTimeValue              SM-DeliveryTimerValue,
+  recommendedDeliveryTimeValue          SM-DeliveryTimerValue,
+  extensionContainer                    ExtensionContainer OPTIONAL,
+  ...
 }
 
-MAP V2: RoutingInfoForSM-Res::= SEQUENCE {
-  imsi                    IMSI,
-  locationInfoWithLMSI    [0] LocationInfoWithLMSI,
-  mwd-Set                 [2] BOOLEAN OPTIONAL,
-  -- mwd-Set must be absent in version greater 1 ...
-}
+SM-DeliveryTimerValue ::= INTEGER (30..600)
 </code>
  *
- * @author sergey vetyutnev
- *
+ * @author eva ogallar
  */
-public interface SendRoutingInfoForSMResponse extends SmsMessage {
+public interface IpSmGwGuidance extends Serializable {
 
-    IMSI getIMSI();
+    int getMinimumDeliveryTimeValue();
 
-    LocationInfoWithLMSI getLocationInfoWithLMSI();
+    int getRecommendedDeliveryTimeValue();
 
     MAPExtensionContainer getExtensionContainer();
-
-    IpSmGwGuidance getIpSmGwGuidance();
-
-    // for MAP V1 only
-    Boolean getMwdSet();
 
 }

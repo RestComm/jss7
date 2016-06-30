@@ -22,27 +22,30 @@
 
 package org.mobicents.protocols.ss7.map.service.sms;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-
-import java.util.Arrays;
-
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.TeleserviceCodeValue;
+import org.mobicents.protocols.ss7.map.api.service.sms.SMDeliveryNotIntended;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_MTI;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_SMEA;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
+import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.TeleserviceCodeImpl;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  *
@@ -69,6 +72,21 @@ public class SendRoutingInfoForSMRequestTest {
     private byte[] getEncodedData1() {
         return new byte[] { 48, 20, -128, 5, -111, 17, 17, 17, 17, -127, 1, 0, -126, 5, -111, 34, 34, 34, 34, -123, 1, 33 };
     }
+
+    private byte[] getEncodedData2() {
+        return new byte[] { 48,25,-128,5,-111,17,17,17,17,-127,1,-1,-126,5,-111,34,34,34,34,-121,0,-117,0,-114,0,-115,0 };
+    }
+
+    private byte[] getEncodedData3() {
+        return new byte[] { 48,20,-128,5,-111,17,17,17,17,-127,1,0,-126,5,-111,34,34,34,34,-118,1,0 };
+    }
+
+
+    private byte[] getEncodedData4() {
+        return new byte[] { 48,25,-128,5,-111,17,17,17,17,-127,1,0,-126,5,-111,34,34,34,34,-116,6,81,20,69,81,20,69};
+    }
+
+
 
     @Test(groups = { "functional.decode", "service.sms" })
     public void testDecode() throws Exception {
@@ -171,11 +189,12 @@ public class SendRoutingInfoForSMRequestTest {
     @Test(groups = { "functional.encode", "service.sms" })
     public void testEncode() throws Exception {
 
+        //msisdn + sca
         ISDNAddressString msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN,
                 "13457745551");
         AddressString sca = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "9821113333");
         SendRoutingInfoForSMRequestImpl ind = new SendRoutingInfoForSMRequestImpl(msisdn, false, sca, null, false, null, null,
-                null);
+                null, false, null, false, false, null);
 
         AsnOutputStream asnOS = new AsnOutputStream();
         ind.encodeAll(asnOS);
@@ -184,10 +203,11 @@ public class SendRoutingInfoForSMRequestTest {
         byte[] rawData = getEncodedDataSimple();
         assertTrue(Arrays.equals(rawData, encodedData));
 
+        // msisdn + sca + sm_rp_smea
         msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "13457745551");
         sca = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "9821113333");
-        SM_RP_SMEA ui = new SM_RP_SMEAImpl(new byte[] { -111, 105, 49, 3, -105, 97 });
-        ind = new SendRoutingInfoForSMRequestImpl(msisdn, false, sca, null, true, null, ui, null);
+        SM_RP_SMEA sm_rp_smea = new SM_RP_SMEAImpl(new byte[] { -111, 105, 49, 3, -105, 97 });
+        ind = new SendRoutingInfoForSMRequestImpl(msisdn, false, sca, null, true, null, sm_rp_smea, null, false, null, false, false, null);
 
         asnOS = new AsnOutputStream();
         ind.encodeAll(asnOS);
@@ -196,11 +216,12 @@ public class SendRoutingInfoForSMRequestTest {
         rawData = getEncodedDataComplex();
         assertTrue(Arrays.equals(rawData, encodedData));
 
+        //msisdn + sca + sm_rp_smea + extContainer + SM_RP_MTI
         msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "111222333");
         sca = new AddressStringImpl(AddressNature.network_specific_number, NumberingPlan.national, "4444");
-        ui = new SM_RP_SMEAImpl(new byte[] { -111, 105, 49, 3, -105, 97 });
+        sm_rp_smea = new SM_RP_SMEAImpl(new byte[] { -111, 105, 49, 3, -105, 97 });
         ind = new SendRoutingInfoForSMRequestImpl(msisdn, true, sca, MAPExtensionContainerTest.GetTestExtensionContainer(),
-                true, SM_RP_MTI.SMS_Status_Report, ui, null);
+                true, SM_RP_MTI.SMS_Status_Report, sm_rp_smea, null, false, null, false, false, null);
 
         asnOS = new AsnOutputStream();
         ind.encodeAll(asnOS);
@@ -209,16 +230,56 @@ public class SendRoutingInfoForSMRequestTest {
         rawData = getEncodedDataFull();
         assertTrue(Arrays.equals(rawData, encodedData));
 
+        //msisdn + sca + tc
         msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "11111111");
         sca = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22222222");
         TeleserviceCodeImpl tc = new TeleserviceCodeImpl(TeleserviceCodeValue.shortMessageMT_PP);
-        ind = new SendRoutingInfoForSMRequestImpl(msisdn, false, sca, null, false, null, null, tc);
+        ind = new SendRoutingInfoForSMRequestImpl(msisdn, false, sca, null, false, null, null, null, false, null, false, false, tc);
 
         asnOS = new AsnOutputStream();
         ind.encodeAll(asnOS);
 
         encodedData = asnOS.toByteArray();
         rawData = getEncodedData1();
+        assertTrue(Arrays.equals(rawData, encodedData));
+
+        //msisdn + sca + sm_RP_PRI + gprsSupportIndicator + ipSmGwGuidanceIndicator + t4TriggerIndicator + this.singleAttemptDelivery
+        msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "11111111");
+        sca = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22222222");
+        ind = new SendRoutingInfoForSMRequestImpl(msisdn, true, sca, null, true, null, null, null, true, null, true, true, null);
+
+        asnOS = new AsnOutputStream();
+        ind.encodeAll(asnOS);
+
+        encodedData = asnOS.toByteArray();
+        rawData = getEncodedData2();
+        assertTrue(Arrays.equals(rawData, encodedData));
+
+
+        //msisdn + sca + smDeliveryNotIntended
+        msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "11111111");
+        sca = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22222222");
+        SMDeliveryNotIntended smDeliveryNotIntended = SMDeliveryNotIntended.onlyIMSIRequested;
+        ind = new SendRoutingInfoForSMRequestImpl(msisdn, false, sca, null, false, null, null, smDeliveryNotIntended, false, null, false, false, null);
+
+        asnOS = new AsnOutputStream();
+        ind.encodeAll(asnOS);
+
+        encodedData = asnOS.toByteArray();
+        rawData = getEncodedData3();
+        assertTrue(Arrays.equals(rawData, encodedData));
+
+        //msisdn + sca + imsi
+        msisdn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "11111111");
+        sca = new AddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "22222222");
+        IMSI imsi = new IMSIImpl("154154154154");
+        ind = new SendRoutingInfoForSMRequestImpl(msisdn, false, sca, null, false, null, null, null, false, imsi, false, false, null);
+
+        asnOS = new AsnOutputStream();
+        ind.encodeAll(asnOS);
+
+        encodedData = asnOS.toByteArray();
+        rawData = getEncodedData4();
         assertTrue(Arrays.equals(rawData, encodedData));
     }
 }

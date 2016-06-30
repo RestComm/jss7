@@ -126,6 +126,7 @@ import org.mobicents.protocols.ss7.map.api.service.oam.TraceType;
 import org.mobicents.protocols.ss7.map.api.service.pdpContextActivation.MAPDialogPdpContextActivation;
 import org.mobicents.protocols.ss7.map.api.service.sms.AlertReason;
 import org.mobicents.protocols.ss7.map.api.service.sms.MAPDialogSms;
+import org.mobicents.protocols.ss7.map.api.service.sms.SMDeliveryNotIntended;
 import org.mobicents.protocols.ss7.map.api.service.sms.SMDeliveryOutcome;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_MTI;
@@ -705,7 +706,7 @@ public class Client extends EventTestHarness {
                 NumberingPlan.national, "999000");
         clientDialogSms.addSendRoutingInfoForSMRequest(msisdn1, false, servCenAddr1, MAPExtensionContainerTest
                 .GetTestExtensionContainer(), true, SM_RP_MTI.SMS_Status_Report, new SM_RP_SMEAImpl(new byte[] { 90, 91 }),
-                null);
+                SMDeliveryNotIntended.onlyIMSIRequested, true, null, false, false, null);
 
         this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendRoutingInfoForSMIndication, null, sequence++));
         clientDialogSms.send();
@@ -1453,7 +1454,7 @@ public class Client extends EventTestHarness {
                 NumberingPlan.ISDN, "11223344");
         AddressString serviceCentreAddress = this.mapParameterFactory.createAddressString(AddressNature.international_number,
                 NumberingPlan.ISDN, "1122334455");
-        clientDialogSms.addSendRoutingInfoForSMRequest(msisdn, true, serviceCentreAddress, null, false, null, null, null);
+        clientDialogSms.addSendRoutingInfoForSMRequest(msisdn, true, serviceCentreAddress, null, false, null, null, null, false, null, false, false, null);
 
         this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendRoutingInfoForSMIndication, null, sequence++));
 

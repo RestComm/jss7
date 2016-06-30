@@ -194,7 +194,6 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TEID;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TransactionId;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.UserCSGInformation;
-
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.AMBR;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APN;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APNConfiguration;
@@ -334,7 +333,6 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtQoSSubscribed_SduErrorRatio;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtQoSSubscribed_TrafficHandlingPriority;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Ext2QoSSubscribed_SourceStatisticsDescriptor;
-
 import org.mobicents.protocols.ss7.map.api.service.oam.AreaScope;
 import org.mobicents.protocols.ss7.map.api.service.oam.BMSCEventList;
 import org.mobicents.protocols.ss7.map.api.service.oam.BMSCInterfaceList;
@@ -373,7 +371,7 @@ import org.mobicents.protocols.ss7.map.api.service.oam.TraceNETypeList;
 import org.mobicents.protocols.ss7.map.api.service.oam.TraceReference;
 import org.mobicents.protocols.ss7.map.api.service.oam.TraceType;
 import org.mobicents.protocols.ss7.map.api.service.oam.TraceTypeInvokingEvent;
-
+import org.mobicents.protocols.ss7.map.api.service.sms.IpSmGwGuidance;
 import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
@@ -1517,4 +1515,8 @@ public interface MAPParameterFactory {
             boolean supportedVlrCamelPhases, boolean supportedSgsnCamelPhases, MAPExtensionContainer extensionContainer,
             AdditionalRequestedCAMELSubscriptionInfo additionalRequestedCamelSubscriptionInfo, boolean msisdnBsList, boolean csgSubscriptionDataRequested,
             boolean cwInfo, boolean clipInfo, boolean clirInfo, boolean holdInfo, boolean ectInfo);
+
+    IpSmGwGuidance createIpSmGwGuidance(int minimumDeliveryTimeValue, int recommendedDeliveryTimeValue,
+            MAPExtensionContainer extensionContainer);
+
 }

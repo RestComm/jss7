@@ -22,13 +22,6 @@
 
 package org.mobicents.protocols.ss7.map.service.sms;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-
-import java.util.Arrays;
-
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -45,6 +38,14 @@ import org.mobicents.protocols.ss7.map.primitives.LMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.lsm.AdditionalNumberImpl;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  *
@@ -67,6 +68,10 @@ public class SendRoutingInfoForSMResponseTest {
 
     private byte[] getEncodedData1() {
         return new byte[] { 48, 22, 4, 7, 82, 0, 17, 17, 17, 17, 17, -96, 8, -127, 6, -111, -105, -103, 25, 17, 17, -126, 1, 0 };
+    }
+
+    private byte[] getEncodedData2() {
+        return new byte[] {48,30,4,7,82,0,17,17,17,17,17,-96,8,-127,6,-111,-105,-103,25,17,17,-126,1,0,-91,6,2,1,30,2,1,40};
     }
 
     @Test(groups = { "functional.decode", "service.sms" })
@@ -144,6 +149,31 @@ public class SendRoutingInfoForSMResponseTest {
         assertNull(li.getAdditionalNumber());
         assertNull(ind.getExtensionContainer());
         assertFalse(ind.getMwdSet());
+
+        rawData = getEncodedData2();
+        asn = new AsnInputStream(rawData);
+
+        tag = asn.readTag();
+        ind = new SendRoutingInfoForSMResponseImpl();
+        ind.decodeAll(asn);
+
+        assertEquals(tag, Tag.SEQUENCE);
+        assertEquals(asn.getTagClass(), Tag.CLASS_UNIVERSAL);
+
+        imsi = ind.getIMSI();
+        assertEquals(imsi.getData(), "25001111111111");
+        li = ind.getLocationInfoWithLMSI();
+        nnn = li.getNetworkNodeNumber();
+        assertEquals(nnn.getAddressNature(), AddressNature.international_number);
+        assertEquals(nnn.getNumberingPlan(), NumberingPlan.ISDN);
+        assertEquals(nnn.getAddress(), "7999911111");
+        assertNull(li.getLMSI());
+        assertNull(li.getAdditionalNumber());
+        assertNull(ind.getExtensionContainer());
+        assertNotNull(ind.getIpSmGwGuidance());
+        assertEquals(ind.getIpSmGwGuidance().getMinimumDeliveryTimeValue(), 30);
+        assertEquals(ind.getIpSmGwGuidance().getRecommendedDeliveryTimeValue(), 40);
+        assertFalse(ind.getMwdSet());
     }
 
     @Test(groups = { "functional.encode", "service.sms" })
@@ -154,7 +184,7 @@ public class SendRoutingInfoForSMResponseTest {
         LMSI lmsi = new LMSIImpl(new byte[] { 0, 3, 98, 49 });
 
         LocationInfoWithLMSI li = new LocationInfoWithLMSIImpl(nnn, lmsi, null, false, null);
-        SendRoutingInfoForSMResponseImpl ind = new SendRoutingInfoForSMResponseImpl(imsi, li, null, null);
+        SendRoutingInfoForSMResponseImpl ind = new SendRoutingInfoForSMResponseImpl(imsi, li, null, null, null);
 
         AsnOutputStream asnOS = new AsnOutputStream();
         ind.encodeAll(asnOS);
@@ -170,7 +200,7 @@ public class SendRoutingInfoForSMResponseTest {
                 NumberingPlan.land_mobile, "99999999");
         AdditionalNumber additionalNumber = new AdditionalNumberImpl(null, sgsnAdditionalNumber);
         li = new LocationInfoWithLMSIImpl(nnn, lmsi, MAPExtensionContainerTest.GetTestExtensionContainer(), false, additionalNumber);
-        ind = new SendRoutingInfoForSMResponseImpl(imsi, li, MAPExtensionContainerTest.GetTestExtensionContainer(), null);
+        ind = new SendRoutingInfoForSMResponseImpl(imsi, li, MAPExtensionContainerTest.GetTestExtensionContainer(), null, null);
 
         asnOS = new AsnOutputStream();
         ind.encodeAll(asnOS);
@@ -182,13 +212,26 @@ public class SendRoutingInfoForSMResponseTest {
         imsi = new IMSIImpl("25001111111111");
         nnn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "7999911111");
         li = new LocationInfoWithLMSIImpl(nnn, null, null, false, null);
-        ind = new SendRoutingInfoForSMResponseImpl(imsi, li, null, false);
+        ind = new SendRoutingInfoForSMResponseImpl(imsi, li, null, false, null);
 
         asnOS = new AsnOutputStream();
         ind.encodeAll(asnOS);
 
         encodedData = asnOS.toByteArray();
         rawData = getEncodedData1();
+        assertTrue(Arrays.equals(rawData, encodedData));
+
+        imsi = new IMSIImpl("25001111111111");
+        nnn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "7999911111");
+        li = new LocationInfoWithLMSIImpl(nnn, null, null, false, null);
+        IpSmGwGuidanceImpl ipSmGwGuidance = new IpSmGwGuidanceImpl(30, 40, null);
+        ind = new SendRoutingInfoForSMResponseImpl(imsi, li, null, false, ipSmGwGuidance);
+
+        asnOS = new AsnOutputStream();
+        ind.encodeAll(asnOS);
+
+        encodedData = asnOS.toByteArray();
+        rawData = getEncodedData2();
         assertTrue(Arrays.equals(rawData, encodedData));
     }
 

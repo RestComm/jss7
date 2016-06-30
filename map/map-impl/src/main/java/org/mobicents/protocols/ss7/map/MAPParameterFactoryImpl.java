@@ -149,7 +149,6 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.S
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedLCSCapabilitySets;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.SupportedRATTypes;
 import org.mobicents.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
-
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AdditionalRequestedCAMELSubscriptionInfo;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.AnyTimeInterrogationResponse;
@@ -199,7 +198,6 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformatio
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TransactionId;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.TypeOfShape;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.UserCSGInformation;
-
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.AMBR;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APN;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.APNConfiguration;
@@ -339,7 +337,6 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtQoSSubscribed_ResidualBER;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtQoSSubscribed_TrafficHandlingPriority;
 import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement.Ext2QoSSubscribed_SourceStatisticsDescriptor;
-
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.CAMELSubscriptionInfoImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.CallBarringDataImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberInformation.CallForwardingDataImpl;
@@ -453,7 +450,6 @@ import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.Ext
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtQoSSubscribed_BitRateImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtQoSSubscribed_BitRateExtendedImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.ExtQoSSubscribed_TransferDelayImpl;
-
 import org.mobicents.protocols.ss7.map.api.service.oam.AreaScope;
 import org.mobicents.protocols.ss7.map.api.service.oam.BMSCEventList;
 import org.mobicents.protocols.ss7.map.api.service.oam.BMSCInterfaceList;
@@ -492,7 +488,7 @@ import org.mobicents.protocols.ss7.map.api.service.oam.TraceNETypeList;
 import org.mobicents.protocols.ss7.map.api.service.oam.TraceReference;
 import org.mobicents.protocols.ss7.map.api.service.oam.TraceType;
 import org.mobicents.protocols.ss7.map.api.service.oam.TraceTypeInvokingEvent;
-
+import org.mobicents.protocols.ss7.map.api.service.sms.IpSmGwGuidance;
 import org.mobicents.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
 import org.mobicents.protocols.ss7.map.api.service.sms.MWStatus;
 import org.mobicents.protocols.ss7.map.api.service.sms.SM_RP_DA;
@@ -683,6 +679,7 @@ import org.mobicents.protocols.ss7.map.service.oam.TraceInterfaceListImpl;
 import org.mobicents.protocols.ss7.map.service.oam.TraceNETypeListImpl;
 import org.mobicents.protocols.ss7.map.service.oam.TraceReferenceImpl;
 import org.mobicents.protocols.ss7.map.service.oam.TraceTypeImpl;
+import org.mobicents.protocols.ss7.map.service.sms.IpSmGwGuidanceImpl;
 import org.mobicents.protocols.ss7.map.service.sms.LocationInfoWithLMSIImpl;
 import org.mobicents.protocols.ss7.map.service.sms.MWStatusImpl;
 import org.mobicents.protocols.ss7.map.service.sms.SM_RP_DAImpl;
@@ -2824,6 +2821,12 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
         return new RequestedSubscriptionInfoImpl(requestedSSInfo, odb, requestedCAMELSubscriptionInfo, supportedVlrCamelPhases, supportedSgsnCamelPhases,
                 extensionContainer, additionalRequestedCamelSubscriptionInfo, msisdnBsList, csgSubscriptionDataRequested, cwInfo, clipInfo,
                 clirInfo, holdInfo, ectInfo);
+    }
+
+    @Override
+    public IpSmGwGuidance createIpSmGwGuidance(int minimumDeliveryTimeValue, int recommendedDeliveryTimeValue,
+            MAPExtensionContainer extensionContainer) {
+        return new IpSmGwGuidanceImpl(minimumDeliveryTimeValue, recommendedDeliveryTimeValue, extensionContainer);
     }
 }
 
