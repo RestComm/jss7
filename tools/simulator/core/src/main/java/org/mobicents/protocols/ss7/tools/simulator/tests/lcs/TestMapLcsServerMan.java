@@ -90,7 +90,8 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
 
     public void onSubscriberLocationReportRequest(SubscriberLocationReportRequest subscriberLocationReportRequestIndication) {
         logger.debug("onSubscriberLocationReportRequest");
-        this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: SubscriberLocationReportRequest", "todo", Level.INFO);
+        String address = subscriberLocationReportRequestIndication.getLCSLocationInfo().getNetworkNodeNumber().getAddress();
+        this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: SubscriberLocationReportRequest", "address:"+address, Level.INFO);
     }
 
     public void onSubscriberLocationReportResponse(SubscriberLocationReportResponse subscriberLocationReportResponseIndication) {

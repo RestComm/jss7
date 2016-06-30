@@ -22,14 +22,18 @@
 
 package org.mobicents.protocols.ss7.tools.simulatorgui.tests.lcs;
 
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
-import java.awt.Color;
 import javax.swing.JLabel;
-import javax.swing.JComboBox;
-import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.border.LineBorder;
 
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
@@ -37,67 +41,70 @@ import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
-import javax.swing.JCheckBox;
-import javax.swing.JTextField;
 
 /**
  *
- * @author falonso@csc.com
+ * @author sergey vetyutnev
  *
  */
 public class TestMapLcsClientParamForm extends JDialog {
-
-    private static final long serialVersionUID = 5106250858311037393L;
+    private static final long serialVersionUID = 5428271328162943202L;
 
     private TestMapLcsClientManMBean mapLcsClient;
-
+    private JComboBox cbMapProtocolVersion;
     private JComboBox cbAddressNature;
     private JComboBox cbNumberingPlan;
-    private JRadioButton rbImsi;
-    private JRadioButton rbMsisdn;
-    private final ButtonGroup buttonGroup = new ButtonGroup();
-    private final ButtonGroup buttonGroup_1 = new ButtonGroup();
-    private JCheckBox cbLocationInformation;
-    private JCheckBox cbSubscriberState;
-    private JCheckBox cbCurrentLocation;
-    private JRadioButton rbCsDomain;
-    private JRadioButton rbPsDomain;
-    private JCheckBox cbImei;
-    private JCheckBox cbMsClassmark;
-    private JCheckBox cbMnpRequestedInfo;
-    private JTextField tbGsmSCFAddress;
-    private JRadioButton rbDomainType_NoValue;
 
     public TestMapLcsClientParamForm(JFrame owner) {
         super(owner, true);
 
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setResizable(false);
-        setTitle("ATI test client settings");
-        setBounds(100, 100, 585, 584);
+        setTitle("MAP LCS test client settings");
+        setBounds(100, 100, 640, 584);
         getContentPane().setLayout(null);
+
+        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        tabbedPane.setBounds(0, 0, 634, 465);
+        getContentPane().add(tabbedPane);
+
+        JPanel panel_gen = new JPanel();
+        tabbedPane.addTab("General", null, panel_gen, null);
+        panel_gen.setLayout(null);
+
+        JLabel label = new JLabel("MAP protocol version");
+        label.setBounds(10, 14, 204, 14);
+        panel_gen.add(label);
+
+        cbMapProtocolVersion = new JComboBox();
+        cbMapProtocolVersion.setBounds(266, 11, 255, 20);
+        panel_gen.add(cbMapProtocolVersion);
+
+        JPanel panel_sri = new JPanel();
+        panel_sri.setLayout(null);
+        tabbedPane.addTab("SRI request", null, panel_sri, null);
+
+        JPanel panel_slr = new JPanel();
+        tabbedPane.addTab("SLR request", panel_slr);
+        panel_slr.setLayout(null);
 
         JPanel panel = new JPanel();
         panel.setLayout(null);
         panel.setBorder(new LineBorder(new Color(0, 0, 0)));
-        panel.setBounds(10, 59, 511, 94);
-        getContentPane().add(panel);
+        panel.setBounds(10, 26, 511, 94);
+        panel_slr.add(panel);
 
-        JLabel lblParametersForAddresses = new JLabel("Parameters for AddressString creation");
-        lblParametersForAddresses.setBounds(10, 0, 266, 14);
-        panel.add(lblParametersForAddresses);
+        JLabel label_7 = new JLabel("Parameters for AddressString creation");
+        label_7.setBounds(10, 0, 266, 14);
+        panel.add(label_7);
 
-        JLabel lblAddressnature = new JLabel("AddressNature");
-        lblAddressnature.setBounds(10, 28, 174, 14);
-        panel.add(lblAddressnature);
+        JLabel label_8 = new JLabel("AddressNature");
+        label_8.setBounds(10, 28, 174, 14);
+        panel.add(label_8);
 
-        JLabel lblNumberingplan = new JLabel("NumberingPlan");
-        lblNumberingplan.setBounds(10, 59, 174, 14);
-        panel.add(lblNumberingplan);
+        JLabel label_9 = new JLabel("NumberingPlan");
+        label_9.setBounds(10, 59, 174, 14);
+        panel.add(label_9);
 
         cbAddressNature = new JComboBox();
         cbAddressNature.setBounds(194, 25, 307, 20);
@@ -107,133 +114,56 @@ public class TestMapLcsClientParamForm extends JDialog {
         cbNumberingPlan.setBounds(194, 56, 307, 20);
         panel.add(cbNumberingPlan);
 
+        JPanel panel_plr = new JPanel();
+        panel_plr.setLayout(null);
+        tabbedPane.addTab("PLR request", null, panel_plr, null);
+
         JButton button = new JButton("Load default values for side A");
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg0) {
-                loadDataA();
-            }
-        });
-        button.setBounds(10, 488, 246, 23);
+        button.setBounds(10, 476, 246, 23);
         getContentPane().add(button);
 
-        JButton button_1 = new JButton("Load default values for side B");
-        button_1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                loadDataB();
-            }
-        });
-        button_1.setBounds(266, 488, 255, 23);
-        getContentPane().add(button_1);
+        JButton button_3 = new JButton("Load default values for side B");
+        button_3.setBounds(266, 476, 255, 23);
+        getContentPane().add(button_3);
 
-        JButton button_2 = new JButton("Reload");
-        button_2.addActionListener(new ActionListener() {
+        JButton button_4 = new JButton("Cancel");
+        button_4.setBounds(404, 510, 117, 23);
+        getContentPane().add(button_4);
+
+        JButton button_2 = new JButton("Save");
+        button_2.setBounds(180, 510, 117, 23);
+        getContentPane().add(button_2);
+
+        JButton button_1 = new JButton("Reload");
+        button_1.setBounds(10, 510, 144, 23);
+        getContentPane().add(button_1);
+        button_1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 reloadData();
             }
         });
-        button_2.setBounds(10, 522, 144, 23);
-        getContentPane().add(button_2);
-
-        JButton button_3 = new JButton("Save");
-        button_3.addActionListener(new ActionListener() {
+        button_2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (saveData()) {
                     getJFrame().dispose();
                 }
             }
         });
-        button_3.setBounds(180, 522, 117, 23);
-        getContentPane().add(button_3);
-
-        JButton button_4 = new JButton("Cancel");
         button_4.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 getJFrame().dispose();
             }
         });
-        button_4.setBounds(404, 522, 117, 23);
-        getContentPane().add(button_4);
-
-        JPanel pnSubscriberIdentityType = new JPanel();
-        pnSubscriberIdentityType.setBounds(10, 11, 511, 37);
-        getContentPane().add(pnSubscriberIdentityType);
-        pnSubscriberIdentityType.setLayout(null);
-
-        rbImsi = new JRadioButton("IMSI");
-        buttonGroup.add(rbImsi);
-        rbImsi.setBounds(299, 7, 88, 23);
-        pnSubscriberIdentityType.add(rbImsi);
-
-        rbMsisdn = new JRadioButton("MSISDN");
-        buttonGroup.add(rbMsisdn);
-        rbMsisdn.setBounds(405, 7, 88, 23);
-        pnSubscriberIdentityType.add(rbMsisdn);
-
-        JLabel lblNewLabel = new JLabel("Subscriber identity type");
-        lblNewLabel.setBounds(10, 11, 243, 14);
-        pnSubscriberIdentityType.add(lblNewLabel);
-
-        JPanel panel_1 = new JPanel();
-        panel_1.setLayout(null);
-        panel_1.setBorder(new LineBorder(new Color(0, 0, 0)));
-        panel_1.setBounds(10, 164, 562, 209);
-        getContentPane().add(panel_1);
-
-        JLabel lblRequestedInfoIn = new JLabel("Requested info in ATI request");
-        lblRequestedInfoIn.setBounds(10, 0, 266, 14);
-        panel_1.add(lblRequestedInfoIn);
-
-        cbLocationInformation = new JCheckBox("Location Information");
-        cbLocationInformation.setBounds(10, 21, 511, 23);
-        panel_1.add(cbLocationInformation);
-
-        cbSubscriberState = new JCheckBox("Subscriber State");
-        cbSubscriberState.setBounds(10, 47, 511, 23);
-        panel_1.add(cbSubscriberState);
-
-        cbCurrentLocation = new JCheckBox("Current Location");
-        cbCurrentLocation.setBounds(10, 73, 511, 23);
-        panel_1.add(cbCurrentLocation);
-
-        JLabel lblDomainType = new JLabel("Domain Type");
-        lblDomainType.setBounds(10, 103, 130, 14);
-        panel_1.add(lblDomainType);
-
-        rbCsDomain = new JRadioButton("csDomain");
-        buttonGroup_1.add(rbCsDomain);
-        rbCsDomain.setBounds(236, 99, 88, 23);
-        panel_1.add(rbCsDomain);
-
-        rbPsDomain = new JRadioButton("psDomain");
-        buttonGroup_1.add(rbPsDomain);
-        rbPsDomain.setBounds(340, 99, 88, 23);
-        panel_1.add(rbPsDomain);
-
-        cbImei = new JCheckBox("Imei");
-        cbImei.setBounds(10, 124, 511, 23);
-        panel_1.add(cbImei);
-
-        cbMsClassmark = new JCheckBox("Ms Classmark");
-        cbMsClassmark.setBounds(10, 150, 511, 23);
-        panel_1.add(cbMsClassmark);
-
-        cbMnpRequestedInfo = new JCheckBox("Mnp Requested Info");
-        cbMnpRequestedInfo.setBounds(10, 176, 511, 23);
-        panel_1.add(cbMnpRequestedInfo);
-
-        rbDomainType_NoValue = new JRadioButton("No value");
-        buttonGroup_1.add(rbDomainType_NoValue);
-        rbDomainType_NoValue.setBounds(132, 99, 88, 23);
-        panel_1.add(rbDomainType_NoValue);
-
-        JLabel lblGsmScfAddress = new JLabel("Gsm SCF address digits");
-        lblGsmScfAddress.setBounds(10, 387, 361, 14);
-        getContentPane().add(lblGsmScfAddress);
-
-        tbGsmSCFAddress = new JTextField();
-        tbGsmSCFAddress.setColumns(10);
-        tbGsmSCFAddress.setBounds(392, 384, 177, 20);
-        getContentPane().add(tbGsmSCFAddress);
+        button_3.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                loadDataB();
+            }
+        });
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                loadDataA();
+            }
+        });
     }
 
     public void setData(TestMapLcsClientManMBean mapLcsClient) {
@@ -247,55 +177,14 @@ public class TestMapLcsClientParamForm extends JDialog {
     }
 
     private void reloadData() {
-        /*
         M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, this.mapLcsClient.getAddressNature());
-        M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, this.mapLcsClient.getNumberingPlan());
-
-        if (this.mapLcsClient.getSubscriberIdentityType().intValue() == SubscriberIdentityType.VALUE_IMSI) {
-            this.rbImsi.setSelected(true);
-        } else {
-            this.rbMsisdn.setSelected(true);
-        }
-
-        this.cbLocationInformation.setSelected(this.mapLcsClient.isGetLocationInformation());
-        this.cbSubscriberState.setSelected(this.mapLcsClient.isGetSubscriberState());
-        this.cbCurrentLocation.setSelected(this.mapLcsClient.isGetCurrentLocation());
-        this.cbImei.setSelected(this.mapLcsClient.isGetImei());
-        this.cbMsClassmark.setSelected(this.mapLcsClient.isGetMsClassmark());
-        this.cbMnpRequestedInfo.setSelected(this.mapLcsClient.isGetMnpRequestedInfo());
-
-        switch (this.mapLcsClient.getGetRequestedDomain().intValue()) {
-        case AtiDomainType.NO_VALUE:
-            this.rbDomainType_NoValue.setSelected(true);
-            break;
-        case 0:
-            this.rbCsDomain.setSelected(true);
-            break;
-        default:
-            this.rbPsDomain.setSelected(true);
-            break;
-        }
-
-        this.tbGsmSCFAddress.setText(this.mapLcsClient.getGsmSCFAddress());
-        */
+        M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, this.mapLcsClient.getNumberingPlanType());
     }
 
     private void loadDataA() {
-        M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, new AddressNatureType(AddressNature.international_number.getIndicator()));
+        M3uaForm.setEnumeratedBaseComboBox(cbAddressNature,
+                new AddressNatureType(AddressNature.international_number.getIndicator()));
         M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
-
-        this.rbMsisdn.setSelected(true);
-
-        this.cbLocationInformation.setSelected(true);
-        this.cbSubscriberState.setSelected(false);
-        this.cbCurrentLocation.setSelected(false);
-        this.cbImei.setSelected(false);
-        this.cbMsClassmark.setSelected(false);
-        this.cbMnpRequestedInfo.setSelected(false);
-
-        this.rbDomainType_NoValue.setSelected(true);
-
-        this.tbGsmSCFAddress.setText("000");
     }
 
     private void loadDataB() {
@@ -303,31 +192,8 @@ public class TestMapLcsClientParamForm extends JDialog {
     }
 
     private boolean saveData() {
-        /*
         this.mapLcsClient.setAddressNature((AddressNatureType) cbAddressNature.getSelectedItem());
-        this.mapLcsClient.setNumberingPlan((NumberingPlanMapType) cbNumberingPlan.getSelectedItem());
-
-        if (this.rbImsi.isSelected())
-            this.mapLcsClient.setSubscriberIdentityType(new SubscriberIdentityType(SubscriberIdentityType.VALUE_IMSI));
-        else
-            this.mapLcsClient.setSubscriberIdentityType(new SubscriberIdentityType(SubscriberIdentityType.VALUE_ISDN));
-
-        this.mapLcsClient.setGetLocationInformation(this.cbLocationInformation.isSelected());
-        this.mapLcsClient.setGetSubscriberState(this.cbSubscriberState.isSelected());
-        this.mapLcsClient.setGetCurrentLocation(this.cbCurrentLocation.isSelected());
-        this.mapLcsClient.setGetImei(this.cbImei.isSelected());
-        this.mapLcsClient.setGetMsClassmark(this.cbMsClassmark.isSelected());
-        this.mapLcsClient.setGetMnpRequestedInfo(this.cbMnpRequestedInfo.isSelected());
-
-        if (this.rbDomainType_NoValue.isSelected())
-            this.mapLcsClient.setGetRequestedDomain(new AtiDomainType(AtiDomainType.NO_VALUE));
-        else if (this.rbCsDomain.isSelected())
-            this.mapLcsClient.setGetRequestedDomain(new AtiDomainType(DomainType.csDomain.getType()));
-        else
-            this.mapLcsClient.setGetRequestedDomain(new AtiDomainType(DomainType.psDomain.getType()));
-
-        this.mapLcsClient.setGsmSCFAddress(this.tbGsmSCFAddress.getText());
-        */
+        this.mapLcsClient.setNumberingPlanType((NumberingPlanMapType) cbNumberingPlan.getSelectedItem());
 
         return true;
     }
