@@ -29,6 +29,7 @@ package org.mobicents.protocols.ss7.tools.simulator.tests.lcs;
 public interface TestMapLcsServerManMBean {
 
     String sendRoutingInfoForLCSResponse();
+    String subscriberLocationReportResponse();
 
 
 }

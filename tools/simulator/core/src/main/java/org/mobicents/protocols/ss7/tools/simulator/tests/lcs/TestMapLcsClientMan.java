@@ -5,6 +5,10 @@ import org.mobicents.protocols.ss7.tools.simulator.common.TesterBase;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapMan;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSEvent;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSLocationInfo;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPDialogLsm;
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm;
 import org.mobicents.protocols.ss7.map.api.MAPException;
@@ -134,6 +138,57 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         return "sendRoutingInfoForLCSRequest sent";
     }
 
+    public String subscriberLocationReportRequest(){
+        MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
+        if (mapProvider== null) {
+            return "mapProvider is null";
+        }
+
+
+        try {
+
+            MAPServiceLsm service = mapProvider.getMAPServiceLsm();
+
+            // falonso acivate should be activate, never used before?
+            service.acivate();
+
+            MAPApplicationContext appCnt = null;
+
+            appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationSvcEnquiryContext,
+                MAPApplicationContextVersion.version3);
+
+            MAPParameterFactory mapParameterFactory = mapProvider.getMAPParameterFactory();
+
+
+            MAPDialogLsm clientDialogLsm = service.createNewDialog(appCnt, this.mapMan.createOrigAddress(), null,
+                   this.mapMan.createDestAddress(), null);
+
+            logger.debug("MAPDialogLsm Created");
+
+            LCSClientID lcsClientID = mapParameterFactory.createLCSClientID(LCSClientType.plmnOperatorServices, null, null,
+                    null, null, null, null);
+            ISDNAddressString networkNodeNumber = mapParameterFactory.createISDNAddressString(
+                    AddressNature.international_number, NumberingPlan.ISDN, "11113333");
+            LCSLocationInfo lcsLocationInfo = mapParameterFactory.createLCSLocationInfo(networkNodeNumber, null, null, false,
+                    null, null, null, null, null);
+
+            clientDialogLsm.addSubscriberLocationReportRequest(LCSEvent.emergencyCallOrigination, lcsClientID, lcsLocationInfo,
+                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, false, false,
+                    null, null, null, null, false, null, null, null);
+            logger.debug("Added SubscriberLocationReportRequest");
+
+            clientDialogLsm.send();
+
+        }
+        catch(MAPException e) {
+            return "Exception "+e.toString();
+        }
+
+        return "subscriberLocationReportRequest sent";
+    }
+
+
+
     @Override
     public AddressNatureType getAddressNature() {
         return new AddressNatureType(this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getAddressNature().getIndicator());
@@ -177,5 +232,6 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setIMSI(data);
         this.testerHost.markStore();
     }
+
 
 }

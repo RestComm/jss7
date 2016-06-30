@@ -35,6 +35,8 @@ public interface TestMapLcsClientManMBean {
 
     String sendRoutingInfoForLCSRequest();
 
+    String subscriberLocationReportRequest();
+
     String performSendRoutingInfoForLCSRequest();
 
     // Attributes

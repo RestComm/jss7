@@ -91,12 +91,21 @@ public class TestMapLcsClientForm extends TestingForm {
         panel.add(panel_1, gbc_panel_1);
 
         JButton btnSendRoutingInfoForLCSRequest = new JButton("SendRoutingInfoForLCSRequest");
-        btnSendRoutingInfoForLCSRequest.setBounds(12, 0, 249, 25);
+        btnSendRoutingInfoForLCSRequest.setBounds(0, 11, 187, 23);
         panel_1.add(btnSendRoutingInfoForLCSRequest);
 
         btnSendRoutingInfoForLCSRequest.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 sendRoutingInfoForLCSRequest();
+            }
+        });
+        JButton btnSubscriberLocationReportRequest = new JButton("SubscriberLocationReportRequest");
+        btnSubscriberLocationReportRequest.setBounds(192, 10, 202, 25);
+        panel_1.add(btnSubscriberLocationReportRequest);
+
+        btnSubscriberLocationReportRequest.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                subscriberLocationReportRequest();
             }
         });
 
@@ -155,6 +164,11 @@ public class TestMapLcsClientForm extends TestingForm {
     private void sendRoutingInfoForLCSRequest() {
         this.lbMessage.setText("");
         String res = this.mapLcsClient.sendRoutingInfoForLCSRequest();
+        this.lbResult.setText(res);
+    }
+    private void subscriberLocationReportRequest() {
+        this.lbMessage.setText("");
+        String res = this.mapLcsClient.subscriberLocationReportRequest();
         this.lbResult.setText(res);
     }
 

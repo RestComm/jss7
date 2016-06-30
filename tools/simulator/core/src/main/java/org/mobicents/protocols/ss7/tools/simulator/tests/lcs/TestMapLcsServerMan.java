@@ -108,6 +108,7 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
         logger.debug("onSendRoutingInfoForLCSResponse");
 
     }
-
-
+    public String subscriberLocationReportResponse(){
+        return "subscriberLocationReportResponse not implemented";
+    }
 }
