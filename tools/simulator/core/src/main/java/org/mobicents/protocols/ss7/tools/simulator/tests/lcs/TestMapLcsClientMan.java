@@ -17,6 +17,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
+import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 
 import org.apache.log4j.Logger;
 
@@ -32,13 +34,16 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     public static String SOURCE_NAME = "TestMapLcsClientMan";
     private final String name;
     private MapMan mapMan;
+    private boolean isStarted = false;
 
     public TestMapLcsClientMan(String name) {
         super(SOURCE_NAME);
         this.name = name;
+        this.isStarted = false;
     }
 
     public boolean start() {
+        isStarted = true;
         return true;
     }
 
@@ -67,6 +72,15 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
 
     @Override
     public void stop() {
+    }
+
+    @Override
+    public String performSendRoutingInfoForLCSRequest() {
+        if (!isStarted) {
+            return "The tester is not started";
+        }
+
+        return sendRoutingInfoForLCSRequest();
     }
 
     @Override
@@ -118,6 +132,50 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         }
 
         return "sendRoutingInfoForLCSRequest sent";
+    }
+
+    @Override
+    public AddressNatureType getAddressNature() {
+        return new AddressNatureType(this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getAddressNature().getIndicator());
+    }
+
+    @Override
+    public void setAddressNature(AddressNatureType val) {
+        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setAddressNature(AddressNature.getInstance(val.intValue()));
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public String getNumberingPlan(){
+        return this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getNumberingPlan();
+    }
+
+    @Override
+    public void setNumberingPlan(String numPlan){
+        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setNumberingPlan(numPlan);
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public NumberingPlanMapType getNumberingPlanType(){
+        return new NumberingPlanMapType(this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getNumberingPlanType().getIndicator());
+    }
+
+    @Override
+    public void setNumberingPlanType(NumberingPlanMapType val){
+        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setNumberingPlanType(NumberingPlan.getInstance(val.intValue()));
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public String getIMSI() {
+        return this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getIMSI();
+    }
+
+    @Override
+    public void setIMSI(String data) {
+        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setIMSI(data);
+        this.testerHost.markStore();
     }
 
 }
