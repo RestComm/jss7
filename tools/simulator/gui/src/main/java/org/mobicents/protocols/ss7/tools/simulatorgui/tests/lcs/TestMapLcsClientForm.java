@@ -48,18 +48,12 @@ public class TestMapLcsClientForm extends TestingForm {
 
     private TestMapLcsClientManMBean mapLcsClient;
 
-    private JButton btCloseCurrentDialog;
-    private JButton btnSendCheckImei;
+
     private JLabel lbMessage;
     private JLabel lbResult;
     private JLabel lbState;
-    private JTextField tbDestIsdnNumber;
-    private JTextField tbImei;
-    private JTextField tbMessage;
-    private JTextField tbOrigIsdnNumber;
-    private JTextField tbRefNum;
-    private JTextField tbSegmCnt;
-    private JTextField tbSegmNum;
+    private JTextField tbAddress;
+
 
     public TestMapLcsClientForm(JFrame owner) {
     super(owner);
@@ -73,13 +67,22 @@ public class TestMapLcsClientForm extends TestingForm {
         gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
         panel.setLayout(gbl_panel);
 
-        JLabel label = new JLabel("Parameter input not implemented yet");
-        GridBagConstraints gbc_label = new GridBagConstraints();
-        gbc_label.anchor = GridBagConstraints.EAST;
-        gbc_label.insets = new Insets(0, 0, 5, 5);
-        gbc_label.gridx = 0;
-        gbc_label.gridy = 0;
-        panel.add(label, gbc_label);
+        JLabel lblImsiMsisdn = new JLabel("  IMSI / MSISDN digits");
+        GridBagConstraints gbc_lblImsiMsisdn = new GridBagConstraints();
+        gbc_lblImsiMsisdn.anchor = GridBagConstraints.EAST;
+        gbc_lblImsiMsisdn.insets = new Insets(0, 0, 5, 5);
+        gbc_lblImsiMsisdn.gridx = 0;
+        gbc_lblImsiMsisdn.gridy = 0;
+        panel.add(lblImsiMsisdn, gbc_lblImsiMsisdn);
+
+        tbAddress = new JTextField();
+        tbAddress.setColumns(10);
+        GridBagConstraints gbc_tbAddress = new GridBagConstraints();
+        gbc_tbAddress.fill = GridBagConstraints.HORIZONTAL;
+        gbc_tbAddress.insets = new Insets(0, 0, 5, 0);
+        gbc_tbAddress.gridx = 1;
+        gbc_tbAddress.gridy = 0;
+        panel.add(tbAddress, gbc_tbAddress);
 
         JPanel panel_1 = new JPanel();
         panel_1.setLayout(null);
@@ -168,7 +171,8 @@ public class TestMapLcsClientForm extends TestingForm {
     }
     private void subscriberLocationReportRequest() {
         this.lbMessage.setText("");
-        String res = this.mapLcsClient.subscriberLocationReportRequest();
+        String address = this.tbAddress.getText();
+        String res = this.mapLcsClient.subscriberLocationReportRequest(address);
         this.lbResult.setText(res);
     }
 

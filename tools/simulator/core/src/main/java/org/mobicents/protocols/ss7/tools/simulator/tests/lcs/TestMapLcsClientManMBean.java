@@ -20,10 +20,8 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.tests.lcs;
 
-//import org.mobicents.protocols.ss7.tools.simulator.level3.MapProtocolVersion;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
-
 
 /**
  * @author falonso@csc.com
@@ -34,6 +32,8 @@ public interface TestMapLcsClientManMBean {
     // Operations
 
     String sendRoutingInfoForLCSRequest();
+
+    String subscriberLocationReportRequest(String address);
 
     String performSendRoutingInfoForLCSRequest();
 
