@@ -21,6 +21,9 @@
 package org.mobicents.protocols.ss7.tools.simulator.tests.lcs;
 
 //import org.mobicents.protocols.ss7.tools.simulator.level3.MapProtocolVersion;
+import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
+
 
 /**
  * @author falonso@csc.com
@@ -28,8 +31,28 @@ package org.mobicents.protocols.ss7.tools.simulator.tests.lcs;
  */
 public interface TestMapLcsClientManMBean {
 
-     String sendRoutingInfoForLCSRequest();
-     String subscriberLocationReportRequest();
+    // Operations
 
+    String sendRoutingInfoForLCSRequest();
+
+    String performSendRoutingInfoForLCSRequest();
+
+    // Attributes
+
+    AddressNatureType getAddressNature();
+
+    void setAddressNature(AddressNatureType val);
+
+    String getNumberingPlan();
+
+    void setNumberingPlan(String numPlan);
+
+    NumberingPlanMapType getNumberingPlanType();
+
+    void setNumberingPlanType(NumberingPlanMapType val);
+
+    String getIMSI();
+
+    void setIMSI(String data);
 
 }

@@ -44,6 +44,8 @@ import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsClientConfig
 import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerConfigurationData;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientConfigurationData;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerConfigurationData;
+import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientConfigurationData;
+
 
 /**
  *
@@ -72,6 +74,8 @@ public class ConfigurationData {
     public static final String TEST_ATI_SERVER = "testAtiServer";
     public static final String TEST_CHECK_IMEI_CLIENT = "testCheckImeiClient";
     public static final String TEST_CHECK_IMEI_SERVER = "testCheckImeiServer";
+    public static final String TEST_MAP_LCS_CLIENT = "testMapLcsClient";
+    public static final String TEST_MAP_LCS_SERVER = "testMapLcsServer";
 
     private Instance_L1 instance_L1 = new Instance_L1(Instance_L1.VAL_NO);
     private Instance_L2 instance_L2 = new Instance_L2(Instance_L2.VAL_NO);
@@ -94,6 +98,8 @@ public class ConfigurationData {
     private TestAtiServerConfigurationData testAtiServerConfigurationData = new TestAtiServerConfigurationData();
     private TestCheckImeiClientConfigurationData testCheckImeiClientConfigurationData = new TestCheckImeiClientConfigurationData();
     private TestCheckImeiServerConfigurationData testCheckImeiServerConfigurationData = new TestCheckImeiServerConfigurationData();
+    private TestMapLcsClientConfigurationData testMapLcsClientConfigurationData = new TestMapLcsClientConfigurationData();
+
 
     public Instance_L1 getInstance_L1() {
         return instance_L1;
@@ -247,6 +253,16 @@ public class ConfigurationData {
         this.testCheckImeiServerConfigurationData = testCheckImeiServerConfigurationData;
     }
 
+
+    public TestMapLcsClientConfigurationData getTestMapLcsClientConfigurationData() {
+        return testMapLcsClientConfigurationData;
+    }
+
+    public void setTestMapLcsClientConfigurationData(TestMapLcsClientConfigurationData testMapLcsClientConfigurationData) {
+        this.testMapLcsClientConfigurationData = testMapLcsClientConfigurationData;
+    }
+
+
     /**
      * XML Serialization/Deserialization
      */
@@ -320,6 +336,10 @@ public class ConfigurationData {
             if (checkImeiServer != null)
                 data.setTestCheckImeiServerConfigurationData(checkImeiServer);
 
+            TestMapLcsClientConfigurationData mapLcsClient = xml.get(TEST_MAP_LCS_CLIENT, TestMapLcsClientConfigurationData.class);
+            if (mapLcsClient != null)
+                data.setTestMapLcsClientConfigurationData(mapLcsClient);
+
             // while (xml.hasNext()) {
             // Object o = xml.getNext();
             // }
@@ -348,6 +368,7 @@ public class ConfigurationData {
             xml.add(data.getTestCapSsfConfigurationData(), TEST_CAP_SSF, TestCapSsfConfigurationData.class);
             xml.add(data.getTestCheckImeiClientConfigurationData(), TEST_CHECK_IMEI_CLIENT, TestCheckImeiClientConfigurationData.class);
             xml.add(data.getTestCheckImeiServerConfigurationData(), TEST_CHECK_IMEI_SERVER, TestCheckImeiServerConfigurationData.class);
+            xml.add(data.getTestMapLcsClientConfigurationData(), TEST_MAP_LCS_CLIENT, TestMapLcsClientConfigurationData.class);
         }
     };
 
