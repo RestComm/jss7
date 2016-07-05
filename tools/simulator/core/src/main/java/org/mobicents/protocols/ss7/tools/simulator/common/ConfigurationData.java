@@ -45,7 +45,7 @@ import org.mobicents.protocols.ss7.tools.simulator.tests.sms.TestSmsServerConfig
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientConfigurationData;
 import org.mobicents.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerConfigurationData;
 import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientConfigurationData;
-
+import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsServerConfigurationData;
 
 /**
  *
@@ -99,6 +99,8 @@ public class ConfigurationData {
     private TestCheckImeiClientConfigurationData testCheckImeiClientConfigurationData = new TestCheckImeiClientConfigurationData();
     private TestCheckImeiServerConfigurationData testCheckImeiServerConfigurationData = new TestCheckImeiServerConfigurationData();
     private TestMapLcsClientConfigurationData testMapLcsClientConfigurationData = new TestMapLcsClientConfigurationData();
+    private TestMapLcsServerConfigurationData testMapLcsServerConfigurationData = new TestMapLcsServerConfigurationData();
+
 
 
     public Instance_L1 getInstance_L1() {
@@ -263,6 +265,15 @@ public class ConfigurationData {
     }
 
 
+    public TestMapLcsServerConfigurationData getTestMapLcsServerConfigurationData() {
+        return testMapLcsServerConfigurationData;
+    }
+
+    public void setTestMapLcsServerConfigurationData(TestMapLcsServerConfigurationData testMapLcsServerConfigurationData) {
+        this.testMapLcsServerConfigurationData = testMapLcsServerConfigurationData;
+    }
+
+
     /**
      * XML Serialization/Deserialization
      */
@@ -340,6 +351,10 @@ public class ConfigurationData {
             if (mapLcsClient != null)
                 data.setTestMapLcsClientConfigurationData(mapLcsClient);
 
+            TestMapLcsServerConfigurationData mapLcsServer = xml.get(TEST_MAP_LCS_SERVER, TestMapLcsServerConfigurationData.class);
+            if (mapLcsServer != null)
+                data.setTestMapLcsServerConfigurationData(mapLcsServer);
+
             // while (xml.hasNext()) {
             // Object o = xml.getNext();
             // }
@@ -369,6 +384,7 @@ public class ConfigurationData {
             xml.add(data.getTestCheckImeiClientConfigurationData(), TEST_CHECK_IMEI_CLIENT, TestCheckImeiClientConfigurationData.class);
             xml.add(data.getTestCheckImeiServerConfigurationData(), TEST_CHECK_IMEI_SERVER, TestCheckImeiServerConfigurationData.class);
             xml.add(data.getTestMapLcsClientConfigurationData(), TEST_MAP_LCS_CLIENT, TestMapLcsClientConfigurationData.class);
+            xml.add(data.getTestMapLcsServerConfigurationData(), TEST_MAP_LCS_SERVER, TestMapLcsServerConfigurationData.class);
         }
     };
 

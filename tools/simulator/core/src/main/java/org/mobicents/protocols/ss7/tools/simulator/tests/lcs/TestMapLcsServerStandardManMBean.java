@@ -31,7 +31,7 @@ import javax.management.StandardMBean;
 
 /**
 *
-* @author sergey vetyutnev
+* @author falonso@csc.com
 *
 */
 public class TestMapLcsServerStandardManMBean extends StandardMBean {
@@ -43,18 +43,17 @@ public class TestMapLcsServerStandardManMBean extends StandardMBean {
     @Override
     public MBeanInfo getMBeanInfo() {
 
-        // TODO: Put real attributes and operations
-
         MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[] {
-                new MBeanAttributeInfo("ATIReaction_Value", String.class.getName(), "ATI response type", true, false, false), };
+                new MBeanAttributeInfo("NetworkNodeNumberAddress", String.class.getName(),
+                                       "NetworkNodeNumber address parameter for response",
+                                       true, true, false), };
 
-        MBeanParameterInfo[] signString = new MBeanParameterInfo[] { new MBeanParameterInfo("val", String.class.getName(), "Index number or value") };
+        MBeanParameterInfo[] performSRIResponseParam = new MBeanParameterInfo[] { };
 
         MBeanOperationInfo[] operations = new MBeanOperationInfo[] {
-                new MBeanOperationInfo("putATIReaction", "ATI response type: "
-                        + "1:ReturnSuccess,2:ReturnSuccessSubscriberState,3:ReturnSystemFailureError,4:ReturnDataMissingError,5:ReturnUnknownSubscriberError",
-                        signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
-                };
+                new MBeanOperationInfo("performSendRoutingInfoForLCSResponse", "Send Routing Information for LCS response",
+                                       performSRIResponseParam, String.class.getName(), MBeanOperationInfo.ACTION),
+                 };
 
         return new MBeanInfo(TestMapLcsServerMan.class.getName(), "MapLcsServer test parameters management", attributes, null, operations, null);
     }
