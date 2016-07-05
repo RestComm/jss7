@@ -203,7 +203,7 @@ public class TestMapLcsClientForm extends TestingForm {
     public void refreshState() {
         super.refreshState();
 
-        //String s1 = this.mapLcsClient.getCurrentRequestDef();
-        this.lbState.setText("No op Refreshed");
+        String s1 = this.mapLcsClient.getCurrentRequestDef();
+        this.lbState.setText(s1);
     }
 }

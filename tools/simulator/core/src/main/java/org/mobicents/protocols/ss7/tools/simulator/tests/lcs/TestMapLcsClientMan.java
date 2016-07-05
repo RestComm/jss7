@@ -25,6 +25,7 @@ import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
 
 
 /**
@@ -39,6 +40,9 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     private final String name;
     private MapMan mapMan;
     private boolean isStarted = false;
+    private int countMapLcsReq = 0;
+    private int countMapLcsResp = 0;
+    private String currentRequestDef = "";
 
     public TestMapLcsClientMan(String name) {
         super(SOURCE_NAME);
@@ -48,6 +52,8 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
 
     public boolean start() {
         isStarted = true;
+        this.countMapLcsReq = 0;
+        this.countMapLcsResp = 0;
         return true;
     }
 
@@ -64,8 +70,11 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append(SOURCE_NAME);
-        sb.append(": CurDialog=");
-        sb.append("No");
+        sb.append(": ");
+        sb.append("<br>Count: countMapLcsReq-");
+        sb.append(countMapLcsReq);
+        sb.append(", countMapLcsResp-");
+        sb.append(countMapLcsResp);
         sb.append("</html>");
         return sb.toString();
     }
@@ -134,12 +143,29 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
 
             clientDialogLsm.send();
 
+            this.countMapLcsReq++;
+
+            this.testerHost.sendNotif(SOURCE_NAME, "Sent: SubscriberLocationReportRequest", createSRIforLCSReqData(clientDialogLsm.getLocalDialogId(),getNumberingPlan()), Level.INFO);
+
+            currentRequestDef += "Sent SRIforLCS Request;";
+
         }
         catch(MAPException e) {
             return "Exception "+e.toString();
         }
 
         return "sendRoutingInfoForLCSRequest sent";
+    }
+
+
+    private String createSRIforLCSReqData(long dialogId, String address) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("dialogId=");
+        sb.append(dialogId);
+        sb.append(", address=\"");
+        sb.append(address);
+        sb.append("\"");
+        return sb.toString();
     }
 
     public String subscriberLocationReportRequest(String address){
@@ -236,5 +262,11 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setIMSI(data);
         this.testerHost.markStore();
     }
+
+    @Override
+    public String getCurrentRequestDef() {
+        return "LastDialog: " + currentRequestDef;
+    }
+
 
 }
