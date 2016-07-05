@@ -55,4 +55,8 @@ public interface TestMapLcsClientManMBean {
 
     void setIMSI(String data);
 
+    // Other
+
+    String getCurrentRequestDef();
+
 }
