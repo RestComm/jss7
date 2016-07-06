@@ -34,6 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.LineBorder;
+import javax.swing.JTextField;
 
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
@@ -41,6 +42,8 @@ import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
+
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -50,10 +53,16 @@ import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
 public class TestMapLcsClientParamForm extends JDialog {
     private static final long serialVersionUID = 5428271328162943202L;
 
+    private static Logger logger = Logger.getLogger(TestMapLcsClientParamForm.class);
+
     private TestMapLcsClientManMBean mapLcsClient;
     private JComboBox cbMapProtocolVersion;
     private JComboBox cbAddressNature;
     private JComboBox cbNumberingPlan;
+    private JComboBox cbAddressNature2;
+    private JComboBox cbNumberingPlan2;
+    private JTextField cbAddress;
+    private JTabbedPane tabbedPane;
 
     public TestMapLcsClientParamForm(JFrame owner) {
         super(owner, true);
@@ -64,7 +73,7 @@ public class TestMapLcsClientParamForm extends JDialog {
         setBounds(100, 100, 640, 584);
         getContentPane().setLayout(null);
 
-        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         tabbedPane.setBounds(0, 0, 634, 465);
         getContentPane().add(tabbedPane);
 
@@ -83,6 +92,41 @@ public class TestMapLcsClientParamForm extends JDialog {
         JPanel panel_sri = new JPanel();
         panel_sri.setLayout(null);
         tabbedPane.addTab("SRI request", null, panel_sri, null);
+
+        JPanel panelSriDetail = new JPanel();
+        panelSriDetail.setLayout(null);
+        panelSriDetail.setBorder(new LineBorder(new Color(0, 0, 0)));
+        panelSriDetail.setBounds(10, 26, 511, 125);
+        panel_sri.add(panelSriDetail);
+
+        JLabel label_10 = new JLabel("Parameters for mlc");
+        label_10.setBounds(10, 0, 266, 14);
+        panelSriDetail.add(label_10);
+
+        JLabel label_11 = new JLabel("AddressNature");
+        label_11.setBounds(10, 28, 174, 14);
+        panelSriDetail.add(label_11);
+
+        JLabel label_12 = new JLabel("NumberingPlanType");
+        label_12.setBounds(10, 59, 174, 14);
+        panelSriDetail.add(label_12);
+
+        JLabel label_13 = new JLabel("NumberingPlan");
+        label_13.setBounds(10, 90, 174, 14);
+        panelSriDetail.add(label_13);
+
+        cbAddressNature2 = new JComboBox();
+        cbAddressNature2.setBounds(194, 25, 307, 20);
+        panelSriDetail.add(cbAddressNature2);
+
+        cbNumberingPlan2 = new JComboBox();
+        cbNumberingPlan2.setBounds(194, 56, 307, 20);
+        panelSriDetail.add(cbNumberingPlan2);
+
+        cbAddress = new JTextField();
+        cbAddress.setBounds(194, 87, 307, 20);
+        cbAddress.setColumns(10);
+        panelSriDetail.add(cbAddress);
 
         JPanel panel_slr = new JPanel();
         tabbedPane.addTab("SLR request", panel_slr);
@@ -179,12 +223,21 @@ public class TestMapLcsClientParamForm extends JDialog {
     private void reloadData() {
         M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, this.mapLcsClient.getAddressNature());
         M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, this.mapLcsClient.getNumberingPlanType());
+        M3uaForm.setEnumeratedBaseComboBox(cbAddressNature2, this.mapLcsClient.getAddressNature());
+        M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan2, this.mapLcsClient.getNumberingPlanType());
+
+        cbAddress.setText(this.mapLcsClient.getNumberingPlan());
     }
 
     private void loadDataA() {
         M3uaForm.setEnumeratedBaseComboBox(cbAddressNature,
                 new AddressNatureType(AddressNature.international_number.getIndicator()));
         M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
+        M3uaForm.setEnumeratedBaseComboBox(cbAddressNature2,
+                new AddressNatureType(AddressNature.international_number.getIndicator()));
+        M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan2, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
+
+        cbAddress.setText("12345678");
     }
 
     private void loadDataB() {
@@ -192,8 +245,21 @@ public class TestMapLcsClientParamForm extends JDialog {
     }
 
     private boolean saveData() {
-        this.mapLcsClient.setAddressNature((AddressNatureType) cbAddressNature.getSelectedItem());
-        this.mapLcsClient.setNumberingPlanType((NumberingPlanMapType) cbNumberingPlan.getSelectedItem());
+
+        // check which message viewed as it overrides
+        // we can either make certain params general or have specific ones per message
+        //
+        logger.debug("Selected: "+tabbedPane.getSelectedIndex());
+        if ( tabbedPane.getSelectedIndex() == 1) {
+            this.mapLcsClient.setAddressNature((AddressNatureType) cbAddressNature2.getSelectedItem());
+            this.mapLcsClient.setNumberingPlanType((NumberingPlanMapType) cbNumberingPlan2.getSelectedItem());
+        }
+        else {
+            this.mapLcsClient.setAddressNature((AddressNatureType) cbAddressNature.getSelectedItem());
+            this.mapLcsClient.setNumberingPlanType((NumberingPlanMapType) cbNumberingPlan.getSelectedItem());
+        }
+
+        this.mapLcsClient.setNumberingPlan(cbAddress.getText());
 
         return true;
     }
