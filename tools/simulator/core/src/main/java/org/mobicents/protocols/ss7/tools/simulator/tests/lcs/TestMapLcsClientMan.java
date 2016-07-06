@@ -23,7 +23,6 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
-
 import org.apache.log4j.Logger;
 import org.apache.log4j.Level;
 
@@ -168,7 +167,25 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         return sb.toString();
     }
 
-    public String subscriberLocationReportRequest(String address){
+    private String createSLRReqData(long dialogId, String address) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("dialogId=");
+        sb.append(dialogId);
+        sb.append(", networkNodeNumberAddress=\"");
+        sb.append(address);
+        sb.append("\"");
+        return sb.toString();
+    }
+
+    public String performSubscriberLocationReportRequest(){
+        if (!isStarted) {
+            return "The tester is not started";
+        }
+
+        return subscriberLocationReportRequest();
+    }
+
+    public String subscriberLocationReportRequest(){
         MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
         if (mapProvider== null) {
             return "mapProvider is null";
@@ -199,7 +216,8 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
                     null, null, null, null);
             ISDNAddressString networkNodeNumber = mapParameterFactory.createISDNAddressString(
                     this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getAddressNature(),
-                    this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getNumberingPlanType(), address);
+                    this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getNumberingPlanType(),
+                    getNetworkNodeNumberAddress());
             LCSLocationInfo lcsLocationInfo = mapParameterFactory.createLCSLocationInfo(networkNodeNumber, null, null, false,
                     null, null, null, null, null);
 
@@ -209,6 +227,12 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
             logger.debug("Added SubscriberLocationReportRequest");
 
             clientDialogLsm.send();
+
+            this.countMapLcsReq++;
+
+            this.testerHost.sendNotif(SOURCE_NAME, "Sent: SubscriberLocationReportRequest", createSLRReqData(clientDialogLsm.getLocalDialogId(),this.getNetworkNodeNumberAddress()), Level.INFO);
+
+            currentRequestDef += "Sent SLR Request;";
 
         }
         catch(MAPException e) {
@@ -264,6 +288,16 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         this.testerHost.markStore();
     }
 
+    @Override
+    public String getNetworkNodeNumberAddress() {
+        return this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getNetworkNodeNumberAddress();
+    }
+
+    @Override
+    public void setNetworkNodeNumberAddress(String data) {
+        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setNetworkNodeNumberAddress(data);
+        this.testerHost.markStore();
+    }
 
     @Override
     public String getCurrentRequestDef() {

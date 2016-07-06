@@ -33,9 +33,11 @@ public interface TestMapLcsClientManMBean {
 
     String sendRoutingInfoForLCSRequest();
 
-    String subscriberLocationReportRequest(String address);
+    String subscriberLocationReportRequest();
 
     String performSendRoutingInfoForLCSRequest();
+
+    String performSubscriberLocationReportRequest();
 
     // Attributes
 
@@ -55,8 +57,11 @@ public interface TestMapLcsClientManMBean {
 
     void setIMSI(String data);
 
+    String getNetworkNodeNumberAddress();
+
+    void setNetworkNodeNumberAddress(String val);
+
     // Other
 
     String getCurrentRequestDef();
-
 }
