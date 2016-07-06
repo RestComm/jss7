@@ -23,15 +23,25 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.Level;
+
+import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationResponse;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportResponse;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSResponse;
+
 
 
 /**
  * @author falonso@csc.com
  *
  */
-public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientManMBean, Stoppable {
+public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientManMBean, Stoppable, MAPServiceLsmListener {
 
     private static Logger logger = Logger.getLogger(TestMapLcsClientMan.class);
 
@@ -42,6 +52,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     private int countMapLcsReq = 0;
     private int countMapLcsResp = 0;
     private String currentRequestDef = "";
+    private MAPProvider mapProvider;
 
     public TestMapLcsClientMan(String name) {
         super(SOURCE_NAME);
@@ -50,6 +61,12 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     }
 
     public boolean start() {
+
+        this.mapProvider = this.mapMan.getMAPStack().getMAPProvider();
+        mapProvider.getMAPServiceLsm().acivate();
+        mapProvider.getMAPServiceLsm().addMAPServiceListener(this);
+        mapProvider.addMAPDialogListener(this);
+
         isStarted = true;
         this.countMapLcsReq = 0;
         this.countMapLcsResp = 0;
@@ -87,18 +104,18 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     }
 
     @Override
-    public String performSendRoutingInfoForLCSRequest() {
+    public String performSendRoutingInfoForLCSRequest(String addressIMSI) {
         if (!isStarted) {
             return "The tester is not started";
         }
 
-        return sendRoutingInfoForLCSRequest();
+        return sendRoutingInfoForLCSRequest(addressIMSI);
     }
 
     @Override
-    public String sendRoutingInfoForLCSRequest() {
+    public String sendRoutingInfoForLCSRequest(String addressIMSI) {
 
-        MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
+        // MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 
         if (mapProvider== null) {
 
@@ -133,7 +150,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
                 getNumberingPlan());      // e.g. 11112222
 
             IMSI imsi = mapParameterFactory.createIMSI(
-                getIMSI());               // e.g. 55555
+                addressIMSI);               // e.g. 55555
             SubscriberIdentity targetMS = mapParameterFactory.createSubscriberIdentity(imsi);
 
             clientDialogLsm.addSendRoutingInfoForLCSRequest(mlcNumber, targetMS, null);
@@ -144,7 +161,8 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
 
             this.countMapLcsReq++;
 
-            this.testerHost.sendNotif(SOURCE_NAME, "Sent: SubscriberLocationReportRequest", createSRIforLCSReqData(clientDialogLsm.getLocalDialogId(),getNumberingPlan()), Level.INFO);
+            this.testerHost.sendNotif(SOURCE_NAME, "Sent: SendRoutingInfoForLCSRequest",
+                        createSRIforLCSReqData(clientDialogLsm.getLocalDialogId(),getNumberingPlan(),addressIMSI), Level.INFO);
 
             currentRequestDef += "Sent SRIforLCS Request;";
 
@@ -157,12 +175,14 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     }
 
 
-    private String createSRIforLCSReqData(long dialogId, String address) {
+    private String createSRIforLCSReqData(long dialogId, String address, String imsi) {
         StringBuilder sb = new StringBuilder();
         sb.append("dialogId=");
         sb.append(dialogId);
         sb.append(", address=\"");
         sb.append(address);
+        sb.append(", imsi=\"");
+        sb.append(imsi);
         sb.append("\"");
         return sb.toString();
     }
@@ -186,7 +206,6 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     }
 
     public String subscriberLocationReportRequest(){
-        MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
         if (mapProvider== null) {
             return "mapProvider is null";
         }
@@ -278,14 +297,25 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     }
 
     @Override
-    public String getIMSI() {
-        return this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getIMSI();
+    public String getCurrentRequestDef() {
+        return "LastDialog: " + currentRequestDef;
     }
 
-    @Override
-    public void setIMSI(String data) {
-        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setIMSI(data);
-        this.testerHost.markStore();
+
+    public void onProvideSubscriberLocationRequest(ProvideSubscriberLocationRequest provideSubscriberLocationRequestIndication) {
+
+    }
+
+    public void onProvideSubscriberLocationResponse(
+            ProvideSubscriberLocationResponse provideSubscriberLocationResponseIndication) {
+
+    }
+
+    public void onSubscriberLocationReportRequest(SubscriberLocationReportRequest subscriberLocationReportRequestIndication) {
+    }
+
+    public void onSubscriberLocationReportResponse(SubscriberLocationReportResponse subscriberLocationReportResponseIndication) {
+        logger.debug("onSubscriberLocationReportResponse");
     }
 
     @Override
@@ -299,10 +329,17 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         this.testerHost.markStore();
     }
 
-    @Override
-    public String getCurrentRequestDef() {
-        return "LastDialog: " + currentRequestDef;
+    public void onSendRoutingInfoForLCSRequest(SendRoutingInfoForLCSRequest sendRoutingInforForLCSRequestIndication) {
     }
+
+    public void onSendRoutingInfoForLCSResponse(SendRoutingInfoForLCSResponse sendRoutingInforForLCSResponseIndication){
+        logger.debug("onSendRoutingInfoForLCSResponse");
+        this.countMapLcsResp++;
+        String address = sendRoutingInforForLCSResponseIndication.getLCSLocationInfo().getNetworkNodeNumber().getAddress();
+        this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: SendRoutingInfoForLCSResponse", "address:"+address, Level.INFO);
+    }
+
+
 
 
 }
