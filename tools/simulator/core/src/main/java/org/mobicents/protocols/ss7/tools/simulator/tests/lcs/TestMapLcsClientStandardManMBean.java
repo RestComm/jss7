@@ -35,7 +35,7 @@ import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 
 /**
 *
-* @author sergey vetyutnev
+* @author falonso@csc.com
 *
 */
 public class TestMapLcsClientStandardManMBean extends StandardMBean {

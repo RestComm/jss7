@@ -39,7 +39,7 @@ import javax.swing.JComboBox;
 
 /**
  *
- * @author sergey vetyutnev
+ * @author falonso@csc.com
  *
  */
 public class TestMapLcsServerParamForm extends JDialog {

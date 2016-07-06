@@ -47,7 +47,7 @@ import org.apache.log4j.Logger;
 
 /**
  *
- * @author sergey vetyutnev
+ * @author mrojo2@csc.com
  *
  */
 public class TestMapLcsClientParamForm extends JDialog {
