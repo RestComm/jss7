@@ -88,16 +88,16 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     }
 
     @Override
-    public String performSendRoutingInfoForLCSRequest() {
+    public String performSendRoutingInfoForLCSRequest(String addressIMSI) {
         if (!isStarted) {
             return "The tester is not started";
         }
 
-        return sendRoutingInfoForLCSRequest();
+        return sendRoutingInfoForLCSRequest(addressIMSI);
     }
 
     @Override
-    public String sendRoutingInfoForLCSRequest() {
+    public String sendRoutingInfoForLCSRequest(String addressIMSI) {
 
         MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
 
@@ -134,7 +134,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
                 getNumberingPlan());      // e.g. 11112222
 
             IMSI imsi = mapParameterFactory.createIMSI(
-                getIMSI());               // e.g. 55555
+                addressIMSI);               // e.g. 55555
             SubscriberIdentity targetMS = mapParameterFactory.createSubscriberIdentity(imsi);
 
             clientDialogLsm.addSendRoutingInfoForLCSRequest(mlcNumber, targetMS, null);
@@ -145,7 +145,8 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
 
             this.countMapLcsReq++;
 
-            this.testerHost.sendNotif(SOURCE_NAME, "Sent: SubscriberLocationReportRequest", createSRIforLCSReqData(clientDialogLsm.getLocalDialogId(),getNumberingPlan()), Level.INFO);
+            this.testerHost.sendNotif(SOURCE_NAME, "Sent: SubscriberLocationReportRequest",
+                        createSRIforLCSReqData(clientDialogLsm.getLocalDialogId(),getNumberingPlan(),addressIMSI), Level.INFO);
 
             currentRequestDef += "Sent SRIforLCS Request;";
 
@@ -158,12 +159,14 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     }
 
 
-    private String createSRIforLCSReqData(long dialogId, String address) {
+    private String createSRIforLCSReqData(long dialogId, String address, String imsi) {
         StringBuilder sb = new StringBuilder();
         sb.append("dialogId=");
         sb.append(dialogId);
         sb.append(", address=\"");
         sb.append(address);
+        sb.append(", imsi=\"");
+        sb.append(imsi);
         sb.append("\"");
         return sb.toString();
     }
@@ -252,18 +255,6 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setNumberingPlanType(NumberingPlan.getInstance(val.intValue()));
         this.testerHost.markStore();
     }
-
-    @Override
-    public String getIMSI() {
-        return this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getIMSI();
-    }
-
-    @Override
-    public void setIMSI(String data) {
-        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setIMSI(data);
-        this.testerHost.markStore();
-    }
-
 
     @Override
     public String getCurrentRequestDef() {

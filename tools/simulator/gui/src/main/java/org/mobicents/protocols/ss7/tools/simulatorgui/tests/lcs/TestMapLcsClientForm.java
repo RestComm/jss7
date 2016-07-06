@@ -166,7 +166,8 @@ public class TestMapLcsClientForm extends TestingForm {
 
     private void sendRoutingInfoForLCSRequest() {
         this.lbMessage.setText("");
-        String res = this.mapLcsClient.sendRoutingInfoForLCSRequest();
+        String address = this.tbAddress.getText();
+        String res = this.mapLcsClient.sendRoutingInfoForLCSRequest(address);
         this.lbResult.setText(res);
     }
     private void subscriberLocationReportRequest() {

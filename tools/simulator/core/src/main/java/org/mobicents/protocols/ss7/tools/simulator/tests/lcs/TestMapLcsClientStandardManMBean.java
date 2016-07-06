@@ -58,13 +58,10 @@ public class TestMapLcsClientStandardManMBean extends StandardMBean {
                                        true, true, false),
                 new MBeanAttributeInfo("NumberingPlan", String.class.getName(),
                                        "NumberingPlan parameter for mlcNumber creating",
-                                       true, true, false),
-
-                new MBeanAttributeInfo("IMSI", String.class.getName(),
-                                       "IMSI parameter for targetMS creating",
                                        true, true, false), };
 
-        MBeanParameterInfo[] performSRIRequestParam = new MBeanParameterInfo[] { };
+        MBeanParameterInfo[] performSRIRequestParam = new MBeanParameterInfo[] {
+                       new MBeanParameterInfo("addressIMSI", String.class.getName(), "Address for IMSI") };
 
         MBeanOperationInfo[] operations = new MBeanOperationInfo[] {
                 new MBeanOperationInfo("performSendRoutingInfoForLCSRequest", "Send Routing Information for LCS request",
