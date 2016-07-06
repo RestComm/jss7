@@ -172,8 +172,7 @@ public class TestMapLcsClientForm extends TestingForm {
     }
     private void subscriberLocationReportRequest() {
         this.lbMessage.setText("");
-        String address = this.tbAddress.getText();
-        String res = this.mapLcsClient.subscriberLocationReportRequest(address);
+        String res = this.mapLcsClient.subscriberLocationReportRequest();
         this.lbResult.setText(res);
     }
 

@@ -40,11 +40,13 @@ public class TestMapLcsClientConfigurationData {
     protected static final String NUMBERING_PLAN_TYPE = "numberingPlanType";
     protected static final String NUMBERING_PLAN = "numberingPlan";
     protected static final String IMSI = "imsi";
+    protected static final String NETWORK_NODE_NUMBER_ADDRESS = "networkNodeNumberAddress";
 
     private AddressNature addressNature = AddressNature.international_number;
     private NumberingPlan numberingPlanType = NumberingPlan.ISDN;
     private String numberingPlan = "11112222";
     private String imsi = "5555544444";
+    private String networkNodeNumberAddress = "4444455555";
 
 
     public AddressNature getAddressNature() {
@@ -79,6 +81,13 @@ public class TestMapLcsClientConfigurationData {
         return imsi;
     }
 
+    public void setNetworkNodeNumberAddress(String data) {
+        this.networkNodeNumberAddress=data;
+    }
+
+    public String getNetworkNodeNumberAddress() {
+        return networkNodeNumberAddress;
+    }
 
     protected static final XMLFormat<TestMapLcsClientConfigurationData> XML = new XMLFormat<TestMapLcsClientConfigurationData>(TestMapLcsClientConfigurationData.class) {
 
@@ -88,6 +97,7 @@ public class TestMapLcsClientConfigurationData {
             xml.add(clt.numberingPlanType.toString(), NUMBERING_PLAN_TYPE, String.class);
             xml.add(clt.numberingPlan.toString(), NUMBERING_PLAN, String.class);
             xml.add(clt.imsi.toString(), IMSI, String.class);
+            xml.add(clt.networkNodeNumberAddress.toString(), NETWORK_NODE_NUMBER_ADDRESS, String.class);
         }
 
         public void read(InputElement xml, TestMapLcsClientConfigurationData clt) throws XMLStreamException {
@@ -100,6 +110,8 @@ public class TestMapLcsClientConfigurationData {
             clt.numberingPlan = np;
             String imsi = (String) xml.get(IMSI, String.class);
             clt.imsi = imsi;
+            String networkNodeNumberAddress = (String) xml.get(NETWORK_NODE_NUMBER_ADDRESS, String.class);
+            clt.networkNodeNumberAddress = networkNodeNumberAddress;
         }
     };
 
