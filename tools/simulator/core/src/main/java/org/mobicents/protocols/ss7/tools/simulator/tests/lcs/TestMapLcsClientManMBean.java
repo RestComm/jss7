@@ -31,11 +31,11 @@ public interface TestMapLcsClientManMBean {
 
     // Operations
 
-    String sendRoutingInfoForLCSRequest();
+    String sendRoutingInfoForLCSRequest(String addressIMSI);
 
     String subscriberLocationReportRequest(String address);
 
-    String performSendRoutingInfoForLCSRequest();
+    String performSendRoutingInfoForLCSRequest(String addressIMSI);
 
     // Attributes
 
@@ -50,10 +50,6 @@ public interface TestMapLcsClientManMBean {
     NumberingPlanMapType getNumberingPlanType();
 
     void setNumberingPlanType(NumberingPlanMapType val);
-
-    String getIMSI();
-
-    void setIMSI(String data);
 
     // Other
 
