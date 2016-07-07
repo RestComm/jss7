@@ -51,14 +51,18 @@ public class TestMapLcsClientStandardManMBean extends StandardMBean {
 
         MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[] {
                 new MBeanAttributeInfo("AddressNature", AddressNatureType.class.getName(),
-                                       "AddressNature parameter for mlcNumber creating",
+                                       "AddressNature parameter for address creation (mlcNumber, networkNodeNumber)",
                                        true, true, false),
                 new MBeanAttributeInfo("NumberingPlanType", NumberingPlanMapType.class.getName(),
-                                       "NumberingPlanType parameter for mlcNumber creating",
+                                       "NumberingPlanType parameter for address creation (numberingPlan,networkNodeNumber)",
                                        true, true, false),
                 new MBeanAttributeInfo("NumberingPlan", String.class.getName(),
-                                       "NumberingPlan parameter for mlcNumber creating",
-                                       true, true, false), };
+                                       "NumberingPlan parameter for mlcNumber address creation",
+                                       true, true, false),
+                new MBeanAttributeInfo("NetworkNodeNumberAddress", String.class.getName(),
+                                       "NetworkNodeNumber address parameter",
+                                       true, true, false),
+                };
 
         MBeanParameterInfo[] performSRIRequestParam = new MBeanParameterInfo[] {
                        new MBeanParameterInfo("addressIMSI", String.class.getName(), "Address for IMSI") };
@@ -66,6 +70,8 @@ public class TestMapLcsClientStandardManMBean extends StandardMBean {
         MBeanOperationInfo[] operations = new MBeanOperationInfo[] {
                 new MBeanOperationInfo("performSendRoutingInfoForLCSRequest", "Send Routing Information for LCS request",
                                        performSRIRequestParam, String.class.getName(), MBeanOperationInfo.ACTION),
+                new MBeanOperationInfo("performSubscriberLocationReportRequest", "Subscriber Location Report request",
+                                               null, String.class.getName(), MBeanOperationInfo.ACTION)
                  };
 
         return new MBeanInfo(TestMapLcsClientMan.class.getName(), "MapLcsClient test parameters management", attributes, null, operations, null);
