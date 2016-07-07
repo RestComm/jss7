@@ -31,9 +31,12 @@ public interface TestMapLcsServerManMBean {
     String sendRoutingInfoForLCSResponse();
     String performSendRoutingInfoForLCSResponse();
     String subscriberLocationReportResponse();
+    String performSubscriberLocationReportResponse();
 
     String getNetworkNodeNumberAddress();
     void setNetworkNodeNumberAddress(String address);
+    String getNaSRDAddress();
+    void setNaSRDAddress(String address);
 
 
 }

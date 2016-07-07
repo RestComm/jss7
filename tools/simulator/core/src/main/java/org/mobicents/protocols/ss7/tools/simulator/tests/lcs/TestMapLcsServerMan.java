@@ -1,27 +1,28 @@
 package org.mobicents.protocols.ss7.tools.simulator.tests.lcs;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.mobicents.protocols.ss7.map.api.MAPException;
+import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
+import org.mobicents.protocols.ss7.map.api.MAPProvider;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSLocationInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.MAPDialogLsm;
+import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm;
+import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationResponse;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSResponse;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportRequest;
+import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportResponse;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
 import org.mobicents.protocols.ss7.tools.simulator.common.TesterBase;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapMan;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
-import org.mobicents.protocols.ss7.map.api.MAPProvider;
-import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener;
-import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationRequest;
-import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationResponse;
-import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportRequest;
-import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportResponse;
-import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSRequest;
-import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSResponse;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
-import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
-import org.mobicents.protocols.ss7.map.api.service.lsm.MAPDialogLsm;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
-import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
-import org.mobicents.protocols.ss7.map.api.service.lsm.LCSLocationInfo;
-import org.mobicents.protocols.ss7.map.api.MAPException;
 
 
 
@@ -38,6 +39,7 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
     private MapMan mapMan;
     private boolean isStarted = false;
     private MAPProvider mapProvider;
+    private MAPServiceLsm mapServiceLsm;
 
     public TestMapLcsServerMan(String name) {
         super(SOURCE_NAME);
@@ -47,8 +49,9 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
     public boolean start() {
 
         this.mapProvider = this.mapMan.getMAPStack().getMAPProvider();
-        mapProvider.getMAPServiceLsm().acivate();
-        mapProvider.getMAPServiceLsm().addMAPServiceListener(this);
+        mapServiceLsm = mapProvider.getMAPServiceLsm();
+        mapServiceLsm.acivate();
+        mapServiceLsm.addMAPServiceListener(this);
         mapProvider.addMAPDialogListener(this);
 
         isStarted = true;
@@ -98,6 +101,21 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
         return "sendRoutingInfoForLCSResponse called automatically";
     }
 
+    @Override
+    public String performSubscriberLocationReportResponse() {
+        if (!isStarted) {
+            return "The tester is not started";
+        }
+
+        return subscriberLocationReportResponse();
+    }
+
+    @Override
+    public String subscriberLocationReportResponse() {
+
+        return "subscriberLocationReportResponse called automatically";
+    }
+
     public void onProvideSubscriberLocationRequest(ProvideSubscriberLocationRequest provideSubscriberLocationRequestIndication) {
 
     }
@@ -109,8 +127,42 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
 
     public void onSubscriberLocationReportRequest(SubscriberLocationReportRequest subscriberLocationReportRequestIndication) {
         logger.debug("onSubscriberLocationReportRequest");
-        String address = subscriberLocationReportRequestIndication.getLCSLocationInfo().getNetworkNodeNumber().getAddress();
-        this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: SubscriberLocationReportRequest", "address:"+address, Level.INFO);
+        if (!isStarted)
+            return;
+
+        MAPDialogLsm curDialog = subscriberLocationReportRequestIndication.getMAPDialog();
+        String networkNodeNumberAddress = subscriberLocationReportRequestIndication.getLCSLocationInfo().getNetworkNodeNumber().getAddress();
+
+        this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: SubscriberLocationReportRequest",
+                   createSLRReqData(curDialog.getLocalDialogId(),networkNodeNumberAddress), Level.INFO);
+
+        MAPParameterFactory mapParameterFactory = this.mapProvider.getMAPParameterFactory();
+        ISDNAddressString naEsrd = mapParameterFactory.createISDNAddressString(
+                        AddressNature.international_number,
+                        NumberingPlan.ISDN,
+                        getNaSRDAddress());
+
+        try {
+            curDialog.addSubscriberLocationReportResponse(subscriberLocationReportRequestIndication.getInvokeId(), naEsrd, null, null);
+            logger.debug("set addSubscriberLocationReportResponse");
+            curDialog.send();
+            logger.debug("addSubscriberLocationReportResponse sent");
+
+            this.testerHost.sendNotif(SOURCE_NAME, "Sent: SubscriberLocationReportResponse",
+                   createSLRResData(curDialog.getLocalDialogId(),getNaSRDAddress() ), Level.INFO);
+
+         } catch (MAPException e) {
+            logger.debug("Failed building response "+e.toString());
+        }
+    }
+
+    public String getNaSRDAddress(){
+        return this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getNaSRDAddress();
+    }
+
+    public void setNaSRDAddress(String address) {
+        this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setNaSRDAddress(address);
+        this.testerHost.markStore();
     }
 
     public void onSubscriberLocationReportResponse(SubscriberLocationReportResponse subscriberLocationReportResponseIndication) {
@@ -190,15 +242,28 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
         sb.append("\"");
         return sb.toString();
     }
+    private String createSLRReqData(Long dialogId, String networkNodeNumberAddress) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("dialogId=");
+        sb.append(dialogId);
+        sb.append(", networkNodeNumber=\"");
+        sb.append(networkNodeNumberAddress);
+        sb.append("\"");
+        return sb.toString();
+    }
 
-
-
+    private String createSLRResData(long dialogId, String address) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("dialogId=");
+        sb.append(dialogId);
+        sb.append(", naSRDAddress=\"");
+        sb.append(address);
+        sb.append("\"");
+        return sb.toString();
+    }
     public void onSendRoutingInfoForLCSResponse(SendRoutingInfoForLCSResponse sendRoutingInforForLCSResponseIndication){
         logger.debug("onSendRoutingInfoForLCSResponse");
 
-    }
-    public String subscriberLocationReportResponse(){
-        return "subscriberLocationReportResponse not implemented";
     }
 
     @Override

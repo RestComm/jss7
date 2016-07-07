@@ -23,10 +23,8 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
-
 import org.apache.log4j.Logger;
 import org.apache.log4j.Level;
-
 import org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationRequest;
 import org.mobicents.protocols.ss7.map.api.service.lsm.ProvideSubscriberLocationResponse;
@@ -53,6 +51,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     private int countMapLcsResp = 0;
     private String currentRequestDef = "";
     private MAPProvider mapProvider;
+    private MAPServiceLsm mapServiceLsm;
 
     public TestMapLcsClientMan(String name) {
         super(SOURCE_NAME);
@@ -63,8 +62,9 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     public boolean start() {
 
         this.mapProvider = this.mapMan.getMAPStack().getMAPProvider();
-        mapProvider.getMAPServiceLsm().acivate();
-        mapProvider.getMAPServiceLsm().addMAPServiceListener(this);
+        this.mapServiceLsm = mapProvider.getMAPServiceLsm();
+        mapServiceLsm.acivate();
+        mapServiceLsm.addMAPServiceListener(this);
         mapProvider.addMAPDialogListener(this);
 
         isStarted = true;
@@ -101,11 +101,6 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
 
     @Override
     public void stop() {
-        isStarted = false;
-        mapProvider.getMAPServiceLsm().deactivate();
-        mapProvider.getMAPServiceLsm().removeMAPServiceListener(this);
-        mapProvider.removeMAPDialogListener(this);
-        this.testerHost.sendNotif(SOURCE_NAME, "LCS Client has been stopped", "", Level.INFO);
     }
 
     @Override
@@ -120,8 +115,6 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     @Override
     public String sendRoutingInfoForLCSRequest(String addressIMSI) {
 
-        // MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
-
         if (mapProvider== null) {
 
             return "mapProvider is null";
@@ -131,11 +124,6 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
 
         try {
 
-            MAPServiceLsm service = mapProvider.getMAPServiceLsm();
-
-            // falonso acivate should be activate, never used before?
-            service.acivate();
-
             MAPApplicationContext appCnt = null;
 
             appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationSvcGatewayContext,
@@ -144,7 +132,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
             MAPParameterFactory mapParameterFactory = mapProvider.getMAPParameterFactory();
 
 
-            MAPDialogLsm clientDialogLsm = service.createNewDialog(appCnt, this.mapMan.createOrigAddress(), null,
+            MAPDialogLsm clientDialogLsm = mapServiceLsm.createNewDialog(appCnt, this.mapMan.createOrigAddress(), null,
                    this.mapMan.createDestAddress(), null);
 
             logger.debug("MAPDialogLsm Created");
@@ -192,11 +180,30 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         return sb.toString();
     }
 
+    private String createSRIforLCSResData(long dialogId, String address) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("dialogId=");
+        sb.append(dialogId);
+        sb.append(", node number=\"");
+        sb.append(address);
+        sb.append("\"");
+        return sb.toString();
+    }
+
     private String createSLRReqData(long dialogId, String address) {
         StringBuilder sb = new StringBuilder();
         sb.append("dialogId=");
         sb.append(dialogId);
-        sb.append(", networkNodeNumberAddress=\"");
+        sb.append(", networkNodeNumber=\"");
+        sb.append(address);
+        sb.append("\"");
+        return sb.toString();
+    }
+    private String createSLRResData(long dialogId, String address) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("dialogId=");
+        sb.append(dialogId);
+        sb.append(", naESR=\"");
         sb.append(address);
         sb.append("\"");
         return sb.toString();
@@ -218,11 +225,6 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
 
         try {
 
-            MAPServiceLsm service = mapProvider.getMAPServiceLsm();
-
-            // falonso acivate should be activate, never used before?
-            service.acivate();
-
             MAPApplicationContext appCnt = null;
 
             appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationSvcEnquiryContext,
@@ -231,7 +233,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
             MAPParameterFactory mapParameterFactory = mapProvider.getMAPParameterFactory();
 
 
-            MAPDialogLsm clientDialogLsm = service.createNewDialog(appCnt, this.mapMan.createOrigAddress(), null,
+            MAPDialogLsm clientDialogLsm = mapServiceLsm.createNewDialog(appCnt, this.mapMan.createOrigAddress(), null,
                    this.mapMan.createDestAddress(), null);
 
             logger.debug("MAPDialogLsm Created");
@@ -321,6 +323,14 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
 
     public void onSubscriberLocationReportResponse(SubscriberLocationReportResponse subscriberLocationReportResponseIndication) {
         logger.debug("onSubscriberLocationReportResponse");
+        this.countMapLcsResp++;
+        this.testerHost.sendNotif(SOURCE_NAME,
+                "Rcvd: SubscriberLocationReportResponse", this
+                        .createSLRResData(
+                                subscriberLocationReportResponseIndication
+                                        .getInvokeId(),
+                                subscriberLocationReportResponseIndication
+                                        .getNaESRD().getAddress()), Level.INFO);
     }
 
     @Override
@@ -340,8 +350,15 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     public void onSendRoutingInfoForLCSResponse(SendRoutingInfoForLCSResponse sendRoutingInforForLCSResponseIndication){
         logger.debug("onSendRoutingInfoForLCSResponse");
         this.countMapLcsResp++;
-        String address = sendRoutingInforForLCSResponseIndication.getLCSLocationInfo().getNetworkNodeNumber().getAddress();
-        this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: SendRoutingInfoForLCSResponse", "address:"+address, Level.INFO);
+        this.testerHost.sendNotif(SOURCE_NAME,
+                "Rcvd: SendRoutingInfoForLCSResponse", this
+                        .createSRIforLCSResData(
+                                sendRoutingInforForLCSResponseIndication
+                                        .getInvokeId(),
+                                sendRoutingInforForLCSResponseIndication
+                                        .getLCSLocationInfo()
+                                        .getNetworkNodeNumber().getAddress()),
+                Level.INFO);
     }
 
 
