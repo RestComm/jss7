@@ -101,6 +101,11 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
 
     @Override
     public void stop() {
+        isStarted = false;
+        mapProvider.getMAPServiceLsm().deactivate();
+        mapProvider.getMAPServiceLsm().removeMAPServiceListener(this);
+        mapProvider.removeMAPDialogListener(this);
+        this.testerHost.sendNotif(SOURCE_NAME, "LCS Client has been stopped", "", Level.INFO);
     }
 
     @Override
