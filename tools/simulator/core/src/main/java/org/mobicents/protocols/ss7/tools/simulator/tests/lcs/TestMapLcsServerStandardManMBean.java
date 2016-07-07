@@ -46,13 +46,18 @@ public class TestMapLcsServerStandardManMBean extends StandardMBean {
         MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[] {
                 new MBeanAttributeInfo("NetworkNodeNumberAddress", String.class.getName(),
                                        "NetworkNodeNumber address parameter for response",
-                                       true, true, false), };
+                                       true, true, false),
+                new MBeanAttributeInfo("NaSRDAddress", String.class.getName(),
+                                       "NaSRD address parameter for response",
+                                       true, true, false),};
 
         MBeanParameterInfo[] performSRIResponseParam = new MBeanParameterInfo[] { };
 
         MBeanOperationInfo[] operations = new MBeanOperationInfo[] {
                 new MBeanOperationInfo("performSendRoutingInfoForLCSResponse", "Send Routing Information for LCS response",
                                        performSRIResponseParam, String.class.getName(), MBeanOperationInfo.ACTION),
+                new MBeanOperationInfo("performSubscriberLocationReportResponse", "Subscriber Location Report response",
+                                               null, String.class.getName(), MBeanOperationInfo.ACTION),
                  };
 
         return new MBeanInfo(TestMapLcsServerMan.class.getName(), "MapLcsServer test parameters management", attributes, null, operations, null);

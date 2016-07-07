@@ -144,7 +144,9 @@ public class TestMapLcsServerForm extends TestingForm {
     }
 
     private void subscriberLocationReportResponse() {
-        // TODO Auto-generated method stub
+        this.lbMessage.setText("");
+        String res = this.mapLcsServer.subscriberLocationReportResponse();
+        this.lbResult.setText(res);
     }
 
     public void setData(TestMapLcsServerManMBean mapLcsServer) {
