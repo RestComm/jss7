@@ -56,13 +56,11 @@ public class TestMapLcsClientParamForm extends JDialog {
     private static Logger logger = Logger.getLogger(TestMapLcsClientParamForm.class);
 
     private TestMapLcsClientManMBean mapLcsClient;
-    private JComboBox cbMapProtocolVersion;
-    private JComboBox cbAddressNature;
-    private JComboBox cbNumberingPlan;
-    private JComboBox cbAddressNature2;
-    private JComboBox cbNumberingPlan2;
     private JTextField cbAddress;
     private JTabbedPane tabbedPane;
+    private JTextField tfNetworkNodeAddress;
+    private JComboBox cbAddressNature;
+    private JComboBox cbNumberingPlan;
 
     public TestMapLcsClientParamForm(JFrame owner) {
         super(owner, true);
@@ -81,74 +79,23 @@ public class TestMapLcsClientParamForm extends JDialog {
         tabbedPane.addTab("General", null, panel_gen, null);
         panel_gen.setLayout(null);
 
-        JLabel label = new JLabel("MAP protocol version");
-        label.setBounds(10, 14, 204, 14);
-        panel_gen.add(label);
-
-        cbMapProtocolVersion = new JComboBox();
-        cbMapProtocolVersion.setBounds(266, 11, 255, 20);
-        panel_gen.add(cbMapProtocolVersion);
-
-        JPanel panel_sri = new JPanel();
-        panel_sri.setLayout(null);
-        tabbedPane.addTab("SRI request", null, panel_sri, null);
-
-        JPanel panelSriDetail = new JPanel();
-        panelSriDetail.setLayout(null);
-        panelSriDetail.setBorder(new LineBorder(new Color(0, 0, 0)));
-        panelSriDetail.setBounds(10, 26, 511, 125);
-        panel_sri.add(panelSriDetail);
-
-        JLabel label_10 = new JLabel("Parameters for mlc");
-        label_10.setBounds(10, 0, 266, 14);
-        panelSriDetail.add(label_10);
-
-        JLabel label_11 = new JLabel("AddressNature");
-        label_11.setBounds(10, 28, 174, 14);
-        panelSriDetail.add(label_11);
-
-        JLabel label_12 = new JLabel("NumberingPlanType");
-        label_12.setBounds(10, 59, 174, 14);
-        panelSriDetail.add(label_12);
-
-        JLabel label_13 = new JLabel("NumberingPlan");
-        label_13.setBounds(10, 90, 174, 14);
-        panelSriDetail.add(label_13);
-
-        cbAddressNature2 = new JComboBox();
-        cbAddressNature2.setBounds(194, 25, 307, 20);
-        panelSriDetail.add(cbAddressNature2);
-
-        cbNumberingPlan2 = new JComboBox();
-        cbNumberingPlan2.setBounds(194, 56, 307, 20);
-        panelSriDetail.add(cbNumberingPlan2);
-
-        cbAddress = new JTextField();
-        cbAddress.setBounds(194, 87, 307, 20);
-        cbAddress.setColumns(10);
-        panelSriDetail.add(cbAddress);
-
-        JPanel panel_slr = new JPanel();
-        tabbedPane.addTab("SLR request", panel_slr);
-        panel_slr.setLayout(null);
-
         JPanel panel = new JPanel();
         panel.setLayout(null);
         panel.setBorder(new LineBorder(new Color(0, 0, 0)));
-        panel.setBounds(10, 26, 511, 94);
-        panel_slr.add(panel);
+        panel.setBounds(26, 23, 511, 94);
+        panel_gen.add(panel);
 
-        JLabel label_7 = new JLabel("Parameters for AddressString creation");
-        label_7.setBounds(10, 0, 266, 14);
-        panel.add(label_7);
+        JLabel label = new JLabel("Parameters for AddressString creation");
+        label.setBounds(10, 0, 266, 14);
+        panel.add(label);
 
-        JLabel label_8 = new JLabel("AddressNature");
-        label_8.setBounds(10, 28, 174, 14);
-        panel.add(label_8);
+        JLabel label_1 = new JLabel("AddressNature");
+        label_1.setBounds(10, 28, 174, 14);
+        panel.add(label_1);
 
-        JLabel label_9 = new JLabel("NumberingPlan");
-        label_9.setBounds(10, 59, 174, 14);
-        panel.add(label_9);
+        JLabel label_2 = new JLabel("NumberingPlan");
+        label_2.setBounds(10, 59, 174, 14);
+        panel.add(label_2);
 
         cbAddressNature = new JComboBox();
         cbAddressNature.setBounds(194, 25, 307, 20);
@@ -157,6 +104,60 @@ public class TestMapLcsClientParamForm extends JDialog {
         cbNumberingPlan = new JComboBox();
         cbNumberingPlan.setBounds(194, 56, 307, 20);
         panel.add(cbNumberingPlan);
+
+        JPanel panel_sri = new JPanel();
+        panel_sri.setLayout(null);
+        tabbedPane.addTab("SRI request", null, panel_sri, null);
+
+        JPanel panelSriDetail = new JPanel();
+        panelSriDetail.setLayout(null);
+        panelSriDetail.setBorder(new LineBorder(new Color(0, 0, 0)));
+        panelSriDetail.setBounds(10, 24, 511, 109);
+        panel_sri.add(panelSriDetail);
+
+        JLabel label_10 = new JLabel("MLC Number parameters");
+        label_10.setBounds(10, 11, 266, 14);
+        panelSriDetail.add(label_10);
+
+        JLabel label_13 = new JLabel("NumberingPlan");
+        label_13.setBounds(10, 45, 174, 14);
+        panelSriDetail.add(label_13);
+
+        cbAddress = new JTextField();
+        cbAddress.setBounds(194, 42, 307, 20);
+        cbAddress.setColumns(10);
+        panelSriDetail.add(cbAddress);
+
+        JLabel label_3 = new JLabel("AddressNature, NumberingPlanType from General tab");
+        label_3.setBounds(10, 84, 266, 14);
+        panelSriDetail.add(label_3);
+
+        JPanel panel_slr = new JPanel();
+        tabbedPane.addTab("SLR request", panel_slr);
+        panel_slr.setLayout(null);
+
+        JPanel panel_1 = new JPanel();
+        panel_1.setLayout(null);
+        panel_1.setBorder(new LineBorder(new Color(0, 0, 0)));
+        panel_1.setBounds(10, 24, 511, 104);
+        panel_slr.add(panel_1);
+
+        JLabel lblParametersForNetworknodenumber = new JLabel("Network Node Number parameters");
+        lblParametersForNetworknodenumber.setBounds(10, 11, 266, 14);
+        panel_1.add(lblParametersForNetworknodenumber);
+
+        JLabel lblNetworknodenumberaddress = new JLabel("NetworkNodeNumberAddress");
+        lblNetworknodenumberaddress.setBounds(10, 45, 174, 14);
+        panel_1.add(lblNetworknodenumberaddress);
+
+        tfNetworkNodeAddress = new JTextField();
+        tfNetworkNodeAddress.setColumns(10);
+        tfNetworkNodeAddress.setBounds(194, 42, 307, 20);
+        panel_1.add(tfNetworkNodeAddress);
+
+        JLabel lblAddressnatureNumberingplantypeFrom = new JLabel("AddressNature, NumberingPlanType from General tab");
+        lblAddressnatureNumberingplantypeFrom.setBounds(10, 83, 266, 14);
+        panel_1.add(lblAddressnatureNumberingplantypeFrom);
 
         JPanel panel_plr = new JPanel();
         panel_plr.setLayout(null);
@@ -223,21 +224,20 @@ public class TestMapLcsClientParamForm extends JDialog {
     private void reloadData() {
         M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, this.mapLcsClient.getAddressNature());
         M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, this.mapLcsClient.getNumberingPlanType());
-        M3uaForm.setEnumeratedBaseComboBox(cbAddressNature2, this.mapLcsClient.getAddressNature());
-        M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan2, this.mapLcsClient.getNumberingPlanType());
-
+        //SRI tab
         cbAddress.setText(this.mapLcsClient.getNumberingPlan());
+        //SLR tab
+        tfNetworkNodeAddress.setText(this.mapLcsClient.getNetworkNodeNumberAddress());
     }
 
     private void loadDataA() {
         M3uaForm.setEnumeratedBaseComboBox(cbAddressNature,
                 new AddressNatureType(AddressNature.international_number.getIndicator()));
         M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
-        M3uaForm.setEnumeratedBaseComboBox(cbAddressNature2,
-                new AddressNatureType(AddressNature.international_number.getIndicator()));
-        M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan2, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
-
+        //SRI tab
         cbAddress.setText("12345678");
+        //SLR tab
+        tfNetworkNodeAddress.setText("4444455555");
     }
 
     private void loadDataB() {
@@ -246,21 +246,12 @@ public class TestMapLcsClientParamForm extends JDialog {
 
     private boolean saveData() {
 
-        // check which message viewed as it overrides
-        // we can either make certain params general or have specific ones per message
-        //
-        logger.debug("Selected: "+tabbedPane.getSelectedIndex());
-        if ( tabbedPane.getSelectedIndex() == 1) {
-            this.mapLcsClient.setAddressNature((AddressNatureType) cbAddressNature2.getSelectedItem());
-            this.mapLcsClient.setNumberingPlanType((NumberingPlanMapType) cbNumberingPlan2.getSelectedItem());
-        }
-        else {
-            this.mapLcsClient.setAddressNature((AddressNatureType) cbAddressNature.getSelectedItem());
-            this.mapLcsClient.setNumberingPlanType((NumberingPlanMapType) cbNumberingPlan.getSelectedItem());
-        }
-
+        this.mapLcsClient.setAddressNature((AddressNatureType) cbAddressNature.getSelectedItem());
+        this.mapLcsClient.setNumberingPlanType((NumberingPlanMapType) cbNumberingPlan.getSelectedItem());
+        //SRI tab
         this.mapLcsClient.setNumberingPlan(cbAddress.getText());
-
+        //SLR tab
+        this.mapLcsClient.setNetworkNodeNumberAddress(tfNetworkNodeAddress.getText());
         return true;
     }
 }
