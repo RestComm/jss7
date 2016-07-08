@@ -222,7 +222,7 @@ public class TestMapLcsServerParamForm extends JDialog {
         //SRI tab
         tfNetworkNodeNumberAddress.setText(this.mapLcsServer.getNetworkNodeNumberAddress());
         //SLR tab
-        cbNaEsrdAddress.setText(this.mapLcsServer.getNaSRDAddress());
+        cbNaEsrdAddress.setText(this.mapLcsServer.getNaESRDAddress());
     }
 
     private void loadDataA() {
@@ -246,7 +246,7 @@ public class TestMapLcsServerParamForm extends JDialog {
         //SRI tab
         this.mapLcsServer.setNetworkNodeNumberAddress(tfNetworkNodeNumberAddress.getText());
         //SLR tab
-        this.mapLcsServer.setNaSRDAddress(cbNaEsrdAddress.getText());
+        this.mapLcsServer.setNaESRDAddress(cbNaEsrdAddress.getText());
         return true;
     }
 }

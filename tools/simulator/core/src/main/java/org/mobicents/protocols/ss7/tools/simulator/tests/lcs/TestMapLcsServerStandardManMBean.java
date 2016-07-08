@@ -47,8 +47,8 @@ public class TestMapLcsServerStandardManMBean extends StandardMBean {
                 new MBeanAttributeInfo("NetworkNodeNumberAddress", String.class.getName(),
                                        "NetworkNodeNumber address parameter for response",
                                        true, true, false),
-                new MBeanAttributeInfo("NaSRDAddress", String.class.getName(),
-                                       "NaSRD address parameter for response",
+                new MBeanAttributeInfo("NaESRDAddress", String.class.getName(),
+                                       "NaESRD address parameter for response",
                                        true, true, false),};
 
         MBeanParameterInfo[] performSRIResponseParam = new MBeanParameterInfo[] { };

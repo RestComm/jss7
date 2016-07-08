@@ -189,7 +189,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         StringBuilder sb = new StringBuilder();
         sb.append("dialogId=");
         sb.append(dialogId);
-        sb.append(", node number=\"");
+        sb.append(", networkNodeNumber=\"");
         sb.append(address);
         sb.append("\"");
         return sb.toString();
@@ -208,7 +208,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         StringBuilder sb = new StringBuilder();
         sb.append("dialogId=");
         sb.append(dialogId);
-        sb.append(", naESR=\"");
+        sb.append(", naESRD=\"");
         sb.append(address);
         sb.append("\"");
         return sb.toString();

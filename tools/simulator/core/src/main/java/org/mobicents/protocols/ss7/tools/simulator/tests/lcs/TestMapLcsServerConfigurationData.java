@@ -34,17 +34,17 @@ import javolution.xml.stream.XMLStreamException;
 public class TestMapLcsServerConfigurationData {
 
     protected static final String NETWORK_NODE_NUMBER_ADDRESS = "network_node_number_address";
-    protected static final String NA_SRD_ADDRESS = "na_srd_address";
+    protected static final String NA_ESRD_ADDRESS = "na_esrd_address";
 
     private String networkNodeNumberAddress = "5555544444";
-    private String naSRDAddress = "11114444";
+    private String naESRDAddress = "11114444";
 
-    public String getNaSRDAddress() {
-        return naSRDAddress;
+    public String getNaESRDAddress() {
+        return naESRDAddress;
     }
 
-    public void setNaSRDAddress(String naSRDAddress) {
-        this.naSRDAddress = naSRDAddress;
+    public void setNaESRDAddress(String naESRDAddress) {
+        this.naESRDAddress = naESRDAddress;
     }
 
     public void setNetworkNodeNumberAddress(String data) {
@@ -61,13 +61,13 @@ public class TestMapLcsServerConfigurationData {
 
         public void write(TestMapLcsServerConfigurationData srv, OutputElement xml) throws XMLStreamException {
             xml.setAttribute(NETWORK_NODE_NUMBER_ADDRESS, srv.networkNodeNumberAddress);
-            xml.add(srv.naSRDAddress.toString(), NA_SRD_ADDRESS, String.class);
+            xml.add(srv.naESRDAddress.toString(), NA_ESRD_ADDRESS, String.class);
         }
 
         public void read(InputElement xml, TestMapLcsServerConfigurationData srv) throws XMLStreamException {
             srv.networkNodeNumberAddress = xml.getAttribute(NETWORK_NODE_NUMBER_ADDRESS).toString();
-            String naSrdAddress = (String) xml.get(NA_SRD_ADDRESS, String.class);
-            srv.naSRDAddress = naSrdAddress;
+            String naESRDAddress = (String) xml.get(NA_ESRD_ADDRESS, String.class);
+            srv.naESRDAddress = naESRDAddress;
         }
     };
 
