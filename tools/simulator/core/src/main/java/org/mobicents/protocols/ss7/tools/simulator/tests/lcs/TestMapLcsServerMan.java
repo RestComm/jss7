@@ -140,7 +140,7 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
         ISDNAddressString naEsrd = mapParameterFactory.createISDNAddressString(
                         AddressNature.international_number,
                         NumberingPlan.ISDN,
-                        getNaSRDAddress());
+                        getNaESRDAddress());
 
         try {
             curDialog.addSubscriberLocationReportResponse(subscriberLocationReportRequestIndication.getInvokeId(), naEsrd, null, null);
@@ -149,19 +149,21 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
             logger.debug("addSubscriberLocationReportResponse sent");
 
             this.testerHost.sendNotif(SOURCE_NAME, "Sent: SubscriberLocationReportResponse",
-                   createSLRResData(curDialog.getLocalDialogId(),getNaSRDAddress() ), Level.INFO);
+                   createSLRResData(curDialog.getLocalDialogId(),getNaESRDAddress() ), Level.INFO);
 
          } catch (MAPException e) {
             logger.debug("Failed building response "+e.toString());
         }
     }
 
-    public String getNaSRDAddress(){
-        return this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getNaSRDAddress();
+    @Override
+    public String getNaESRDAddress(){
+        return this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getNaESRDAddress();
     }
 
-    public void setNaSRDAddress(String address) {
-        this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setNaSRDAddress(address);
+    @Override
+    public void setNaESRDAddress(String address) {
+        this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setNaESRDAddress(address);
         this.testerHost.markStore();
     }
 
@@ -237,7 +239,7 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
         StringBuilder sb = new StringBuilder();
         sb.append("dialogId=");
         sb.append(dialogId);
-        sb.append(", node number=\"");
+        sb.append(", networkNodeNumber=\"");
         sb.append(address);
         sb.append("\"");
         return sb.toString();
@@ -256,7 +258,7 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
         StringBuilder sb = new StringBuilder();
         sb.append("dialogId=");
         sb.append(dialogId);
-        sb.append(", naSRDAddress=\"");
+        sb.append(", naESRD=\"");
         sb.append(address);
         sb.append("\"");
         return sb.toString();

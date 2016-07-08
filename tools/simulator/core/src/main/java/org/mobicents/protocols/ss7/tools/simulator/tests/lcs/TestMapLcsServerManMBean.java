@@ -35,8 +35,8 @@ public interface TestMapLcsServerManMBean {
 
     String getNetworkNodeNumberAddress();
     void setNetworkNodeNumberAddress(String address);
-    String getNaSRDAddress();
-    void setNaSRDAddress(String address);
+    String getNaESRDAddress();
+    void setNaESRDAddress(String address);
 
 
 }
