@@ -22,97 +22,188 @@
 
 package org.mobicents.protocols.ss7.tools.simulatorgui.tests.lcs;
 
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-
-import org.mobicents.protocols.ss7.tools.simulator.tests.ati.ATIReaction;
-import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsServerManMBean;
-import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
-import javax.swing.JLabel;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
+
+import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsServerManMBean;
+//import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
+import org.apache.log4j.Logger;
 
 /**
  *
- * @author falonso@csc.com
+ * @author mrojo2@csc.com
  *
  */
 public class TestMapLcsServerParamForm extends JDialog {
+    private static final long serialVersionUID = 5428271328162943202L;
 
-    private static final long serialVersionUID = -6495066621733616114L;
+    private static Logger logger = Logger.getLogger(TestMapLcsServerParamForm.class);
 
     private TestMapLcsServerManMBean mapLcsServer;
-
-    private JComboBox cbATIReaction = new JComboBox();
+    private JTextField cbNaEsrdAddress;
+    private JTabbedPane tabbedPane;
+    private JTextField tfNetworkNodeNumberAddress;
+    private JComboBox cbAddressNature;
+    private JComboBox cbNumberingPlan;
 
     public TestMapLcsServerParamForm(JFrame owner) {
         super(owner, true);
 
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setResizable(false);
-        setTitle("ATI test server settings");
-        setBounds(100, 100, 640, 226);
+        setTitle("MAP LCS test client settings");
+        setBounds(100, 100, 640, 584);
         getContentPane().setLayout(null);
 
+        tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        tabbedPane.setBounds(0, 0, 634, 465);
+        getContentPane().add(tabbedPane);
+
+        JPanel panel_gen = new JPanel();
+        tabbedPane.addTab("General", null, panel_gen, null);
+        panel_gen.setLayout(null);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(null);
+        panel.setBorder(new LineBorder(new Color(0, 0, 0)));
+        panel.setBounds(26, 23, 511, 94);
+        panel_gen.add(panel);
+
+        JLabel label = new JLabel("Parameters for AddressString creation");
+        label.setBounds(10, 0, 266, 14);
+        panel.add(label);
+
+        JLabel label_1 = new JLabel("AddressNature");
+        label_1.setBounds(10, 28, 174, 14);
+        panel.add(label_1);
+
+        JLabel label_2 = new JLabel("NumberingPlan");
+        label_2.setBounds(10, 59, 174, 14);
+        panel.add(label_2);
+
+        cbAddressNature = new JComboBox();
+        cbAddressNature.setBounds(194, 25, 307, 20);
+        panel.add(cbAddressNature);
+
+        cbNumberingPlan = new JComboBox();
+        cbNumberingPlan.setBounds(194, 56, 307, 20);
+        panel.add(cbNumberingPlan);
+
+        JPanel panel_slr = new JPanel();
+        tabbedPane.addTab("SRI response", panel_slr);
+        panel_slr.setLayout(null);
+
+        JPanel panel_1 = new JPanel();
+        panel_1.setLayout(null);
+        panel_1.setBorder(new LineBorder(new Color(0, 0, 0)));
+        panel_1.setBounds(10, 24, 511, 104);
+        panel_slr.add(panel_1);
+
+        JLabel lblParametersForNetworknodenumber = new JLabel("Network Node Number parameters");
+        lblParametersForNetworknodenumber.setBounds(10, 11, 266, 14);
+        panel_1.add(lblParametersForNetworknodenumber);
+
+        JLabel lblNetworknodenumberaddress = new JLabel("NetworkNodeNumberAddress");
+        lblNetworknodenumberaddress.setBounds(10, 45, 174, 14);
+        panel_1.add(lblNetworknodenumberaddress);
+
+        tfNetworkNodeNumberAddress = new JTextField();
+        tfNetworkNodeNumberAddress.setColumns(10);
+        tfNetworkNodeNumberAddress.setBounds(194, 42, 307, 20);
+        panel_1.add(tfNetworkNodeNumberAddress);
+
+        JLabel lblAddressnatureNumberingplantypeFrom = new JLabel("AddressNature, NumberingPlanType from General tab");
+        lblAddressnatureNumberingplantypeFrom.setBounds(10, 83, 266, 14);
+        panel_1.add(lblAddressnatureNumberingplantypeFrom);
+
+        JPanel panel_sri = new JPanel();
+        panel_sri.setLayout(null);
+        tabbedPane.addTab("SLR response", null, panel_sri, null);
+
+        JPanel panelSriDetail = new JPanel();
+        panelSriDetail.setLayout(null);
+        panelSriDetail.setBorder(new LineBorder(new Color(0, 0, 0)));
+        panelSriDetail.setBounds(10, 24, 511, 109);
+        panel_sri.add(panelSriDetail);
+
+        JLabel lblNaEsrdParameters = new JLabel("NA-ESRD parameters");
+        lblNaEsrdParameters.setBounds(10, 11, 266, 14);
+        panelSriDetail.add(lblNaEsrdParameters);
+
+        JLabel lblNaEsrdAddress = new JLabel("NA-ESRD address");
+        lblNaEsrdAddress.setBounds(10, 45, 174, 14);
+        panelSriDetail.add(lblNaEsrdAddress);
+
+        cbNaEsrdAddress = new JTextField();
+        cbNaEsrdAddress.setBounds(194, 42, 307, 20);
+        cbNaEsrdAddress.setColumns(10);
+        panelSriDetail.add(cbNaEsrdAddress);
+
+        JLabel label_3 = new JLabel("AddressNature, NumberingPlanType from General tab");
+        label_3.setBounds(10, 84, 266, 14);
+        panelSriDetail.add(label_3);
+
+        JPanel panel_plr = new JPanel();
+        panel_plr.setLayout(null);
+        tabbedPane.addTab("PLR response", null, panel_plr, null);
+
         JButton button = new JButton("Load default values for side A");
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                loadDataA();
-            }
-        });
-        button.setBounds(10, 123, 246, 23);
+        button.setBounds(10, 476, 246, 23);
         getContentPane().add(button);
 
-        JButton button_1 = new JButton("Load default values for side B");
-        button_1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                loadDataB();
-            }
-        });
-        button_1.setBounds(266, 123, 255, 23);
-        getContentPane().add(button_1);
+        JButton button_3 = new JButton("Load default values for side B");
+        button_3.setBounds(266, 476, 255, 23);
+        getContentPane().add(button_3);
 
-        JButton button_2 = new JButton("Cancel");
-        button_2.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                getJFrame().dispose();
-            }
-        });
-        button_2.setBounds(404, 157, 117, 23);
+        JButton button_4 = new JButton("Cancel");
+        button_4.setBounds(404, 510, 117, 23);
+        getContentPane().add(button_4);
+
+        JButton button_2 = new JButton("Save");
+        button_2.setBounds(180, 510, 117, 23);
         getContentPane().add(button_2);
 
-        JButton button_3 = new JButton("Save");
-        button_3.addActionListener(new ActionListener() {
+        JButton button_1 = new JButton("Reload");
+        button_1.setBounds(10, 510, 144, 23);
+        getContentPane().add(button_1);
+        button_1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                reloadData();
+            }
+        });
+        button_2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (saveData()) {
                     getJFrame().dispose();
                 }
             }
         });
-        button_3.setBounds(180, 157, 117, 23);
-        getContentPane().add(button_3);
-
-        JButton button_4 = new JButton("Reload");
         button_4.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                reloadData();
+                getJFrame().dispose();
             }
         });
-        button_4.setBounds(10, 157, 144, 23);
-        getContentPane().add(button_4);
-
-        JLabel lblReactionForAti = new JLabel("Reaction for ATI request");
-        lblReactionForAti.setBounds(10, 14, 290, 14);
-        getContentPane().add(lblReactionForAti);
-
-        cbATIReaction = new JComboBox();
-        cbATIReaction.setBounds(310, 11, 309, 20);
-        getContentPane().add(cbATIReaction);
+        button_3.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                loadDataB();
+            }
+        });
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                loadDataA();
+            }
+        });
     }
 
     public void setData(TestMapLcsServerManMBean mapLcsServer) {
@@ -126,11 +217,22 @@ public class TestMapLcsServerParamForm extends JDialog {
     }
 
     private void reloadData() {
-        //M3uaForm.setEnumeratedBaseComboBox(cbATIReaction, this.mapLcsServer.getATIReaction());
+//        M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, this.mapLcsServer.getAddressNature());
+//        M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, this.mapLcsServer.getNumberingPlanType());
+        //SRI tab
+        tfNetworkNodeNumberAddress.setText(this.mapLcsServer.getNetworkNodeNumberAddress());
+        //SLR tab
+        cbNaEsrdAddress.setText(this.mapLcsServer.getNaSRDAddress());
     }
 
     private void loadDataA() {
-        M3uaForm.setEnumeratedBaseComboBox(cbATIReaction, new ATIReaction(ATIReaction.VAL_RETURN_SUCCESS));
+//        M3uaForm.setEnumeratedBaseComboBox(cbAddressNature,
+//                new AddressNatureType(AddressNature.international_number.getIndicator()));
+//        M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
+        //SRI tab
+        tfNetworkNodeNumberAddress.setText("5555544444");
+        //SLR tab
+        cbNaEsrdAddress.setText("11114444");
     }
 
     private void loadDataB() {
@@ -138,8 +240,13 @@ public class TestMapLcsServerParamForm extends JDialog {
     }
 
     private boolean saveData() {
-        //this.mapLcsServer.setATIReaction((ATIReaction) cbATIReaction.getSelectedItem());
 
+//        this.mapLcsServer.setAddressNature((AddressNatureType) cbAddressNature.getSelectedItem());
+//        this.mapLcsServer.setNumberingPlanType((NumberingPlanMapType) cbNumberingPlan.getSelectedItem());
+        //SRI tab
+        this.mapLcsServer.setNetworkNodeNumberAddress(tfNetworkNodeNumberAddress.getText());
+        //SLR tab
+        this.mapLcsServer.setNaSRDAddress(cbNaEsrdAddress.getText());
         return true;
     }
 }
