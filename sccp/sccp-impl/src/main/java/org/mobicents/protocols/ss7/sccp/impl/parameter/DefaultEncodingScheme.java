@@ -112,7 +112,7 @@ public class DefaultEncodingScheme implements EncodingScheme, XMLSerializable {
                 digits.deleteCharAt(digits.length() - 1);
             }
 
-            return digits.toString().toUpperCase();
+            return digits.toString().toLowerCase();
         } catch (IOException e) {
             throw new ParseException(e);
         }

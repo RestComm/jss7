@@ -47,7 +47,6 @@ import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
-import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle0100;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -424,6 +423,49 @@ public class RuleTest {
         assertEquals(translatedAddress2.getSignalingPointCode(), 2186);
         assertEquals(translatedAddress2.getSubsystemNumber(), 146);
         assertEquals(translatedAddress2.getGlobalTitle().getDigits(), "92300001009");
+    }
+
+    @Test(groups = { "router", "functional.translate" })
+    public void testTranslateHex() throws Exception {
+        // Test Hex
+
+        SccpAddress pattern = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("48??117/*", 0,
+                NumberingPlan.ISDN_TELEPHONY, null, NatureOfAddress.INTERNATIONAL), 0, 146);
+
+        SccpAddress primaryAddress = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("00/00", 0, NumberingPlan.ISDN_TELEPHONY, null, NatureOfAddress.INTERNATIONAL), 7574, 146);
+
+        SccpAddress newClgPartyAddress = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("92300010321", 0, NumberingPlan.ISDN_TELEPHONY, null, NatureOfAddress.INTERNATIONAL), 0, 146);
+
+        RuleImpl rule = new RuleImpl(RuleType.DOMINANT, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K/K", 0);
+        rule.setPrimaryAddressId(1);
+        rule.setNewCallingPartyAddressId(3);
+
+        SccpAddress address = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("48CC117735979971", 0,
+                NumberingPlan.ISDN_TELEPHONY, null, NatureOfAddress.INTERNATIONAL), 0, 146);
+
+        assertTrue(rule.matches(address, true, 0));
+
+        SccpAddress translatedAddress = rule.translate(address, primaryAddress);
+
+//        assertEquals(translatedAddress.getAddressIndicator().getRoutingIndicator(),
+//                RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE);
+//        assertEquals(
+//                translatedAddress.getAddressIndicator().getGlobalTitleIndicator(),
+//                GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS);
+//        assertEquals(translatedAddress.getSignalingPointCode(), 7574);
+//        assertEquals(translatedAddress.getSubsystemNumber(), 146);
+//        assertEquals(translatedAddress.getGlobalTitle().getDigits(), "92300010020");
+//
+//        SccpAddress translatedAddress2 = rule.translate(address, secondaryAddress);
+//
+//        assertEquals(translatedAddress2.getAddressIndicator().getRoutingIndicator(),
+//                RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE);
+//        assertEquals(
+//                translatedAddress2.getAddressIndicator().getGlobalTitleIndicator(),
+//                GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS);
+//        assertEquals(translatedAddress2.getSignalingPointCode(), 2186);
+//        assertEquals(translatedAddress2.getSubsystemNumber(), 146);
+//        assertEquals(translatedAddress2.getGlobalTitle().getDigits(), "92300001009");
     }
 
     @Test(groups = { "router", "functional.encode" })

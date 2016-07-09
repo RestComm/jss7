@@ -140,6 +140,17 @@ public class GT0100Test {
 
         boolean correct = Arrays.equals(dataHex, res);
         assertTrue(correct, "Incorrect encoding");
+
+
+        bout = new ByteArrayOutputStream();
+        gt = new GlobalTitle0100Impl("902abc958",0, BCDOddEncodingScheme.INSTANCE,NumberingPlan.ISDN_TELEPHONY, NatureOfAddress.NATIONAL);
+
+        gt.encode(bout, false, SccpProtocolVersion.ITU);
+
+        res = bout.toByteArray();
+
+        correct = Arrays.equals(dataHex, res);
+        assertTrue(correct, "Incorrect encoding");
     }
 
     @Test(groups = { "parameter", "functional.decode" })
@@ -154,7 +165,7 @@ public class GT0100Test {
         // check results
         assertEquals(gt1.getTranslationType(), 0);
         assertEquals(gt1.getNumberingPlan(), NumberingPlan.ISDN_TELEPHONY);
-        assertEquals(gt1.getDigits(), "902ABC958");
+        assertEquals(gt1.getDigits(), "902abc958");
     }
 
     /**

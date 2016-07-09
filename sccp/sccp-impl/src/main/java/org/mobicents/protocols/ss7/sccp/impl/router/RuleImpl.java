@@ -369,7 +369,7 @@ public class RuleImpl implements Rule, Serializable {
                 }
 
                 // digits must match
-                if (!matchPattern(gt.getDigits().toCharArray(), patternGT.getDigits().toCharArray())) {
+                if (!matchPattern(gt.getDigits(), patternGT.getDigits())) {
                     if (logger.isDebugEnabled()) {
                         logger.debug(String.format("digits didn't match. Pattern digits=%s Address Digits=%s Return  False",
                                 patternGT.getDigits(), gt.getDigits()));
@@ -408,7 +408,7 @@ public class RuleImpl implements Rule, Serializable {
                 }
 
                 // digits must match
-                if (!matchPattern(gt1.getDigits().toCharArray(), patternGT.getDigits().toCharArray())) {
+                if (!matchPattern(gt1.getDigits(), patternGT.getDigits())) {
                     if (logger.isDebugEnabled()) {
                         logger.debug(String.format("digits didn't match. Pattern digits=%s Address Digits=%s Return  False",
                                 patternGT.getDigits(), gt1.getDigits()));
@@ -456,7 +456,7 @@ public class RuleImpl implements Rule, Serializable {
                 }
 
                 // digits must match
-                if (!matchPattern(gt2.getDigits().toCharArray(), pattern.getGlobalTitle().getDigits().toCharArray())) {
+                if (!matchPattern(gt2.getDigits(), pattern.getGlobalTitle().getDigits())) {
                     if (logger.isDebugEnabled()) {
                         logger.debug(String.format("digits didn't match. Pattern digits=%s Address Digits=%s Return  False",
                                 patternGT.getDigits(), gt2.getDigits()));
@@ -486,7 +486,7 @@ public class RuleImpl implements Rule, Serializable {
                 }
 
                 // digits must match
-                if (!matchPattern(gt3.getDigits().toCharArray(), pattern.getGlobalTitle().getDigits().toCharArray())) {
+                if (!matchPattern(gt3.getDigits(), pattern.getGlobalTitle().getDigits())) {
                     if (logger.isDebugEnabled()) {
                         logger.debug(String.format("digits didn't match. Pattern digits=%s Address Digits=%s Return  False",
                                 patternGT.getDigits(), gt3.getDigits()));
@@ -579,7 +579,10 @@ public class RuleImpl implements Rule, Serializable {
         return translatedDigits.toString();
     }
 
-    private boolean matchPattern(char[] digits, char[] pattern) {
+    private boolean matchPattern(String digitsStr, String patternStr) {
+        char[] digits = digitsStr.toLowerCase().toCharArray();
+        char[] pattern = patternStr.toLowerCase().toCharArray();
+
         int j = 0;
         for (int i = 0; i < pattern.length; i++) {
 
