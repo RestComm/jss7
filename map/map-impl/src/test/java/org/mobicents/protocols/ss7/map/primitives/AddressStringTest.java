@@ -42,15 +42,16 @@ import org.testng.annotations.Test;
 /**
  *
  * @author amit bhayani
+ * @author sergey vetyutnev
  *
  */
 public class AddressStringTest {
 
+    byte[] rawData = new byte[] { 4, 9, (byte) 0x96, 0x02, 0x24, (byte) 0x80, 0x03, 0x00, (byte) 0x80, 0x00, (byte) 0xf2 };
+    byte[] rawData2 = new byte[] { 4, 5, -106, 33, -29, 78, -11 };
+
     @Test(groups = { "functional.decode", "primitives" })
     public void testDecode() throws Exception {
-
-        byte[] rawData = new byte[] { 4, 9, (byte) 0x96, 0x02, 0x24, (byte) 0x80, 0x03, 0x00, (byte) 0x80, 0x00, (byte) 0xf2 };
-
         AsnInputStream asn = new AsnInputStream(rawData);
 
         int tag = asn.readTag();
@@ -62,25 +63,43 @@ public class AddressStringTest {
         assertEquals(addStr.getAddressNature(), AddressNature.international_number);
         assertEquals(addStr.getNumberingPlan(), NumberingPlan.land_mobile);
         assertEquals(addStr.getAddress(), "204208300008002");
+
+
+        asn = new AsnInputStream(rawData2);
+
+        tag = asn.readTag();
+        addStr = new AddressStringImpl();
+        addStr.decodeAll(asn);
+
+        assertEquals(tag, 4);
+        assertFalse(addStr.isExtension());
+        assertEquals(addStr.getAddressNature(), AddressNature.international_number);
+        assertEquals(addStr.getNumberingPlan(), NumberingPlan.land_mobile);
+        assertEquals(addStr.getAddress(), "123cc45");
     }
 
     @Test(groups = { "functional.encode", "primitives" })
     public void testEncode() throws Exception {
-
         AddressStringImpl addStr = new AddressStringImpl(AddressNature.international_number, NumberingPlan.land_mobile,
                 "204208300008002");
         AsnOutputStream asnOS = new AsnOutputStream();
-
         addStr.encodeAll(asnOS);
-
         byte[] encodedData = asnOS.toByteArray();
-
-        // System.out.println(Utils.dump(rawData, rawData.length, false));
-
-        byte[] rawData = new byte[] { 4, 9, (byte) 0x96, 0x02, 0x24, (byte) 0x80, 0x03, 0x00, (byte) 0x80, 0x00, (byte) 0xf2 };
-
         assertTrue(Arrays.equals(rawData, encodedData));
 
+        addStr = new AddressStringImpl(AddressNature.international_number, NumberingPlan.land_mobile,
+                "123cc45");
+        asnOS = new AsnOutputStream();
+        addStr.encodeAll(asnOS);
+        encodedData = asnOS.toByteArray();
+        assertTrue(Arrays.equals(rawData2, encodedData));
+
+        addStr = new AddressStringImpl(AddressNature.international_number, NumberingPlan.land_mobile,
+                "123CC45");
+        asnOS = new AsnOutputStream();
+        addStr.encodeAll(asnOS);
+        encodedData = asnOS.toByteArray();
+        assertTrue(Arrays.equals(rawData2, encodedData));
     }
 
     @Test(groups = { "functional.serialize", "primitives" })
