@@ -23,6 +23,7 @@ import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.SubscriberIdentity;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.Level;
 
@@ -165,7 +166,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
 
             this.countMapLcsReq++;
 
-            this.testerHost.sendNotif(SOURCE_NAME, "Sent: SubscriberLocationReportRequest",
+            this.testerHost.sendNotif(SOURCE_NAME, "Sent: SendRoutingInfoForLCSRequest",
                         createSRIforLCSReqData(clientDialogLsm.getLocalDialogId(),getNumberingPlan(),addressIMSI), Level.INFO);
 
             currentRequestDef += "Sent SRIforLCS Request;";
@@ -210,7 +211,6 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     }
 
     public String subscriberLocationReportRequest(){
-        MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
         if (mapProvider== null) {
             return "mapProvider is null";
         }
@@ -267,6 +267,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     }
 
 
+
     @Override
     public AddressNatureType getAddressNature() {
         return new AddressNatureType(this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getAddressNature().getIndicator());
@@ -301,28 +302,6 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     }
 
     @Override
-    public String getIMSI() {
-        return this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getIMSI();
-    }
-
-    @Override
-    public void setIMSI(String data) {
-        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setIMSI(data);
-        this.testerHost.markStore();
-    }
-
-    @Override
-    public String getNetworkNodeNumberAddress() {
-        return this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getNetworkNodeNumberAddress();
-    }
-
-    @Override
-    public void setNetworkNodeNumberAddress(String data) {
-        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setNetworkNodeNumberAddress(data);
-        this.testerHost.markStore();
-    }
-
-    @Override
     public String getCurrentRequestDef() {
         return "LastDialog: " + currentRequestDef;
     }
@@ -344,6 +323,17 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         logger.debug("onSubscriberLocationReportResponse");
     }
 
+    @Override
+    public String getNetworkNodeNumberAddress() {
+        return this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getNetworkNodeNumberAddress();
+    }
+
+    @Override
+    public void setNetworkNodeNumberAddress(String data) {
+        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setNetworkNodeNumberAddress(data);
+        this.testerHost.markStore();
+    }
+
     public void onSendRoutingInfoForLCSRequest(SendRoutingInfoForLCSRequest sendRoutingInforForLCSRequestIndication) {
     }
 
@@ -351,7 +341,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         logger.debug("onSendRoutingInfoForLCSResponse");
         this.countMapLcsResp++;
         String address = sendRoutingInforForLCSResponseIndication.getLCSLocationInfo().getNetworkNodeNumber().getAddress();
-        this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: SubscriberLocationReportResponse", "address:"+address, Level.INFO);
+        this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: SendRoutingInfoForLCSResponse", "address:"+address, Level.INFO);
     }
 
 
