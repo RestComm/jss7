@@ -82,6 +82,8 @@ public class AsImpl implements XMLSerializable, As {
     // List of As state listeners
     private FastSet<AsStateListener> asStateListeners = new FastSet<AsStateListener>();
 
+    private AspTrafficListener aspTrafficListener;
+
     protected String name;
     protected RoutingContext rc;
     protected TrafficModeType trMode;
@@ -333,6 +335,14 @@ public class AsImpl implements XMLSerializable, As {
      */
     public String getName() {
         return this.name;
+    }
+
+    public AspTrafficListener getAspTrafficListener() {
+        return aspTrafficListener;
+    }
+
+    public void setAspTrafficListener(AspTrafficListener aspTrafficListener) {
+        this.aspTrafficListener = aspTrafficListener;
     }
 
     public boolean isConnected() {
@@ -643,6 +653,17 @@ public class AsImpl implements XMLSerializable, As {
                         } else {
                             aspTemp.getAspFactory().write(message);
                             aspFound = true;
+
+                            if (aspTrafficListener != null) {
+                                try {
+                                    aspTrafficListener.onAspMessage(aspTemp.getName(), message.getData().getData());
+                                } catch (Exception e) {
+                                    logger.error(String.format(
+                                            "Error while calling aspTrafficListener=%s onAspMessage method for Asp=%s",
+                                            aspTrafficListener, aspTemp));
+                                }
+                            }
+
                             break;
                         }
                     }
@@ -652,6 +673,16 @@ public class AsImpl implements XMLSerializable, As {
                     if (aspCong != null) {
                         aspCong.getAspFactory().write(message);
                         aspFound = true;
+
+                        if (aspTrafficListener != null) {
+                            try {
+                                aspTrafficListener.onAspMessage(aspCong.getName(), message.getData().getData());
+                            } catch (Exception e) {
+                                logger.error(String.format(
+                                        "Error while calling aspTrafficListener=%s onAspMessage method for Asp=%s",
+                                        aspTrafficListener, aspCong));
+                            }
+                        }
                     }
                 }
 
