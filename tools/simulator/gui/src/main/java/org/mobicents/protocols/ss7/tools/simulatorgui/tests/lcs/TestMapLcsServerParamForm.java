@@ -36,7 +36,12 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsServerManMBean;
+import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
 //import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
 import org.apache.log4j.Logger;
 
@@ -217,8 +222,8 @@ public class TestMapLcsServerParamForm extends JDialog {
     }
 
     private void reloadData() {
-//        M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, this.mapLcsServer.getAddressNature());
-//        M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, this.mapLcsServer.getNumberingPlanType());
+        M3uaForm.setEnumeratedBaseComboBox(cbAddressNature, this.mapLcsServer.getAddressNature());
+        M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, this.mapLcsServer.getNumberingPlanType());
         //SRI tab
         tfNetworkNodeNumberAddress.setText(this.mapLcsServer.getNetworkNodeNumberAddress());
         //SLR tab
@@ -226,9 +231,9 @@ public class TestMapLcsServerParamForm extends JDialog {
     }
 
     private void loadDataA() {
-//        M3uaForm.setEnumeratedBaseComboBox(cbAddressNature,
-//                new AddressNatureType(AddressNature.international_number.getIndicator()));
-//        M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
+        M3uaForm.setEnumeratedBaseComboBox(cbAddressNature,
+                new AddressNatureType(AddressNature.international_number.getIndicator()));
+        M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
         //SRI tab
         tfNetworkNodeNumberAddress.setText("5555544444");
         //SLR tab
@@ -241,8 +246,8 @@ public class TestMapLcsServerParamForm extends JDialog {
 
     private boolean saveData() {
 
-//        this.mapLcsServer.setAddressNature((AddressNatureType) cbAddressNature.getSelectedItem());
-//        this.mapLcsServer.setNumberingPlanType((NumberingPlanMapType) cbNumberingPlan.getSelectedItem());
+        this.mapLcsServer.setAddressNature((AddressNatureType) cbAddressNature.getSelectedItem());
+        this.mapLcsServer.setNumberingPlanType((NumberingPlanMapType) cbNumberingPlan.getSelectedItem());
         //SRI tab
         this.mapLcsServer.setNetworkNodeNumberAddress(tfNetworkNodeNumberAddress.getText());
         //SLR tab

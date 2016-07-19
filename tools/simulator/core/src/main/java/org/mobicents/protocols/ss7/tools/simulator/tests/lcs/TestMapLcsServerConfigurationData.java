@@ -22,6 +22,9 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.tests.lcs;
 
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
+
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
@@ -38,6 +41,10 @@ public class TestMapLcsServerConfigurationData {
 
     private String networkNodeNumberAddress = "5555544444";
     private String naESRDAddress = "11114444";
+    private AddressNature addressNature = AddressNature.international_number;
+    private NumberingPlan numberingPlanType = NumberingPlan.ISDN;
+    protected static final String ADDRESS_NATURE = "addressNature";
+    protected static final String NUMBERING_PLAN_TYPE = "numberingPlanType";
 
     public String getNaESRDAddress() {
         return naESRDAddress;
@@ -56,15 +63,38 @@ public class TestMapLcsServerConfigurationData {
     }
 
 
+    public AddressNature getAddressNature() {
+        return addressNature;
+    }
+
+    public NumberingPlan getNumberingPlanType() {
+        return numberingPlanType;
+    }
+
+    public void setAddressNature(AddressNature addressNature) {
+        this.addressNature = addressNature;
+    }
+
+    public void setNumberingPlanType(NumberingPlan numberingPlan) {
+        this.numberingPlanType = numberingPlan;
+    }
+
+
     protected static final XMLFormat<TestMapLcsServerConfigurationData> XML = new XMLFormat<TestMapLcsServerConfigurationData>(
             TestMapLcsServerConfigurationData.class) {
 
         public void write(TestMapLcsServerConfigurationData srv, OutputElement xml) throws XMLStreamException {
             xml.setAttribute(NETWORK_NODE_NUMBER_ADDRESS, srv.networkNodeNumberAddress);
+            xml.add(srv.addressNature.toString(), ADDRESS_NATURE, String.class);
+            xml.add(srv.numberingPlanType.toString(), NUMBERING_PLAN_TYPE, String.class);
             xml.add(srv.naESRDAddress.toString(), NA_ESRD_ADDRESS, String.class);
         }
 
         public void read(InputElement xml, TestMapLcsServerConfigurationData srv) throws XMLStreamException {
+            String an = (String) xml.get(ADDRESS_NATURE, String.class);
+            srv.addressNature = AddressNature.valueOf(an);
+            String npt = (String) xml.get(NUMBERING_PLAN_TYPE, String.class);
+            srv.numberingPlanType = NumberingPlan.valueOf(npt);
             srv.networkNodeNumberAddress = xml.getAttribute(NETWORK_NODE_NUMBER_ADDRESS).toString();
             String naESRDAddress = (String) xml.get(NA_ESRD_ADDRESS, String.class);
             srv.naESRDAddress = naESRDAddress;

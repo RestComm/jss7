@@ -20,8 +20,10 @@ import org.mobicents.protocols.ss7.map.api.service.lsm.SendRoutingInfoForLCSResp
 import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportRequest;
 import org.mobicents.protocols.ss7.map.api.service.lsm.SubscriberLocationReportResponse;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
+import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.common.TesterBase;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapMan;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 
 
@@ -138,9 +140,9 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
 
         MAPParameterFactory mapParameterFactory = this.mapProvider.getMAPParameterFactory();
         ISDNAddressString naEsrd = mapParameterFactory.createISDNAddressString(
-                        AddressNature.international_number,
-                        NumberingPlan.ISDN,
-                        getNaESRDAddress());
+                AddressNature.getInstance(getAddressNature().intValue()),
+                NumberingPlan.getInstance(getNumberingPlanType().intValue()),
+                getNaESRDAddress());
 
         try {
             curDialog.addSubscriberLocationReportResponse(subscriberLocationReportRequestIndication.getInvokeId(), naEsrd, null, null);
@@ -192,9 +194,9 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
 
 
         ISDNAddressString networkNodeNumber = mapParameterFactory.createISDNAddressString(
-                        AddressNature.international_number,
-                        NumberingPlan.ISDN,
-                        getNetworkNodeNumberAddress());
+                   AddressNature.getInstance(getAddressNature().intValue()),
+                   NumberingPlan.getInstance(getNumberingPlanType().intValue()),
+                   getNetworkNodeNumberAddress());
 
         LCSLocationInfo lcsLocationInfo = mapParameterFactory.createLCSLocationInfo(
                 networkNodeNumber, null, null,
@@ -276,6 +278,28 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
     @Override
     public void setNetworkNodeNumberAddress(String address) {
         this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setNetworkNodeNumberAddress(address);
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public AddressNatureType getAddressNature() {
+        return new AddressNatureType(this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getAddressNature().getIndicator());
+    }
+
+    @Override
+    public NumberingPlanMapType getNumberingPlanType(){
+        return new NumberingPlanMapType(this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getNumberingPlanType().getIndicator());
+    }
+
+    @Override
+    public void setAddressNature(AddressNatureType val) {
+        this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setAddressNature(AddressNature.getInstance(val.intValue()));
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public void setNumberingPlanType(NumberingPlanMapType val){
+        this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setNumberingPlanType(NumberingPlan.getInstance(val.intValue()));
         this.testerHost.markStore();
     }
 }

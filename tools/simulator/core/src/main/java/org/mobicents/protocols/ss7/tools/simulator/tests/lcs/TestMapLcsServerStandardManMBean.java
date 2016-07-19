@@ -29,6 +29,9 @@ import javax.management.MBeanParameterInfo;
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
 
+import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
+
 /**
 *
 * @author falonso@csc.com
@@ -44,6 +47,12 @@ public class TestMapLcsServerStandardManMBean extends StandardMBean {
     public MBeanInfo getMBeanInfo() {
 
         MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[] {
+                new MBeanAttributeInfo("AddressNature", AddressNatureType.class.getName(),
+                        "AddressNature parameter for address creation (networkNodeNumber,NaESRD)",
+                        true, true, false),
+                new MBeanAttributeInfo("NumberingPlanType", NumberingPlanMapType.class.getName(),
+                        "NumberingPlanType parameter for address creation (networkNodeNumber,NaESRD)",
+                        true, true, false),
                 new MBeanAttributeInfo("NetworkNodeNumberAddress", String.class.getName(),
                                        "NetworkNodeNumber address parameter for response",
                                        true, true, false),

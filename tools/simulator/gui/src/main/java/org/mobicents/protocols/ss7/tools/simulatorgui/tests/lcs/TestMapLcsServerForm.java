@@ -72,14 +72,6 @@ public class TestMapLcsServerForm extends TestingForm {
         gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
         panel.setLayout(gbl_panel);
 
-        JLabel label = new JLabel("Parameter input not implemented yet");
-        GridBagConstraints gbc_label = new GridBagConstraints();
-        gbc_label.anchor = GridBagConstraints.EAST;
-        gbc_label.insets = new Insets(0, 0, 5, 5);
-        gbc_label.gridx = 0;
-        gbc_label.gridy = 0;
-        panel.add(label, gbc_label);
-
         JPanel panel_1 = new JPanel();
         panel_1.setLayout(null);
         GridBagConstraints gbc_panel_1 = new GridBagConstraints();
