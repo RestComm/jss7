@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configurationData>
+	<instance_L1 value="NO"/>
+	<instance_L2 value="NO"/>
+	<instance_L3 value="NO"/>
+	<instance_TestTask value="MAP_LCS_TEST_CLIENT"/>
+	<m3ua storePcapTrace="false" isSctpServer="false" localPort="0" localPort2="0" remotePort="0" remotePort2="0" ipChannelType="TCP" dpc="0" dpc2="0" opc="-1" opc2="0" si="-1" routingConext="101" networkAppearance="102" trafficModeType="2" m3uaFunctionality="IPSP" m3uaExchangeType="SE" routingLabelFormat="ITU" m3uaIPSPType="CLIENT"/>
+	<dialogic SourceModuleId="0" DestinationModuleId="0"/>
+	<sccp routeOnGtMode="false" remoteSpc="0" localSpc="0" ni="0" remoteSsn="0" localSsn="0" translationType="0">
+		<globalTitleType value="Translation type, numbering plan, encoding scheme and NOA ind"/>
+		<addressNature value="INTERNATIONAL"/>
+		<numberingPlan value="ISDN_MOBILE"/>
+		<sccpProtocolVersion value="ITU"/>
+		<callingPartyAddressDigits value=""/>
+	</sccp>
+	<map>
+		<origReferenceAddressNature value="international_number"/>
+		<origReferenceNumberingPlan value="ISDN"/>
+		<destReferenceAddressNature value="international_number"/>
+		<destReferenceNumberingPlan value="ISDN"/>
+	</map>
+	<cap/>
+	<testUssdClient dataCodingScheme="15" alertingPattern="-1" maxConcurrentDialogs="10" oneNotificationFor100Dialogs="false" return20PersDeliveryErrors="false">
+		<msisdnAddress value=""/>
+		<msisdnAddressNature value="international_number"/>
+		<msisdnNumberingPlan value="ISDN"/>
+		<sriResponseImsi value=""/>
+		<sriResponseVlr value=""/>
+		<sriReaction value="Return success"/>
+		<ussdClientAction value="Manual operation"/>
+		<autoRequestString value="???"/>
+	</testUssdClient>
+	<testUssdServer dataCodingScheme="15" alertingPattern="-1" oneNotificationFor100Dialogs="false">
+		<msisdnAddress value=""/>
+		<autoResponseString value=""/>
+		<autoUnstructured_SS_RequestString value=""/>
+		<msisdnAddressNature value="international_number"/>
+		<msisdnNumberingPlan value="ISDN"/>
+		<processSsRequestAction value="Manual response"/>
+	</testUssdServer>
+	<testSmsClient smscSsn="8" nationalLanguageCode="0" sriScAddressNotIncluded="false" oneNotificationFor100Dialogs="false" return20PersDeliveryErrors="false" continueDialog="false">
+		<serviceCenterAddress value=""/>
+		<sriResponseImsi value=""/>
+		<sriResponseVlr value=""/>
+		<addressNature value="international_number"/>
+		<numberingPlan value="ISDN"/>
+		<mapProtocolVersion value="MAP protocol version 3"/>
+		<typeOfNumber value="InternationalNumber"/>
+		<numberingPlanIdentification value="ISDNTelephoneNumberingPlan"/>
+		<smsCodingType value="GSM7"/>
+		<sriReaction value="Return success"/>
+		<sriInformServiceCenter value="No data in MWD file"/>
+		<esmDelStat value="Return success"/>
+		<mtFSMReaction value="Return success"/>
+	</testSmsClient>
+	<testSmsServer hlrSsn="6" vlrSsn="8" sendSrsmdsIfError="false" gprsSupportIndicator="false">
+		<serviceCenterAddress value=""/>
+		<addressNature value="international_number"/>
+		<numberingPlan value="ISDN"/>
+		<mapProtocolVersion value="MAP protocol version 3"/>
+		<typeOfNumber value="InternationalNumber"/>
+		<numberingPlanIdentification value="ISDNTelephoneNumberingPlan"/>
+		<smsCodingType value="GSM7"/>
+	</testSmsServer>
+	<testAtiClient subscriberIdentityType="false">
+		<addressNature value="international_number"/>
+		<numberingPlan value="ISDN"/>
+		<gsmScfAddress value="000"/>
+	</testAtiClient>
+	<testAtiServer>
+		<atiReaction value="Return success"/>
+	</testAtiServer>
+	<testCapScf>
+		<capApplicationContext value="CAP_V4_capscf_ssfGeneric 23.3.8"/>
+	</testCapScf>
+	<testCapSsf>
+		<capApplicationContext value="CAP_V1_gsmSSF_to_gsmSCF 0.50.0"/>
+	</testCapSsf>
+	<testCheckImeiClient maxConcurrentDialogs="10" oneNotificationFor100Dialogs="false">
+		<imei value=""/>
+		<mapProtocolVersion value="MAP protocol version 3"/>
+		<checkImeiClientAction value="Manual operation"/>
+	</testCheckImeiClient>
+	<testCheckImeiServer oneNotificationFor100Dialogs="false">
+		<autoEquipmentStatus value="whiteListed"/>
+	</testCheckImeiServer>
+	<testMapLcsClient>
+		<addressNature value="international_number"/>
+		<numberingPlanType value="ISDN"/>
+		<numberingPlan value="11112222"/>
+		<imsi value="5555544444"/>
+		<networkNodeNumberAddress value="4444455555"/>
+		<ageOfLocationEstimate value="100"/>
+		<cellId value="222"/>
+		<lac value="1111"/>
+		<mnc value="1"/>
+		<mcc value="250"/>
+		<lcsReferenceNumber value="111"/>
+		<hgmlcAddress value="0.0.0.0"/>
+		<imei value="5555544444"/>
+		<msisdn value="3333344444"/>
+		<lcsEvent value="emergencyCallOrigination"/>
+	</testMapLcsClient>
+	<testMapLcsServer network_node_number_address="5555544444">
+		<addressNature value="international_number"/>
+		<numberingPlanType value="ISDN"/>
+		<na_esrd_address value="11114444"/>
+	</testMapLcsServer>
+</configurationData>

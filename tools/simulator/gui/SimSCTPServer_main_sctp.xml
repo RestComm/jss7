@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<connectdelay value="10000"/>
+<congControl_DelayThreshold_1 value="2.5"/>
+<congControl_DelayThreshold_2 value="8.0"/>
+<congControl_DelayThreshold_3 value="14.0"/>
+<congControl_BackToNormalDelayThreshold_1 value="1.5"/>
+<congControl_BackToNormalDelayThreshold_2 value="5.5"/>
+<congControl_BackToNormalDelayThreshold_3 value="10.0"/>
+<servers/>
+<associations>
+	<name value="Ass_main"/>
+	<association name="Ass_main" assoctype="CLIENT" hostAddress="127.0.0.1" hostPort="8011" peerAddress="127.0.0.1" peerPort="8012" ipChannelType="1" extraHostAddresseSize="0"/>
+</associations>
