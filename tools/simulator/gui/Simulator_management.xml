@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dialogidletimeout value="60000"/>
+<invoketimeout value="30000"/>
+<maxdialogs value="5000"/>
+<dialogidrangestart value="1"/>
+<dialogidrangeend value="2147483647"/>
+<donotsendprotocolversion value="false"/>
+<congControl_blockingIncomingTcapMessages value="false"/>
+<congControl_ExecutorDelayThreshold_1 value="1.0"/>
+<congControl_ExecutorDelayThreshold_2 value="6.0"/>
+<congControl_ExecutorDelayThreshold_3 value="12.0"/>
+<congControl_ExecutorBackToNormalDelayThreshold_1 value="0.5"/>
+<congControl_ExecutorBackToNormalDelayThreshold_2 value="3.0"/>
+<congControl_ExecutorBackToNormalDelayThreshold_3 value="8.0"/>
+<congControl_MemoryThreshold_1 value="77.0"/>
+<congControl_MemoryThreshold_2 value="87.0"/>
+<congControl_MemoryThreshold_3 value="97.0"/>
+<congControl_BackToNormalMemoryThreshold_1 value="72.0"/>
+<congControl_BackToNormalMemoryThreshold_2 value="82.0"/>
+<congControl_BackToNormalMemoryThreshold_3 value="92.0"/>
+<statisticsenabled value="false"/>
