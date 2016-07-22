@@ -91,11 +91,11 @@ public class TestMapLcsServerConfigurationData {
         }
 
         public void read(InputElement xml, TestMapLcsServerConfigurationData srv) throws XMLStreamException {
+            srv.networkNodeNumberAddress = xml.getAttribute(NETWORK_NODE_NUMBER_ADDRESS).toString();
             String an = (String) xml.get(ADDRESS_NATURE, String.class);
             srv.addressNature = AddressNature.valueOf(an);
             String npt = (String) xml.get(NUMBERING_PLAN_TYPE, String.class);
-            srv.numberingPlanType = NumberingPlan.valueOf(npt);
-            srv.networkNodeNumberAddress = xml.getAttribute(NETWORK_NODE_NUMBER_ADDRESS).toString();
+            srv.numberingPlanType = NumberingPlan.valueOf(npt);            
             String naESRDAddress = (String) xml.get(NA_ESRD_ADDRESS, String.class);
             srv.naESRDAddress = naESRDAddress;
         }

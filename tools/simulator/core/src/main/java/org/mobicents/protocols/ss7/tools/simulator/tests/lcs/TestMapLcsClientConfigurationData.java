@@ -25,6 +25,8 @@ package org.mobicents.protocols.ss7.tools.simulator.tests.lcs;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSEvent;
+
 //import javolution.text.CharArray;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
@@ -41,13 +43,113 @@ public class TestMapLcsClientConfigurationData {
     protected static final String NUMBERING_PLAN = "numberingPlan";
     protected static final String IMSI = "imsi";
     protected static final String NETWORK_NODE_NUMBER_ADDRESS = "networkNodeNumberAddress";
+    protected static final String IMEI ="imei";
+    protected static final String HGMLC_ADDRESS = "hgmlcAddress";
+    protected static final String MCC ="mcc";
+    protected static final String MNC = "mnc";
+    protected static final String LAC ="lac";
+    protected static final String CELL_ID="cellId";
+    protected static final String LCS_REFERENCE_NUMBER="lcsReferenceNumber";
+    protected static final String AGE_OF_LOCATION_ESTIMATE ="ageOfLocationEstimate";
+    protected static final String LCS_EVENT = "lcsEvent";
+    protected static final String MSISDN = "msisdn";
+
+    public String getIMEI() {
+        return imei;
+    }
+
+    public void setIMEI(String imei) {
+        this.imei = imei;
+    }
+
+    public String getHGMLCAddress() {
+        return hgmlcAddress;
+    }
+
+    public void setHGMLCAddress(String hgmlcAddress) {
+        this.hgmlcAddress = hgmlcAddress;
+    }
+
+    public Integer getMCC() {
+        return mcc;
+    }
+
+    public void setMCC(Integer mcc) {
+        this.mcc = mcc;
+    }
+
+    public Integer getMNC() {
+        return mnc;
+    }
+
+    public void setMNC(Integer mnc) {
+        this.mnc = mnc;
+    }
+
+    public Integer getLAC() {
+        return lac;
+    }
+
+    public void setLAC(Integer lac) {
+        this.lac = lac;
+    }
+
+    public Integer getCellId() {
+        return cellId;
+    }
+
+    public void setCellId(Integer cellId) {
+        this.cellId = cellId;
+    }
+
+    public Integer getLCSReferenceNumber() {
+        return lcsReferenceNumber;
+    }
+
+    public void setLCSReferenceNumber(Integer lcsReferenceNumber) {
+        this.lcsReferenceNumber = lcsReferenceNumber;
+    }
+
+    public Integer getAgeOfLocationEstimate() {
+        return ageOfLocationEstimate;
+    }
+
+    public void setAgeOfLocationEstimate(Integer ageOfLocationEstimate) {
+        this.ageOfLocationEstimate = ageOfLocationEstimate;
+    }
+
+    public LCSEvent getLCSEvent() {
+        return lcsEvent;
+    }
+
+    public void setLCSEvent(LCSEvent lcsEvent) {
+        this.lcsEvent = lcsEvent;
+    }
+
 
     private AddressNature addressNature = AddressNature.international_number;
     private NumberingPlan numberingPlanType = NumberingPlan.ISDN;
     private String numberingPlan = "11112222";
     private String imsi = "5555544444";
     private String networkNodeNumberAddress = "4444455555";
+    private String imei = "5555544444";
+    private String msisdn = "3333344444";
+    private String hgmlcAddress = "0.0.0.0";
+    private Integer mcc = 250;
+    private Integer mnc =1;
+    private Integer lac =1111;
+    private Integer cellId =222;
+    private Integer lcsReferenceNumber = 111;
+    private Integer ageOfLocationEstimate = 100;
+    private LCSEvent lcsEvent = LCSEvent.emergencyCallOrigination;
 
+    public String getMSISDN() {
+        return msisdn;
+    }
+
+    public void setMSISDN(String msisdn) {
+        this.msisdn = msisdn;
+    }
 
     public AddressNature getAddressNature() {
         return addressNature;
@@ -98,6 +200,16 @@ public class TestMapLcsClientConfigurationData {
             xml.add(clt.numberingPlan.toString(), NUMBERING_PLAN, String.class);
             xml.add(clt.imsi.toString(), IMSI, String.class);
             xml.add(clt.networkNodeNumberAddress.toString(), NETWORK_NODE_NUMBER_ADDRESS, String.class);
+            xml.add(clt.ageOfLocationEstimate, AGE_OF_LOCATION_ESTIMATE, Integer.class);
+            xml.add(clt.cellId, CELL_ID, Integer.class);
+            xml.add(clt.lac, LAC, Integer.class);
+            xml.add(clt.mnc, MNC, Integer.class);
+            xml.add(clt.mcc, MCC, Integer.class);
+            xml.add(clt.lcsReferenceNumber, LCS_REFERENCE_NUMBER, Integer.class);
+            xml.add(clt.hgmlcAddress, HGMLC_ADDRESS, String.class);
+            xml.add(clt.imei, IMEI, String.class);
+            xml.add(clt.msisdn, MSISDN, String.class);
+            xml.add(clt.lcsEvent.toString(), LCS_EVENT, String.class);
         }
 
         public void read(InputElement xml, TestMapLcsClientConfigurationData clt) throws XMLStreamException {
@@ -112,6 +224,26 @@ public class TestMapLcsClientConfigurationData {
             clt.imsi = imsi;
             String networkNodeNumberAddress = (String) xml.get(NETWORK_NODE_NUMBER_ADDRESS, String.class);
             clt.networkNodeNumberAddress = networkNodeNumberAddress;
+            Integer ageOfLocationEstimate = (Integer) xml.get(AGE_OF_LOCATION_ESTIMATE, Integer.class);
+            clt.ageOfLocationEstimate = ageOfLocationEstimate;
+            Integer cellId = (Integer) xml.get(CELL_ID, Integer.class);
+            clt.cellId = cellId;
+            Integer lac = (Integer) xml.get(LAC, Integer.class);
+            clt.lac = lac;
+            Integer mnc = (Integer) xml.get(MNC, Integer.class);
+            clt.mnc = mnc;
+            Integer mcc = (Integer) xml.get(MCC, Integer.class);
+            clt.mcc = mcc;
+            Integer lcsReferenceNumber = (Integer) xml.get(LCS_REFERENCE_NUMBER, Integer.class);
+            clt.lcsReferenceNumber = lcsReferenceNumber;
+            String gsnAddress = (String) xml.get(HGMLC_ADDRESS, String.class);
+            clt.hgmlcAddress = gsnAddress;
+            String imei = (String) xml.get(IMEI, String.class);
+            clt.imei = imei;
+            String msisdn = (String) xml.get(MSISDN, String.class);
+            clt.msisdn = msisdn;
+            String lcsEvent = (String) xml.get(LCS_EVENT, String.class);
+            clt.lcsEvent = LCSEvent.valueOf(lcsEvent);
         }
     };
 

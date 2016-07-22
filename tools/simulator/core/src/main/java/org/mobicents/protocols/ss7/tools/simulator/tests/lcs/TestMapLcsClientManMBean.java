@@ -53,9 +53,31 @@ public interface TestMapLcsClientManMBean {
 
     void setNumberingPlanType(NumberingPlanMapType val);
 
+    // SLR
     String getNetworkNodeNumberAddress();
-
     void setNetworkNodeNumberAddress(String val);
+    String getHGMLCAddress();
+    void setHGMLCAddress(String hgmlcAddress);
+    String getIMEI();
+    void setIMEI(String imei);
+    String getIMSI();
+    void setIMSI(String imsi);
+    Integer getCellId();
+    void setCellId(Integer lac);
+    Integer getLAC();
+    void setAgeOfLocationEstimate(Integer ageOfLocationEstimate);
+    Integer getAgeOfLocationEstimate();
+    void setLAC(Integer lac);
+    LCSEventType getLCSEventType();
+    void setLCSEventType(LCSEventType val);
+    Integer getLCSReferenceNumber();
+    void setLCSReferenceNumber(Integer lcsReferenceNumber);
+    Integer getMCC();
+    void setMCC(Integer mcc);
+    Integer getMNC();
+    void setMNC(Integer mnc);
+    String getMSISDN();
+    void setMSISDN(String msisdn);
 
     // Other
 

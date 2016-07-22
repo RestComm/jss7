@@ -47,8 +47,6 @@ public class TestMapLcsClientStandardManMBean extends StandardMBean {
     @Override
     public MBeanInfo getMBeanInfo() {
 
-        // TODO: Put real attributes and operations
-
         MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[] {
                 new MBeanAttributeInfo("AddressNature", AddressNatureType.class.getName(),
                                        "AddressNature parameter for address creation (mlcNumber, networkNodeNumber)",
@@ -61,6 +59,39 @@ public class TestMapLcsClientStandardManMBean extends StandardMBean {
                                        true, true, false),
                 new MBeanAttributeInfo("NetworkNodeNumberAddress", String.class.getName(),
                                        "NetworkNodeNumber address parameter",
+                                       true, true, false),
+                new MBeanAttributeInfo("LCSEvent", LCSEventType.class.getName(),
+                                       "LCS Event parameter",
+                                       true, true, false),
+                new MBeanAttributeInfo("IMEI", String.class.getName(),
+                                       "IMEI address parameter",
+                                               true, true, false),
+                new MBeanAttributeInfo("IMSI", String.class.getName(),
+                                       "IMSI address parameter",
+                                       true, true, false),
+                new MBeanAttributeInfo("MSISDN", String.class.getName(),
+                                       "MSISDN address parameter",
+                                       true, true, false),
+                new MBeanAttributeInfo("HGMLCAddress", String.class.getName(),
+                                       "H-GMLC address parameter",
+                                       true, true, false),
+                new MBeanAttributeInfo("LCSReferenceNumber", Integer.class.getName(),
+                                       "LCS Reference number parameter",
+                                       true, true, false),
+                new MBeanAttributeInfo("MCC", Integer.class.getName(),
+                                       "MCC parameter for CellId Or SAI",
+                                       true, true, false),
+                new MBeanAttributeInfo("MNC", Integer.class.getName(),
+                                       "MNC parameter for CellId Or SAI",
+                                       true, true, false),
+                new MBeanAttributeInfo("LAC", Integer.class.getName(),
+                                       "LAC parameter for CellId Or SAI",
+                                        true, true, false),
+                new MBeanAttributeInfo("CellId", Integer.class.getName(),
+                                       "CellId parameter for CellId Or SAI",
+                                       true, true, false),
+                new MBeanAttributeInfo("AgeOfLocationEstimate", Integer.class.getName(),
+                                       "Age of Location Estimate parameter",
                                        true, true, false),
                 };
 
