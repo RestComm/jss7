@@ -647,10 +647,7 @@ public class AsImpl implements XMLSerializable, As {
                         aspFsm = aspTemp.getPeerFSM();
                     }
 
-                    if (AspState.getState(aspFsm.getState().getName()) == AspState.ACTIVE &&
-                            // Is is possible a situation when aspFsm has state "ACTIVE" but
-                            // association.getConnected() == false
-                            aspTemp.getAspFactory().getAssociation().isConnected()) {
+                    if (AspState.getState(aspFsm.getState().getName()) == AspState.ACTIVE) {
                         if (aspTemp.getAspFactory().getAssociation().getCongestionLevel() > 1) {
                             aspCong = aspTemp;
                         } else {
