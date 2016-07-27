@@ -672,6 +672,15 @@ public class AsImpl implements XMLSerializable, As {
                     if (aspCong != null) {
                         aspCong.getAspFactory().write(message);
                         aspFound = true;
+
+                        if (aspTrafficListener != null) {
+                            try {
+                                aspTrafficListener.onAspMessage(aspCong.getName(), message.getData().getData());
+                            } catch (Exception e) {
+                                logger.error(String.format("Error while calling aspTrafficListener=%s onAspMessage method for Asp=%s",
+                                        aspTrafficListener, aspCong));
+                            }
+                        }
                     }
                 }
 
