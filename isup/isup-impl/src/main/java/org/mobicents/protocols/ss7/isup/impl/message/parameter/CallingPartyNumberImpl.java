@@ -211,7 +211,7 @@ public class CallingPartyNumberImpl extends AbstractNAINumber implements Calling
 
     public String toString() {
         return "CallingPartyNumber [numberingPlanIndicator=" + numberingPlanIndicator + ", numberIncompleteIndicator="
-                + numberIncompleteIndicator + ", addressRepresentationREstrictedIndicator="
+                + numberIncompleteIndicator + ", addressRepresentationRestrictedIndicator="
                 + addressRepresentationRestrictedIndicator + ", screeningIndicator=" + screeningIndicator
                 + ", natureOfAddresIndicator=" + natureOfAddresIndicator + ", oddFlag=" + oddFlag + ", address=" + address
                 + "]";
