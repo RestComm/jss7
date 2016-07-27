@@ -727,7 +727,7 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
         sb.append(customInformationTransferRate);
 
         if (l1UserInformation > 0) {
-            sb.append(",\nl1UserInformation=");
+            sb.append(", l1UserInformation=");
             sb.append(l1UserInformation);
 
             sb.append(", syncMode=");
@@ -767,12 +767,12 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
         }
 
         if (l2UserInformation > 0) {
-            sb.append("\nl2UserInformation=");
+            sb.append(", l2UserInformation=");
             sb.append(l2UserInformation);
         }
 
         if (l3UserInformation > 0) {
-            sb.append("\nl3UserInformation=");
+            sb.append(", l3UserInformation=");
             sb.append(l3UserInformation);
 
             sb.append(", l3Protocol=");
