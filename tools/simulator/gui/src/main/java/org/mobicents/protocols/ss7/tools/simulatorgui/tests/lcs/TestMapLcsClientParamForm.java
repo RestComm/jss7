@@ -365,7 +365,7 @@ public class TestMapLcsClientParamForm extends JDialog {
         this.tfMcc.setText(this.mapLcsClient.getMCC().toString());
         this.tfMnc.setText(this.mapLcsClient.getMNC().toString());
         this.tfMsisdn.setText(this.mapLcsClient.getMSISDN());
-        M3uaForm.setEnumeratedBaseComboBox(this.cbLcsEvent, new LCSEventType(LCSEvent.emergencyCallOrigination.getEvent()));
+        M3uaForm.setEnumeratedBaseComboBox(this.cbLcsEvent, this.mapLcsClient.getLCSEventType());
     }
 
     private void loadDataA() {
@@ -381,10 +381,10 @@ public class TestMapLcsClientParamForm extends JDialog {
         this.tfHgmlcAddress.setText("0.0.0.0");
         this.tfImei.setText("5555544444");
         this.tfImsi.setText("5555544444");
-        this.tfLac.setText("111");
-        this.tfLcsReferenceNumber.setText("");
+        this.tfLac.setText("1111");
+        this.tfLcsReferenceNumber.setText("111");
         this.tfMcc.setText("250");
-        this.tfMnc.setText("1");
+        this.tfMnc.setText("123");
         this.tfMsisdn.setText("3333344444");
         M3uaForm.setEnumeratedBaseComboBox(this.cbLcsEvent, new LCSEventType(LCSEvent.emergencyCallOrigination.getEvent()));
     }
@@ -405,7 +405,7 @@ public class TestMapLcsClientParamForm extends JDialog {
             this.mapLcsClient.setAgeOfLocationEstimate(Integer.valueOf(this.tfAgeOfLocationEstimate.getText()));
             this.mapLcsClient.setLAC(Integer.valueOf(this.tfLac.getText()));
             this.mapLcsClient.setLCSReferenceNumber(Integer.valueOf(this.tfLcsReferenceNumber.getText()));
-            this.mapLcsClient.setMCC(Integer.valueOf(this.tfLcsReferenceNumber.getText()));
+            this.mapLcsClient.setMCC(Integer.valueOf(this.tfMcc.getText()));
             this.mapLcsClient.setMNC(Integer.valueOf(this.tfMnc.getText()));
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Exception when parsing value: " + e.toString());
