@@ -136,7 +136,7 @@ public class TestMapLcsClientConfigurationData {
     private String msisdn = "3333344444";
     private String hgmlcAddress = "0.0.0.0";
     private Integer mcc = 250;
-    private Integer mnc =1;
+    private Integer mnc = 123;
     private Integer lac =1111;
     private Integer cellId =222;
     private Integer lcsReferenceNumber = 111;

@@ -95,7 +95,7 @@ public class TestMapLcsServerConfigurationData {
             String an = (String) xml.get(ADDRESS_NATURE, String.class);
             srv.addressNature = AddressNature.valueOf(an);
             String npt = (String) xml.get(NUMBERING_PLAN_TYPE, String.class);
-            srv.numberingPlanType = NumberingPlan.valueOf(npt);            
+            srv.numberingPlanType = NumberingPlan.valueOf(npt);
             String naESRDAddress = (String) xml.get(NA_ESRD_ADDRESS, String.class);
             srv.naESRDAddress = naESRDAddress;
         }
