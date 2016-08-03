@@ -279,7 +279,7 @@ public class GSMCharsetTest {
 
         assertTrue(gsm7Charset.checkAllCharsCanBeEncoded(""));
         assertTrue(gsm7Charset.checkAllCharsCanBeEncoded("[ **]"));
-        assertFalse(gsm7Charset.checkAllCharsCanBeEncoded("wûw"));
+        assertFalse(gsm7Charset.checkAllCharsCanBeEncoded("w\u044Bw"));
     }
 
     @Test(groups = { "datacoding" })
@@ -287,7 +287,7 @@ public class GSMCharsetTest {
         GSMCharset gsm7Charset = new GSMCharset("GSM", new String[] {});
 
         assertEquals(gsm7Charset.checkEncodedDataLengthInChars(""), 0);
-        assertEquals(gsm7Charset.checkEncodedDataLengthInChars("123[]û4"), 9);
+        assertEquals(gsm7Charset.checkEncodedDataLengthInChars("123[]\u044B4"), 9);
     }
 
     @Test(groups = { "datacoding" })
@@ -338,9 +338,9 @@ public class GSMCharsetTest {
         assertEquals(ss[2], "3");
         assertEquals(ss[3], "]");
 
-        ss = gsm7Charset.sliceString("12û3", 3);
+        ss = gsm7Charset.sliceString("12\u044B3", 3);
         assertEquals(ss.length, 2);
-        assertEquals(ss[0], "12û");
+        assertEquals(ss[0], "12\u044B");
         assertEquals(ss[1], "3");
 
     }
