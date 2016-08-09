@@ -36,7 +36,7 @@ public interface AffectedPointCode extends Parameter {
      * <p>
      * To make it easier to identify multiple point codes, ranges can be used as well. The mask field is used to identify ranges
      * within the point code. For example, if the mask contains a value of 2, this would indicate that the last two digits of
-     * the point code are a “wild card.”
+     * the point code are a "wild card."
      * </p>
      *
      * @return returns the mask

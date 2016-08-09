@@ -29,7 +29,7 @@ package org.mobicents.ss7.linkset.oam;
  */
 public interface LinksetState {
     /**
-     * Indicates the linkset does not have any “available” links and cannot transport traffic
+     * Indicates the linkset does not have any "available" links and cannot transport traffic
      */
     int UNAVAILABLE = 1;
 
