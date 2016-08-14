@@ -1332,6 +1332,8 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
             }
         }
 
+        this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: rsmdsReq", ind.toString(), Level.DEBUG);
+
         try {
             if (reportSMDeliveryStatusReaction.intValue() == ReportSMDeliveryStatusReaction.VAL_RETURN_SUCCESS) {
                 curDialog.addReportSMDeliveryStatusResponse(invokeId, null, null);
@@ -1350,8 +1352,6 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
 
                 this.needSendClose = true;
             }
-
-            this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: rsmdsReq", ind.toString(), Level.DEBUG);
 
         } catch (MAPException e) {
             this.testerHost.sendNotif(SOURCE_NAME, "Exception when invoking ReportSMDeliveryStatusResponse : " + e.getMessage(), e, Level.ERROR);
