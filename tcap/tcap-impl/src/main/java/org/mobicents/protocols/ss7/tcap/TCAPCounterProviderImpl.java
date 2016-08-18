@@ -31,7 +31,11 @@ import org.mobicents.protocols.ss7.statistics.api.LongValue;
 import org.mobicents.protocols.ss7.statistics.api.StatDataCollection;
 import org.mobicents.protocols.ss7.statistics.api.StatDataCollectorType;
 import org.mobicents.protocols.ss7.statistics.api.StatResult;
+import org.mobicents.protocols.ss7.tcap.api.TCAPCounterEventsListener;
 import org.mobicents.protocols.ss7.tcap.api.TCAPCounterProvider;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 
 /**
  *
@@ -118,8 +122,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcUniReceivedCount.get();
     }
 
-    public void updateTcUniReceivedCount() {
+    public void updateTcUniReceivedCount(Dialog dialog) {
         tcUniReceivedCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateTcUniReceivedCount(dialog);
+        }
     }
 
     @Override
@@ -127,8 +135,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcUniSentCount.get();
     }
 
-    public void updateTcUniSentCount() {
+    public void updateTcUniSentCount(Dialog dialog) {
         tcUniSentCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateTcUniSentCount(dialog);
+        }
     }
 
     @Override
@@ -136,8 +148,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcBeginReceivedCount.get();
     }
 
-    public void updateTcBeginReceivedCount() {
+    public void updateTcBeginReceivedCount(Dialog dialog) {
         tcBeginReceivedCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateTcBeginReceivedCount(dialog);
+        }
     }
 
     @Override
@@ -145,8 +161,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcBeginSentCount.get();
     }
 
-    public void updateTcBeginSentCount() {
+    public void updateTcBeginSentCount(Dialog dialog) {
         tcBeginSentCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateTcBeginSentCount(dialog);
+        }
     }
 
     @Override
@@ -154,8 +174,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcContinueReceivedCount.get();
     }
 
-    public void updateTcContinueReceivedCount() {
+    public void updateTcContinueReceivedCount(Dialog dialog) {
         tcContinueReceivedCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateTcContinueReceivedCount(dialog);
+        }
     }
 
     @Override
@@ -163,8 +187,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcContinueSentCount.get();
     }
 
-    public void updateTcContinueSentCount() {
+    public void updateTcContinueSentCount(Dialog dialog) {
         tcContinueSentCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateTcContinueSentCount(dialog);
+        }
     }
 
     @Override
@@ -172,8 +200,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcEndReceivedCount.get();
     }
 
-    public void updateTcEndReceivedCount() {
+    public void updateTcEndReceivedCount(Dialog dialog) {
         tcEndReceivedCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateTcContinueSentCount(dialog);
+        }
     }
 
     @Override
@@ -181,8 +213,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcEndSentCount.get();
     }
 
-    public void updateTcEndSentCount() {
+    public void updateTcEndSentCount(Dialog dialog) {
         tcEndSentCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateTcEndSentCount(dialog);
+        }
     }
 
     @Override
@@ -190,8 +226,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcPAbortReceivedCount.get();
     }
 
-    public void updateTcPAbortReceivedCount() {
+    public void updateTcPAbortReceivedCount(Dialog dialog, PAbortCauseType cause) {
         tcPAbortReceivedCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateTcPAbortReceivedCount(dialog, cause);
+        }
     }
 
     @Override
@@ -199,8 +239,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcPAbortSentCount.get();
     }
 
-    public void updateTcPAbortSentCount() {
+    public void updateTcPAbortSentCount(byte[] originatingTransactionId, PAbortCauseType cause) {
         tcPAbortSentCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateTcPAbortSentCount(originatingTransactionId, cause);
+        }
     }
 
     @Override
@@ -208,8 +252,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcUserAbortReceivedCount.get();
     }
 
-    public void updateTcUserAbortReceivedCount() {
+    public void updateTcUserAbortReceivedCount(Dialog dialog) {
         tcUserAbortReceivedCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateTcUserAbortReceivedCount(dialog);
+        }
     }
 
     @Override
@@ -217,8 +265,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return tcUserAbortSentCount.get();
     }
 
-    public void updateTcUserAbortSentCount() {
+    public void updateTcUserAbortSentCount(Dialog dialog) {
         tcUserAbortSentCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateTcUserAbortSentCount(dialog);
+        }
     }
 
     @Override
@@ -226,8 +278,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return invokeReceivedCount.get();
     }
 
-    public void updateInvokeReceivedCount() {
+    public void updateInvokeReceivedCount(Dialog dialog, Invoke invoke) {
         invokeReceivedCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateInvokeReceivedCount(dialog, invoke);
+        }
     }
 
     @Override
@@ -235,8 +291,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return invokeSentCount.get();
     }
 
-    public void updateInvokeSentCount() {
+    public void updateInvokeSentCount(Dialog dialog, Invoke invoke) {
         invokeSentCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateInvokeSentCount(dialog, invoke);
+        }
     }
 
     @Override
@@ -244,8 +304,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return returnResultReceivedCount.get();
     }
 
-    public void updateReturnResultReceivedCount() {
+    public void updateReturnResultReceivedCount(Dialog dialog) {
         returnResultReceivedCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateReturnResultReceivedCount(dialog);
+        }
     }
 
     @Override
@@ -253,8 +317,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return returnResultSentCount.get();
     }
 
-    public void updateReturnResultSentCount() {
+    public void updateReturnResultSentCount(Dialog dialog) {
         returnResultSentCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateReturnResultSentCount(dialog);
+        }
     }
 
     @Override
@@ -262,8 +330,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return returnResultLastReceivedCount.get();
     }
 
-    public void updateReturnResultLastReceivedCount() {
+    public void updateReturnResultLastReceivedCount(Dialog dialog) {
         returnResultLastReceivedCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateReturnResultLastReceivedCount(dialog);
+        }
     }
 
     @Override
@@ -271,8 +343,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return returnResultLastSentCount.get();
     }
 
-    public void updateReturnResultLastSentCount() {
+    public void updateReturnResultLastSentCount(Dialog dialog) {
         returnResultLastSentCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateReturnResultLastSentCount(dialog);
+        }
     }
 
     @Override
@@ -280,8 +356,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return returnErrorReceivedCount.get();
     }
 
-    public void updateReturnErrorReceivedCount() {
+    public void updateReturnErrorReceivedCount(Dialog dialog) {
         returnErrorReceivedCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateReturnErrorReceivedCount(dialog);
+        }
     }
 
     @Override
@@ -289,8 +369,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return returnErrorSentCount.get();
     }
 
-    public void updateReturnErrorSentCount() {
+    public void updateReturnErrorSentCount(Dialog dialog) {
         returnErrorSentCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateReturnErrorSentCount(dialog);
+        }
     }
 
     @Override
@@ -298,8 +382,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return rejectReceivedCount.get();
     }
 
-    public void updateRejectReceivedCount() {
+    public void updateRejectReceivedCount(Dialog dialog) {
         rejectReceivedCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateRejectReceivedCount(dialog);
+        }
     }
 
     @Override
@@ -307,8 +395,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return rejectSentCount.get();
     }
 
-    public void updateRejectSentCount() {
+    public void updateRejectSentCount(Dialog dialog) {
         rejectSentCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateRejectSentCount(dialog);
+        }
     }
 
     @Override
@@ -316,8 +408,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return dialogTimeoutCount.get();
     }
 
-    public void updateDialogTimeoutCount() {
+    public void updateDialogTimeoutCount(Dialog dialog) {
         dialogTimeoutCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateDialogTimeoutCount(dialog);
+        }
     }
 
     @Override
@@ -325,8 +421,12 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         return dialogReleaseCount.get();
     }
 
-    public void updateDialogReleaseCount() {
+    public void updateDialogReleaseCount(Dialog dialog) {
         dialogReleaseCount.addAndGet(1);
+        TCAPCounterEventsListener listener = provider.getStack().getTCAPCounterEventsListener();
+        if (listener != null) {
+            listener.updateDialogReleaseCount(dialog);
+        }
     }
 
 

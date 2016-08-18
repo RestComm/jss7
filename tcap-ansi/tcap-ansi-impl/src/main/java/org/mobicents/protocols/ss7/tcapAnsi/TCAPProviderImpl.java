@@ -321,7 +321,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     public void deliver(DialogImpl dialogImpl, TCQueryIndicationImpl msg) {
 
         if (this.stack.getStatisticsEnabled()) {
-            this.stack.getCounterProviderImpl().updateTcQueryReceivedCount();
+            this.stack.getCounterProviderImpl().updateTcQueryReceivedCount(dialogImpl);
         }
         try {
             for (TCListener lst : this.tcListeners) {
@@ -338,7 +338,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     public void deliver(DialogImpl dialogImpl, TCConversationIndicationImpl tcContinueIndication) {
 
         if (this.stack.getStatisticsEnabled()) {
-            this.stack.getCounterProviderImpl().updateTcConversationReceivedCount();
+            this.stack.getCounterProviderImpl().updateTcConversationReceivedCount(dialogImpl);
         }
         try {
             for (TCListener lst : this.tcListeners) {
@@ -355,7 +355,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     public void deliver(DialogImpl dialogImpl, TCResponseIndicationImpl tcEndIndication) {
 
         if (this.stack.getStatisticsEnabled()) {
-            this.stack.getCounterProviderImpl().updateTcResponseReceivedCount();
+            this.stack.getCounterProviderImpl().updateTcResponseReceivedCount(dialogImpl);
         }
         try {
             for (TCListener lst : this.tcListeners) {
@@ -371,7 +371,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     public void deliver(DialogImpl dialogImpl, TCPAbortIndicationImpl tcAbortIndication) {
 
         if (this.stack.getStatisticsEnabled()) {
-            this.stack.getCounterProviderImpl().updateTcPAbortReceivedCount();
+            this.stack.getCounterProviderImpl().updateTcPAbortReceivedCount(dialogImpl, tcAbortIndication.getPAbortCause());
         }
         try {
             for (TCListener lst : this.tcListeners) {
@@ -388,7 +388,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     public void deliver(DialogImpl dialogImpl, TCUserAbortIndicationImpl tcAbortIndication) {
 
         if (this.stack.getStatisticsEnabled()) {
-            this.stack.getCounterProviderImpl().updateTcUserAbortReceivedCount();
+            this.stack.getCounterProviderImpl().updateTcUserAbortReceivedCount(dialogImpl);
         }
         try {
             for (TCListener lst : this.tcListeners) {
@@ -405,7 +405,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     public void deliver(DialogImpl dialogImpl, TCUniIndicationImpl tcUniIndication) {
 
         if (this.stack.getStatisticsEnabled()) {
-            this.stack.getCounterProviderImpl().updateTcUniReceivedCount();
+            this.stack.getCounterProviderImpl().updateTcUniReceivedCount(dialogImpl);
         }
         try {
             for (TCListener lst : this.tcListeners) {
@@ -449,7 +449,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     private void doRelease(DialogImpl d) {
 
         if (d.isStructured() && this.stack.getStatisticsEnabled()) {
-            this.stack.getCounterProviderImpl().updateDialogReleaseCount();
+            this.stack.getCounterProviderImpl().updateDialogReleaseCount(d);
         }
         try {
             for (TCListener lst : this.tcListeners) {
@@ -468,7 +468,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     public void timeout(DialogImpl d) {
 
         if (this.stack.getStatisticsEnabled()) {
-            this.stack.getCounterProviderImpl().updateDialogTimeoutCount();
+            this.stack.getCounterProviderImpl().updateDialogTimeoutCount(d);
         }
         try {
             for (TCListener lst : this.tcListeners) {
@@ -542,7 +542,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         try {
             msg.encode(aos);
             if (this.stack.getStatisticsEnabled()) {
-                this.stack.getCounterProviderImpl().updateTcPAbortSentCount();
+                this.stack.getCounterProviderImpl().updateTcPAbortSentCount(remoteTransactionId, pAbortCause);
             }
             this.send(aos.toByteArray(), false, remoteAddress, localAddress, seqControl, networkId);
         } catch (Exception e) {
@@ -573,7 +573,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         try {
             msg.encode(aos);
             if (this.stack.getStatisticsEnabled()) {
-                this.stack.getCounterProviderImpl().updateTcPAbortSentCount();
+                this.stack.getCounterProviderImpl().updateTcPAbortSentCount(remoteTransactionId, pAbortCause);
             }
             this.send(aos.toByteArray(), false, remoteAddress, localAddress, seqControl, networkId);
         } catch (Exception e) {

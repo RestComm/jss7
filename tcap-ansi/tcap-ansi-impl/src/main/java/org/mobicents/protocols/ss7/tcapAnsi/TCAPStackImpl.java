@@ -36,6 +36,7 @@ import javolution.xml.stream.XMLStreamException;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPCounterEventsListener;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPCounterProvider;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPStack;
@@ -85,6 +86,7 @@ public class TCAPStackImpl implements TCAPStack {
     // TCAP state data, it is used ONLY on client side
     protected TCAPProviderImpl tcapProvider;
     protected TCAPCounterProviderImpl tcapCounterProvider;
+    protected TCAPCounterEventsListener tcapCounterEventsListener;
     private SccpProvider sccpProvider;
     private SccpAddress address;
 
@@ -709,4 +711,13 @@ public class TCAPStackImpl implements TCAPStack {
         }
     }
 
+    @Override
+    public TCAPCounterEventsListener getTCAPCounterEventsListener() {
+        return this.tcapCounterEventsListener;
+    }
+
+    @Override
+    public void setTCAPCounterEventsListener(TCAPCounterEventsListener tcapCounterEventsListener) {
+        this.tcapCounterEventsListener = tcapCounterEventsListener;
+    }
 }

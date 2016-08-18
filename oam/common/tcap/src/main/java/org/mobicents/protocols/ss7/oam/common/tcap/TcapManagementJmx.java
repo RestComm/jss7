@@ -43,6 +43,7 @@ import org.mobicents.protocols.ss7.oam.common.statistics.api.CounterMediator;
 import org.mobicents.protocols.ss7.oam.common.statistics.api.CounterType;
 import org.mobicents.protocols.ss7.oam.common.statistics.api.SourceValueSet;
 import org.mobicents.protocols.ss7.statistics.api.LongValue;
+import org.mobicents.protocols.ss7.tcap.api.TCAPCounterEventsListener;
 import org.mobicents.protocols.ss7.tcap.api.TCAPCounterProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
@@ -616,6 +617,16 @@ public class TcapManagementJmx implements TcapManagementJmxMBean, CounterMediato
 
             return null;
         }
+    }
+
+    @Override
+    public TCAPCounterEventsListener getTCAPCounterEventsListener() {
+        return this.wrappedTCAPStack.getTCAPCounterEventsListener();
+    }
+
+    @Override
+    public void setTCAPCounterEventsListener(TCAPCounterEventsListener tcapCounterEventsListener) {
+        this.wrappedTCAPStack.setTCAPCounterEventsListener(tcapCounterEventsListener);
     }
 
 }
