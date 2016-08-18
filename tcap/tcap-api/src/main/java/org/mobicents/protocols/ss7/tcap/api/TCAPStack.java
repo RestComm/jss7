@@ -354,4 +354,17 @@ public interface TCAPStack {
      */
     void setCongControl_BackToNormalMemoryThreshold_3(double value) throws Exception;
 
+    /**
+    *
+    * @return the TCAPCounterEventsListener object or null it it isn't set (or set to null value)
+    */
+    TCAPCounterEventsListener getTCAPCounterEventsListener();
+
+    /**
+     * Sets the tcapCounterEventsListener attribute to the given value.
+     *
+     * @param value
+     */
+    void setTCAPCounterEventsListener(TCAPCounterEventsListener tcapCounterEventsListener);
+
 }
