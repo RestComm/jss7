@@ -37,6 +37,7 @@ public interface TCAPStack {
 
     /**
      * Set the persist directory to store the xml files
+     *
      * @return
      */
     String getPersistDir();
@@ -62,7 +63,6 @@ public interface TCAPStack {
      * @throws StartFailedException
      */
     void start() throws Exception;
-
 
     boolean isStarted();
 
@@ -330,5 +330,18 @@ public interface TCAPStack {
      * @param value
      */
     void setCongControl_BackToNormalMemoryThreshold_3(double value) throws Exception;
+
+    /**
+     *
+     * @return the TCAPCounterEventsListener object or null it it isn't set (or set to null value)
+     */
+    TCAPCounterEventsListener getTCAPCounterEventsListener();
+
+    /**
+     * Sets the tcapCounterEventsListener attribute to the given value.
+     *
+     * @param value
+     */
+    void setTCAPCounterEventsListener(TCAPCounterEventsListener tcapCounterEventsListener);
 
 }

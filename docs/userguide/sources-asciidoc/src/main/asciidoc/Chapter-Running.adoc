@@ -155,13 +155,8 @@ Once console starts, it will print following like information:
 
 ----
 
-=========================================================================
-
-Mobicents SS7 Management Shell Bootstrap Environment
-
-=========================================================================
-
-mobicents>
+version=6.2.8.493,name={this-platform} CLI,prefix={this-folder},vendor=TeleStax
+{this-folder}>
 ----
 
 The `ss7-cli`			script supports the following options 

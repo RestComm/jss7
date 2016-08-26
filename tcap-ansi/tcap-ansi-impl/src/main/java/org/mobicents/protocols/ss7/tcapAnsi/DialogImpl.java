@@ -214,8 +214,8 @@ public class DialogImpl implements Dialog {
      * @param pdd
      * @param sideB
      */
-    protected DialogImpl(SccpAddress localAddress, SccpAddress remoteAddress, int seqControl,
-            ScheduledExecutorService executor, TCAPProviderImpl provider, PrevewDialogData pdd, boolean sideB) {
+    protected DialogImpl(SccpAddress localAddress, SccpAddress remoteAddress, int seqControl, ScheduledExecutorService executor,
+            TCAPProviderImpl provider, PrevewDialogData pdd, boolean sideB) {
         this.localAddress = localAddress;
         this.remoteAddress = remoteAddress;
         this.localTransactionIdObject = pdd.getDialogId();
@@ -349,7 +349,8 @@ public class DialogImpl implements Dialog {
             // lookup through send buffer.
             for (index = 0; index < this.scheduledComponentList.size(); index++) {
                 Component cr = this.scheduledComponentList.get(index);
-                if ((cr.getType() == ComponentType.InvokeNotLast || cr.getType() == ComponentType.InvokeLast) && cr.getCorrelationId().equals(invokeId)) {
+                if ((cr.getType() == ComponentType.InvokeNotLast || cr.getType() == ComponentType.InvokeLast)
+                        && cr.getCorrelationId().equals(invokeId)) {
                     this.scheduledComponentList.remove(index);
                     ((InvokeImpl) cr).stopTimer();
                     ((InvokeImpl) cr).setState(OperationState.Idle);
@@ -501,8 +502,8 @@ public class DialogImpl implements Dialog {
             tcbm.setDialogTermitationPermission(event.getDialogTermitationPermission());
             tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
 
-            if (event.getApplicationContextName() != null || event.getConfidentiality() != null || event.getSecurityContext() != null
-                    || event.getUserInformation() != null) {
+            if (event.getApplicationContextName() != null || event.getConfidentiality() != null
+                    || event.getSecurityContext() != null || event.getUserInformation() != null) {
                 this.dpSentInBegin = true;
                 this.lastACN = event.getApplicationContextName();
                 if (event.getUserInformation() != null) {
@@ -540,7 +541,7 @@ public class DialogImpl implements Dialog {
                 tcbm.encode(aos);
                 this.setState(TRPseudoState.InitialSent);
                 if (this.provider.getStack().getStatisticsEnabled()) {
-                    this.provider.getStack().getCounterProviderImpl().updateTcQuerySentCount();
+                    this.provider.getStack().getCounterProviderImpl().updateTcQuerySentCount(this);
                 }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
                         this.seqControl, this.getNetworkId());
@@ -586,8 +587,8 @@ public class DialogImpl implements Dialog {
                     this.localAddress = event.getOriginatingAddress();
                 }
 
-                if (event.getApplicationContextName() != null || event.getConfidentiality() != null || event.getSecurityContext() != null
-                        || event.getUserInformation() != null) {
+                if (event.getApplicationContextName() != null || event.getConfidentiality() != null
+                        || event.getSecurityContext() != null || event.getUserInformation() != null) {
                     // set dialog portion
                     DialogPortion dp = TcapFactory.createDialogPortion();
                     dp.setProtocolVersion(TcapFactory.createProtocolVersionFull());
@@ -609,7 +610,7 @@ public class DialogImpl implements Dialog {
                 try {
                     tcbm.encode(aos);
                     if (this.provider.getStack().getStatisticsEnabled()) {
-                        this.provider.getStack().getCounterProviderImpl().updateTcConversationSentCount();
+                        this.provider.getStack().getCounterProviderImpl().updateTcConversationSentCount(this);
                     }
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
                             this.localAddress, this.seqControl, this.getNetworkId());
@@ -643,7 +644,7 @@ public class DialogImpl implements Dialog {
                 try {
                     tcbm.encode(aos);
                     if (this.provider.getStack().getStatisticsEnabled()) {
-                        this.provider.getStack().getCounterProviderImpl().updateTcConversationSentCount();
+                        this.provider.getStack().getCounterProviderImpl().updateTcConversationSentCount(this);
                     }
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
                             this.localAddress, this.seqControl, this.getNetworkId());
@@ -695,8 +696,8 @@ public class DialogImpl implements Dialog {
                     this.localAddress = event.getOriginatingAddress();
                 }
 
-                if (event.getApplicationContextName() != null || event.getConfidentiality() != null || event.getSecurityContext() != null
-                        || event.getUserInformation() != null) {
+                if (event.getApplicationContextName() != null || event.getConfidentiality() != null
+                        || event.getSecurityContext() != null || event.getUserInformation() != null) {
                     // set dialog portion
                     DialogPortion dp = TcapFactory.createDialogPortion();
                     dp.setProtocolVersion(TcapFactory.createProtocolVersionFull());
@@ -733,7 +734,7 @@ public class DialogImpl implements Dialog {
             try {
                 tcbm.encode(aos);
                 if (this.provider.getStack().getStatisticsEnabled()) {
-                    this.provider.getStack().getCounterProviderImpl().updateTcResponseSentCount();
+                    this.provider.getStack().getCounterProviderImpl().updateTcResponseSentCount(this);
                 }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
                         this.seqControl, this.getNetworkId());
@@ -773,8 +774,8 @@ public class DialogImpl implements Dialog {
             this.dialogLock.lock();
             TCUniMessageImpl msg = (TCUniMessageImpl) TcapFactory.createTCUniMessage();
 
-            if (event.getApplicationContextName() != null || event.getConfidentiality() != null || event.getSecurityContext() != null
-                    || event.getUserInformation() != null) {
+            if (event.getApplicationContextName() != null || event.getConfidentiality() != null
+                    || event.getSecurityContext() != null || event.getUserInformation() != null) {
                 // set dialog portion
                 DialogPortion dp = TcapFactory.createDialogPortion();
                 dp.setProtocolVersion(TcapFactory.createProtocolVersionFull());
@@ -797,7 +798,7 @@ public class DialogImpl implements Dialog {
             try {
                 msg.encode(aos);
                 if (this.provider.getStack().getStatisticsEnabled()) {
-                    this.provider.getStack().getCounterProviderImpl().updateTcUniSentCount();
+                    this.provider.getStack().getCounterProviderImpl().updateTcUniSentCount(this);
                 }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
                         this.seqControl, this.getNetworkId());
@@ -833,8 +834,8 @@ public class DialogImpl implements Dialog {
                 TCAbortMessageImpl msg = (TCAbortMessageImpl) TcapFactory.createTCAbortMessage();
                 msg.setDestinationTransactionId(this.remoteTransactionId);
 
-                if (event.getApplicationContextName() != null || event.getConfidentiality() != null || event.getSecurityContext() != null
-                        || event.getUserInformation() != null) {
+                if (event.getApplicationContextName() != null || event.getConfidentiality() != null
+                        || event.getSecurityContext() != null || event.getUserInformation() != null) {
                     // set dialog portion
                     DialogPortion dp = TcapFactory.createDialogPortion();
                     dp.setProtocolVersion(TcapFactory.createProtocolVersionFull());
@@ -858,7 +859,7 @@ public class DialogImpl implements Dialog {
                 try {
                     msg.encode(aos);
                     if (this.provider.getStack().getStatisticsEnabled()) {
-                        this.provider.getStack().getCounterProviderImpl().updateTcUserAbortSentCount();
+                        this.provider.getStack().getCounterProviderImpl().updateTcUserAbortSentCount(this);
                     }
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
                             this.localAddress, this.seqControl, this.getNetworkId());
@@ -895,54 +896,59 @@ public class DialogImpl implements Dialog {
 
         if (this.provider.getStack().getStatisticsEnabled()) {
             switch (componentRequest.getType()) {
-            case InvokeNotLast:
-                this.provider.getStack().getCounterProviderImpl().updateInvokeNotLastSentCount();
+                case InvokeNotLast:
+                    this.provider.getStack().getCounterProviderImpl().updateInvokeNotLastSentCount(this,
+                            (Invoke) componentRequest);
 
-                Invoke inv = (Invoke) componentRequest;
-                OperationCodeImpl oc = (OperationCodeImpl) inv.getOperationCode();
-                if (oc != null) {
-                    this.provider.getStack().getCounterProviderImpl().updateOutgoingInvokesPerOperationCode(oc.getStringValue());
-                }
-                break;
-            case InvokeLast:
-                this.provider.getStack().getCounterProviderImpl().updateInvokeLastSentCount();
+                    Invoke inv = (Invoke) componentRequest;
+                    OperationCodeImpl oc = (OperationCodeImpl) inv.getOperationCode();
+                    if (oc != null) {
+                        this.provider.getStack().getCounterProviderImpl()
+                                .updateOutgoingInvokesPerOperationCode(oc.getStringValue());
+                    }
+                    break;
+                case InvokeLast:
+                    this.provider.getStack().getCounterProviderImpl().updateInvokeLastSentCount(this,
+                            (Invoke) componentRequest);
 
-                inv = (Invoke) componentRequest;
-                oc = (OperationCodeImpl) inv.getOperationCode();
-                if (oc != null) {
-                    this.provider.getStack().getCounterProviderImpl().updateOutgoingInvokesPerOperationCode(oc.getStringValue());
-                }
-                break;
-            case ReturnResultNotLast:
-                this.provider.getStack().getCounterProviderImpl().updateReturnResultNotLastSentCount();
-                break;
-            case ReturnResultLast:
-                this.provider.getStack().getCounterProviderImpl().updateReturnResultLastSentCount();
-                break;
-            case ReturnError:
-                this.provider.getStack().getCounterProviderImpl().updateReturnErrorSentCount();
+                    inv = (Invoke) componentRequest;
+                    oc = (OperationCodeImpl) inv.getOperationCode();
+                    if (oc != null) {
+                        this.provider.getStack().getCounterProviderImpl()
+                                .updateOutgoingInvokesPerOperationCode(oc.getStringValue());
+                    }
+                    break;
+                case ReturnResultNotLast:
+                    this.provider.getStack().getCounterProviderImpl().updateReturnResultNotLastSentCount(this);
+                    break;
+                case ReturnResultLast:
+                    this.provider.getStack().getCounterProviderImpl().updateReturnResultLastSentCount(this);
+                    break;
+                case ReturnError:
+                    this.provider.getStack().getCounterProviderImpl().updateReturnErrorSentCount(this);
 
-                ReturnError re = (ReturnError) componentRequest;
-                ErrorCodeImpl ec = (ErrorCodeImpl) re.getErrorCode();
-                if (ec != null) {
-                    this.provider.getStack().getCounterProviderImpl().updateOutgoingErrorsPerErrorCode(ec.getStringValue());
-                }
-                break;
-            case Reject:
-                this.provider.getStack().getCounterProviderImpl().updateRejectSentCount();
+                    ReturnError re = (ReturnError) componentRequest;
+                    ErrorCodeImpl ec = (ErrorCodeImpl) re.getErrorCode();
+                    if (ec != null) {
+                        this.provider.getStack().getCounterProviderImpl().updateOutgoingErrorsPerErrorCode(ec.getStringValue());
+                    }
+                    break;
+                case Reject:
+                    this.provider.getStack().getCounterProviderImpl().updateRejectSentCount(this);
 
-                Reject rej = (Reject) componentRequest;
-                RejectProblem prob = (RejectProblem) rej.getProblem();
-                if (prob != null) {
-                    this.provider.getStack().getCounterProviderImpl().updateOutgoingRejectPerProblem(prob.toString());
-                }
-                break;
+                    Reject rej = (Reject) componentRequest;
+                    RejectProblem prob = (RejectProblem) rej.getProblem();
+                    if (prob != null) {
+                        this.provider.getStack().getCounterProviderImpl().updateOutgoingRejectPerProblem(prob.toString());
+                    }
+                    break;
             }
         }
 
         try {
             this.dialogLock.lock();
-            if (componentRequest.getType() == ComponentType.InvokeNotLast || componentRequest.getType() == ComponentType.InvokeLast) {
+            if (componentRequest.getType() == ComponentType.InvokeNotLast
+                    || componentRequest.getType() == ComponentType.InvokeLast) {
                 InvokeImpl invoke = (InvokeImpl) componentRequest;
 
                 // check if its taken!
@@ -1006,8 +1012,8 @@ public class DialogImpl implements Dialog {
         tcbm.setDialogTermitationPermission(event.getDialogTermitationPermission());
         tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
 
-        if (event.getApplicationContextName() != null || event.getConfidentiality() != null || event.getSecurityContext() != null
-                || event.getUserInformation() != null) {
+        if (event.getApplicationContextName() != null || event.getConfidentiality() != null
+                || event.getSecurityContext() != null || event.getUserInformation() != null) {
             DialogPortion dp = TcapFactory.createDialogPortion();
             dp.setProtocolVersion(TcapFactory.createProtocolVersionFull());
             dp.setApplicationContext(event.getApplicationContextName());
@@ -1046,8 +1052,8 @@ public class DialogImpl implements Dialog {
         tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
         tcbm.setDestinationTransactionId(this.remoteTransactionId);
 
-        if (event.getApplicationContextName() != null || event.getConfidentiality() != null || event.getSecurityContext() != null
-                || event.getUserInformation() != null) {
+        if (event.getApplicationContextName() != null || event.getConfidentiality() != null
+                || event.getSecurityContext() != null || event.getUserInformation() != null) {
             // set dialog portion
             DialogPortion dp = TcapFactory.createDialogPortion();
             dp.setProtocolVersion(TcapFactory.createProtocolVersionFull());
@@ -1096,8 +1102,8 @@ public class DialogImpl implements Dialog {
         }
 
         if (state == TRPseudoState.InitialReceived) {
-            if (event.getApplicationContextName() != null || event.getConfidentiality() != null || event.getSecurityContext() != null
-                    || event.getUserInformation() != null) {
+            if (event.getApplicationContextName() != null || event.getConfidentiality() != null
+                    || event.getSecurityContext() != null || event.getUserInformation() != null) {
                 // set dialog portion
                 DialogPortion dp = TcapFactory.createDialogPortion();
                 dp.setProtocolVersion(TcapFactory.createProtocolVersionFull());
@@ -1127,8 +1133,8 @@ public class DialogImpl implements Dialog {
 
         TCUniMessageImpl msg = (TCUniMessageImpl) TcapFactory.createTCUniMessage();
 
-        if (event.getApplicationContextName() != null || event.getConfidentiality() != null || event.getSecurityContext() != null
-                || event.getUserInformation() != null) {
+        if (event.getApplicationContextName() != null || event.getConfidentiality() != null
+                || event.getSecurityContext() != null || event.getUserInformation() != null) {
             // set dialog portion
             DialogPortion dp = TcapFactory.createDialogPortion();
             dp.setProtocolVersion(TcapFactory.createProtocolVersionFull());
@@ -1208,8 +1214,8 @@ public class DialogImpl implements Dialog {
 
                 // no dialog portion!
                 // convert to indications
-                TCUniIndicationImpl tcUniIndication = (TCUniIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider.getDialogPrimitiveFactory())
-                        .createUniIndication(this);
+                TCUniIndicationImpl tcUniIndication = (TCUniIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider
+                        .getDialogPrimitiveFactory()).createUniIndication(this);
 
                 tcUniIndication.setDestinationAddress(localAddress);
                 tcUniIndication.setOriginatingAddress(remoteAddress);
@@ -1240,7 +1246,8 @@ public class DialogImpl implements Dialog {
         }
     }
 
-    protected void processQuery(TCQueryMessage msg, SccpAddress localAddress, SccpAddress remoteAddress, boolean dialogTermitationPermission) {
+    protected void processQuery(TCQueryMessage msg, SccpAddress localAddress, SccpAddress remoteAddress,
+            boolean dialogTermitationPermission) {
 
         TCQueryIndicationImpl tcBeginIndication = null;
         try {
@@ -1264,8 +1271,8 @@ public class DialogImpl implements Dialog {
             this.setLocalAddress(localAddress);
             this.setRemoteTransactionId(msg.getOriginatingTransactionId());
             // convert to indications
-            tcBeginIndication = (TCQueryIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider.getDialogPrimitiveFactory()).createQueryIndication(this,
-                    dialogTermitationPermission);
+            tcBeginIndication = (TCQueryIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider.getDialogPrimitiveFactory())
+                    .createQueryIndication(this, dialogTermitationPermission);
 
             tcBeginIndication.setDestinationAddress(localAddress);
             tcBeginIndication.setOriginatingAddress(remoteAddress);
@@ -1304,15 +1311,16 @@ public class DialogImpl implements Dialog {
         }
     }
 
-    protected void processConversation(TCConversationMessage msg, SccpAddress localAddress, SccpAddress remoteAddressm, boolean dialogTermitationPermission) {
+    protected void processConversation(TCConversationMessage msg, SccpAddress localAddress, SccpAddress remoteAddressm,
+            boolean dialogTermitationPermission) {
 
         TCConversationIndicationImpl tcContinueIndication = null;
         try {
             this.dialogLock.lock();
 
             if (this.previewMode) {
-                tcContinueIndication = (TCConversationIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider.getDialogPrimitiveFactory())
-                        .createConversationIndication(this, dialogTermitationPermission);
+                tcContinueIndication = (TCConversationIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider
+                        .getDialogPrimitiveFactory()).createConversationIndication(this, dialogTermitationPermission);
                 this.setRemoteTransactionId(msg.getOriginatingTransactionId());
 
                 // here we will receive DialogResponse APDU - if request was
@@ -1336,8 +1344,8 @@ public class DialogImpl implements Dialog {
 
                 if (state == TRPseudoState.InitialSent) {
                     restartIdleTimer();
-                    tcContinueIndication = (TCConversationIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider.getDialogPrimitiveFactory())
-                            .createConversationIndication(this, dialogTermitationPermission);
+                    tcContinueIndication = (TCConversationIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider
+                            .getDialogPrimitiveFactory()).createConversationIndication(this, dialogTermitationPermission);
                     // in continue remote address MAY change be changed, so lets
                     // update!
                     this.setRemoteAddress(remoteAddress);
@@ -1371,8 +1379,8 @@ public class DialogImpl implements Dialog {
                 } else if (state == TRPseudoState.Active) {
                     restartIdleTimer();
                     // XXX: here NO APDU will be present, hence, no ACN/UI change
-                    tcContinueIndication = (TCConversationIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider.getDialogPrimitiveFactory())
-                            .createConversationIndication(this, dialogTermitationPermission);
+                    tcContinueIndication = (TCConversationIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider
+                            .getDialogPrimitiveFactory()).createConversationIndication(this, dialogTermitationPermission);
 
                     tcContinueIndication.setOriginatingAddress(remoteAddress);
 
@@ -1384,8 +1392,8 @@ public class DialogImpl implements Dialog {
 
                 } else {
                     if (logger.isEnabledFor(Level.ERROR)) {
-                        logger.error("Received Continue primitive, but state is not proper: " + this.state + ", Dialog: "
-                                + this);
+                        logger.error(
+                                "Received Continue primitive, but state is not proper: " + this.state + ", Dialog: " + this);
                     }
                     this.sendAbnormalDialog();
                     return;
@@ -1514,16 +1522,16 @@ public class DialogImpl implements Dialog {
             try {
                 // sending to the remote side
                 if (this.getProtocolVersion() != null) {
-                    this.provider.sendProviderAbort(PAbortCause.InconsistentDialoguePortion, remoteTransactionId, remoteAddress, localAddress, seqControl,
-                            this.getNetworkId());
+                    this.provider.sendProviderAbort(PAbortCause.InconsistentDialoguePortion, remoteTransactionId, remoteAddress,
+                            localAddress, seqControl, this.getNetworkId());
                 } else {
-                    this.provider.sendRejectAsProviderAbort(PAbortCause.InconsistentDialoguePortion, remoteTransactionId, remoteAddress, localAddress,
-                            seqControl, this.getNetworkId());
+                    this.provider.sendRejectAsProviderAbort(PAbortCause.InconsistentDialoguePortion, remoteTransactionId,
+                            remoteAddress, localAddress, seqControl, this.getNetworkId());
                 }
 
                 // sending to the local side
-                tcAbortIndication = (TCPAbortIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider.getDialogPrimitiveFactory())
-                        .createPAbortIndication(this);
+                tcAbortIndication = (TCPAbortIndicationImpl) ((DialogPrimitiveFactoryImpl) this.provider
+                        .getDialogPrimitiveFactory()).createPAbortIndication(this);
                 tcAbortIndication.setDialog(this);
                 tcAbortIndication.setPAbortCause(PAbortCause.InconsistentDialoguePortion);
 
@@ -1554,111 +1562,118 @@ public class DialogImpl implements Dialog {
 
             switch (ci.getType()) {
 
-            case InvokeNotLast:
-            case InvokeLast:
-                if (invokeId != null && invoke == null) {
-                    logger.error(String.format("Rx : %s but no sent Invoke for correlationId exists", ci));
-                    this.addReject(resultingIndications, ((InvokeImpl) ci).getInvokeId(), RejectProblem.invokeUnrecognisedCorrelationId);
-                } else {
-                    if (invoke != null) {
-                        ((InvokeImpl) ci).setCorrelationInvoke(invoke);
-                    }
-
-                    if (this.previewMode) {
-                        resultingIndications.add(ci);
-                        index = getIndexFromInvokeId(((Invoke)ci).getInvokeId());
-                        this.operationsSentA[index] = (InvokeImpl) ci;
-                        ((InvokeImpl) ci).setDialog(this);
-                        ((InvokeImpl) ci).setState(OperationState.Sent);
+                case InvokeNotLast:
+                case InvokeLast:
+                    if (invokeId != null && invoke == null) {
+                        logger.error(String.format("Rx : %s but no sent Invoke for correlationId exists", ci));
+                        this.addReject(resultingIndications, ((InvokeImpl) ci).getInvokeId(),
+                                RejectProblem.invokeUnrecognisedCorrelationId);
                     } else {
-                        if (!this.addIncomingInvokeId(((InvokeImpl) ci).getInvokeId())) {
-                            logger.error(String.format("Rx : %s but there is already Invoke with this invokeId", ci));
-                            this.addReject(resultingIndications, ((InvokeImpl) ci).getInvokeId(), RejectProblem.invokeDuplicateInvocation);
+                        if (invoke != null) {
+                            ((InvokeImpl) ci).setCorrelationInvoke(invoke);
+                        }
+
+                        if (this.previewMode) {
+                            resultingIndications.add(ci);
+                            index = getIndexFromInvokeId(((Invoke) ci).getInvokeId());
+                            this.operationsSentA[index] = (InvokeImpl) ci;
+                            ((InvokeImpl) ci).setDialog(this);
+                            ((InvokeImpl) ci).setState(OperationState.Sent);
                         } else {
+                            if (!this.addIncomingInvokeId(((InvokeImpl) ci).getInvokeId())) {
+                                logger.error(String.format("Rx : %s but there is already Invoke with this invokeId", ci));
+                                this.addReject(resultingIndications, ((InvokeImpl) ci).getInvokeId(),
+                                        RejectProblem.invokeDuplicateInvocation);
+                            } else {
+                                resultingIndications.add(ci);
+                            }
+                        }
+                    }
+                    break;
+
+                case ReturnResultNotLast:
+
+                    if (invoke == null) {
+                        logger.error(String.format("Rx : %s but there is no corresponding Invoke", ci));
+                        this.addReject(resultingIndications, ci.getCorrelationId(),
+                                RejectProblem.returnResultUnrecognisedCorrelationId);
+                    } else if (invoke.getInvokeClass() != InvokeClass.Class1 && invoke.getInvokeClass() != InvokeClass.Class3) {
+                        logger.error(String.format("Rx : %s but Invoke class is not 1 or 3", ci));
+                        this.addReject(resultingIndications, ci.getCorrelationId(),
+                                RejectProblem.returnResultUnexpectedReturnResult);
+                    } else {
+                        resultingIndications.add(ci);
+                        ReturnResultNotLastImpl rri = (ReturnResultNotLastImpl) ci;
+                        if (rri.getOperationCode() == null)
+                            rri.setOperationCode(invoke.getOperationCode());
+                    }
+                    break;
+
+                case ReturnResultLast:
+
+                    if (invoke == null) {
+                        logger.error(String.format("Rx : %s but there is no corresponding Invoke", ci));
+                        this.addReject(resultingIndications, ci.getCorrelationId(),
+                                RejectProblem.returnResultUnrecognisedCorrelationId);
+                    } else if (invoke.getInvokeClass() != InvokeClass.Class1 && invoke.getInvokeClass() != InvokeClass.Class3) {
+                        logger.error(String.format("Rx : %s but Invoke class is not 1 or 3", ci));
+                        this.addReject(resultingIndications, ci.getCorrelationId(),
+                                RejectProblem.returnResultUnexpectedReturnResult);
+                    } else {
+                        invoke.onReturnResultLast();
+                        if (invoke.isSuccessReported()) {
+                            resultingIndications.add(ci);
+                        }
+                        ReturnResultLastImpl rri = (ReturnResultLastImpl) ci;
+                        if (rri.getOperationCode() == null)
+                            rri.setOperationCode(invoke.getOperationCode());
+                    }
+                    break;
+
+                case ReturnError:
+                    if (invoke == null) {
+                        logger.error(String.format("Rx : %s but there is no corresponding Invoke", ci));
+                        this.addReject(resultingIndications, ci.getCorrelationId(),
+                                RejectProblem.returnErrorUnrecognisedCorrelationId);
+                    } else if (invoke.getInvokeClass() != InvokeClass.Class1 && invoke.getInvokeClass() != InvokeClass.Class2) {
+                        logger.error(String.format("Rx : %s but Invoke class is not 1 or 2", ci));
+                        this.addReject(resultingIndications, ci.getCorrelationId(), RejectProblem.returnErrorUnexpectedError);
+                    } else {
+                        invoke.onError();
+                        if (invoke.isErrorReported()) {
                             resultingIndications.add(ci);
                         }
                     }
-                }
-                break;
+                    break;
 
-
-            case ReturnResultNotLast:
-
-                if (invoke == null) {
-                    logger.error(String.format("Rx : %s but there is no corresponding Invoke", ci));
-                    this.addReject(resultingIndications, ci.getCorrelationId(), RejectProblem.returnResultUnrecognisedCorrelationId);
-                } else if (invoke.getInvokeClass() != InvokeClass.Class1 && invoke.getInvokeClass() != InvokeClass.Class3) {
-                    logger.error(String.format("Rx : %s but Invoke class is not 1 or 3", ci));
-                    this.addReject(resultingIndications, ci.getCorrelationId(), RejectProblem.returnResultUnexpectedReturnResult);
-                } else {
+                case Reject:
+                    Reject rej = (Reject) ci;
+                    if (invoke != null) {
+                        // If the Reject Problem is the InvokeProblemType we
+                        // should move the invoke to the idle state
+                        RejectProblem problem = rej.getProblem();
+                        if (!rej.isLocalOriginated() && (problem == RejectProblem.invokeDuplicateInvocation
+                                || problem == RejectProblem.invokeIncorrectParameter
+                                || problem == RejectProblem.invokeUnrecognisedCorrelationId
+                                || problem == RejectProblem.invokeUnrecognisedOperation))
+                            invoke.onReject();
+                    }
+                    if (rej.isLocalOriginated() && this.isStructured()) {
+                        try {
+                            // this is a local originated Reject - we are rejecting
+                            // an incoming component
+                            // we need to send a Reject also to a peer
+                            this.sendComponent(rej);
+                        } catch (TCAPSendException e) {
+                            logger.error("TCAPSendException when sending Reject component : Dialog: " + this, e);
+                        }
+                    }
                     resultingIndications.add(ci);
-                    ReturnResultNotLastImpl rri = (ReturnResultNotLastImpl) ci;
-                    if (rri.getOperationCode() == null)
-                        rri.setOperationCode(invoke.getOperationCode());
-                }
-                break;
+                    break;
 
-            case ReturnResultLast:
-
-                if (invoke == null) {
-                    logger.error(String.format("Rx : %s but there is no corresponding Invoke", ci));
-                    this.addReject(resultingIndications, ci.getCorrelationId(), RejectProblem.returnResultUnrecognisedCorrelationId);
-                } else if (invoke.getInvokeClass() != InvokeClass.Class1 && invoke.getInvokeClass() != InvokeClass.Class3) {
-                    logger.error(String.format("Rx : %s but Invoke class is not 1 or 3", ci));
-                    this.addReject(resultingIndications, ci.getCorrelationId(), RejectProblem.returnResultUnexpectedReturnResult);
-                } else {
-                    invoke.onReturnResultLast();
-                    if (invoke.isSuccessReported()) {
-                        resultingIndications.add(ci);
-                    }
-                    ReturnResultLastImpl rri = (ReturnResultLastImpl) ci;
-                    if (rri.getOperationCode() == null)
-                        rri.setOperationCode(invoke.getOperationCode());
-                }
-                break;
-
-            case ReturnError:
-                if (invoke == null) {
-                    logger.error(String.format("Rx : %s but there is no corresponding Invoke", ci));
-                    this.addReject(resultingIndications, ci.getCorrelationId(), RejectProblem.returnErrorUnrecognisedCorrelationId);
-                } else if (invoke.getInvokeClass() != InvokeClass.Class1 && invoke.getInvokeClass() != InvokeClass.Class2) {
-                    logger.error(String.format("Rx : %s but Invoke class is not 1 or 2", ci));
-                    this.addReject(resultingIndications, ci.getCorrelationId(), RejectProblem.returnErrorUnexpectedError);
-                } else {
-                    invoke.onError();
-                    if (invoke.isErrorReported()) {
-                        resultingIndications.add(ci);
-                    }
-                }
-                break;
-
-            case Reject:
-                Reject rej = (Reject) ci;
-                if (invoke != null) {
-                    // If the Reject Problem is the InvokeProblemType we
-                    // should move the invoke to the idle state
-                    RejectProblem problem = rej.getProblem();
-                    if (!rej.isLocalOriginated()
-                            && (problem == RejectProblem.invokeDuplicateInvocation || problem == RejectProblem.invokeIncorrectParameter
-                                    || problem == RejectProblem.invokeUnrecognisedCorrelationId || problem == RejectProblem.invokeUnrecognisedOperation))
-                        invoke.onReject();
-                }
-                if (rej.isLocalOriginated() && this.isStructured()) {
-                    try {
-                        // this is a local originated Reject - we are rejecting
-                        // an incoming component
-                        // we need to send a Reject also to a peer
-                        this.sendComponent(rej);
-                    } catch (TCAPSendException e) {
-                        logger.error("TCAPSendException when sending Reject component : Dialog: " + this, e);
-                    }
-                }
-                resultingIndications.add(ci);
-                break;
-
-            default:
-                resultingIndications.add(ci);
-                break;
+                default:
+                    resultingIndications.add(ci);
+                    break;
             }
 
         }
@@ -1676,50 +1691,54 @@ public class DialogImpl implements Dialog {
         if (this.provider.getStack().getStatisticsEnabled()) {
             for (Component comp : components) {
                 switch (comp.getType()) {
-                case InvokeLast:
-                    this.provider.getStack().getCounterProviderImpl().updateInvokeLastReceivedCount();
+                    case InvokeLast:
+                        this.provider.getStack().getCounterProviderImpl().updateInvokeLastReceivedCount(this, (Invoke) comp);
 
-                    Invoke inv = (Invoke) comp;
-                    OperationCodeImpl oc = (OperationCodeImpl) inv.getOperationCode();
-                    if (oc != null) {
-                        this.provider.getStack().getCounterProviderImpl().updateIncomingInvokesPerOperationCode(oc.getStringValue());
-                    }
-                    break;
-                case InvokeNotLast:
-                    this.provider.getStack().getCounterProviderImpl().updateInvokeNotLastReceivedCount();
-
-                    inv = (Invoke) comp;
-                    oc = (OperationCodeImpl) inv.getOperationCode();
-                    if (oc != null) {
-                        this.provider.getStack().getCounterProviderImpl().updateIncomingInvokesPerOperationCode(oc.getStringValue());
-                    }
-                    break;
-                case ReturnResultNotLast:
-                    this.provider.getStack().getCounterProviderImpl().updateReturnResultNotLastReceivedCount();
-                    break;
-                case ReturnResultLast:
-                    this.provider.getStack().getCounterProviderImpl().updateReturnResultLastReceivedCount();
-                    break;
-                case ReturnError:
-                    this.provider.getStack().getCounterProviderImpl().updateReturnErrorReceivedCount();
-
-                    ReturnError re = (ReturnError) comp;
-                    ErrorCodeImpl ec = (ErrorCodeImpl) re.getErrorCode();
-                    if (ec != null) {
-                        this.provider.getStack().getCounterProviderImpl().updateIncomingErrorsPerErrorCode(ec.getStringValue());
-                    }
-                    break;
-                case Reject:
-                    Reject rej = (Reject) comp;
-                    if (!rej.isLocalOriginated()) {
-                        this.provider.getStack().getCounterProviderImpl().updateRejectReceivedCount();
-
-                        RejectProblem prob = (RejectProblem) rej.getProblem();
-                        if (prob != null) {
-                            this.provider.getStack().getCounterProviderImpl().updateIncomingRejectPerProblem(prob.toString());
+                        Invoke inv = (Invoke) comp;
+                        OperationCodeImpl oc = (OperationCodeImpl) inv.getOperationCode();
+                        if (oc != null) {
+                            this.provider.getStack().getCounterProviderImpl()
+                                    .updateIncomingInvokesPerOperationCode(oc.getStringValue());
                         }
-                    }
-                    break;
+                        break;
+                    case InvokeNotLast:
+                        this.provider.getStack().getCounterProviderImpl().updateInvokeNotLastReceivedCount(this, (Invoke) comp);
+
+                        inv = (Invoke) comp;
+                        oc = (OperationCodeImpl) inv.getOperationCode();
+                        if (oc != null) {
+                            this.provider.getStack().getCounterProviderImpl()
+                                    .updateIncomingInvokesPerOperationCode(oc.getStringValue());
+                        }
+                        break;
+                    case ReturnResultNotLast:
+                        this.provider.getStack().getCounterProviderImpl().updateReturnResultNotLastReceivedCount(this);
+                        break;
+                    case ReturnResultLast:
+                        this.provider.getStack().getCounterProviderImpl().updateReturnResultLastReceivedCount(this);
+                        break;
+                    case ReturnError:
+                        this.provider.getStack().getCounterProviderImpl().updateReturnErrorReceivedCount(this);
+
+                        ReturnError re = (ReturnError) comp;
+                        ErrorCodeImpl ec = (ErrorCodeImpl) re.getErrorCode();
+                        if (ec != null) {
+                            this.provider.getStack().getCounterProviderImpl()
+                                    .updateIncomingErrorsPerErrorCode(ec.getStringValue());
+                        }
+                        break;
+                    case Reject:
+                        Reject rej = (Reject) comp;
+                        if (!rej.isLocalOriginated()) {
+                            this.provider.getStack().getCounterProviderImpl().updateRejectReceivedCount(this);
+
+                            RejectProblem prob = (RejectProblem) rej.getProblem();
+                            if (prob != null) {
+                                this.provider.getStack().getCounterProviderImpl()
+                                        .updateIncomingRejectPerProblem(prob.toString());
+                            }
+                        }
+                        break;
                 }
             }
         }
