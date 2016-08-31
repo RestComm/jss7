@@ -82,4 +82,13 @@ public interface TestMapLcsClientManMBean {
     // Other
 
     String getCurrentRequestDef();
+
+    // Methods for configurable properties via HTTP interface for values that are based on EnumeratedBase abstract class
+
+    void putAddressNature(String val);
+
+    void putNumberingPlanType(String val);
+
+    void putLCSEventType(String val);
+
 }
