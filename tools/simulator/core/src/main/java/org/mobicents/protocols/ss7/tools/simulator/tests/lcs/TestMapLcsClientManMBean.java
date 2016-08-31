@@ -31,10 +31,6 @@ public interface TestMapLcsClientManMBean {
 
     // Operations
 
-    String sendRoutingInfoForLCSRequest(String addressIMSI);
-
-    String subscriberLocationReportRequest();
-
     String performSendRoutingInfoForLCSRequest(String addressIMSI);
 
     String performSubscriberLocationReportRequest();

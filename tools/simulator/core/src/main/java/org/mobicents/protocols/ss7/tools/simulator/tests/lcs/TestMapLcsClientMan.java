@@ -131,8 +131,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         return sendRoutingInfoForLCSRequest(addressIMSI);
     }
 
-    @Override
-    public String sendRoutingInfoForLCSRequest(String addressIMSI) {
+    private String sendRoutingInfoForLCSRequest(String addressIMSI) {
 
         if (mapProvider== null) {
 
@@ -236,6 +235,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         return sb.toString();
     }
 
+    @Override
     public String performSubscriberLocationReportRequest(){
         if (!isStarted) {
             return "The tester is not started";
@@ -244,7 +244,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         return subscriberLocationReportRequest();
     }
 
-    public String subscriberLocationReportRequest(){
+    private String subscriberLocationReportRequest(){
         if (mapProvider== null) {
             return "mapProvider is null";
         }
