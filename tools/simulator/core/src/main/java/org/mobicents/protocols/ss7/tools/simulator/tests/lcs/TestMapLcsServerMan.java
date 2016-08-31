@@ -113,6 +113,20 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
     }
 
     @Override
+    public void putAddressNature(String val) {
+        AddressNatureType x = AddressNatureType.createInstance(val);
+        if (x != null)
+            this.setAddressNature(x);
+    }
+
+    @Override
+    public void putNumberingPlanType(String val) {
+        NumberingPlanMapType x = NumberingPlanMapType.createInstance(val);
+        if (x != null)
+            this.setNumberingPlanType(x);
+    }
+
+    @Override
     public String subscriberLocationReportResponse() {
 
         return "subscriberLocationReportResponse called automatically";

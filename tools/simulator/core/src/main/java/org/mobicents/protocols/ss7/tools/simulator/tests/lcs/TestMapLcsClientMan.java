@@ -466,6 +466,27 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         return "LastDialog: " + currentRequestDef;
     }
 
+    @Override
+    public void putAddressNature(String val) {
+        AddressNatureType x = AddressNatureType.createInstance(val);
+        if (x != null)
+            this.setAddressNature(x);
+    }
+
+    @Override
+    public void putNumberingPlanType(String val) {
+        NumberingPlanMapType x = NumberingPlanMapType.createInstance(val);
+        if (x != null)
+            this.setNumberingPlanType(x);
+    }
+
+    @Override
+    public void putLCSEventType(String val) {
+        LCSEventType x = LCSEventType.createInstance(val);
+        if (x != null)
+            this.setLCSEventType(x);
+    }
+
 
     public void onProvideSubscriberLocationRequest(ProvideSubscriberLocationRequest provideSubscriberLocationRequestIndication) {
 

@@ -60,7 +60,7 @@ public class TestMapLcsClientStandardManMBean extends StandardMBean {
                 new MBeanAttributeInfo("NetworkNodeNumberAddress", String.class.getName(),
                                        "NetworkNodeNumber address parameter",
                                        true, true, false),
-                new MBeanAttributeInfo("LCSEvent", LCSEventType.class.getName(),
+                new MBeanAttributeInfo("LCSEventType", LCSEventType.class.getName(),
                                        "LCS Event parameter",
                                        true, true, false),
                 new MBeanAttributeInfo("IMEI", String.class.getName(),
@@ -98,7 +98,20 @@ public class TestMapLcsClientStandardManMBean extends StandardMBean {
         MBeanParameterInfo[] performSRIRequestParam = new MBeanParameterInfo[] {
                        new MBeanParameterInfo("addressIMSI", String.class.getName(), "Address for IMSI") };
 
+        MBeanParameterInfo[] signString = new MBeanParameterInfo[] { new MBeanParameterInfo("val", String.class.getName(), "Index number or value") };
+
         MBeanOperationInfo[] operations = new MBeanOperationInfo[] {
+                new MBeanOperationInfo("putLCSEventType", "Type parameter for LCS Event creating: "
+                        + "0:emergencyCallOrigination,1:emergencyCallRelease,2:molr,3:deferredmtlrResponse", signString,
+                        Void.TYPE.getName(), MBeanOperationInfo.ACTION),
+                new MBeanOperationInfo(
+                        "putAddressNature",
+                        "AddressNature parameter for AddressString creating: "
+                                + "0:unknown,1:international_number,2:national_significant_number,3:network_specific_number,4:subscriber_number,5:reserved,6:abbreviated_number,7:reserved_for_extension",
+                        signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
+                new MBeanOperationInfo("putNumberingPlanType", "NumberingPlan parameter for AddressString creating: "
+                        + "0:unknown,1:ISDN,2:spare_2,3:data,4:telex,5:spare_5,6:land_mobile,7:spare_7,8:national,9:private_plan,15:reserved", signString,
+                        Void.TYPE.getName(), MBeanOperationInfo.ACTION),
                 new MBeanOperationInfo("performSendRoutingInfoForLCSRequest", "Send Routing Information for LCS request",
                                        performSRIRequestParam, String.class.getName(), MBeanOperationInfo.ACTION),
                 new MBeanOperationInfo("performSubscriberLocationReportRequest", "Subscriber Location Report request",

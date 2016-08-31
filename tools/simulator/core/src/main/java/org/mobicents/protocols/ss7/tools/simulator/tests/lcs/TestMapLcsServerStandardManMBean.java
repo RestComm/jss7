@@ -62,7 +62,17 @@ public class TestMapLcsServerStandardManMBean extends StandardMBean {
 
         MBeanParameterInfo[] performSRIResponseParam = new MBeanParameterInfo[] { };
 
+        MBeanParameterInfo[] signString = new MBeanParameterInfo[] { new MBeanParameterInfo("val", String.class.getName(), "Index number or value") };
+
         MBeanOperationInfo[] operations = new MBeanOperationInfo[] {
+                new MBeanOperationInfo(
+                        "putAddressNature",
+                        "AddressNature parameter for AddressString creating: "
+                                + "0:unknown,1:international_number,2:national_significant_number,3:network_specific_number,4:subscriber_number,5:reserved,6:abbreviated_number,7:reserved_for_extension",
+                        signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
+                new MBeanOperationInfo("putNumberingPlanType", "NumberingPlan parameter for AddressString creating: "
+                        + "0:unknown,1:ISDN,2:spare_2,3:data,4:telex,5:spare_5,6:land_mobile,7:spare_7,8:national,9:private_plan,15:reserved", signString,
+                        Void.TYPE.getName(), MBeanOperationInfo.ACTION),
                 new MBeanOperationInfo("performSendRoutingInfoForLCSResponse", "Send Routing Information for LCS response",
                                        performSRIResponseParam, String.class.getName(), MBeanOperationInfo.ACTION),
                 new MBeanOperationInfo("performSubscriberLocationReportResponse", "Subscriber Location Report response",
