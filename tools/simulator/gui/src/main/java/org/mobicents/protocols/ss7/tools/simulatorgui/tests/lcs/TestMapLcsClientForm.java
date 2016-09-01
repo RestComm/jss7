@@ -94,7 +94,7 @@ public class TestMapLcsClientForm extends TestingForm {
         panel.add(panel_1, gbc_panel_1);
 
         JButton btnSendRoutingInfoForLCSRequest = new JButton("SendRoutingInfoForLCSRequest");
-        btnSendRoutingInfoForLCSRequest.setBounds(0, 11, 187, 23);
+        btnSendRoutingInfoForLCSRequest.setBounds(0, 11, 250, 23);
         panel_1.add(btnSendRoutingInfoForLCSRequest);
 
         btnSendRoutingInfoForLCSRequest.addActionListener(new ActionListener() {
@@ -102,6 +102,8 @@ public class TestMapLcsClientForm extends TestingForm {
                 sendRoutingInfoForLCSRequest();
             }
         });
+        /*
+        // SLR Request
         JButton btnSubscriberLocationReportRequest = new JButton("SubscriberLocationReportRequest");
         btnSubscriberLocationReportRequest.setBounds(192, 10, 202, 25);
         panel_1.add(btnSubscriberLocationReportRequest);
@@ -111,6 +113,7 @@ public class TestMapLcsClientForm extends TestingForm {
                 subscriberLocationReportRequest();
             }
         });
+        */
 
 
         JLabel label_3 = new JLabel("Operation result");
