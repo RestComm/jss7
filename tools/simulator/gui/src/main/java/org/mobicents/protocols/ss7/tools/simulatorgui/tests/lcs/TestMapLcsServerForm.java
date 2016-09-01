@@ -99,6 +99,15 @@ public class TestMapLcsServerForm extends TestingForm {
                 subscriberLocationReportResponse();
             }
         });
+        JButton btnSubscriberLocationReportRequest = new JButton("SubscriberLocationReportRequest");
+        btnSubscriberLocationReportRequest.setBounds(0, 30, 249, 25);
+        panel_1.add(btnSubscriberLocationReportRequest);
+
+        btnSubscriberLocationReportRequest.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                subscriberLocationReportRequest();
+            }
+        });
 
         JLabel label_3 = new JLabel("Operation result");
         GridBagConstraints gbc_label_3 = new GridBagConstraints();
@@ -133,6 +142,12 @@ public class TestMapLcsServerForm extends TestingForm {
         gbc_lbState.gridx = 1;
         gbc_lbState.gridy = 7;
         panel.add(lbState, gbc_lbState);
+    }
+
+    private void subscriberLocationReportRequest() {
+        this.lbMessage.setText("");
+        String res = this.mapLcsServer.performSubscriberLocationReportRequest();
+        this.lbResult.setText(res);
     }
 
     private void subscriberLocationReportResponse() {

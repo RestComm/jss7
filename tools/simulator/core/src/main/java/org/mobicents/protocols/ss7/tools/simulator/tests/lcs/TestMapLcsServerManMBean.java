@@ -33,6 +33,9 @@ public interface TestMapLcsServerManMBean {
     String performSendRoutingInfoForLCSResponse();
     String subscriberLocationReportResponse();
     String performSubscriberLocationReportResponse();
+
+    String performSubscriberLocationReportRequest();
+
     // Attributes
     String getNetworkNodeNumberAddress();
     void setNetworkNodeNumberAddress(String address);
@@ -43,11 +46,36 @@ public interface TestMapLcsServerManMBean {
     void setAddressNature(AddressNatureType val);
     void setNumberingPlanType(NumberingPlanMapType val);
 
+    String getMSISDN();
+    void setMSISDN(String msisdn);
+    String getIMSI();
+    void setIMSI(String imsi);
+    Integer getCellId();
+    void setCellId(Integer lac);
+    String getIMEI();
+    void setIMEI(String imei);
+    String getHGMLCAddress();
+    void setHGMLCAddress(String hgmlcAddress);
+    Integer getLAC();
+    void setAgeOfLocationEstimate(Integer ageOfLocationEstimate);
+    Integer getAgeOfLocationEstimate();
+    void setLAC(Integer lac);
+    LCSEventType getLCSEventType();
+    void setLCSEventType(LCSEventType val);
+    Integer getLCSReferenceNumber();
+    void setLCSReferenceNumber(Integer lcsReferenceNumber);
+    Integer getMCC();
+    void setMCC(Integer mcc);
+    Integer getMNC();
+    void setMNC(Integer mnc);
+
     // Methods for configurable properties via HTTP interface for values that are based on EnumeratedBase abstract class
 
     void putAddressNature(String val);
 
     void putNumberingPlanType(String val);
+
+    void putLCSEventType(String val);
 
 
 }
