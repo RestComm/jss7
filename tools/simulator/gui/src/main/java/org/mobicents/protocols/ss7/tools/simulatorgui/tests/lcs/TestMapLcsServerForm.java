@@ -90,6 +90,7 @@ public class TestMapLcsServerForm extends TestingForm {
                 sendRoutingInfoForLCSResponse();
             }
         });
+        /*
         JButton btnSubscriberLocationReportResponse = new JButton("SubscriberLocationReportResponse");
         btnSubscriberLocationReportResponse.setBounds(259, 0, 249, 25);
         panel_1.add(btnSubscriberLocationReportResponse);
@@ -99,6 +100,7 @@ public class TestMapLcsServerForm extends TestingForm {
                 subscriberLocationReportResponse();
             }
         });
+        */
         JButton btnSubscriberLocationReportRequest = new JButton("SubscriberLocationReportRequest");
         btnSubscriberLocationReportRequest.setBounds(0, 30, 249, 25);
         panel_1.add(btnSubscriberLocationReportRequest);

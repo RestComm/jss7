@@ -31,7 +31,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+//import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.LineBorder;
@@ -39,10 +39,10 @@ import javax.swing.JTextField;
 
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
-import org.mobicents.protocols.ss7.map.api.service.lsm.LCSEvent;
+//import org.mobicents.protocols.ss7.map.api.service.lsm.LCSEvent;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
-import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.LCSEventType;
+//import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.LCSEventType;
 import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientManMBean;
 import org.mobicents.protocols.ss7.tools.simulatorgui.M3uaForm;
 import org.apache.log4j.Logger;
@@ -146,7 +146,7 @@ public class TestMapLcsClientParamForm extends JDialog {
         JLabel label_3 = new JLabel("AddressNature, NumberingPlanType from General tab");
         label_3.setBounds(10, 84, 350, 14);
         panelSriDetail.add(label_3);
-
+/*
         JPanel panel_slr = new JPanel();
         tabbedPane.addTab("SLR request", panel_slr);
         panel_slr.setLayout(null);
@@ -287,7 +287,7 @@ public class TestMapLcsClientParamForm extends JDialog {
         cbLcsEvent = new JComboBox();
         cbLcsEvent.setBounds(194, 149, 307, 20);
         panel_3.add(cbLcsEvent);
-
+*/
         // SLR Response
         JPanel panel_slr_resp = new JPanel();
         panel_slr_resp.setLayout(null);
@@ -320,7 +320,7 @@ public class TestMapLcsClientParamForm extends JDialog {
 
         JPanel panel_plr = new JPanel();
         panel_plr.setLayout(null);
-        tabbedPane.addTab("PLR request", null, panel_plr, null);
+        tabbedPane.addTab("PLR ", null, panel_plr, null);
 
         JButton button = new JButton("Load default values for side A");
         button.setBounds(10, 476, 246, 23);
@@ -385,6 +385,7 @@ public class TestMapLcsClientParamForm extends JDialog {
         M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, this.mapLcsClient.getNumberingPlanType());
         //SRI tab
         cbAddress.setText(this.mapLcsClient.getNumberingPlan());
+        /*
         //SLR Request tab
         tfNetworkNodeAddress.setText(this.mapLcsClient.getNetworkNodeNumberAddress());
         this.tfAgeOfLocationEstimate.setText(this.mapLcsClient.getAgeOfLocationEstimate().toString());
@@ -398,6 +399,7 @@ public class TestMapLcsClientParamForm extends JDialog {
         this.tfMnc.setText(this.mapLcsClient.getMNC().toString());
         this.tfMsisdn.setText(this.mapLcsClient.getMSISDN());
         M3uaForm.setEnumeratedBaseComboBox(this.cbLcsEvent, this.mapLcsClient.getLCSEventType());
+        */
         //SLR Response tab
         cbNaEsrdAddress.setText(this.mapLcsClient.getNaESRDAddress());
     }
@@ -408,6 +410,7 @@ public class TestMapLcsClientParamForm extends JDialog {
         M3uaForm.setEnumeratedBaseComboBox(cbNumberingPlan, new NumberingPlanMapType(NumberingPlan.ISDN.getIndicator()));
         //SRI Request tab
         cbAddress.setText("12345678");
+        /*
         //SLR Request tab
         tfNetworkNodeAddress.setText("4444455555");
         this.tfAgeOfLocationEstimate.setText("100");
@@ -421,6 +424,7 @@ public class TestMapLcsClientParamForm extends JDialog {
         this.tfMnc.setText("123");
         this.tfMsisdn.setText("3333344444");
         M3uaForm.setEnumeratedBaseComboBox(this.cbLcsEvent, new LCSEventType(LCSEvent.emergencyCallOrigination.getEvent()));
+        */
         //SLR Response tab
         cbNaEsrdAddress.setText("11114444");
 
@@ -436,6 +440,7 @@ public class TestMapLcsClientParamForm extends JDialog {
         this.mapLcsClient.setNumberingPlanType((NumberingPlanMapType) cbNumberingPlan.getSelectedItem());
         //SRI tab
         this.mapLcsClient.setNumberingPlan(cbAddress.getText());
+        /*
         //SLR tab
         this.mapLcsClient.setNetworkNodeNumberAddress(tfNetworkNodeAddress.getText());
         try {
@@ -454,7 +459,7 @@ public class TestMapLcsClientParamForm extends JDialog {
         this.mapLcsClient.setIMSI(this.tfImsi.getText());
         this.mapLcsClient.setMSISDN(this.tfMsisdn.getText());
         this.mapLcsClient.setLCSEventType((LCSEventType) cbLcsEvent.getSelectedItem());
-
+        */
         //SLR Response tab
         this.mapLcsClient.setNaESRDAddress(cbNaEsrdAddress.getText());
 

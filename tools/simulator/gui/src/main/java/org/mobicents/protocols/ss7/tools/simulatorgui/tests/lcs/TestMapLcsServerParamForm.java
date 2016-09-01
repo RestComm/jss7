@@ -299,10 +299,7 @@ public class TestMapLcsServerParamForm extends JDialog {
         cbLcsEvent.setBounds(194, 149, 307, 20);
         panel_3A.add(cbLcsEvent);
 
-/* */
-
-
-
+        /*
 
         JPanel panel_sri = new JPanel();
         panel_sri.setLayout(null);
@@ -331,9 +328,11 @@ public class TestMapLcsServerParamForm extends JDialog {
         label_3.setBounds(10, 84, 450, 14);
         panelSriDetail.add(label_3);
 
+        */
+
         JPanel panel_plr = new JPanel();
         panel_plr.setLayout(null);
-        tabbedPane.addTab("PLR response", null, panel_plr, null);
+        tabbedPane.addTab("PLR ", null, panel_plr, null);
 
         JButton button = new JButton("Load default values for side A");
         button.setBounds(10, 476, 246, 23);
@@ -400,8 +399,10 @@ public class TestMapLcsServerParamForm extends JDialog {
         tfNetworkNodeNumberAddress.setText(this.mapLcsServer.getNetworkNodeNumberAddress());
         //SRI tab
         tfNetworkNodeAddressSRI.setText(this.mapLcsServer.getNetworkNodeNumberAddress());
-        //SLR tab
+        /*
+        //SLR Response tab
         cbNaEsrdAddress.setText(this.mapLcsServer.getNaESRDAddress());
+        */
         //SLR Request tab
         tfNetworkNodeAddress.setText(this.mapLcsServer.getNetworkNodeNumberAddress());
         this.tfAgeOfLocationEstimate.setText(this.mapLcsServer.getAgeOfLocationEstimate().toString());
@@ -426,8 +427,10 @@ public class TestMapLcsServerParamForm extends JDialog {
         tfNetworkNodeNumberAddress.setText(networkNodeNumberAddressSideA);
         //SRI tab
         tfNetworkNodeAddressSRI.setText(networkNodeNumberAddressSideA);
+        /*
         //SLR Response tab
         cbNaEsrdAddress.setText("11114444");
+        */
         //SLR request tab
         tfNetworkNodeAddress.setText(networkNodeNumberAddressSideA);
         this.tfAgeOfLocationEstimate.setText("100");
@@ -473,8 +476,10 @@ public class TestMapLcsServerParamForm extends JDialog {
         this.mapLcsServer.setIMSI(this.tfImsi.getText());
         this.mapLcsServer.setMSISDN(this.tfMsisdn.getText());
         this.mapLcsServer.setLCSEventType((LCSEventType) cbLcsEvent.getSelectedItem());
-        //SLR tab
+        /*
+        //SLR Response tab
         this.mapLcsServer.setNaESRDAddress(cbNaEsrdAddress.getText());
+        */
         return true;
     }
 }
