@@ -426,7 +426,7 @@ public class TestMapLcsServerParamForm extends JDialog {
         tfNetworkNodeNumberAddress.setText(networkNodeNumberAddressSideA);
         //SRI tab
         tfNetworkNodeAddressSRI.setText(networkNodeNumberAddressSideA);
-        //SLR tab
+        //SLR Response tab
         cbNaEsrdAddress.setText("11114444");
         //SLR request tab
         tfNetworkNodeAddress.setText(networkNodeNumberAddressSideA);
@@ -463,11 +463,11 @@ public class TestMapLcsServerParamForm extends JDialog {
             this.mapLcsServer.setLCSReferenceNumber(Integer.valueOf(this.tfLcsReferenceNumber.getText()));
             this.mapLcsServer.setMCC(Integer.valueOf(this.tfMcc.getText()));
             this.mapLcsServer.setMNC(Integer.valueOf(this.tfMnc.getText()));
+            this.mapLcsServer.setCellId(Integer.valueOf(this.tfCellId.getText()));
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Exception when parsing value: " + e.toString());
+            JOptionPane.showMessageDialog(this, "value: " + e.toString() + "Not valid, must be a number");
             return false;
         }
-        this.mapLcsServer.setCellId(Integer.valueOf(this.tfCellId.getText()));
         this.mapLcsServer.setHGMLCAddress(this.tfHgmlcAddress.getText());
         this.mapLcsServer.setIMEI(this.tfImei.getText());
         this.mapLcsServer.setIMSI(this.tfImsi.getText());
