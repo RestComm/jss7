@@ -84,7 +84,7 @@ public class TestMapLcsServerParamForm extends JDialog {
 
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setResizable(false);
-        setTitle("MAP LCS test client settings");
+        setTitle("MAP LCS test server settings");
         setBounds(100, 100, 640, 584);
         getContentPane().setLayout(null);
 
@@ -154,7 +154,7 @@ public class TestMapLcsServerParamForm extends JDialog {
         panel_1.add(tfNetworkNodeAddressSRI);
 
         JLabel lblAddressnatureNumberingplantypeFrom = new JLabel("NwNodeNumberAddress, AddressNature, NumberingPlanType from General tab");
-        lblAddressnatureNumberingplantypeFrom.setBounds(10, 83, 350, 14);
+        lblAddressnatureNumberingplantypeFrom.setBounds(10, 83, 450, 14);
         panel_1.add(lblAddressnatureNumberingplantypeFrom);
 
         JPanel panel_slr_req = new JPanel();
@@ -178,7 +178,7 @@ public class TestMapLcsServerParamForm extends JDialog {
         panel_1A.add(tfNetworkNodeAddress);
 
         JLabel lblAddressnatureNumberingplantypeFromA = new JLabel("NwNodeNumberAddress, AddressNature, NumberingPlanType from General tab");
-        lblAddressnatureNumberingplantypeFromA.setBounds(10, 83, 350, 14);
+        lblAddressnatureNumberingplantypeFromA.setBounds(10, 83, 450, 14);
         panel_1A.add(lblAddressnatureNumberingplantypeFromA);
 
         JLabel lblMsisdn = new JLabel("MSISDN");
@@ -191,7 +191,7 @@ public class TestMapLcsServerParamForm extends JDialog {
         panel_1A.add(tfMsisdn);
 
         JLabel label_5 = new JLabel("NwNodeNumberAddress, AddressNature, NumberingPlanType from General tab");
-        label_5.setBounds(10, 64, 300, 14);
+        label_5.setBounds(10, 64, 450, 14);
         panel_1A.add(label_5);
 
         JPanel panel_2A = new JPanel();
@@ -328,7 +328,7 @@ public class TestMapLcsServerParamForm extends JDialog {
         panelSriDetail.add(cbNaEsrdAddress);
 
         JLabel label_3 = new JLabel("NwNodeNumberAddress, AddressNature, NumberingPlanType from General tab");
-        label_3.setBounds(10, 84, 266, 14);
+        label_3.setBounds(10, 84, 450, 14);
         panelSriDetail.add(label_3);
 
         JPanel panel_plr = new JPanel();
