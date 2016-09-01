@@ -293,6 +293,14 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
 
     public void onSubscriberLocationReportResponse(SubscriberLocationReportResponse subscriberLocationReportResponseIndication) {
         logger.debug("onSubscriberLocationReportResponse");
+        this.countMapLcsResp++;
+        this.testerHost.sendNotif(SOURCE_NAME,
+                "Rcvd: SubscriberLocationReportResponse", this
+                        .createSLRResData(
+                                subscriberLocationReportResponseIndication
+                                        .getInvokeId(),
+                                subscriberLocationReportResponseIndication
+                                        .getNaESRD().getAddress()), Level.INFO);
 
     }
 
