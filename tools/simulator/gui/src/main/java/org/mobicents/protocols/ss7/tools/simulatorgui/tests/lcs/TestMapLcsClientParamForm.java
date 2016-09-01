@@ -299,8 +299,8 @@ public class TestMapLcsClientParamForm extends JDialog {
         panelSlrRespDetail.setBounds(10, 24, 511, 109);
         panel_slr_resp.add(panelSlrRespDetail);
 
-        JLabel lblNaEsrdParameters = new JLabel("NA-ESRD parameters");
-        lblNaEsrdParameters.setBounds(10, 11, 266, 14);
+        JLabel lblNaEsrdParameters = new JLabel("NA-ESRD parameters for auto response");
+        lblNaEsrdParameters.setBounds(10, 11, 350, 14);
         panelSlrRespDetail.add(lblNaEsrdParameters);
 
         JLabel lblNaEsrdAddress = new JLabel("NA-ESRD address");

@@ -508,6 +508,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
 
     public void onSubscriberLocationReportRequest(SubscriberLocationReportRequest subscriberLocationReportRequestIndication) {
         logger.debug("onSubscriberLocationReportRequest");
+        this.countMapLcsReq++;
         if (!isStarted)
             return;
 
@@ -528,6 +529,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
             logger.debug("set addSubscriberLocationReportResponse");
             curDialog.send();
             logger.debug("addSubscriberLocationReportResponse sent");
+            this.countMapLcsResp++;
 
             this.testerHost.sendNotif(SOURCE_NAME, "Sent: SubscriberLocationReportResponse",
                    createSLRResData(curDialog.getLocalDialogId(),getNaESRDAddress() ), Level.INFO);
@@ -576,11 +578,11 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     public void onSendRoutingInfoForLCSResponse(SendRoutingInfoForLCSResponse sendRoutingInforForLCSResponseIndication){
         logger.debug("onSendRoutingInfoForLCSResponse");
         this.countMapLcsResp++;
+        MAPDialogLsm curDialog = sendRoutingInforForLCSResponseIndication.getMAPDialog();
         this.testerHost.sendNotif(SOURCE_NAME,
                 "Rcvd: SendRoutingInfoForLCSResponse", this
                         .createSRIforLCSResData(
-                                sendRoutingInforForLCSResponseIndication
-                                        .getInvokeId(),
+                                curDialog.getLocalDialogId(),
                                 sendRoutingInforForLCSResponseIndication
                                         .getLCSLocationInfo()
                                         .getNetworkNodeNumber().getAddress()),

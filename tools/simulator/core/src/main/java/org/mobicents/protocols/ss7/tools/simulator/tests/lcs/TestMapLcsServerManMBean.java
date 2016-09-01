@@ -36,6 +36,10 @@ public interface TestMapLcsServerManMBean {
 
     String performSubscriberLocationReportRequest();
 
+    // Other
+
+    String getCurrentRequestDef();
+
     // Attributes
     String getNetworkNodeNumberAddress();
     void setNetworkNodeNumberAddress(String address);
