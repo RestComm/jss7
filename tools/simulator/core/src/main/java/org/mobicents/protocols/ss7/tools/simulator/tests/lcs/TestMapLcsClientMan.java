@@ -225,6 +225,15 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         sb.append(hgmlcAddress);
         return sb.toString();
     }
+    private String createSLRReqData(Long dialogId, String networkNodeNumberAddress) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("dialogId=");
+        sb.append(dialogId);
+        sb.append(", networkNodeNumber=\"");
+        sb.append(networkNodeNumberAddress);
+        sb.append("\"");
+        return sb.toString();
+    }
     private String createSLRResData(long dialogId, String address) {
         StringBuilder sb = new StringBuilder();
         sb.append("dialogId=");
@@ -498,6 +507,34 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     }
 
     public void onSubscriberLocationReportRequest(SubscriberLocationReportRequest subscriberLocationReportRequestIndication) {
+        logger.debug("onSubscriberLocationReportRequest");
+        if (!isStarted)
+            return;
+
+        MAPDialogLsm curDialog = subscriberLocationReportRequestIndication.getMAPDialog();
+        String networkNodeNumberAddress = subscriberLocationReportRequestIndication.getLCSLocationInfo().getNetworkNodeNumber().getAddress();
+
+        this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: SubscriberLocationReportRequest",
+                   createSLRReqData(curDialog.getLocalDialogId(),networkNodeNumberAddress), Level.INFO);
+
+        MAPParameterFactory mapParameterFactory = this.mapProvider.getMAPParameterFactory();
+        ISDNAddressString naEsrd = mapParameterFactory.createISDNAddressString(
+                AddressNature.getInstance(getAddressNature().intValue()),
+                NumberingPlan.getInstance(getNumberingPlanType().intValue()),
+                getNaESRDAddress());
+
+        try {
+            curDialog.addSubscriberLocationReportResponse(subscriberLocationReportRequestIndication.getInvokeId(), naEsrd, null, null);
+            logger.debug("set addSubscriberLocationReportResponse");
+            curDialog.send();
+            logger.debug("addSubscriberLocationReportResponse sent");
+
+            this.testerHost.sendNotif(SOURCE_NAME, "Sent: SubscriberLocationReportResponse",
+                   createSLRResData(curDialog.getLocalDialogId(),getNaESRDAddress() ), Level.INFO);
+
+         } catch (MAPException e) {
+            logger.debug("Failed building response "+e.toString());
+        }
     }
 
     public void onSubscriberLocationReportResponse(SubscriberLocationReportResponse subscriberLocationReportResponseIndication) {
@@ -520,6 +557,16 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     @Override
     public void setNetworkNodeNumberAddress(String data) {
         this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setNetworkNodeNumberAddress(data);
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public String getNaESRDAddress(){
+        return this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getNaESRDAddress();
+    }
+    @Override
+    public void setNaESRDAddress(String address) {
+        this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setNaESRDAddress(address);
         this.testerHost.markStore();
     }
 

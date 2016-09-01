@@ -49,7 +49,11 @@ public interface TestMapLcsClientManMBean {
 
     void setNumberingPlanType(NumberingPlanMapType val);
 
-    // SLR
+    // SLR Response
+    String getNaESRDAddress();
+    void setNaESRDAddress(String address);
+
+    // SLR Request
     String getNetworkNodeNumberAddress();
     void setNetworkNodeNumberAddress(String val);
     String getHGMLCAddress();

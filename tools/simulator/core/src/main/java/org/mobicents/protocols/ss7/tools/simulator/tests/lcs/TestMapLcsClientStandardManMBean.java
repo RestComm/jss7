@@ -48,11 +48,14 @@ public class TestMapLcsClientStandardManMBean extends StandardMBean {
     public MBeanInfo getMBeanInfo() {
 
         MBeanAttributeInfo[] attributes = new MBeanAttributeInfo[] {
+                new MBeanAttributeInfo("NaESRDAddress", String.class.getName(),
+                                       "NaESRD address parameter for response",
+                                       true, true, false),
                 new MBeanAttributeInfo("AddressNature", AddressNatureType.class.getName(),
-                                       "AddressNature parameter for address creation (mlcNumber, networkNodeNumber)",
+                                       "AddressNature parameter for address creation (mlcNumber, networkNodeNumber, NaESRD)",
                                        true, true, false),
                 new MBeanAttributeInfo("NumberingPlanType", NumberingPlanMapType.class.getName(),
-                                       "NumberingPlanType parameter for address creation (numberingPlan,networkNodeNumber)",
+                                       "NumberingPlanType parameter for address creation (numberingPlan,networkNodeNumber, NaESRD)",
                                        true, true, false),
                 new MBeanAttributeInfo("NumberingPlan", String.class.getName(),
                                        "NumberingPlan parameter for mlcNumber address creation",

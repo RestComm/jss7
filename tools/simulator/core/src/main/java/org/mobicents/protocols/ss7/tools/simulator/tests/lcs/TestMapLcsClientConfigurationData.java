@@ -38,6 +38,7 @@ import javolution.xml.stream.XMLStreamException;
 */
 public class TestMapLcsClientConfigurationData {
 
+    protected static final String NA_ESRD_ADDRESS = "na_esrd_address";
     protected static final String ADDRESS_NATURE = "addressNature";
     protected static final String NUMBERING_PLAN_TYPE = "numberingPlanType";
     protected static final String NUMBERING_PLAN = "numberingPlan";
@@ -126,6 +127,7 @@ public class TestMapLcsClientConfigurationData {
         this.lcsEvent = lcsEvent;
     }
 
+    private String naESRDAddress = "11114444";
 
     private AddressNature addressNature = AddressNature.international_number;
     private NumberingPlan numberingPlanType = NumberingPlan.ISDN;
@@ -142,6 +144,14 @@ public class TestMapLcsClientConfigurationData {
     private Integer lcsReferenceNumber = 111;
     private Integer ageOfLocationEstimate = 100;
     private LCSEvent lcsEvent = LCSEvent.emergencyCallOrigination;
+
+    public String getNaESRDAddress() {
+        return naESRDAddress;
+    }
+
+    public void setNaESRDAddress(String naESRDAddress) {
+        this.naESRDAddress = naESRDAddress;
+    }
 
     public String getMSISDN() {
         return msisdn;
@@ -195,6 +205,7 @@ public class TestMapLcsClientConfigurationData {
 
         public void write(TestMapLcsClientConfigurationData clt, OutputElement xml) throws XMLStreamException {
 
+            xml.add(clt.naESRDAddress.toString(), NA_ESRD_ADDRESS, String.class);
             xml.add(clt.addressNature.toString(), ADDRESS_NATURE, String.class);
             xml.add(clt.numberingPlanType.toString(), NUMBERING_PLAN_TYPE, String.class);
             xml.add(clt.numberingPlan.toString(), NUMBERING_PLAN, String.class);
@@ -214,6 +225,8 @@ public class TestMapLcsClientConfigurationData {
 
         public void read(InputElement xml, TestMapLcsClientConfigurationData clt) throws XMLStreamException {
 
+            String naESRDAddress = (String) xml.get(NA_ESRD_ADDRESS, String.class);
+            clt.naESRDAddress = naESRDAddress;
             String an = (String) xml.get(ADDRESS_NATURE, String.class);
             clt.addressNature = AddressNature.valueOf(an);
             String npt = (String) xml.get(NUMBERING_PLAN_TYPE, String.class);
