@@ -32,6 +32,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JOptionPane;
 
 //import org.mobicents.protocols.ss7.tools.simulator.tests.checkimei.CheckImeiClientAction;
 import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientManMBean;
@@ -168,8 +169,13 @@ public class TestMapLcsClientForm extends TestingForm {
     }
 
     private void sendRoutingInfoForLCSRequest() {
-        this.lbMessage.setText("");
+
         String address = this.tbAddress.getText();
+        if (address.length()<5) {
+            JOptionPane.showMessageDialog(this, "IMSI/MSISDN must be at least 5 digits");
+            return;
+        }
+        this.lbMessage.setText("");
         String res = this.mapLcsClient.performSendRoutingInfoForLCSRequest(address);
         this.lbResult.setText(res);
     }

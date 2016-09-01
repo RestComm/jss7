@@ -81,6 +81,7 @@ public class TestMapLcsServerForm extends TestingForm {
         gbc_panel_1.gridy = 3;
         panel.add(panel_1, gbc_panel_1);
 
+        /*
         JButton btnSendRoutingInfoForLCSResponse = new JButton("SendRoutingInfoForLCSResponse");
         btnSendRoutingInfoForLCSResponse.setBounds(0, 0, 249, 25);
         panel_1.add(btnSendRoutingInfoForLCSResponse);
@@ -90,7 +91,7 @@ public class TestMapLcsServerForm extends TestingForm {
                 sendRoutingInfoForLCSResponse();
             }
         });
-        /*
+
         JButton btnSubscriberLocationReportResponse = new JButton("SubscriberLocationReportResponse");
         btnSubscriberLocationReportResponse.setBounds(259, 0, 249, 25);
         panel_1.add(btnSubscriberLocationReportResponse);
@@ -194,6 +195,9 @@ public class TestMapLcsServerForm extends TestingForm {
     public void refreshState() {
         super.refreshState();
 
-        this.lbState.setText("No op Refreshed");
+        super.refreshState();
+
+        String s1 = this.mapLcsServer.getCurrentRequestDef();
+        this.lbState.setText(s1);
     }
 }

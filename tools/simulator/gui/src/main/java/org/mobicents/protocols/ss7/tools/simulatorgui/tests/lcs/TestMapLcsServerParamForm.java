@@ -141,8 +141,8 @@ public class TestMapLcsServerParamForm extends JDialog {
         panel_1.setBounds(10, 24, 511, 104);
         panel_slr.add(panel_1);
 
-        JLabel lblParametersForNetworknodenumber = new JLabel("Network Node Number parameters");
-        lblParametersForNetworknodenumber.setBounds(10, 11, 266, 14);
+        JLabel lblParametersForNetworknodenumber = new JLabel("Network Node Number parameters for auto response");
+        lblParametersForNetworknodenumber.setBounds(10, 11, 350, 14);
         panel_1.add(lblParametersForNetworknodenumber);
 
         JLabel lblNetworknodenumberaddressSRI = new JLabel("Network Node Number address");
@@ -156,6 +156,7 @@ public class TestMapLcsServerParamForm extends JDialog {
         JLabel lblAddressnatureNumberingplantypeFrom = new JLabel("NwNodeNumberAddress, AddressNature, NumberingPlanType from General tab");
         lblAddressnatureNumberingplantypeFrom.setBounds(10, 83, 450, 14);
         panel_1.add(lblAddressnatureNumberingplantypeFrom);
+
 
         JPanel panel_slr_req = new JPanel();
         tabbedPane.addTab("SLR request", panel_slr_req);

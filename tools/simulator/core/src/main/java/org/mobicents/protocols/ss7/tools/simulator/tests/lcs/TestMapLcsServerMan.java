@@ -101,8 +101,11 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append(SOURCE_NAME);
-        sb.append(": CurDialog=");
-        sb.append("No");
+        sb.append(": ");
+        sb.append("<br>Count: countMapLcsReq-");
+        sb.append(countMapLcsReq);
+        sb.append(", countMapLcsResp-");
+        sb.append(countMapLcsResp);
         sb.append("</html>");
         return sb.toString();
     }
@@ -294,11 +297,11 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
     public void onSubscriberLocationReportResponse(SubscriberLocationReportResponse subscriberLocationReportResponseIndication) {
         logger.debug("onSubscriberLocationReportResponse");
         this.countMapLcsResp++;
+        MAPDialogLsm curDialog = subscriberLocationReportResponseIndication.getMAPDialog();
         this.testerHost.sendNotif(SOURCE_NAME,
                 "Rcvd: SubscriberLocationReportResponse", this
                         .createSLRResData(
-                                subscriberLocationReportResponseIndication
-                                        .getInvokeId(),
+                                curDialog.getLocalDialogId(),
                                 subscriberLocationReportResponseIndication
                                         .getNaESRD().getAddress()), Level.INFO);
 
@@ -306,6 +309,8 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
 
     public void onSendRoutingInfoForLCSRequest(SendRoutingInfoForLCSRequest sendRoutingInforForLCSRequestIndication) {
         logger.debug("onSendRoutingInfoForLCSRequest");
+
+        this.countMapLcsReq++;
 
         if (!isStarted)
             return;
@@ -320,7 +325,8 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
 
         this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: SendRoutingInfoForLCSRequest",
                    createSRIforLCSReqData(curDialog.getLocalDialogId(),
-                   mlc.getAddress() ), Level.INFO);
+                   mlc.getAddress(),
+                   targetMS.getIMSI().getData()), Level.INFO);
 
 
         ISDNAddressString networkNodeNumber = mapParameterFactory.createISDNAddressString(
@@ -346,6 +352,7 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
             logger.debug("set addSendRoutingInfoForLCSResponse");
             curDialog.send();
             logger.debug("addSendRoutingInfoForLCSResponse sent");
+            this.countMapLcsResp++;
 
             this.testerHost.sendNotif(SOURCE_NAME, "Sent: SendRoutingInfoForLCSResponse",
                    createSRIforLCSResData(curDialog.getLocalDialogId(),
@@ -357,12 +364,15 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
 
     }
 
-    private String createSRIforLCSReqData(long dialogId, String address) {
+    private String createSRIforLCSReqData(long dialogId, String address,String imsi) {
         StringBuilder sb = new StringBuilder();
         sb.append("dialogId=");
         sb.append(dialogId);
         sb.append(", address=\"");
         sb.append(address);
+        sb.append("\"");
+        sb.append(", imsi=\"");
+        sb.append(imsi);
         sb.append("\"");
         return sb.toString();
     }
@@ -572,6 +582,10 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
     public void setCellId(Integer cellId){
         this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setCellId(cellId);
         this.testerHost.markStore();
+    }
+    @Override
+    public String getCurrentRequestDef() {
+        return "LastDialog: " + currentRequestDef;
     }
 
 
