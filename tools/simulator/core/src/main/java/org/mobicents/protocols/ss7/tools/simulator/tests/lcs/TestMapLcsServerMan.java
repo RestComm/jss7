@@ -25,6 +25,28 @@ import org.mobicents.protocols.ss7.tools.simulator.common.TesterBase;
 import org.mobicents.protocols.ss7.tools.simulator.level3.MapMan;
 import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
+import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientID;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSEvent;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
+import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
+import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
+import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdFixedLength;
+import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdOrLAI;
+import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
+import org.mobicents.protocols.ss7.map.api.primitives.GSNAddressAddressType;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+
+
+
+
 
 
 
@@ -42,6 +64,10 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
     private boolean isStarted = false;
     private MAPProvider mapProvider;
     private MAPServiceLsm mapServiceLsm;
+    private MAPParameterFactory mapParameterFactory;
+    private int countMapLcsReq = 0;
+    private int countMapLcsResp = 0;
+    private String currentRequestDef = "";
 
     public TestMapLcsServerMan(String name) {
         super(SOURCE_NAME);
@@ -52,6 +78,7 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
 
         this.mapProvider = this.mapMan.getMAPStack().getMAPProvider();
         mapServiceLsm = mapProvider.getMAPServiceLsm();
+        this.mapParameterFactory = mapProvider.getMAPParameterFactory();
         mapServiceLsm.acivate();
         mapServiceLsm.addMAPServiceListener(this);
         mapProvider.addMAPDialogListener(this);
@@ -112,6 +139,80 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
         return subscriberLocationReportResponse();
     }
 
+        @Override
+    public String performSubscriberLocationReportRequest(){
+        if (!isStarted) {
+            return "The tester is not started";
+        }
+
+        return subscriberLocationReportRequest();
+    }
+
+    private String subscriberLocationReportRequest(){
+        if (mapProvider== null) {
+            return "mapProvider is null";
+        }
+
+
+        try {
+
+            MAPApplicationContext appCnt = null;
+
+            appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationSvcEnquiryContext,
+                MAPApplicationContextVersion.version3);
+
+            MAPDialogLsm clientDialogLsm = mapServiceLsm.createNewDialog(appCnt, this.mapMan.createOrigAddress(), null,
+                   this.mapMan.createDestAddress(), null);
+
+            logger.debug("MAPDialogLsm Created");
+
+            // Mandatory parameters
+            LCSClientID lcsClientID = mapParameterFactory.createLCSClientID(LCSClientType.plmnOperatorServices, null, null,
+                    null, null, null, null);
+            LCSEvent lcsEvent = this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getLCSEvent();
+            ISDNAddressString networkNodeNumber = mapParameterFactory.createISDNAddressString(
+                    this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getAddressNature(),
+                    this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getNumberingPlanType(),
+                    getNetworkNodeNumberAddress());
+            LCSLocationInfo lcsLocationInfo = mapParameterFactory.createLCSLocationInfo(networkNodeNumber, null, null, false,
+                    null, null, null, null, null);
+
+            // Conditional parameters
+            IMSI imsi = mapParameterFactory.createIMSI(getIMSI());
+            ISDNAddressString msisdn = mapParameterFactory.createISDNAddressString(
+                    this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getAddressNature(),
+                    this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getNumberingPlanType(),
+                    getMSISDN());
+            LMSI lmsi = mapParameterFactory.createLMSI(new byte[] { 49, 48, 47, 46 });//TODO make this configurable
+            IMEI imei = mapParameterFactory.createIMEI(getIMEI());
+
+            GSNAddress hgmlcAddress = createGSNAddress(getHGMLCAddress());
+
+            CellGlobalIdOrServiceAreaIdFixedLength cellGlobalIdOrServiceAreaIdFixedLength = mapParameterFactory.createCellGlobalIdOrServiceAreaIdFixedLength(this.getMCC(), this.getMNC(), this.getLAC(), this.getCellId());
+            CellGlobalIdOrServiceAreaIdOrLAI cellIdOrSai = mapParameterFactory.createCellGlobalIdOrServiceAreaIdOrLAI(cellGlobalIdOrServiceAreaIdFixedLength);
+            clientDialogLsm.addSubscriberLocationReportRequest(lcsEvent, lcsClientID, lcsLocationInfo,
+                    msisdn, imsi, imei,  null, null, null, getAgeOfLocationEstimate(), null, null,null, getLCSReferenceNumber(), null,
+                    null, cellIdOrSai, hgmlcAddress,  null, false, false, null, null, null, null, false, null, null, null);
+            logger.debug("Added SubscriberLocationReportRequest");
+
+            clientDialogLsm.send();
+
+            this.countMapLcsReq++;
+
+            this.testerHost.sendNotif(SOURCE_NAME, "Sent: SubscriberLocationReportRequest", createSLRReqData(clientDialogLsm.getLocalDialogId(),lcsEvent,
+                    this.getNetworkNodeNumberAddress(), lcsClientID, msisdn,imsi,imei, lmsi, getAgeOfLocationEstimate(),getLCSReferenceNumber(),cellIdOrSai,hgmlcAddress), Level.INFO);
+
+            currentRequestDef += "Sent SLR Request;";
+
+        }
+        catch(MAPException e) {
+            return "Exception "+e.toString();
+        }
+
+        return "subscriberLocationReportRequest sent";
+    }
+
+
     @Override
     public void putAddressNature(String val) {
         AddressNatureType x = AddressNatureType.createInstance(val);
@@ -124,6 +225,13 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
         NumberingPlanMapType x = NumberingPlanMapType.createInstance(val);
         if (x != null)
             this.setNumberingPlanType(x);
+    }
+
+    @Override
+    public void putLCSEventType(String val) {
+        LCSEventType x = LCSEventType.createInstance(val);
+        if (x != null)
+            this.setLCSEventType(x);
     }
 
     @Override
@@ -279,6 +387,28 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
         sb.append("\"");
         return sb.toString();
     }
+
+private String createSLRReqData(long dialogId, LCSEvent lcsEvent, String address, LCSClientID lcsClientID, ISDNAddressString msisdn, IMSI imsi, IMEI imei, LMSI lmsi, Integer ageOfLocationEstimate, Integer lcsReferenceNumber, CellGlobalIdOrServiceAreaIdOrLAI cellIdOrSai, GSNAddress hgmlcAddress) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("dialogId=");
+        sb.append(dialogId);
+        sb.append(", lcsEvent=\"");
+        sb.append(lcsEvent);
+        sb.append("\", networkNodeNumber=\"");
+        sb.append(address).append(", ");
+        sb.append(lcsClientID).append(", ");
+        sb.append(msisdn).append(", ");
+        sb.append(imsi).append(", ");
+        sb.append("\", ageOfLocationEstimate=\"");
+        sb.append(ageOfLocationEstimate);
+        sb.append("\", lcsReferenceNumber=\"");
+        sb.append(lcsReferenceNumber).append("\", ");
+        sb.append(lmsi).append(", ");
+        sb.append(cellIdOrSai).append(", ");
+        sb.append(hgmlcAddress);
+        return sb.toString();
+    }
+
     public void onSendRoutingInfoForLCSResponse(SendRoutingInfoForLCSResponse sendRoutingInforForLCSResponseIndication){
         logger.debug("onSendRoutingInfoForLCSResponse");
 
@@ -316,4 +446,125 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
         this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setNumberingPlanType(NumberingPlan.getInstance(val.intValue()));
         this.testerHost.markStore();
     }
+
+    @Override
+    public String getIMSI() {
+        return this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getIMSI();
+    }
+    @Override
+    public void setIMSI(String imsi){
+        this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setIMSI(imsi);
+        this.testerHost.markStore();
+    }
+    @Override
+    public String getIMEI() {
+        return this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getIMEI();
+    }
+    @Override
+    public void setIMEI(String imei){
+        this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setIMEI(imei);
+        this.testerHost.markStore();
+    }
+    @Override
+    public String getMSISDN() {
+        return this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getMSISDN();
+    }
+    @Override
+    public void setMSISDN(String msisdn){
+        this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setMSISDN(msisdn);
+        this.testerHost.markStore();
+    }
+    @Override
+    public String getHGMLCAddress() {
+        return this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getHGMLCAddress();
+    }
+    @Override
+    public void setHGMLCAddress(String hgmlcAddress){
+        this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setHGMLCAddress(hgmlcAddress);
+        this.testerHost.markStore();
+    }
+    @Override
+    public Integer getMNC() {
+        return this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getMNC();
+    }
+    @Override
+    public void setMNC(Integer mnc){
+        this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setMNC(mnc);
+        this.testerHost.markStore();
+    }
+    @Override
+    public Integer getMCC() {
+        return this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getMCC();
+    }
+    @Override
+    public void setMCC(Integer mcc){
+        this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setMCC(mcc);
+        this.testerHost.markStore();
+    }
+    @Override
+    public Integer getAgeOfLocationEstimate() {
+        return this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getAgeOfLocationEstimate();
+    }
+    @Override
+    public void setAgeOfLocationEstimate(Integer ageLocationEstimate){
+        this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setAgeOfLocationEstimate(ageLocationEstimate);
+        this.testerHost.markStore();
+    }
+    @Override
+    public Integer getLCSReferenceNumber() {
+        return this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getLCSReferenceNumber();
+    }
+    @Override
+    public void setLCSReferenceNumber(Integer lcsReferenceNumber){
+        this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setLCSReferenceNumber(lcsReferenceNumber);
+        this.testerHost.markStore();
+    }
+    @Override
+    public LCSEventType getLCSEventType() {
+        return new LCSEventType(this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getLCSEvent().getEvent());
+    }
+    @Override
+    public void setLCSEventType(LCSEventType val){
+        this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setLCSEvent(LCSEvent.getLCSEvent(val.intValue()));
+        this.testerHost.markStore();
+    }
+    @Override
+    public Integer getLAC() {
+        return this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getLAC();
+    }
+    @Override
+    public void setLAC(Integer lac){
+        this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setLAC(lac);
+        this.testerHost.markStore();
+    }
+     //TODO move this helper method to constructor type...
+    private GSNAddress createGSNAddress(String gsnAddress) throws MAPException {
+        try {
+            //From InetAddress javadoc "the host name can either be a machine name, such as "java.sun.com", or a textual representation of its IP address.
+            //If a literal IP address is supplied, only the validity of the address format is checked".
+            InetAddress address = InetAddress.getByName(gsnAddress);
+            GSNAddressAddressType addressType = null;
+            if (address instanceof Inet4Address) {
+                addressType = GSNAddressAddressType.IPv4;
+            } else if (address instanceof Inet6Address) {
+                addressType = GSNAddressAddressType.IPv6;
+            }
+            byte[] addressData = address.getAddress();
+            return this.mapParameterFactory.createGSNAddress(addressType, addressData);
+
+        } catch (UnknownHostException e) {
+            throw new MAPException("Invalid GSNAddress",e);
+        }
+    }
+    @Override
+    public Integer getCellId() {
+        return this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getCellId();
+    }
+    @Override
+    public void setCellId(Integer cellId){
+        this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().setCellId(cellId);
+        this.testerHost.markStore();
+    }
+
+
 }
