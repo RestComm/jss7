@@ -205,7 +205,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         return sb.toString();
     }
 
-    private String createSLRReqData(long dialogId, LCSEvent lcsEvent, String address, LCSClientID lcsClientID, ISDNAddressString msisdn, IMSI imsi, IMEI imei, LMSI lmsi, Integer ageOfLocationEstimate, Integer lcsReferenceNumber, CellGlobalIdOrServiceAreaIdOrLAI cellIdOrSai, GSNAddress hgmlcAddress) {
+    private String createSLRReqData(long dialogId, LCSEvent lcsEvent, String address, LCSClientID lcsClientID, ISDNAddressString msisdn, IMSI imsi, IMEI imei, Integer ageOfLocationEstimate, Integer lcsReferenceNumber, CellGlobalIdOrServiceAreaIdOrLAI cellIdOrSai, GSNAddress hgmlcAddress) {
         StringBuilder sb = new StringBuilder();
         sb.append("dialogId=");
         sb.append(dialogId);
@@ -220,7 +220,6 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         sb.append(ageOfLocationEstimate);
         sb.append("\", lcsReferenceNumber=\"");
         sb.append(lcsReferenceNumber).append("\", ");
-        sb.append(lmsi).append(", ");
         sb.append(cellIdOrSai).append(", ");
         sb.append(hgmlcAddress);
         return sb.toString();
@@ -305,7 +304,7 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
             this.countMapLcsReq++;
 
             this.testerHost.sendNotif(SOURCE_NAME, "Sent: SubscriberLocationReportRequest", createSLRReqData(clientDialogLsm.getLocalDialogId(),lcsEvent,
-                    this.getNetworkNodeNumberAddress(), lcsClientID, msisdn,imsi,imei, lmsi, getAgeOfLocationEstimate(),getLCSReferenceNumber(),cellIdOrSai,hgmlcAddress), Level.INFO);
+                    this.getNetworkNodeNumberAddress(), lcsClientID, msisdn,imsi,imei, getAgeOfLocationEstimate(),getLCSReferenceNumber(),cellIdOrSai,hgmlcAddress), Level.INFO);
 
             currentRequestDef += "Sent SLR Request;";
 
@@ -516,7 +515,16 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         String networkNodeNumberAddress = subscriberLocationReportRequestIndication.getLCSLocationInfo().getNetworkNodeNumber().getAddress();
 
         this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: SubscriberLocationReportRequest",
-                   createSLRReqData(curDialog.getLocalDialogId(),networkNodeNumberAddress), Level.INFO);
+                    createSLRReqData(curDialog.getLocalDialogId(),  subscriberLocationReportRequestIndication.getLCSEvent(),
+                    networkNodeNumberAddress,
+                    subscriberLocationReportRequestIndication.getLCSClientID(),
+                    subscriberLocationReportRequestIndication.getMSISDN(),
+                    subscriberLocationReportRequestIndication.getIMSI(),
+                    subscriberLocationReportRequestIndication.getIMEI(),
+                    subscriberLocationReportRequestIndication.getAgeOfLocationEstimate(),
+                    subscriberLocationReportRequestIndication.getLCSReferenceNumber(),
+                    subscriberLocationReportRequestIndication.getCellGlobalIdOrServiceAreaIdOrLAI(), //cellIdOrSai,
+                    subscriberLocationReportRequestIndication.getHGMLCAddress()), Level.INFO);
 
         MAPParameterFactory mapParameterFactory = this.mapProvider.getMAPParameterFactory();
         ISDNAddressString naEsrd = mapParameterFactory.createISDNAddressString(

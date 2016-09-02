@@ -33,7 +33,6 @@ import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
 import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
-import org.mobicents.protocols.ss7.map.api.primitives.LMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdFixedLength;
 import org.mobicents.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdOrLAI;
 import org.mobicents.protocols.ss7.map.api.primitives.GSNAddress;
@@ -186,7 +185,7 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
                     this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getAddressNature(),
                     this.testerHost.getConfigurationData().getTestMapLcsServerConfigurationData().getNumberingPlanType(),
                     getMSISDN());
-            LMSI lmsi = mapParameterFactory.createLMSI(new byte[] { 49, 48, 47, 46 });//TODO make this configurable
+
             IMEI imei = mapParameterFactory.createIMEI(getIMEI());
 
             GSNAddress hgmlcAddress = createGSNAddress(getHGMLCAddress());
@@ -203,7 +202,7 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
             this.countMapLcsReq++;
 
             this.testerHost.sendNotif(SOURCE_NAME, "Sent: SubscriberLocationReportRequest", createSLRReqData(clientDialogLsm.getLocalDialogId(),lcsEvent,
-                    this.getNetworkNodeNumberAddress(), lcsClientID, msisdn,imsi,imei, lmsi, getAgeOfLocationEstimate(),getLCSReferenceNumber(),cellIdOrSai,hgmlcAddress), Level.INFO);
+                    this.getNetworkNodeNumberAddress(), lcsClientID, msisdn,imsi,imei, getAgeOfLocationEstimate(),getLCSReferenceNumber(),cellIdOrSai,hgmlcAddress), Level.INFO);
 
             currentRequestDef += "Sent SLR Request;";
 
@@ -406,7 +405,7 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
         return sb.toString();
     }
 
-    private String createSLRReqData(long dialogId, LCSEvent lcsEvent, String address, LCSClientID lcsClientID, ISDNAddressString msisdn, IMSI imsi, IMEI imei, LMSI lmsi, Integer ageOfLocationEstimate, Integer lcsReferenceNumber, CellGlobalIdOrServiceAreaIdOrLAI cellIdOrSai, GSNAddress hgmlcAddress) {
+    private String createSLRReqData(long dialogId, LCSEvent lcsEvent, String address, LCSClientID lcsClientID, ISDNAddressString msisdn, IMSI imsi, IMEI imei, Integer ageOfLocationEstimate, Integer lcsReferenceNumber, CellGlobalIdOrServiceAreaIdOrLAI cellIdOrSai, GSNAddress hgmlcAddress) {
         StringBuilder sb = new StringBuilder();
         sb.append("dialogId=");
         sb.append(dialogId);
@@ -421,7 +420,6 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
         sb.append(ageOfLocationEstimate);
         sb.append("\", lcsReferenceNumber=\"");
         sb.append(lcsReferenceNumber).append("\", ");
-        sb.append(lmsi).append(", ");
         sb.append(cellIdOrSai).append(", ");
         sb.append(hgmlcAddress);
         return sb.toString();
