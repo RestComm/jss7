@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<heartbeattime value="10000"/>
+<useLsbForLinksetSelection value="false"/>
+<aspFactoryList>
+	<aspFactory name="testasp1" started="true" maxseqnumber="256" aspid="9" heartbeat="false"/>
+	<aspFactory name="testasp2" started="true" maxseqnumber="256" aspid="10" heartbeat="false"/>
+</aspFactoryList>
+<asList>
+	<as name="testas1" minAspActiveForLb="1" functionality="SGW" exchangeType="SE">
+		<defTrafficMode mode="2"/>
+		<asps>
+			<asp name="testasp1"/>
+		</asps>
+	</as>
+	<as name="testas2" minAspActiveForLb="1" functionality="SGW" exchangeType="SE">
+		<defTrafficMode mode="2"/>
+		<asps>
+			<asp name="testasp2"/>
+		</asps>
+	</as>
+</asList>
+<route>
+	<key value="2:-1:-1"/>
+	<routeAs trafficModeType="2" as="testas1,testas2"/>
+</route>
