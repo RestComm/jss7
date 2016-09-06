@@ -647,7 +647,8 @@ public class AsImpl implements XMLSerializable, As {
                         aspFsm = aspTemp.getPeerFSM();
                     }
 
-                    if (AspState.getState(aspFsm.getState().getName()) == AspState.ACTIVE &&
+                    if (AspState.getState(aspFsm.getState().getName()) == AspState.ACTIVE
+                            &&
                             aspTemp.getAspFactory().getAssociation().isConnected()) {
                         if (aspTemp.getAspFactory().getAssociation().getCongestionLevel() > 1) {
                             aspCong = aspTemp;
