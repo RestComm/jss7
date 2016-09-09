@@ -262,6 +262,11 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
     }
 
     @Override
+    public void onCallGapRequest(org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallGapRequest ind) {
+
+    }
+
+    @Override
     public void onCallInformationRequestRequest(CallInformationRequestRequest ind) {
         // TODO Auto-generated method stub
 

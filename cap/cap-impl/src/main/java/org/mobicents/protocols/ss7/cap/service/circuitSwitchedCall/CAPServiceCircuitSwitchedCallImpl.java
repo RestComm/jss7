@@ -235,6 +235,16 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
                 }
                 break;
 
+            case CAPOperationCode.callGap:
+                if (acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric
+                        || acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric
+                        || acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
+                    if (compType == ComponentType.Invoke) {
+                        callGapRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
+                    }
+                }
+                break;
+
             case CAPOperationCode.callInformationRequest:
                 if (acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric
                         || acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric
@@ -747,6 +757,38 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
                 ((CAPServiceCircuitSwitchedCallListener) serLis).onConnectRequest(ind);
             } catch (Exception e) {
                 loger.error("Error processing eventReportBCSMRequest: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    private void callGapRequest(Parameter parameter, CAPDialogCircuitSwitchedCallImpl capDialogImpl,
+            Long invokeId) throws CAPParsingComponentException {
+        if (parameter == null) {
+            throw new CAPParsingComponentException(
+                    "Error while decoding callGapRequest: Parameter is mandatory but not found",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+
+        if (parameter.getTag() != Tag.SEQUENCE || parameter.getTagClass() != Tag.CLASS_UNIVERSAL || parameter.isPrimitive()) {
+            throw new CAPParsingComponentException(
+                    "Error while decoding callGapRequest: Bad tag or tagClass or parameter is primitive, received tag="
+                    + parameter.getTag(), CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+
+        byte[] buf = parameter.getData();
+        AsnInputStream ais = new AsnInputStream(buf);
+        CallGapRequestImpl ind = new CallGapRequestImpl();
+        ind.decodeData(ais, buf.length);
+
+        ind.setInvokeId(invokeId);
+        ind.setCAPDialog(capDialogImpl);
+
+        for (CAPServiceListener serLis : this.serviceListeners) {
+            try {
+                serLis.onCAPMessage(ind);
+                ((CAPServiceCircuitSwitchedCallListener) serLis).onCallGapRequest(ind);
+            } catch (Exception e) {
+                loger.error("Error processing callGapRequest: " + e.getMessage(), e);
             }
         }
     }

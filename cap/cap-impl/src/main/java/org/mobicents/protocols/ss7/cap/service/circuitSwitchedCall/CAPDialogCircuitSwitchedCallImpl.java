@@ -31,6 +31,9 @@ import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
 import org.mobicents.protocols.ss7.cap.api.CAPServiceBase;
+import org.mobicents.protocols.ss7.cap.api.gap.GapCriteria;
+import org.mobicents.protocols.ss7.cap.api.gap.GapIndicators;
+import org.mobicents.protocols.ss7.cap.api.gap.GapTreatment;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
@@ -58,6 +61,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Carrier;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CollectedInfo;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ContinueWithArgumentArgExtension;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ControlType;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FCIBCCCAMELsequence1;
@@ -96,6 +100,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 /**
  *
  * @author sergey vetyutnev
+ * @author <a href="mailto:bartosz.krok@pro-ids.com"> Bartosz Krok (ProIDS sp. z o.o.)</a>
  *
  */
 public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements CAPDialogCircuitSwitchedCall {
@@ -1904,6 +1909,58 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
         OperationCode oc = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
         oc.setLocalOperationCode((long) CAPOperationCode.collectInformation);
         invoke.setOperationCode(oc);
+
+        Long invokeId;
+        try {
+            invokeId = this.tcapDialog.getNewInvokeId();
+            invoke.setInvokeId(invokeId);
+        } catch (TCAPException e) {
+            throw new CAPException(e.getMessage(), e);
+        }
+
+        this.sendInvokeComponent(invoke);
+
+        return invokeId;
+    }
+
+    @Override
+    public Long addCallGapRequest(GapCriteria gapCriteria, GapIndicators gapIndicators, ControlType controlType, GapTreatment gapTreatment, CAPExtensions capExtension) throws CAPException {
+        return addCallGapRequest(_Timer_Default, gapCriteria, gapIndicators, controlType, gapTreatment, capExtension);
+    }
+
+    @Override
+    public Long addCallGapRequest(int customInvokeTimeout, GapCriteria gapCriteria, GapIndicators gapIndicators, ControlType controlType, GapTreatment gapTreatment, CAPExtensions capExtension) throws CAPException {
+
+        if (this.appCntx != CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
+                && this.appCntx != CAPApplicationContext.CapV3_gsmSSF_scfGeneric
+                && this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric
+                && this.appCntx != CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
+            throw new CAPException(
+                    "Bad application context name for addApplyChargingReportRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_gsmSSF_scfGeneric");
+        }
+
+        Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
+                .createTCInvokeRequest(InvokeClass.Class4);
+        if (customInvokeTimeout == _Timer_Default) {
+            invoke.setTimeout(_Timer_CircuitSwitchedCallControl_Short);
+        } else {
+            invoke.setTimeout(customInvokeTimeout);
+        }
+
+        OperationCode oc = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
+        oc.setLocalOperationCode((long) CAPOperationCode.callGap);
+        invoke.setOperationCode(oc);
+
+        CallGapRequestImpl req = new CallGapRequestImpl(gapCriteria, gapIndicators, controlType, gapTreatment, capExtension);
+        AsnOutputStream aos = new AsnOutputStream();
+        req.encodeData(aos);
+
+        Parameter p = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createParameter();
+        p.setTagClass(req.getTagClass());
+        p.setPrimitive(req.getIsPrimitive());
+        p.setTag(req.getTag());
+        p.setData(aos.toByteArray());
+        invoke.setParameter(p);
 
         Long invokeId;
         try {
