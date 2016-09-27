@@ -44,6 +44,21 @@ import org.mobicents.protocols.ss7.tools.simulator.level3.MapMan;
 import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 
+import org.mobicents.protocols.ss7.map.api.service.lsm.LocationType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LocationEstimateType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.PrivacyCheckRelatedAction;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AreaType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSCodeword;
+import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSPrivacyCheck;
+
+import org.mobicents.protocols.ss7.map.api.service.lsm.Area;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AreaDefinition;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AreaEventInfo;
+import java.util.ArrayList;
+import org.mobicents.protocols.ss7.map.api.service.lsm.OccurrenceInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.PeriodicLDRInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AreaIdentification;
 
 
 /**
@@ -224,6 +239,58 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
         sb.append(hgmlcAddress);
         return sb.toString();
     }
+
+    private String createPSLRequest(
+        long dialogId,
+        LocationType locationType,
+        ISDNAddressString mlcNumber,
+        LCSClientID lcsClientID,
+        IMSI imsi,
+        ISDNAddressString msisdn,
+        IMEI imei,
+        Integer lcsReferenceNumber,
+        Integer lcsServiceTypeID,
+        LCSCodeword lcsCodeword,
+        LCSPrivacyCheck lcsPrivacyCheck,
+        AreaEventInfo areaEventInfo,
+        GSNAddress hgmlcAddress,
+        boolean moLrShortCircuitIndicator,
+        PeriodicLDRInfo periodicLDRInfo){
+        StringBuilder sb = new StringBuilder();
+        sb.append("dialogId=");
+        sb.append(dialogId).append("\",\n ");
+        sb.append("locationType=\"");
+        sb.append(locationType).append("\",\n ");
+        sb.append("mlcNumber=\"");
+        sb.append(mlcNumber).append("\",\n ");
+        sb.append("lcsClientID=\"");
+        sb.append(lcsClientID).append("\",\n ");
+        sb.append("imsi=\"");
+        sb.append(imsi).append("\",\n ");
+        sb.append("msisdn=\"");
+        sb.append(msisdn).append("\",\n ");
+        sb.append("imei=\"");
+        sb.append(imei).append("\",\n ");
+        sb.append("lcsReferenceNumber=\"");
+        sb.append(lcsReferenceNumber).append("\",\n ");
+        sb.append("lcsServiceTypeID=\"");
+        sb.append(lcsServiceTypeID).append("\",\n ");
+        sb.append("lcsCodeword=\"");
+        sb.append(lcsCodeword).append("\",\n ");
+        sb.append("lcsPrivacyCheck=\"");
+        sb.append(lcsPrivacyCheck).append("\",\n ");
+        sb.append("areaEventInfo=\"");
+        sb.append(areaEventInfo).append("\",\n ");
+        sb.append("hgmlcAddress=\"");
+        sb.append(hgmlcAddress).append("\",\n ");
+        sb.append("moLrShortCircuitIndicator=\"");
+        sb.append(moLrShortCircuitIndicator).append("\",\n ");
+        sb.append("periodicLDRInfo=\"");
+        sb.append(periodicLDRInfo);
+        return sb.toString();
+    }
+
+
     private String createSLRReqData(Long dialogId, String networkNodeNumberAddress) {
         StringBuilder sb = new StringBuilder();
         sb.append("dialogId=");
@@ -251,6 +318,153 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
 
         return subscriberLocationReportRequest();
     }
+
+    @Override
+    public String performProvideSubscriberLocationRequest(){
+        if (!isStarted) {
+            return "The tester is not started";
+        }
+
+        return provideSubscriberLocationRequest();
+    }
+
+    private String provideSubscriberLocationRequest()  {
+        if (mapProvider== null) {
+            return "mapProvider is null";
+        }
+
+        try {
+
+            MAPApplicationContext appCnt = null;
+
+            appCnt = MAPApplicationContext.getInstance(MAPApplicationContextName.locationSvcEnquiryContext,
+                MAPApplicationContextVersion.version3);
+
+            TestMapLcsClientConfigurationData configData=this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData();
+
+            MAPDialogLsm clientDialogLsm = mapServiceLsm.createNewDialog(appCnt, this.mapMan.createOrigAddress(), null,
+                   this.mapMan.createDestAddress(), null);
+
+            // Mandatory parameters
+            LocationEstimateType locationEstimateType = configData.getLocationEstimateType();
+            LocationType locationType = mapParameterFactory.createLocationType(
+                   locationEstimateType, // final LocationEstimateType locationEstimateType,
+                   null // final DeferredLocationEventType deferredLocationEventType
+                   );
+            ISDNAddressString mlcNumber = mapParameterFactory.createISDNAddressString(
+                AddressNature.getInstance(getAddressNature().intValue()),       // e.g. international_number
+                NumberingPlan.getInstance(getNumberingPlanType().intValue()),   // e.g  ISDN
+                getNumberingPlan());
+
+            LCSClientID lcsClientID = mapParameterFactory.createLCSClientID(
+                    configData.getLcsClientType(),
+                    null, null, null, null, null, null);
+
+            // Conditional parameters
+            IMSI imsi = mapParameterFactory.createIMSI(getIMSI());
+            ISDNAddressString msisdn = mapParameterFactory.createISDNAddressString(
+                    configData.getAddressNature(),
+                    configData.getNumberingPlanType(),
+                    getNetworkNodeNumberAddress());
+            GSNAddress hgmlcAddress = createGSNAddress(getHGMLCAddress());
+
+            LCSCodeword lcsCodeword = mapParameterFactory.createLCSCodeword(
+                new CBSDataCodingSchemeImpl(getDataCodingScheme()),
+                mapParameterFactory.createUSSDString(getCodeWordUSSDString()));
+
+            IMEI imei = mapParameterFactory.createIMEI(getIMEI());
+
+            LCSPrivacyCheck lcsPrivacyCheck = mapParameterFactory.createLCSPrivacyCheck(
+                PrivacyCheckRelatedAction.getPrivacyCheckRelatedAction(getCallSessionUnrelated().intValue()),
+                PrivacyCheckRelatedAction.getPrivacyCheckRelatedAction(getCallSessionRelated().intValue())
+                );
+
+            ArrayList<Area> areaList = new ArrayList<Area>();
+
+            AreaType areaType = AreaType.getAreaType(getAreaType().intValue());
+
+            AreaIdentification areaIdentification = mapParameterFactory.createAreaIdentification(
+                areaType,
+                getMCC(),
+                getMNC(),
+                getLAC(),
+                getCellId());
+
+            Area area = mapParameterFactory.createArea(areaType,areaIdentification);
+
+            areaList.add(area);
+
+            AreaDefinition areaDef = mapParameterFactory.createAreaDefinition(areaList);
+
+            AreaEventInfo areaEventInfo = mapParameterFactory.createAreaEventInfo(
+                areaDef,
+                OccurrenceInfo.oneTimeEvent,
+                10
+                );
+
+            PeriodicLDRInfo periodicLDRInfo = mapParameterFactory.createPeriodicLDRInfo(getReportingAmmount(),getReportingInterval());
+
+            logger.debug("MAPDialogLsm Created");
+            clientDialogLsm.addProvideSubscriberLocationRequest(
+            locationType, // Mand round 1 - LocationType locationType,
+            mlcNumber, // Mand round 1 - ISDNAddressString mlcNumber,
+            lcsClientID, // Mand round 1 - LCSClientID lcsClientID,
+            false, // UDefined round 2 - boolean privacyOverride,
+            imsi, // Cond round 1 - IMSI imsi,
+            msisdn, // Cond round 1 - ISDNAddressString msisdn,
+            null, // Cond round 2 - LMSI lmsi,
+            imei, // UDefined round 1 - IMEI imei
+            null, // Cond round 2 - LCSPriority lcsPriority,
+            null,  // Cond round 2 - LCSQoS lcsQoS,
+            null, // Cond round 2 - MAPExtensionContainer extensionContainer,
+            null, // Cond round 2 -SupportedGADShapes supportedGADShapes,
+            getLCSReferenceNumber(), // Cond round 1 - Integer lcsReferenceNumber,
+            configData.getLcsServiceTypeID(), // Cond round 1 - Integer lcsServiceTypeID,
+            lcsCodeword, // Cond round 1 - LCSCodeword lcsCodeword,
+            lcsPrivacyCheck, // Cond round 1 - LCSPrivacyCheck lcsPrivacyCheck,
+            areaEventInfo, // Cond round 1 - AreaEventInfo areaEventInfo,
+            hgmlcAddress, // Cond round 1 - GSNAddress hgmlcAddress,
+            getMoLrShortCircuitIndicator(), // Cond round 1 - boolean moLrShortCircuitIndicator,
+            periodicLDRInfo, // Cond round 1 - PeriodicLDRInfo periodicLDRInfo,
+            null // Cond round 2 - ReportingPLMNList reportingPLMNList
+            );
+
+            logger.debug("Added ProviderSubscriberLocationRequest");
+
+            clientDialogLsm.send();
+
+            this.countMapLcsReq++;
+
+            this.testerHost.sendNotif(SOURCE_NAME, "Sent: ProviderSubscriberLocationRequest",
+                createPSLRequest(
+            clientDialogLsm.getLocalDialogId(),
+            locationType, // Mand round 1 - LocationType locationType,
+            mlcNumber, // Mand round 1 - ISDNAddressString mlcNumber,
+            lcsClientID, // Mand round 1 - LCSClientID lcsClientID,
+            imsi, // Cond round 1 - IMSI imsi,
+            msisdn, // Cond round 1 - ISDNAddressString msisdn,
+            imei, // UDefined round 1 - IMEI imei
+            getLCSReferenceNumber(), // Cond round 1 - Integer lcsReferenceNumber,
+            configData.getLcsServiceTypeID(), // Cond round 1 - Integer lcsServiceTypeID,
+            lcsCodeword, // Cond round 1 - LCSCodeword lcsCodeword,
+            lcsPrivacyCheck, // Cond round 1 - LCSPrivacyCheck lcsPrivacyCheck,
+            areaEventInfo, // Cond round 1 - AreaEventInfo areaEventInfo,
+            hgmlcAddress, // Cond round 1 - GSNAddress hgmlcAddress,
+            getMoLrShortCircuitIndicator(), // Cond round 1 - boolean moLrShortCircuitIndicator,
+            periodicLDRInfo), // Cond round 1 - PeriodicLDRInfo periodicLDRInfo,
+            Level.INFO);
+
+            currentRequestDef += "Sent PSL Request;";
+        }
+        catch(MAPException e) {
+            return "Exception "+e.toString();
+        }
+
+        return "ProviderSubscriberLocationRequest sent";
+
+    }
+
+
 
     private String subscriberLocationReportRequest(){
         if (mapProvider== null) {
@@ -334,6 +548,75 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
             throw new MAPException("Invalid GSNAddress",e);
         }
     }
+
+    // PSL Request
+    @Override
+    public LocationEstimateTypeEnumerated getLocEstimateType(){
+        return new LocationEstimateTypeEnumerated(this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getLocationEstimateType().getType());
+    }
+    @Override
+    public void setLocEstimateType(LocationEstimateTypeEnumerated locEstimate){
+        this.testerHost.getConfigurationData().
+           getTestMapLcsClientConfigurationData().setLocationEstimateType(LocationEstimateType.getLocationEstimateType(locEstimate.intValue()));
+        this.testerHost.markStore();
+    }
+    @Override
+    public Integer getLcsServiceTypeID(){
+        return this.testerHost.getConfigurationData().
+           getTestMapLcsClientConfigurationData().getLcsServiceTypeID();
+    }
+    @Override
+    public void setLcsServiceTypeID(Integer lcsServiceTypeID){
+        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setLcsServiceTypeID(lcsServiceTypeID);
+        this.testerHost.markStore();
+    }
+    @Override
+    public LCSClientTypeEnumerated getLcsClientType() {
+        return new LCSClientTypeEnumerated(this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getLcsClientType().getType());
+    }
+    @Override
+    public void setLcsClientType(LCSClientTypeEnumerated val){
+        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setLcsClientType(LCSClientType.getLCSClientType(val.intValue()));
+        this.testerHost.markStore();
+    }
+    @Override
+    public void setCodeWordUSSDString(String codeWordUSSDString){
+        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setCodeWordUSSDString(codeWordUSSDString);
+    }
+    @Override
+    public String getCodeWordUSSDString(){
+        return this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getCodeWordUSSDString();
+    }
+    @Override
+    public void setCallSessionUnrelated(PrivacyCheckRelatedActionEnumerated val){
+        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setCallSessionUnrelated(PrivacyCheckRelatedAction.getPrivacyCheckRelatedAction(val.intValue()));
+        this.testerHost.markStore();
+    }
+    @Override
+    public PrivacyCheckRelatedActionEnumerated getCallSessionUnrelated(){
+        return new PrivacyCheckRelatedActionEnumerated(this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getCallSessionUnrelated().getAction());
+    }
+    @Override
+    public void setCallSessionRelated(PrivacyCheckRelatedActionEnumerated val){
+        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setCallSessionRelated(PrivacyCheckRelatedAction.getPrivacyCheckRelatedAction(val.intValue()));
+        this.testerHost.markStore();
+    }
+    @Override
+    public PrivacyCheckRelatedActionEnumerated getCallSessionRelated(){
+        return new PrivacyCheckRelatedActionEnumerated(this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getCallSessionRelated().getAction());
+    }
+
+    @Override
+    public boolean getMoLrShortCircuitIndicator(){
+        return this.testerHost.getConfigurationData().
+           getTestMapLcsClientConfigurationData().getMoLrShortCircuitIndicator();
+    }
+    @Override
+    public void setMoLrShortCircuitIndicator(boolean moLrShortCircuitIndicator){
+        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setMoLrShortCircuitIndicator(moLrShortCircuitIndicator);
+        this.testerHost.markStore();
+    }
+
     @Override
     public LCSEventType getLCSEventType() {
         return new LCSEventType(this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getLCSEvent().getEvent());
@@ -467,6 +750,43 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
     public void setNumberingPlanType(NumberingPlanMapType val){
         this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setNumberingPlanType(NumberingPlan.getInstance(val.intValue()));
         this.testerHost.markStore();
+    }
+
+    @Override
+    public void setAreaType(AreaTypeEnumerated val){
+        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setAreaType(AreaType.getAreaType(val.intValue()));
+        this.testerHost.markStore();
+    }
+    @Override
+    public AreaTypeEnumerated getAreaType(){
+        return new AreaTypeEnumerated(this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getAreaType().getType());
+    }
+    @Override
+    public void setReportingAmmount(Integer val){
+        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setReportingAmmount(val);
+        this.testerHost.markStore();
+    }
+    @Override
+    public Integer getReportingAmmount(){
+        return this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getReportingAmmount();
+    }
+    @Override
+    public void setReportingInterval(Integer val){
+        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setReportingInterval(val);
+        this.testerHost.markStore();
+    }
+    @Override
+    public Integer getReportingInterval(){
+        return this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getReportingInterval();
+    }
+    @Override
+    public void setDataCodingScheme(Integer val){
+        this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().setDataCodingScheme(val);
+        this.testerHost.markStore();
+    }
+    @Override
+    public Integer getDataCodingScheme(){
+        return this.testerHost.getConfigurationData().getTestMapLcsClientConfigurationData().getDataCodingScheme();
     }
 
     @Override
