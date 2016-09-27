@@ -23,6 +23,7 @@ package org.mobicents.protocols.ss7.tools.simulator.tests.lcs;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 
+
 /**
  * @author falonso@csc.com
  *
@@ -34,6 +35,8 @@ public interface TestMapLcsClientManMBean {
     String performSendRoutingInfoForLCSRequest(String addressIMSI);
 
     String performSubscriberLocationReportRequest();
+
+    String performProvideSubscriberLocationRequest();
 
     // Attributes
 
@@ -52,6 +55,10 @@ public interface TestMapLcsClientManMBean {
     // SLR Response
     String getNaESRDAddress();
     void setNaESRDAddress(String address);
+
+    // PSL Request
+    LocationEstimateTypeEnumerated getLocEstimateType();
+    void setLocEstimateType(LocationEstimateTypeEnumerated locEstimate);
 
     // SLR Request
     String getNetworkNodeNumberAddress();
@@ -78,6 +85,26 @@ public interface TestMapLcsClientManMBean {
     void setMNC(Integer mnc);
     String getMSISDN();
     void setMSISDN(String msisdn);
+    Integer getLcsServiceTypeID();
+    void setLcsServiceTypeID(Integer lcsServiceTypeID);
+    boolean getMoLrShortCircuitIndicator();
+    void setMoLrShortCircuitIndicator(boolean moLrShortCircuitIndicator);
+    LCSClientTypeEnumerated getLcsClientType();
+    void setLcsClientType(LCSClientTypeEnumerated lcsClientType);
+    void setCodeWordUSSDString(String codeWordUSSDString);
+    String getCodeWordUSSDString();
+    void setCallSessionUnrelated(PrivacyCheckRelatedActionEnumerated val);
+    PrivacyCheckRelatedActionEnumerated getCallSessionUnrelated();
+    void setCallSessionRelated(PrivacyCheckRelatedActionEnumerated val);
+    PrivacyCheckRelatedActionEnumerated getCallSessionRelated();
+    void setAreaType(AreaTypeEnumerated val);
+    AreaTypeEnumerated getAreaType();
+    void setReportingAmmount(Integer val);
+    Integer getReportingAmmount();
+    void setReportingInterval(Integer val);
+    Integer getReportingInterval();
+    void setDataCodingScheme(Integer val);
+    Integer getDataCodingScheme();
 
     // Other
 

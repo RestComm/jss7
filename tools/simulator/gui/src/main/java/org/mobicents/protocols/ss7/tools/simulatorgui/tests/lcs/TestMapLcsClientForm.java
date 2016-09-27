@@ -115,6 +115,16 @@ public class TestMapLcsClientForm extends TestingForm {
             }
         });
         */
+        // PSL Request
+        JButton btnProvideSubscriberLocationRequest = new JButton("ProvideSubscriberLocationRequest");
+        btnProvideSubscriberLocationRequest.setBounds(300, 10, 250, 25);
+        panel_1.add(btnProvideSubscriberLocationRequest);
+
+        btnProvideSubscriberLocationRequest.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                provideSubscriberLocationRequest();
+            }
+        });
 
 
         JLabel label_3 = new JLabel("Operation result");
@@ -182,6 +192,11 @@ public class TestMapLcsClientForm extends TestingForm {
     private void subscriberLocationReportRequest() {
         this.lbMessage.setText("");
         String res = this.mapLcsClient.performSubscriberLocationReportRequest();
+        this.lbResult.setText(res);
+    }
+    private void provideSubscriberLocationRequest() {
+        this.lbMessage.setText("");
+        String res = this.mapLcsClient.performProvideSubscriberLocationRequest();
         this.lbResult.setText(res);
     }
 

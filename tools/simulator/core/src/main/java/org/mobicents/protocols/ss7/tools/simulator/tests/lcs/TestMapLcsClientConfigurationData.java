@@ -26,6 +26,10 @@ import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 
 import org.mobicents.protocols.ss7.map.api.service.lsm.LCSEvent;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LocationEstimateType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSClientType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.PrivacyCheckRelatedAction;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AreaType;
 
 //import javolution.text.CharArray;
 import javolution.xml.XMLFormat;
@@ -54,6 +58,17 @@ public class TestMapLcsClientConfigurationData {
     protected static final String AGE_OF_LOCATION_ESTIMATE ="ageOfLocationEstimate";
     protected static final String LCS_EVENT = "lcsEvent";
     protected static final String MSISDN = "msisdn";
+    protected static final String LOCATIONESTIMATETYPE = "locationEstimateType";
+    protected static final String LCSSERVICETYPEID = "lcsServiceTypeID";
+    protected static final String MOLRSHORTCIRCUITINDICATOR = "moLrShortCircuitIndicator";
+    protected static final String LCSCLIENTTYPE = "lcsClientType";
+    protected static final String CODEWORDUSSDSTRING = "codeWordUSSDString";
+    protected static final String CALLSESSIONUNRELATED = "callSessionUnrelated";
+    protected static final String CALLSESSIONRELATED = "callSessionUnrelated";
+    protected static final String AREATYPE = "areaType";
+    protected static final String REPORTINGAMMOUNT = "reportingAmmount";
+    protected static final String REPORTINGINTERVAL = "reportingInterval";
+    protected static final String DATACODINGSCHEME = "dataCodingScheme";
 
     public String getIMEI() {
         return imei;
@@ -127,6 +142,86 @@ public class TestMapLcsClientConfigurationData {
         this.lcsEvent = lcsEvent;
     }
 
+    public LCSClientType getLcsClientType() {
+        return lcsClientType;
+    }
+
+    public void setLcsClientType(LCSClientType val){
+        this.lcsClientType = val;
+    }
+
+    public void setLocationEstimateType(LocationEstimateType locType){
+        this.locationEstimateType=locType;
+    }
+
+    public LocationEstimateType getLocationEstimateType() {
+        return locationEstimateType;
+    }
+
+    public Integer getLcsServiceTypeID(){
+         return lcsServiceTypeID;
+    }
+
+    public void setLcsServiceTypeID(Integer lcsServiceTypeID){
+        this.lcsServiceTypeID = lcsServiceTypeID;
+    }
+
+    public boolean getMoLrShortCircuitIndicator(){
+        return this.moLrShortCircuitIndicator;
+    }
+
+    public void setMoLrShortCircuitIndicator(boolean moLrShortCircuitIndicator){
+        this.moLrShortCircuitIndicator= moLrShortCircuitIndicator;
+    }
+
+    public void setCallSessionUnrelated(PrivacyCheckRelatedAction val){
+        this.callSessionUnrelated=val;
+    }
+
+    public PrivacyCheckRelatedAction getCallSessionUnrelated(){
+        return callSessionUnrelated;
+    }
+
+    public void setCallSessionRelated(PrivacyCheckRelatedAction val){
+        this.callSessionRelated=val;
+    }
+
+    public PrivacyCheckRelatedAction getCallSessionRelated(){
+        return callSessionRelated;
+    }
+
+    public void setAreaType(AreaType areaType){
+        this.areaType=areaType;
+    }
+
+    public AreaType getAreaType(){
+        return areaType;
+    }
+
+    public void setReportingAmmount(Integer val){
+        this.reportingAmmount=val;
+    }
+
+    public Integer getReportingAmmount(){
+        return reportingAmmount;
+    }
+    public void setReportingInterval(Integer val){
+        this.reportingInterval=val;
+    }
+
+    public Integer getReportingInterval(){
+        return reportingInterval;
+    }
+
+    public void setDataCodingScheme(Integer val){
+        this.dataCodingScheme=val;
+    }
+
+    public Integer getDataCodingScheme(){
+        return dataCodingScheme;
+    }
+
+
     private String naESRDAddress = "11114444";
 
     private AddressNature addressNature = AddressNature.international_number;
@@ -144,6 +239,17 @@ public class TestMapLcsClientConfigurationData {
     private Integer lcsReferenceNumber = 111;
     private Integer ageOfLocationEstimate = 100;
     private LCSEvent lcsEvent = LCSEvent.emergencyCallOrigination;
+    private LocationEstimateType locationEstimateType = LocationEstimateType.currentLocation;
+    private Integer lcsServiceTypeID = 0;
+    private boolean moLrShortCircuitIndicator = false;
+    private LCSClientType lcsClientType = LCSClientType.emergencyServices;
+    private String codeWordUSSDString = "CODE";
+    private PrivacyCheckRelatedAction callSessionUnrelated = PrivacyCheckRelatedAction.allowedWithoutNotification;
+    private PrivacyCheckRelatedAction callSessionRelated = PrivacyCheckRelatedAction.allowedWithoutNotification;
+    private AreaType areaType = AreaType.countryCode;
+    private Integer reportingAmmount = 10;
+    private Integer reportingInterval = 10;
+    private Integer dataCodingScheme = 15;
 
     public String getNaESRDAddress() {
         return naESRDAddress;
@@ -201,6 +307,16 @@ public class TestMapLcsClientConfigurationData {
         return networkNodeNumberAddress;
     }
 
+    public void setCodeWordUSSDString(String codeWordUSSDString){
+        this.codeWordUSSDString =codeWordUSSDString;
+    }
+
+    public String getCodeWordUSSDString(){
+        return this.codeWordUSSDString;
+    }
+
+
+
     protected static final XMLFormat<TestMapLcsClientConfigurationData> XML = new XMLFormat<TestMapLcsClientConfigurationData>(TestMapLcsClientConfigurationData.class) {
 
         public void write(TestMapLcsClientConfigurationData clt, OutputElement xml) throws XMLStreamException {
@@ -221,6 +337,17 @@ public class TestMapLcsClientConfigurationData {
             xml.add(clt.imei, IMEI, String.class);
             xml.add(clt.msisdn, MSISDN, String.class);
             xml.add(clt.lcsEvent.toString(), LCS_EVENT, String.class);
+            xml.add(clt.locationEstimateType.toString(),LOCATIONESTIMATETYPE,String.class);
+            xml.add(clt.lcsServiceTypeID,LCSSERVICETYPEID,Integer.class);
+            xml.add(clt.moLrShortCircuitIndicator,MOLRSHORTCIRCUITINDICATOR);
+            xml.add(clt.lcsClientType.toString(),LCSCLIENTTYPE,String.class);
+            xml.add(clt.codeWordUSSDString.toString(),CODEWORDUSSDSTRING,String.class);
+            xml.add(clt.callSessionUnrelated.toString(),CALLSESSIONUNRELATED,String.class);
+            xml.add(clt.callSessionRelated.toString(),CALLSESSIONRELATED,String.class);
+            xml.add(clt.areaType.toString(),AREATYPE,String.class);
+            xml.add(clt.reportingInterval,REPORTINGINTERVAL,Integer.class);
+            xml.add(clt.reportingAmmount,REPORTINGAMMOUNT,Integer.class);
+            xml.add(clt.dataCodingScheme,DATACODINGSCHEME,Integer.class);
         }
 
         public void read(InputElement xml, TestMapLcsClientConfigurationData clt) throws XMLStreamException {
@@ -257,6 +384,27 @@ public class TestMapLcsClientConfigurationData {
             clt.msisdn = msisdn;
             String lcsEvent = (String) xml.get(LCS_EVENT, String.class);
             clt.lcsEvent = LCSEvent.valueOf(lcsEvent);
+            String locationEstimateTypeTmp = (String) xml.get(LOCATIONESTIMATETYPE,String.class);
+            clt.locationEstimateType = LocationEstimateType.valueOf(locationEstimateTypeTmp);
+            Integer lcsServiceTypeID = (Integer) xml.get(LCSSERVICETYPEID,Integer.class);
+            clt.lcsServiceTypeID = lcsServiceTypeID;
+            clt.moLrShortCircuitIndicator = xml.getAttribute(MOLRSHORTCIRCUITINDICATOR).toBoolean();
+            String lcsClientType = (String) xml.get(LCSCLIENTTYPE,String.class);
+            clt.lcsClientType = LCSClientType.valueOf(lcsClientType);
+            String codeWordUSSDString = (String) xml.get(CODEWORDUSSDSTRING,String.class);
+            clt.codeWordUSSDString=codeWordUSSDString;
+            String callSessionUnrelated = (String) xml.get(CALLSESSIONUNRELATED,String.class);
+            clt.callSessionUnrelated=PrivacyCheckRelatedAction.valueOf(callSessionUnrelated);
+            String callSessionRelated = (String) xml.get(CALLSESSIONRELATED,String.class);
+            clt.callSessionRelated=PrivacyCheckRelatedAction.valueOf(callSessionRelated);
+            String areaType = (String) xml.get(AREATYPE,String.class);
+            clt.areaType=AreaType.valueOf(areaType);
+            Integer reportingAmmount = (Integer)xml.get(REPORTINGAMMOUNT,Integer.class);
+            clt.reportingAmmount=reportingAmmount;
+            Integer reportingInterval = (Integer)xml.get(REPORTINGINTERVAL,Integer.class);
+            clt.reportingInterval=reportingInterval;
+            Integer dataCodingScheme = (Integer)xml.get(DATACODINGSCHEME,Integer.class);
+            clt.dataCodingScheme=dataCodingScheme;
         }
     };
 
