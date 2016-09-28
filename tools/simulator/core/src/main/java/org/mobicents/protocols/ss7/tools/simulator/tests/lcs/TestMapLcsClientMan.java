@@ -59,6 +59,7 @@ import java.util.ArrayList;
 import org.mobicents.protocols.ss7.map.api.service.lsm.OccurrenceInfo;
 import org.mobicents.protocols.ss7.map.api.service.lsm.PeriodicLDRInfo;
 import org.mobicents.protocols.ss7.map.api.service.lsm.AreaIdentification;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ExtGeographicalInformation;
 
 
 /**
@@ -820,9 +821,33 @@ public class TestMapLcsClientMan extends TesterBase implements TestMapLcsClientM
 
     }
 
+    private String createPSLResponse(
+        long dialogId,
+        ExtGeographicalInformation locationEstimate){
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("dialogId=");
+        sb.append(dialogId).append("\",\n ");
+        sb.append("locationEstimate=\"");
+        sb.append(locationEstimate).append("\"");
+
+        return sb.toString();
+    }
+
     public void onProvideSubscriberLocationResponse(
             ProvideSubscriberLocationResponse provideSubscriberLocationResponseIndication) {
 
+        logger.debug("onProvideSubscriberLocationResponse");
+
+        MAPDialogLsm curDialog = provideSubscriberLocationResponseIndication.getMAPDialog();
+
+        this.countMapLcsResp++;
+        this.testerHost.sendNotif(SOURCE_NAME,
+                "Rcvd: ProvideSubscriberLocationResponse", this
+                        .createPSLResponse(
+                                curDialog.getLocalDialogId(),
+                                provideSubscriberLocationResponseIndication
+                                        .getLocationEstimate()), Level.INFO);
     }
 
     public void onSubscriberLocationReportRequest(SubscriberLocationReportRequest subscriberLocationReportRequestIndication) {
