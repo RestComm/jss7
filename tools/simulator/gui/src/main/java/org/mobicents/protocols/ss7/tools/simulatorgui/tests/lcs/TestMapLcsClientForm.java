@@ -32,6 +32,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JOptionPane;
 
 //import org.mobicents.protocols.ss7.tools.simulator.tests.checkimei.CheckImeiClientAction;
 import org.mobicents.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientManMBean;
@@ -94,7 +95,7 @@ public class TestMapLcsClientForm extends TestingForm {
         panel.add(panel_1, gbc_panel_1);
 
         JButton btnSendRoutingInfoForLCSRequest = new JButton("SendRoutingInfoForLCSRequest");
-        btnSendRoutingInfoForLCSRequest.setBounds(0, 11, 187, 23);
+        btnSendRoutingInfoForLCSRequest.setBounds(0, 11, 250, 23);
         panel_1.add(btnSendRoutingInfoForLCSRequest);
 
         btnSendRoutingInfoForLCSRequest.addActionListener(new ActionListener() {
@@ -102,6 +103,8 @@ public class TestMapLcsClientForm extends TestingForm {
                 sendRoutingInfoForLCSRequest();
             }
         });
+        /*
+        // SLR Request
         JButton btnSubscriberLocationReportRequest = new JButton("SubscriberLocationReportRequest");
         btnSubscriberLocationReportRequest.setBounds(192, 10, 202, 25);
         panel_1.add(btnSubscriberLocationReportRequest);
@@ -109,6 +112,17 @@ public class TestMapLcsClientForm extends TestingForm {
         btnSubscriberLocationReportRequest.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 subscriberLocationReportRequest();
+            }
+        });
+        */
+        // PSL Request
+        JButton btnProvideSubscriberLocationRequest = new JButton("ProvideSubscriberLocationRequest");
+        btnProvideSubscriberLocationRequest.setBounds(300, 10, 250, 25);
+        panel_1.add(btnProvideSubscriberLocationRequest);
+
+        btnProvideSubscriberLocationRequest.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                provideSubscriberLocationRequest();
             }
         });
 
@@ -165,14 +179,24 @@ public class TestMapLcsClientForm extends TestingForm {
     }
 
     private void sendRoutingInfoForLCSRequest() {
-        this.lbMessage.setText("");
+
         String address = this.tbAddress.getText();
-        String res = this.mapLcsClient.sendRoutingInfoForLCSRequest(address);
+        if (address.length()<5) {
+            JOptionPane.showMessageDialog(this, "IMSI/MSISDN must be at least 5 digits");
+            return;
+        }
+        this.lbMessage.setText("");
+        String res = this.mapLcsClient.performSendRoutingInfoForLCSRequest(address);
         this.lbResult.setText(res);
     }
     private void subscriberLocationReportRequest() {
         this.lbMessage.setText("");
-        String res = this.mapLcsClient.subscriberLocationReportRequest();
+        String res = this.mapLcsClient.performSubscriberLocationReportRequest();
+        this.lbResult.setText(res);
+    }
+    private void provideSubscriberLocationRequest() {
+        this.lbMessage.setText("");
+        String res = this.mapLcsClient.performProvideSubscriberLocationRequest();
         this.lbResult.setText(res);
     }
 

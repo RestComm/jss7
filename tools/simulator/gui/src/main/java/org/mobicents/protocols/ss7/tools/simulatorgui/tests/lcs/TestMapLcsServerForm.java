@@ -72,14 +72,6 @@ public class TestMapLcsServerForm extends TestingForm {
         gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
         panel.setLayout(gbl_panel);
 
-        JLabel label = new JLabel("Parameter input not implemented yet");
-        GridBagConstraints gbc_label = new GridBagConstraints();
-        gbc_label.anchor = GridBagConstraints.EAST;
-        gbc_label.insets = new Insets(0, 0, 5, 5);
-        gbc_label.gridx = 0;
-        gbc_label.gridy = 0;
-        panel.add(label, gbc_label);
-
         JPanel panel_1 = new JPanel();
         panel_1.setLayout(null);
         GridBagConstraints gbc_panel_1 = new GridBagConstraints();
@@ -89,6 +81,7 @@ public class TestMapLcsServerForm extends TestingForm {
         gbc_panel_1.gridy = 3;
         panel.add(panel_1, gbc_panel_1);
 
+        /*
         JButton btnSendRoutingInfoForLCSResponse = new JButton("SendRoutingInfoForLCSResponse");
         btnSendRoutingInfoForLCSResponse.setBounds(0, 0, 249, 25);
         panel_1.add(btnSendRoutingInfoForLCSResponse);
@@ -98,6 +91,7 @@ public class TestMapLcsServerForm extends TestingForm {
                 sendRoutingInfoForLCSResponse();
             }
         });
+
         JButton btnSubscriberLocationReportResponse = new JButton("SubscriberLocationReportResponse");
         btnSubscriberLocationReportResponse.setBounds(259, 0, 249, 25);
         panel_1.add(btnSubscriberLocationReportResponse);
@@ -105,6 +99,16 @@ public class TestMapLcsServerForm extends TestingForm {
         btnSubscriberLocationReportResponse.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 subscriberLocationReportResponse();
+            }
+        });
+        */
+        JButton btnSubscriberLocationReportRequest = new JButton("SubscriberLocationReportRequest");
+        btnSubscriberLocationReportRequest.setBounds(0, 30, 249, 25);
+        panel_1.add(btnSubscriberLocationReportRequest);
+
+        btnSubscriberLocationReportRequest.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                subscriberLocationReportRequest();
             }
         });
 
@@ -143,8 +147,16 @@ public class TestMapLcsServerForm extends TestingForm {
         panel.add(lbState, gbc_lbState);
     }
 
+    private void subscriberLocationReportRequest() {
+        this.lbMessage.setText("");
+        String res = this.mapLcsServer.performSubscriberLocationReportRequest();
+        this.lbResult.setText(res);
+    }
+
     private void subscriberLocationReportResponse() {
-        // TODO Auto-generated method stub
+        this.lbMessage.setText("");
+        String res = this.mapLcsServer.subscriberLocationReportResponse();
+        this.lbResult.setText(res);
     }
 
     public void setData(TestMapLcsServerManMBean mapLcsServer) {
@@ -183,6 +195,9 @@ public class TestMapLcsServerForm extends TestingForm {
     public void refreshState() {
         super.refreshState();
 
-        this.lbState.setText("No op Refreshed");
+        super.refreshState();
+
+        String s1 = this.mapLcsServer.getCurrentRequestDef();
+        this.lbState.setText(s1);
     }
 }

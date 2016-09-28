@@ -23,6 +23,7 @@ package org.mobicents.protocols.ss7.tools.simulator.tests.lcs;
 import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 
+
 /**
  * @author falonso@csc.com
  *
@@ -31,13 +32,11 @@ public interface TestMapLcsClientManMBean {
 
     // Operations
 
-    String sendRoutingInfoForLCSRequest(String addressIMSI);
-
-    String subscriberLocationReportRequest();
-
     String performSendRoutingInfoForLCSRequest(String addressIMSI);
 
     String performSubscriberLocationReportRequest();
+
+    String performProvideSubscriberLocationRequest();
 
     // Attributes
 
@@ -53,11 +52,70 @@ public interface TestMapLcsClientManMBean {
 
     void setNumberingPlanType(NumberingPlanMapType val);
 
-    String getNetworkNodeNumberAddress();
+    // SLR Response
+    String getNaESRDAddress();
+    void setNaESRDAddress(String address);
 
+    // PSL Request
+    LocationEstimateTypeEnumerated getLocEstimateType();
+    void setLocEstimateType(LocationEstimateTypeEnumerated locEstimate);
+
+    // SLR Request
+    String getNetworkNodeNumberAddress();
     void setNetworkNodeNumberAddress(String val);
+    String getHGMLCAddress();
+    void setHGMLCAddress(String hgmlcAddress);
+    String getIMEI();
+    void setIMEI(String imei);
+    String getIMSI();
+    void setIMSI(String imsi);
+    Integer getCellId();
+    void setCellId(Integer lac);
+    Integer getLAC();
+    void setAgeOfLocationEstimate(Integer ageOfLocationEstimate);
+    Integer getAgeOfLocationEstimate();
+    void setLAC(Integer lac);
+    LCSEventType getLCSEventType();
+    void setLCSEventType(LCSEventType val);
+    Integer getLCSReferenceNumber();
+    void setLCSReferenceNumber(Integer lcsReferenceNumber);
+    Integer getMCC();
+    void setMCC(Integer mcc);
+    Integer getMNC();
+    void setMNC(Integer mnc);
+    String getMSISDN();
+    void setMSISDN(String msisdn);
+    Integer getLcsServiceTypeID();
+    void setLcsServiceTypeID(Integer lcsServiceTypeID);
+    boolean getMoLrShortCircuitIndicator();
+    void setMoLrShortCircuitIndicator(boolean moLrShortCircuitIndicator);
+    LCSClientTypeEnumerated getLcsClientType();
+    void setLcsClientType(LCSClientTypeEnumerated lcsClientType);
+    void setCodeWordUSSDString(String codeWordUSSDString);
+    String getCodeWordUSSDString();
+    void setCallSessionUnrelated(PrivacyCheckRelatedActionEnumerated val);
+    PrivacyCheckRelatedActionEnumerated getCallSessionUnrelated();
+    void setCallSessionRelated(PrivacyCheckRelatedActionEnumerated val);
+    PrivacyCheckRelatedActionEnumerated getCallSessionRelated();
+    void setAreaType(AreaTypeEnumerated val);
+    AreaTypeEnumerated getAreaType();
+    void setReportingAmmount(Integer val);
+    Integer getReportingAmmount();
+    void setReportingInterval(Integer val);
+    Integer getReportingInterval();
+    void setDataCodingScheme(Integer val);
+    Integer getDataCodingScheme();
 
     // Other
 
     String getCurrentRequestDef();
+
+    // Methods for configurable properties via HTTP interface for values that are based on EnumeratedBase abstract class
+
+    void putAddressNature(String val);
+
+    void putNumberingPlanType(String val);
+
+    void putLCSEventType(String val);
+
 }
