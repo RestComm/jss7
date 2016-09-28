@@ -42,11 +42,23 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import org.mobicents.protocols.ss7.map.api.service.lsm.LocationType;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSCodeword;
+import org.mobicents.protocols.ss7.map.api.service.lsm.LCSPrivacyCheck;
 
+import org.mobicents.protocols.ss7.map.api.service.lsm.AreaEventInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.PeriodicLDRInfo;
 
-
-
-
+import org.mobicents.protocols.ss7.map.api.service.lsm.PositioningDataInformation;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ExtGeographicalInformation;
+import org.mobicents.protocols.ss7.map.api.service.lsm.UtranPositioningDataInfo;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AddGeographicalInformation;
+import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.service.lsm.AccuracyFulfilmentIndicator;
+import org.mobicents.protocols.ss7.map.api.service.lsm.VelocityEstimate;
+import org.mobicents.protocols.ss7.map.api.service.lsm.GeranGANSSpositioningData;
+import org.mobicents.protocols.ss7.map.api.service.lsm.UtranGANSSpositioningData;
+import org.mobicents.protocols.ss7.map.api.service.lsm.ServingNodeAddress;
 
 
 /**
@@ -242,12 +254,152 @@ public class TestMapLcsServerMan extends TesterBase implements TestMapLcsServerM
         return "subscriberLocationReportResponse called automatically";
     }
 
+        private String createPSLRequest(
+        long dialogId,
+        LocationType locationType,
+        ISDNAddressString mlcNumber,
+        LCSClientID lcsClientID,
+        IMSI imsi,
+        ISDNAddressString msisdn,
+        IMEI imei,
+        Integer lcsReferenceNumber,
+        Integer lcsServiceTypeID,
+        LCSCodeword lcsCodeword,
+        LCSPrivacyCheck lcsPrivacyCheck,
+        AreaEventInfo areaEventInfo,
+        GSNAddress hgmlcAddress,
+        boolean moLrShortCircuitIndicator,
+        PeriodicLDRInfo periodicLDRInfo){
+        StringBuilder sb = new StringBuilder();
+        sb.append("dialogId=");
+        sb.append(dialogId).append("\",\n ");
+        sb.append("locationType=\"");
+        sb.append(locationType).append("\",\n ");
+        sb.append("mlcNumber=\"");
+        sb.append(mlcNumber).append("\",\n ");
+        sb.append("lcsClientID=\"");
+        sb.append(lcsClientID).append("\",\n ");
+        sb.append("imsi=\"");
+        sb.append(imsi).append("\",\n ");
+        sb.append("msisdn=\"");
+        sb.append(msisdn).append("\",\n ");
+        sb.append("imei=\"");
+        sb.append(imei).append("\",\n ");
+        sb.append("lcsReferenceNumber=\"");
+        sb.append(lcsReferenceNumber).append("\",\n ");
+        sb.append("lcsServiceTypeID=\"");
+        sb.append(lcsServiceTypeID).append("\",\n ");
+        sb.append("lcsCodeword=\"");
+        sb.append(lcsCodeword).append("\",\n ");
+        sb.append("lcsPrivacyCheck=\"");
+        sb.append(lcsPrivacyCheck).append("\",\n ");
+        sb.append("areaEventInfo=\"");
+        sb.append(areaEventInfo).append("\",\n ");
+        sb.append("hgmlcAddress=\"");
+        sb.append(hgmlcAddress).append("\",\n ");
+        sb.append("moLrShortCircuitIndicator=\"");
+        sb.append(moLrShortCircuitIndicator).append("\",\n ");
+        sb.append("periodicLDRInfo=\"");
+        sb.append(periodicLDRInfo);
+        return sb.toString();
+    }
+
+    private String createPSLResponse(
+        long dialogId,
+        ExtGeographicalInformation locationEstimate){
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("dialogId=");
+        sb.append(dialogId).append("\",\n ");
+        sb.append("locationEstimate=\"");
+        sb.append(locationEstimate).append("\"");
+
+        return sb.toString();
+    }
+
+
+
     public void onProvideSubscriberLocationRequest(ProvideSubscriberLocationRequest provideSubscriberLocationRequestIndication) {
 
+        logger.debug("onProvideSubscriberLocationRequest");
+        if (!isStarted)
+            return;
+
+        this.countMapLcsReq++;
+
+        MAPDialogLsm curDialog = provideSubscriberLocationRequestIndication.getMAPDialog();
+
+        this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: ProvideSubscriberLocationRequest",
+                   createPSLRequest(curDialog.getLocalDialogId(),
+                    provideSubscriberLocationRequestIndication.getLocationType(),
+                    provideSubscriberLocationRequestIndication.getMlcNumber(),
+                    provideSubscriberLocationRequestIndication.getLCSClientID(),
+                    provideSubscriberLocationRequestIndication.getIMSI(),
+                    provideSubscriberLocationRequestIndication.getMSISDN(),
+                    provideSubscriberLocationRequestIndication.getIMEI(),
+                    provideSubscriberLocationRequestIndication.getLCSReferenceNumber(),
+                    provideSubscriberLocationRequestIndication.getLCSServiceTypeID(),
+                    provideSubscriberLocationRequestIndication.getLCSCodeword(),
+                    provideSubscriberLocationRequestIndication.getLCSPrivacyCheck(),
+                    provideSubscriberLocationRequestIndication.getAreaEventInfo(),
+                    provideSubscriberLocationRequestIndication.getHGMLCAddress(),
+                    provideSubscriberLocationRequestIndication.getMoLrShortCircuitIndicator(),
+                    provideSubscriberLocationRequestIndication.getPeriodicLDRInfo()
+                    ), Level.INFO);
+
+            PositioningDataInformation geranPositioningData = null;
+            UtranPositioningDataInfo utranPositioningData = null;
+            Integer ageOfLocationEstimate = 0;
+            AddGeographicalInformation additionalLocationEstimate = null;
+            MAPExtensionContainer extensionContainer = null;
+            boolean deferredMTLRResponseIndicator = false;
+            CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI = null;
+            boolean saiPresent = false;
+            AccuracyFulfilmentIndicator accuracyFulfilmentIndicator = null;
+            VelocityEstimate velocityEstimate = null;
+            boolean moLrShortCircuitIndicator = false;
+            GeranGANSSpositioningData geranGANSSpositioningData = null;
+            UtranGANSSpositioningData utranGANSSpositioningData = null;
+            ServingNodeAddress targetServingNodeForHandover = null;
+
+        try {
+            ExtGeographicalInformation locationEstimate = mapParameterFactory.createExtGeographicalInformation_EllipsoidPoint(40.416775,-3.703790);
+
+            curDialog.addProvideSubscriberLocationResponse(
+                provideSubscriberLocationRequestIndication.getInvokeId(),
+                locationEstimate,
+                geranPositioningData,
+                utranPositioningData,
+                ageOfLocationEstimate,
+                additionalLocationEstimate,
+                extensionContainer,
+                deferredMTLRResponseIndicator,
+                cellGlobalIdOrServiceAreaIdOrLAI,
+                saiPresent,
+                accuracyFulfilmentIndicator,
+                velocityEstimate,
+                moLrShortCircuitIndicator,
+                geranGANSSpositioningData,
+                utranGANSSpositioningData,
+                targetServingNodeForHandover);
+
+            logger.debug("set addProvideSubscriberLocationResponse");
+            curDialog.send();
+            logger.debug("addProvideSubscriberLocationResponse sent");
+            this.countMapLcsResp++;
+
+            this.testerHost.sendNotif(SOURCE_NAME, "Sent: SendRoutingInfoForLCSResponse",
+                createPSLResponse(curDialog.getLocalDialogId(),
+                    locationEstimate), Level.INFO);
+
+         } catch (MAPException e) {
+            logger.debug("Failed building  SendRoutingInfoForLCS response "+e.toString());
+        }
     }
 
     public void onProvideSubscriberLocationResponse(
             ProvideSubscriberLocationResponse provideSubscriberLocationResponseIndication) {
+
 
     }
 
