@@ -206,7 +206,7 @@ public class TestMapLcsServerConfigurationData {
             TestMapLcsServerConfigurationData.class) {
 
         public void write(TestMapLcsServerConfigurationData srv, OutputElement xml) throws XMLStreamException {
-            xml.setAttribute(NETWORK_NODE_NUMBER_ADDRESS, srv.networkNodeNumberAddress);
+            //xml.setAttribute(NETWORK_NODE_NUMBER_ADDRESS, srv.networkNodeNumberAddress);
             xml.add(srv.addressNature.toString(), ADDRESS_NATURE, String.class);
             xml.add(srv.numberingPlanType.toString(), NUMBERING_PLAN_TYPE, String.class);
             xml.add(srv.naESRDAddress.toString(), NA_ESRD_ADDRESS, String.class);

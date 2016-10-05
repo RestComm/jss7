@@ -64,7 +64,7 @@ public class TestMapLcsClientConfigurationData {
     protected static final String LCSCLIENTTYPE = "lcsClientType";
     protected static final String CODEWORDUSSDSTRING = "codeWordUSSDString";
     protected static final String CALLSESSIONUNRELATED = "callSessionUnrelated";
-    protected static final String CALLSESSIONRELATED = "callSessionUnrelated";
+    protected static final String CALLSESSIONRELATED = "callSessionRelated";
     protected static final String AREATYPE = "areaType";
     protected static final String REPORTINGAMMOUNT = "reportingAmmount";
     protected static final String REPORTINGINTERVAL = "reportingInterval";
@@ -321,6 +321,8 @@ public class TestMapLcsClientConfigurationData {
 
         public void write(TestMapLcsClientConfigurationData clt, OutputElement xml) throws XMLStreamException {
 
+            xml.setAttribute(REPORTINGAMMOUNT, clt.reportingAmmount);
+
             xml.add(clt.naESRDAddress.toString(), NA_ESRD_ADDRESS, String.class);
             xml.add(clt.addressNature.toString(), ADDRESS_NATURE, String.class);
             xml.add(clt.numberingPlanType.toString(), NUMBERING_PLAN_TYPE, String.class);
@@ -339,18 +341,22 @@ public class TestMapLcsClientConfigurationData {
             xml.add(clt.lcsEvent.toString(), LCS_EVENT, String.class);
             xml.add(clt.locationEstimateType.toString(),LOCATIONESTIMATETYPE,String.class);
             xml.add(clt.lcsServiceTypeID,LCSSERVICETYPEID,Integer.class);
-            xml.add(clt.moLrShortCircuitIndicator,MOLRSHORTCIRCUITINDICATOR);
+            xml.add(Boolean.toString(clt.moLrShortCircuitIndicator),MOLRSHORTCIRCUITINDICATOR,String.class);
             xml.add(clt.lcsClientType.toString(),LCSCLIENTTYPE,String.class);
             xml.add(clt.codeWordUSSDString.toString(),CODEWORDUSSDSTRING,String.class);
             xml.add(clt.callSessionUnrelated.toString(),CALLSESSIONUNRELATED,String.class);
             xml.add(clt.callSessionRelated.toString(),CALLSESSIONRELATED,String.class);
             xml.add(clt.areaType.toString(),AREATYPE,String.class);
             xml.add(clt.reportingInterval,REPORTINGINTERVAL,Integer.class);
-            xml.add(clt.reportingAmmount,REPORTINGAMMOUNT,Integer.class);
             xml.add(clt.dataCodingScheme,DATACODINGSCHEME,Integer.class);
         }
 
         public void read(InputElement xml, TestMapLcsClientConfigurationData clt) throws XMLStreamException {
+
+
+            //return;
+            clt.reportingAmmount = xml.getAttribute(REPORTINGAMMOUNT).toInt();
+
 
             String naESRDAddress = (String) xml.get(NA_ESRD_ADDRESS, String.class);
             clt.naESRDAddress = naESRDAddress;
@@ -388,7 +394,8 @@ public class TestMapLcsClientConfigurationData {
             clt.locationEstimateType = LocationEstimateType.valueOf(locationEstimateTypeTmp);
             Integer lcsServiceTypeID = (Integer) xml.get(LCSSERVICETYPEID,Integer.class);
             clt.lcsServiceTypeID = lcsServiceTypeID;
-            clt.moLrShortCircuitIndicator = xml.getAttribute(MOLRSHORTCIRCUITINDICATOR).toBoolean();
+            String molr_tmp = (String) xml.get(MOLRSHORTCIRCUITINDICATOR,String.class);
+            clt.moLrShortCircuitIndicator = Boolean.parseBoolean(molr_tmp);
             String lcsClientType = (String) xml.get(LCSCLIENTTYPE,String.class);
             clt.lcsClientType = LCSClientType.valueOf(lcsClientType);
             String codeWordUSSDString = (String) xml.get(CODEWORDUSSDSTRING,String.class);
@@ -399,12 +406,11 @@ public class TestMapLcsClientConfigurationData {
             clt.callSessionRelated=PrivacyCheckRelatedAction.valueOf(callSessionRelated);
             String areaType = (String) xml.get(AREATYPE,String.class);
             clt.areaType=AreaType.valueOf(areaType);
-            Integer reportingAmmount = (Integer)xml.get(REPORTINGAMMOUNT,Integer.class);
-            clt.reportingAmmount=reportingAmmount;
             Integer reportingInterval = (Integer)xml.get(REPORTINGINTERVAL,Integer.class);
             clt.reportingInterval=reportingInterval;
             Integer dataCodingScheme = (Integer)xml.get(DATACODINGSCHEME,Integer.class);
             clt.dataCodingScheme=dataCodingScheme;
+
         }
     };
 
