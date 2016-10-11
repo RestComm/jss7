@@ -215,12 +215,14 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
                         if (compType == ComponentType.Invoke)
                             this.moForwardShortMessageRequest(parameter, mapDialogSmsImpl, invokeId);
                         else
-                            this.moForwardShortMessageResponse(parameter, mapDialogSmsImpl, invokeId);
+                            this.moForwardShortMessageResponse(parameter, mapDialogSmsImpl, invokeId,
+                                    compType == ComponentType.ReturnResult);
                     } else {
                         if (compType == ComponentType.Invoke)
                             this.forwardShortMessageRequest(parameter, mapDialogSmsImpl, invokeId);
                         else
-                            this.forwardShortMessageResponse(parameter, mapDialogSmsImpl, invokeId);
+                            this.forwardShortMessageResponse(parameter, mapDialogSmsImpl, invokeId,
+                                    compType == ComponentType.ReturnResult);
                     }
                 }
                 break;
@@ -230,7 +232,8 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
                     if (compType == ComponentType.Invoke)
                         this.mtForwardShortMessageRequest(parameter, mapDialogSmsImpl, invokeId);
                     else
-                        this.mtForwardShortMessageResponse(parameter, mapDialogSmsImpl, invokeId);
+                        this.mtForwardShortMessageResponse(parameter, mapDialogSmsImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
                 }
                 break;
 
@@ -239,7 +242,8 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
                     if (compType == ComponentType.Invoke)
                         this.sendRoutingInfoForSMRequest(parameter, mapDialogSmsImpl, invokeId);
                     else
-                        this.sendRoutingInfoForSMResponse(parameter, mapDialogSmsImpl, invokeId);
+                        this.sendRoutingInfoForSMResponse(parameter, mapDialogSmsImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
                 }
                 break;
 
@@ -248,7 +252,8 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
                     if (compType == ComponentType.Invoke)
                         this.reportSMDeliveryStatusRequest(parameter, mapDialogSmsImpl, invokeId);
                     else
-                        this.reportSMDeliveryStatusResponse(parameter, mapDialogSmsImpl, invokeId, vers);
+                        this.reportSMDeliveryStatusResponse(parameter, mapDialogSmsImpl, invokeId, vers,
+                                compType == ComponentType.ReturnResult);
                 }
                 break;
 
@@ -264,7 +269,8 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
                     if (compType == ComponentType.Invoke)
                         this.alertServiceCentreRequest(parameter, mapDialogSmsImpl, invokeId, ocValueInt);
                     else
-                        this.alertServiceCentreResponse(parameter, mapDialogSmsImpl, invokeId);
+                        this.alertServiceCentreResponse(parameter, mapDialogSmsImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
                 }
                 break;
 
@@ -280,7 +286,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
                     if (compType == ComponentType.Invoke)
                         this.readyForSMRequest(parameter, mapDialogSmsImpl, invokeId, ocValueInt);
                     else
-                        this.readyForSMResponse(parameter, mapDialogSmsImpl, invokeId);
+                        this.readyForSMResponse(parameter, mapDialogSmsImpl, invokeId, compType == ComponentType.ReturnResult);
                 }
                 break;
 
@@ -328,13 +334,14 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
         }
     }
 
-    private void forwardShortMessageResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void forwardShortMessageResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         ForwardShortMessageResponseImpl ind = new ForwardShortMessageResponseImpl();
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
 
@@ -378,8 +385,8 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
         }
     }
 
-    private void moForwardShortMessageResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void moForwardShortMessageResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         MoForwardShortMessageResponseImpl ind = new MoForwardShortMessageResponseImpl();
 
@@ -396,6 +403,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -438,8 +446,8 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
         }
     }
 
-    private void mtForwardShortMessageResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void mtForwardShortMessageResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         MtForwardShortMessageResponseImpl ind = new MtForwardShortMessageResponseImpl();
 
@@ -456,6 +464,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -498,8 +507,8 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
         }
     }
 
-    private void sendRoutingInfoForSMResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void sendRoutingInfoForSMResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         SendRoutingInfoForSMResponseImpl ind = new SendRoutingInfoForSMResponseImpl();
 
@@ -519,6 +528,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -563,7 +573,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
     }
 
     private void reportSMDeliveryStatusResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId,
-            long mapProtocolVersion) throws MAPParsingComponentException {
+            long mapProtocolVersion, boolean returnResultNotLast) throws MAPParsingComponentException {
 
         ReportSMDeliveryStatusResponseImpl ind = new ReportSMDeliveryStatusResponseImpl(mapProtocolVersion);
 
@@ -589,6 +599,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -662,13 +673,14 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
         }
     }
 
-    private void alertServiceCentreResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void alertServiceCentreResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         AlertServiceCentreResponseImpl ind = new AlertServiceCentreResponseImpl();
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
 
@@ -713,7 +725,8 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
         }
     }
 
-    private void readyForSMResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId) throws MAPParsingComponentException {
+    private void readyForSMResponse(Parameter parameter, MAPDialogSmsImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         ReadyForSMResponseImpl ind = new ReadyForSMResponseImpl();
 
@@ -730,6 +743,7 @@ public class MAPServiceSmsImpl extends MAPServiceBaseImpl implements MAPServiceS
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {

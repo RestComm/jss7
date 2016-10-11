@@ -174,90 +174,100 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
         int ocValueInt2 = (int) ocValueInt;
         MAPApplicationContextName acn = mapDialog.getApplicationContext().getApplicationContextName();
         switch (ocValueInt2) {
-        case MAPOperationCode.registerSS:
-            if (acn == MAPApplicationContextName.networkFunctionalSsContext) {
-                if (compType == ComponentType.Invoke)
-                    this.registerSSRequest(parameter, mapDialogSupplementaryImpl, invokeId);
-                else
-                    this.registerSSResponse(parameter, mapDialogSupplementaryImpl, invokeId);
-            }
-            break;
-        case MAPOperationCode.eraseSS:
-            if (acn == MAPApplicationContextName.networkFunctionalSsContext) {
-                if (compType == ComponentType.Invoke)
-                    this.eraseSSRequest(parameter, mapDialogSupplementaryImpl, invokeId);
-                else
-                    this.eraseSSResponse(parameter, mapDialogSupplementaryImpl, invokeId);
-            }
-            break;
-        case MAPOperationCode.activateSS:
-            if (acn == MAPApplicationContextName.networkFunctionalSsContext) {
-                if (compType == ComponentType.Invoke)
-                    this.activateSSRequest(parameter, mapDialogSupplementaryImpl, invokeId);
-                else
-                    this.activateSSResponse(parameter, mapDialogSupplementaryImpl, invokeId);
-            }
-            break;
-        case MAPOperationCode.deactivateSS:
-            if (acn == MAPApplicationContextName.networkFunctionalSsContext) {
-                if (compType == ComponentType.Invoke)
-                    this.deactivateSSRequest(parameter, mapDialogSupplementaryImpl, invokeId);
-                else
-                    this.deactivateSSResponse(parameter, mapDialogSupplementaryImpl, invokeId);
-            }
-            break;
-        case MAPOperationCode.interrogateSS:
-            if (acn == MAPApplicationContextName.networkFunctionalSsContext) {
-                if (compType == ComponentType.Invoke)
-                    this.interrogateSSRequest(parameter, mapDialogSupplementaryImpl, invokeId);
-                else
-                    this.interrogateSSResponse(parameter, mapDialogSupplementaryImpl, invokeId);
-            }
-            break;
-        case MAPOperationCode.registerPassword:
-            if (acn == MAPApplicationContextName.networkFunctionalSsContext) {
-                if (compType == ComponentType.Invoke)
-                    this.registerPasswordRequest(parameter, mapDialogSupplementaryImpl, invokeId);
-                else
-                    this.registerPasswordResponse(parameter, mapDialogSupplementaryImpl, invokeId);
-            }
-            break;
-        case MAPOperationCode.getPassword:
-            if (acn == MAPApplicationContextName.networkFunctionalSsContext) {
-                if (compType == ComponentType.Invoke)
-                    this.getPasswordRequest(parameter, mapDialogSupplementaryImpl, invokeId, linkedId, linkedInvoke);
-                else
-                    this.getPasswordResponse(parameter, mapDialogSupplementaryImpl, invokeId);
-            }
-            break;
+            case MAPOperationCode.registerSS:
+                if (acn == MAPApplicationContextName.networkFunctionalSsContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.registerSSRequest(parameter, mapDialogSupplementaryImpl, invokeId);
+                    else
+                        this.registerSSResponse(parameter, mapDialogSupplementaryImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
+            case MAPOperationCode.eraseSS:
+                if (acn == MAPApplicationContextName.networkFunctionalSsContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.eraseSSRequest(parameter, mapDialogSupplementaryImpl, invokeId);
+                    else
+                        this.eraseSSResponse(parameter, mapDialogSupplementaryImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
+            case MAPOperationCode.activateSS:
+                if (acn == MAPApplicationContextName.networkFunctionalSsContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.activateSSRequest(parameter, mapDialogSupplementaryImpl, invokeId);
+                    else
+                        this.activateSSResponse(parameter, mapDialogSupplementaryImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
+            case MAPOperationCode.deactivateSS:
+                if (acn == MAPApplicationContextName.networkFunctionalSsContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.deactivateSSRequest(parameter, mapDialogSupplementaryImpl, invokeId);
+                    else
+                        this.deactivateSSResponse(parameter, mapDialogSupplementaryImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
+            case MAPOperationCode.interrogateSS:
+                if (acn == MAPApplicationContextName.networkFunctionalSsContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.interrogateSSRequest(parameter, mapDialogSupplementaryImpl, invokeId);
+                    else
+                        this.interrogateSSResponse(parameter, mapDialogSupplementaryImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
+            case MAPOperationCode.registerPassword:
+                if (acn == MAPApplicationContextName.networkFunctionalSsContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.registerPasswordRequest(parameter, mapDialogSupplementaryImpl, invokeId);
+                    else
+                        this.registerPasswordResponse(parameter, mapDialogSupplementaryImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
+            case MAPOperationCode.getPassword:
+                if (acn == MAPApplicationContextName.networkFunctionalSsContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.getPasswordRequest(parameter, mapDialogSupplementaryImpl, invokeId, linkedId, linkedInvoke);
+                    else
+                        this.getPasswordResponse(parameter, mapDialogSupplementaryImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
 
-        case MAPOperationCode.processUnstructuredSS_Request:
-            if (acn == MAPApplicationContextName.networkUnstructuredSsContext) {
-                if (compType == ComponentType.Invoke)
-                    this.processUnstructuredSSRequest(parameter, mapDialogSupplementaryImpl, invokeId);
-                else
-                    this.processUnstructuredSSResponse(parameter, mapDialogSupplementaryImpl, invokeId);
-            }
-            break;
-        case MAPOperationCode.unstructuredSS_Request:
-            if (acn == MAPApplicationContextName.networkUnstructuredSsContext) {
-                if (compType == ComponentType.Invoke)
-                    this.unstructuredSSRequest(parameter, mapDialogSupplementaryImpl, invokeId);
-                else
-                    this.unstructuredSSResponse(parameter, mapDialogSupplementaryImpl, invokeId);
-            }
-            break;
-        case MAPOperationCode.unstructuredSS_Notify:
-            if (acn == MAPApplicationContextName.networkUnstructuredSsContext) {
-                if (compType == ComponentType.Invoke)
-                    this.unstructuredSSNotifyRequest(parameter, mapDialogSupplementaryImpl, invokeId);
-                else
-                    this.unstructuredSSNotifyResponse(parameter, mapDialogSupplementaryImpl, invokeId);
-            }
-            break;
-        default:
-            throw new MAPParsingComponentException("MAPServiceSupplementary: unknown incoming operation code: " + ocValueInt2,
-                    MAPParsingComponentExceptionReason.UnrecognizedOperation);
+            case MAPOperationCode.processUnstructuredSS_Request:
+                if (acn == MAPApplicationContextName.networkUnstructuredSsContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.processUnstructuredSSRequest(parameter, mapDialogSupplementaryImpl, invokeId);
+                    else
+                        this.processUnstructuredSSResponse(parameter, mapDialogSupplementaryImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
+            case MAPOperationCode.unstructuredSS_Request:
+                if (acn == MAPApplicationContextName.networkUnstructuredSsContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.unstructuredSSRequest(parameter, mapDialogSupplementaryImpl, invokeId);
+                    else
+                        this.unstructuredSSResponse(parameter, mapDialogSupplementaryImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
+            case MAPOperationCode.unstructuredSS_Notify:
+                if (acn == MAPApplicationContextName.networkUnstructuredSsContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.unstructuredSSNotifyRequest(parameter, mapDialogSupplementaryImpl, invokeId);
+                    else
+                        this.unstructuredSSNotifyResponse(parameter, mapDialogSupplementaryImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
+            default:
+                throw new MAPParsingComponentException("MAPServiceSupplementary: unknown incoming operation code: "
+                        + ocValueInt2, MAPParsingComponentExceptionReason.UnrecognizedOperation);
         }
     }
 
@@ -289,8 +299,8 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
         }
     }
 
-    private void registerSSResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void registerSSResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
         RegisterSSResponseImpl ind = new RegisterSSResponseImpl();
 
         if (parameter != null) {
@@ -303,6 +313,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -342,8 +353,8 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
         }
     }
 
-    private void eraseSSResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void eraseSSResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
         EraseSSResponseImpl ind = new EraseSSResponseImpl();
 
         if (parameter != null) {
@@ -357,6 +368,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -396,8 +408,8 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
         }
     }
 
-    private void activateSSResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void activateSSResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
         ActivateSSResponseImpl ind = new ActivateSSResponseImpl();
 
         if (parameter != null) {
@@ -411,6 +423,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -450,8 +463,8 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
         }
     }
 
-    private void deactivateSSResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void deactivateSSResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
         DeactivateSSResponseImpl ind = new DeactivateSSResponseImpl();
 
         if (parameter != null) {
@@ -465,6 +478,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -504,8 +518,8 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
         }
     }
 
-    private void interrogateSSResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void interrogateSSResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
         InterrogateSSResponseImpl ind = new InterrogateSSResponseImpl();
 
         if (parameter == null)
@@ -522,6 +536,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -564,8 +579,8 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
         }
     }
 
-    private void getPasswordResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void getPasswordResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
         GetPasswordResponseImpl ind = new GetPasswordResponseImpl();
 
         if (parameter == null)
@@ -585,6 +600,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -624,8 +640,8 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
         }
     }
 
-    private void registerPasswordResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void registerPasswordResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
         RegisterPasswordResponseImpl ind = new RegisterPasswordResponseImpl();
 
         if (parameter == null)
@@ -645,6 +661,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -687,12 +704,13 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
         }
     }
 
-    private void unstructuredSSNotifyResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void unstructuredSSNotifyResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         UnstructuredSSNotifyResponseImpl ind = new UnstructuredSSNotifyResponseImpl();
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -734,8 +752,8 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
         }
     }
 
-    private void unstructuredSSResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void unstructuredSSResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         UnstructuredSSResponseImpl ind = new UnstructuredSSResponseImpl();
 
@@ -753,6 +771,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -797,8 +816,8 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
 
     }
 
-    private void processUnstructuredSSResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void processUnstructuredSSResponse(Parameter parameter, MAPDialogSupplementaryImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         if (parameter == null)
             throw new MAPParsingComponentException(
@@ -817,6 +836,7 @@ public class MAPServiceSupplementaryImpl extends MAPServiceBaseImpl implements M
         ind.decodeData(ais, buf.length);
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {

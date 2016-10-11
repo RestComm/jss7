@@ -45,4 +45,6 @@ public interface MAPMessage extends Serializable {
 
     int getOperationCode();
 
+    boolean isReturnResultNotLast();
+
 }

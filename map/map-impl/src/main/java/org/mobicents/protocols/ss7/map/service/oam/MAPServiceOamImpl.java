@@ -171,27 +171,29 @@ public class MAPServiceOamImpl extends MAPServiceBaseImpl implements MAPServiceO
         int ocValueInt = (int) (long) ocValue;
 
         switch (ocValueInt) {
-        case MAPOperationCode.activateTraceMode:
-            if (acn == MAPApplicationContextName.tracingContext) {
-                if (compType == ComponentType.Invoke)
-                    this.processActivateTraceModeRequest(parameter, mapDialogOamImpl, invokeId);
-                else
-                    this.processActivateTraceModeResponse(parameter, mapDialogOamImpl, invokeId);
-            }
-            break;
+            case MAPOperationCode.activateTraceMode:
+                if (acn == MAPApplicationContextName.tracingContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.processActivateTraceModeRequest(parameter, mapDialogOamImpl, invokeId);
+                    else
+                        this.processActivateTraceModeResponse(parameter, mapDialogOamImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
 
-        case MAPOperationCode.sendIMSI:
-            if (acn == MAPApplicationContextName.imsiRetrievalContext) {
-                if (compType == ComponentType.Invoke)
-                    this.processSendImsiRequest(parameter, mapDialogOamImpl, invokeId);
-                else
-                    this.processSendImsiResponse(parameter, mapDialogOamImpl, invokeId);
-            }
-            break;
+            case MAPOperationCode.sendIMSI:
+                if (acn == MAPApplicationContextName.imsiRetrievalContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.processSendImsiRequest(parameter, mapDialogOamImpl, invokeId);
+                    else
+                        this.processSendImsiResponse(parameter, mapDialogOamImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
 
-        default:
-            throw new MAPParsingComponentException("MAPServiceOam: unknown incoming operation code: " + ocValueInt,
-                    MAPParsingComponentExceptionReason.UnrecognizedOperation);
+            default:
+                throw new MAPParsingComponentException("MAPServiceOam: unknown incoming operation code: " + ocValueInt,
+                        MAPParsingComponentExceptionReason.UnrecognizedOperation);
         }
     }
 
@@ -226,8 +228,8 @@ public class MAPServiceOamImpl extends MAPServiceBaseImpl implements MAPServiceO
         }
     }
 
-    private void processActivateTraceModeResponse(Parameter parameter, MAPDialogOamImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void processActivateTraceModeResponse(Parameter parameter, MAPDialogOamImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         ActivateTraceModeResponseImpl_Oam ind = new ActivateTraceModeResponseImpl_Oam();
 
@@ -244,6 +246,7 @@ public class MAPServiceOamImpl extends MAPServiceBaseImpl implements MAPServiceO
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -285,8 +288,8 @@ public class MAPServiceOamImpl extends MAPServiceBaseImpl implements MAPServiceO
         }
     }
 
-    private void processSendImsiResponse(Parameter parameter, MAPDialogOamImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void processSendImsiResponse(Parameter parameter, MAPDialogOamImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         if (parameter == null)
             throw new MAPParsingComponentException("Error while decoding processSendImsiResponse: Parameter is mandatory but not found",
@@ -304,6 +307,7 @@ public class MAPServiceOamImpl extends MAPServiceBaseImpl implements MAPServiceO
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {

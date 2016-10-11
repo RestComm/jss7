@@ -37,9 +37,11 @@ import org.mobicents.protocols.ss7.map.api.MAPMessage;
 public abstract class MessageImpl implements MAPMessage {
 
     private static final String INVOKE_ID = "invokeId";
+    private static final String RETURN_RESULT_NOT_LAST = "returnResultNotLast";
 
     private long invokeId;
     private MAPDialog mapDialog;
+    private boolean returnResultNotLast = false;
 
     public long getInvokeId() {
         return this.invokeId;
@@ -57,6 +59,14 @@ public abstract class MessageImpl implements MAPMessage {
         this.mapDialog = mapDialog;
     }
 
+    public boolean isReturnResultNotLast() {
+        return returnResultNotLast;
+    }
+
+    public void setReturnResultNotLast(boolean returnResultNotLast) {
+        this.returnResultNotLast = returnResultNotLast;
+    }
+
     /**
      * XML Serialization/Deserialization
      */
@@ -65,11 +75,14 @@ public abstract class MessageImpl implements MAPMessage {
         @Override
         public void read(javolution.xml.XMLFormat.InputElement xml, MessageImpl message) throws XMLStreamException {
             message.invokeId = xml.getAttribute(INVOKE_ID, -1L);
+            message.returnResultNotLast = xml.getAttribute(RETURN_RESULT_NOT_LAST, false);
         }
 
         @Override
         public void write(MessageImpl message, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
             xml.setAttribute(INVOKE_ID, message.invokeId);
+            if (message.returnResultNotLast)
+                xml.setAttribute(RETURN_RESULT_NOT_LAST, message.returnResultNotLast);
         }
     };
 
