@@ -339,157 +339,173 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         switch (ocValueInt) {
 
         // -- Location management services
-        case MAPOperationCode.updateLocation:
-            if (acn == MAPApplicationContextName.networkLocUpContext) {
-                if (compType == ComponentType.Invoke)
-                    this.updateLocationRequest(parameter, mapDialogMobilityImpl, invokeId);
-                else
-                    this.updateLocationResponse(parameter, mapDialogMobilityImpl, invokeId);
-            }
-            break;
-        case MAPOperationCode.cancelLocation:
-            if (acn == MAPApplicationContextName.locationCancellationContext) {
-                if (compType == ComponentType.Invoke)
-                    this.cancelLocationRequest(parameter, mapDialogMobilityImpl, invokeId);
-                else
-                    this.cancelLocationResponse(parameter, mapDialogMobilityImpl, invokeId);
-            }
-            break;
-        case MAPOperationCode.sendIdentification:
-            if (acn == MAPApplicationContextName.interVlrInfoRetrievalContext) {
-                if (compType == ComponentType.Invoke)
-                    this.SendIdentificationRequest(parameter, mapDialogMobilityImpl, invokeId);
-                else
-                    this.SendIdentificationResponse(parameter, mapDialogMobilityImpl, invokeId);
-            }
-            break;
-        case MAPOperationCode.updateGprsLocation:
-            if (acn == MAPApplicationContextName.gprsLocationUpdateContext) {
-                if (compType == ComponentType.Invoke)
-                    this.updateGprsLocationRequest(parameter, mapDialogMobilityImpl, invokeId);
-                else
-                    this.updateGprsLocationResponse(parameter, mapDialogMobilityImpl, invokeId);
-            }
-            break;
-        case MAPOperationCode.purgeMS:
-            if (acn == MAPApplicationContextName.msPurgingContext) {
-                if (compType == ComponentType.Invoke)
-                    this.purgeMSRequest(parameter, mapDialogMobilityImpl, invokeId);
-                else
-                    this.purgeMSResponse(parameter, mapDialogMobilityImpl, invokeId);
-            }
-            break;
+            case MAPOperationCode.updateLocation:
+                if (acn == MAPApplicationContextName.networkLocUpContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.updateLocationRequest(parameter, mapDialogMobilityImpl, invokeId);
+                    else
+                        this.updateLocationResponse(parameter, mapDialogMobilityImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
+            case MAPOperationCode.cancelLocation:
+                if (acn == MAPApplicationContextName.locationCancellationContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.cancelLocationRequest(parameter, mapDialogMobilityImpl, invokeId);
+                    else
+                        this.cancelLocationResponse(parameter, mapDialogMobilityImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
+            case MAPOperationCode.sendIdentification:
+                if (acn == MAPApplicationContextName.interVlrInfoRetrievalContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.SendIdentificationRequest(parameter, mapDialogMobilityImpl, invokeId);
+                    else
+                        this.SendIdentificationResponse(parameter, mapDialogMobilityImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
+            case MAPOperationCode.updateGprsLocation:
+                if (acn == MAPApplicationContextName.gprsLocationUpdateContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.updateGprsLocationRequest(parameter, mapDialogMobilityImpl, invokeId);
+                    else
+                        this.updateGprsLocationResponse(parameter, mapDialogMobilityImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
+            case MAPOperationCode.purgeMS:
+                if (acn == MAPApplicationContextName.msPurgingContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.purgeMSRequest(parameter, mapDialogMobilityImpl, invokeId);
+                    else
+                        this.purgeMSResponse(parameter, mapDialogMobilityImpl, invokeId, compType == ComponentType.ReturnResult);
+                }
+                break;
 
-        // -- Authentication management services
-        case MAPOperationCode.sendAuthenticationInfo:
-            if (acn == MAPApplicationContextName.infoRetrievalContext && vers >= 2) {
-                if (compType == ComponentType.Invoke)
-                    this.sendAuthenticationInfoRequest(parameter, mapDialogMobilityImpl, invokeId);
-                else
-                    this.sendAuthenticationInfoResponse(parameter, mapDialogMobilityImpl, invokeId);
-            }
-            break;
-        case MAPOperationCode.authenticationFailureReport:
-            if (acn == MAPApplicationContextName.authenticationFailureReportContext && vers >= 3) {
-                if (compType == ComponentType.Invoke)
-                    this.authenticationFailureReportRequest(parameter, mapDialogMobilityImpl, invokeId);
-                else
-                    this.authenticationFailureReportResponse(parameter, mapDialogMobilityImpl, invokeId);
-            }
-            break;
+            // -- Authentication management services
+            case MAPOperationCode.sendAuthenticationInfo:
+                if (acn == MAPApplicationContextName.infoRetrievalContext && vers >= 2) {
+                    if (compType == ComponentType.Invoke)
+                        this.sendAuthenticationInfoRequest(parameter, mapDialogMobilityImpl, invokeId);
+                    else
+                        this.sendAuthenticationInfoResponse(parameter, mapDialogMobilityImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
+            case MAPOperationCode.authenticationFailureReport:
+                if (acn == MAPApplicationContextName.authenticationFailureReportContext && vers >= 3) {
+                    if (compType == ComponentType.Invoke)
+                        this.authenticationFailureReportRequest(parameter, mapDialogMobilityImpl, invokeId);
+                    else
+                        this.authenticationFailureReportResponse(parameter, mapDialogMobilityImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
 
-        // -- Fault Recovery services
-        case MAPOperationCode.reset:
-            if (acn == MAPApplicationContextName.resetContext && vers <= 2) {
-                if (compType == ComponentType.Invoke)
-                    this.resetRequest(parameter, mapDialogMobilityImpl, invokeId);
-            }
-            break;
-        case MAPOperationCode.forwardCheckSsIndication:
-            if (acn == MAPApplicationContextName.networkLocUpContext) {
-                if (compType == ComponentType.Invoke)
-                    this.forwardCheckSsIndicationRequest(parameter, mapDialogMobilityImpl, invokeId);
-            }
-            break;
-        case MAPOperationCode.restoreData:
-            if (acn == MAPApplicationContextName.networkLocUpContext && vers >= 2) {
-                if (compType == ComponentType.Invoke)
-                    this.restoreDataRequest(parameter, mapDialogMobilityImpl, invokeId);
-                else
-                    this.restoreDataResponse(parameter, mapDialogMobilityImpl, invokeId);
-            }
-            break;
+            // -- Fault Recovery services
+            case MAPOperationCode.reset:
+                if (acn == MAPApplicationContextName.resetContext && vers <= 2) {
+                    if (compType == ComponentType.Invoke)
+                        this.resetRequest(parameter, mapDialogMobilityImpl, invokeId);
+                }
+                break;
+            case MAPOperationCode.forwardCheckSsIndication:
+                if (acn == MAPApplicationContextName.networkLocUpContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.forwardCheckSsIndicationRequest(parameter, mapDialogMobilityImpl, invokeId);
+                }
+                break;
+            case MAPOperationCode.restoreData:
+                if (acn == MAPApplicationContextName.networkLocUpContext && vers >= 2) {
+                    if (compType == ComponentType.Invoke)
+                        this.restoreDataRequest(parameter, mapDialogMobilityImpl, invokeId);
+                    else
+                        this.restoreDataResponse(parameter, mapDialogMobilityImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
 
-        // -- Subscriber Information services
-        case MAPOperationCode.anyTimeInterrogation:
-            if (acn == MAPApplicationContextName.anyTimeEnquiryContext) {
-                if (compType == ComponentType.Invoke)
-                    this.processAnyTimeInterrogationRequest(parameter, mapDialogMobilityImpl, invokeId);
-                else
-                    this.processAnyTimeInterrogationResponse(parameter, mapDialogMobilityImpl, invokeId);
-            }
-            break;
-        case MAPOperationCode.anyTimeSubscriptionInterrogation:
-            if (acn == MAPApplicationContextName.anyTimeInfoHandlingContext) {
-                if (compType == ComponentType.Invoke)
-                    this.processAnyTimeSubscriptionInterrogationRequest(parameter, mapDialogMobilityImpl, invokeId);
-                else
-                    this.processAnyTimeSubscriptionInterrogationResponse(parameter, mapDialogMobilityImpl, invokeId);
-            }
-            break;
-        case MAPOperationCode.provideSubscriberInfo:
-            if (acn == MAPApplicationContextName.subscriberInfoEnquiryContext) {
-                if (compType == ComponentType.Invoke)
-                    this.processProvideSubscriberInfoRequest(parameter, mapDialogMobilityImpl, invokeId);
-                else
-                    this.processProvideSubscriberInfoResponse(parameter, mapDialogMobilityImpl, invokeId);
-            }
-            break;
+            // -- Subscriber Information services
+            case MAPOperationCode.anyTimeInterrogation:
+                if (acn == MAPApplicationContextName.anyTimeEnquiryContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.processAnyTimeInterrogationRequest(parameter, mapDialogMobilityImpl, invokeId);
+                    else
+                        this.processAnyTimeInterrogationResponse(parameter, mapDialogMobilityImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
+            case MAPOperationCode.anyTimeSubscriptionInterrogation:
+                if (acn == MAPApplicationContextName.anyTimeInfoHandlingContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.processAnyTimeSubscriptionInterrogationRequest(parameter, mapDialogMobilityImpl, invokeId);
+                    else
+                        this.processAnyTimeSubscriptionInterrogationResponse(parameter, mapDialogMobilityImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
+            case MAPOperationCode.provideSubscriberInfo:
+                if (acn == MAPApplicationContextName.subscriberInfoEnquiryContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.processProvideSubscriberInfoRequest(parameter, mapDialogMobilityImpl, invokeId);
+                    else
+                        this.processProvideSubscriberInfoResponse(parameter, mapDialogMobilityImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
 
-        // -- IMEI services
-        case MAPOperationCode.checkIMEI:
-            if (acn == MAPApplicationContextName.equipmentMngtContext) {
-                if (compType == ComponentType.Invoke)
-                    this.processCheckImeiRequest(parameter, mapDialogMobilityImpl, invokeId);
-                else
-                    this.processCheckImeiResponse(parameter, mapDialogMobilityImpl, invokeId);
-            }
-            break;
+            // -- IMEI services
+            case MAPOperationCode.checkIMEI:
+                if (acn == MAPApplicationContextName.equipmentMngtContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.processCheckImeiRequest(parameter, mapDialogMobilityImpl, invokeId);
+                    else
+                        this.processCheckImeiResponse(parameter, mapDialogMobilityImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
 
-        // -- Subscriber management services
-        case MAPOperationCode.insertSubscriberData:
-            if (acn == MAPApplicationContextName.subscriberDataMngtContext || acn == MAPApplicationContextName.networkLocUpContext
-                    || acn == MAPApplicationContextName.gprsLocationUpdateContext) {
-                if (compType == ComponentType.Invoke)
-                    this.processInsertSubscriberDataRequest(parameter, mapDialogMobilityImpl, invokeId);
-                else
-                    this.processInsertSubscriberDataResponse(parameter, mapDialogMobilityImpl, invokeId);
-            }
-            break;
-        case MAPOperationCode.deleteSubscriberData:
-            if (acn == MAPApplicationContextName.subscriberDataMngtContext) {
-                if (compType == ComponentType.Invoke)
-                    this.processDeleteSubscriberDataRequest(parameter, mapDialogMobilityImpl, invokeId);
-                else
-                    this.processDeleteSubscriberDataResponse(parameter, mapDialogMobilityImpl, invokeId);
-            }
-            break;
+            // -- Subscriber management services
+            case MAPOperationCode.insertSubscriberData:
+                if (acn == MAPApplicationContextName.subscriberDataMngtContext
+                        || acn == MAPApplicationContextName.networkLocUpContext
+                        || acn == MAPApplicationContextName.gprsLocationUpdateContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.processInsertSubscriberDataRequest(parameter, mapDialogMobilityImpl, invokeId);
+                    else
+                        this.processInsertSubscriberDataResponse(parameter, mapDialogMobilityImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
+            case MAPOperationCode.deleteSubscriberData:
+                if (acn == MAPApplicationContextName.subscriberDataMngtContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.processDeleteSubscriberDataRequest(parameter, mapDialogMobilityImpl, invokeId);
+                    else
+                        this.processDeleteSubscriberDataResponse(parameter, mapDialogMobilityImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
 
-        // -- OAM service: activateTraceMode operation can be present in
-        // networkLocUpContext and gprsLocationUpdateContext application
-        // contexts
-        case MAPOperationCode.activateTraceMode:
-            if (acn == MAPApplicationContextName.networkLocUpContext || acn == MAPApplicationContextName.gprsLocationUpdateContext) {
-                if (compType == ComponentType.Invoke)
-                    this.processActivateTraceModeRequest(parameter, mapDialogMobilityImpl, invokeId);
-                else
-                    this.processActivateTraceModeResponse(parameter, mapDialogMobilityImpl, invokeId);
-            }
-            break;
+            // -- OAM service: activateTraceMode operation can be present in
+            // networkLocUpContext and gprsLocationUpdateContext application
+            // contexts
+            case MAPOperationCode.activateTraceMode:
+                if (acn == MAPApplicationContextName.networkLocUpContext
+                        || acn == MAPApplicationContextName.gprsLocationUpdateContext) {
+                    if (compType == ComponentType.Invoke)
+                        this.processActivateTraceModeRequest(parameter, mapDialogMobilityImpl, invokeId);
+                    else
+                        this.processActivateTraceModeResponse(parameter, mapDialogMobilityImpl, invokeId,
+                                compType == ComponentType.ReturnResult);
+                }
+                break;
 
-        default:
-            throw new MAPParsingComponentException("MAPServiceMobility: unknown incoming operation code: " + ocValueInt,
-                    MAPParsingComponentExceptionReason.UnrecognizedOperation);
+            default:
+                throw new MAPParsingComponentException("MAPServiceMobility: unknown incoming operation code: " + ocValueInt,
+                        MAPParsingComponentExceptionReason.UnrecognizedOperation);
         }
     }
 
@@ -526,8 +542,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         }
     }
 
-    private void updateLocationResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void updateLocationResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
         if (parameter == null)
@@ -555,6 +571,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -607,8 +624,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         }
     }
 
-    private void cancelLocationResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void cancelLocationResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
         long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
 
         CancelLocationResponseImpl ind = new CancelLocationResponseImpl();
@@ -627,6 +644,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -678,8 +696,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         }
     }
 
-    private void SendIdentificationResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void SendIdentificationResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
         long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
 
         SendIdentificationResponseImpl ind = new SendIdentificationResponseImpl(version);
@@ -709,6 +727,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -754,8 +773,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         }
     }
 
-    private void updateGprsLocationResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void updateGprsLocationResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
         long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
 
         UpdateGprsLocationResponseImpl ind = new UpdateGprsLocationResponseImpl();
@@ -777,6 +796,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -829,8 +849,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         }
     }
 
-    private void purgeMSResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void purgeMSResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
         PurgeMSResponseImpl ind = new PurgeMSResponseImpl();
 
         if (parameter != null) {
@@ -846,6 +866,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -905,8 +926,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         }
     }
 
-    private void sendAuthenticationInfoResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void sendAuthenticationInfoResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
         SendAuthenticationInfoResponseImpl ind = new SendAuthenticationInfoResponseImpl(version);
@@ -938,6 +959,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -977,8 +999,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         }
     }
 
-    private void authenticationFailureReportResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void authenticationFailureReportResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         AuthenticationFailureReportResponseImpl ind = new AuthenticationFailureReportResponseImpl();
         if (parameter != null) {
@@ -994,6 +1016,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -1076,8 +1099,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         }
     }
 
-    private void restoreDataResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void restoreDataResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         if (parameter == null)
             throw new MAPParsingComponentException("Error while decoding restoreDataResponse: Parameter is mandatory but not found",
@@ -1093,6 +1116,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -1136,8 +1160,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
     }
 
-    private void processAnyTimeInterrogationResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void processAnyTimeInterrogationResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         if (parameter == null)
             throw new MAPParsingComponentException(
@@ -1156,6 +1180,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         ind.decodeData(ais, buf.length);
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -1197,8 +1222,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         }
     }
 
-    private void processAnyTimeSubscriptionInterrogationResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void processAnyTimeSubscriptionInterrogationResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl,
+            Long invokeId, boolean returnResultNotLast) throws MAPParsingComponentException {
 
         if (parameter == null)
             throw new MAPParsingComponentException(
@@ -1217,6 +1242,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         ind.decodeData(ais, buf.length);
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -1257,8 +1283,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
     }
 
-    private void processProvideSubscriberInfoResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void processProvideSubscriberInfoResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         if (parameter == null)
             throw new MAPParsingComponentException("Error while decoding ProvideSubscriberInfoResponseIndication: Parameter is mandatory but not found",
@@ -1276,6 +1302,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         ind.decodeData(ais, buf.length);
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -1329,8 +1356,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         }
     }
 
-    private void processCheckImeiResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void processCheckImeiResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         if (parameter == null)
             throw new MAPParsingComponentException(
@@ -1359,6 +1386,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         ind.decodeData(ais, buf.length);
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -1402,8 +1430,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         }
     }
 
-    private void processInsertSubscriberDataResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void processInsertSubscriberDataResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
         InsertSubscriberDataResponseImpl ind = new InsertSubscriberDataResponseImpl(version);
@@ -1421,6 +1449,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -1461,8 +1490,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         }
     }
 
-    private void processDeleteSubscriberDataResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void processDeleteSubscriberDataResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         DeleteSubscriberDataResponseImpl ind = new DeleteSubscriberDataResponseImpl();
 
@@ -1479,6 +1508,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -1520,8 +1550,8 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
         }
     }
 
-    private void processActivateTraceModeResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void processActivateTraceModeResponse(Parameter parameter, MAPDialogMobilityImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
 
         ActivateTraceModeResponseImpl_Mobility ind = new ActivateTraceModeResponseImpl_Mobility();
 
@@ -1538,6 +1568,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {

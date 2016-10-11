@@ -172,21 +172,23 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
                 if (compType == ComponentType.Invoke)
                     this.sendRoutingInformationRequest(parameter, mapDialogImpl, invokeId);
                 else if (compType == ComponentType.ReturnResult || compType == ComponentType.ReturnResultLast)
-                    this.sendRoutingInformationResponse(parameter, mapDialogImpl, invokeId);
+                    this.sendRoutingInformationResponse(parameter, mapDialogImpl, invokeId,
+                            compType == ComponentType.ReturnResult);
                 break;
 
             case MAPOperationCode.provideRoamingNumber:
                 if (compType == ComponentType.Invoke)
                     this.provideRoamingNumberRequest(parameter, mapDialogImpl, invokeId);
                 else if (compType == ComponentType.ReturnResult || compType == ComponentType.ReturnResultLast)
-                    this.provideRoamingNumberResponse(parameter, mapDialogImpl, invokeId);
+                    this.provideRoamingNumberResponse(parameter, mapDialogImpl, invokeId,
+                            compType == ComponentType.ReturnResult);
                 break;
 
             case MAPOperationCode.istCommand:
                 if (compType == ComponentType.Invoke)
                     this.istCommandRequest(parameter, mapDialogImpl, invokeId);
                 else if (compType == ComponentType.ReturnResult || compType == ComponentType.ReturnResultLast)
-                    this.istCommandResponse(parameter, mapDialogImpl, invokeId);
+                    this.istCommandResponse(parameter, mapDialogImpl, invokeId, compType == ComponentType.ReturnResult);
                 break;
             default:
             throw new MAPParsingComponentException("MAPServiceCallHandling: unknown incoming operation code: " + ocValueInt,
@@ -227,8 +229,8 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
         }
     }
 
-    private void sendRoutingInformationResponse(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void sendRoutingInformationResponse(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
         long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
         SendRoutingInformationResponseImpl ind = new SendRoutingInformationResponseImpl(version);
 
@@ -256,6 +258,7 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
         ind.decodeData(ais, buf.length);
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -300,8 +303,8 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
         }
     }
 
-    private void provideRoamingNumberResponse(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void provideRoamingNumberResponse(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
         long version = mapDialogImpl.getApplicationContext().getApplicationContextVersion().getVersion();
         ProvideRoamingNumberResponseImpl ind = new ProvideRoamingNumberResponseImpl(version);
 
@@ -329,6 +332,7 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
         ind.decodeData(ais, buf.length);
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
@@ -372,8 +376,8 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
         }
     }
 
-    private void istCommandResponse(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId)
-            throws MAPParsingComponentException {
+    private void istCommandResponse(Parameter parameter, MAPDialogCallHandlingImpl mapDialogImpl, Long invokeId,
+            boolean returnResultNotLast) throws MAPParsingComponentException {
         IstCommandResponseImpl ind = new IstCommandResponseImpl();
 
         if (parameter != null) {
@@ -389,6 +393,7 @@ public class MAPServiceCallHandlingImpl extends MAPServiceBaseImpl implements MA
 
         ind.setInvokeId(invokeId);
         ind.setMAPDialog(mapDialogImpl);
+        ind.setReturnResultNotLast(returnResultNotLast);
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
