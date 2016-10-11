@@ -84,6 +84,10 @@ public class UserDataHeaderTest {
         return new byte[] { 6, 5, 4, 35, -12, 0, 0 };
     }
 
+    public byte[] getData8() {
+        return new byte[] { 2, 112, 0 };
+    }
+
     @Test(groups = { "functional.decode", "smstpdu" })
     public void testDecode() throws Exception {
 
@@ -137,6 +141,11 @@ public class UserDataHeaderTest {
         assertEquals(nss.getNationalLanguageIdentifier(), NationalLanguageIdentifier.Portuguese);
 
         // TODO: implement getData3()-getData7() decoding
+
+        impl = new UserDataHeaderImpl(this.getData8());
+        mp = impl.getAllData();
+        assertEquals(impl.getAllData().size(), 1);
+        assertTrue(Arrays.equals(mp.get(112), new byte[] { }));
     }
 
     @Test(groups = { "functional.encode", "smstpdu" })
@@ -168,5 +177,10 @@ public class UserDataHeaderTest {
         assertTrue(Arrays.equals(impl.getEncodedData(), this.getDataA2()));
 
         // TODO: implement getData3()-getData7() encoding
+
+        impl = new UserDataHeaderImpl();
+        ie = new ConcatenatedShortMessagesIdentifierImpl(false, 140, 2, 1);
+        impl.addInformationElement(112, new byte[] {});
+        assertTrue(Arrays.equals(impl.getEncodedData(), this.getData8()));
     }
 }

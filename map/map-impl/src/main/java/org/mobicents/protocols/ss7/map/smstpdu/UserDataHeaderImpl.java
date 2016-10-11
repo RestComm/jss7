@@ -53,7 +53,7 @@ public class UserDataHeaderImpl implements UserDataHeader {
         if (udhl > encodedData.length)
             udhl = encodedData.length;
         int ind = 1;
-        while (ind <= udhl - 2) {
+        while (ind <= udhl - 1) {
             int id = encodedData[ind++];
             int len = encodedData[ind++];
             if (len <= udhl + 1 - ind) {
