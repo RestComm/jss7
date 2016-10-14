@@ -54,6 +54,10 @@ public class OriginalCalledNumberCapTest {
         return new byte[] { (byte) 131, 20, 7, 1, 9, 0 };
     }
 
+    public byte[] getData2() {
+        return new byte[] { (byte) 140, 11, 4, 16, 76, (byte) 152, 8, (byte) 148, 113, 7, 41, (byte) 146, 115 };
+    }
+
     @Test(groups = { "functional.decode", "isup" })
     public void testDecode() throws Exception {
 
@@ -68,6 +72,17 @@ public class OriginalCalledNumberCapTest {
         assertTrue(ocn.getAddress().equals("7010900"));
         assertEquals(ocn.getNumberingPlanIndicator(), 1);
         assertEquals(ocn.getAddressRepresentationRestrictedIndicator(), 1);
+
+        data = this.getData2();
+        ais = new AsnInputStream(data);
+        elem = new OriginalCalledNumberCapImpl();
+        tag = ais.readTag();
+        elem.decodeAll(ais);
+        ocn = elem.getOriginalCalledNumber();
+        assertEquals(ocn.getNumberingPlanIndicator(), 1);
+        assertEquals(ocn.getAddressRepresentationRestrictedIndicator(), 0);
+        assertEquals(ocn.getNatureOfAddressIndicator(), 4);
+        assertEquals(ocn.getAddress(), "c48980491770922937");
     }
 
     @Test(groups = { "functional.encode", "isup" })
@@ -83,6 +98,12 @@ public class OriginalCalledNumberCapTest {
         aos = new AsnOutputStream();
         elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 12);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+
+        cpn = new OriginalCalledNumberImpl(4, "c48980491770922937", 1, 0);
+        elem = new OriginalCalledNumberCapImpl(cpn);
+        aos = new AsnOutputStream();
+        elem.encodeAll(aos, Tag.CLASS_CONTEXT_SPECIFIC, 12);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
 
         // int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator
     }

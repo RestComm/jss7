@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2012, Telestax Inc and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -29,14 +29,16 @@ import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
 
 /**
  *
- ISUP OriginalCalledNumber wrapper
- *
- * OriginalCalledPartyID {PARAMETERS-BOUND : bound} ::= OCTET STRING (SIZE( bound.&minOriginalCalledPartyIDLength ..
- * bound.&maxOriginalCalledPartyIDLength)) -- Indicates the original called number. Refer to ETSI EN 300 356-1 [23] Original
- * Called Number -- for encoding.
- *
- * minOriginalCalledPartyIDLength ::= 2 maxOriginalCalledPartyIDLength ::= 10
- *
+ISUP OriginalCalledNumber wrapper
+
+OriginalCalledPartyID {PARAMETERS-BOUND : bound} ::= OCTET STRING (
+  SIZE( bound.&minOriginalCalledPartyIDLength .. bound.&maxOriginalCalledPartyIDLength))
+-- Indicates the original called number. Refer to ETSI EN 300 356-1 [23] Original Called Number
+-- for encoding.
+
+minOriginalCalledPartyIDLength ::= 2
+maxOriginalCalledPartyIDLength ::= 10
+
  *
  * @author sergey vetyutnev
  *
