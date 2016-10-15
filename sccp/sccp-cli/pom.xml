@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>sccp-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7.sccp</groupId>
-		<version>7.0.0-SNAPSHOT</version>
+		<version>7.1.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>sccp-cli</artifactId>

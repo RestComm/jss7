@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>ss7-trace-parser-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7.tools.traceparser</groupId>
-		<version>7.0.0-SNAPSHOT</version>
+		<version>7.1.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>ss7-trace-parser-bootstrap</artifactId>

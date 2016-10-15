@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>statistics-parent</artifactId>
 		<groupId>org.mobicents.protocols.ss7.statistics</groupId>
-		<version>7.0.0-SNAPSHOT</version>
+		<version>7.1.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>statistics-api</artifactId>
