@@ -860,61 +860,68 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
         MAPProvider mapProvider = this.mapMan.getMAPStack().getMAPProvider();
         String uData;
         switch (mtFSMReaction.intValue()) {
-        case MtFSMReaction.VAL_ERROR_MEMORY_CAPACITY_EXCEEDED:
-        case MtFSMReaction.VAL_ERROR_UNKNOWN_SERVICE_CENTRE:
-            SMEnumeratedDeliveryFailureCause smEnumeratedDeliveryFailureCause;
-            if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction().intValue() == MtFSMReaction.VAL_ERROR_MEMORY_CAPACITY_EXCEEDED)
-                smEnumeratedDeliveryFailureCause = SMEnumeratedDeliveryFailureCause.memoryCapacityExceeded;
-            else
-                smEnumeratedDeliveryFailureCause = SMEnumeratedDeliveryFailureCause.unknownServiceCentre;
+            case MtFSMReaction.VAL_ERROR_MEMORY_CAPACITY_EXCEEDED:
+            case MtFSMReaction.VAL_ERROR_EQUIPMENT_PROTOCOL_ERROR:
+            case MtFSMReaction.VAL_ERROR_UNKNOWN_SERVICE_CENTRE:
+                SMEnumeratedDeliveryFailureCause smEnumeratedDeliveryFailureCause;
+                if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction().intValue() == MtFSMReaction.VAL_ERROR_MEMORY_CAPACITY_EXCEEDED)
+                    smEnumeratedDeliveryFailureCause = SMEnumeratedDeliveryFailureCause.memoryCapacityExceeded;
+                else if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction()
+                        .intValue() == MtFSMReaction.VAL_ERROR_EQUIPMENT_PROTOCOL_ERROR)
+                    smEnumeratedDeliveryFailureCause = SMEnumeratedDeliveryFailureCause.equipmentProtocolError;
+                else
+                    smEnumeratedDeliveryFailureCause = SMEnumeratedDeliveryFailureCause.unknownServiceCentre;
                 MAPErrorMessage mapErrorMessage = mapProvider.getMAPErrorMessageFactory()
                         .createMAPErrorMessageSMDeliveryFailure(
                                 curDialog.getApplicationContext().getApplicationContextVersion().getVersion(),
                                 smEnumeratedDeliveryFailureCause, null, null);
-            curDialog.sendErrorComponent(invokeId, mapErrorMessage);
+                curDialog.sendErrorComponent(invokeId, mapErrorMessage);
 
-            this.countErrSent++;
-            uData = this.createErrorData(curDialog.getLocalDialogId(), (int) invokeId, mapErrorMessage);
-            this.testerHost.sendNotif(SOURCE_NAME, "Sent: errSmDelFail", uData, Level.DEBUG);
-            break;
-        case MtFSMReaction.VAL_ERROR_ABSENT_SUBSCRIBER:
-            mapErrorMessage = null;
-            switch (curDialog.getApplicationContext().getApplicationContextVersion()) {
-            case version1:
-                mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageAbsentSubscriber(null);
+                this.countErrSent++;
+                uData = this.createErrorData(curDialog.getLocalDialogId(), (int) invokeId, mapErrorMessage);
+                this.testerHost.sendNotif(SOURCE_NAME, "Sent: errSmDelFail", uData, Level.DEBUG);
                 break;
-            case version2:
-                mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageAbsentSubscriber(null, null);
+            case MtFSMReaction.VAL_ERROR_ABSENT_SUBSCRIBER:
+                mapErrorMessage = null;
+                switch (curDialog.getApplicationContext().getApplicationContextVersion()) {
+                    case version1:
+                        mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageAbsentSubscriber(null);
+                        break;
+                    case version2:
+                        mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageAbsentSubscriber(null,
+                                null);
+                        break;
+                    default:
+                        mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageAbsentSubscriberSM(
+                                AbsentSubscriberDiagnosticSM.IMSIDetached, null, null);
+                        break;
+                }
+
+                curDialog.sendErrorComponent(invokeId, mapErrorMessage);
+
+                this.countErrSent++;
+                uData = this.createErrorData(curDialog.getLocalDialogId(), (int) invokeId, mapErrorMessage);
+                this.testerHost.sendNotif(SOURCE_NAME, "Sent: errAbsSubs", uData, Level.DEBUG);
                 break;
-            default:
-                mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageAbsentSubscriberSM(AbsentSubscriberDiagnosticSM.IMSIDetached,
-                        null, null);
+            case MtFSMReaction.VAL_ERROR_SUBSCRIBER_BUSY_FOR_MT_SMS:
+                mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageSubscriberBusyForMtSms(null,
+                        null);
+                curDialog.sendErrorComponent(invokeId, mapErrorMessage);
+
+                this.countErrSent++;
+                uData = this.createErrorData(curDialog.getLocalDialogId(), (int) invokeId, mapErrorMessage);
+                this.testerHost.sendNotif(SOURCE_NAME, "Sent: errSubBusyForMt", uData, Level.DEBUG);
                 break;
-            }
+            case MtFSMReaction.VAL_ERROR_SYSTEM_FAILURE:
+                mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageSystemFailure(
+                        (long) curDialog.getApplicationContext().getApplicationContextVersion().getVersion(),
+                        NetworkResource.vmsc, null, null);
+                curDialog.sendErrorComponent(invokeId, mapErrorMessage);
 
-            curDialog.sendErrorComponent(invokeId, mapErrorMessage);
-
-            this.countErrSent++;
-            uData = this.createErrorData(curDialog.getLocalDialogId(), (int) invokeId, mapErrorMessage);
-            this.testerHost.sendNotif(SOURCE_NAME, "Sent: errAbsSubs", uData, Level.DEBUG);
-            break;
-        case MtFSMReaction.VAL_ERROR_SUBSCRIBER_BUSY_FOR_MT_SMS:
-            mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageSubscriberBusyForMtSms(null, null);
-            curDialog.sendErrorComponent(invokeId, mapErrorMessage);
-
-            this.countErrSent++;
-            uData = this.createErrorData(curDialog.getLocalDialogId(), (int) invokeId, mapErrorMessage);
-            this.testerHost.sendNotif(SOURCE_NAME, "Sent: errSubBusyForMt", uData, Level.DEBUG);
-            break;
-        case MtFSMReaction.VAL_ERROR_SYSTEM_FAILURE:
-            mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageSystemFailure(
-                    (long) curDialog.getApplicationContext().getApplicationContextVersion().getVersion(), NetworkResource.vmsc, null, null);
-            curDialog.sendErrorComponent(invokeId, mapErrorMessage);
-
-            this.countErrSent++;
-            uData = this.createErrorData(curDialog.getLocalDialogId(), (int) invokeId, mapErrorMessage);
-            this.testerHost.sendNotif(SOURCE_NAME, "Sent: errSysFail", uData, Level.DEBUG);
-            break;
+                this.countErrSent++;
+                uData = this.createErrorData(curDialog.getLocalDialogId(), (int) invokeId, mapErrorMessage);
+                this.testerHost.sendNotif(SOURCE_NAME, "Sent: errSysFail", uData, Level.DEBUG);
+                break;
         }
     }
 

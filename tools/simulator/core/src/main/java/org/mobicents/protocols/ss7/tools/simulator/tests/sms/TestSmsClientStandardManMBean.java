@@ -124,8 +124,8 @@ public class TestSmsClientStandardManMBean extends StandardMBean {
                         + "1:MwdNo,2:MwdMcef,3:MwdMnrf,4:MwdMcefMnrf,5:MwdMnrg", signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
                 new MBeanOperationInfo("putMtFSMReaction", "MtFSM response type: "
                         + "1:ReturnSuccess,2:SMDeliveryFailure_ReturnMemoryCapacityExceeded,3:SMDeliveryFailure_UnknownServiceCentre,"
-                        + "4:ReturnErrorSystemFailure,5:ReturnAbsentSubscriberError,6:ReturnErrorSubscriberBusyForMtSms", signString, Void.TYPE.getName(),
-                        MBeanOperationInfo.ACTION),
+                        + "4:ReturnErrorSystemFailure,5:ReturnAbsentSubscriberError,6:ReturnErrorSubscriberBusyForMtSms,7:SMDeliveryFailure_EquipmentProtocolError",
+                        signString, Void.TYPE.getName(), MBeanOperationInfo.ACTION),
                 new MBeanOperationInfo(
                         "putTypeOfNumber",
                         "TypeOfNumber parameter for SMS tpdu destAddress: "
