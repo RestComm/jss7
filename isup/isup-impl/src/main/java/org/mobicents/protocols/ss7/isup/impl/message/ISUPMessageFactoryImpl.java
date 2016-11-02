@@ -1274,7 +1274,7 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         mandatoryCodeToIndex.put(NatureOfConnectionIndicators._PARAMETER_CODE,
                 InitialAddressMessageImpl._INDEX_F_NatureOfConnectionIndicators);
         mandatoryCodeToIndex.put(ForwardCallIndicators._PARAMETER_CODE,
-                InitialAddressMessageImpl._INDEX_F_NatureOfConnectionIndicators);
+                InitialAddressMessageImpl._INDEX_F_ForwardCallIndicators);
         mandatoryCodeToIndex.put(CallingPartyCategory._PARAMETER_CODE, InitialAddressMessageImpl._INDEX_F_CallingPartyCategory);
         mandatoryCodeToIndex.put(TransmissionMediumRequirement._PARAMETER_CODE,
                 InitialAddressMessageImpl._INDEX_F_TransmissionMediumRequirement);
