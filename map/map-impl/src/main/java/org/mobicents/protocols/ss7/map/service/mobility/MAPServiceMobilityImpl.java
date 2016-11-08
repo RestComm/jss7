@@ -1152,6 +1152,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
+                serLis.onMAPMessage(ind);
                 ((MAPServiceMobilityListener) serLis).onAnyTimeInterrogationRequest(ind);
             } catch (Exception e) {
                 loger.error("Error processing AnyTimeInterrogationRequestIndication: " + e.getMessage(), e);
@@ -1184,6 +1185,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
+                serLis.onMAPMessage(ind);
                 ((MAPServiceMobilityListener) serLis).onAnyTimeInterrogationResponse(ind);
             } catch (Exception e) {
                 loger.error("Error processing AnyTimeInterrogationResponseIndication: " + e.getMessage(), e);
@@ -1215,6 +1217,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
+                serLis.onMAPMessage(ind);
                 ((MAPServiceMobilityListener) serLis).onAnyTimeSubscriptionInterrogationRequest(ind);
             } catch (Exception e) {
                 loger.error("Error processing AnyTimeSubscriptionInterrogationRequestIndication: " + e.getMessage(), e);
@@ -1246,6 +1249,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
+                serLis.onMAPMessage(ind);
                 ((MAPServiceMobilityListener) serLis).onAnyTimeSubscriptionInterrogationResponse(ind);
             } catch (Exception e) {
                 loger.error("Error processing AnyTimeSubscriptionInterrogationResponseIndication: " + e.getMessage(), e);
@@ -1275,6 +1279,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
+                serLis.onMAPMessage(ind);
                 ((MAPServiceMobilityListener) serLis).onProvideSubscriberInfoRequest(ind);
             } catch (Exception e) {
                 loger.error("Error processing ProvideSubscriberInfoRequest: " + e.getMessage(), e);
@@ -1306,6 +1311,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
+                serLis.onMAPMessage(ind);
                 ((MAPServiceMobilityListener) serLis).onProvideSubscriberInfoResponse(ind);
             } catch (Exception e) {
                 loger.error("Error processing ProvideSubscriberInfoResponseIndication: " + e.getMessage(), e);
@@ -1349,6 +1355,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
+                serLis.onMAPMessage(ind);
                 ((MAPServiceMobilityListener) serLis).onCheckImeiRequest(ind);
             } catch (Exception e) {
                 loger.error("Error processing processCheckImeiRequest: " + e.getMessage(), e);
@@ -1390,6 +1397,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
+                serLis.onMAPMessage(ind);
                 ((MAPServiceMobilityListener) serLis).onCheckImeiResponse(ind);
             } catch (Exception e) {
                 loger.error("Error processing processCheckImeiResponse: " + e.getMessage(), e);
@@ -1423,6 +1431,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
+                serLis.onMAPMessage(ind);
                 ((MAPServiceMobilityListener) serLis).onInsertSubscriberDataRequest(ind);
             } catch (Exception e) {
                 loger.error("Error processing processInsertSubscriberDataRequest: " + e.getMessage(), e);
@@ -1453,6 +1462,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
+                serLis.onMAPMessage(ind);
                 ((MAPServiceMobilityListener) serLis).onInsertSubscriberDataResponse(ind);
             } catch (Exception e) {
                 loger.error("Error processing processInsertSubscriberDataResponse: " + e.getMessage(), e);
@@ -1483,6 +1493,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
+                serLis.onMAPMessage(ind);
                 ((MAPServiceMobilityListener) serLis).onDeleteSubscriberDataRequest(ind);
             } catch (Exception e) {
                 loger.error("Error processing processDeleteSubscriberDataRequest: " + e.getMessage(), e);
@@ -1512,6 +1523,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
+                serLis.onMAPMessage(ind);
                 ((MAPServiceMobilityListener) serLis).onDeleteSubscriberDataResponse(ind);
             } catch (Exception e) {
                 loger.error("Error processing processDeleteSubscriberDataResponse: " + e.getMessage(), e);
@@ -1572,6 +1584,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
 
         for (MAPServiceListener serLis : this.serviceListeners) {
             try {
+                serLis.onMAPMessage(ind);
                 ((MAPServiceMobilityListener) serLis).onActivateTraceModeResponse_Mobility(ind);
             } catch (Exception e) {
                 loger.error("Error processing processActivateTraceModeResponse: " + e.getMessage(), e);
