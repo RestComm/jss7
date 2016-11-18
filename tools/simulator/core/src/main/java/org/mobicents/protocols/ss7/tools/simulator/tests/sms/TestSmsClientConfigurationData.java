@@ -58,6 +58,7 @@ public class TestSmsClientConfigurationData {
     protected static final String ONE_NOTIFICATION_FOR_100_DIALOGS = "oneNotificationFor100Dialogs";
     protected static final String RETURN_20_PERS_DELIVERY_ERRORS = "return20PersDeliveryErrors";
     protected static final String CONTINUE_DIALOG = "continueDialog";
+    protected static final String STATUS_REPORT_REQUEST = "statusReportRequest";
 
     protected AddressNature addressNature = AddressNature.international_number;
     protected NumberingPlan numberingPlan = NumberingPlan.ISDN;
@@ -70,6 +71,7 @@ public class TestSmsClientConfigurationData {
     protected NumberingPlanIdentification numberingPlanIdentification = NumberingPlanIdentification.ISDNTelephoneNumberingPlan;
     protected SmsCodingType smsCodingType = new SmsCodingType(SmsCodingType.VAL_GSM7);
     protected int nationalLanguageCode = 0;
+    protected boolean statusReportRequest = false;
 
     protected SRIReaction sriReaction = new SRIReaction(SRIReaction.VAL_RETURN_SUCCESS);
     protected SRIInformServiceCenter sriInformServiceCenter = new SRIInformServiceCenter(SRIInformServiceCenter.MWD_NO);
@@ -185,6 +187,14 @@ public class TestSmsClientConfigurationData {
         this.nationalLanguageCode = nationalLanguageCode;
     }
 
+    public boolean isStatusReportRequest() {
+        return statusReportRequest;
+    }
+
+    public void setStatusReportRequest(boolean statusReportRequest) {
+        this.statusReportRequest = statusReportRequest;
+    }
+
     public TypeOfNumber getTypeOfNumber() {
         return typeOfNumber;
     }
@@ -239,6 +249,7 @@ public class TestSmsClientConfigurationData {
             xml.setAttribute(SMSC_SSN, clt.smscSsn);
             xml.setAttribute(NATIONAL_LANGUAGE_CODE, clt.nationalLanguageCode);
             xml.setAttribute(SRI_SC_ADDRESS_NOT_INCLUDED, clt.sriScAddressNotIncluded);
+            xml.setAttribute(STATUS_REPORT_REQUEST, clt.statusReportRequest);
 
             xml.setAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS, clt.oneNotificationFor100Dialogs);
             xml.setAttribute(RETURN_20_PERS_DELIVERY_ERRORS, clt.return20PersDeliveryErrors);
@@ -267,6 +278,9 @@ public class TestSmsClientConfigurationData {
             if (val != null)
                 clt.nationalLanguageCode = val.toInt();
             clt.sriScAddressNotIncluded = xml.getAttribute(SRI_SC_ADDRESS_NOT_INCLUDED).toBoolean();
+            val = xml.getAttribute(STATUS_REPORT_REQUEST);
+            if (val != null)
+                clt.statusReportRequest = val.toBoolean();
 
             CharArray chArr = xml.getAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS);
             if (chArr != null)

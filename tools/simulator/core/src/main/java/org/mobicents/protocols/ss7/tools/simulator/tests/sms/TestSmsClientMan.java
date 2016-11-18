@@ -75,6 +75,7 @@ import org.mobicents.protocols.ss7.map.api.smstpdu.DataCodingScheme;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.ProtocolIdentifier;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsDeliverTpdu;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsStatusReportTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsSubmitTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.TypeOfNumber;
@@ -395,6 +396,17 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
     }
 
     @Override
+    public boolean isStatusReportRequest() {
+        return this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isStatusReportRequest();
+    }
+
+    @Override
+    public void setStatusReportRequest(boolean val) {
+        this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().setStatusReportRequest(val);
+        this.testerHost.markStore();
+    }
+
+    @Override
     public TypeOfNumberType getTypeOfNumber() {
         return new TypeOfNumberType(this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getTypeOfNumber().getCode());
     }
@@ -695,7 +707,9 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
             ProtocolIdentifier pi = new ProtocolIdentifierImpl(0);
             ValidityPeriod validityPeriod = new ValidityPeriodImpl(169); // 3
                                                                          // days
-            SmsSubmitTpdu tpdu = new SmsSubmitTpduImpl(false, false, false, ++mesRef, destAddress, pi, validityPeriod, userData);
+            SmsSubmitTpdu tpdu = new SmsSubmitTpduImpl(false, false, this.testerHost.getConfigurationData()
+                    .getTestSmsClientConfigurationData().isStatusReportRequest(), ++mesRef, destAddress, pi, validityPeriod,
+                    userData);
             SmsSignalInfo si = mapProvider.getMAPParameterFactory().createSmsSignalInfo(tpdu, null);
 
             MAPDialogSms curDialog = mapProvider.getMAPServiceSms().createNewDialog(mapAppContext, this.mapMan.createOrigAddress(), null,
@@ -945,6 +959,7 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
         try {
             String msg = null;
             SmsDeliverTpdu dTpdu = null;
+            SmsStatusReportTpdu srTpdu = null;
             if (si != null) {
                 SmsTpdu tpdu = si.decodeTpdu(false);
                 if (tpdu instanceof SmsDeliverTpdu) {
@@ -972,6 +987,16 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
                         }
                     }
                 }
+                if (tpdu instanceof SmsStatusReportTpdu) {
+                    srTpdu = (SmsStatusReportTpdu) tpdu;
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("[Status=");
+                    sb.append(srTpdu.getStatus().getCode());
+                    sb.append(", msgRef=");
+                    sb.append(srTpdu.getMessageReference());
+                    sb.append("]");
+                    msg = sb.toString();
+                }
             }
 
             if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().isOneNotificationFor100Dialogs()) {
@@ -981,7 +1006,7 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
                     this.testerHost.sendNotif(SOURCE_NAME, "Rsvd: Ms messages: " + (countMtFsmReqNot * 100), "", Level.DEBUG);
                 }
             } else {
-                String uData = this.createMtData(curDialog, destImsi, dTpdu, serviceCentreAddr);
+                String uData = this.createMtData(curDialog, destImsi, dTpdu, srTpdu, serviceCentreAddr);
                 this.testerHost.sendNotif(SOURCE_NAME, "Rcvd: mtReq: " + msg, uData, Level.DEBUG);
             }
         } catch (MAPException e) {
@@ -1069,7 +1094,7 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
         }
     }
 
-    private String createMtData(MAPDialogSms dialog, String destImsi, SmsDeliverTpdu dTpdu, AddressString serviceCentreAddr) {
+    private String createMtData(MAPDialogSms dialog, String destImsi, SmsDeliverTpdu dTpdu, SmsStatusReportTpdu srTpdu, AddressString serviceCentreAddr) {
         StringBuilder sb = new StringBuilder();
         sb.append("dialogId=");
         sb.append(dialog.getLocalDialogId());
@@ -1077,8 +1102,14 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
         sb.append(destImsi);
         sb.append(",\"\nserviceCentreAddr=\"");
         sb.append(serviceCentreAddr);
-        sb.append(",\"\nsmsDeliverTpdu=");
-        sb.append(dTpdu);
+        if (dTpdu != null) {
+            sb.append(",\"\nsmsDeliverTpdu=");
+            sb.append(dTpdu);
+        }
+        if (srTpdu != null) {
+            sb.append(",\"\nsmsStatusReportTpdu=");
+            sb.append(srTpdu);
+        }
 
         sb.append(",\nRemoteAddress=");
         sb.append(dialog.getRemoteAddress());
