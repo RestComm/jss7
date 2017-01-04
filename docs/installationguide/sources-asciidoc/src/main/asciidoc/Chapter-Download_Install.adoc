@@ -7,7 +7,7 @@ You can either download the binary release or download the source code and set u
 [[_downloading_binary]]
 == Binary Download
 
-The binary release is available for download at TeleStax Customer Support Portal {this-release-binary-url} 
+The binary release is available for download at the following link: {this-release-binary-url}
 
 .Procedure: Binary Download
 . Download the zip file [path]_-.zip_ to any folder of your choice. 
@@ -89,12 +89,12 @@ Checkout a specific release source using GIT.
 The base URL to clone from is {this-release-source-code-url}.
 Then add the specific release version, in the below example we are downloading the version "3.0.0". 
 +
-[source]
+[source,subs="attributes"]
 ----
 
-[usr]$ git clone 
+[usr]$ git clone {this-trunk-source-code-url}.git
 [usr]$ cd jss7
-[usr]$ git checkout 3.0.0
+[usr]$ git checkout <version>
 ----
 
 . Building the source code
@@ -146,9 +146,9 @@ Make sure you pass the "include.zap" system property with a value pointing to th
 === Development Trunk Source Building
 
 To build from development trunk source, follow the same procedure as above but at the time of checkout do not switch to the specific release tag. 
-[source]
+[source,subs="attributes"]
 ----
-[usr]$ git clone 
+[usr]$ git clone {this-trunk-source-code-url}.git
 [usr]$ cd jss7
 [usr]$ git checkout
 ----  
