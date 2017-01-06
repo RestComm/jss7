@@ -30,7 +30,8 @@ import org.mobicents.protocols.ss7.oam.common.jmx.MBeanLayer;
  *
  */
 public enum Ss7Layer implements MBeanLayer {
-    SCTP("SCTP"), M3UA("M3UA"), SCCP("SCCP"), TCAP("TCAP"), LINKSET("LINKSET"), SMSC_GW("SMSC_GW"), USSD_GW("USSD_GW");
+    SCTP("SCTP"), M3UA("M3UA"), SCCP("SCCP"), TCAP("TCAP"), LINKSET("LINKSET"), SMSC_GW("SMSC_GW"), USSD_GW("USSD_GW"), CAMEL_GW(
+            "CAMEL_GW");
 
     private final String name;
 
@@ -42,6 +43,7 @@ public enum Ss7Layer implements MBeanLayer {
 
     public static final String NAME_SMSC_GW = "SMSC_GW";
     public static final String NAME_USSD_GW = "USSD_GW";
+    public static final String NAME_CAMEL_GW = "CAMEL_GW";
 
     private Ss7Layer(String name) {
         this.name = name;
@@ -66,6 +68,8 @@ public enum Ss7Layer implements MBeanLayer {
             return SMSC_GW;
         } else if (NAME_USSD_GW.equals(name)) {
             return USSD_GW;
+        } else if (NAME_CAMEL_GW.equals(name)) {
+            return CAMEL_GW;
         }
 
         return null;
