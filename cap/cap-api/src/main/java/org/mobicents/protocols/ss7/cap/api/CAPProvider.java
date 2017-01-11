@@ -31,10 +31,12 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSms;
 import org.mobicents.protocols.ss7.inap.api.INAPParameterFactory;
 import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  *
  * @author sergey vetyutnev
+ * @author <a href="mailto:info@pro-ids.com">ProIDS sp. z o.o.</a>
  *
  */
 public interface CAPProvider extends Serializable {
@@ -102,4 +104,19 @@ public interface CAPProvider extends Serializable {
 
     CAPServiceSms getCAPServiceSms();
 
+    /**
+     * Relay Initial Cap Message to other network node
+     * @param newServiceKey
+     * @param capMessage
+     * @throws CAPException
+     */
+    void relayCapMessage(int newServiceKey, CAPMessage capMessage) throws CAPException;
+
+    /**
+     * Relay Initial Cap Message to other network node
+     * @param newServiceKey
+     * @param capMessage
+     * @throws CAPException
+     */
+    void relayCapMessage(int newServiceKey, SccpAddress origAddress, SccpAddress destAddress, CAPMessage capMessage) throws CAPException;
 }

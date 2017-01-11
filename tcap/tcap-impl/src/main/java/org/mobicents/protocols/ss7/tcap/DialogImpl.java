@@ -107,6 +107,7 @@ import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCUserAbortIndicationIm
  * @author baranowb
  * @author amit bhayani
  * @author sergey vetyutnev
+ * @author <a href="mailto:info@pro-ids.com">ProIDS sp. z o.o.</a>
  *
  */
 public class DialogImpl implements Dialog {
@@ -133,6 +134,7 @@ public class DialogImpl implements Dialog {
     private long localTransactionId;
     private byte[] remoteTransactionId;
     private Long remoteTransactionIdObject;
+    private Long localRelayedTransactionIdObject;
 
     private SccpAddress localAddress;
     private SccpAddress remoteAddress;
@@ -545,7 +547,11 @@ public class DialogImpl implements Dialog {
             }
 
             // now comps
-            tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
+            if (this.localRelayedTransactionIdObject!=null) {
+                tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localRelayedTransactionIdObject));
+            } else {
+                tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
+            }
             if (this.scheduledComponentList.size() > 0) {
                 Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
                 this.prepareComponents(componentsToSend);
@@ -2167,6 +2173,15 @@ public class DialogImpl implements Dialog {
     public PrevewDialogData getPrevewDialogData() {
         return this.prevewDialogData;
     }
+
+    public Long getRelayedLocalDialogId() {
+        return this.localRelayedTransactionIdObject;
+    }
+
+    public void setRelayedLocalDialogId(Long relayedDialogId) {
+        this.localRelayedTransactionIdObject = relayedDialogId;
+    }
+
 
     /*
      * (non-Javadoc)
