@@ -30,6 +30,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 /**
  *
  * @author sergey vetyutnev
+ * @author <a href="mailto:info@pro-ids.com">ProIDS sp. z o.o.</a>
  *
  */
 public interface CAPServiceCircuitSwitchedCall extends CAPServiceBase {
@@ -43,5 +44,12 @@ public interface CAPServiceCircuitSwitchedCall extends CAPServiceBase {
     void addCAPServiceListener(CAPServiceCircuitSwitchedCallListener capServiceListener);
 
     void removeCAPServiceListener(CAPServiceCircuitSwitchedCallListener capServiceListener);
+
+    /**
+     * Create new structured dialog with default TransactionId.
+     * Used for SCCP relay functionality
+     * @param relayedLocalTrId
+     */
+    CAPDialogCircuitSwitchedCall createNewRelayedDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress, Long relayedLocalTrId) throws CAPException;
 
 }

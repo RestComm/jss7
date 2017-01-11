@@ -51,6 +51,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 /**
  *
  * @author sergey vetyutnev
+ * @author <a href="mailto:info@pro-ids.com">ProIDS sp. z o.o.</a>
  *
  */
 public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implements CAPServiceCircuitSwitchedCall {
@@ -69,6 +70,11 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
     @Override
     public CAPDialogCircuitSwitchedCall createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress, Long localTrId)
             throws CAPException {
+        return this.createNewDialog(appCntx, origAddress, destAddress, null, null);
+    }
+
+    private CAPDialogCircuitSwitchedCall createNewDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress, Long localTrId, Long relayedLocalTrId)
+            throws CAPException {
 
         // We cannot create a dialog if the service is not activated
         if (!this.isActivated())
@@ -76,12 +82,17 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
                     "Cannot create CAPDialogCircuitSwitchedCall because CAPServiceCircuitSwitchedCall is not activated");
 
         Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress, localTrId);
+        tcapDialog.setRelayedLocalDialogId(relayedLocalTrId);
         CAPDialogCircuitSwitchedCallImpl dialog = new CAPDialogCircuitSwitchedCallImpl(appCntx, tcapDialog,
                 this.capProviderImpl, this);
 
         this.putCAPDialogIntoCollection(dialog);
 
         return dialog;
+    }
+
+    public CAPDialogCircuitSwitchedCall createNewRelayedDialog(CAPApplicationContext appCntx, SccpAddress origAddress, SccpAddress destAddress, Long relayedLocalTrId) throws CAPException {
+        return this.createNewDialog(appCntx, origAddress, destAddress, null, relayedLocalTrId);
     }
 
     @Override

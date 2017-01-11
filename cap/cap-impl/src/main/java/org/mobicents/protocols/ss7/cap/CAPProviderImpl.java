@@ -40,6 +40,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.CAPMessage;
 import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
 import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentException;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
@@ -69,6 +70,7 @@ import org.mobicents.protocols.ss7.isup.ISUPParameterFactory;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.DialogImpl;
 import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
@@ -113,6 +115,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
 /**
  *
  * @author sergey vetyutnev
+ * @author <a href="mailto:info@pro-ids.com">ProIDS sp. z o.o.</a>
  *
  */
 public class CAPProviderImpl implements CAPProvider, TCListener {
@@ -1301,5 +1304,13 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
     @Override
     public int getCurrentDialogsCount() {
         return this.tcapProvider.getCurrentDialogsCount();
+    }
+
+    public void relayCapMessage(int newServiceKey, CAPMessage capMessage) throws CAPException {
+        throw new RuntimeException("NotImplemented");
+    }
+
+    public void relayCapMessage(int newServiceKey, SccpAddress origAddress, SccpAddress destAddress, CAPMessage capMessage) throws CAPException {
+        throw new RuntimeException("NotImplemented");
     }
 }

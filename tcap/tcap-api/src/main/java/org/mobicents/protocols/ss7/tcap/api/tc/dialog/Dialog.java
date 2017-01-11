@@ -42,6 +42,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
  *
  * @author baranowb
  * @author sergey vetyutnev
+ * @author <a href="mailto:info@pro-ids.com">ProIDS sp. z o.o.</a>
  *
  */
 public interface Dialog extends Serializable {
@@ -52,6 +53,18 @@ public interface Dialog extends Serializable {
      * @return
      */
     Long getLocalDialogId();
+
+    /**
+     * returns relayed dialog ID.
+     *
+     * @return
+     */
+    Long getRelayedLocalDialogId();
+
+    /**
+     * sets relayed dialog ID.
+     */
+    void setRelayedLocalDialogId(Long relayedDialogId);
 
     /**
      * return the remote Dialog Id. This will be null if Dialog is locally originated and not confirmed yet
