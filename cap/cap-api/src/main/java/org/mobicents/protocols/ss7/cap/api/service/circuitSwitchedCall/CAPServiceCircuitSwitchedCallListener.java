@@ -100,4 +100,7 @@ public interface CAPServiceCircuitSwitchedCallListener extends CAPServiceListene
     void onSplitLegRequest(SplitLegRequest ind);
 
     void onSplitLegResponse(SplitLegResponse ind);
+
+    void onCallGapRequest(CallGapRequest ind);
+
 }
