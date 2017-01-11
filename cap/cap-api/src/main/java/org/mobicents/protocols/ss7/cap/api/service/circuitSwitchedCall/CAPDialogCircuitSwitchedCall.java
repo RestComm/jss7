@@ -26,6 +26,9 @@ import java.util.ArrayList;
 
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
+import org.mobicents.protocols.ss7.cap.api.gap.GapCriteria;
+import org.mobicents.protocols.ss7.cap.api.gap.GapIndicators;
+import org.mobicents.protocols.ss7.cap.api.gap.GapTreatment;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
@@ -52,6 +55,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.Carrier;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.CollectedInfo;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ContinueWithArgumentArgExtension;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.ControlType;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.FCIBCCCAMELsequence1;
@@ -83,6 +87,7 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 /**
  *
  * @author sergey vetyutnev
+ * @author <a href="mailto:bartosz.krok@pro-ids.com"> Bartosz Krok (ProIDS sp. z o.o.)</a>
  *
  */
 public interface CAPDialogCircuitSwitchedCall extends CAPDialog {
@@ -348,5 +353,20 @@ public interface CAPDialogCircuitSwitchedCall extends CAPDialog {
     Long addCollectInformationRequest() throws CAPException;
 
     Long addCollectInformationRequest(int customInvokeTimeout) throws CAPException;
+
+    Long addSplitLegRequest(LegID legIDToSplit, Integer newCallSegmentId, CAPExtensions extensions) throws CAPException;
+
+    Long addSplitLegRequest(int customInvokeTimeout, LegID legIDToSplit, Integer newCallSegmentId,
+            CAPExtensions extensions) throws CAPException;
+
+    void addSplitLegResponse(long invokeId) throws CAPException;
+
+    Long addCallGapRequest(GapCriteria gapCriteria, GapIndicators gapIndicators,
+                           ControlType controlType, GapTreatment gapTreatment,
+                           CAPExtensions capExtension) throws CAPException;
+
+    Long addCallGapRequest(int customInvokeTimeout, GapCriteria gapCriteria,
+                           GapIndicators gapIndicators, ControlType controlType,
+                           GapTreatment gapTreatment, CAPExtensions capExtension) throws CAPException;
 
 }

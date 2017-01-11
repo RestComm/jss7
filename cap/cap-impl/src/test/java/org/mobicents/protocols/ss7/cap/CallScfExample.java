@@ -56,6 +56,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTime
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallGapRequest;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
@@ -482,5 +483,11 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
     public void onCollectInformationRequest(CollectInformationRequest ind) {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public void onCallGapRequest(CallGapRequest ind) {
+        // TODO Auto-generated method stub
+
     }
 }

@@ -46,6 +46,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChar
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.AssistRequestInstructionsRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallListener;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallGapRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationReportRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CancelRequest;
@@ -783,6 +784,12 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
 
     @Override
     public void onCollectInformationRequest(CollectInformationRequest arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onCallGapRequest(CallGapRequest ind) {
         // TODO Auto-generated method stub
 
     }
