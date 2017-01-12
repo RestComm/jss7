@@ -22,8 +22,10 @@
 package org.mobicents.protocols.ss7.cap.gap;
 
 import java.io.IOException;
+
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -36,12 +38,13 @@ import org.mobicents.protocols.ss7.cap.api.gap.CompoundCriteria;
 import org.mobicents.protocols.ss7.cap.api.primitives.ScfID;
 import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.cap.primitives.ScfIDImpl;
+import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 
 /**
  *
  * @author <a href="mailto:bartosz.krok@pro-ids.com"> Bartosz Krok (ProIDS sp. z o.o.)</a>
  */
-public class CompoundCriteriaImpl implements CompoundCriteria, CAPAsnPrimitive {
+public class CompoundCriteriaImpl extends SequenceBase implements CompoundCriteria {
 
     private static final int _ID_basicGapCriteria = 0;
     private static final int _ID_scfId = 1;
@@ -49,15 +52,16 @@ public class CompoundCriteriaImpl implements CompoundCriteria, CAPAsnPrimitive {
     private static final String BASIC_GAP_CRITERIA = "basicGapCriteria";
     private static final String SCF_ID = "scfId";
 
-    public static final String _PrimitiveName = "CompoundCriteria";
-
     private BasicGapCriteria basicGapCriteria;
     private ScfID scfId;
 
     public CompoundCriteriaImpl() {
+        super("CompoundCriteria");
     }
 
     public CompoundCriteriaImpl(BasicGapCriteria basicGapCriteria, ScfID scfId) {
+        super("CompoundCriteria");
+
         this.basicGapCriteria = basicGapCriteria;
         this.scfId = scfId;
     }
@@ -70,46 +74,7 @@ public class CompoundCriteriaImpl implements CompoundCriteria, CAPAsnPrimitive {
         return scfId;
     }
 
-    public int getTag() throws CAPException {
-        return Tag.SEQUENCE;
-    }
-
-    public int getTagClass() {
-        return Tag.CLASS_CONTEXT_SPECIFIC;
-    }
-
-    public boolean getIsPrimitive() {
-        return false;
-    }
-
-    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
-
-        try {
-            int length = ansIS.readLength();
-            this._decode(ansIS, length);
-        } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        }
-    }
-
-    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
-
-        try {
-            this._decode(ansIS, length);
-        } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        }
-    }
-
-    private void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
+    protected void _decode(AsnInputStream ansIS, int length) throws CAPParsingComponentException, IOException, AsnException {
 
         this.basicGapCriteria = null;
         this.scfId = null;
@@ -152,23 +117,6 @@ public class CompoundCriteriaImpl implements CompoundCriteria, CAPAsnPrimitive {
             throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
                     + ": parameter basicGapCriteria is mandatory but not found",
                     CAPParsingComponentExceptionReason.MistypedParameter);
-        }
-    }
-
-    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-
-        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-    }
-
-    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-
-        try {
-            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-            int pos = asnOs.StartContentDefiniteLength();
-            this.encodeData(asnOs);
-            asnOs.FinalizeContent(pos);
-        } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 

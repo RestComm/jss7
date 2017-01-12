@@ -236,9 +236,8 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
                 break;
 
             case CAPOperationCode.callGap:
-                if (acn == CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF || acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric
-                        || acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric
-                        || acn == CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
+                if (acn == CAPApplicationContext.CapV3_gsmSSF_scfGeneric
+                        || acn == CAPApplicationContext.CapV4_gsmSSF_scfGeneric) {
                     if (compType == ComponentType.Invoke) {
                         callGapRequest(parameter, capDialogCircuitSwitchedCallImpl, invokeId);
                     }

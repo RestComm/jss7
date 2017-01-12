@@ -26,10 +26,14 @@ import java.io.Serializable;
 
 /**
  *
- GapOnService ::= SEQUENCE { serviceKey [0] ServiceKey, ... }
- *
- * ServiceKey::= Integer4
- *
+<code>
+GapOnService ::= SEQUENCE {
+  serviceKey [0] ServiceKey,
+  ...
+}
+
+ServiceKey::= Integer4
+</code>
  *
  * @author sergey vetyutnev
  *

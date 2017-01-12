@@ -43,7 +43,6 @@ import org.mobicents.protocols.ss7.cap.gap.GapCriteriaImpl;
 import org.mobicents.protocols.ss7.cap.gap.GapIndicatorsImpl;
 import org.mobicents.protocols.ss7.cap.gap.GapTreatmentImpl;
 import org.mobicents.protocols.ss7.cap.primitives.CAPExtensionsImpl;
-import static org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.CircuitSwitchedCallMessageImpl.CIRCUIT_SWITCHED_CALL_MESSAGE_XML;
 
 /**
  *
