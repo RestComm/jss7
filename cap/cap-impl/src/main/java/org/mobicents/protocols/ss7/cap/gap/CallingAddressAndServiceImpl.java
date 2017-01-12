@@ -22,8 +22,10 @@
 package org.mobicents.protocols.ss7.cap.gap;
 
 import java.io.IOException;
+
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -34,13 +36,13 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.gap.CallingAddressAndService;
 import org.mobicents.protocols.ss7.cap.api.isup.Digits;
 import org.mobicents.protocols.ss7.cap.isup.DigitsImpl;
-import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
+import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 
 /**
  *
  * @author <a href="mailto:bartosz.krok@pro-ids.com"> Bartosz Krok (ProIDS sp. z o.o.)</a>
  */
-public class CallingAddressAndServiceImpl implements CallingAddressAndService, CAPAsnPrimitive {
+public class CallingAddressAndServiceImpl extends SequenceBase implements CallingAddressAndService {
 
     public static final int _ID_callingAddressValue = 0;
     public static final int _ID_serviceKey = 1;
@@ -48,15 +50,15 @@ public class CallingAddressAndServiceImpl implements CallingAddressAndService, C
     private static final String CALLING_ADDRESS_VALUE = "callingAddressValue";
     private static final String SERVICE_KEY = "serviceKey";
 
-    public static final String _PrimitiveName = "CallingAddressAndService";
-
     private Digits callingAddressValue;
     private int serviceKey;
 
     public CallingAddressAndServiceImpl() {
+        super("CallingAddressAndService");
     }
 
     public CallingAddressAndServiceImpl(Digits callingAddressValue, int serviceKey) {
+        super("CallingAddressAndService");
         this.callingAddressValue = callingAddressValue;
         this.serviceKey = serviceKey;
     }
@@ -69,44 +71,7 @@ public class CallingAddressAndServiceImpl implements CallingAddressAndService, C
         return serviceKey;
     }
 
-    public int getTag() throws CAPException {
-        return Tag.SEQUENCE;
-    }
-
-    public int getTagClass() {
-        return Tag.CLASS_UNIVERSAL;
-    }
-
-    public boolean getIsPrimitive() {
-        return false;
-    }
-
-    public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {
-        try {
-            int length = ansIS.readLength();
-            this._decode(ansIS, length);
-        } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        }
-    }
-
-    public void decodeData(AsnInputStream ansIS, int length) throws CAPParsingComponentException {
-        try {
-            this._decode(ansIS, length);
-        } catch (IOException e) {
-            throw new CAPParsingComponentException("IOException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        } catch (AsnException e) {
-            throw new CAPParsingComponentException("AsnException when decoding " + _PrimitiveName + ": " + e.getMessage(), e,
-                    CAPParsingComponentExceptionReason.MistypedParameter);
-        }
-    }
-
-    private void _decode(AsnInputStream ansIS, int length) throws IOException, AsnException, CAPParsingComponentException {
+    protected  void _decode(AsnInputStream ansIS, int length) throws IOException, AsnException, CAPParsingComponentException {
 
         this.callingAddressValue = null;
         this.serviceKey = 0;
@@ -151,21 +116,6 @@ public class CallingAddressAndServiceImpl implements CallingAddressAndService, C
             throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
                     + ": serviceKey is mandatory",
                     CAPParsingComponentExceptionReason.MistypedParameter);
-        }
-    }
-
-    public void encodeAll(AsnOutputStream asnOs) throws CAPException {
-        this.encodeAll(asnOs, this.getTagClass(), this.getTag());
-    }
-
-    public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws CAPException {
-        try {
-            asnOs.writeTag(tagClass, this.getIsPrimitive(), tag);
-            int pos = asnOs.StartContentDefiniteLength();
-            this.encodeData(asnOs);
-            asnOs.FinalizeContent(pos);
-        } catch (AsnException e) {
-            throw new CAPException("AsnException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         }
     }
 

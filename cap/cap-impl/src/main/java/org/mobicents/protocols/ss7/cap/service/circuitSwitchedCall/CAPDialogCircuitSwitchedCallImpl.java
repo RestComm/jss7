@@ -1932,12 +1932,10 @@ public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements C
     @Override
     public Long addCallGapRequest(int customInvokeTimeout, GapCriteria gapCriteria, GapIndicators gapIndicators, ControlType controlType, GapTreatment gapTreatment, CAPExtensions capExtension) throws CAPException {
 
-        if (this.appCntx != CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF
-                && this.appCntx != CAPApplicationContext.CapV3_gsmSSF_scfGeneric
-                && this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric
-                && this.appCntx != CAPApplicationContext.CapV4_scf_gsmSSFGeneric) {
+        if (this.appCntx != CAPApplicationContext.CapV3_gsmSSF_scfGeneric
+                && this.appCntx != CAPApplicationContext.CapV4_gsmSSF_scfGeneric) {
             throw new CAPException(
-                    "Bad application context name for addApplyChargingReportRequest: must be CapV2_gsmSSF_to_gsmSCF, CapV3_gsmSSF_scfGeneric, CapV4_gsmSSF_scfGeneric or CapV4_gsmSSF_scfGeneric");
+                    "Bad application context name for addApplyChargingReportRequest: must be CapV3_gsmSSF_scfGeneric or CapV4_gsmSSF_scfGeneric");
         }
 
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()

@@ -29,8 +29,13 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 
 /**
  *
- GapTreatment {PARAMETERS-BOUND : bound} ::= CHOICE { informationToSend [0] InformationToSend {bound}, releaseCause [1] Cause
- * {bound} } -- The default value for Cause is the same as in ISUP.
+<code>
+GapTreatment {PARAMETERS-BOUND : bound} ::= CHOICE {
+  informationToSend [0] InformationToSend {bound},
+  releaseCause      [1] Cause {bound}
+}
+-- The default value for Cause is the same as in ISUP.
+</code>
  *
  *
  * @author sergey vetyutnev

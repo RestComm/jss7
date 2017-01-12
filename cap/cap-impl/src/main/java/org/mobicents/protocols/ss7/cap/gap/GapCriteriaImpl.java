@@ -42,9 +42,6 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
  */
 public class GapCriteriaImpl implements GapCriteria, CAPAsnPrimitive {
 
-    public static final int _ID_basicGapCriteria = 0;
-    public static final int _ID_compoundGapCriteria = 1;
-
     private static final String BASIC_GAP_CRITERIA = "basicGapCriteria";
     private static final String COMPOUND_CRITERIA = "compoundCriteria";
 
@@ -74,19 +71,29 @@ public class GapCriteriaImpl implements GapCriteria, CAPAsnPrimitive {
 
     public int getTag() throws CAPException {
         if (basicGapCriteria != null) {
-            return _ID_basicGapCriteria;
+            return ((BasicGapCriteriaImpl) basicGapCriteria).getTag();
         } else if (compoundCriteria != null) {
-            return _ID_compoundGapCriteria;
+            return ((CompoundCriteriaImpl) compoundCriteria).getTag();
         }
 
         throw new CAPException("Error while encoding " + _PrimitiveName + ": no choice is specified");
     }
 
     public int getTagClass() {
+        if (basicGapCriteria != null) {
+            return ((BasicGapCriteriaImpl) basicGapCriteria).getTagClass();
+        } else if (compoundCriteria != null) {
+            return ((CompoundCriteriaImpl) compoundCriteria).getTagClass();
+        }
         return Tag.CLASS_CONTEXT_SPECIFIC;
     }
 
     public boolean getIsPrimitive() {
+        if (basicGapCriteria != null) {
+            return ((BasicGapCriteriaImpl) basicGapCriteria).getIsPrimitive();
+        } else if (compoundCriteria != null) {
+            return ((CompoundCriteriaImpl) compoundCriteria).getIsPrimitive();
+        }
         return false;
     }
 
@@ -122,27 +129,11 @@ public class GapCriteriaImpl implements GapCriteria, CAPAsnPrimitive {
         this.compoundCriteria = null;
 
         if (ansIS.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-
-            switch (ansIS.getTag()) {
-                case _ID_basicGapCriteria: {
-                    AsnInputStream ais2 = ansIS.readSequenceStreamData(length);
-                    ais2.readTag();
-                    basicGapCriteria = new BasicGapCriteriaImpl();
-                    ((BasicGapCriteriaImpl) basicGapCriteria).decodeAll(ais2);
-                    break;
-                }
-                case _ID_compoundGapCriteria: {
-                    AsnInputStream ais2 = ansIS.readSequenceStreamData(length);
-                    ais2.readTag();
-                    this.compoundCriteria = new CompoundCriteriaImpl();
-                    ((CompoundCriteriaImpl) compoundCriteria).decodeAll(ais2);
-                    break;
-                }
-                default: {
-                    throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tag",
-                            CAPParsingComponentExceptionReason.MistypedParameter);
-                }
-            }
+            basicGapCriteria = new BasicGapCriteriaImpl();
+            ((BasicGapCriteriaImpl) basicGapCriteria).decodeAll(ansIS);
+        } else if (ansIS.getTagClass() == Tag.CLASS_UNIVERSAL) {
+            this.compoundCriteria = new CompoundCriteriaImpl();
+            ((CompoundCriteriaImpl) compoundCriteria).decodeAll(ansIS);
         } else {
             throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
                     CAPParsingComponentExceptionReason.MistypedParameter);

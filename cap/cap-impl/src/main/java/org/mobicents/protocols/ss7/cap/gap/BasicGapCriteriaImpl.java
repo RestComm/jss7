@@ -116,7 +116,10 @@ public class BasicGapCriteriaImpl implements BasicGapCriteria, CAPAsnPrimitive {
     }
 
     public boolean getIsPrimitive() {
-        return false;
+        if (calledAddressValue != null)
+            return true;
+        else
+            return false;
     }
 
     public void decodeAll(AsnInputStream ansIS) throws CAPParsingComponentException {

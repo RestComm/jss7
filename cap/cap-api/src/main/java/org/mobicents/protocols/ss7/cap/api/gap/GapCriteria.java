@@ -26,8 +26,12 @@ import java.io.Serializable;
 
 /**
  *
- GapCriteria {PARAMETERS-BOUND : bound}::= CHOICE { basicGapCriteria BasicGapCriteria {bound}, compoundGapCriteria
- * CompoundCriteria {bound} }
+<code>
+GapCriteria {PARAMETERS-BOUND : bound}::= CHOICE {
+  basicGapCriteria      BasicGapCriteria {bound},
+  compoundGapCriteria   CompoundCriteria {bound}
+}
+</code>
  *
  *
  * @author sergey vetyutnev
