@@ -36,7 +36,6 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.cap.api.gap.BasicGapCriteria;
 import org.mobicents.protocols.ss7.cap.api.gap.CompoundCriteria;
 import org.mobicents.protocols.ss7.cap.api.primitives.ScfID;
-import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
 import org.mobicents.protocols.ss7.cap.primitives.ScfIDImpl;
 import org.mobicents.protocols.ss7.cap.primitives.SequenceBase;
 
