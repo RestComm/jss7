@@ -147,6 +147,8 @@ public class GSMCharsetTest {
         this.doTestDecode("[88]", new byte[] { 27, 60, 56, 56, 27, 62 }, Gsm7EncodingStyle.bit8_smpp_style, 0, 0);
         this.doTestDecode("[88]", new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 27, 60, 56, 56, 27, 62 },
                 Gsm7EncodingStyle.bit8_smpp_style, 0, octetOffset);
+
+        this.doTestDecode("He l", new byte[] { 72, 101, (byte) 200, 108 }, Gsm7EncodingStyle.bit8_smpp_style, 0, 0);
     }
 
     private void doTestEncode(String decodedString, byte[] encodedData, Gsm7EncodingStyle gsm7EncodingStyle, byte[] bufUDH,

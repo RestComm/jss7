@@ -163,16 +163,18 @@ public class GSMCharsetDecoder extends CharsetDecoder {
         }
 
         int code = 0;
-        if (escape) {
-            escape = false;
-            if (this.cs.extensionTable != null)
-                code = this.cs.extensionTable[data];
-        } else {
-            if (data == GSMCharset.ESCAPE) {
-                escape = true;
-                return;
+        if (data >= 0 && data < 128) {
+            if (escape) {
+                escape = false;
+                if (this.cs.extensionTable != null)
+                    code = this.cs.extensionTable[data];
             } else {
-                code = this.cs.mainTable[data];
+                if (data == GSMCharset.ESCAPE) {
+                    escape = true;
+                    return;
+                } else {
+                    code = this.cs.mainTable[data];
+                }
             }
         }
 
