@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javolution.util.FastList;
 import javolution.util.FastMap;
@@ -141,7 +142,8 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
     private transient Collection<MAPDialogListener> dialogListeners = new FastList<MAPDialogListener>().shared();
 
-    protected transient FastMap<Long, MAPDialogImpl> dialogs = new FastMap<Long, MAPDialogImpl>().shared();
+//    protected transient FastMap<Long, MAPDialogImpl> dialogs = new FastMap<Long, MAPDialogImpl>().shared();
+    protected transient ConcurrentHashMap<Long, MAPDialogImpl> dialogs = new ConcurrentHashMap<Long, MAPDialogImpl>();
 
 //    /**
 //     * Congestion sources name list. Congestion is where this collection is not empty

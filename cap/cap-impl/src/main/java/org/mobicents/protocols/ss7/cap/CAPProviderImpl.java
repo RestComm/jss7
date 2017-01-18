@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javolution.util.FastList;
 import javolution.util.FastMap;
@@ -123,7 +124,8 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
     private transient Collection<CAPDialogListener> dialogListeners = new FastList<CAPDialogListener>().shared();
 
-    protected transient FastMap<Long, CAPDialogImpl> dialogs = new FastMap<Long, CAPDialogImpl>().shared();
+//    protected transient FastMap<Long, CAPDialogImpl> dialogs = new FastMap<Long, CAPDialogImpl>().shared();
+    protected transient ConcurrentHashMap<Long, CAPDialogImpl> dialogs = new ConcurrentHashMap<Long, CAPDialogImpl>();
 
     private transient TCAPProvider tcapProvider = null;
 
