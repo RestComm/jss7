@@ -151,7 +151,7 @@ public class DialogImpl implements Dialog {
     private boolean dpSentInBegin = false;
 
     private boolean previewMode = false;
-    protected PrevewDialogData prevewDialogData;
+    protected PreviewDialogData prevewDialogData;
     private long startDialogTime;
     private int networkId;
 
@@ -215,7 +215,7 @@ public class DialogImpl implements Dialog {
      * @param sideB
      */
     protected DialogImpl(SccpAddress localAddress, SccpAddress remoteAddress, int seqControl, ScheduledExecutorService executor,
-            TCAPProviderImpl provider, PrevewDialogData pdd, boolean sideB) {
+            TCAPProviderImpl provider, PreviewDialogData pdd, boolean sideB) {
         this.localAddress = localAddress;
         this.remoteAddress = remoteAddress;
         this.localTransactionIdObject = pdd.getDialogId();
@@ -1916,7 +1916,7 @@ public class DialogImpl implements Dialog {
         return this.previewMode;
     }
 
-    public PrevewDialogData getPrevewDialogData() {
+    public PreviewDialogData getPrevewDialogData() {
         return this.prevewDialogData;
     }
 

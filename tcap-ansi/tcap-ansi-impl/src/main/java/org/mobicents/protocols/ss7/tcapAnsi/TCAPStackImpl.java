@@ -336,6 +336,7 @@ public class TCAPStackImpl implements TCAPStack {
 
         this.checkDialogIdRangeValues(val, this.getDialogIdRangeEnd());
         dialogIdRangeStart = val;
+        tcapProvider.resetDialogIdValueAfterRangeChange();
 
         this.store();
     }
@@ -346,6 +347,7 @@ public class TCAPStackImpl implements TCAPStack {
 
         this.checkDialogIdRangeValues(this.getDialogIdRangeStart(), val);
         dialogIdRangeEnd = val;
+        tcapProvider.resetDialogIdValueAfterRangeChange();
 
         this.store();
     }
