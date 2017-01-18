@@ -37,9 +37,9 @@ import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
  * @author sergey vetyutnev
  *
  */
-public class PrevewDialogData {
+public class PreviewDialogData {
 
-    private static final Logger logger = Logger.getLogger(PrevewDialogData.class);
+    private static final Logger logger = Logger.getLogger(PreviewDialogData.class);
 
     private ApplicationContextName lastACN;
     private InvokeImpl[] operationsSentA;
@@ -47,8 +47,8 @@ public class PrevewDialogData {
 
     private Object upperDialog;
 
-    private TCAPProviderImpl.PrevewDialogDataKey prevewDialogDataKey1;
-    private TCAPProviderImpl.PrevewDialogDataKey prevewDialogDataKey2;
+    private TCAPProviderImpl.PreviewDialogDataKey prevewDialogDataKey1;
+    private TCAPProviderImpl.PreviewDialogDataKey prevewDialogDataKey2;
 
     private ReentrantLock dialogLock = new ReentrantLock();
     private Future idleTimerFuture;
@@ -57,7 +57,7 @@ public class PrevewDialogData {
     private long idleTaskTimeout;
     private Long dialogId;
 
-    public PrevewDialogData(TCAPProviderImpl provider, Long dialogId) {
+    public PreviewDialogData(TCAPProviderImpl provider, Long dialogId) {
         this.provider = provider;
         this.dialogId = dialogId;
         TCAPStack stack = provider.getStack();
@@ -101,19 +101,19 @@ public class PrevewDialogData {
         upperDialog = val;
     }
 
-    protected TCAPProviderImpl.PrevewDialogDataKey getPrevewDialogDataKey1() {
+    protected TCAPProviderImpl.PreviewDialogDataKey getPrevewDialogDataKey1() {
         return prevewDialogDataKey1;
     }
 
-    protected TCAPProviderImpl.PrevewDialogDataKey getPrevewDialogDataKey2() {
+    protected TCAPProviderImpl.PreviewDialogDataKey getPrevewDialogDataKey2() {
         return prevewDialogDataKey2;
     }
 
-    protected void setPrevewDialogDataKey1(TCAPProviderImpl.PrevewDialogDataKey val) {
+    protected void setPrevewDialogDataKey1(TCAPProviderImpl.PreviewDialogDataKey val) {
         prevewDialogDataKey1 = val;
     }
 
-    protected void setPrevewDialogDataKey2(TCAPProviderImpl.PrevewDialogDataKey val) {
+    protected void setPrevewDialogDataKey2(TCAPProviderImpl.PreviewDialogDataKey val) {
         prevewDialogDataKey2 = val;
     }
 
@@ -153,7 +153,7 @@ public class PrevewDialogData {
     }
 
     private class IdleTimerTask implements Runnable {
-        PrevewDialogData pdd;
+        PreviewDialogData pdd;
 
         public void run() {
             try {
