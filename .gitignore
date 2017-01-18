@@ -132,3 +132,8 @@ docs/sources-*/src
 /SccpStack_sccprouter2.xml
 /TestUudt_sccpresource2.xml
 /TestUudt_sccprouter2.xml
+/.apt_generated/
+/Test_Benchmark_management.xml
+/Test_Benchmark_sccpresource2.xml
+/Test_Benchmark_sccprouter2.xml
+/DialogIdRangeTest_management.xml
