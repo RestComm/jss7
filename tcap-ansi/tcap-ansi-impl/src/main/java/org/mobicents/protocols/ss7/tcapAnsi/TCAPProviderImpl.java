@@ -1006,26 +1006,26 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         }
     }
 
-    private Dialog createPreviewDialog(PreviewDialogDataKey ky, SccpAddress localAddress, SccpAddress remoteAddress,
+    Dialog createPreviewDialog(PreviewDialogDataKey ky, SccpAddress localAddress, SccpAddress remoteAddress,
             int seqControl) throws TCAPException {
 
-        if (this.dialogPreviewList.size() >= this.stack.getMaxDialogs())
-            throw new TCAPException("Current dialog count exceeds its maximum value");
+            if (this.dialogPreviewList.size() >= this.stack.getMaxDialogs())
+                throw new TCAPException("Current dialog count exceeds its maximum value");
 
         Long dialogId = this.getAvailableTxIdPreview();
         PreviewDialogData pdd = new PreviewDialogData(this, dialogId);
         PreviewDialogData pddx = this.dialogPreviewList.putIfAbsent(ky, pdd);
-        if (pddx != null) {
-            this.removePreviewDialog(pddx);
-            throw new TCAPException("Dialog with trId=" + ky.origTxId + " is already exists - we ignore it and drops curent dialog");
-        }
+            if (pddx != null) {
+                this.removePreviewDialog(pddx);
+                throw new TCAPException("Dialog with trId=" + ky.origTxId + " is already exists - we ignore it and drops curent dialog");
+            }
 
-        DialogImpl di = new DialogImpl(localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, false);
-        pdd.setPrevewDialogDataKey1(ky);
+            DialogImpl di = new DialogImpl(localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, false);
+            pdd.setPrevewDialogDataKey1(ky);
 
-        pdd.startIdleTimer();
+            pdd.startIdleTimer();
 
-        return di;
+            return di;
 
 
 //        synchronized (this.dialogPreviewList) {
@@ -1051,7 +1051,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 //        }
     }
 
-    private Long getAvailableTxIdPreview() throws TCAPException {
+    Long getAvailableTxIdPreview() throws TCAPException {
         while (true) {
             Long id;
             if (!currentDialogId.compareAndSet(this.stack.getDialogIdRangeEnd(), this.stack.getDialogIdRangeStart() + 1)) {
@@ -1070,7 +1070,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         }
     }
 
-    protected Dialog getPreviewDialog(PreviewDialogDataKey ky1, PreviewDialogDataKey ky2, SccpAddress localAddress,
+    Dialog getPreviewDialog(PreviewDialogDataKey ky1, PreviewDialogDataKey ky2, SccpAddress localAddress,
             SccpAddress remoteAddress, int seqControl) {
 
         // synchronized (this.dialogPreviewList) {
@@ -1193,58 +1193,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         this._EXECUTOR.schedule(currentNetworkIdStateListUpdater, 5000, TimeUnit.MILLISECONDS);
 
         networkIdStateList = this.sccpProvider.getNetworkIdStateList();
-    }
-
-    protected class PreviewDialogDataKey {
-        public int dpc;
-        public String sccpDigits;
-        public int ssn;
-        public long origTxId;
-
-        public PreviewDialogDataKey(int dpc, String sccpDigits, int ssn, long txId) {
-            this.dpc = dpc;
-            this.sccpDigits = sccpDigits;
-            this.ssn = ssn;
-            this.origTxId = txId;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null)
-                return false;
-            if (!(obj instanceof PreviewDialogDataKey))
-                return false;
-            PreviewDialogDataKey b = (PreviewDialogDataKey) obj;
-
-            if (this.sccpDigits != null) {
-                // sccpDigits + ssn
-                if (!this.sccpDigits.equals(b.sccpDigits))
-                    return false;
-            } else {
-                // dpc + ssn
-                if (this.dpc != b.dpc)
-                    return false;
-            }
-            if (this.ssn != b.ssn)
-                return false;
-            if (this.origTxId != b.origTxId)
-                return false;
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            if (this.sccpDigits != null) {
-                result = prime * result + ((sccpDigits == null) ? 0 : sccpDigits.hashCode());
-            } else {
-                result = prime * result + this.dpc;
-            }
-            result = prime * result + this.ssn;
-            result = prime * result + (int) (this.origTxId + (this.origTxId >> 32));
-            return result;
-        }
     }
 
     private class NetworkIdStateListUpdater implements Runnable, Serializable {
