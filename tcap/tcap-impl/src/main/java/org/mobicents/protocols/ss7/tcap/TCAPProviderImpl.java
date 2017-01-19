@@ -966,27 +966,48 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
     private Dialog createPreviewDialog(PreviewDialogDataKey ky, SccpAddress localAddress, SccpAddress remoteAddress,
             int seqControl) throws TCAPException {
-        synchronized (this.dialogPreviewList) {
-            if (this.dialogPreviewList.size() >= this.stack.getMaxDialogs())
-                throw new TCAPException("Current dialog count exceeds its maximum value");
 
-            // checking if a Dialog is current already exists
-            PreviewDialogData pddx = this.dialogPreviewList.get(ky);
-            if (pddx != null) {
-                this.removePreviewDialog(pddx);
-                throw new TCAPException("Dialog with trId=" + ky.origTxId + " is already exists - we ignore it and drops curent dialog");
-            }
+        if (this.dialogPreviewList.size() >= this.stack.getMaxDialogs())
+            throw new TCAPException("Current dialog count exceeds its maximum value");
 
-            Long dialogId = this.getAvailableTxIdPreview();
-            PreviewDialogData pdd = new PreviewDialogData(this, dialogId);
-            this.dialogPreviewList.put(ky, pdd);
-            DialogImpl di = new DialogImpl(localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, false);
-            pdd.setPrevewDialogDataKey1(ky);
-
-            pdd.startIdleTimer();
-
-            return di;
+        Long dialogId = this.getAvailableTxIdPreview();
+        PreviewDialogData pdd = new PreviewDialogData(this, dialogId);
+        PreviewDialogData pddx = this.dialogPreviewList.putIfAbsent(ky, pdd);
+        if (pddx != null) {
+            this.removePreviewDialog(pddx);
+            throw new TCAPException("Dialog with trId=" + ky.origTxId
+                    + " is already exists - we ignore it and drops curent dialog");
         }
+
+        DialogImpl di = new DialogImpl(localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, false);
+        pdd.setPrevewDialogDataKey1(ky);
+
+        pdd.startIdleTimer();
+
+        return di;
+
+        // synchronized (this.dialogPreviewList) {
+        // if (this.dialogPreviewList.size() >= this.stack.getMaxDialogs())
+        // throw new TCAPException("Current dialog count exceeds its maximum value");
+        //
+        // // checking if a Dialog is current already exists
+        // PreviewDialogData pddx = this.dialogPreviewList.get(ky);
+        // if (pddx != null) {
+        // this.removePreviewDialog(pddx);
+        // throw new TCAPException("Dialog with trId=" + ky.origTxId +
+        // " is already exists - we ignore it and drops curent dialog");
+        // }
+        //
+        // Long dialogId = this.getAvailableTxIdPreview();
+        // PreviewDialogData pdd = new PreviewDialogData(this, dialogId);
+        // this.dialogPreviewList.put(ky, pdd);
+        // DialogImpl di = new DialogImpl(localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, false);
+        // pdd.setPrevewDialogDataKey1(ky);
+        //
+        // pdd.startIdleTimer();
+        //
+        // return di;
+        // }
     }
 
     private Long getAvailableTxIdPreview() throws TCAPException {
@@ -1011,59 +1032,67 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
     protected Dialog getPreviewDialog(PreviewDialogDataKey ky1, PreviewDialogDataKey ky2, SccpAddress localAddress,
             SccpAddress remoteAddress, int seqControl) {
-        synchronized (this.dialogPreviewList) {
-            PreviewDialogData pdd = this.dialogPreviewList.get(ky1);
-            DialogImpl di = null;
-            boolean sideB = false;
+
+        // synchronized (this.dialogPreviewList) {
+
+        PreviewDialogData pdd = this.dialogPreviewList.get(ky1);
+        DialogImpl di = null;
+        boolean sideB = false;
+        if (pdd != null) {
+            sideB = pdd.getPrevewDialogDataKey1().equals(ky1);
+            di = new DialogImpl(localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, sideB);
+        } else {
+            if (ky2 != null)
+                pdd = this.dialogPreviewList.get(ky2);
             if (pdd != null) {
                 sideB = pdd.getPrevewDialogDataKey1().equals(ky1);
                 di = new DialogImpl(localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, sideB);
             } else {
-                if (ky2 != null)
-                    pdd = this.dialogPreviewList.get(ky2);
-                if (pdd != null) {
-                    sideB = pdd.getPrevewDialogDataKey1().equals(ky1);
-                    di = new DialogImpl(localAddress, remoteAddress, seqControl, this._EXECUTOR, this, pdd, sideB);
-                } else {
-                    return null;
-                }
+                return null;
             }
-
-            pdd.restartIdleTimer();
-
-            if (pdd.getPrevewDialogDataKey2() == null && ky2 != null) {
-                if (pdd.getPrevewDialogDataKey1().equals(ky1))
-                    pdd.setPrevewDialogDataKey2(ky2);
-                else
-                    pdd.setPrevewDialogDataKey2(ky1);
-                this.dialogPreviewList.put(pdd.getPrevewDialogDataKey2(), pdd);
-            }
-
-            return di;
         }
+
+        pdd.restartIdleTimer();
+
+        if (pdd.getPrevewDialogDataKey2() == null && ky2 != null) {
+            if (pdd.getPrevewDialogDataKey1().equals(ky1))
+                pdd.setPrevewDialogDataKey2(ky2);
+            else
+                pdd.setPrevewDialogDataKey2(ky1);
+            this.dialogPreviewList.put(pdd.getPrevewDialogDataKey2(), pdd);
+        }
+
+        return di;
+        // }
     }
 
     protected void removePreviewDialog(DialogImpl di) {
-        synchronized (this.dialogPreviewList) {
-            PreviewDialogData pdd = this.dialogPreviewList.get(di.prevewDialogData.getPrevewDialogDataKey1());
-            if (pdd == null && di.prevewDialogData.getPrevewDialogDataKey2() != null) {
-                pdd = this.dialogPreviewList.get(di.prevewDialogData.getPrevewDialogDataKey2());
-            }
+        // synchronized (this.dialogPreviewList) {
 
-            if (pdd != null)
-                removePreviewDialog(pdd);
+        PreviewDialogData pdd = this.dialogPreviewList.get(di.prevewDialogData.getPrevewDialogDataKey1());
+        if (pdd == null && di.prevewDialogData.getPrevewDialogDataKey2() != null) {
+            pdd = this.dialogPreviewList.get(di.prevewDialogData.getPrevewDialogDataKey2());
         }
+
+        if (pdd != null)
+            removePreviewDialog(pdd);
+
+        // }
 
         this.doRelease(di);
     }
 
     protected void removePreviewDialog(PreviewDialogData pdd) {
-        synchronized (this.dialogPreviewList) {
-            this.dialogPreviewList.remove(pdd.getPrevewDialogDataKey1());
-            if (pdd.getPrevewDialogDataKey2() != null) {
-                this.dialogPreviewList.remove(pdd.getPrevewDialogDataKey2());
-            }
+
+        // synchronized (this.dialogPreviewList) {
+
+        this.dialogPreviewList.remove(pdd.getPrevewDialogDataKey1());
+        if (pdd.getPrevewDialogDataKey2() != null) {
+            this.dialogPreviewList.remove(pdd.getPrevewDialogDataKey2());
         }
+
+        // }
+
         pdd.stopIdleTimer();
 
         // TODO ??? : create Dialog and invoke "this.doRelease(di);"
