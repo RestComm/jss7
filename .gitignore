@@ -149,3 +149,4 @@ docs/sources-*/src
 /MessageTransferTestStack2_management2.xml
 /MessageTransferTestStack2_sccpresource2.xml
 /MessageTransferTestStack2_sccprouter2.xml
+/DialogMngConcurrentTest_management.xml
