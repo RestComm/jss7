@@ -1,9 +1,9 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 <suite name="Encoding" parallel="methods" thread-count="8"  verbose="1">
 	<test name="asn">
-	   
-	  	<packages>
-      		<package name="org.mobicents.protocols.ss7.tcapAnsi.asn" />
-  		 </packages>
+
+		<packages>
+			<package name="org.mobicents.protocols.ss7.tcapAnsi.asn" />
+		</packages>
 	</test>
 </suite>

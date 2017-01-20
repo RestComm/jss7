@@ -27,7 +27,6 @@ import java.util.Map;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.tcapAnsi.PreviewDialogData;
 import org.mobicents.protocols.ss7.tcapAnsi.TCAPStackImpl;
-import org.mobicents.protocols.ss7.tcapAnsi.TCAPProviderImpl.PreviewDialogDataKey;
 
 /**
  *
