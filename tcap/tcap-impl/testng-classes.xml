@@ -19,6 +19,7 @@
 	  	<packages>
       		<package name="org.mobicents.protocols.ss7.tcap" />
       		<package name="org.mobicents.protocols.ss7.tcap.dialog.timeout" />
+			<package name="org.mobicents.protocols.ss7.tcap.concurrent" />
   		 </packages>
   		 <!-- TODO: to speed up more, divide those tests into classes 
   		 <classes>

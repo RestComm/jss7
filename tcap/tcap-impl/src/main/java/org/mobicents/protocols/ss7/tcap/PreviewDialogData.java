@@ -47,8 +47,8 @@ public class PreviewDialogData {
 
     private Object upperDialog;
 
-    private TCAPProviderImpl.PreviewDialogDataKey prevewDialogDataKey1;
-    private TCAPProviderImpl.PreviewDialogDataKey prevewDialogDataKey2;
+    private PreviewDialogDataKey prevewDialogDataKey1;
+    private PreviewDialogDataKey prevewDialogDataKey2;
 
     private ReentrantLock dialogLock = new ReentrantLock();
     private Future idleTimerFuture;
@@ -101,19 +101,19 @@ public class PreviewDialogData {
         upperDialog = val;
     }
 
-    protected TCAPProviderImpl.PreviewDialogDataKey getPrevewDialogDataKey1() {
+    protected PreviewDialogDataKey getPrevewDialogDataKey1() {
         return prevewDialogDataKey1;
     }
 
-    protected TCAPProviderImpl.PreviewDialogDataKey getPrevewDialogDataKey2() {
+    protected PreviewDialogDataKey getPrevewDialogDataKey2() {
         return prevewDialogDataKey2;
     }
 
-    protected void setPrevewDialogDataKey1(TCAPProviderImpl.PreviewDialogDataKey val) {
+    protected void setPrevewDialogDataKey1(PreviewDialogDataKey val) {
         prevewDialogDataKey1 = val;
     }
 
-    protected void setPrevewDialogDataKey2(TCAPProviderImpl.PreviewDialogDataKey val) {
+    protected void setPrevewDialogDataKey2(PreviewDialogDataKey val) {
         prevewDialogDataKey2 = val;
     }
 
@@ -148,8 +148,14 @@ public class PreviewDialogData {
     }
 
     protected void restartIdleTimer() {
-        stopIdleTimer();
-        startIdleTimer();
+        try {
+            this.dialogLock.lock();
+
+            stopIdleTimer();
+            startIdleTimer();
+        } finally {
+            this.dialogLock.unlock();
+        }
     }
 
     private class IdleTimerTask implements Runnable {
