@@ -137,3 +137,15 @@ docs/sources-*/src
 /Test_Benchmark_sccpresource2.xml
 /Test_Benchmark_sccprouter2.xml
 /DialogIdRangeTest_management.xml
+/MessageReassemblyTestStack1_management2.xml
+/MessageReassemblyTestStack1_sccpresource2.xml
+/MessageReassemblyTestStack1_sccprouter2.xml
+/MessageReassemblyTestStack2_management2.xml
+/MessageReassemblyTestStack2_sccpresource2.xml
+/MessageReassemblyTestStack2_sccprouter2.xml
+/MessageTransferTestStack1_management2.xml
+/MessageTransferTestStack1_sccpresource2.xml
+/MessageTransferTestStack1_sccprouter2.xml
+/MessageTransferTestStack2_management2.xml
+/MessageTransferTestStack2_sccpresource2.xml
+/MessageTransferTestStack2_sccprouter2.xml

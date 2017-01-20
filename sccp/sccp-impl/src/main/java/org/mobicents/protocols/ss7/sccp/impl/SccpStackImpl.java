@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.sccp.impl;
 
+import io.netty.util.concurrent.DefaultThreadFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -31,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -165,6 +168,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     // if true outgoing SCCP messages will be blocked (depending on message type, UDP messages from level N=6)
     protected boolean congControl_blockingOutgoungSccpMessages = false;
 
+    // The count of threads that will be used for message delivering to
+    // SccpListener's for SCCP user -> SCCP -> SCCP user transit (without MTP part)
+    protected int deliveryTransferMessageThreadCount = 4;
+
     private boolean previewMode = false;
 
     protected volatile State state = State.IDLE;
@@ -184,6 +191,11 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     protected FastMap<Integer, Mtp3UserPart> mtp3UserParts = new FastMap<Integer, Mtp3UserPart>();
     protected ScheduledExecutorService timerExecutors;
     protected FastMap<MessageReassemblyProcess, SccpSegmentableMessageImpl> reassemplyCache = new FastMap<MessageReassemblyProcess, SccpSegmentableMessageImpl>();
+
+    // executors for delivering messages SCCP user -> SCCP -> SCCP user (for messages that are not from or to MTP part)
+    protected ExecutorService[] msgDeliveryExecutors;
+    protected int slsFilter = 0x0f;
+    protected int[] slsTable = null;
 
     // protected int localSpc;
     // protected int ni = 2;
@@ -296,6 +308,18 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         this.previewMode = previewMode;
 
         this.store();
+    }
+
+    public int getDeliveryMessageThreadCount() {
+        return this.deliveryTransferMessageThreadCount;
+    }
+
+    public void setDeliveryMessageThreadCount(int deliveryMessageThreadCount) throws Exception {
+        if (this.isStarted())
+            throw new Exception("DeliveryMessageThreadCount parameter can be updated only when SCCP stack is NOT running");
+
+        if (deliveryMessageThreadCount > 0 && deliveryMessageThreadCount <= 100)
+            this.deliveryTransferMessageThreadCount = deliveryMessageThreadCount;
     }
 
     public void setSstTimerDuration_Min(int sstTimerDuration_Min) throws Exception {
@@ -519,6 +543,16 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         return (this.selectorCounter == 1);
     }
 
+    protected void createSLSTable(int maxSls, int minimumBoundThread) {
+        int stream = 0;
+        for (int i = 0; i < maxSls; i++) {
+            if (stream >= minimumBoundThread) {
+                stream = 0;
+            }
+            slsTable[i] = stream++;
+        }
+    }
+
     public void start() throws IllegalStateException {
         logger.info("Starting ...");
 
@@ -565,6 +599,19 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
         this.timerExecutors = Executors.newScheduledThreadPool(1);
 
+        // initiating of SCCP delivery executors
+        // TODO: we do it for ITU standard, may be we may configure it for other standard's (different SLS count) maxSls and
+        // slsFilter values initiating
+        int maxSls = 16;
+        slsFilter = 0x0f;
+        this.slsTable = new int[maxSls];
+        this.createSLSTable(maxSls, this.deliveryTransferMessageThreadCount);
+        this.msgDeliveryExecutors = new ExecutorService[this.deliveryTransferMessageThreadCount];
+        for (int i = 0; i < this.deliveryTransferMessageThreadCount; i++) {
+            this.msgDeliveryExecutors[i] = Executors.newFixedThreadPool(1, new DefaultThreadFactory(
+                    "SccpTransit-DeliveryExecutor-" + i));
+        }
+
         for (FastMap.Entry<Integer, Mtp3UserPart> e = this.mtp3UserParts.head(), end = this.mtp3UserParts.tail(); (e = e
                 .getNext()) != end;) {
             Mtp3UserPart mup = e.getValue();
@@ -591,6 +638,13 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         // executor = null;
         //
         // layer3exec = null;
+
+        if (this.msgDeliveryExecutors != null) {
+            for (ExecutorService es : this.msgDeliveryExecutors) {
+                es.shutdown();
+            }
+            this.msgDeliveryExecutors = null;
+        }
 
         for (SccpManagementEventListener lstr : this.sccpProvider.managementEventListeners) {
             try {

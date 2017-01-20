@@ -110,8 +110,9 @@ public class SccpRoutingControl {
             for (Map.Entry<Integer, SccpListener> val : lstListn.entrySet()) {
                 SccpListener listener = val.getValue();
                 if (msg instanceof SccpDataMessage) {
-                    SccpDataMessage dataMsg = (SccpDataMessage) msg;
-                    listener.onMessage(dataMsg);
+//                    SccpDataMessage dataMsg = (SccpDataMessage) msg;
+//                    listener.onMessage(dataMsg);
+                    deliverMessageToSccpUser(listener, (SccpDataMessage) msg);
                 }
             }
 
@@ -153,7 +154,8 @@ public class SccpRoutingControl {
                         if (logger.isDebugEnabled()) {
                             logger.debug(String.format("Local deliver : SCCP Data Message=%s", msg.toString()));
                         }
-                        listener.onMessage((SccpDataMessage) msg);
+//                        listener.onMessage((SccpDataMessage) msg);
+                        deliverMessageToSccpUser(listener, (SccpDataMessage) msg);
                     } else if (msg instanceof SccpNoticeMessage) {
                         if (logger.isDebugEnabled()) {
                             logger.debug(String.format("Local deliver : SCCP Notice Message=%s", msg.toString()));
@@ -659,7 +661,8 @@ public class SccpRoutingControl {
                             if (logger.isDebugEnabled()) {
                                 logger.debug(String.format("Local deliver : SCCP Data Message=%s", msg.toString()));
                             }
-                            listener.onMessage((SccpDataMessage) msg);
+//                            listener.onMessage((SccpDataMessage) msg);
+                            deliverMessageToSccpUser(listener, (SccpDataMessage) msg);
                         } else if (msg instanceof SccpNoticeMessage) {
                             if (logger.isDebugEnabled()) {
                                 logger.debug(String.format("Local deliver : SCCP Notice Message=%s", msg.toString()));
@@ -815,6 +818,18 @@ public class SccpRoutingControl {
         }
     }
 
+    private void deliverMessageToSccpUser(SccpListener listener, SccpDataMessage msg) {
+        if (msg.getIsMtpOriginated()) {
+            listener.onMessage(msg);
+        } else {
+            // we need to make asynch delivering for local user originated messages
+            int seqControl = msg.getSls();
+            SccpTransferDeliveryHandler hdl = new SccpTransferDeliveryHandler(msg, listener);
+            seqControl = seqControl & this.sccpStackImpl.slsFilter;
+            this.sccpStackImpl.msgDeliveryExecutors[this.sccpStackImpl.slsTable[seqControl]].execute(hdl);
+        }
+    }
+
     protected void sendMessageToMtp(SccpAddressedMessageImpl msg) throws Exception {
 
         msg.setOutgoingDpc(msg.getCalledPartyAddress().getSignalingPointCode());
@@ -876,6 +891,30 @@ public class SccpRoutingControl {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private class SccpTransferDeliveryHandler implements Runnable {
+        private SccpDataMessage msg;
+        private SccpListener listener;
+
+        public SccpTransferDeliveryHandler(SccpDataMessage msg, SccpListener listener) {
+            this.msg = msg;
+            this.listener = listener;
+        }
+
+        @Override
+        public void run() {
+            if (sccpStackImpl.isStarted()) {
+                try {
+                    listener.onMessage(msg);
+                } catch (Exception e) {
+                    logger.error("Exception while delivering a system messages to the SCCP-user: " + e.getMessage(), e);
+                }
+            } else {
+                logger.error(String.format("Received SccpDataMessage=%s but SccpStack is not started. Message will be dropped",
+                        msg));
             }
         }
     }
