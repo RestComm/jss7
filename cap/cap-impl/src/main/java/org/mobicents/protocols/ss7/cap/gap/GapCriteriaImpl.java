@@ -128,9 +128,11 @@ public class GapCriteriaImpl implements GapCriteria, CAPAsnPrimitive {
         this.basicGapCriteria = null;
         this.compoundCriteria = null;
 
+        ansIS.readTag();
+
         if (ansIS.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
             basicGapCriteria = new BasicGapCriteriaImpl();
-            ((BasicGapCriteriaImpl) basicGapCriteria).decodeAll(ansIS);
+            ((BasicGapCriteriaImpl) basicGapCriteria).decodeData(ansIS, length);
         } else if (ansIS.getTagClass() == Tag.CLASS_UNIVERSAL) {
             this.compoundCriteria = new CompoundCriteriaImpl();
             ((CompoundCriteriaImpl) compoundCriteria).decodeAll(ansIS);
@@ -166,10 +168,10 @@ public class GapCriteriaImpl implements GapCriteria, CAPAsnPrimitive {
 
         try {
             if (basicGapCriteria != null) {
-                ((BasicGapCriteriaImpl) basicGapCriteria).encodeAll(asnOs);
+                ((BasicGapCriteriaImpl) basicGapCriteria).encodeData(asnOs);
 
             } else if (compoundCriteria != null) {
-                ((CompoundCriteriaImpl) compoundCriteria).encodeAll(asnOs);
+                ((CompoundCriteriaImpl) compoundCriteria).encodeData(asnOs);
             }
         } catch (CAPException e) {
             throw new CAPException("CAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);

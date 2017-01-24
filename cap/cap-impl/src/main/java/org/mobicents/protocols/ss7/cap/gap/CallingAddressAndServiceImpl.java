@@ -71,7 +71,7 @@ public class CallingAddressAndServiceImpl extends SequenceBase implements Callin
         return serviceKey;
     }
 
-    protected  void _decode(AsnInputStream ansIS, int length) throws IOException, AsnException, CAPParsingComponentException {
+    protected void _decode(AsnInputStream ansIS, int length) throws IOException, AsnException, CAPParsingComponentException {
 
         this.callingAddressValue = null;
         this.serviceKey = 0;
