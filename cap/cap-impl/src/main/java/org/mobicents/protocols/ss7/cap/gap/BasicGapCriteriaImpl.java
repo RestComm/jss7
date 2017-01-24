@@ -161,31 +161,23 @@ public class BasicGapCriteriaImpl implements BasicGapCriteria, CAPAsnPrimitive {
             switch (ais.getTag()) {
                 case _ID_calledAddressValue: {
                     this.calledAddressValue = new DigitsImpl();
-                    AsnInputStream ais2 = ais.readSequenceStreamData(length);
-                    ais2.readTag();
-                    ((DigitsImpl) this.calledAddressValue).decodeAll(ais2);
+                    ((DigitsImpl) this.calledAddressValue).decodeAll(ais);
                     this.calledAddressValue.setIsGenericNumber();
                     break;
                 }
                 case _ID_gapOnService: {
                     this.gapOnService = new GapOnServiceImpl();
-                    AsnInputStream ais2 = ais.readSequenceStreamData(length);
-                    ais2.readTag();
-                    ((GapOnServiceImpl) this.gapOnService).decodeAll(ais2);
+                    ((GapOnServiceImpl) this.gapOnService).decodeAll(ais);
                     break;
                 }
                 case _ID_calledAddressAndService: {
                     this.calledAddressAndService = new CalledAddressAndServiceImpl();
-                    AsnInputStream ais2 = ais.readSequenceStreamData(length);
-                    ais2.readTag();
-                    ((CalledAddressAndServiceImpl) this.calledAddressAndService).decodeAll(ais2);
+                    ((CalledAddressAndServiceImpl) this.calledAddressAndService).decodeAll(ais);
                     break;
                 }
                 case _ID_callingAddressAndService: {
                     this.callingAddressAndService = new CallingAddressAndServiceImpl();
-                    AsnInputStream ais2 = ais.readSequenceStreamData(length);
-                    ais2.readTag();
-                    ((CallingAddressAndServiceImpl) this.callingAddressAndService).decodeAll(ais2);
+                    ((CallingAddressAndServiceImpl) this.callingAddressAndService).decodeAll(ais);
                     break;
                 }
                 default: {
@@ -219,21 +211,21 @@ public class BasicGapCriteriaImpl implements BasicGapCriteria, CAPAsnPrimitive {
 
         if ((this.calledAddressValue == null && this.gapOnService == null && this.calledAddressAndService == null && this.callingAddressAndService == null)
                 || (this.calledAddressValue != null && this.gapOnService != null || this.calledAddressAndService != null && this.callingAddressAndService != null)) {
-            throw new CAPException("Error while decoding " + _PrimitiveName + ": One and only one choice must be selected");
+            throw new CAPException("Error while encoding " + _PrimitiveName + ": One and only one choice must be selected");
         }
 
         try {
             if (calledAddressValue != null) {
-                ((DigitsImpl) calledAddressValue).encodeAll(asnOs);
+                ((DigitsImpl) calledAddressValue).encodeData(asnOs);
 
             } else if (gapOnService != null) {
-                ((GapOnServiceImpl) gapOnService).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _ID_gapOnService);
+                ((GapOnServiceImpl) gapOnService).encodeData(asnOs);
 
             } else if (calledAddressAndService != null) {
-                ((CalledAddressAndServiceImpl) calledAddressAndService).encodeAll(asnOs);
+                ((CalledAddressAndServiceImpl) calledAddressAndService).encodeData(asnOs);
 
             } else if (callingAddressAndService != null) {
-                ((CallingAddressAndServiceImpl) callingAddressAndService).encodeAll(asnOs);
+                ((CallingAddressAndServiceImpl) callingAddressAndService).encodeData(asnOs);
             }
         } catch (CAPException e) {
             throw new CAPException("CAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);

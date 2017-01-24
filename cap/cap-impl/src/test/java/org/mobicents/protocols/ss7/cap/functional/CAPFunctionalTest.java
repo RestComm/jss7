@@ -54,6 +54,7 @@ import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessageSystemFailure;
 import org.mobicents.protocols.ss7.cap.api.errors.UnavailableNetworkResource;
+import org.mobicents.protocols.ss7.cap.api.gap.*;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
 import org.mobicents.protocols.ss7.cap.api.isup.Digits;
@@ -70,6 +71,7 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChar
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.AssistRequestInstructionsRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
+import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallGapRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationReportRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequest;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CancelRequest;
@@ -159,6 +161,7 @@ import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.MOSMSCause;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.RPCause;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSAddressString;
 import org.mobicents.protocols.ss7.cap.api.service.sms.primitive.SMSEvent;
+import org.mobicents.protocols.ss7.cap.gap.*;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCallImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.AOCSubsequentImpl;
 import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.CAI_GSM0224Impl;
@@ -5181,6 +5184,108 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
 
         client.compareEvents(clientExpectedEvents);
         server.compareEvents(serverExpectedEvents);
+    }
+
+    /*
+    <code>
+    TC-BEGIN + InitialDPRequest
+
+
+    </code>
+    */
+
+    @Test(groups = {"functional.flow", "dialog"})
+    public void testCallGap() throws Exception {
+
+        Client client = new Client(stack1, this, peer1Address, peer2Address) {
+            private int dialogStep;
+
+            //TODO
+            public void onCallGapRequest(CallGapRequest ind) {
+                super.onCallGapRequest(ind);
+
+                if (ind.getGapCriteria().getBasicGapCriteria() != null) {
+                    BasicGapCriteria basicGapCriteria = ind.getGapCriteria().getBasicGapCriteria();
+                    if (basicGapCriteria.getCalledAddressAndService() != null) {
+                        System.out.println("OK");
+                    }
+                } else {
+                    System.out.println("ERROR");
+                }
+            }
+        };
+
+        Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+            private int dialogStep = 0;
+
+            @Override
+            public void onInitialDPRequest(InitialDPRequest ind) {
+                super.onInitialDPRequest(ind);
+                
+                try {
+                    GenericNumber genericNumber = capProvider.getISUPParameterFactory().createGenericNumber();
+                    genericNumber.setAddress("501090500");
+                    Digits digits = capProvider.getCAPParameterFactory().createDigits_GenericNumber(genericNumber);
+
+                    CalledAddressAndService calledAddressAndService = new CalledAddressAndServiceImpl(digits, 100);
+                    BasicGapCriteria basicGapCriteria = new BasicGapCriteriaImpl(calledAddressAndService);
+                    GapCriteria gapCriteria = new GapCriteriaImpl(basicGapCriteria);
+                    GapIndicators gapIndicators = new GapIndicatorsImpl(60, -1);
+
+                    ind.getCAPDialog().addCallGapRequest(gapCriteria, gapIndicators, null, null, null);
+                    ind.getCAPDialog().send();
+                } catch (CAPException e) {
+                    this.error("Error while trying to send Response CallGapRequests", e);
+                }
+                dialogStep = 1;
+                ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
+            }
+
+            @Override
+            public void onDialogDelimiter(CAPDialog capDialog) {
+                super.onDialogDelimiter(capDialog);
+
+                try {
+                    capDialog.close(false);
+                } catch (CAPException e) {
+                    this.error("Error while trying to close() Dialog", e);
+                }
+            }
+        };
+
+        long stamp = System.currentTimeMillis();
+        int count = 0;
+
+        // Client side events
+        List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+        TestEvent te = TestEvent.createSentEvent(EventType.InitialDpRequest, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.CallGapRequest, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        count = 0;
+        // Server side events
+        List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+        te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.InitialDpRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.CallGapRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        client.sendInitialDp(CAPApplicationContext.CapV3_gsmSSF_scfGeneric);
+
+        waitForEnd();
+
+        client.compareEvents(clientExpectedEvents);
+        server.compareEvents(serverExpectedEvents);
+
     }
     
     

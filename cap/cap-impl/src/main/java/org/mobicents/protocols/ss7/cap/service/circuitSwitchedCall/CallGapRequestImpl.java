@@ -163,10 +163,8 @@ public class CallGapRequestImpl extends CircuitSwitchedCallMessageImpl implement
 
                 switch (tag) {
                     case _ID_gapCriteria: {
-                        AsnInputStream ais2 = ais.readSequenceStream();
-                        ais2.readTag();
                         this.gapCriteria = new GapCriteriaImpl();
-                        ((GapCriteriaImpl) this.gapCriteria).decodeAll(ais2);
+                        ((GapCriteriaImpl) this.gapCriteria).decodeAll(ais);
                         break;
                     }
                     case _ID_gapIndicators: {
