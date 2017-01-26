@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="urn:jboss:bean-deployer:2.0">
+
+
+	<bean name="SCTPManagement" class="org.mobicents.protocols.sctp.netty.NettySctpManagementImpl">
+		<constructor>
+			<parameter>SCTPManagement</parameter>
+		</constructor>
+		<property name="persistDir">${jboss.server.data.dir}</property>
+<!-- extra options for SCTP channel parameters configuring
+		<property name="optionSctpDisableFragments">true</property>
+		<property name="optionSctpFragmentInterleave">0</property>
+		<property name="optionSctpNodelay">true</property>
+		<property name="optionSoSndbuf">4000</property>
+		<property name="optionSoRcvbuf">4000</property>
+		<property name="optionSoLinger">-1</property>
+		<property name="optionSctpInitMaxstreams_MaxOutStreams">8</property>
+		<property name="optionSctpInitMaxstreams_MaxInStreams">10</property>
+-->
+	</bean>
+
+	<bean name="SCTPShellExecutor" class="org.mobicents.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
+		<property name="sctpManagements">
+			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.sctp.netty.NettySctpManagementImpl">
+				<entry>
+					<key>SCTPManagement</key>
+					<value>
+						<inject bean="SCTPManagement" />
+					</value>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<!-- ==================================================================== -->
+	<!-- MTP3 Properties -->
+	<!-- Define MTP3 PointCode Format -->
+	<!-- ==================================================================== -->
+	<bean name="RoutingLabelFormat" class="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat">
+		<constructor factoryClass="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat"
+			factoryMethod="getInstance">
+			<parameter>ITU</parameter>
+		</constructor>
+	</bean>
+
+	<!-- ==================================================================== -->
+	<!-- M3UA -->
+	<!-- M3UAManagement is managing the m3ua side commands -->
+	<!-- ==================================================================== -->
+	<!-- -->
+	<bean name="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl">
+		<constructor>
+			<parameter>Mtp3UserPart</parameter>
+			<parameter>Restcomm-jSS7</parameter>
+		</constructor>
+		<property name="persistDir">${jboss.server.data.dir}</property>
+		<property name="maxSequenceNumber">256</property>
+		<property name="maxAsForRoute">2</property>
+		<property name="deliveryMessageThreadCount">1</property>
+		<property name="routingLabelFormat">
+			<inject bean="RoutingLabelFormat" />
+		</property>
+		<property name="transportManagement">
+			<inject bean="SCTPManagement" />
+		</property>
+	</bean>
+
+	<bean name="M3UAShellExecutor" class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
+		<property name="m3uaManagements">
+			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl">
+				<entry>
+					<key>Mtp3UserPart</key>
+					<value>
+						<inject bean="Mtp3UserPart" />
+					</value>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<!-- ==================================================================== -->
+	<!-- Scheduler -->
+	<!-- Scheduler for ss7 stack -->
+	<!-- ==================================================================== -->
+	<!-- -->
+	<bean name="SS7Clock" class="org.mobicents.protocols.ss7.scheduler.DefaultClock">
+	</bean>
+
+	<bean name="SS7Scheduler" class="org.mobicents.protocols.ss7.scheduler.Scheduler">
+		<property name="clock">
+			<inject bean="SS7Clock" />
+		</property>
+	</bean>
+
+	<!-- ==================================================================== -->
+	<!-- Dialogic Mtp3UserPart -->
+	<!-- ==================================================================== -->
+<!--
+	<bean name="Mtp3UserPart"
+		class="org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart">
+		<constructor>
+			<parameter>Restcomm-jSS7</parameter>
+		</constructor>
+		<property name="sourceModuleId">61</property>
+		<property name="destinationModuleId">34</property>
+		<property name="routingLabelFormat">
+			<inject bean="RoutingLabelFormat" />
+		</property>
+	</bean>
+-->
+
+	<!-- ==================================================================== -->
+	<!-- Linkset -->
+	<!-- ==================================================================== -->
+<!--
+	<bean name="LinksetFactoryFactory" class="org.mobicents.ss7.linkset.oam.LinksetFactoryFactory">
+		<incallback method="addFactory" />
+		<uncallback method="removeFactory" />
+	</bean>
+	<bean name="DahdiLinksetFactory"
+		class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
+	</bean>
+	<bean name="LinksetManager" class="org.mobicents.ss7.linkset.oam.LinksetManagerImpl">
+		<constructor>
+			<parameter>LinksetManager</parameter>
+		</constructor>
+		<property name="scheduler">
+			<inject bean="SS7Scheduler" />
+		</property>
+		<property name="linksetFactoryFactory">
+			<inject bean="LinksetFactoryFactory" />
+		</property>
+		<property name="persistDir">${jboss.server.data.dir}</property>
+	</bean>
+	<bean name="LinksetExecutor" class="org.mobicents.ss7.linkset.oam.LinksetExecutor">
+		<property name="linksetManager">
+			<inject bean="LinksetManager" />
+		</property>
+	</bean>
+-->
+
+	<!-- ==================================================================== -->
+	<!-- SCCP Service -->
+	<!-- ==================================================================== -->
+	<bean name="SccpStack" class="org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl">
+		<constructor>
+			<parameter>SccpStack</parameter>
+		</constructor>
+		<property name="persistDir">${jboss.server.data.dir}</property>
+		<property name="mtp3UserParts">
+			<map keyClass="java.lang.Integer" valueClass="org.mobicents.protocols.ss7.mtp.Mtp3UserPart">
+				<entry>
+					<key>1</key>
+					<value>
+						<inject bean="Mtp3UserPart" />
+					</value>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean name="SccpExecutor" class="org.mobicents.protocols.ss7.sccp.impl.oam.SccpExecutor">
+		<property name="sccpStacks">
+			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl">
+				<entry>
+					<key>SccpStack</key>
+					<value>
+						<inject bean="SccpStack" />
+					</value>
+				</entry>
+			</map>		
+		</property>
+	</bean>
+
+	<!-- ==================================================================== -->
+	<!-- TCAP Service -->
+	<!-- ==================================================================== -->
+	<bean name="TcapStack" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
+		<constructor>
+			<parameter>TcapStack</parameter>
+			<parameter>
+				<inject bean="SccpStack" property="sccpProvider" />
+			</parameter>
+			<parameter>8</parameter>
+		</constructor>
+		<property name="persistDir">${jboss.server.data.dir}</property>
+		<property name="previewMode">false</property>
+	</bean>
+
+	<bean name="TcapExecutor" class="org.mobicents.protocols.ss7.tcap.oam.TCAPExecutor">
+		<property name="tcapStacks">
+			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
+				<entry>
+					<key>TcapStack</key>
+					<value>
+						<inject bean="TcapStack" />
+					</value>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<!-- ==================================================================== -->
+	<!-- Shell Service -->
+	<!-- ==================================================================== -->
+	<!-- Define Shell Executor -->
+	<bean name="ShellExecutor" class="org.mobicents.ss7.management.console.ShellServer">
+		<constructor>
+			<parameter>
+				<inject bean="SS7Scheduler" />
+			</parameter>
+			<parameter>
+				<list class="javolution.util.FastList"
+					elementClass="org.mobicents.ss7.management.console.ShellExecutor">
+					<inject bean="SccpExecutor" />
+					<inject bean="M3UAShellExecutor" />
+					<inject bean="SCTPShellExecutor" />
+					<inject bean="TcapExecutor" />
+					<!-- <inject bean="LinksetExecutor" /> -->
+				</list>
+			</parameter>
+		</constructor>
+
+		<property name="address">${jboss.bind.address}</property>
+		<property name="port">3435</property>
+		<property name="securityDomain">java:/jaas/jmx-console</property>
+	</bean>	
+
+
+	<!-- ==================================================================== -->
+	<!-- MAP Service -->
+	<!-- ==================================================================== -->
+	<bean name="MapStack" class="org.mobicents.protocols.ss7.map.MAPStackImpl">
+		<constructor>
+			<parameter>MapStack</parameter>
+			<parameter>
+				<inject bean="TcapStack" property="provider" />
+			</parameter>
+		</constructor>
+	</bean>
+
+	<!-- ==================================================================== -->
+	<!-- ISUP Service -->
+	<!-- ==================================================================== -->
+	<bean name="CircuitManager"
+		class="org.mobicents.protocols.ss7.isup.impl.CircuitManagerImpl">
+	</bean>
+
+	<bean name="IsupStack" class="org.mobicents.protocols.ss7.isup.impl.ISUPStackImpl">
+		<constructor>
+			<parameter>
+				<inject bean="SS7Scheduler" />
+			</parameter>
+			<parameter>22234</parameter>
+			<parameter>2</parameter>
+		</constructor>
+		<property name="mtp3UserPart">
+			<inject bean="Mtp3UserPart" />
+		</property>
+		<property name="circuitManager">
+			<inject bean="CircuitManager" />
+		</property>
+	</bean>
+	<!-- ==================================================================== -->
+	<!-- RestComm SS7 Service -->
+	<!-- ==================================================================== -->
+	<bean name="MAPSS7Service" class="org.mobicents.ss7.SS7Service">
+		<constructor>
+			<parameter>MAP</parameter>
+		</constructor>
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=MAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)</annotation>
+		<property name="jndiName">java:/restcomm/ss7/map</property>
+		<property name="stack">
+			<inject bean="MapStack" property="MAPProvider" />
+		</property>
+	</bean>
+
+	<!-- ==================================================================== -->
+	<!-- Restcomm jSS7 Managemenet Service -->
+	<!-- ==================================================================== -->
+	<bean name="Ss7Management"
+		class="org.mobicents.protocols.ss7.oam.common.jmxss7.Ss7Management">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=Ss7Management",exposedInterface=org.mobicents.protocols.ss7.oam.common.jmxss7.Ss7ManagementMBean.class,registerDirectly=true)</annotation>
+		<property name="agentId">jboss</property>
+	</bean>
+
+	<bean name="RestcommAlarmManagement"
+		class="org.mobicents.protocols.ss7.oam.common.alarm.AlarmProvider">
+		<constructor>
+			<parameter>
+				<inject bean="Ss7Management" />
+			</parameter>
+			<parameter>
+				<inject bean="Ss7Management" />
+			</parameter>
+		</constructor>
+	</bean>
+
+	<bean name="RestcommStatisticManagement"
+		class="org.mobicents.protocols.ss7.oam.common.statistics.CounterProviderManagement">
+		<constructor>
+			<parameter>
+				<inject bean="Ss7Management" />
+			</parameter>
+		</constructor>
+		<property name="persistDir">${jboss.server.data.dir}</property>
+	</bean>
+
+	<bean name="RestcommSctpManagement"
+		class="org.mobicents.protocols.ss7.oam.common.sctp.SctpManagementJmx">
+		<constructor>
+			<parameter>
+				<inject bean="Ss7Management" />
+			</parameter>
+			<parameter>
+				<inject bean="SCTPManagement" />
+			</parameter>
+		</constructor>
+	</bean>
+
+	<bean name="RestcommM3uaManagement"
+		class="org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmx">
+		<constructor>
+			<parameter>
+				<inject bean="Ss7Management" />
+			</parameter>
+			<parameter>
+				<inject bean="Mtp3UserPart" />
+			</parameter>
+		</constructor>
+	</bean>
+
+	<bean name="RestcommSccpManagement"
+		class="org.mobicents.protocols.ss7.oam.common.sccp.SccpManagementJmx">
+		<constructor>
+			<parameter>
+				<inject bean="Ss7Management" />
+			</parameter>
+			<parameter>
+				<inject bean="SccpStack" />
+			</parameter>
+		</constructor>
+	</bean>
+	
+	<bean name="RestcommTcapMapManagement"
+		class="org.mobicents.protocols.ss7.oam.common.tcap.TcapManagementJmx">
+		<constructor>
+			<parameter>
+				<inject bean="Ss7Management" />
+			</parameter>
+			<parameter>
+				<inject bean="TcapStack" />
+			</parameter>
+		</constructor>
+	</bean>
+
+	<bean name="MapServiceUssdClient"
+		class="org.mobicents.protocols.ss7.map.loadService.MapServiceUssdClient">
+		<constructor>
+			<parameter>
+				<inject bean="MapStack" />
+			</parameter>
+		</constructor>
+		<property name="delayBeforeLoad">60</property>
+		<property name="numberOfDialogs">200000</property>
+		<property name="maxConcurrentDialogs">10000</property>
+	</bean>
+
+<!--
+	<bean name="RestcommLinksetManagement"
+		class="org.mobicents.protocols.ss7.oam.common.linkset.LinksetManagerJmx">
+		<constructor>
+			<parameter>
+				<inject bean="Ss7Management" />
+			</parameter>
+			<parameter>
+				<inject bean="LinksetManager" />
+			</parameter>
+		</constructor>
+	</bean>
+-->
+
+</deployment>

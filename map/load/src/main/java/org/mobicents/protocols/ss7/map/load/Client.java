@@ -249,9 +249,12 @@ public class Client extends TestHarness {
 
     private void initiateUSSD() throws MAPException {
         NetworkIdState networkIdState = this.mapStack.getMAPProvider().getNetworkIdState(0);
-        if (!(networkIdState == null || networkIdState.isAvailavle() && networkIdState.getCongLevel() == 0)) {
+        int executorCongestionLevel = this.mapStack.getMAPProvider().getExecutorCongestionLevel();
+        if (!(networkIdState == null || networkIdState.isAvailavle() && networkIdState.getCongLevel() <= 0
+                && executorCongestionLevel <= 0)) {
             // congestion or unavailable
-            logger.warn("Outgoing congestion control: MAP load test client: networkIdState=" + networkIdState);
+            logger.warn("**** Outgoing congestion control: MAP load test client: networkIdState=" + networkIdState
+                    + ", executorCongestionLevel=" + executorCongestionLevel);
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
