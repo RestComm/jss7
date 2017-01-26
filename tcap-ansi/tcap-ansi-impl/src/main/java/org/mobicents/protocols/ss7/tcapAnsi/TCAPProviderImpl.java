@@ -1247,9 +1247,8 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             // cumulativeCongestionLevel
             int newCumulativeCongestionLevel = getCumulativeCongestionLevel();
             if (cumulativeCongestionLevel != newCumulativeCongestionLevel) {
-                logger.warn("Outgoing congestion control: Changing of internal congestion level: "
-                        + newCumulativeCongestionLevel + "->" + cumulativeCongestionLevel + "\n"
-                        + getCumulativeCongestionLevelString());
+                logger.warn("Outgoing congestion control: Changing of internal congestion level: " + cumulativeCongestionLevel
+                        + "->" + newCumulativeCongestionLevel + "\n" + getCumulativeCongestionLevelString());
                 cumulativeCongestionLevel = newCumulativeCongestionLevel;
             }
         }

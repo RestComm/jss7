@@ -224,7 +224,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
         if (isStarted && monitor != null) {
             monitor.monitor();
             ExecutorCongestionMonitorHandler handler = new ExecutorCongestionMonitorHandler();
-            this.msgDeliveryExecutorSystem.schedule(handler, 1000, TimeUnit.MILLISECONDS);
+            this.msgDeliveryExecutorSystem.schedule(handler, 500, TimeUnit.MILLISECONDS);
         }
     }
 
