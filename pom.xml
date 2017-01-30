@@ -15,8 +15,6 @@
 
 	<name>RestComm jSS7 :: ${project.artifactId}</name>
 
-
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -43,6 +41,10 @@
 		<dialogic.version>6.7.1</dialogic.version>
 		<netty.version>4.0.33.Final</netty.version>
 
+
+		<version.wildfly.as>10.1.0.Final</version.wildfly.as>
+		<version.wildfly.core>2.2.0.Final</version.wildfly.core>
+
 		<!-- lic dep -->
 	</properties>
 
@@ -68,6 +70,8 @@
 		<module>sgw</module>
 
 		<module>tools</module>
+
+		<module>build</module>
 	</modules>
 
 	<!-- declare our babies -->
