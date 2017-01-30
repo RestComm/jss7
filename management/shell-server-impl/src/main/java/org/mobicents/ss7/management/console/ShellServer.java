@@ -54,7 +54,7 @@ import org.mobicents.ss7.management.transceiver.ShellServerChannel;
  * @author amit bhayani
  *
  */
-public class ShellServer extends Task {
+public class ShellServer extends Task implements ShellServerMBean {
     Logger logger = Logger.getLogger(ShellServer.class);
 
     public static final String CONNECTED_MESSAGE = "Connected to %s %s %s";
@@ -98,18 +98,22 @@ public class ShellServer extends Task {
         this.shellExecutors.addAll(shellExecutors);
     }
 
+    @Override
     public String getAddress() {
         return address;
     }
 
+    @Override
     public void setAddress(String address) {
         this.address = address;
     }
 
+    @Override
     public int getPort() {
         return port;
     }
 
+    @Override
     public void setPort(int port) {
         this.port = port;
     }
@@ -117,6 +121,7 @@ public class ShellServer extends Task {
     /**
      * @return the securityDomain
      */
+    @Override
     public String getSecurityDomain() {
         return securityDomain;
     }
@@ -124,6 +129,7 @@ public class ShellServer extends Task {
     /**
      * @param securityDomain the securityDomain to set
      */
+    @Override
     public void setSecurityDomain(String securityDomain) {
         this.securityDomain = securityDomain;
     }
@@ -172,6 +178,7 @@ public class ShellServer extends Task {
         this.logger.info("Stopped ShellExecutor service");
     }
 
+    @Override
     public int getQueueNumber() {
         return scheduler.MANAGEMENT_QUEUE;
     }
