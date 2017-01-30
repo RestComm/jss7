@@ -52,7 +52,7 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
     @Override
     public void startService() throws Exception {
         // starting
-        rebind(stack);
+        //rebind(stack);
         logger.info(generateMessageWithLogo("service started"));
     }
 
@@ -109,11 +109,10 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 
     @Override
     public void stopService() {
-        try {
-            unbind(jndiName);
-        } catch (Exception e) {
-
-        }
+        //try {
+        //    unbind(jndiName);
+        //} catch (Exception e) {
+        //}
 
         logger.info(generateMessageWithLogo("service stopped"));
     }
