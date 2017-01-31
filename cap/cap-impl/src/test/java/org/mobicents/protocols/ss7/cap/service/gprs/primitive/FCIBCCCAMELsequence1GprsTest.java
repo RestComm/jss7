@@ -39,7 +39,7 @@ import org.testng.annotations.Test;
  * @author Lasith Waruna Perera
  *
  */
-public class FCIBCCCAMELsequence1Test {
+public class FCIBCCCAMELsequence1GprsTest {
 
     public byte[] getData() {
         return new byte[] { -96, 16, -128, 8, 48, 6, -128, 1, 5, -127, 1, 2, -127, 1, 2, -126, 1, 1 };
