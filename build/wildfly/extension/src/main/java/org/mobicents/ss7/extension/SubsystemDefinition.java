@@ -12,9 +12,7 @@ public class SubsystemDefinition extends SimpleResourceDefinition {
   private SubsystemDefinition() {
     super(SS7Extension.SUBSYSTEM_PATH,
         SS7Extension.getResourceDescriptionResolver(null),
-        //We always need to add an 'add' operation
         SubsystemAdd.INSTANCE,
-        //Every resource that is added, normally needs a remove operation
         SubsystemRemove.INSTANCE);
   }
 

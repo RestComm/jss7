@@ -101,6 +101,41 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Management linkset -->
+        <dependency>
+            <groupId>org.mobicents.protocols.ss7.hardware</groupId>
+            <artifactId>linkset</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Hardware Dahdi Java -->
+        <dependency>
+            <groupId>org.mobicents.protocols.ss7.hardware</groupId>
+            <artifactId>restcomm-dahdi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Hardware Dialogic Java -->
+        <dependency>
+            <groupId>com.vendor.dialogic</groupId>
+            <artifactId>gctapi</artifactId>
+            <version>${dialogic.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mobicents.protocols.ss7.hardware</groupId>
+            <artifactId>restcomm-dialogic</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- /hardware m3ua Java -->
+        <!--
+        <dependency>
+            <artifactId>restcomm-m3ua</artifactId>
+            <groupId>org.mobicents.protocols.ss7.hardware</groupId>
+            <version>${project.version}</version>
+        </dependency>
+        -->
+
         <!-- OAM dependencies -->
         <dependency>
             <groupId>org.mobicents.protocols.ss7.oam.common</groupId>
@@ -183,15 +218,6 @@
             <artifactId>sctp-impl</artifactId>
             <version>${sctp.version}</version>
         </dependency>
-
-        <!-- /hardware m3ua Java -->
-        <!--
-        <dependency>
-            <artifactId>restcomm-m3ua</artifactId>
-            <groupId>org.mobicents.protocols.ss7.hardware</groupId>
-            <version>${project.version}</version>
-        </dependency>
-        -->
 
         <!-- MTP -->
         <dependency>

@@ -10,11 +10,11 @@ import org.jboss.dmr.ModelType;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SS7MbeanPropertyDefinition extends SimpleResourceDefinition {
+public class SS7MbeanPropertyEntryDefinition extends SimpleResourceDefinition {
 
     public enum Element {
         UNKNOWN(null),
-        NAME("name"),
+        KEY("key"),
         TYPE("type"),
         VALUE("value");
 
@@ -31,7 +31,7 @@ public class SS7MbeanPropertyDefinition extends SimpleResourceDefinition {
         private static final Map<String, Element> MAP;
 
         static {
-            final Map<String, Element> map = new HashMap<String, Element>();
+            final Map<String, Element> map = new HashMap<String, SS7MbeanPropertyEntryDefinition.Element>();
             for (Element element : values()) {
                 final String name = element.localName();
                 if (name != null) map.put(name, element);
@@ -43,46 +43,38 @@ public class SS7MbeanPropertyDefinition extends SimpleResourceDefinition {
             final Element element = MAP.get(localName);
             return element == null ? UNKNOWN : element;
         }
-
     }
 
-    public static final SimpleAttributeDefinition NAME_ATTR = new SimpleAttributeDefinition(
-            Element.NAME.localName(), ModelType.STRING, true);
+    public static final SimpleAttributeDefinition KEY_ATTR = new SimpleAttributeDefinition(
+            Element.KEY.localName(), ModelType.STRING, true);
     public static final SimpleAttributeDefinition TYPE_ATTR = new SimpleAttributeDefinition(
             Element.TYPE.localName(), ModelType.STRING, true);
     public static final SimpleAttributeDefinition VALUE_ATTR = new SimpleAttributeDefinition(
             Element.VALUE.localName(), ModelType.STRING, true);
 
-    public static final String PROPERTY = "property";
-    public static final PathElement PROPERTY_PATH = PathElement.pathElement(PROPERTY);
-    public static final SS7MbeanPropertyDefinition INSTANCE = new SS7MbeanPropertyDefinition();
+    public static final String ENTRY = "entry";
+    public static final PathElement ENTRY_PATH = PathElement.pathElement(ENTRY);
+    public static final SS7MbeanPropertyEntryDefinition INSTANCE = new SS7MbeanPropertyEntryDefinition();
 
-    protected static final SimpleAttributeDefinition[] PROPERTY_ATTRIBUTES = {
-            //NAME_ATTR, // name is read-only
+    protected static final SimpleAttributeDefinition[] ENTRY_ATTRIBUTES = {
+            //KEY_ATTR, // key is read-only
             TYPE_ATTR,
             VALUE_ATTR
     };
 
-    private SS7MbeanPropertyDefinition() {
-        super(PROPERTY_PATH,
-                SS7Extension.getResourceDescriptionResolver(SS7MbeanDefinition.MBEAN + "." + PROPERTY),
-                SS7MbeanPropertyAdd.INSTANCE,
-                SS7MbeanPropertyRemove.INSTANCE);
-    }
-
-    @Override
-    public void registerChildren(ManagementResourceRegistration resourceRegistration) {
-        super.registerChildren(resourceRegistration);
-        resourceRegistration.registerSubModel(SS7MbeanPropertyEntryDefinition.INSTANCE);
+    private SS7MbeanPropertyEntryDefinition() {
+        super(ENTRY_PATH,
+                SS7Extension.getResourceDescriptionResolver(SS7MbeanPropertyDefinition.PROPERTY + "." + ENTRY),
+                SS7MbeanPropertyEntryAdd.INSTANCE,
+                SS7MbeanPropertyEntryRemove.INSTANCE);
     }
 
     @Override
     public void registerAttributes(final ManagementResourceRegistration properties) {
         //super.registerAttributes(resourceRegistration);
-        properties.registerReadOnlyAttribute(NAME_ATTR, null);
-        for (SimpleAttributeDefinition def : PROPERTY_ATTRIBUTES) {
+        properties.registerReadOnlyAttribute(KEY_ATTR, null);
+        for (SimpleAttributeDefinition def : ENTRY_ATTRIBUTES) {
             properties.registerReadWriteAttribute(def, null, new ReloadRequiredWriteAttributeHandler(def));
         }
     }
-
 }

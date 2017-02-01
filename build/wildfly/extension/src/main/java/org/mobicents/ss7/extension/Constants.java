@@ -5,8 +5,15 @@ package org.mobicents.ss7.extension;
  */
 public interface Constants {
 
+    String CLASSIC = "classic";
+
     String MBEAN = "mbean";
     String NAME = "name";
+
+    String CONSTRUCTOR = "constructor";
+    String PARAMETER = "parameter";
+
     String PROPERTY = "property";
+    String ENTRY = "entry";
 
 }
