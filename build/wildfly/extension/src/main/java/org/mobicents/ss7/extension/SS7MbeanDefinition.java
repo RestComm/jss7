@@ -19,7 +19,12 @@ public class SS7MbeanDefinition extends SimpleResourceDefinition {
     public enum Element {
         // must be first
         UNKNOWN(null),
-        NAME("name");
+        NAME("name"),
+        TYPE("type"),
+        CLASS("class"),
+        INTERFACE("interface"),
+        ENABLED("enabled"),
+        REFLECTION("reflection");
 
         private final String name;
 
@@ -43,17 +48,45 @@ public class SS7MbeanDefinition extends SimpleResourceDefinition {
             MAP = map;
         }
 
-        public static Element forName(String localName) {
+        public static Element of(final String localName) {
             final Element element = MAP.get(localName);
             return element == null ? UNKNOWN : element;
         }
 
     }
 
-    protected static final SimpleAttributeDefinition NAME =
+    protected static final SimpleAttributeDefinition NAME_ATTR =
             new SimpleAttributeDefinitionBuilder(Element.NAME.localName(), ModelType.STRING)
                     .setXmlName(Element.NAME.localName())
                     .setAllowNull(true) // todo should be false, but 'add' won't validate then
+                    .build();
+
+    protected static final SimpleAttributeDefinition TYPE_ATTR =
+            new SimpleAttributeDefinitionBuilder(Element.TYPE.localName(), ModelType.STRING)
+                    .setXmlName(Element.TYPE.localName())
+                    .setAllowNull(true) // todo should be false, but 'add' won't validate then
+                    .build();
+
+    protected static final SimpleAttributeDefinition CLASS_ATTR =
+            new SimpleAttributeDefinitionBuilder(Element.CLASS.localName(), ModelType.STRING)
+                    .setXmlName(Element.CLASS.localName())
+                    .setAllowNull(true) // todo should be false, but 'add' won't validate then
+                    .build();
+
+    protected static final SimpleAttributeDefinition INTERFACE_ATTR =
+            new SimpleAttributeDefinitionBuilder(Element.INTERFACE.localName(), ModelType.STRING)
+                    .setXmlName(Element.INTERFACE.localName())
+                    .setAllowNull(true) // todo should be false, but 'add' won't validate then
+                    .build();
+
+    protected static final SimpleAttributeDefinition ENABLED_ATTR =
+            new SimpleAttributeDefinitionBuilder(Element.ENABLED.localName(), ModelType.BOOLEAN)
+                    .setXmlName(Element.ENABLED.localName())
+                    .build();
+
+    protected static final SimpleAttributeDefinition REFLECTION_ATTR =
+            new SimpleAttributeDefinitionBuilder(Element.REFLECTION.localName(), ModelType.BOOLEAN)
+                    .setXmlName(Element.REFLECTION.localName())
                     .build();
 
     public static final String MBEAN = "mbean";
@@ -62,29 +95,33 @@ public class SS7MbeanDefinition extends SimpleResourceDefinition {
 
     protected static final SimpleAttributeDefinition[] MBEAN_ATTRIBUTES = {
             //NAME, // name is read-only
+            TYPE_ATTR,
+            CLASS_ATTR,
+            INTERFACE_ATTR,
+            ENABLED_ATTR,
+            REFLECTION_ATTR
     };
 
     private SS7MbeanDefinition() {
-        super(MBEAN_PATH, SS7Extension.getResourceDescriptionResolver(MBEAN),
-                SS7MbeanAdd.INSTANCE, SS7MbeanRemove.INSTANCE);
+        super(MBEAN_PATH,
+                SS7Extension.getResourceDescriptionResolver(MBEAN),
+                SS7MbeanAdd.INSTANCE,
+                SS7MbeanRemove.INSTANCE);
     }
 
     @Override
     public void registerChildren(ManagementResourceRegistration resourceRegistration) {
         super.registerChildren(resourceRegistration);
+        resourceRegistration.registerSubModel(SS7MbeanConstructorDefinition.INSTANCE);
         resourceRegistration.registerSubModel(SS7MbeanPropertyDefinition.INSTANCE);
     }
 
     @Override
     public void registerAttributes(ManagementResourceRegistration mbeans) {
-        mbeans.registerReadOnlyAttribute(NAME, null);
+        mbeans.registerReadOnlyAttribute(NAME_ATTR, null);
         for (SimpleAttributeDefinition def : MBEAN_ATTRIBUTES) {
             mbeans.registerReadWriteAttribute(def, null, new ReloadRequiredWriteAttributeHandler(def));
         }
-
-        //for (final SimpleAttributeDefinition def : SipConnectorMetrics.ATTRIBUTES) {
-        //    connectors.registerMetric(def, SipConnectorMetrics.INSTANCE);
-        //}
     }
 
 }

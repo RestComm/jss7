@@ -1,9 +1,6 @@
 package org.mobicents.ss7.extension;
 
 import org.jboss.as.controller.AbstractRemoveStepHandler;
-import org.jboss.as.controller.OperationContext;
-import org.jboss.as.controller.OperationFailedException;
-import org.jboss.dmr.ModelNode;
 
 class SS7MbeanPropertyRemove extends AbstractRemoveStepHandler {
 
@@ -11,11 +8,4 @@ class SS7MbeanPropertyRemove extends AbstractRemoveStepHandler {
 
     private SS7MbeanPropertyRemove() {
     }
-
-    @Override
-    protected void performRuntime(final OperationContext context,
-                                  final ModelNode operation,
-                                  final ModelNode model) throws OperationFailedException {
-    }
-
 }

@@ -15,14 +15,39 @@
     </xs:complexType>
 
     <xs:complexType name="mbeanType">
-        <xs:attribute name="name" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="type" type="xs:string" use="required"/>
+        <xs:attribute name="class" type="xs:string" use="required"/>
+        <xs:attribute name="interface" type="xs:string" use="required"/>
+        <xs:attribute name="enabled" type="xs:boolean" use="required"/>
+        <xs:attribute name="reflection" type="xs:boolean" use="required"/>
+        <xs:element name="constructor" type="constructorType"/>
         <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element name="property" type="propertyType"/>
         </xs:choice>
     </xs:complexType>
 
+    <xs:complexType name="constructorType">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="parameter" type="parameterType"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="parameterType">
+    </xs:complexType>
+
     <xs:complexType name="propertyType">
         <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="type" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string" use="required"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="entry" type="entryType"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="entryType">
+        <xs:attribute name="key" type="xs:string" use="required"/>
+        <xs:attribute name="type" type="xs:string" use="required"/>
         <xs:attribute name="value" type="xs:string" use="required"/>
     </xs:complexType>
 
