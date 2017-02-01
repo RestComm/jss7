@@ -6,8 +6,10 @@
 	<!-- SYSTEM RELATED -->
 	<property environment="system" />
 	<property name="jboss.home" value="${system.JBOSS_HOME}" />
-	<property name="node" value="default" />
-	<property name="jboss.deploy" value="${jboss.home}/server/${node}/deploy" />
+	<property name="jboss.deploy" value="${jboss.home}/standalone/deployments" />
+
+	<property name="jboss.modules.path" value="${jboss.home}/modules/system/layers/base" />
+	<property name="restcomm-ss7.path" value="${jboss.modules.path}/org/mobicents/ss7" />
 
 	<condition property="file_url" value="file:/">
 		<os family="windows" />
@@ -21,10 +23,13 @@
 
 	<target name="deploy">
 
-		<copy overwrite="true" todir="${jboss.deploy}/restcomm-ss7-service">
-			<fileset dir="./restcomm-ss7-service">
+		<copy overwrite="true" todir="${restcomm-ss7.path}">
+			<fileset dir="./restcomm-ss7-service/extension">
 				<include name="**" />
-			</fileset>			
+			</fileset>
+			<fileset dir="./restcomm-ss7-service/modules">
+				<include name="**" />
+			</fileset>
 		</copy>
 
 		<copy overwrite="true" todir="${jboss.home}/bin">
@@ -48,7 +53,7 @@
 	</target>
 
 	<target name="undeploy">
-		<delete dir="${jboss.deploy}/restcomm-ss7-service" />
+		<delete dir="${restcomm-ss7.path}" />
 		<delete file="${jboss.deploy}/jss7-management-console.war" />
 		<delete file="${jboss.deploy}/jolokia.war" />
 		<delete file="${jboss.home}/bin/ss7-cli.sh" />
