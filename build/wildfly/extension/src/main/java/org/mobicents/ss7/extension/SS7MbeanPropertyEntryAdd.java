@@ -5,19 +5,19 @@ import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.dmr.ModelNode;
 
-import static org.mobicents.ss7.extension.SS7MbeanPropertyDefinition.PROPERTY_ATTRIBUTES;
+import static org.mobicents.ss7.extension.SS7MbeanPropertyEntryDefinition.ENTRY_ATTRIBUTES;
 
-class SS7MbeanPropertyAdd extends AbstractAddStepHandler {
+class SS7MbeanPropertyEntryAdd extends AbstractAddStepHandler {
 
-    public static final SS7MbeanPropertyAdd INSTANCE = new SS7MbeanPropertyAdd();
+    public static final SS7MbeanPropertyEntryAdd INSTANCE = new SS7MbeanPropertyEntryAdd();
 
-    private SS7MbeanPropertyAdd() {
+    private SS7MbeanPropertyEntryAdd() {
     }
 
     @Override
     protected void populateModel(final ModelNode operation, final ModelNode model) throws OperationFailedException {
-        SS7MbeanPropertyDefinition.NAME_ATTR.validateAndSet(operation, model);
-        for (SimpleAttributeDefinition def : PROPERTY_ATTRIBUTES) {
+        SS7MbeanPropertyEntryDefinition.KEY_ATTR.validateAndSet(operation, model);
+        for (SimpleAttributeDefinition def : ENTRY_ATTRIBUTES) {
             def.validateAndSet(operation, model);
         }
     }
