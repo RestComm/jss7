@@ -185,6 +185,12 @@
                 </fileset>
         </copy>
 
+        <copy todir="${restcomm.jss7.dist}/ss7/template/log4j/" failonerror="true">
+                <fileset dir="${jss7.dir}/service/src/main/log4j">
+                        <include name="**" />
+                </fileset>
+        </copy>
+
         <copy todir="${restcomm.jss7.dist}/ss7/restcomm-ss7-service" failonerror="true">
                 <fileset dir="${jss7.dir}/service/target/restcomm-ss7-service">
                         <include name="**" />

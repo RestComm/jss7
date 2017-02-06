@@ -134,8 +134,14 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
     private int cumulativeCongestionLevel = 0;
     private int executorCongestionLevel = 0;
+    private int executorCountWithCongestionLevel_1 = 0;
+    private int executorCountWithCongestionLevel_2 = 0;
+    private int executorCountWithCongestionLevel_3 = 0;
     private MemoryCongestionMonitorImpl memoryCongestionMonitor;
     private transient FastMap<String, Integer> lstUserPartCongestionLevel = new FastMap<String, Integer>();
+    private int userPartCongestionLevel_1 = 0;
+    private int userPartCongestionLevel_2 = 0;
+    private int userPartCongestionLevel_3 = 0;
 
     protected TCAPProviderImpl(SccpProvider sccpProvider, TCAPStackImpl stack, int ssn) {
         super();
@@ -1148,9 +1154,74 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     private void updateNetworkIdStateList() {
         stopNetworkIdStateList();
         currentNetworkIdStateListUpdater = new NetworkIdStateListUpdater();
-        this._EXECUTOR.schedule(currentNetworkIdStateListUpdater, 5000, TimeUnit.MILLISECONDS);
+        this._EXECUTOR.schedule(currentNetworkIdStateListUpdater, 1000, TimeUnit.MILLISECONDS);
 
         networkIdStateList = this.sccpProvider.getNetworkIdStateList();
+
+        int cntNotAvailable = 0;
+        int cntCongLevel1 = 0;
+        int cntCongLevel2 = 0;
+        int cntCongLevel3 = 0;
+        for (NetworkIdState state : networkIdStateList.values()) {
+            if (!state.isAvailavle())
+                cntNotAvailable++;
+            if (state.getCongLevel() >= 1) {
+                cntCongLevel1++;
+            }
+            if (state.getCongLevel() >= 2) {
+                cntCongLevel1++;
+                cntCongLevel2++;
+            }
+            if (state.getCongLevel() >= 3) {
+                cntCongLevel1++;
+                cntCongLevel2++;
+                cntCongLevel3++;
+            }
+        }
+
+        this.stack.getCounterProviderImpl().updateMaxNetworkIdAreasNotAvailable(cntNotAvailable);
+        this.stack.getCounterProviderImpl().updateMaxNetworkIdAreasCongLevel_1(cntCongLevel1);
+        this.stack.getCounterProviderImpl().updateMaxNetworkIdAreasCongLevel_2(cntCongLevel2);
+        this.stack.getCounterProviderImpl().updateMaxNetworkIdAreasCongLevel_3(cntCongLevel3);
+    }
+
+    public int getNetworkIdAreasNotAvailableCount() {
+        int cntNotAvailable = 0;
+        for (NetworkIdState state : networkIdStateList.values()) {
+            if (!state.isAvailavle())
+                cntNotAvailable++;
+        }
+        return cntNotAvailable;
+    }
+
+    public int getNetworkIdAreasCongLevel_1_Count() {
+        int cntCongLevel1 = 0;
+        for (NetworkIdState state : networkIdStateList.values()) {
+            if (state.getCongLevel() >= 1) {
+                cntCongLevel1++;
+            }
+        }
+        return cntCongLevel1;
+    }
+
+    public int getNetworkIdAreasCongLevel_2_Count() {
+        int cntCongLevel2 = 0;
+        for (NetworkIdState state : networkIdStateList.values()) {
+            if (state.getCongLevel() >= 2) {
+                cntCongLevel2++;
+            }
+        }
+        return cntCongLevel2;
+    }
+
+    public int getNetworkIdAreasCongLevel_3_Count() {
+        int cntCongLevel3 = 0;
+        for (NetworkIdState state : networkIdStateList.values()) {
+            if (state.getCongLevel() >= 3) {
+                cntCongLevel3++;
+            }
+        }
+        return cntCongLevel3;
     }
 
     private class NetworkIdStateListUpdater implements Runnable, Serializable {
@@ -1176,10 +1247,25 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             // MTP3 Executor monitors
             ExecutorCongestionMonitor[] lst = sccpProvider.getExecutorCongestionMonitorList();
             int maxExecutorCongestionLevel = 0;
+            int countExecutorCountWithCongestionLevel_1 = 0;
+            int countExecutorCountWithCongestionLevel_2 = 0;
+            int countExecutorCountWithCongestionLevel_3 = 0;
             for (ExecutorCongestionMonitor ecm : lst) {
                 int level = ecm.getAlarmLevel();
                 if (maxExecutorCongestionLevel < level)
                     maxExecutorCongestionLevel = level;
+                if (level >= 1) {
+                    countExecutorCountWithCongestionLevel_1++;
+                }
+                if (level >= 2) {
+                    countExecutorCountWithCongestionLevel_1++;
+                    countExecutorCountWithCongestionLevel_2++;
+                }
+                if (level >= 3) {
+                    countExecutorCountWithCongestionLevel_1++;
+                    countExecutorCountWithCongestionLevel_2++;
+                    countExecutorCountWithCongestionLevel_3++;
+                }
                 try {
                     ecm.setDelayThreshold_1(stack.getCongControl_ExecutorDelayThreshold_1());
                     ecm.setDelayThreshold_2(stack.getCongControl_ExecutorDelayThreshold_2());
@@ -1192,6 +1278,16 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                 }
             }
             executorCongestionLevel = maxExecutorCongestionLevel;
+            executorCountWithCongestionLevel_1 = countExecutorCountWithCongestionLevel_1;
+            executorCountWithCongestionLevel_2 = countExecutorCountWithCongestionLevel_2;
+            executorCountWithCongestionLevel_3 = countExecutorCountWithCongestionLevel_3;
+
+            stack.getCounterProviderImpl().updateMaxExecutorsCongLevel_1(executorCountWithCongestionLevel_1);
+            stack.getCounterProviderImpl().updateMaxExecutorsCongLevel_2(executorCountWithCongestionLevel_2);
+            stack.getCounterProviderImpl().updateMaxExecutorsCongLevel_3(executorCountWithCongestionLevel_3);
+
+            // MemoryMonitor
+
             memoryCongestionMonitor.setMemoryThreshold1(stack.getCongControl_MemoryThreshold_1());
             memoryCongestionMonitor.setMemoryThreshold2(stack.getCongControl_MemoryThreshold_2());
             memoryCongestionMonitor.setMemoryThreshold3(stack.getCongControl_MemoryThreshold_3());
@@ -1199,8 +1295,8 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             memoryCongestionMonitor.setBackToNormalMemoryThreshold2(stack.getCongControl_BackToNormalMemoryThreshold_2());
             memoryCongestionMonitor.setBackToNormalMemoryThreshold3(stack.getCongControl_BackToNormalMemoryThreshold_3());
 
-            // MemoryMonitor
             memoryCongestionMonitor.monitor();
+            stack.getCounterProviderImpl().updateMaxMemoryCongLevel(memoryCongestionMonitor.getAlarmLevel());
 
             // cumulativeCongestionLevel
             int newCumulativeCongestionLevel = getCumulativeCongestionLevel();
@@ -1220,6 +1316,31 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             } else {
                 lstUserPartCongestionLevel.remove(congObject);
             }
+
+            int cntUserPartCongestionLevel_1 = 0;
+            int cntUserPartCongestionLevel_2 = 0;
+            int cntUserPartCongestionLevel_3 = 0;
+            for (Integer lev : lstUserPartCongestionLevel.values()) {
+                if (lev >= 1) {
+                    cntUserPartCongestionLevel_1++;
+                }
+                if (lev >= 2) {
+                    cntUserPartCongestionLevel_1++;
+                    cntUserPartCongestionLevel_2++;
+                }
+                if (lev >= 3) {
+                    cntUserPartCongestionLevel_1++;
+                    cntUserPartCongestionLevel_2++;
+                    cntUserPartCongestionLevel_3++;
+                }
+            }
+            userPartCongestionLevel_1 = cntUserPartCongestionLevel_1;
+            userPartCongestionLevel_2 = cntUserPartCongestionLevel_2;
+            userPartCongestionLevel_3 = cntUserPartCongestionLevel_3;
+
+            stack.getCounterProviderImpl().updateMaxUserPartsCongLevel_1(userPartCongestionLevel_1);
+            stack.getCounterProviderImpl().updateMaxUserPartsCongLevel_2(userPartCongestionLevel_2);
+            stack.getCounterProviderImpl().updateMaxUserPartsCongLevel_3(userPartCongestionLevel_3);
         }
     }
 
@@ -1231,6 +1352,30 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     @Override
     public int getExecutorCongestionLevel() {
         return executorCongestionLevel;
+    }
+
+    public int getExecutorCountWithCongestionLevel_1() {
+        return executorCountWithCongestionLevel_1;
+    }
+
+    public int getExecutorCountWithCongestionLevel_2() {
+        return executorCountWithCongestionLevel_2;
+    }
+
+    public int getExecutorCountWithCongestionLevel_3() {
+        return executorCountWithCongestionLevel_3;
+    }
+
+    public int getUserPartCongestionLevel_1() {
+        return userPartCongestionLevel_1;
+    }
+
+    public int getUserPartCongestionLevel_2() {
+        return userPartCongestionLevel_2;
+    }
+
+    public int getUserPartCongestionLevel_3() {
+        return userPartCongestionLevel_3;
     }
 
     @Override
