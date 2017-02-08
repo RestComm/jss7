@@ -31,6 +31,7 @@ import javolution.util.FastList;
 import javolution.util.FastMap;
 
 import org.mobicents.protocols.api.Association;
+import org.mobicents.protocols.api.CongestionListener;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.api.Management;
 import org.mobicents.protocols.api.ManagementEventListener;
@@ -53,7 +54,7 @@ import org.mobicents.protocols.ss7.oam.common.jmxss7.Ss7Layer;
  * @author amit bhayani
  *
  */
-public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEventListener, AlarmMediator {
+public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEventListener, AlarmMediator, CongestionListener {
 
     private final MBeanHost ss7Management;
     private final Management wrappedSctpManagement;
@@ -407,6 +408,7 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
 
             this.ss7Management.registerMBean(Ss7Layer.SCTP, SctpManagementType.MANAGEMENT, this.getName(), this);
             this.wrappedSctpManagement.addManagementEventListener(this);
+            this.wrappedSctpManagement.addCongestionListener(this);
 
             List<Server> lstSrv = wrappedSctpManagement.getServers();
             for (Server srv : lstSrv) {
@@ -535,11 +537,20 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
         if (wrappedSctpManagement.isStarted()) {
             Map<String, Association> lstAss = wrappedSctpManagement.getAssociations();
             for (Association ass : lstAss.values()) {
-                if (ass.isStarted() && !ass.isConnected()) {
-                    AlarmMessage alm = this.generateAssociationAlarm(ass, false, true, "");
-                    this.alc.prepareAlarm(alm);
+                if (ass.isStarted()) {
+                    if (!ass.isConnected()) {
+                        AlarmMessage alm = this.generateAssociationAlarm(ass, false, true, "");
+                        this.alc.prepareAlarm(alm);
 
-                    al.addAlarm(alm);
+                        al.addAlarm(alm);
+                    }
+                    int congLevel = ass.getCongestionLevel();
+                    if (congLevel > 0) {
+                        AlarmMessage alm = this.generateCongestionAlarm(ass, congLevel, false, true, "");
+                        this.alc.prepareAlarm(alm);
+
+                        al.addAlarm(alm);
+                    }
                 }
             }
         }
@@ -597,6 +608,44 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
         return alm;
     }
 
+    private AlarmMessage generateCongestionAlarm(Association ass, int congLevel, boolean isCleared, boolean isCurrentAlarmList,
+            String event) {
+        if (congLevel < 1 || congLevel > 3)
+            return null;
+
+        AlarmMessageImpl alm = new AlarmMessageImpl();
+
+        alm.setIsCleared(isCleared);
+        switch (congLevel) {
+            case 1:
+                alm.setAlarmSeverity(AlarmSeverity.minor);
+                alm.setProblemName("SCTP association congestion level 1 (minor)");
+                break;
+            case 2:
+                alm.setAlarmSeverity(AlarmSeverity.major);
+                alm.setProblemName("SCTP association congestion level 2 (major)");
+                break;
+            case 3:
+                alm.setAlarmSeverity(AlarmSeverity.critical);
+                alm.setProblemName("SCTP association congestion level 3 (critical)");
+                break;
+        }
+        alm.setAlarmSource("SS7_SCTP_" + this.getName());
+        alm.setObjectName("Association: " + ass.getName());
+        alm.setObjectPath("/Sctp:" + this.getName() + "/Associations/Association:" + ass.getName());
+        alm.setCause(event);
+        alm.setTimeAlarm(Calendar.getInstance());
+
+        if (!isCurrentAlarmList) {
+            if (isCleared)
+                alm.setCurentTimeClear();
+            else
+                alm.setCurentTimeAlarm();
+        }
+
+        return alm;
+    }
+
     private void removeAssociationFromManagement(Association asso) {
         synchronized (this) {
             lstAssociations.remove(asso.getName());
@@ -640,6 +689,33 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
             SctpServerJmx srvBean = new SctpServerJmx(this, srv);
             this.ss7Management.registerMBean(Ss7Layer.SCTP, SctpManagementType.SERVER, srv.getName(), srvBean);
             lstServers.add(srvBean);
+        }
+    }
+
+    @Override
+    public void addCongestionListener(CongestionListener listener) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void removeCongestionListener(CongestionListener listener) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onCongLevelChanged(Association association, int oldCongLevel, int newCongLevel) {
+        if (association.isStarted()) {
+            if (oldCongLevel > 0) {
+                AlarmMessage alm = this.generateCongestionAlarm(association, oldCongLevel, true, false, "onCongLevelChanged");
+                this.alc.onAlarm(alm);
+            }
+
+            if (newCongLevel > 0) {
+                AlarmMessage alm = this.generateCongestionAlarm(association, newCongLevel, false, false, "onCongLevelChanged");
+                this.alc.onAlarm(alm);
+            }
         }
     }
 }

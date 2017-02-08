@@ -41,6 +41,7 @@ import javolution.util.FastMap;
 import org.mobicents.protocols.api.Association;
 import org.mobicents.protocols.api.AssociationListener;
 import org.mobicents.protocols.api.AssociationType;
+import org.mobicents.protocols.api.CongestionListener;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.api.Management;
 import org.mobicents.protocols.api.ManagementEventListener;
@@ -1827,6 +1828,18 @@ public class RemSgFSMTest {
 
         @Override
         public void setOptionSctpInitMaxstreams_MaxOutStreams(Integer arg0) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void addCongestionListener(CongestionListener arg0) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void removeCongestionListener(CongestionListener arg0) {
             // TODO Auto-generated method stub
             
         }

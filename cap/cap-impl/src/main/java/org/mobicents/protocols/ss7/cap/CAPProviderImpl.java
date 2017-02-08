@@ -1310,4 +1310,25 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
     public NetworkIdState getNetworkIdState(int networkId) {
         return this.tcapProvider.getNetworkIdState(networkId);
     }
+
+    @Override
+    public void setUserPartCongestionLevel(String congObject, int level) {
+        this.tcapProvider.setUserPartCongestionLevel(congObject, level);
+    }
+
+    @Override
+    public int getMemoryCongestionLevel() {
+        return this.tcapProvider.getMemoryCongestionLevel();
+    }
+
+    @Override
+    public int getExecutorCongestionLevel() {
+        return this.tcapProvider.getExecutorCongestionLevel();
+    }
+
+    @Override
+    public int getCumulativeCongestionLevel() {
+        return this.tcapProvider.getCumulativeCongestionLevel();
+    }
+
 }

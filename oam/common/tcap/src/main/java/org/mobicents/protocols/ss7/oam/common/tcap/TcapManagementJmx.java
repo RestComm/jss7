@@ -427,6 +427,29 @@ public class TcapManagementJmx implements TcapManagementJmxMBean, CounterMediato
         cd = new CounterDefImpl(CounterType.ComplexValue, "IncomingRejectPerProblem", "An incoming Reject count per Problem");
         cds.addCounterDef(cd);
 
+        cd = new CounterDefImpl(CounterType.Maximal, "MaxNetworkIdAreasNotAvailable", "A max count of networkID areas that are not available");
+        cds.addCounterDef(cd);
+        cd = new CounterDefImpl(CounterType.Maximal, "MaxNetworkIdAreasCongLevel_1", "A max count of networkID areas that are congested with level at least 1");
+        cds.addCounterDef(cd);
+        cd = new CounterDefImpl(CounterType.Maximal, "MaxNetworkIdAreasCongLevel_2", "A max count of networkID areas that are congested with level at least 2");
+        cds.addCounterDef(cd);
+        cd = new CounterDefImpl(CounterType.Maximal, "MaxNetworkIdAreasCongLevel_3", "A max count of networkID areas that are congested with level at least 3");
+        cds.addCounterDef(cd);
+        cd = new CounterDefImpl(CounterType.Maximal, "MaxExecutorsCongLevel_1", "A max count of Executors that are congested with level at least 1");
+        cds.addCounterDef(cd);
+        cd = new CounterDefImpl(CounterType.Maximal, "MaxExecutorsCongLevel_2", "A max count of Executors that are congested with level at least 2");
+        cds.addCounterDef(cd);
+        cd = new CounterDefImpl(CounterType.Maximal, "MaxExecutorsCongLevel_3", "A max count of Executors that are congested with level at least 3");
+        cds.addCounterDef(cd);
+        cd = new CounterDefImpl(CounterType.Maximal, "MaxMemoryCongLevel", "A max memory congestion level");
+        cds.addCounterDef(cd);
+        cd = new CounterDefImpl(CounterType.Maximal, "MaxUserPartsCongLevel_1", "Max count of TcapUserParts that are congested with level at least 1");
+        cds.addCounterDef(cd);
+        cd = new CounterDefImpl(CounterType.Maximal, "MaxUserPartsCongLevel_2", "Max count of TcapUserParts that are congested with level at least 2");
+        cds.addCounterDef(cd);
+        cd = new CounterDefImpl(CounterType.Maximal, "MaxUserPartsCongLevel_3", "Max count of TcapUserParts that are congested with level at least 3");
+        cds.addCounterDef(cd);
+
         lstCounters = lst;
     }
 
@@ -561,6 +584,52 @@ public class TcapManagementJmx implements TcapManagementJmxMBean, CounterMediato
                     svo = createComplexValue(cp.getOutgoingRejectPerProblem(campaignName));
                 } else if (cd.getCounterName().equals("IncomingRejectPerProblem")) {
                     svo = createComplexValue(cp.getIncomingRejectPerProblem(campaignName));
+
+                } else if (cd.getCounterName().equals("MaxNetworkIdAreasNotAvailable")) {
+                    Long res = cp.getMaxNetworkIdAreasNotAvailable(campaignName);
+                    if (res != null)
+                        svo = new SourceValueObjectImpl(this.getName(), res);
+                } else if (cd.getCounterName().equals("MaxNetworkIdAreasCongLevel_1")) {
+                    Long res = cp.getMaxNetworkIdAreasCongLevel_1(campaignName);
+                    if (res != null)
+                        svo = new SourceValueObjectImpl(this.getName(), res);
+                } else if (cd.getCounterName().equals("MaxNetworkIdAreasCongLevel_2")) {
+                    Long res = cp.getMaxNetworkIdAreasCongLevel_2(campaignName);
+                    if (res != null)
+                        svo = new SourceValueObjectImpl(this.getName(), res);
+                } else if (cd.getCounterName().equals("MaxNetworkIdAreasCongLevel_3")) {
+                    Long res = cp.getMaxNetworkIdAreasCongLevel_3(campaignName);
+                    if (res != null)
+                        svo = new SourceValueObjectImpl(this.getName(), res);
+                } else if (cd.getCounterName().equals("MaxExecutorsCongLevel_1")) {
+                    Long res = cp.getMaxExecutorsCongLevel_1(campaignName);
+                    if (res != null)
+                        svo = new SourceValueObjectImpl(this.getName(), res);
+                } else if (cd.getCounterName().equals("MaxExecutorsCongLevel_2")) {
+                    Long res = cp.getMaxExecutorsCongLevel_2(campaignName);
+                    if (res != null)
+                        svo = new SourceValueObjectImpl(this.getName(), res);
+                } else if (cd.getCounterName().equals("MaxExecutorsCongLevel_3")) {
+                    Long res = cp.getMaxExecutorsCongLevel_3(campaignName);
+                    if (res != null)
+                        svo = new SourceValueObjectImpl(this.getName(), res);
+                } else if (cd.getCounterName().equals("MaxMemoryCongLevel")) {
+                    Long res = cp.getMaxMemoryCongLevel(campaignName);
+                    if (res != null)
+                        svo = new SourceValueObjectImpl(this.getName(), res);
+                } else if (cd.getCounterName().equals("MaxUserPartsCongLevel_1")) {
+                    Long res = cp.getMaxUserPartsCongLevel_1(campaignName);
+                    if (res != null)
+                        svo = new SourceValueObjectImpl(this.getName(), res);
+                } else if (cd.getCounterName().equals("MaxUserPartsCongLevel_2")) {
+                    Long res = cp.getMaxUserPartsCongLevel_2(campaignName);
+                    if (res != null)
+                        svo = new SourceValueObjectImpl(this.getName(), res);
+                } else if (cd.getCounterName().equals("MaxUserPartsCongLevel_3")) {
+                    Long res = cp.getMaxUserPartsCongLevel_3(campaignName);
+                    if (res != null)
+                        svo = new SourceValueObjectImpl(this.getName(), res);
+
                 }
                 if (svo != null)
                     scs.addObject(svo);

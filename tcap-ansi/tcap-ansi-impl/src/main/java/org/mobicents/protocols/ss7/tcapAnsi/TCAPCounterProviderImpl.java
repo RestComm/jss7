@@ -96,6 +96,18 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
     private static String MIN_DIALOGS_COUNT = "MinDialogsCount";
     private static String MAX_DIALOGS_COUNT = "MaxDialogsCount";
 
+    private static String MAX_NETWORK_ID_AREAS_NOT_AVAILABLE = "MaxNetworkIdAreasNotAvailable";
+    private static String MAX_NETWORK_ID_AREAS_CONGLEVEL_1 = "MaxNetworkIdAreasCongLevel_1";
+    private static String MAX_NETWORK_ID_AREAS_CONGLEVEL_2 = "MaxNetworkIdAreasCongLevel_2";
+    private static String MAX_NETWORK_ID_AREAS_CONGLEVEL_3 = "MaxNetworkIdAreasCongLevel_3";
+    private static String MAX_EXECUTORS_CONG_LEVEL_1 = "MaxExecutorsCongLevel_1";
+    private static String MAX_EXECUTORS_CONG_LEVEL_2 = "MaxExecutorsCongLevel_2";
+    private static String MAX_EXECUTORS_CONG_LEVEL_3 = "MaxExecutorsCongLevel_3";
+    private static String MAX_MEMORY_CONG_LEVEL = "MaxMemoryCongLevel";
+    private static String MAX_USER_PARTS_CONG_LEVEL_1 = "MaxUserPartsCongLevel_1";
+    private static String MAX_USER_PARTS_CONG_LEVEL_2 = "MaxUserPartsCongLevel_2";
+    private static String MAX_USER_PARTS_CONG_LEVEL_3 = "MaxUserPartsCongLevel_3";
+
     public TCAPCounterProviderImpl(TCAPProviderImpl provider) {
         this.provider = provider;
 
@@ -110,6 +122,18 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
         this.statDataCollection.registerStatCounterCollector(INCOMING_ERRORS_PER_ERROR_CODE, StatDataCollectorType.StringLongMap);
         this.statDataCollection.registerStatCounterCollector(OUTGOING_REJECT_PER_PROBLEM, StatDataCollectorType.StringLongMap);
         this.statDataCollection.registerStatCounterCollector(INCOMING_REJECT_PER_PROBLEM, StatDataCollectorType.StringLongMap);
+
+        this.statDataCollection.registerStatCounterCollector(MAX_NETWORK_ID_AREAS_NOT_AVAILABLE, StatDataCollectorType.MAX);
+        this.statDataCollection.registerStatCounterCollector(MAX_NETWORK_ID_AREAS_CONGLEVEL_1, StatDataCollectorType.MAX);
+        this.statDataCollection.registerStatCounterCollector(MAX_NETWORK_ID_AREAS_CONGLEVEL_2, StatDataCollectorType.MAX);
+        this.statDataCollection.registerStatCounterCollector(MAX_NETWORK_ID_AREAS_CONGLEVEL_3, StatDataCollectorType.MAX);
+        this.statDataCollection.registerStatCounterCollector(MAX_EXECUTORS_CONG_LEVEL_1, StatDataCollectorType.MAX);
+        this.statDataCollection.registerStatCounterCollector(MAX_EXECUTORS_CONG_LEVEL_2, StatDataCollectorType.MAX);
+        this.statDataCollection.registerStatCounterCollector(MAX_EXECUTORS_CONG_LEVEL_3, StatDataCollectorType.MAX);
+        this.statDataCollection.registerStatCounterCollector(MAX_MEMORY_CONG_LEVEL, StatDataCollectorType.MAX);
+        this.statDataCollection.registerStatCounterCollector(MAX_USER_PARTS_CONG_LEVEL_1, StatDataCollectorType.MAX);
+        this.statDataCollection.registerStatCounterCollector(MAX_USER_PARTS_CONG_LEVEL_2, StatDataCollectorType.MAX);
+        this.statDataCollection.registerStatCounterCollector(MAX_USER_PARTS_CONG_LEVEL_3, StatDataCollectorType.MAX);
     }
 
 
@@ -637,6 +661,160 @@ public class TCAPCounterProviderImpl implements TCAPCounterProvider {
 
     public void updateIncomingRejectPerProblem(String name) {
         this.statDataCollection.updateData(INCOMING_REJECT_PER_PROBLEM, name);
+    }
+
+    @Override
+    public Long getMaxNetworkIdAreasNotAvailable(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(MAX_NETWORK_ID_AREAS_NOT_AVAILABLE, compainName);
+        this.statDataCollection.updateData(MAX_NETWORK_ID_AREAS_NOT_AVAILABLE, provider.getNetworkIdAreasNotAvailableCount());
+        if (res != null)
+            return res.getLongValue();
+        else
+            return null;
+    }
+
+    public void updateMaxNetworkIdAreasNotAvailable(long newVal) {
+        this.statDataCollection.updateData(MAX_NETWORK_ID_AREAS_NOT_AVAILABLE, newVal);
+    }
+
+    @Override
+    public Long getMaxNetworkIdAreasCongLevel_1(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(MAX_NETWORK_ID_AREAS_CONGLEVEL_1, compainName);
+        this.statDataCollection.updateData(MAX_NETWORK_ID_AREAS_CONGLEVEL_1, provider.getNetworkIdAreasCongLevel_1_Count());
+        if (res != null)
+            return res.getLongValue();
+        else
+            return null;
+    }
+
+    public void updateMaxNetworkIdAreasCongLevel_1(long newVal) {
+        this.statDataCollection.updateData(MAX_NETWORK_ID_AREAS_CONGLEVEL_1, newVal);
+    }
+
+    @Override
+    public Long getMaxNetworkIdAreasCongLevel_2(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(MAX_NETWORK_ID_AREAS_CONGLEVEL_2, compainName);
+        this.statDataCollection.updateData(MAX_NETWORK_ID_AREAS_CONGLEVEL_2, provider.getNetworkIdAreasCongLevel_2_Count());
+        if (res != null)
+            return res.getLongValue();
+        else
+            return null;
+    }
+
+    public void updateMaxNetworkIdAreasCongLevel_2(long newVal) {
+        this.statDataCollection.updateData(MAX_NETWORK_ID_AREAS_CONGLEVEL_2, newVal);
+    }
+
+    @Override
+    public Long getMaxNetworkIdAreasCongLevel_3(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(MAX_NETWORK_ID_AREAS_CONGLEVEL_3, compainName);
+        this.statDataCollection.updateData(MAX_NETWORK_ID_AREAS_CONGLEVEL_3, provider.getNetworkIdAreasCongLevel_3_Count());
+        if (res != null)
+            return res.getLongValue();
+        else
+            return null;
+    }
+
+    public void updateMaxNetworkIdAreasCongLevel_3(long newVal) {
+        this.statDataCollection.updateData(MAX_NETWORK_ID_AREAS_CONGLEVEL_3, newVal);
+    }
+
+    @Override
+    public Long getMaxExecutorsCongLevel_1(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(MAX_EXECUTORS_CONG_LEVEL_1, compainName);
+        this.statDataCollection.updateData(MAX_EXECUTORS_CONG_LEVEL_1, provider.getExecutorCountWithCongestionLevel_1());
+        if (res != null)
+            return res.getLongValue();
+        else
+            return null;
+    }
+
+    public void updateMaxExecutorsCongLevel_1(long newVal) {
+        this.statDataCollection.updateData(MAX_EXECUTORS_CONG_LEVEL_1, newVal);
+    }
+
+    @Override
+    public Long getMaxExecutorsCongLevel_2(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(MAX_EXECUTORS_CONG_LEVEL_2, compainName);
+        this.statDataCollection.updateData(MAX_EXECUTORS_CONG_LEVEL_2, provider.getExecutorCountWithCongestionLevel_2());
+        if (res != null)
+            return res.getLongValue();
+        else
+            return null;
+    }
+
+    public void updateMaxExecutorsCongLevel_2(long newVal) {
+        this.statDataCollection.updateData(MAX_EXECUTORS_CONG_LEVEL_2, newVal);
+    }
+
+    @Override
+    public Long getMaxExecutorsCongLevel_3(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(MAX_EXECUTORS_CONG_LEVEL_3, compainName);
+        this.statDataCollection.updateData(MAX_EXECUTORS_CONG_LEVEL_3, provider.getExecutorCountWithCongestionLevel_3());
+        if (res != null)
+            return res.getLongValue();
+        else
+            return null;
+    }
+
+    public void updateMaxExecutorsCongLevel_3(long newVal) {
+        this.statDataCollection.updateData(MAX_EXECUTORS_CONG_LEVEL_3, newVal);
+    }
+
+    @Override
+    public Long getMaxMemoryCongLevel(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(MAX_MEMORY_CONG_LEVEL, compainName);
+        this.statDataCollection.updateData(MAX_MEMORY_CONG_LEVEL, provider.getMemoryCongestionLevel());
+        if (res != null)
+            return res.getLongValue();
+        else
+            return null;
+    }
+
+    public void updateMaxMemoryCongLevel(long newVal) {
+        this.statDataCollection.updateData(MAX_MEMORY_CONG_LEVEL, newVal);
+    }
+
+    @Override
+    public Long getMaxUserPartsCongLevel_1(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(MAX_USER_PARTS_CONG_LEVEL_1, compainName);
+        this.statDataCollection.updateData(MAX_USER_PARTS_CONG_LEVEL_1, provider.getUserPartCongestionLevel_1());
+        if (res != null)
+            return res.getLongValue();
+        else
+            return null;
+    }
+
+    public void updateMaxUserPartsCongLevel_1(long newVal) {
+        this.statDataCollection.updateData(MAX_USER_PARTS_CONG_LEVEL_1, newVal);
+    }
+
+    @Override
+    public Long getMaxUserPartsCongLevel_2(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(MAX_USER_PARTS_CONG_LEVEL_2, compainName);
+        this.statDataCollection.updateData(MAX_USER_PARTS_CONG_LEVEL_2, provider.getUserPartCongestionLevel_2());
+        if (res != null)
+            return res.getLongValue();
+        else
+            return null;
+    }
+
+    public void updateMaxUserPartsCongLevel_2(long newVal) {
+        this.statDataCollection.updateData(MAX_USER_PARTS_CONG_LEVEL_2, newVal);
+    }
+
+    @Override
+    public Long getMaxUserPartsCongLevel_3(String compainName) {
+        StatResult res = this.statDataCollection.restartAndGet(MAX_USER_PARTS_CONG_LEVEL_3, compainName);
+        this.statDataCollection.updateData(MAX_USER_PARTS_CONG_LEVEL_3, provider.getUserPartCongestionLevel_3());
+        if (res != null)
+            return res.getLongValue();
+        else
+            return null;
+    }
+
+    public void updateMaxUserPartsCongLevel_3(long newVal) {
+        this.statDataCollection.updateData(MAX_USER_PARTS_CONG_LEVEL_3, newVal);
     }
 
 }

@@ -250,4 +250,60 @@ public interface TCAPCounterProvider {
      */
     Map<String,LongValue> getIncomingRejectPerProblem(String compainName);
 
+
+    /**
+     * return A max count of networkID areas that are not available
+     */
+    Long getMaxNetworkIdAreasNotAvailable(String compainName);
+
+    /**
+     * return A max count of networkID areas that are congested with level at least 1
+     */
+    Long getMaxNetworkIdAreasCongLevel_1(String compainName);
+
+    /**
+     * return A max count of networkID areas that are congested with level at least 2
+     */
+    Long getMaxNetworkIdAreasCongLevel_2(String compainName);
+
+    /**
+     * return A max count of networkID areas that are congested with level at least 3
+     */
+    Long getMaxNetworkIdAreasCongLevel_3(String compainName);
+
+    /**
+     * return A max count of Executors that are congested with level at least 1
+     */
+    Long getMaxExecutorsCongLevel_1(String compainName);
+
+    /**
+     * return A max count of Executors that are congested with level at least 2
+     */
+    Long getMaxExecutorsCongLevel_2(String compainName);
+
+    /**
+     * return A max count of Executors that are congested with level at least 3
+     */
+    Long getMaxExecutorsCongLevel_3(String compainName);
+
+    /**
+     * return A max memory congestion level
+     */
+    Long getMaxMemoryCongLevel(String compainName);
+
+    /**
+     * return Max count of TcapUserParts that are congested with level at least 1
+     */
+    Long getMaxUserPartsCongLevel_1(String compainName);
+
+    /**
+     * return Max count of TcapUserParts that are congested with level at least 2
+     */
+    Long getMaxUserPartsCongLevel_2(String compainName);
+
+    /**
+     * return Max count of TcapUserParts that are congested with level at least 3
+     */
+    Long getMaxUserPartsCongLevel_3(String compainName);
+
 }

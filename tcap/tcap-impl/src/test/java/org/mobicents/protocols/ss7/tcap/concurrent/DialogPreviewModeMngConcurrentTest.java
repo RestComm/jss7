@@ -411,7 +411,7 @@ public class DialogPreviewModeMngConcurrentTest {
 
         @Override
         public FastMap<Integer, NetworkIdState> getNetworkIdStateList() {
-            return null;
+            return new FastMap<Integer, NetworkIdState>();
         }
 
         @Override

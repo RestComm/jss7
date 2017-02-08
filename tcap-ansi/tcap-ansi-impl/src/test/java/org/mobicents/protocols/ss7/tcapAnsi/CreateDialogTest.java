@@ -171,8 +171,7 @@ public class CreateDialogTest {
 
         @Override
         public FastMap<Integer, NetworkIdState> getNetworkIdStateList() {
-            // TODO Auto-generated method stub
-            return null;
+            return new FastMap<Integer, NetworkIdState>();
         }
 
         @Override

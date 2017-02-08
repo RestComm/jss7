@@ -150,3 +150,14 @@ docs/sources-*/src
 /MessageTransferTestStack2_sccpresource2.xml
 /MessageTransferTestStack2_sccprouter2.xml
 /DialogMngConcurrentTest_management.xml
+/DialogIdleEndTest_1_management.xml
+/DialogIdleEndTest_2_management.xml
+/DialogIdleEndTestSccpStack1_management2.xml
+/DialogIdleEndTestSccpStack2_management2.xml
+/DialogIdleTest_management.xml
+/DialogIdleTestSccpStack1_management2.xml
+/DialogIdleTestSccpStack1_sccpresource2.xml
+/DialogIdleTestSccpStack1_sccprouter2.xml
+/DialogIdleTestSccpStack2_management2.xml
+/DialogIdleTestSccpStack2_sccpresource2.xml
+/DialogIdleTestSccpStack2_sccprouter2.xml
