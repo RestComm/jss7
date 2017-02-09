@@ -86,7 +86,6 @@ public class CalledAddressAndServiceImpl extends SequenceBase implements CalledA
             int tag = ais.readTag();
 
             if (ais.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
-
                 switch (tag) {
                     case _ID_calledAddressValue: {
                         this.calledAddressValue = new DigitsImpl();
@@ -101,7 +100,6 @@ public class CalledAddressAndServiceImpl extends SequenceBase implements CalledA
                                     CAPParsingComponentExceptionReason.MistypedParameter);
                         }
                         this.serviceKey = (int) ais.readInteger();
-
                         break;
                     }
                     default: {
