@@ -209,8 +209,16 @@ public class BasicGapCriteriaImpl implements BasicGapCriteria, CAPAsnPrimitive {
 
     public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
-        if ((this.calledAddressValue == null && this.gapOnService == null && this.calledAddressAndService == null && this.callingAddressAndService == null)
-                || (this.calledAddressValue != null && this.gapOnService != null || this.calledAddressAndService != null && this.callingAddressAndService != null)) {
+        int cnt = 0;
+        if (this.calledAddressValue != null)
+            cnt++;
+        if (this.gapOnService != null)
+            cnt++;
+        if (this.calledAddressAndService != null)
+            cnt++;
+        if (this.callingAddressAndService != null)
+            cnt++;
+        if (cnt != 1) {
             throw new CAPException("Error while encoding " + _PrimitiveName + ": One and only one choice must be selected");
         }
 
