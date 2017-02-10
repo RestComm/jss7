@@ -1,0 +1,67 @@
+	<subsystem xmlns="urn:org.restcomm:ss7-wildfly:1.0">
+            <mbean name="SCTPManagement" type="SCTPManagement" class="org.mobicents.protocols.sctp.netty.NettySctpManagementImpl" interface="empty" enabled="true" reflection="false">
+                <property name="persistDir" type="String" value="jboss.server.data.dir"/>
+            </mbean>
+            <mbean name="SCTPShellExecutor" type="SCTPShellExecutor" class="org.mobicents.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor" enabled="true" reflection="false"/>
+            <mbean name="Mtp3UserPart" type="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl" interface="org.mobicents.protocols.ss7.m3ua.M3UAManagement" enabled="true" reflection="true">
+                <constructor>
+                    <parameter>
+                        Mtp3UserPart
+                    </parameter>
+                    <parameter>
+                        Restcomm-jSS7
+                    </parameter>
+                </constructor>
+                <property name="transportManagement" type="Bean" value="SCTPManagement"/>
+                <property name="persistDir" type="String" value="jboss.server.data.dir"/>
+                <property name="maxSequenceNumber" type="int" value="256"/>
+                <property name="maxAsForRoute" type="int" value="2"/>
+                <property name="deliveryMessageThreadCount" type="int" value="1"/>
+            </mbean>
+            <mbean name="Mtp3UserPart_Dialogic" type="Mtp3UserPart" class="org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart" interface="org.mobicents.protocols.ss7.mtp.Mtp3UserPart" enabled="true" reflection="true">
+                <constructor>
+                    <parameter>
+                        Restcomm-jSS7-2
+                    </parameter>
+                </constructor>
+                <property name="sourceModuleId" type="int" value="61"/>
+                <property name="destinationModuleId" type="int" value="34"/>
+            </mbean>
+            <mbean name="M3UAShellExecutor" type="M3UAShellExecutor" class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor" enabled="true" reflection="false">
+                <property name="mtp3UserParts" type="Map" value="empty">
+                    <entry key="1" type="Bean" value="Mtp3UserPart"/>
+                </property>
+            </mbean>
+            <mbean name="SS7Clock" type="SS7Clock" class="org.mobicents.protocols.ss7.scheduler.DefaultClock" enabled="true" reflection="false"/>
+            <mbean name="SS7Scheduler" type="SS7Scheduler" class="org.mobicents.protocols.ss7.scheduler.Scheduler" enabled="true" reflection="false"/>
+            <mbean name="SccpStack" type="SccpStack" class="org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl" interface="empty" enabled="true" reflection="false">
+                <property name="persistDir" type="String" value="test"/>
+                <property name="mtp3UserParts" type="Map" value="empty">
+                    <entry key="1" type="Bean" value="Mtp3UserPart"/>
+                    <entry key="2" type="Bean" value="Mtp3UserPart_Dialogic"/>
+                </property>
+            </mbean>
+            <mbean name="SccpExecutor" type="SCTPShellExecutor" class="org.mobicents.protocols.ss7.sccp.impl.oam.SccpExecutor" enabled="true" reflection="false"/>
+            <mbean name="TcapStackMap" type="TcapStackMap" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="TcapStackCap" type="TcapStackCap" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="TcapStack" type="TcapStack" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="TcapExecutor" type="TcapExecutor" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="ShellExecutor" type="ShellExecutor" class="org.mobicents.ss7.management.console.ShellServer" enabled="true" reflection="false"/>
+            <mbean name="CapStack" type="CapStack" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="MapStack" type="MapStack" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="CircuitManager" type="CircuitManager" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="IsupStack" type="IsupStack" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="TCAPSS7Service" type="TCAPSS7Service" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="MAPSS7Service" type="MAPSS7Service" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="CAPSS7Service" type="CAPSS7Service" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="ISUPSS7Service" type="ISUPSS7Service" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="Ss7Management" type="Ss7Management" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="RestcommAlarmManagement" type="RestcommAlarmManagement" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="RestcommStatisticManagement" type="RestcommStatisticManagement" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="RestcommSctpManagement" type="RestcommSctpManagement" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="RestcommM3uaManagement" type="RestcommM3uaManagement" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="RestcommSccpManagement" type="RestcommSccpManagement" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="RestcommTcapManagement" type="RestcommTcapManagement" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="RestcommTcapMapManagement" type="RestcommTcapMapManagement" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+            <mbean name="RestcommTcapCapManagement" type="RestcommTcapCapManagement" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false"/>
+		</subsystem>
