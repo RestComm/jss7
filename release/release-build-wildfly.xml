@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="Release_build" default="deploy">
+
+	<property name="home" value="${ant.file.Release_build}/../" />
+
+	<!-- SYSTEM RELATED -->
+	<property environment="system" />
+	<property name="jboss.home" value="${system.JBOSS_HOME}" />
+	<property name="jboss.deploy" value="${jboss.home}/standalone/deployments" />
+
+	<property name="jboss.modules.path" value="${jboss.home}/modules/system/layers/base" />
+	<property name="restcomm-ss7.path" value="${jboss.modules.path}/org/mobicents/ss7" />
+
+	<condition property="file_url" value="file:/">
+		<os family="windows" />
+	</condition>
+	<!-- Property already set on windows platform -->
+	<property name="file_url" value="file://" />
+
+	<pathconvert targetos="unix" property="jboss.home.standard">
+		<path description="To use te same stile for every url file" path="${jboss.home}" />
+	</pathconvert>
+
+	<target name="deploy">
+
+		<!-- Copy jSS7 Extension with Modules -->
+		<copy overwrite="true" todir="${restcomm-ss7.path}">
+			<fileset dir="./restcomm-ss7-service/extension">
+				<include name="**" />
+			</fileset>
+			<fileset dir="./restcomm-ss7-service/modules">
+				<include name="**" />
+			</fileset>
+		</copy>
+
+		<!-- Update WildFly configuration with adding jSS7 Extension and Subsystem -->
+		<replace file="${jboss.home}/standalone/configuration/standalone.xml">
+			<replacetoken><![CDATA[</extensions>]]></replacetoken>
+			<replacevalue><![CDATA[    <extension module="org.mobicents.ss7.extension"/>
+	</extensions>]]></replacevalue>
+		</replace>
+
+		<loadfile property="subsystem.config" srcFile="${basedir}/wildfly-jss7-subsystem.txt" failonerror="true"/>
+		<replace file="${jboss.home}/standalone/configuration/standalone.xml" value="${subsystem.config}">
+			<replacetoken><![CDATA[</profile>]]></replacetoken>
+			<replacevalue><![CDATA[
+	</profile>]]></replacevalue>
+		</replace>
+
+		<copy overwrite="true" todir="${jboss.home}/bin">
+			<fileset dir="./shell/bin">
+				<include name="**" />
+			</fileset>			
+		</copy>
+
+		<copy overwrite="true" todir="${jboss.home}/lib">
+			<fileset dir="./shell/lib">
+				<include name="**" />
+			</fileset>			
+		</copy>
+
+		<copy overwrite="true" todir="${jboss.deploy}">
+			<fileset dir="./../oam/new-ui">
+				<include name="**" />
+			</fileset>			
+		</copy>
+
+	</target>
+
+	<target name="undeploy">
+		<delete dir="${restcomm-ss7.path}" />
+		<delete file="${jboss.deploy}/jss7-management-console.war" />
+		<delete file="${jboss.deploy}/jolokia.war" />
+		<delete file="${jboss.home}/bin/ss7-cli.sh" />
+		<delete file="${jboss.home}/bin/ss7-cli.bat" />
+	</target>
+
+</project>
