@@ -6,6 +6,8 @@ import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.PathAddress;
 import org.jboss.as.controller.ServiceVerificationHandler;
 import org.jboss.as.controller.registry.Resource;
+import org.jboss.as.controller.services.path.PathManager;
+import org.jboss.as.controller.services.path.PathManagerService;
 import org.jboss.as.jmx.MBeanServerService;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
@@ -51,6 +53,7 @@ class SubsystemAdd extends AbstractBoottimeAddStepHandler {
     ServiceName name = SS7ExtensionService.getServiceName();
     ServiceController<SS7ExtensionService> controller = context.getServiceTarget()
         .addService(name, service)
+        .addDependency(PathManagerService.SERVICE_NAME, PathManager.class, service.getPathManagerInjector())
         .addDependency(MBeanServerService.SERVICE_NAME, MBeanServer.class, service.getMbeanServer())
         .addListener(verificationHandler)
         .setInitialMode(ServiceController.Mode.ACTIVE)

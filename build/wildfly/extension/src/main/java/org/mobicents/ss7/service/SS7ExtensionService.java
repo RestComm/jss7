@@ -2,6 +2,7 @@ package org.mobicents.ss7.service;
 
 import javolution.util.FastList;
 import javolution.util.FastMap;
+import org.jboss.as.controller.services.path.PathManager;
 import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.Property;
 import org.jboss.logging.Logger;
@@ -85,7 +86,13 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
   public InjectedValue<MBeanServer> getMbeanServer() {
     return mbeanServer;
   }
+  private final InjectedValue<PathManager> pathManagerInjector = new InjectedValue<PathManager>();
+  public InjectedValue<PathManager> getPathManagerInjector() {
+    return pathManagerInjector;
+  }
   private final LinkedList<String> registeredMBeans = new LinkedList<String>();
+
+  private static final String DATA_DIR = "jboss.server.data.dir";
 
   private ModelNode fullModel;
   private Map<String, Object> beanObjects = new FastMap<String, Object>();
@@ -113,14 +120,17 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
   public void start(StartContext context) throws StartException {
     log.info("Starting SS7ExtensionService");
 
+    String dataDir = pathManagerInjector.getValue().getPathEntry(DATA_DIR).resolvePath();
+    log.info("dataDir: "+dataDir);
+
     //
     NettySctpManagementImpl sctpManagement = null;
     StandardMBean sctpManagementMBean = null;
     try {
       sctpManagement = new NettySctpManagementImpl("SCTPManagement");
       String res = getPropertyString("SCTPManagement", "persistDir", "DEFAULT");
-      log.debug("res: "+res);
-      sctpManagement.setPersistDir(res);
+      log.info("res: "+res);
+      sctpManagement.setPersistDir(dataDir);
 
       sctpManagementMBean = new StandardMBean(sctpManagement, org.mobicents.protocols.api.Management.class);
     } catch (Exception e) {
@@ -208,6 +218,7 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
     try {
       schedulerMBean = new Scheduler();
       schedulerMBean.setClock(ss7Clock);
+      schedulerMBean.start();
     } catch (Exception e) {
       log.warn("SS7Scheduler MBean creating is failed: "+e);
     }
@@ -234,7 +245,8 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
       }
 
       sccpStack = new SccpStackImpl("SccpStack");
-      sccpStack.setPersistDir(getPropertyString("SccpStack", "persistDir", "DEFAULT"));
+      //sccpStack.setPersistDir(getPropertyString("SccpStack", "persistDir", "DEFAULT"));
+      sccpStack.setPersistDir(dataDir);
       sccpStack.setMtp3UserParts(mtp3UserParts);
 
       sccpStackMBean = new StandardMBean(sccpStack, org.mobicents.protocols.ss7.sccp.SccpStack.class);
@@ -268,7 +280,8 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
     StandardMBean tcapStackMapMBean = null;
     try {
       tcapStackMap = new TCAPStackImpl("TcapStackMap", sccpStack.getSccpProvider(), 8);
-      tcapStackMap.setPersistDir(getPropertyString("TcapStackMap", "persistDir", "DEFAULT"));
+      //tcapStackMap.setPersistDir(getPropertyString("TcapStackMap", "persistDir", "DEFAULT"));
+      tcapStackMap.setPersistDir(dataDir);
       tcapStackMap.setPreviewMode(false);
 
       tcapStackMapMBean = new StandardMBean(tcapStackMap, org.mobicents.protocols.ss7.tcap.api.TCAPStack.class);
@@ -284,7 +297,8 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
     StandardMBean tcapStackCapMBean = null;
     try {
       tcapStackCap = new TCAPStackImpl("TcapStackCap", sccpStack.getSccpProvider(), 146);
-      tcapStackCap.setPersistDir(getPropertyString("TcapStackCap", "persistDir", "DEFAULT"));
+      //tcapStackCap.setPersistDir(getPropertyString("TcapStackCap", "persistDir", "DEFAULT"));
+      tcapStackCap.setPersistDir(dataDir);
       tcapStackCap.setPreviewMode(false);
 
       tcapStackCapMBean = new StandardMBean(tcapStackCap, org.mobicents.protocols.ss7.tcap.api.TCAPStack.class);
@@ -300,7 +314,8 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
     StandardMBean tcapStackMBean = null;
     try {
       tcapStack = new TCAPStackImpl("TcapStackCap", sccpStack.getSccpProvider(), 9);
-      tcapStack.setPersistDir(getPropertyString("TcapStack", "persistDir", "DEFAULT"));
+      //tcapStack.setPersistDir(getPropertyString("TcapStack", "persistDir", "DEFAULT"));
+      tcapStack.setPersistDir(dataDir);
       tcapStack.setPreviewMode(false);
 
       tcapStackMBean = new StandardMBean(tcapStack, org.mobicents.protocols.ss7.tcap.api.TCAPStack.class);
@@ -425,7 +440,8 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
     //
     CounterProviderManagement restcommStatisticManagementMBean = null;
     restcommStatisticManagementMBean = new CounterProviderManagement(ss7ManagementMBean);
-    restcommStatisticManagementMBean.setPersistDir(getPropertyString("RestcommStatisticManagement", "persistDir", "DEFAULT"));
+    //restcommStatisticManagementMBean.setPersistDir(getPropertyString("RestcommStatisticManagement", "persistDir", "DEFAULT"));
+    restcommStatisticManagementMBean.setPersistDir(dataDir);
 
     //
     SctpManagementJmx restcommSctpManagementMBean = null;
@@ -479,8 +495,24 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
     registerMBean(restcommTcapCapManagementMBean, "org.mobicents.ss7:name=RestcommTcapCapManagement");
     registerMBean(restcommTcapMapManagementMBean, "org.mobicents.ss7:name=RestcommTcapMapManagement");
 
-
     ////
+    try {
+      sccpStack.start();
+      tcapStack.start();
+      tcapStackCap.start();
+      tcapStackMap.start();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    try {
+      capStack.start();
+      mapStack.start();
+      isupStack.start();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
     //
     try {
       tcapSS7Service.create();
