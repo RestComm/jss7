@@ -356,9 +356,10 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
       shellExecutors.add(tcapExecutor);
 
       shellExecutorMBean = new ShellServer(schedulerMBean, shellExecutors);
-      shellExecutorMBean.setAddress(getPropertyString("ShellExecutor", "address", "${jboss.bind.address}"));
+      shellExecutorMBean.setAddress(getPropertyString("ShellExecutor", "address", "127.0.0.1"));
       shellExecutorMBean.setPort(getPropertyInt("ShellExecutor", "port", 3435));
-      shellExecutorMBean.setSecurityDomain(getPropertyString("ShellExecutor", "securityDomain", "java:/jaas/jmx-console"));
+      //shellExecutorMBean.setSecurityDomain(getPropertyString("ShellExecutor", "securityDomain", "java:/jaas/jmx-console"));
+      shellExecutorMBean.start();
     } catch (Exception e) {
       log.warn("ShellExecutor MBean creating is failed: "+e);
     }
