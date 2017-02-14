@@ -297,16 +297,16 @@ public class CallGapRequestImpl extends CircuitSwitchedCallMessageImpl implement
 
             callGapRequest.isCAPVersion3orLater = xml.getAttribute(IS_CAP_VERSION_3_OR_LATER, false);
 
-            callGapRequest.gapCriteria = xml.get(GAP_CRITERIA, GapCriteria.class);
-            callGapRequest.gapIndicators = xml.get(GAP_INDICATOR, GapIndicators.class);
+            callGapRequest.gapCriteria = xml.get(GAP_CRITERIA, GapCriteriaImpl.class);
+            callGapRequest.gapIndicators = xml.get(GAP_INDICATOR, GapIndicatorsImpl.class);
 
             String str = xml.get(CONTROL_TYPE, String.class);
             if (str != null) {
                 callGapRequest.controlType = Enum.valueOf(ControlType.class, str);
             }
 
-            callGapRequest.gapTreatment = xml.get(GAP_TREATMENT, GapTreatment.class);
-            callGapRequest.capExtensions = xml.get(CAP_EXTENSION, CAPExtensions.class);
+            callGapRequest.gapTreatment = xml.get(GAP_TREATMENT, GapTreatmentImpl.class);
+            callGapRequest.capExtensions = xml.get(CAP_EXTENSION, CAPExtensionsImpl.class);
         }
 
         @Override
@@ -316,17 +316,17 @@ public class CallGapRequestImpl extends CircuitSwitchedCallMessageImpl implement
 
             xml.setAttribute(IS_CAP_VERSION_3_OR_LATER, callGapRequest.isCAPVersion3orLater);
 
-            xml.add((GapCriteria) callGapRequest.getGapCriteria(), GAP_CRITERIA, GapCriteria.class);
-            xml.add((GapIndicators) callGapRequest.getGapIndicators(), GAP_INDICATOR, GapIndicators.class);
+            xml.add((GapCriteriaImpl) callGapRequest.getGapCriteria(), GAP_CRITERIA, GapCriteriaImpl.class);
+            xml.add((GapIndicatorsImpl) callGapRequest.getGapIndicators(), GAP_INDICATOR, GapIndicatorsImpl.class);
 
             if (callGapRequest.getControlType() != null) {
                 xml.add((String) callGapRequest.getControlType().toString(), CONTROL_TYPE, String.class);
             }
             if (callGapRequest.getGapTreatment() != null) {
-                xml.add((GapTreatment) callGapRequest.getGapTreatment(), GAP_TREATMENT, GapTreatment.class);
+                xml.add((GapTreatmentImpl) callGapRequest.getGapTreatment(), GAP_TREATMENT, GapTreatmentImpl.class);
             }
             if (callGapRequest.getExtensions() != null) {
-                xml.add((CAPExtensions) callGapRequest.getExtensions(), CAP_EXTENSION, CAPExtensions.class);
+                xml.add((CAPExtensionsImpl) callGapRequest.getExtensions(), CAP_EXTENSION, CAPExtensionsImpl.class);
             }
         }
     };

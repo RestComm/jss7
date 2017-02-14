@@ -661,6 +661,8 @@ public class EventTestHarness implements CAPDialogListener, CAPServiceCircuitSwi
 
     @Override
     public void onCallGapRequest(org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallGapRequest ind) {
-
+        this.logger.debug("CollectInformationRequest");
+        TestEvent te = TestEvent.createReceivedEvent(EventType.CallGapRequest, ind, sequence++);
+        this.observerdEvents.add(te);
     }
 }

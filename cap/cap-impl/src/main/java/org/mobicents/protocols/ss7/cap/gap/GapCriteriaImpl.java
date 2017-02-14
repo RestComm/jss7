@@ -208,7 +208,7 @@ public class GapCriteriaImpl implements GapCriteria, CAPAsnPrimitive {
             sb.append("basicGapCriteria=");
             sb.append(basicGapCriteria);
         } else if (compoundCriteria != null) {
-            sb.append(", compoundCriteria=");
+            sb.append("compoundCriteria=");
             sb.append(compoundCriteria);
         }
 

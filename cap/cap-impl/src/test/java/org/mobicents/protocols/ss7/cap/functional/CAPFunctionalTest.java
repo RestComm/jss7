@@ -225,6 +225,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import sun.awt.CausedFocusEvent;
 
 /**
  *
@@ -5198,19 +5199,18 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
     public void testCallGap() throws Exception {
 
         Client client = new Client(stack1, this, peer1Address, peer2Address) {
-            private int dialogStep;
 
-            //TODO
+            @Override
             public void onCallGapRequest(CallGapRequest ind) {
                 super.onCallGapRequest(ind);
 
-                if (ind.getGapCriteria().getBasicGapCriteria() != null) {
-                    BasicGapCriteria basicGapCriteria = ind.getGapCriteria().getBasicGapCriteria();
-                    if (basicGapCriteria.getCalledAddressAndService() != null) {
-                        System.out.println("OK");
-                    }
-                } else {
-                    System.out.println("ERROR");
+                try {
+                    assertEquals(ind.getGapCriteria().getBasicGapCriteria().getCalledAddressAndService().getCalledAddressValue().getGenericNumber().getAddress(), "501090500");
+                    assertEquals(ind.getGapCriteria().getBasicGapCriteria().getCalledAddressAndService().getServiceKey(), 100);
+                    assertEquals(ind.getGapIndicators().getDuration(), 60);
+                    assertEquals(ind.getGapIndicators().getGapInterval(), -1);
+                } catch (CAPException ex) {
+
                 }
             }
         };
@@ -5221,22 +5221,7 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
             @Override
             public void onInitialDPRequest(InitialDPRequest ind) {
                 super.onInitialDPRequest(ind);
-                
-                try {
-                    GenericNumber genericNumber = capProvider.getISUPParameterFactory().createGenericNumber();
-                    genericNumber.setAddress("501090500");
-                    Digits digits = capProvider.getCAPParameterFactory().createDigits_GenericNumber(genericNumber);
 
-                    CalledAddressAndService calledAddressAndService = new CalledAddressAndServiceImpl(digits, 100);
-                    BasicGapCriteria basicGapCriteria = new BasicGapCriteriaImpl(calledAddressAndService);
-                    GapCriteria gapCriteria = new GapCriteriaImpl(basicGapCriteria);
-                    GapIndicators gapIndicators = new GapIndicatorsImpl(60, -1);
-
-                    ind.getCAPDialog().addCallGapRequest(gapCriteria, gapIndicators, null, null, null);
-                    ind.getCAPDialog().send();
-                } catch (CAPException e) {
-                    this.error("Error while trying to send Response CallGapRequests", e);
-                }
                 dialogStep = 1;
                 ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
             }
@@ -5245,10 +5230,30 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
             public void onDialogDelimiter(CAPDialog capDialog) {
                 super.onDialogDelimiter(capDialog);
 
+                CAPDialogCircuitSwitchedCall dlg = (CAPDialogCircuitSwitchedCall) capDialog;
+
                 try {
-                    capDialog.close(false);
+                    switch (dialogStep) {
+                        case 1: // after InitialDp
+                            GenericNumber genericNumber = capProvider.getISUPParameterFactory().createGenericNumber();
+                            genericNumber.setAddress("501090500");
+                            Digits digits = capProvider.getCAPParameterFactory().createDigits_GenericNumber(genericNumber);
+
+                            CalledAddressAndService calledAddressAndService = new CalledAddressAndServiceImpl(digits, 100);
+                            BasicGapCriteria basicGapCriteria = new BasicGapCriteriaImpl(calledAddressAndService);
+                            GapCriteria gapCriteria = new GapCriteriaImpl(basicGapCriteria);
+                            GapIndicators gapIndicators = new GapIndicatorsImpl(60, -1);
+
+                            dlg.addCallGapRequest(gapCriteria, gapIndicators, null, null, null);
+                            this.observerdEvents.add(TestEvent.createSentEvent(EventType.CallGapRequest, null, sequence++));
+                            dlg.send();
+
+                            dialogStep = 0;
+
+                            break;
+                    }
                 } catch (CAPException e) {
-                    this.error("Error while trying to close() Dialog", e);
+                    this.error("Error while trying to send Response CallGapRequests", e);
                 }
             }
         };
@@ -5267,6 +5272,10 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
         te = TestEvent.createReceivedEvent(EventType.CallGapRequest, null, count++, stamp);
         clientExpectedEvents.add(te);
 
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+
         count = 0;
         // Server side events
         List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
@@ -5276,8 +5285,12 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
         te = TestEvent.createReceivedEvent(EventType.InitialDpRequest, null, count++, stamp);
         serverExpectedEvents.add(te);
 
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
         te = TestEvent.createSentEvent(EventType.CallGapRequest, null, count++, stamp);
         serverExpectedEvents.add(te);
+
 
         client.sendInitialDp(CAPApplicationContext.CapV3_gsmSSF_scfGeneric);
 
