@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.cap.gap;
 
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.cap.api.gap.*;
@@ -29,9 +31,12 @@ import org.mobicents.protocols.ss7.cap.api.isup.Digits;
 import org.mobicents.protocols.ss7.cap.api.primitives.ScfID;
 import org.mobicents.protocols.ss7.cap.isup.DigitsImpl;
 import org.mobicents.protocols.ss7.cap.primitives.ScfIDImpl;
-import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.CallGapRequestImpl;
+import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericNumberImpl;
+import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.testng.annotations.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 import static org.testng.Assert.assertEquals;
@@ -45,14 +50,9 @@ import static org.testng.Assert.assertTrue;
 public class CompoundCriteriaTest {
 
     public static final int SERVICE_KEY = 821;
-    public static final int DURATION = 60;
-    public static final int GAP_INTERVAL = 1;
 
-    // CalledAddressAndService & Gap Indicators
     public byte[] getData() {
-        return new byte[] { 48, 32, (byte) 160, 22, 48, 20, (byte) 160, 12, (byte) 189, 10, (byte) 128,
-                4, 48, 69, 91, 11, (byte) 129, 2, 3, 53, (byte) 129, 4, 12, 32, 23, 56, (byte) 161, 6,
-                (byte) 128, 1, DURATION, (byte) 129, GAP_INTERVAL, (byte) 255};
+        return new byte[] {48, 20, (byte) 160, 12, (byte) 189, 10, (byte) 128, 4, 48, 69, 91, 11, (byte) 129, 2, 3, 53, (byte) 129, 4, 12, 32, 23, 56};
     }
 
     public byte[] getDigitsData() {
@@ -68,14 +68,12 @@ public class CompoundCriteriaTest {
 
         byte[] data = this.getData();
         AsnInputStream ais = new AsnInputStream(data);
-        CallGapRequestImpl elem = new CallGapRequestImpl();
+        CompoundCriteriaImpl elem = new CompoundCriteriaImpl();
         int tag = ais.readTag();
         elem.decodeAll(ais);
 
-        assertEquals(elem.getGapCriteria().getCompoundGapCriteria().getBasicGapCriteria().getCalledAddressAndService().getServiceKey(), SERVICE_KEY);
-        assertEquals(elem.getGapCriteria().getCompoundGapCriteria().getBasicGapCriteria().getCalledAddressAndService().getCalledAddressValue().getData(), getDigitsData());
-        assertEquals(elem.getGapIndicators().getDuration(), DURATION);
-        assertEquals(elem.getGapIndicators().getGapInterval(), -GAP_INTERVAL);
+        assertEquals(elem.getBasicGapCriteria().getCalledAddressAndService().getServiceKey(), SERVICE_KEY);
+
     }
 
     @Test(groups = { "functional.encode", "circuitSwitchedCall" })
@@ -87,16 +85,86 @@ public class CompoundCriteriaTest {
 
         ScfID scfId = new ScfIDImpl(getDigitsData1());
 
-        CompoundCriteria compoundCriteria = new CompoundCriteriaImpl(basicGapCriteria, scfId);
-        GapCriteria gapCriteria = new GapCriteriaImpl(compoundCriteria);
-
-        GapIndicators gapIndicators = new GapIndicatorsImpl(DURATION, -GAP_INTERVAL);
-
-        CallGapRequestImpl elem = new CallGapRequestImpl(gapCriteria, gapIndicators, null, null, null);
+        CompoundCriteriaImpl elem = new CompoundCriteriaImpl(basicGapCriteria, scfId);
 
         AsnOutputStream aos = new AsnOutputStream();
         elem.encodeAll(aos);
+
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+    }
+
+    @Test(groups = { "functional.xml.serialize", "gap" })
+    public void testXMLSerialize() throws Exception {
+
+        GenericNumberImpl gn = new GenericNumberImpl(GenericNumber._NAI_NATIONAL_SN, "12345",
+                GenericNumber._NQIA_CONNECTED_NUMBER, GenericNumber._NPI_TELEX, GenericNumber._APRI_ALLOWED,
+                GenericNumber._NI_INCOMPLETE, GenericNumber._SI_USER_PROVIDED_VERIFIED_FAILED);
+        Digits digits = new DigitsImpl(gn);
+
+        CalledAddressAndServiceImpl calledAddressAndService = new CalledAddressAndServiceImpl(digits, SERVICE_KEY);
+        CallingAddressAndServiceImpl callingAddressAndService = new CallingAddressAndServiceImpl(digits, SERVICE_KEY);
+        GapOnService gapOnService = new GapOnServiceImpl(SERVICE_KEY);
+
+        BasicGapCriteriaImpl basicGapCriteria;
+
+        int i = 0;
+        while(i < 4) {
+            switch (i) {
+                case 0:
+                    basicGapCriteria = new BasicGapCriteriaImpl(digits);
+                    test(basicGapCriteria);
+                    break;
+                case 1:
+                    basicGapCriteria = new BasicGapCriteriaImpl(calledAddressAndService);
+                    test(basicGapCriteria);
+                    break;
+                case 2:
+                    basicGapCriteria = new BasicGapCriteriaImpl(callingAddressAndService);
+                    test(basicGapCriteria);
+                    break;
+                case 3:
+                    basicGapCriteria = new BasicGapCriteriaImpl(gapOnService);
+                    test(basicGapCriteria);
+                    break;
+            }
+            i++;
+        }
+    }
+
+    private void test(BasicGapCriteriaImpl basicGapCriteria) throws Exception {
+
+        CompoundCriteriaImpl original = new CompoundCriteriaImpl(basicGapCriteria, null);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "compoundCriteriaArg", CompoundCriteriaImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+
+        CompoundCriteriaImpl copy = reader.read("compoundCriteriaArg", CompoundCriteriaImpl.class);
+
+        assertTrue(isEqual(original, copy));
+    }
+
+    private boolean isEqual(CompoundCriteriaImpl o1, CompoundCriteriaImpl o2) {
+        if (o1 == o2)
+            return true;
+        if (o1 == null && o2 != null || o1 != null && o2 == null)
+            return false;
+        if (o1 == null && o2 == null)
+            return true;
+        if (!o1.toString().equals(o2.toString()))
+            return false;
+        return true;
     }
 
 

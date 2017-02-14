@@ -26,9 +26,11 @@ import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.gap.*;
 import org.mobicents.protocols.ss7.cap.api.isup.Digits;
 import org.mobicents.protocols.ss7.cap.isup.DigitsImpl;
+import org.mobicents.protocols.ss7.cap.primitives.ScfIDImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericNumberImpl;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.testng.annotations.Test;
@@ -45,20 +47,21 @@ import static org.testng.Assert.assertTrue;
  * @author <a href="mailto:bartosz.krok@pro-ids.com"> Bartosz Krok (ProIDS sp. z o.o.)</a>
  *
  */
-public class BasicGapCriteriaTest {
+public class GapCriteriaTest {
 
     public static final int SERVICE_KEY = 821;
 
-    // CalledAddressValue
+    // choice BasicGapCriteria -> CalledAddressValue
     public byte[] getData() {
-        return new byte[] { (byte) 128, 4, 48, 69, 91, 84};
+        return new byte[] {(byte) 160, 6, (byte) 128, 4, 48, 69, 91, 84};
     }
 
-    // CalledAddressAndService
+    // choice BasicGapCriteria -> GapOnService
     public byte[] getData1() {
-        return new byte[] {(byte) 189, 10, (byte) 128, 4, 48, 69, 91, 84, (byte) 129, 2, 3, 53};
+        return new byte[] {(byte) 160, 6, (byte) 162, 4, (byte) 128, 2, 3, 53};
     }
 
+    // calledAddressValue
     public byte[] getDigitsData() {
         return new byte[] {48, 69, 91, 84};
     }
@@ -68,55 +71,61 @@ public class BasicGapCriteriaTest {
 
         byte[] data = this.getData();
         AsnInputStream ais = new AsnInputStream(data);
-        BasicGapCriteriaImpl elem = new BasicGapCriteriaImpl();
-
+        GapCriteriaImpl elem = new GapCriteriaImpl();
         int tag = ais.readTag();
-        int length = getData().length;
-        elem.decodeData(ais, length);
+        elem.decodeAll(ais);
 
-        assertEquals(elem.getCalledAddressValue().getData(), getDigitsData());
+        assertEquals(elem.getBasicGapCriteria().getCalledAddressValue().getData(), getDigitsData());
     }
+
+    public static final int _ID_gapCriteria = 0;
 
     @Test(groups = { "functional.encode", "gap" })
     public void testEncode_CalledAddressValue() throws Exception {
 
-        Digits digits = new DigitsImpl(getDigitsData());
-        BasicGapCriteriaImpl elem = new BasicGapCriteriaImpl(digits);
+        Digits calledAddressValue = new DigitsImpl(getDigitsData());
+        BasicGapCriteria basicGapCriteria = new BasicGapCriteriaImpl(calledAddressValue);
+        GapCriteriaImpl elem = new GapCriteriaImpl(basicGapCriteria);
 
         AsnOutputStream aos = new AsnOutputStream();
+        aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_gapCriteria);
+        int pos = aos.StartContentDefiniteLength();
         elem.encodeAll(aos);
+        aos.FinalizeContent(pos);
 
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
     }
 
     @Test(groups = { "functional.decode", "gap" })
-    public void testDecode_CalledAddressAndService() throws Exception {
+    public void testDecode_GapOnService() throws Exception {
 
         byte[] data = this.getData1();
         AsnInputStream ais = new AsnInputStream(data);
-        BasicGapCriteriaImpl elem = new BasicGapCriteriaImpl();
+        GapCriteriaImpl elem = new GapCriteriaImpl();
         int tag = ais.readTag();
-        int length = getData1().length;
-        elem.decodeData(ais, length);
+        elem.decodeAll(ais);
 
-        assertEquals(elem.getCalledAddressAndService().getServiceKey(), SERVICE_KEY);
-        assertEquals(elem.getCalledAddressAndService().getCalledAddressValue().getData(), getDigitsData());
+        assertEquals(elem.getBasicGapCriteria().getGapOnService().getServiceKey(), SERVICE_KEY);
     }
 
     @Test(groups = { "functional.encode", "gap" })
-    public void testEncode_CalledAddressAndService() throws Exception {
+    public void testEncode_GapOnService() throws Exception {
 
-        Digits digits = new DigitsImpl(getDigitsData());
-        CalledAddressAndService calledAddressAndService = new CalledAddressAndServiceImpl(digits, SERVICE_KEY);
-        BasicGapCriteriaImpl elem = new BasicGapCriteriaImpl(calledAddressAndService);
+        GapOnService gapOnService = new GapOnServiceImpl(SERVICE_KEY);
+        BasicGapCriteria basicGapCriteria = new BasicGapCriteriaImpl(gapOnService);
+        GapCriteriaImpl elem = new GapCriteriaImpl(basicGapCriteria);
+
 
         AsnOutputStream aos = new AsnOutputStream();
+        aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_gapCriteria);
+        int pos = aos.StartContentDefiniteLength();
         elem.encodeAll(aos);
+        aos.FinalizeContent(pos);
 
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
     }
 
-    @Test(groups = { "functional.xml.serialize", "gap" })
+    @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
     public void testXMLSerialize() throws Exception {
 
         GenericNumberImpl gn = new GenericNumberImpl(GenericNumber._NAI_NATIONAL_SN, "12345",
@@ -125,41 +134,19 @@ public class BasicGapCriteriaTest {
         Digits digits = new DigitsImpl(gn);
 
         CalledAddressAndServiceImpl calledAddressAndService = new CalledAddressAndServiceImpl(digits, SERVICE_KEY);
-        CallingAddressAndServiceImpl callingAddressAndService = new CallingAddressAndServiceImpl(digits, SERVICE_KEY);
-        GapOnService gapOnService = new GapOnServiceImpl(SERVICE_KEY);
+//        GapOnService gapOnService = new GapOnServiceImpl(SERVICE_KEY);
+        BasicGapCriteriaImpl basicGapCriteria = new BasicGapCriteriaImpl(calledAddressAndService);
+        byte[] data2 = new byte[]{12, 32, 23, 56};
+        ScfIDImpl scfId = new ScfIDImpl(data2);
+        CompoundCriteriaImpl compoundCriteria = new CompoundCriteriaImpl(basicGapCriteria, null);
+        GapCriteriaImpl original = new GapCriteriaImpl(compoundCriteria);
 
-        BasicGapCriteriaImpl original;
 
-        int i = 0;
-        while(i < 4) {
-            switch (i) {
-                case 0:
-                    original = new BasicGapCriteriaImpl(digits);
-                    test(original);
-                    break;
-                case 1:
-                    original = new BasicGapCriteriaImpl(calledAddressAndService);
-                    test(original);
-                    break;
-                case 2:
-                    original = new BasicGapCriteriaImpl(callingAddressAndService);
-                    test(original);
-                    break;
-                case 3:
-                    original = new BasicGapCriteriaImpl(gapOnService);
-                    test(original);
-                    break;
-            }
-            i++;
-        }
-    }
-
-    private void test(BasicGapCriteriaImpl original) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
         // writer.setBinding(binding); // Optional.
         writer.setIndentation("\t"); // Optional (use tabulation for indentation).
-        writer.write(original, "basicGapCriteriaArg", BasicGapCriteriaImpl.class);
+        writer.write(original, "gapCriteriaArg", GapCriteriaImpl.class);
         writer.close();
 
         byte[] rawData = baos.toByteArray();
@@ -170,12 +157,12 @@ public class BasicGapCriteriaTest {
         ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
         XMLObjectReader reader = XMLObjectReader.newInstance(bais);
 
-        BasicGapCriteriaImpl copy = reader.read("basicGapCriteriaArg", BasicGapCriteriaImpl.class);
+        GapCriteriaImpl copy = reader.read("gapCriteriaArg", GapCriteriaImpl.class);
 
         assertTrue(isEqual(original, copy));
     }
 
-    private boolean isEqual(BasicGapCriteriaImpl o1, BasicGapCriteriaImpl o2) {
+    private boolean isEqual(GapCriteriaImpl o1, GapCriteriaImpl o2) {
         if (o1 == o2)
             return true;
         if (o1 == null && o2 != null || o1 != null && o2 == null)
