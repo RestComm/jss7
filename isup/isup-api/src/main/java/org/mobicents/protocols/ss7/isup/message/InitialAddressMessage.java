@@ -22,36 +22,59 @@
 
 package org.mobicents.protocols.ss7.isup.message;
 
+import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransport;
 import org.mobicents.protocols.ss7.isup.message.parameter.CCSS;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallDiversionTreatmentIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallOfferingTreatmentIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledDirectoryNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledINNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CircuitAssigmentMap;
 import org.mobicents.protocols.ss7.isup.message.parameter.ClosedUserGroupInterlockCode;
+import org.mobicents.protocols.ss7.isup.message.parameter.CollectCallRequest;
+import org.mobicents.protocols.ss7.isup.message.parameter.ConferenceTreatmentIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.ConnectionRequest;
+import org.mobicents.protocols.ss7.isup.message.parameter.CorrelationID;
+import org.mobicents.protocols.ss7.isup.message.parameter.EchoControlInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.ForwardCallIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.ForwardGVNS;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNotificationIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericReference;
+import org.mobicents.protocols.ss7.isup.message.parameter.HopCounter;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.MLPPPrecedence;
 import org.mobicents.protocols.ss7.isup.message.parameter.NatureOfConnectionIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.NetworkManagementControls;
+import org.mobicents.protocols.ss7.isup.message.parameter.NetworkRoutingNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.NetworkSpecificFacility;
 import org.mobicents.protocols.ss7.isup.message.parameter.OptionalForwardCallIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledINNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginatingISCPointCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotCapability;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotCounter;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingForwardInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.PropagationDelayCounter;
+import org.mobicents.protocols.ss7.isup.message.parameter.QueryOnReleaseCapability;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectCapability;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectCounter;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectForwardInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectStatus;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.RemoteOperations;
+import org.mobicents.protocols.ss7.isup.message.parameter.SCFID;
 import org.mobicents.protocols.ss7.isup.message.parameter.ServiceActivation;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransimissionMediumRequierementPrime;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransitNetworkSelection;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumRequirement;
+import org.mobicents.protocols.ss7.isup.message.parameter.UIDCapabilityIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformationPrime;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserTeleserviceInformation;
@@ -297,6 +320,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.accessTransport.Access
  */
 public interface InitialAddressMessage extends ISUPMessage {
 
+    // FIXME: add CallingGeodeticLocation & NumberPortabilityForwardInformation
     /**
      * Initial Address Message, Q.763 reference table 32 <br>
      * {@link InitialAddressMessage}
@@ -461,4 +485,96 @@ public interface InitialAddressMessage extends ISUPMessage {
     void setAccessTransport(AccessTransport v);
 
     AccessTransport getAccessTransport();
+
+    void setCircuitAssigmentMap(CircuitAssigmentMap v);
+
+    CircuitAssigmentMap getCircuitAssigmentMap();
+
+    void setCorrelationID(CorrelationID v);
+
+    CorrelationID getCorrelationID();
+
+    void setCallDiversionTreatmentIndicators(CallDiversionTreatmentIndicators v);
+
+    CallDiversionTreatmentIndicators getCallDiversionTreatmentIndicators();
+
+    void setCalledINNumber(CalledINNumber v);
+
+    CalledINNumber getCalledINNumber();
+
+    void setCallOfferingTreatmentIndicators(CallOfferingTreatmentIndicators v);
+
+    CallOfferingTreatmentIndicators getCallOfferingTreatmentIndicators();
+
+    void setConferenceTreatmentIndicators(ConferenceTreatmentIndicators v);
+
+    ConferenceTreatmentIndicators getConferenceTreatmentIndicators();
+
+    void setSCFID(SCFID v);
+
+    SCFID getSCFID();
+
+    void setUIDCapabilityIndicators(UIDCapabilityIndicators v);
+
+    UIDCapabilityIndicators getUIDCapabilityIndicators();
+
+    void setEchoControlInformation(EchoControlInformation v);
+
+    EchoControlInformation getEchoControlInformation();
+
+    void setHopCounter(HopCounter v);
+
+    HopCounter getHopCounter();
+
+    void setCollectCallRequest(CollectCallRequest v);
+
+    CollectCallRequest getCollectCallRequest();
+
+    void setApplicationTransport(ApplicationTransport v);
+
+    ApplicationTransport getApplicationTransport();
+
+    void setPivotCapability(PivotCapability v);
+
+    PivotCapability getPivotCapability();
+
+    void setCalledDirectoryNumber(CalledDirectoryNumber v);
+
+    CalledDirectoryNumber getCalledDirectoryNumber();
+
+    void setOriginalCalledINNumber(OriginalCalledINNumber v);
+
+    OriginalCalledINNumber getOriginalCalledINNumber();
+
+    void setNetworkRoutingNumber(NetworkRoutingNumber v);
+
+    NetworkRoutingNumber getNetworkRoutingNumber();
+
+    void setQueryOnReleaseCapability(QueryOnReleaseCapability v);
+
+    QueryOnReleaseCapability getQueryOnReleaseCapability();
+
+    void setPivotCounter(PivotCounter v);
+
+    PivotCounter getPivotCounter();
+
+    void setPivotRoutingForwardInformation(PivotRoutingForwardInformation v);
+
+    PivotRoutingForwardInformation getPivotRoutingForwardInformation();
+
+    void setRedirectCapability(RedirectCapability v);
+
+    RedirectCapability getRedirectCapability();
+
+    void setRedirectCounter(RedirectCounter v);
+
+    RedirectCounter getRedirectCounter();
+
+    void setRedirectStatus(RedirectStatus v);
+
+    RedirectStatus getRedirectStatus();
+
+    void setRedirectForwardInformation(RedirectForwardInformation v);
+
+    RedirectForwardInformation getRedirectForwardInformation();
 }
