@@ -278,13 +278,13 @@ public class BasicGapCriteriaImpl implements BasicGapCriteria, CAPAsnPrimitive {
             sb.append("calledAddressValue=");
             sb.append(calledAddressValue);
         } else if (gapOnService != null) {
-            sb.append(", gapOnService=");
+            sb.append("gapOnService=");
             sb.append(gapOnService);
         } else if (calledAddressAndService != null) {
-            sb.append(", calledAddressAndService=");
+            sb.append("calledAddressAndService=");
             sb.append(calledAddressAndService);
         } else if (callingAddressAndService != null) {
-            sb.append(", callingAddressAndService=");
+            sb.append("callingAddressAndService=");
             sb.append(callingAddressAndService);
         }
 

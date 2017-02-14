@@ -26,7 +26,6 @@ import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
-import org.mobicents.protocols.ss7.cap.api.gap.*;
 import org.mobicents.protocols.ss7.cap.api.isup.Digits;
 import org.mobicents.protocols.ss7.cap.isup.DigitsImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericNumberImpl;
@@ -45,18 +44,12 @@ import static org.testng.Assert.assertTrue;
  * @author <a href="mailto:bartosz.krok@pro-ids.com"> Bartosz Krok (ProIDS sp. z o.o.)</a>
  *
  */
-public class BasicGapCriteriaTest {
+public class CalledAddressAndServiceTest {
 
     public static final int SERVICE_KEY = 821;
 
-    // CalledAddressValue
     public byte[] getData() {
-        return new byte[] { (byte) 128, 4, 48, 69, 91, 84};
-    }
-
-    // CalledAddressAndService
-    public byte[] getData1() {
-        return new byte[] {(byte) 189, 10, (byte) 128, 4, 48, 69, 91, 84, (byte) 129, 2, 3, 53};
+        return new byte[] {(byte) 48, 10, (byte) 128, 4, 48, 69, 91, 84, (byte) 129, 2, 3, 53};
     }
 
     public byte[] getDigitsData() {
@@ -64,56 +57,28 @@ public class BasicGapCriteriaTest {
     }
 
     @Test(groups = { "functional.decode", "gap" })
-    public void testDecode_CalledAddressValue() throws Exception {
+    public void testDecode() throws Exception {
 
         byte[] data = this.getData();
         AsnInputStream ais = new AsnInputStream(data);
-        BasicGapCriteriaImpl elem = new BasicGapCriteriaImpl();
-
+        CalledAddressAndServiceImpl elem = new CalledAddressAndServiceImpl();
         int tag = ais.readTag();
-        int length = getData().length;
-        elem.decodeData(ais, length);
+        elem.decodeAll(ais);
 
         assertEquals(elem.getCalledAddressValue().getData(), getDigitsData());
+        assertEquals(elem.getServiceKey(), SERVICE_KEY);
     }
 
     @Test(groups = { "functional.encode", "gap" })
-    public void testEncode_CalledAddressValue() throws Exception {
+    public void testEncode() throws Exception {
 
-        Digits digits = new DigitsImpl(getDigitsData());
-        BasicGapCriteriaImpl elem = new BasicGapCriteriaImpl(digits);
+        Digits calledAddressValue = new DigitsImpl(getDigitsData());
+        CalledAddressAndServiceImpl elem = new CalledAddressAndServiceImpl(calledAddressValue, SERVICE_KEY);
 
         AsnOutputStream aos = new AsnOutputStream();
         elem.encodeAll(aos);
 
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
-    }
-
-    @Test(groups = { "functional.decode", "gap" })
-    public void testDecode_CalledAddressAndService() throws Exception {
-
-        byte[] data = this.getData1();
-        AsnInputStream ais = new AsnInputStream(data);
-        BasicGapCriteriaImpl elem = new BasicGapCriteriaImpl();
-        int tag = ais.readTag();
-        int length = getData1().length;
-        elem.decodeData(ais, length);
-
-        assertEquals(elem.getCalledAddressAndService().getServiceKey(), SERVICE_KEY);
-        assertEquals(elem.getCalledAddressAndService().getCalledAddressValue().getData(), getDigitsData());
-    }
-
-    @Test(groups = { "functional.encode", "gap" })
-    public void testEncode_CalledAddressAndService() throws Exception {
-
-        Digits digits = new DigitsImpl(getDigitsData());
-        CalledAddressAndService calledAddressAndService = new CalledAddressAndServiceImpl(digits, SERVICE_KEY);
-        BasicGapCriteriaImpl elem = new BasicGapCriteriaImpl(calledAddressAndService);
-
-        AsnOutputStream aos = new AsnOutputStream();
-        elem.encodeAll(aos);
-
-        assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
     }
 
     @Test(groups = { "functional.xml.serialize", "gap" })
@@ -124,42 +89,13 @@ public class BasicGapCriteriaTest {
                 GenericNumber._NI_INCOMPLETE, GenericNumber._SI_USER_PROVIDED_VERIFIED_FAILED);
         Digits digits = new DigitsImpl(gn);
 
-        CalledAddressAndServiceImpl calledAddressAndService = new CalledAddressAndServiceImpl(digits, SERVICE_KEY);
-        CallingAddressAndServiceImpl callingAddressAndService = new CallingAddressAndServiceImpl(digits, SERVICE_KEY);
-        GapOnService gapOnService = new GapOnServiceImpl(SERVICE_KEY);
+        CalledAddressAndServiceImpl original = new CalledAddressAndServiceImpl(digits, SERVICE_KEY);
 
-        BasicGapCriteriaImpl original;
-
-        int i = 0;
-        while(i < 4) {
-            switch (i) {
-                case 0:
-                    original = new BasicGapCriteriaImpl(digits);
-                    test(original);
-                    break;
-                case 1:
-                    original = new BasicGapCriteriaImpl(calledAddressAndService);
-                    test(original);
-                    break;
-                case 2:
-                    original = new BasicGapCriteriaImpl(callingAddressAndService);
-                    test(original);
-                    break;
-                case 3:
-                    original = new BasicGapCriteriaImpl(gapOnService);
-                    test(original);
-                    break;
-            }
-            i++;
-        }
-    }
-
-    private void test(BasicGapCriteriaImpl original) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
         // writer.setBinding(binding); // Optional.
         writer.setIndentation("\t"); // Optional (use tabulation for indentation).
-        writer.write(original, "basicGapCriteriaArg", BasicGapCriteriaImpl.class);
+        writer.write(original, "CalledAddressAndServiceArg", CalledAddressAndServiceImpl.class);
         writer.close();
 
         byte[] rawData = baos.toByteArray();
@@ -170,12 +106,12 @@ public class BasicGapCriteriaTest {
         ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
         XMLObjectReader reader = XMLObjectReader.newInstance(bais);
 
-        BasicGapCriteriaImpl copy = reader.read("basicGapCriteriaArg", BasicGapCriteriaImpl.class);
+        CalledAddressAndServiceImpl copy = reader.read("CalledAddressAndServiceArg", CalledAddressAndServiceImpl.class);
 
         assertTrue(isEqual(original, copy));
     }
 
-    private boolean isEqual(BasicGapCriteriaImpl o1, BasicGapCriteriaImpl o2) {
+    private boolean isEqual(CalledAddressAndServiceImpl o1, CalledAddressAndServiceImpl o2) {
         if (o1 == o2)
             return true;
         if (o1 == null && o2 != null || o1 != null && o2 == null)
