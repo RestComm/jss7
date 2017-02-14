@@ -40,38 +40,61 @@ import org.mobicents.protocols.ss7.isup.ParameterException;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.AbstractISUPParameter;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.MessageTypeImpl;
 import org.mobicents.protocols.ss7.isup.message.InitialAddressMessage;
+import org.mobicents.protocols.ss7.isup.message.parameter.ApplicationTransport;
 import org.mobicents.protocols.ss7.isup.message.parameter.CCSS;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallDiversionTreatmentIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallOfferingTreatmentIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledDirectoryNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledINNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CircuitAssigmentMap;
 import org.mobicents.protocols.ss7.isup.message.parameter.ClosedUserGroupInterlockCode;
+import org.mobicents.protocols.ss7.isup.message.parameter.CollectCallRequest;
+import org.mobicents.protocols.ss7.isup.message.parameter.ConferenceTreatmentIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.ConnectionRequest;
+import org.mobicents.protocols.ss7.isup.message.parameter.CorrelationID;
+import org.mobicents.protocols.ss7.isup.message.parameter.EchoControlInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.ForwardCallIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.ForwardGVNS;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNotificationIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericReference;
+import org.mobicents.protocols.ss7.isup.message.parameter.HopCounter;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.MLPPPrecedence;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageName;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageType;
 import org.mobicents.protocols.ss7.isup.message.parameter.NatureOfConnectionIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.NetworkManagementControls;
+import org.mobicents.protocols.ss7.isup.message.parameter.NetworkRoutingNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.NetworkSpecificFacility;
 import org.mobicents.protocols.ss7.isup.message.parameter.OptionalForwardCallIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledINNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginatingISCPointCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotCapability;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotCounter;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingForwardInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.PropagationDelayCounter;
+import org.mobicents.protocols.ss7.isup.message.parameter.QueryOnReleaseCapability;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectCapability;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectCounter;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectForwardInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectStatus;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.RemoteOperations;
+import org.mobicents.protocols.ss7.isup.message.parameter.SCFID;
 import org.mobicents.protocols.ss7.isup.message.parameter.ServiceActivation;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransimissionMediumRequierementPrime;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransitNetworkSelection;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumRequirement;
+import org.mobicents.protocols.ss7.isup.message.parameter.UIDCapabilityIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformationPrime;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserTeleserviceInformation;
@@ -129,7 +152,30 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
     static final int _INDEX_O_ForwardGVNS = 28;
     static final int _INDEX_O_CCSS = 29;
     static final int _INDEX_O_NetworkManagementControls = 30;
-    static final int _INDEX_O_EndOfOptionalParameters = 31;
+    static final int _INDEX_O_CircuitAssigmentMap = 31;
+    static final int _INDEX_O_CorrelationID = 32;
+    static final int _INDEX_O_CallDiversionTreatmentIndicators = 33;
+    static final int _INDEX_O_CalledINNumber = 34;
+    static final int _INDEX_O_CallOfferingTreatmentIndicators = 35;
+    static final int _INDEX_O_ConferenceTreatmentIndicators = 36;
+    static final int _INDEX_O_SCFID = 37;
+    static final int _INDEX_O_UIDCapabilityIndicators = 38;
+    static final int _INDEX_O_EchoControlInformation = 39;
+    static final int _INDEX_O_HopCounter = 40;
+    static final int _INDEX_O_CollectCallRequest = 41;
+    static final int _INDEX_O_ApplicationTransport = 42;
+    static final int _INDEX_O_PivotCapability = 43;
+    static final int _INDEX_O_CalledDirectoryNumber = 44;
+    static final int _INDEX_O_OriginalCalledINNumber = 45;
+    static final int _INDEX_O_NetworkRoutingNumber = 46;
+    static final int _INDEX_O_QueryOnReleaseCapability = 47;
+    static final int _INDEX_O_PivotCounter = 48;
+    static final int _INDEX_O_PivotRoutingForwardInformation = 49;
+    static final int _INDEX_O_RedirectCapability = 50;
+    static final int _INDEX_O_RedirectCounter = 51;
+    static final int _INDEX_O_RedirectStatus = 52;
+    static final int _INDEX_O_RedirectForwardInformation = 53;
+    static final int _INDEX_O_EndOfOptionalParameters = 54;
 
     protected static final List<Integer> mandatoryParam;
     static {
@@ -405,6 +451,121 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
                 NetworkManagementControls nmc = parameterFactory.createNetworkManagementControls();
                 ((AbstractISUPParameter) nmc).decode(parameterBody);
                 this.setNetworkManagementControls(nmc);
+                break;
+            case CircuitAssigmentMap._PARAMETER_CODE:
+                CircuitAssigmentMap cam = parameterFactory.createCircuitAssigmentMap();
+                ((AbstractISUPParameter) cam).decode(parameterBody);
+                this.setCircuitAssigmentMap(cam);
+                break;
+            case CorrelationID._PARAMETER_CODE:
+                CorrelationID cid = parameterFactory.createCorrelationID();
+                ((AbstractISUPParameter) cid).decode(parameterBody);
+                this.setCorrelationID(cid);
+                break;
+            case CallDiversionTreatmentIndicators._PARAMETER_CODE:
+                CallDiversionTreatmentIndicators cdti = parameterFactory.createCallDiversionTreatmentIndicators();
+                ((AbstractISUPParameter) cdti).decode(parameterBody);
+                this.setCallDiversionTreatmentIndicators(cdti);
+                break;
+            case CalledINNumber._PARAMETER_CODE:
+                CalledINNumber cin = parameterFactory.createCalledINNumber();
+                ((AbstractISUPParameter) cin).decode(parameterBody);
+                this.setCalledINNumber(cin);
+                break;
+            case CallOfferingTreatmentIndicators._PARAMETER_CODE:
+                CallOfferingTreatmentIndicators coti = parameterFactory.createCallOfferingTreatmentIndicators();
+                ((AbstractISUPParameter) coti).decode(parameterBody);
+                this.setCallOfferingTreatmentIndicators(coti);
+                break;
+            case ConferenceTreatmentIndicators._PARAMETER_CODE:
+                ConferenceTreatmentIndicators cti = parameterFactory.createConferenceTreatmentIndicators();
+                ((AbstractISUPParameter) cti).decode(parameterBody);
+                this.setConferenceTreatmentIndicators(cti);
+                break;
+            case SCFID._PARAMETER_CODE:
+                SCFID scfid = parameterFactory.createSCFID();
+                ((AbstractISUPParameter) scfid).decode(parameterBody);
+                this.setSCFID(scfid);
+                break;
+            case UIDCapabilityIndicators._PARAMETER_CODE:
+                UIDCapabilityIndicators uci = parameterFactory.createUIDCapabilityIndicators();
+                ((AbstractISUPParameter) uci).decode(parameterBody);
+                this.setUIDCapabilityIndicators(uci);
+                break;
+            case EchoControlInformation._PARAMETER_CODE:
+                EchoControlInformation eci = parameterFactory.createEchoControlInformation();
+                ((AbstractISUPParameter) eci).decode(parameterBody);
+                this.setEchoControlInformation(eci);
+                break;
+            case HopCounter._PARAMETER_CODE:
+                HopCounter hc = parameterFactory.createHopCounter();
+                ((AbstractISUPParameter) hc).decode(parameterBody);
+                this.setHopCounter(hc);
+                break;
+            case CollectCallRequest._PARAMETER_CODE:
+                CollectCallRequest ccr = parameterFactory.createCollectCallRequest();
+                ((AbstractISUPParameter) ccr).decode(parameterBody);
+                this.setCollectCallRequest(ccr);
+                break;
+            case ApplicationTransport._PARAMETER_CODE:
+                ApplicationTransport atr = parameterFactory.createApplicationTransport();
+                ((AbstractISUPParameter) atr).decode(parameterBody);
+                this.setApplicationTransport(atr);
+                break;
+            case PivotCapability._PARAMETER_CODE:
+                PivotCapability pc = parameterFactory.createPivotCapability();
+                ((AbstractISUPParameter) pc).decode(parameterBody);
+                this.setPivotCapability(pc);
+                break;
+            case CalledDirectoryNumber._PARAMETER_CODE:
+                CalledDirectoryNumber cdn = parameterFactory.createCalledDirectoryNumber();
+                ((AbstractISUPParameter) cdn).decode(parameterBody);
+                this.setCalledDirectoryNumber(cdn);
+                break;
+            case OriginalCalledINNumber._PARAMETER_CODE:
+                OriginalCalledINNumber ocin = parameterFactory.createOriginalCalledINNumber();
+                ((AbstractISUPParameter) ocin).decode(parameterBody);
+                this.setOriginalCalledINNumber(ocin);
+                break;
+            case NetworkRoutingNumber._PARAMETER_CODE:
+                NetworkRoutingNumber nrn = parameterFactory.createNetworkRoutingNumber();
+                ((AbstractISUPParameter) nrn).decode(parameterBody);
+                this.setNetworkRoutingNumber(nrn);
+                break;
+            case QueryOnReleaseCapability._PARAMETER_CODE:
+                QueryOnReleaseCapability qorc = parameterFactory.createQueryOnReleaseCapability();
+                ((AbstractISUPParameter) qorc).decode(parameterBody);
+                this.setQueryOnReleaseCapability(qorc);
+                break;
+            case PivotCounter._PARAMETER_CODE:
+                PivotCounter pcntr = parameterFactory.createPivotCounter();
+                ((AbstractISUPParameter) pcntr).decode(parameterBody);
+                this.setPivotCounter(pcntr);
+                break;
+            case PivotRoutingForwardInformation._PARAMETER_CODE:
+                PivotRoutingForwardInformation prfi = parameterFactory.createPivotRoutingForwardInformation();
+                ((AbstractISUPParameter) prfi).decode(parameterBody);
+                this.setPivotRoutingForwardInformation(prfi);
+                break;
+            case RedirectCapability._PARAMETER_CODE:
+                RedirectCapability rc = parameterFactory.createRedirectCapability();
+                ((AbstractISUPParameter) rc).decode(parameterBody);
+                this.setRedirectCapability(rc);
+                break;
+            case RedirectCounter._PARAMETER_CODE:
+                RedirectCounter rcntr = parameterFactory.createRedirectCounter();
+                ((AbstractISUPParameter) rcntr).decode(parameterBody);
+                this.setRedirectCounter(rcntr);
+                break;
+            case RedirectStatus._PARAMETER_CODE:
+                RedirectStatus rs = parameterFactory.createRedirectStatus();
+                ((AbstractISUPParameter) rs).decode(parameterBody);
+                this.setRedirectStatus(rs);
+                break;
+            case RedirectForwardInformation._PARAMETER_CODE:
+                RedirectForwardInformation rfi = parameterFactory.createRedirectForwardInformation();
+                ((AbstractISUPParameter) rfi).decode(parameterBody);
+                this.setRedirectForwardInformation(rfi);
                 break;
             default:
                 throw new ParameterException("Unrecognized parameter code for optional part: " + parameterCode);
@@ -754,6 +915,236 @@ public class InitialAddressMessageImpl extends ISUPMessageImpl implements Initia
 
     public AccessTransport getAccessTransport() {
         return (AccessTransport) super.o_Parameters.get(_INDEX_O_AccessTransport);
+    }
+
+    @Override
+    public void setCircuitAssigmentMap(CircuitAssigmentMap v) {
+        super.o_Parameters.put(_INDEX_O_CircuitAssigmentMap, v);
+    }
+
+    @Override
+    public CircuitAssigmentMap getCircuitAssigmentMap() {
+        return (CircuitAssigmentMap) super.o_Parameters.get(_INDEX_O_CircuitAssigmentMap);
+    }
+
+    @Override
+    public void setCorrelationID(CorrelationID v) {
+        super.o_Parameters.put(_INDEX_O_CorrelationID, v);
+    }
+
+    @Override
+    public CorrelationID getCorrelationID() {
+        return (CorrelationID) super.o_Parameters.get(_INDEX_O_CorrelationID);
+    }
+
+    @Override
+    public void setCallDiversionTreatmentIndicators(CallDiversionTreatmentIndicators v) {
+        super.o_Parameters.put(_INDEX_O_CallDiversionTreatmentIndicators, v);
+    }
+
+    @Override
+    public CallDiversionTreatmentIndicators getCallDiversionTreatmentIndicators() {
+        return (CallDiversionTreatmentIndicators) super.o_Parameters.get(_INDEX_O_CallDiversionTreatmentIndicators);
+    }
+
+    @Override
+    public void setCalledINNumber(CalledINNumber v) {
+        super.o_Parameters.put(_INDEX_O_CalledINNumber, v);
+    }
+
+    @Override
+    public CalledINNumber getCalledINNumber() {
+        return (CalledINNumber) super.o_Parameters.get(_INDEX_O_CalledINNumber);
+    }
+
+    @Override
+    public void setCallOfferingTreatmentIndicators(CallOfferingTreatmentIndicators v) {
+        super.o_Parameters.put(_INDEX_O_CallOfferingTreatmentIndicators, v);
+    }
+
+    @Override
+    public CallOfferingTreatmentIndicators getCallOfferingTreatmentIndicators() {
+        return (CallOfferingTreatmentIndicators) super.o_Parameters.get(_INDEX_O_CallOfferingTreatmentIndicators);
+    }
+
+    @Override
+    public void setConferenceTreatmentIndicators(ConferenceTreatmentIndicators v) {
+        super.o_Parameters.put(_INDEX_O_ConferenceTreatmentIndicators, v);
+    }
+
+    @Override
+    public ConferenceTreatmentIndicators getConferenceTreatmentIndicators() {
+        return (ConferenceTreatmentIndicators) super.o_Parameters.get(_INDEX_O_ConferenceTreatmentIndicators);
+    }
+
+    @Override
+    public void setSCFID(SCFID v) {
+        super.o_Parameters.put(_INDEX_O_SCFID, v);
+    }
+
+    @Override
+    public SCFID getSCFID() {
+        return (SCFID) super.o_Parameters.get(_INDEX_O_SCFID);
+    }
+
+    @Override
+    public void setUIDCapabilityIndicators(UIDCapabilityIndicators v) {
+        super.o_Parameters.put(_INDEX_O_UIDCapabilityIndicators, v);
+    }
+
+    @Override
+    public UIDCapabilityIndicators getUIDCapabilityIndicators() {
+        return (UIDCapabilityIndicators) super.o_Parameters.get(_INDEX_O_UIDCapabilityIndicators);
+    }
+
+    @Override
+    public void setEchoControlInformation(EchoControlInformation v) {
+        super.o_Parameters.put(_INDEX_O_EchoControlInformation, v);
+    }
+
+    @Override
+    public EchoControlInformation getEchoControlInformation() {
+        return (EchoControlInformation) super.o_Parameters.get(_INDEX_O_EchoControlInformation);
+    }
+
+    @Override
+    public void setHopCounter(HopCounter v) {
+        super.o_Parameters.put(_INDEX_O_HopCounter, v);
+    }
+
+    @Override
+    public HopCounter getHopCounter() {
+        return (HopCounter) super.o_Parameters.get(_INDEX_O_HopCounter);
+    }
+
+    @Override
+    public void setCollectCallRequest(CollectCallRequest v) {
+        super.o_Parameters.put(_INDEX_O_CollectCallRequest, v);
+    }
+
+    @Override
+    public CollectCallRequest getCollectCallRequest() {
+        return (CollectCallRequest) super.o_Parameters.get(_INDEX_O_CollectCallRequest);
+    }
+
+    @Override
+    public void setApplicationTransport(ApplicationTransport v) {
+        super.o_Parameters.put(_INDEX_O_ApplicationTransport, v);
+    }
+
+    @Override
+    public ApplicationTransport getApplicationTransport() {
+        return (ApplicationTransport) super.o_Parameters.get(_INDEX_O_ApplicationTransport);
+    }
+
+    @Override
+    public void setPivotCapability(PivotCapability v) {
+        super.o_Parameters.put(_INDEX_O_PivotCapability, v);
+    }
+
+    @Override
+    public PivotCapability getPivotCapability() {
+        return (PivotCapability) super.o_Parameters.get(_INDEX_O_PivotCapability);
+    }
+
+    @Override
+    public void setCalledDirectoryNumber(CalledDirectoryNumber v) {
+        super.o_Parameters.put(_INDEX_O_CalledDirectoryNumber, v);
+    }
+
+    @Override
+    public CalledDirectoryNumber getCalledDirectoryNumber() {
+        return (CalledDirectoryNumber) super.o_Parameters.get(_INDEX_O_CalledDirectoryNumber);
+    }
+
+    @Override
+    public void setOriginalCalledINNumber(OriginalCalledINNumber v) {
+        super.o_Parameters.put(_INDEX_O_OriginalCalledINNumber, v);
+    }
+
+    @Override
+    public OriginalCalledINNumber getOriginalCalledINNumber() {
+        return (OriginalCalledINNumber) super.o_Parameters.get(_INDEX_O_OriginalCalledINNumber);
+    }
+
+    @Override
+    public void setNetworkRoutingNumber(NetworkRoutingNumber v) {
+        super.o_Parameters.put(_INDEX_O_NetworkRoutingNumber, v);
+    }
+
+    @Override
+    public NetworkRoutingNumber getNetworkRoutingNumber() {
+        return (NetworkRoutingNumber) super.o_Parameters.get(_INDEX_O_NetworkRoutingNumber);
+    }
+
+    @Override
+    public void setQueryOnReleaseCapability(QueryOnReleaseCapability v) {
+        super.o_Parameters.put(_INDEX_O_QueryOnReleaseCapability, v);
+    }
+
+    @Override
+    public QueryOnReleaseCapability getQueryOnReleaseCapability() {
+        return (QueryOnReleaseCapability) super.o_Parameters.get(_INDEX_O_QueryOnReleaseCapability);
+    }
+
+    @Override
+    public void setPivotCounter(PivotCounter v) {
+        super.o_Parameters.put(_INDEX_O_PivotCounter, v);
+    }
+
+    @Override
+    public PivotCounter getPivotCounter() {
+        return (PivotCounter) super.o_Parameters.get(_INDEX_O_PivotCounter);
+    }
+
+    @Override
+    public void setPivotRoutingForwardInformation(PivotRoutingForwardInformation v) {
+        super.o_Parameters.put(_INDEX_O_PivotRoutingForwardInformation, v);
+    }
+
+    @Override
+    public PivotRoutingForwardInformation getPivotRoutingForwardInformation() {
+        return (PivotRoutingForwardInformation) super.o_Parameters.get(_INDEX_O_PivotRoutingForwardInformation);
+    }
+
+    @Override
+    public void setRedirectCapability(RedirectCapability v) {
+        super.o_Parameters.put(_INDEX_O_RedirectCapability, v);
+    }
+
+    @Override
+    public RedirectCapability getRedirectCapability() {
+        return (RedirectCapability) super.o_Parameters.get(_INDEX_O_RedirectCapability);
+    }
+
+    @Override
+    public void setRedirectCounter(RedirectCounter v) {
+        super.o_Parameters.put(_INDEX_O_RedirectCounter, v);
+    }
+
+    @Override
+    public RedirectCounter getRedirectCounter() {
+        return (RedirectCounter) super.o_Parameters.get(_INDEX_O_RedirectCounter);
+    }
+
+    @Override
+    public void setRedirectStatus(RedirectStatus v) {
+        super.o_Parameters.put(_INDEX_O_RedirectStatus, v);
+    }
+
+    @Override
+    public RedirectStatus getRedirectStatus() {
+        return (RedirectStatus) super.o_Parameters.get(_INDEX_O_RedirectStatus);
+    }
+
+    @Override
+    public void setRedirectForwardInformation(RedirectForwardInformation v) {
+        super.o_Parameters.put(_INDEX_O_RedirectForwardInformation, v);
+    }
+
+    @Override
+    public RedirectForwardInformation getRedirectForwardInformation() {
+        return (RedirectForwardInformation) super.o_Parameters.get(_INDEX_O_RedirectForwardInformation);
     }
 
     /*

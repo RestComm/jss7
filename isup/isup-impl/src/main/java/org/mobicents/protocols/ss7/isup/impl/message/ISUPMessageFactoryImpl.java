@@ -95,23 +95,30 @@ import org.mobicents.protocols.ss7.isup.message.parameter.BackwardGVNS;
 import org.mobicents.protocols.ss7.isup.message.parameter.CCNRPossibleIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.CCSS;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallDiversionInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallDiversionTreatmentIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallHistoryInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallOfferingTreatmentIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallReference;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallTransferNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallTransferReference;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledDirectoryNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CalledINNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyCategory;
 import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.ChargedPartyIdentification;
+import org.mobicents.protocols.ss7.isup.message.parameter.CircuitAssigmentMap;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitGroupSuperVisionMessageType;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitIdentificationCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.CircuitStateIndicator;
 import org.mobicents.protocols.ss7.isup.message.parameter.ClosedUserGroupInterlockCode;
+import org.mobicents.protocols.ss7.isup.message.parameter.CollectCallRequest;
 import org.mobicents.protocols.ss7.isup.message.parameter.ConferenceTreatmentIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.ConnectedNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.ConnectionRequest;
 import org.mobicents.protocols.ss7.isup.message.parameter.ContinuityIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.CorrelationID;
 import org.mobicents.protocols.ss7.isup.message.parameter.DisplayInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.EchoControlInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.EventInformation;
@@ -123,6 +130,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.GenericNotificationInd
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericReference;
 import org.mobicents.protocols.ss7.isup.message.parameter.HTRInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.HopCounter;
 import org.mobicents.protocols.ss7.isup.message.parameter.InformationIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.InformationRequestIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
@@ -133,25 +141,33 @@ import org.mobicents.protocols.ss7.isup.message.parameter.MLPPPrecedence;
 import org.mobicents.protocols.ss7.isup.message.parameter.MessageCompatibilityInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.NatureOfConnectionIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.NetworkManagementControls;
+import org.mobicents.protocols.ss7.isup.message.parameter.NetworkRoutingNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.NetworkSpecificFacility;
 import org.mobicents.protocols.ss7.isup.message.parameter.OptionalBackwardCallIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.OptionalForwardCallIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.OriginalCalledINNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.OriginatingISCPointCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.ParameterCompatibilityInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotCapability;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotCounter;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingBackwardInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingForwardInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotRoutingIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.PivotStatus;
 import org.mobicents.protocols.ss7.isup.message.parameter.PropagationDelayCounter;
+import org.mobicents.protocols.ss7.isup.message.parameter.QueryOnReleaseCapability;
 import org.mobicents.protocols.ss7.isup.message.parameter.RangeAndStatus;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectBackwardInformation;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectCapability;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectCounter;
+import org.mobicents.protocols.ss7.isup.message.parameter.RedirectForwardInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectStatus;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectingNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.RedirectionNumberRestriction;
 import org.mobicents.protocols.ss7.isup.message.parameter.RemoteOperations;
+import org.mobicents.protocols.ss7.isup.message.parameter.SCFID;
 import org.mobicents.protocols.ss7.isup.message.parameter.ServiceActivation;
 import org.mobicents.protocols.ss7.isup.message.parameter.SignalingPointCode;
 import org.mobicents.protocols.ss7.isup.message.parameter.SubsequentNumber;
@@ -161,6 +177,7 @@ import org.mobicents.protocols.ss7.isup.message.parameter.TransitNetworkSelectio
 import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumRequirement;
 import org.mobicents.protocols.ss7.isup.message.parameter.TransmissionMediumUsed;
 import org.mobicents.protocols.ss7.isup.message.parameter.UIDActionIndicators;
+import org.mobicents.protocols.ss7.isup.message.parameter.UIDCapabilityIndicators;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformation;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserServiceInformationPrime;
 import org.mobicents.protocols.ss7.isup.message.parameter.UserTeleserviceInformation;
@@ -1314,6 +1331,29 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         optionalCodes.add(ForwardGVNS._PARAMETER_CODE);
         optionalCodes.add(CCSS._PARAMETER_CODE);
         optionalCodes.add(NetworkManagementControls._PARAMETER_CODE);
+        optionalCodes.add(CircuitAssigmentMap._PARAMETER_CODE);
+        optionalCodes.add(CorrelationID._PARAMETER_CODE);
+        optionalCodes.add(CallDiversionTreatmentIndicators._PARAMETER_CODE);
+        optionalCodes.add(CalledINNumber._PARAMETER_CODE);
+        optionalCodes.add(CallOfferingTreatmentIndicators._PARAMETER_CODE);
+        optionalCodes.add(ConferenceTreatmentIndicators._PARAMETER_CODE);
+        optionalCodes.add(SCFID._PARAMETER_CODE);
+        optionalCodes.add(UIDCapabilityIndicators._PARAMETER_CODE);
+        optionalCodes.add(EchoControlInformation._PARAMETER_CODE);
+        optionalCodes.add(HopCounter._PARAMETER_CODE);
+        optionalCodes.add(CollectCallRequest._PARAMETER_CODE);
+        optionalCodes.add(ApplicationTransport._PARAMETER_CODE);
+        optionalCodes.add(PivotCapability._PARAMETER_CODE);
+        optionalCodes.add(CalledDirectoryNumber._PARAMETER_CODE);
+        optionalCodes.add(OriginalCalledINNumber._PARAMETER_CODE);
+        optionalCodes.add(NetworkRoutingNumber._PARAMETER_CODE);
+        optionalCodes.add(QueryOnReleaseCapability._PARAMETER_CODE);
+        optionalCodes.add(PivotCounter._PARAMETER_CODE);
+        optionalCodes.add(PivotRoutingForwardInformation._PARAMETER_CODE);
+        optionalCodes.add(RedirectCapability._PARAMETER_CODE);
+        optionalCodes.add(RedirectCounter._PARAMETER_CODE);
+        optionalCodes.add(RedirectStatus._PARAMETER_CODE);
+        optionalCodes.add(RedirectForwardInformation._PARAMETER_CODE);
 
         optionalCodeToIndex.put(TransitNetworkSelection._PARAMETER_CODE,
                 InitialAddressMessageImpl._INDEX_O_TransitNetworkSelection);
@@ -1362,6 +1402,45 @@ public class ISUPMessageFactoryImpl implements ISUPMessageFactory {
         optionalCodeToIndex.put(CCSS._PARAMETER_CODE, InitialAddressMessageImpl._INDEX_O_CCSS);
         optionalCodeToIndex.put(NetworkManagementControls._PARAMETER_CODE,
                 InitialAddressMessageImpl._INDEX_O_NetworkManagementControls);
+        optionalCodeToIndex.put(CircuitAssigmentMap._PARAMETER_CODE,
+                InitialAddressMessageImpl._INDEX_O_CircuitAssigmentMap);
+        optionalCodeToIndex.put(CorrelationID._PARAMETER_CODE, InitialAddressMessageImpl._INDEX_O_CorrelationID);
+        optionalCodeToIndex.put(CallDiversionTreatmentIndicators._PARAMETER_CODE,
+                InitialAddressMessageImpl._INDEX_O_CallDiversionTreatmentIndicators);
+        optionalCodeToIndex.put(CalledINNumber._PARAMETER_CODE, InitialAddressMessageImpl._INDEX_O_CalledINNumber);
+        optionalCodeToIndex.put(CallOfferingTreatmentIndicators._PARAMETER_CODE,
+                InitialAddressMessageImpl._INDEX_O_CallOfferingTreatmentIndicators);
+        optionalCodeToIndex.put(ConferenceTreatmentIndicators._PARAMETER_CODE,
+                InitialAddressMessageImpl._INDEX_O_ConferenceTreatmentIndicators);
+        optionalCodeToIndex.put(SCFID._PARAMETER_CODE, InitialAddressMessageImpl._INDEX_O_SCFID);
+        optionalCodeToIndex.put(UIDCapabilityIndicators._PARAMETER_CODE,
+                InitialAddressMessageImpl._INDEX_O_UIDCapabilityIndicators);
+        optionalCodeToIndex.put(EchoControlInformation._PARAMETER_CODE,
+                InitialAddressMessageImpl._INDEX_O_EchoControlInformation);
+        optionalCodeToIndex.put(HopCounter._PARAMETER_CODE, InitialAddressMessageImpl._INDEX_O_HopCounter);
+        optionalCodeToIndex.put(CollectCallRequest._PARAMETER_CODE,
+                InitialAddressMessageImpl._INDEX_O_CollectCallRequest);
+        optionalCodeToIndex.put(ApplicationTransport._PARAMETER_CODE,
+                InitialAddressMessageImpl._INDEX_O_ApplicationTransport);
+        optionalCodeToIndex.put(PivotCapability._PARAMETER_CODE, InitialAddressMessageImpl._INDEX_O_PivotCapability);
+        optionalCodeToIndex.put(CalledDirectoryNumber._PARAMETER_CODE,
+                InitialAddressMessageImpl._INDEX_O_CalledDirectoryNumber);
+        optionalCodeToIndex.put(OriginalCalledINNumber._PARAMETER_CODE,
+                InitialAddressMessageImpl._INDEX_O_OriginalCalledINNumber);
+        optionalCodeToIndex.put(NetworkRoutingNumber._PARAMETER_CODE,
+                InitialAddressMessageImpl._INDEX_O_NetworkRoutingNumber);
+        optionalCodeToIndex.put(QueryOnReleaseCapability._PARAMETER_CODE,
+                InitialAddressMessageImpl._INDEX_O_QueryOnReleaseCapability);
+        optionalCodeToIndex.put(PivotCounter._PARAMETER_CODE, InitialAddressMessageImpl._INDEX_O_PivotCounter);
+        optionalCodeToIndex.put(PivotRoutingForwardInformation._PARAMETER_CODE,
+                InitialAddressMessageImpl._INDEX_O_PivotRoutingForwardInformation);
+        optionalCodeToIndex.put(RedirectCapability._PARAMETER_CODE,
+                InitialAddressMessageImpl._INDEX_O_RedirectCapability);
+        optionalCodeToIndex.put(RedirectCounter._PARAMETER_CODE, InitialAddressMessageImpl._INDEX_O_RedirectCounter);
+        optionalCodeToIndex.put(RedirectStatus._PARAMETER_CODE, InitialAddressMessageImpl._INDEX_O_RedirectStatus);
+        optionalCodeToIndex.put(RedirectForwardInformation._PARAMETER_CODE,
+                InitialAddressMessageImpl._INDEX_O_RedirectForwardInformation);
+
 
         MessageIndexingPlaceHolder IAM_HOLDER = new MessageIndexingPlaceHolder();
         IAM_HOLDER.commandCode = InitialAddressMessage.MESSAGE_CODE;
