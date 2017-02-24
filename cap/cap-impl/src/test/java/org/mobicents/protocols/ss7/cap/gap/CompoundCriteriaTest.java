@@ -73,6 +73,8 @@ public class CompoundCriteriaTest {
         elem.decodeAll(ais);
 
         assertEquals(elem.getBasicGapCriteria().getCalledAddressAndService().getServiceKey(), SERVICE_KEY);
+        assertEquals(elem.getBasicGapCriteria().getCalledAddressAndService().getCalledAddressValue().getData(), getDigitsData());
+        assertEquals(elem.getScfID().getData(), getDigitsData1());
 
     }
 
@@ -133,7 +135,8 @@ public class CompoundCriteriaTest {
 
     private void test(BasicGapCriteriaImpl basicGapCriteria) throws Exception {
 
-        CompoundCriteriaImpl original = new CompoundCriteriaImpl(basicGapCriteria, null);
+        ScfID scfId = new ScfIDImpl(getDigitsData1());
+        CompoundCriteriaImpl original = new CompoundCriteriaImpl(basicGapCriteria, scfId);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);

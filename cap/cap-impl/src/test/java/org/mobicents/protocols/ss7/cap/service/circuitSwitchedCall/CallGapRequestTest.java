@@ -75,6 +75,11 @@ public class CallGapRequestTest {
                 0, 0, 0, (byte) 129, 4, 13, 14, 15, 16};
     }
 
+    public byte[] getData2() {
+        return new byte[] { 48, 22, (byte) 160, 12, (byte) 189, 10, (byte) 128, 4, 48, 69, 91, 84, (byte) 129, 2, 3, 53,
+                (byte) 161, 6, (byte) 128, 1, 60, (byte) 129, 1, (byte) 255 };
+    }
+
     // Digits for CalledAddressAndService
     public byte[] getDigitsData() {
         return new byte[] {48, 69, 91, 84};
@@ -105,6 +110,8 @@ public class CallGapRequestTest {
         assertEquals(elem.getGapIndicators().getDuration(), DURATION);
         assertEquals(elem.getGapIndicators().getGapInterval(), -GAP_INTERVAL);
 
+        assertEquals(elem.getControlType(), ControlType.sCPOverloaded);
+
         assertEquals(elem.getGapTreatment().getInformationToSend().getInbandInfo().getMessageID().getElementaryMessageID().intValue(), ELEMENTARY_MESSAGE_ID);
         assertEquals(elem.getGapTreatment().getInformationToSend().getInbandInfo().getNumberOfRepetitions().intValue(), NUMBER_OF_REPETITIONS);
         assertEquals(elem.getGapTreatment().getInformationToSend().getInbandInfo().getDuration().intValue(), DURATION_IF);
@@ -113,6 +120,23 @@ public class CallGapRequestTest {
         assertEquals(elem.getExtensions().getExtensionFields().get(0).getLocalCode().intValue(), Integer.MIN_VALUE);
         assertEquals(elem.getExtensions().getExtensionFields().get(0).getCriticalityType(), CriticalityType.typeIgnore);
         assertEquals(elem.getExtensions().getExtensionFields().get(0).getData(), getDigitsData2());
+
+
+        data = this.getData2();
+        ais = new AsnInputStream(data);
+        elem = new CallGapRequestImpl();
+        tag = ais.readTag();
+        elem.decodeAll(ais);
+
+        assertEquals(elem.getGapCriteria().getBasicGapCriteria().getCalledAddressAndService().getServiceKey(), SERVICE_KEY);
+        assertEquals(elem.getGapCriteria().getBasicGapCriteria().getCalledAddressAndService().getCalledAddressValue().getData(), getDigitsData());
+
+        assertEquals(elem.getGapIndicators().getDuration(), DURATION);
+        assertEquals(elem.getGapIndicators().getGapInterval(), -GAP_INTERVAL);
+
+        assertNull(elem.getControlType());
+        assertNull(elem.getGapTreatment());
+        assertNull(elem.getExtensions());
     }
 
     @Test(groups = { "functional.encode", "circuitSwitchedCall" })
@@ -142,6 +166,14 @@ public class CallGapRequestTest {
         AsnOutputStream aos = new AsnOutputStream();
         elem.encodeAll(aos);
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
+
+
+        gapCriteria = new GapCriteriaImpl(basicGapCriteria);
+        elem = new CallGapRequestImpl(gapCriteria, gapIndicators, null, null, null);
+
+        aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
     }
 
     @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })

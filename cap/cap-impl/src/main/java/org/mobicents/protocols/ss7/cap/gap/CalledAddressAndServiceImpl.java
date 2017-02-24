@@ -75,6 +75,7 @@ public class CalledAddressAndServiceImpl extends SequenceBase implements CalledA
 
         this.calledAddressValue = null;
         this.serviceKey = 0;
+        boolean serviceKeyFound = false;
 
         AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
@@ -100,6 +101,7 @@ public class CalledAddressAndServiceImpl extends SequenceBase implements CalledA
                                     CAPParsingComponentExceptionReason.MistypedParameter);
                         }
                         this.serviceKey = (int) ais.readInteger();
+                        serviceKeyFound = true;
                         break;
                     }
                     default: {
@@ -112,9 +114,13 @@ public class CalledAddressAndServiceImpl extends SequenceBase implements CalledA
             }
         }
 
-        if (this.serviceKey == 0) {
-            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
-                    + ": serviceKey is mandatory",
+        if (!serviceKeyFound) {
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": serviceKey is mandatory",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+
+        if (this.calledAddressValue == null) {
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": calledAddressValue is mandatory",
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
@@ -161,8 +167,10 @@ public class CalledAddressAndServiceImpl extends SequenceBase implements CalledA
         sb.append(_PrimitiveName);
         sb.append(" [");
 
-        sb.append("calledAddressValue=");
-        sb.append(calledAddressValue.toString());
+        if (calledAddressValue != null) {
+            sb.append("calledAddressValue=");
+            sb.append(calledAddressValue.toString());
+        }
 
         sb.append(", serviceKey=");
         sb.append(serviceKey);

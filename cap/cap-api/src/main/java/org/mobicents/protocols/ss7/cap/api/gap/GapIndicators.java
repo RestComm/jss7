@@ -35,7 +35,8 @@ GapIndicators ::= SEQUENCE {
 -- Indicates the call gapping characteristics.
 -- No call gapping when gapInterval equals 0
 
-Duration ::= INTEGER (-2..86400) Interval ::= INTEGER (-1..60000)
+Duration ::= INTEGER (-2..86400)
+Interval ::= INTEGER (-1..60000)
 </code>
  *
  *

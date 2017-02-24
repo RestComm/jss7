@@ -45,10 +45,10 @@ import org.mobicents.protocols.ss7.cap.primitives.CAPAsnPrimitive;
  */
 public class BasicGapCriteriaImpl implements BasicGapCriteria, CAPAsnPrimitive {
 
-    private static final int _ID_calledAddressValue = 0;
-    private static final int _ID_gapOnService = 2;
-    private static final int _ID_calledAddressAndService = 29;
-    private static final int _ID_callingAddressAndService = 30;
+    public static final int _ID_calledAddressValue = 0;
+    public static final int _ID_gapOnService = 2;
+    public static final int _ID_calledAddressAndService = 29;
+    public static final int _ID_callingAddressAndService = 30;
 
     private static final String CALLED_ADDRESS_VALUE = "calledAddressValue";
     private static final String GAP_ON_SERVICE = "gapOnService";
@@ -161,23 +161,23 @@ public class BasicGapCriteriaImpl implements BasicGapCriteria, CAPAsnPrimitive {
             switch (ais.getTag()) {
                 case _ID_calledAddressValue: {
                     this.calledAddressValue = new DigitsImpl();
-                    ((DigitsImpl) this.calledAddressValue).decodeAll(ais);
+                    ((DigitsImpl) this.calledAddressValue).decodeData(ais, length);
                     this.calledAddressValue.setIsGenericNumber();
                     break;
                 }
                 case _ID_gapOnService: {
                     this.gapOnService = new GapOnServiceImpl();
-                    ((GapOnServiceImpl) this.gapOnService).decodeAll(ais);
+                    ((GapOnServiceImpl) this.gapOnService).decodeData(ais, length);
                     break;
                 }
                 case _ID_calledAddressAndService: {
                     this.calledAddressAndService = new CalledAddressAndServiceImpl();
-                    ((CalledAddressAndServiceImpl) this.calledAddressAndService).decodeAll(ais);
+                    ((CalledAddressAndServiceImpl) this.calledAddressAndService).decodeData(ais, length);
                     break;
                 }
                 case _ID_callingAddressAndService: {
                     this.callingAddressAndService = new CallingAddressAndServiceImpl();
-                    ((CallingAddressAndServiceImpl) this.callingAddressAndService).decodeAll(ais);
+                    ((CallingAddressAndServiceImpl) this.callingAddressAndService).decodeData(ais, length);
                     break;
                 }
                 default: {

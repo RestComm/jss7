@@ -189,7 +189,7 @@ public class OctetStringBase implements CAPAsnPrimitive {
         return sb.toString();
     }
 
-    protected static String bytesToHex(byte[] data) {
+    public static String bytesToHex(byte[] data) {
         if (data == null)
             return null;
         char[] c = new char[data.length * 2];
@@ -210,7 +210,7 @@ public class OctetStringBase implements CAPAsnPrimitive {
             throw new IllegalArgumentException("Invalid hex character: " + c);
     }
 
-    protected static byte[] hexToBytes(String hex) {
+    public static byte[] hexToBytes(String hex) {
         if (hex == null)
             return null;
         char[] c = hex.toCharArray();

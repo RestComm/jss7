@@ -128,14 +128,12 @@ public class GapCriteriaImpl implements GapCriteria, CAPAsnPrimitive {
         this.basicGapCriteria = null;
         this.compoundCriteria = null;
 
-        ansIS.readTag();
-
         if (ansIS.getTagClass() == Tag.CLASS_CONTEXT_SPECIFIC) {
             basicGapCriteria = new BasicGapCriteriaImpl();
             ((BasicGapCriteriaImpl) basicGapCriteria).decodeData(ansIS, length);
         } else if (ansIS.getTagClass() == Tag.CLASS_UNIVERSAL) {
             this.compoundCriteria = new CompoundCriteriaImpl();
-            ((CompoundCriteriaImpl) compoundCriteria).decodeAll(ansIS);
+            ((CompoundCriteriaImpl) compoundCriteria).decodeData(ansIS, length);
         } else {
             throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": bad choice tagClass",
                     CAPParsingComponentExceptionReason.MistypedParameter);
