@@ -39,10 +39,19 @@
 		</dependency>
 
 		<!-- JBoss AS Security -->
+		<!--
 		<dependency>
 			<groupId>org.jboss.jbossas</groupId>
 			<artifactId>jboss-as-security</artifactId>
 			<version>${jboss.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		-->
+
+		<dependency>
+			<groupId>org.wildfly</groupId>
+			<artifactId>wildfly-security</artifactId>
+			<version>${version.wildfly.as}</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
