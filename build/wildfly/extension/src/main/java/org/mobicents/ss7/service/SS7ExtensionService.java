@@ -226,7 +226,7 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
 
             String address = getPropertyString("ShellExecutor", "address", "127.0.0.1");
             int port = getPropertyInt("ShellExecutor", "port", 3435);
-            String securityDomain = getPropertyString("ShellExecutor", "securityDomain", null);
+            String securityDomain = getPropertyString("ShellExecutor", "securityDomain", "jmx-console");
 
             shellExecutorMBean = new ShellServer(schedulerMBean, shellExecutors);
             shellExecutorMBean.setAddress(address);
