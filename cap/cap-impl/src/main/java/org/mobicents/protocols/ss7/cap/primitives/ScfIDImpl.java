@@ -24,6 +24,9 @@ package org.mobicents.protocols.ss7.cap.primitives;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -39,6 +42,8 @@ import org.mobicents.protocols.ss7.cap.api.primitives.ScfID;
  *
  */
 public class ScfIDImpl implements ScfID, CAPAsnPrimitive {
+
+    public static final String _DATA = "data";
 
     public static final String _PrimitiveName = "ScfID";
 
@@ -137,6 +142,19 @@ public class ScfIDImpl implements ScfID, CAPAsnPrimitive {
 
         asnOs.writeOctetStringData(data);
     }
+
+    protected static final XMLFormat<ScfIDImpl> SCF_ID_XML = new XMLFormat<ScfIDImpl>(ScfIDImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, ScfIDImpl scfID) throws XMLStreamException {
+            scfID.data = OctetStringBase.hexToBytes(xml.get(_DATA, String.class));
+        }
+
+        @Override
+        public void write(ScfIDImpl scfID, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            xml.add(OctetStringBase.bytesToHex(scfID.data), _DATA, String.class);
+        }
+    };
 
     @Override
     public String toString() {

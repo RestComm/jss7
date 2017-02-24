@@ -44,8 +44,8 @@ import org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall.primitive.Inf
  */
 public class GapTreatmentImpl implements GapTreatment, CAPAsnPrimitive {
 
-    private static final int _ID_InformationToSend = 0;
-    private static final int _ID_CauseCap = 1;
+    public static final int _ID_InformationToSend = 0;
+    public static final int _ID_CauseCap = 1;
 
     private static final String INFORMATION_TO_SEND = "informationToSend";
     private static final String CAUSE_CAP = "causeCap";
@@ -89,6 +89,11 @@ public class GapTreatmentImpl implements GapTreatment, CAPAsnPrimitive {
     }
 
     public boolean getIsPrimitive() {
+        if (informationToSend != null) {
+            return false;
+        } else if (releaseCause != null) {
+            return ((CauseCapImpl) releaseCause).getIsPrimitive();
+        }
         return false;
     }
 
@@ -133,10 +138,8 @@ public class GapTreatmentImpl implements GapTreatment, CAPAsnPrimitive {
                     break;
                 }
                 case _ID_CauseCap: {
-                    AsnInputStream ais1 = asnIS.readSequenceStreamData(length);
-                    ais1.readTag();
                     this.releaseCause = new CauseCapImpl();
-                    ((CauseCapImpl) this.releaseCause).decodeAll(ais1);
+                    ((CauseCapImpl) this.releaseCause).decodeData(asnIS, length);
                     break;
                 }
                 default: {
@@ -178,7 +181,7 @@ public class GapTreatmentImpl implements GapTreatment, CAPAsnPrimitive {
             if (informationToSend != null) {
                 ((InformationToSendImpl) informationToSend).encodeAll(asnOs);
             } else if (releaseCause != null) {
-                ((CauseCapImpl) releaseCause).encodeAll(asnOs);
+                ((CauseCapImpl) releaseCause).encodeData(asnOs);
             }
         } catch (CAPException e) {
             throw new CAPException("CAPException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);

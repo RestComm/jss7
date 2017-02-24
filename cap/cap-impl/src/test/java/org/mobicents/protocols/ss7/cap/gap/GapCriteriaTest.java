@@ -24,11 +24,13 @@ package org.mobicents.protocols.ss7.cap.gap;
 
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.gap.*;
 import org.mobicents.protocols.ss7.cap.api.isup.Digits;
+import org.mobicents.protocols.ss7.cap.api.primitives.ScfID;
 import org.mobicents.protocols.ss7.cap.isup.DigitsImpl;
 import org.mobicents.protocols.ss7.cap.primitives.ScfIDImpl;
 import org.mobicents.protocols.ss7.isup.impl.message.parameter.GenericNumberImpl;
@@ -53,17 +55,25 @@ public class GapCriteriaTest {
 
     // choice BasicGapCriteria -> CalledAddressValue
     public byte[] getData() {
-        return new byte[] {(byte) 160, 6, (byte) 128, 4, 48, 69, 91, 84};
+        return new byte[] { (byte) 128, 4, 48, 69, 91, 84 };
     }
 
     // choice BasicGapCriteria -> GapOnService
     public byte[] getData1() {
-        return new byte[] {(byte) 160, 6, (byte) 162, 4, (byte) 128, 2, 3, 53};
+        return new byte[] { (byte) 162, 4, (byte) 128, 2, 3, 53 };
+    }
+
+    public byte[] getData2() {
+        return new byte[] { 48, 14, (byte) 160, 6, (byte) 162, 4, (byte) 128, 2, 3, 53, (byte) 129, 4, 12, 32, 23, 56 };
     }
 
     // calledAddressValue
     public byte[] getDigitsData() {
         return new byte[] {48, 69, 91, 84};
+    }
+
+    public byte[] getScfIDData() {
+        return new byte[] { 12, 32, 23, 56 };
     }
 
     @Test(groups = { "functional.decode", "gap" })
@@ -73,6 +83,8 @@ public class GapCriteriaTest {
         AsnInputStream ais = new AsnInputStream(data);
         GapCriteriaImpl elem = new GapCriteriaImpl();
         int tag = ais.readTag();
+        assertEquals(tag, BasicGapCriteriaImpl._ID_calledAddressValue);
+        assertEquals(ais.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
         elem.decodeAll(ais);
 
         assertEquals(elem.getBasicGapCriteria().getCalledAddressValue().getData(), getDigitsData());
@@ -88,10 +100,7 @@ public class GapCriteriaTest {
         GapCriteriaImpl elem = new GapCriteriaImpl(basicGapCriteria);
 
         AsnOutputStream aos = new AsnOutputStream();
-        aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_gapCriteria);
-        int pos = aos.StartContentDefiniteLength();
         elem.encodeAll(aos);
-        aos.FinalizeContent(pos);
 
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData()));
     }
@@ -103,6 +112,8 @@ public class GapCriteriaTest {
         AsnInputStream ais = new AsnInputStream(data);
         GapCriteriaImpl elem = new GapCriteriaImpl();
         int tag = ais.readTag();
+        assertEquals(tag, BasicGapCriteriaImpl._ID_gapOnService);
+        assertEquals(ais.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
         elem.decodeAll(ais);
 
         assertEquals(elem.getBasicGapCriteria().getGapOnService().getServiceKey(), SERVICE_KEY);
@@ -117,12 +128,40 @@ public class GapCriteriaTest {
 
 
         AsnOutputStream aos = new AsnOutputStream();
-        aos.writeTag(Tag.CLASS_CONTEXT_SPECIFIC, false, _ID_gapCriteria);
-        int pos = aos.StartContentDefiniteLength();
         elem.encodeAll(aos);
-        aos.FinalizeContent(pos);
 
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+    }
+
+    @Test(groups = { "functional.decode", "gap" })
+    public void testDecode_CompoundCriteria() throws Exception {
+
+        byte[] data = this.getData2();
+        AsnInputStream ais = new AsnInputStream(data);
+        GapCriteriaImpl elem = new GapCriteriaImpl();
+        int tag = ais.readTag();
+        assertEquals(tag, Tag.SEQUENCE);
+        assertEquals(ais.getTagClass(), Tag.CLASS_UNIVERSAL);
+        elem.decodeAll(ais);
+
+        assertEquals(elem.getCompoundGapCriteria().getBasicGapCriteria().getGapOnService().getServiceKey(), SERVICE_KEY);
+        assertEquals(elem.getCompoundGapCriteria().getScfID().getData(), getScfIDData());
+    }
+
+    @Test(groups = { "functional.encode", "gap" })
+    public void testEncode_CompoundCriteria() throws Exception {
+
+        GapOnService gapOnService = new GapOnServiceImpl(SERVICE_KEY);
+        BasicGapCriteria basicGapCriteria = new BasicGapCriteriaImpl(gapOnService);
+        // BasicGapCriteria basicGapCriteria, ScfID scfId
+        ScfID scfId = new ScfIDImpl(getScfIDData());
+        CompoundCriteria compoundCriteria = new CompoundCriteriaImpl(basicGapCriteria, scfId);
+        GapCriteriaImpl elem = new GapCriteriaImpl(compoundCriteria);
+
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
     }
 
     @Test(groups = { "functional.xml.serialize", "circuitSwitchedCall" })
@@ -134,13 +173,11 @@ public class GapCriteriaTest {
         Digits digits = new DigitsImpl(gn);
 
         CalledAddressAndServiceImpl calledAddressAndService = new CalledAddressAndServiceImpl(digits, SERVICE_KEY);
-//        GapOnService gapOnService = new GapOnServiceImpl(SERVICE_KEY);
         BasicGapCriteriaImpl basicGapCriteria = new BasicGapCriteriaImpl(calledAddressAndService);
-        byte[] data2 = new byte[]{12, 32, 23, 56};
-        ScfIDImpl scfId = new ScfIDImpl(data2);
-        CompoundCriteriaImpl compoundCriteria = new CompoundCriteriaImpl(basicGapCriteria, null);
-        GapCriteriaImpl original = new GapCriteriaImpl(compoundCriteria);
+        ScfIDImpl scfId = new ScfIDImpl(getScfIDData());
+        CompoundCriteriaImpl compoundCriteria = new CompoundCriteriaImpl(basicGapCriteria, scfId);
 
+        GapCriteriaImpl original = new GapCriteriaImpl(basicGapCriteria);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
@@ -158,6 +195,28 @@ public class GapCriteriaTest {
         XMLObjectReader reader = XMLObjectReader.newInstance(bais);
 
         GapCriteriaImpl copy = reader.read("gapCriteriaArg", GapCriteriaImpl.class);
+
+        assertTrue(isEqual(original, copy));
+
+
+        original = new GapCriteriaImpl(compoundCriteria);
+
+        baos = new ByteArrayOutputStream();
+        writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "gapCriteriaArg", GapCriteriaImpl.class);
+        writer.close();
+
+        rawData = baos.toByteArray();
+        serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        bais = new ByteArrayInputStream(rawData);
+        reader = XMLObjectReader.newInstance(bais);
+
+        copy = reader.read("gapCriteriaArg", GapCriteriaImpl.class);
 
         assertTrue(isEqual(original, copy));
     }

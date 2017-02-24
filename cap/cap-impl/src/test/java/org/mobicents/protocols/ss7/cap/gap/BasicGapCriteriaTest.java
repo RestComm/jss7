@@ -24,8 +24,10 @@ package org.mobicents.protocols.ss7.cap.gap;
 
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
+import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.api.gap.*;
 import org.mobicents.protocols.ss7.cap.api.isup.Digits;
 import org.mobicents.protocols.ss7.cap.isup.DigitsImpl;
@@ -51,7 +53,7 @@ public class BasicGapCriteriaTest {
 
     // CalledAddressValue
     public byte[] getData() {
-        return new byte[] { (byte) 128, 4, 48, 69, 91, 84};
+        return new byte[] { (byte) 128, 5, 0, 1, 64, 66, (byte) 134};
     }
 
     // CalledAddressAndService
@@ -63,6 +65,14 @@ public class BasicGapCriteriaTest {
         return new byte[] {48, 69, 91, 84};
     }
 
+    public byte[] getData2() {
+        return new byte[] { (byte) 162, 3, (byte) 128, 1, 18 };
+    }
+
+    public byte[] getData3() {
+        return new byte[] { (byte) 190, 10, (byte) 128, 4, 48, 69, 91, 84, (byte) 129, 2, 3, 53 };
+    }
+
     @Test(groups = { "functional.decode", "gap" })
     public void testDecode_CalledAddressValue() throws Exception {
 
@@ -71,16 +81,19 @@ public class BasicGapCriteriaTest {
         BasicGapCriteriaImpl elem = new BasicGapCriteriaImpl();
 
         int tag = ais.readTag();
-        int length = getData().length;
-        elem.decodeData(ais, length);
+        assertEquals(tag, BasicGapCriteriaImpl._ID_calledAddressValue);
+        assertEquals(ais.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
+        elem.decodeAll(ais);
 
-        assertEquals(elem.getCalledAddressValue().getData(), getDigitsData());
+        assertEquals(elem.getCalledAddressValue().getGenericNumber().getAddress(), "2468");
+        assertEquals(elem.getCalledAddressValue().getGenericNumber().getNumberingPlanIndicator(), 4);
     }
 
     @Test(groups = { "functional.encode", "gap" })
     public void testEncode_CalledAddressValue() throws Exception {
 
-        Digits digits = new DigitsImpl(getDigitsData());
+        GenericNumber genericNumber = new GenericNumberImpl(1, "2468", 0, 4, 0, false, 0);
+        Digits digits = new DigitsImpl(genericNumber);
         BasicGapCriteriaImpl elem = new BasicGapCriteriaImpl(digits);
 
         AsnOutputStream aos = new AsnOutputStream();
@@ -90,14 +103,42 @@ public class BasicGapCriteriaTest {
     }
 
     @Test(groups = { "functional.decode", "gap" })
+    public void testDecode_GapOnService() throws Exception {
+
+        byte[] data = this.getData2();
+        AsnInputStream ais = new AsnInputStream(data);
+        BasicGapCriteriaImpl elem = new BasicGapCriteriaImpl();
+
+        int tag = ais.readTag();
+        assertEquals(tag, BasicGapCriteriaImpl._ID_gapOnService);
+        assertEquals(ais.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
+        elem.decodeAll(ais);
+
+        assertEquals(elem.getGapOnService().getServiceKey(), 18);
+    }
+
+    @Test(groups = { "functional.encode", "gap" })
+    public void testEncode_GapOnService() throws Exception {
+
+        GapOnService gapOnService = new GapOnServiceImpl(18);
+        BasicGapCriteriaImpl elem = new BasicGapCriteriaImpl(gapOnService);
+
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData2()));
+    }
+
+    @Test(groups = { "functional.decode", "gap" })
     public void testDecode_CalledAddressAndService() throws Exception {
 
         byte[] data = this.getData1();
         AsnInputStream ais = new AsnInputStream(data);
         BasicGapCriteriaImpl elem = new BasicGapCriteriaImpl();
         int tag = ais.readTag();
-        int length = getData1().length;
-        elem.decodeData(ais, length);
+        assertEquals(tag, BasicGapCriteriaImpl._ID_calledAddressAndService);
+        assertEquals(ais.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
+        elem.decodeAll(ais);
 
         assertEquals(elem.getCalledAddressAndService().getServiceKey(), SERVICE_KEY);
         assertEquals(elem.getCalledAddressAndService().getCalledAddressValue().getData(), getDigitsData());
@@ -114,6 +155,34 @@ public class BasicGapCriteriaTest {
         elem.encodeAll(aos);
 
         assertTrue(Arrays.equals(aos.toByteArray(), this.getData1()));
+    }
+
+    @Test(groups = { "functional.decode", "gap" })
+    public void testDecode_CallingAddressAndService() throws Exception {
+
+        byte[] data = this.getData3();
+        AsnInputStream ais = new AsnInputStream(data);
+        BasicGapCriteriaImpl elem = new BasicGapCriteriaImpl();
+        int tag = ais.readTag();
+        assertEquals(tag, BasicGapCriteriaImpl._ID_callingAddressAndService);
+        assertEquals(ais.getTagClass(), Tag.CLASS_CONTEXT_SPECIFIC);
+        elem.decodeAll(ais);
+
+        assertEquals(elem.getCallingAddressAndService().getServiceKey(), SERVICE_KEY);
+        assertEquals(elem.getCallingAddressAndService().getCallingAddressValue().getData(), getDigitsData());
+    }
+
+    @Test(groups = { "functional.encode", "gap" })
+    public void testEncode_CallingAddressAndService() throws Exception {
+
+        Digits digits = new DigitsImpl(getDigitsData());
+        CallingAddressAndService callingAddressAndService = new CallingAddressAndServiceImpl(digits, SERVICE_KEY);
+        BasicGapCriteriaImpl elem = new BasicGapCriteriaImpl(callingAddressAndService);
+
+        AsnOutputStream aos = new AsnOutputStream();
+        elem.encodeAll(aos);
+
+        assertTrue(Arrays.equals(aos.toByteArray(), this.getData3()));
     }
 
     @Test(groups = { "functional.xml.serialize", "gap" })

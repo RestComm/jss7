@@ -75,6 +75,7 @@ public class CallingAddressAndServiceImpl extends SequenceBase implements Callin
 
         this.callingAddressValue = null;
         this.serviceKey = 0;
+        boolean serviceKeyFound = false;
 
         AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
@@ -100,6 +101,7 @@ public class CallingAddressAndServiceImpl extends SequenceBase implements Callin
                                     CAPParsingComponentExceptionReason.MistypedParameter);
                         }
                         this.serviceKey = (int) ais.readInteger();
+                        serviceKeyFound = true;
                         break;
                     }
                     default: {
@@ -112,9 +114,13 @@ public class CallingAddressAndServiceImpl extends SequenceBase implements Callin
             }
         }
 
-        if (this.serviceKey == 0) {
+        if (!serviceKeyFound) {
             throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
                     + ": serviceKey is mandatory",
+                    CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+        if (this.callingAddressValue == null) {
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + ": callingAddressValue is mandatory",
                     CAPParsingComponentExceptionReason.MistypedParameter);
         }
     }
@@ -161,8 +167,10 @@ public class CallingAddressAndServiceImpl extends SequenceBase implements Callin
         sb.append(_PrimitiveName);
         sb.append(" [");
 
-        sb.append("callingAddressValue=");
-        sb.append(callingAddressValue.toString());
+        if (callingAddressValue != null) {
+            sb.append("callingAddressValue=");
+            sb.append(callingAddressValue.toString());
+        }
 
         sb.append(", serviceKey=");
         sb.append(serviceKey);

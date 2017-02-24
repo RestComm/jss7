@@ -93,9 +93,9 @@ public class CompoundCriteriaImpl extends SequenceBase implements CompoundCriter
                     case _ID_basicGapCriteria: {
                         int l = ais.readLength();
                         AsnInputStream ais2 = ais.readSequenceStreamData(l);
-                        ais2.readTag();
                         basicGapCriteria = new BasicGapCriteriaImpl();
-                        ((BasicGapCriteriaImpl) basicGapCriteria).decodeData(ais2, length);
+                        ais2.readTag();
+                        ((BasicGapCriteriaImpl) basicGapCriteria).decodeAll(ais2);
                         break;
                     }
                     case _ID_scfId: {
@@ -168,8 +168,10 @@ public class CompoundCriteriaImpl extends SequenceBase implements CompoundCriter
         sb.append(_PrimitiveName);
         sb.append(" [");
 
-        sb.append("basicGapCriteria=");
-        sb.append(basicGapCriteria);
+        if (basicGapCriteria != null) {
+            sb.append("basicGapCriteria=");
+            sb.append(basicGapCriteria);
+        }
 
         if (scfId != null) {
             sb.append(", scfId=");

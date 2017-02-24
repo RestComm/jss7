@@ -45,8 +45,10 @@ public class GapIndicatorsImpl extends SequenceBase implements GapIndicators {
     private static final String DURATION = "duration";
     private static final String GAP_INTERVAL = "gapInterval";
 
-    private static final int _ID_Duration = 0;
-    private static final int _ID_Gap_Interval = 1;
+    public static final int _ID_Duration = 0;
+    public static final int _ID_Gap_Interval = 1;
+
+    private static int DEFAULT_VALUE = 0;
 
     private int duration;
     private int gapInterval;
@@ -74,6 +76,9 @@ public class GapIndicatorsImpl extends SequenceBase implements GapIndicators {
         this.duration = 0;
         this.gapInterval = 0;
 
+        boolean foundDuration = false;
+        boolean foundGapInterval = false;
+
         AsnInputStream ais = asnIS.readSequenceStreamData(length);
 
         while (true) {
@@ -92,6 +97,7 @@ public class GapIndicatorsImpl extends SequenceBase implements GapIndicators {
                             throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + "-duration: possible value -2..86400, received="
                                     + duration, CAPParsingComponentExceptionReason.MistypedParameter);
                         }
+                        foundDuration = true;
                         break;
                     }
                     case _ID_Gap_Interval: {
@@ -100,6 +106,7 @@ public class GapIndicatorsImpl extends SequenceBase implements GapIndicators {
                             throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName + "-gapInterval: possible value -1..60000, received="
                                     + gapInterval, CAPParsingComponentExceptionReason.MistypedParameter);
                         }
+                        foundGapInterval = true;
                         break;
                     }
                     default: {
@@ -111,23 +118,30 @@ public class GapIndicatorsImpl extends SequenceBase implements GapIndicators {
                 ais.advanceElement();
             }
         }
+
+        if (!foundDuration) {
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": duration parameter is not found", CAPParsingComponentExceptionReason.MistypedParameter);
+        }
+        if (!foundGapInterval) {
+            throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
+                    + ": gapInterval parameter is not found", CAPParsingComponentExceptionReason.MistypedParameter);
+        }
     }
 
     public void encodeData(AsnOutputStream asnOs) throws CAPException {
 
         try {
-            if (duration != 0) {
-                if (this.duration < -2 || this.duration > 86400) {
-                    throw new CAPException("Error when encoding " + _PrimitiveName + ": duration must be -2..86400, supplied=" + duration);
-                }
-                asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_Duration, duration);
+            if (this.duration < -2 || this.duration > 86400) {
+                throw new CAPException("Error when encoding " + _PrimitiveName + ": duration must be -2..86400, supplied="
+                        + duration);
             }
-            if (gapInterval != 0) {
-                if (this.gapInterval < -1 || this.gapInterval > 60000) {
-                    throw new CAPException("Error when encoding " + _PrimitiveName + ": gapInterval must be -1..60000, supplied=" + gapInterval);
-                }
-                asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_Gap_Interval, gapInterval);
+            asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_Duration, duration);
+            if (this.gapInterval < -1 || this.gapInterval > 60000) {
+                throw new CAPException("Error when encoding " + _PrimitiveName + ": gapInterval must be -1..60000, supplied="
+                        + gapInterval);
             }
+            asnOs.writeInteger(Tag.CLASS_CONTEXT_SPECIFIC, _ID_Gap_Interval, gapInterval);
         } catch (IOException e) {
             throw new CAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         } catch (AsnException ex) {
@@ -139,25 +153,15 @@ public class GapIndicatorsImpl extends SequenceBase implements GapIndicators {
 
         @Override
         public void read(javolution.xml.XMLFormat.InputElement xml, GapIndicatorsImpl gapIndicators) throws XMLStreamException {
-            Integer i1 = xml.get(DURATION, Integer.class);
-            if (i1 != null) {
-                gapIndicators.duration = i1;
-            }
-
-            Integer i2 = xml.get(GAP_INTERVAL, Integer.class);
-            if (i2 != null) {
-                gapIndicators.gapInterval = i2;
-            }
+            gapIndicators.duration = xml.getAttribute(DURATION, DEFAULT_VALUE);
+            gapIndicators.gapInterval = xml.getAttribute(GAP_INTERVAL, DEFAULT_VALUE);
         }
 
         @Override
-        public void write(GapIndicatorsImpl gapIndicators, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
-            if (gapIndicators.duration != 0) {
-                xml.add((Integer) gapIndicators.duration, DURATION, Integer.class);
-            }
-            if (gapIndicators.gapInterval != 0) {
-                xml.add((Integer) gapIndicators.gapInterval, GAP_INTERVAL, Integer.class);
-            }
+        public void write(GapIndicatorsImpl gapIndicators, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            xml.setAttribute(DURATION, gapIndicators.duration);
+            xml.setAttribute(GAP_INTERVAL, gapIndicators.gapInterval);
         }
     };
 
@@ -168,15 +172,10 @@ public class GapIndicatorsImpl extends SequenceBase implements GapIndicators {
         sb.append(_PrimitiveName);
         sb.append(" [");
 
-        if (duration != 0) {
-            sb.append("duration=[");
-            sb.append(duration);
-            sb.append("]");
-        } else if (gapInterval != 0) {
-            sb.append("gapInterval=[");
-            sb.append(gapInterval);
-            sb.append("]");
-        }
+        sb.append("duration=");
+        sb.append(duration);
+        sb.append(", gapInterval=");
+        sb.append(gapInterval);
 
         sb.append("]");
 

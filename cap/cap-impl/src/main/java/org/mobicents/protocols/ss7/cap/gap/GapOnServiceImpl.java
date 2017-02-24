@@ -65,6 +65,7 @@ public class GapOnServiceImpl extends SequenceBase implements GapOnService {
     protected void _decode(AsnInputStream ansIS, int length) throws IOException, AsnException, CAPParsingComponentException {
 
         this.serviceKey = 0;
+        boolean foundServiceKey = false;
 
         AsnInputStream ais = ansIS.readSequenceStreamData(length);
 
@@ -79,6 +80,7 @@ public class GapOnServiceImpl extends SequenceBase implements GapOnService {
                 switch (tag) {
                     case _ID_serviceKey: {
                         this.serviceKey = (int) ais.readInteger();
+                        foundServiceKey = true;
                         break;
                     }
                     default: {
@@ -91,7 +93,7 @@ public class GapOnServiceImpl extends SequenceBase implements GapOnService {
             }
         }
 
-        if (this.serviceKey == 0) {
+        if (!foundServiceKey) {
             throw new CAPParsingComponentException("Error while decoding " + _PrimitiveName
                     + ": serviceKey is mandatory",
                     CAPParsingComponentExceptionReason.MistypedParameter);
