@@ -35,7 +35,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 import javolution.util.FastMap;
 
@@ -129,8 +128,8 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
     private AtomicInteger seqControl = new AtomicInteger(1);
     private int ssn;
-//    private long curDialogId = 0;
-    private AtomicLong currentDialogId = new AtomicLong(1);
+    private long curDialogId = 0;
+//    private AtomicLong currentDialogId = new AtomicLong(1);
 
     private int cumulativeCongestionLevel = 0;
     private int executorCongestionLevel = 0;
@@ -190,46 +189,54 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             return false;
     }
 
-    private Long getAvailableTxId() throws TCAPException {
+    private synchronized Long getAvailableTxId() throws TCAPException {
         if (this.dialogs.size() >= this.stack.getMaxDialogs())
             throw new TCAPException("Current dialog count exceeds its maximum value");
 
         while (true) {
-            Long id;
-            if (!currentDialogId.compareAndSet(this.stack.getDialogIdRangeEnd(), this.stack.getDialogIdRangeStart() + 1)) {
-                id = currentDialogId.getAndIncrement();
-            } else {
-                id = this.stack.getDialogIdRangeStart();
-            }
-            if (checkAvailableTxId(id))
-                return id;
-
-
-
-//            if (this.curDialogId < this.stack.getDialogIdRangeStart())
-//                this.curDialogId = this.stack.getDialogIdRangeStart() - 1;
-//            if (++this.curDialogId > this.stack.getDialogIdRangeEnd())
-//                this.curDialogId = this.stack.getDialogIdRangeStart();
-//            Long id = this.curDialogId;
+//            Long id;
+//            if (!currentDialogId.compareAndSet(this.stack.getDialogIdRangeEnd(), this.stack.getDialogIdRangeStart() + 1)) {
+//                id = currentDialogId.getAndIncrement();
+//            } else {
+//                id = this.stack.getDialogIdRangeStart();
+//            }
 //            if (checkAvailableTxId(id))
 //                return id;
+
+
+
+            if (this.curDialogId < this.stack.getDialogIdRangeStart())
+                this.curDialogId = this.stack.getDialogIdRangeStart() - 1;
+            if (++this.curDialogId > this.stack.getDialogIdRangeEnd())
+                this.curDialogId = this.stack.getDialogIdRangeStart();
+            Long id = this.curDialogId;
+            if (checkAvailableTxId(id))
+                return id;
         }
     }
 
     protected void resetDialogIdValueAfterRangeChange() {
-        if (this.currentDialogId.longValue() < this.stack.getDialogIdRangeStart())
-            this.currentDialogId.set(this.stack.getDialogIdRangeStart());
-        if (this.currentDialogId.longValue() >= this.stack.getDialogIdRangeEnd())
-            this.currentDialogId.set(this.stack.getDialogIdRangeEnd() - 1);
+        if (this.curDialogId < this.stack.getDialogIdRangeStart())
+            this.curDialogId = this.stack.getDialogIdRangeStart();
+        if (this.curDialogId >= this.stack.getDialogIdRangeEnd())
+            this.curDialogId = this.stack.getDialogIdRangeEnd() - 1;
+
+        // if (this.currentDialogId.longValue() < this.stack.getDialogIdRangeStart())
+        // this.currentDialogId.set(this.stack.getDialogIdRangeStart());
+        // if (this.currentDialogId.longValue() >= this.stack.getDialogIdRangeEnd())
+        // this.currentDialogId.set(this.stack.getDialogIdRangeEnd() - 1);
     }
 
     // get next Seq Control value available
     protected int getNextSeqControl() {
-        if (!seqControl.compareAndSet(256, 1)) {
-            return seqControl.getAndIncrement();
-        } else {
-            return 0;
-        }
+        int res = seqControl.getAndIncrement();
+        return res & 0xFF;
+
+        // if (!seqControl.compareAndSet(256, 1)) {
+        // return seqControl.getAndIncrement();
+        // } else {
+        // return 0;
+        // }
 
         // seqControl++;
         // if (seqControl > 255) {
@@ -1016,23 +1023,22 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         // }
     }
 
-    protected Long getAvailableTxIdPreview() throws TCAPException {
+    protected synchronized Long getAvailableTxIdPreview() throws TCAPException {
         while (true) {
-            Long id;
-            if (!currentDialogId.compareAndSet(this.stack.getDialogIdRangeEnd(), this.stack.getDialogIdRangeStart() + 1)) {
-                id = currentDialogId.getAndIncrement();
-            } else {
-                id = this.stack.getDialogIdRangeStart();
-            }
-            return id;
-
-
-            // if (this.curDialogId < this.stack.getDialogIdRangeStart())
-            // this.curDialogId = this.stack.getDialogIdRangeStart() - 1;
-            // if (++this.curDialogId > this.stack.getDialogIdRangeEnd())
-            // this.curDialogId = this.stack.getDialogIdRangeStart();
-            // Long id = this.curDialogId;
+            // Long id;
+            // if (!currentDialogId.compareAndSet(this.stack.getDialogIdRangeEnd(), this.stack.getDialogIdRangeStart() + 1)) {
+            // id = currentDialogId.getAndIncrement();
+            // } else {
+            // id = this.stack.getDialogIdRangeStart();
+            // }
             // return id;
+
+            if (this.curDialogId < this.stack.getDialogIdRangeStart())
+                this.curDialogId = this.stack.getDialogIdRangeStart() - 1;
+            if (++this.curDialogId > this.stack.getDialogIdRangeEnd())
+                this.curDialogId = this.stack.getDialogIdRangeStart();
+            Long id = this.curDialogId;
+            return id;
         }
     }
 

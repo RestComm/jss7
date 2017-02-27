@@ -127,7 +127,7 @@ public class DialogIdRangeTest extends SccpHarness {
         this.tcapStack1.start();        
 
         d = this.tcapStack1.getProvider().getNewDialog(peer1Address, peer2Address);
-        assertEquals((long) d.getLocalDialogId(), 20);
+        assertEquals((long) d.getLocalDialogId(), 21);
 
         this.tcapStack1.setMaxDialogs(5000);
         try {
@@ -143,7 +143,7 @@ public class DialogIdRangeTest extends SccpHarness {
         this.tcapStack1.setDialogIdRangeEnd(11000);
 
         d = this.tcapStack1.getProvider().getNewDialog(peer1Address, peer2Address);
-        assertEquals((long) d.getLocalDialogId(), 10999);
+        assertEquals((long) d.getLocalDialogId(), 11000);
         d = this.tcapStack1.getProvider().getNewDialog(peer1Address, peer2Address);
         assertEquals((long) d.getLocalDialogId(), 1);
         d = this.tcapStack1.getProvider().getNewDialog(peer1Address, peer2Address);
