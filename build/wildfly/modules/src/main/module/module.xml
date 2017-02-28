@@ -10,8 +10,7 @@
         <resource-root path="statistics-api-${project.version}.jar"/>
         <resource-root path="statistics-impl-${project.version}.jar"/>
 
-        <resource-root path="gctapi-${dialogic.version}.jar"/>
-
+        <resource-root path="commons-${commons.version}.jar"/>
         <resource-root path="asn-${asn.version}.jar"/>
         <resource-root path="sctp-api-${sctp.version}.jar"/>
         <resource-root path="sctp-impl-${sctp.version}.jar"/>
@@ -37,7 +36,6 @@
 
         <resource-root path="restcomm-ss7-${project.version}.jar"/>
 
-        <resource-root path="shell-client-${project.version}.jar"/>
         <resource-root path="shell-server-api-${project.version}.jar"/>
         <resource-root path="shell-server-impl-${project.version}.jar"/>
         <resource-root path="shell-transport-${project.version}.jar"/>
