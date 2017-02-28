@@ -85,11 +85,13 @@
             <artifactId>shell-transport</artifactId>
             <version>${project.version}</version>
         </dependency>
+<!--
         <dependency>
             <groupId>org.mobicents.protocols.ss7.management</groupId>
             <artifactId>shell-client</artifactId>
             <version>${project.version}</version>
         </dependency>
+-->
         <dependency>
             <groupId>org.mobicents.protocols.ss7.management</groupId>
             <artifactId>shell-server-api</artifactId>
@@ -116,11 +118,13 @@
         </dependency>
 
         <!-- Hardware Dialogic Java -->
+<!--
         <dependency>
             <groupId>com.vendor.dialogic</groupId>
             <artifactId>gctapi</artifactId>
             <version>${dialogic.version}</version>
         </dependency>
+-->
         <dependency>
             <groupId>org.mobicents.protocols.ss7.hardware</groupId>
             <artifactId>restcomm-dialogic</artifactId>
@@ -199,6 +203,13 @@
             <artifactId>statistics-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- Commons -->
+		<dependency>
+			<groupId>org.mobicents.commons</groupId>
+			<artifactId>commons</artifactId>
+            <version>${commons.version}</version>
+		</dependency>
 
         <!-- ASN -->
         <dependency>
