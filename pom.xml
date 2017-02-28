@@ -70,8 +70,6 @@
 		<module>sgw</module>
 
 		<module>tools</module>
-
-		<module>build</module>
 	</modules>
 
 	<!-- declare our babies -->

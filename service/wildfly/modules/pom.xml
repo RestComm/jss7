@@ -4,13 +4,13 @@
 
     <parent>
         <groupId>org.mobicents.protocols.ss7</groupId>
-        <artifactId>ss7-build-wildfly</artifactId>
+        <artifactId>restcomm-ss7-wildfly</artifactId>
         <version>8.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ss7-build-wildfly-modules</artifactId>
+    <artifactId>restcomm-ss7-wildfly-modules</artifactId>
 
-    <name>Restcomm jSS7 :: ${project.artifactId}</name>
+	<name>Restcomm jSS7 :: Service :: WildFly :: ${project.artifactId}</name>
 
     <properties>
         <module.name>org.mobicents.ss7.modules</module.name>
