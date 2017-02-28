@@ -1,3 +1,7 @@
+1)
+<extension module="org.mobicents.ss7.extension"/>
+
+2)
         <subsystem xmlns="urn:org.restcomm:ss7-wildfly:1.0">
             <mbean name="SCTPManagement" type="SCTPManagement" class="org.mobicents.protocols.sctp.netty.NettySctpManagementImpl" interface="empty" enabled="true" reflection="false">
 <!--
@@ -109,9 +113,7 @@
             <mbean name="ShellExecutor" type="ShellExecutor" class="org.mobicents.ss7.management.console.ShellServer" enabled="true" reflection="false">
                 <property name="address" type="String" value="127.0.0.1"/>
                 <property name="port" type="int" value="3435"/>
-<!--
-                <property name="securityDomain" type="String" value="java:/jaas/jmx-console"/>
--->
+                <property name="securityDomain" type="String" value="jmx-console"/>
             </mbean>
 
             <mbean name="Ss7Management" type="Ss7Management" class="org.mobicents.protocols.ss7.oam.common.jmxss7.Ss7Management" enabled="true" reflection="false">
