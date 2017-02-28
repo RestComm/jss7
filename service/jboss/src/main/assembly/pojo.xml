@@ -49,18 +49,18 @@
 				<include>org.mobicents.protocols.ss7.mtp:mtp-api</include>
 				<include>org.mobicents.protocols.ss7.scheduler:scheduler</include>				
 				<include>org.mobicents.protocols.ss7.hardware:linkset</include>
-				
+
 				<include>org.mobicents.protocols.ss7.management:shell-transport</include>
 				<include>org.mobicents.protocols.ss7.management:shell-server-api</include>
 				<include>org.mobicents.protocols.ss7.management:shell-server-impl</include>
-				
+
 				<include>org.mobicents.protocols.ss7.hardware:restcomm-dahdi</include> 
 				<include>org.mobicents.protocols.ss7.hardware:restcomm-dialogic</include>
 				<include>org.mobicents.protocols.ss7.congestion:congestion</include>
-				
+
 				<include>org.mobicents.protocols.ss7.statistics:statistics-api</include>
 				<include>org.mobicents.protocols.ss7.statistics:statistics-impl</include>
-				
+
 				<!-- Restcomm jSS7 Libs -->
 				<include>org.mobicents.protocols.ss7.oam.common:jmx</include>
 				<include>org.mobicents.protocols.ss7.oam.common:jmxss7</include>
