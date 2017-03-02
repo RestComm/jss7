@@ -76,7 +76,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>ss7-build-wildfly-modules</artifactId>
+            <artifactId>restcomm-ss7-wildfly-modules</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
