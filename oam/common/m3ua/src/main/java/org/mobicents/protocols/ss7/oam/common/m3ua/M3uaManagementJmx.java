@@ -205,7 +205,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     }
 
     @Override
-    public As createAppServer(String asName, Functionality functionality, ExchangeType exchangeType, IPSPType ipspType,
+    public As createAppServer(String asName, String functionality, String exchangeType, String ipspType,
             String rc, int trafficMode, int minAspActive, String na) throws Exception {
 
         NetworkAppearance networkAppearance = null;
@@ -221,7 +221,8 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
         }
 
         TrafficModeType trafficModeType = parameterFactory.createTrafficModeType(trafficMode);
-        As as = this.wrappedM3UAManagement.createAs(asName, functionality, exchangeType, ipspType, routingContext,
+        As as = this.wrappedM3UAManagement.createAs(asName, Functionality.valueOf(functionality.toUpperCase()),
+                ExchangeType.valueOf(exchangeType.toUpperCase()), IPSPType.valueOf(ipspType.toUpperCase()), routingContext,
                 trafficModeType, minAspActive, networkAppearance);
 
         return null;
