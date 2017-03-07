@@ -36,7 +36,9 @@ import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
 import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
 import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
 import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
 import org.mobicents.protocols.ss7.cap.api.isup.Digits;
+import org.mobicents.protocols.ss7.cap.api.primitives.CalledPartyBCDNumber;
 import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
 import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequest;
@@ -83,14 +85,20 @@ import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive
 import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.TimeInformation;
 import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
 import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericDigits;
 import org.mobicents.protocols.ss7.isup.message.parameter.GenericNumber;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 import org.mobicents.protocols.ss7.tools.simulator.Stoppable;
+import org.mobicents.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.mobicents.protocols.ss7.tools.simulator.common.CapApplicationContextSsf;
 import org.mobicents.protocols.ss7.tools.simulator.common.TesterBase;
 import org.mobicents.protocols.ss7.tools.simulator.level3.CapMan;
+import org.mobicents.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
 import org.mobicents.protocols.ss7.tools.simulator.management.TesterHost;
 
 /**
@@ -169,6 +177,281 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
         CapApplicationContextSsf x = CapApplicationContextSsf.createInstance(val);
         if (x != null)
             this.setCapApplicationContext(x);
+    }
+
+    @Override
+    public int getServiceKey() {
+        return this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getServiceKey();
+    }
+
+    @Override
+    public void setServiceKey(int serviceKey) {
+        this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().setServiceKey(serviceKey);
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public EventTypeBCSMType getIdpEventTypeBCSM() {
+        return new EventTypeBCSMType(this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getIdpEventTypeBCSM().getCode());
+    }
+
+    @Override
+    public String getIdpEventTypeBCSM_Value() {
+          return new EventTypeBCSMType(this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getIdpEventTypeBCSM().getCode()).toString();
+    }
+
+    @Override
+    public void setIdpEventTypeBCSM(EventTypeBCSMType value) {
+        this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().setIdpEventTypeBCSM(EventTypeBCSM.getInstance(value.intValue()));
+        this.testerHost.markStore();
+    }
+
+
+    @Override
+    public void putIdpEventTypeBCSM(String s) {
+        EventTypeBCSMType x = EventTypeBCSMType.createInstance(s);
+        if (x != null)
+            this.setIdpEventTypeBCSM(x);
+    }
+
+    @Override
+    public boolean isUseCldInsteadOfCldBCDNumber() {
+        return this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().isUseCldInsteadOfCldBCDNumber();
+    }
+
+    @Override
+    public void setUseCldInsteadOfCldBCDNumber(boolean value) {
+        this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().setUseCldInsteadOfCldBCDNumber(value);
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public String getCallingPartyNumberAddress() {
+        return this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCallingPartyNumberAddress();
+    }
+
+    @Override
+    public void setCallingPartyNumberAddress(String callingPartyNumberAddress) {
+        this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().setCallingPartyNumberAddress(callingPartyNumberAddress);
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public IsupNatureOfAddressIndicatorType getCallingPartyNumberNatureOfAddress() {
+        return new IsupNatureOfAddressIndicatorType(this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCallingPartyNumberNatureOfAddress().getCode());
+    }
+
+    @Override
+    public String getCallingPartyNumberNatureOfAddress_Value() {
+        return new IsupNatureOfAddressIndicatorType(this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCallingPartyNumberNatureOfAddress().getCode()).toString();
+    }
+
+
+    @Override
+    public void setCallingPartyNumberNatureOfAddress(IsupNatureOfAddressIndicatorType value) {
+
+        this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().setCallingPartyNumberNatureOfAddress(IsupNatureOfAddressIndicator.getInstance(value.intValue()));
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public void putCallingPartyNumberNatureOfAddress(String s) {
+        IsupNatureOfAddressIndicatorType x = IsupNatureOfAddressIndicatorType.createInstance(s);
+        if (x != null)
+            this.setCallingPartyNumberNatureOfAddress(x);
+    }
+
+    @Override
+    public IsupNumberingPlanIndicatorType getCallingPartyNumberNumberingPlan() {
+        return new IsupNumberingPlanIndicatorType (this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCallingPartyNumberNumberingPlan().getCode());
+    }
+    @Override
+    public String getCallingPartyNumberNumberingPlan_Value (){
+        return new IsupNumberingPlanIndicatorType (this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCallingPartyNumberNumberingPlan().getCode()).toString();
+    }
+
+    @Override
+    public void setCallingPartyNumberNumberingPlan(IsupNumberingPlanIndicatorType value) {
+        this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().setCallingPartyNumberNumberingPlan(IsupNumberingPlanIndicator.getInstance(value.intValue()));
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public void putCallingPartyNumberNumberingPlan(String s) {
+        IsupNumberingPlanIndicatorType x = IsupNumberingPlanIndicatorType.createInstance(s);
+        if (x != null)
+            this.setCallingPartyNumberNumberingPlan(x);
+    }
+
+    @Override
+    public String getCalledPartyBCDNumberAddress() {
+        return this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCalledPartyBCDNumberAddress();
+    }
+
+    @Override
+    public void setCalledPartyBCDNumberAddress(String calledPartyBCDNumberAddress) {
+        this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().setCalledPartyBCDNumberAddress(calledPartyBCDNumberAddress);
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public AddressNatureType getCalledPartyBCDNumberAddressNature() {
+           return new AddressNatureType(this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCalledPartyBCDNumberAddressNature().getIndicator());
+    }
+
+    @Override
+    public String getCalledPartyBCDNumberAddressNature_Value() {
+        return new AddressNatureType(this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCalledPartyBCDNumberAddressNature().getIndicator()).toString();
+    }
+
+    @Override
+    public void setCalledPartyBCDNumberAddressNature(AddressNatureType val) {
+        this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().setCalledPartyBCDNumberAddressNature(AddressNature.getInstance(val.intValue()));
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public void putCalledPartyBCDNumberAddressNature(String val) {
+        AddressNatureType x = AddressNatureType.createInstance(val);
+        if (x != null)
+            this.setCalledPartyBCDNumberAddressNature(x);
+    }
+
+    @Override
+    public NumberingPlanMapType getCalledPartyBCDNumberNumberingPlan() {
+        return new NumberingPlanMapType(this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCalledPartyBCDNumberNumberingPlan().getIndicator());
+    }
+
+    @Override
+    public String getCalledPartyBCDNumberNumberingPlan_Value() {
+        return new NumberingPlanMapType(this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCalledPartyBCDNumberNumberingPlan().getIndicator()).toString();
+    }
+
+    @Override
+    public void setCalledPartyBCDNumberNumberingPlan(NumberingPlanMapType val) {
+        this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().setCalledPartyBCDNumberNumberingPlan(NumberingPlan.getInstance(val.intValue()));
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public void putCalledPartyBCDNumberNumberingPlan(String s) {
+        NumberingPlanMapType x = NumberingPlanMapType.createInstance(s);
+        if (x != null)
+            this.setCalledPartyBCDNumberNumberingPlan(x);
+    }
+
+    @Override
+    public String getCalledPartyNumberAddress() {
+        return this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCalledPartyNumberAddress();
+    }
+
+    @Override
+    public void setCalledPartyNumberAddress(String calledPartyNumberAddress) {
+        this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().setCalledPartyNumberAddress(calledPartyNumberAddress);
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public IsupNatureOfAddressIndicatorType getCalledPartyNumberNatureOfAddress() {
+        return new IsupNatureOfAddressIndicatorType (this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCalledPartyNumberNatureOfAddress().getCode());
+    }
+
+    @Override
+    public String getCalledPartyNumberNatureOfAddress_Value(){
+        return new IsupNatureOfAddressIndicatorType (this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCalledPartyNumberNatureOfAddress().getCode()).toString();
+    }
+
+    @Override
+    public void setCalledPartyNumberNatureOfAddress(IsupNatureOfAddressIndicatorType val) {
+        this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().setCalledPartyNumberNatureOfAddress(IsupNatureOfAddressIndicator.getInstance(val.intValue()));
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public void putCalledPartyNumberNatureOfAddress(String s) {
+        IsupNatureOfAddressIndicatorType x = IsupNatureOfAddressIndicatorType.createInstance(s);
+        if (x != null)
+            this.setCalledPartyNumberNatureOfAddress(x);
+    }
+
+    @Override
+    public IsupNumberingPlanIndicatorType getCalledPartyNumberNumberingPlan() {
+        return new IsupNumberingPlanIndicatorType(this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCalledPartyNumberNumberingPlan().getCode());
+    }
+
+    @Override
+    public String getCalledPartyNumberNumberingPlan_Value() {
+        return new IsupNumberingPlanIndicatorType(this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getCalledPartyNumberNumberingPlan().getCode()).toString();
+    }
+
+    @Override
+    public void setCalledPartyNumberNumberingPlan(IsupNumberingPlanIndicatorType val) {
+        this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().setCalledPartyNumberNumberingPlan(IsupNumberingPlanIndicator.getInstance(val.intValue()));
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public void putCalledPartyNumberNumberingPlan(String s) {
+        IsupNumberingPlanIndicatorType x = IsupNumberingPlanIndicatorType.createInstance(s);
+        if (x != null)
+            this.setCalledPartyNumberNumberingPlan(x);
+    }
+
+    @Override
+    public String getMscAddressAddress() {
+        return this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getMscAddressAddress();
+    }
+
+    @Override
+    public void setMscAddressAddress(String mscAddressAddress) {
+        this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().setMscAddressAddress(mscAddressAddress);
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public AddressNatureType getMscAddressNatureOfAddress() {
+        return new AddressNatureType(this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getMscAddressNatureOfAddress().getIndicator());
+    }
+
+    @Override
+    public String getMscAddressNatureOfAddress_Value() {
+        return new AddressNatureType(this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getMscAddressNatureOfAddress().getIndicator()).toString();
+    }
+
+    @Override
+    public void setMscAddressNatureOfAddress(AddressNatureType val) {
+        this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().setMscAddressNatureOfAddress(AddressNature.getInstance(val.intValue()));
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public void putMscAddressNatureOfAddress(String val) {
+        AddressNatureType x = AddressNatureType.createInstance(val);
+        if (x != null)
+            this.setMscAddressNatureOfAddress(x);
+    }
+
+    @Override
+    public NumberingPlanMapType getMscAddressNumberingPlan() {
+           return new NumberingPlanMapType(this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getMscAddressNumberingPlan().getIndicator());
+    }
+
+    @Override
+    public String getMscAddressNumberingPlan_Value() {
+        return new AddressNatureType(this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().getMscAddressNumberingPlan().getIndicator()).toString();
+    }
+
+    @Override
+    public void setMscAddressNumberingPlan(NumberingPlanMapType val) {
+        this.testerHost.getConfigurationData().getTestCapSsfConfigurationData().setMscAddressNumberingPlan(NumberingPlan.getInstance(val.intValue()));
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public void putMscAddressNumberingPlan(String s) {
+        NumberingPlanMapType x = NumberingPlanMapType.createInstance(s);
+        if (x != null)
+            this.setMscAddressNumberingPlan(x);
     }
 
     @Override
@@ -280,6 +563,14 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
         // currentRequestDef = "";
     }
 
+    private boolean isMtEventTypeBCSM(EventTypeBCSM eventTypeBCSM) {
+        return eventTypeBCSM == EventTypeBCSM.termAttemptAuthorized || eventTypeBCSM == EventTypeBCSM.tBusy
+                || eventTypeBCSM == EventTypeBCSM.tNoAnswer || eventTypeBCSM == EventTypeBCSM.tAnswer
+                || eventTypeBCSM == EventTypeBCSM.tMidCall || eventTypeBCSM == EventTypeBCSM.tDisconnect
+                || eventTypeBCSM == EventTypeBCSM.tAbandon || eventTypeBCSM == EventTypeBCSM.tChangeOfPosition
+                || eventTypeBCSM == EventTypeBCSM.tServiceChange;
+    }
+
     @Override
     public String performInitialDp(String msg) {
         if (!isStarted)
@@ -292,8 +583,8 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
         currentRequestDef = "";
 
         CAPProvider capProvider = this.capMan.getCAPStack().getCAPProvider();
-        CAPApplicationContext capAppContext = this.testerHost.getConfigurationData().getTestCapSsfConfigurationData()
-                .getCapApplicationContext().getCAPApplicationContext();
+        TestCapSsfConfigurationData ssfConfigData = this.testerHost.getConfigurationData().getTestCapSsfConfigurationData();
+        CAPApplicationContext capAppContext = ssfConfigData.getCapApplicationContext().getCAPApplicationContext();
 
         try {
             CAPDialogCircuitSwitchedCall curDialog = capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(
@@ -301,17 +592,49 @@ public class TestCapSsfMan extends TesterBase implements TestCapSsfManMBean, Sto
             currentDialog = curDialog;
             this.testerHost.sendNotif(SOURCE_NAME, "DlgStarted:", "TrId=" + curDialog.getLocalDialogId(), Level.DEBUG);
 
-            int serviceKey = 1;
-            CalledPartyNumber calledPartyNumberIsup = capProvider.getISUPParameterFactory().createCalledPartyNumber();
-            calledPartyNumberIsup.setAddress("111222");
-            calledPartyNumberIsup.setInternalNetworkNumberIndicator(calledPartyNumberIsup._INN_ROUTING_ALLOWED);
-            calledPartyNumberIsup.setNatureOfAddresIndicator(calledPartyNumberIsup._NAI_INTERNATIONAL_NUMBER);
-            calledPartyNumberIsup.setNumberingPlanIndicator(calledPartyNumberIsup._NPI_ISDN);
-            CalledPartyNumberCap calledPartyNumber = capProvider.getCAPParameterFactory().createCalledPartyNumberCap(
-                    calledPartyNumberIsup);
+            int serviceKey = ssfConfigData.getServiceKey() != null ? ssfConfigData.getServiceKey() : 1;
+            EventTypeBCSM eventTypeBCSM = ssfConfigData.getIdpEventTypeBCSM();
 
-            curDialog.addInitialDPRequest(serviceKey, calledPartyNumber, null, null, null, null, null, null, null, null, null,
-                    null, null, null, null, null, null, null, null, null, false, null, null, null, null, null, null, null,
+            CalledPartyBCDNumber calledPartyBCDNumber = null;
+            CalledPartyNumberCap calledPartyNumber = null;
+            String calledPartyBCDNumberAddr = ssfConfigData.getCalledPartyBCDNumberAddress();
+
+            if (isMtEventTypeBCSM(eventTypeBCSM) || ssfConfigData.isUseCldInsteadOfCldBCDNumber()) {
+                // MT & MF calls
+                CalledPartyNumber calledPartyNumberIsup = capProvider.getISUPParameterFactory().createCalledPartyNumber();
+                String calledPartyNumberAddr = ssfConfigData.getCalledPartyNumberAddress();
+                calledPartyNumberIsup.setAddress(calledPartyNumberAddr);
+                calledPartyNumberIsup.setNatureOfAddresIndicator(ssfConfigData.getCalledPartyNumberNatureOfAddress().getCode());
+                calledPartyNumberIsup.setNumberingPlanIndicator(ssfConfigData.getCalledPartyNumberNumberingPlan().getCode());
+                calledPartyNumberIsup.setInternalNetworkNumberIndicator(CalledPartyNumber._INN_ROUTING_ALLOWED);
+                calledPartyNumber = capProvider.getCAPParameterFactory().createCalledPartyNumberCap(
+                        calledPartyNumberIsup);
+            } else {
+                // MO call
+                AddressNature addressNature = ssfConfigData.getCalledPartyBCDNumberAddressNature();
+                NumberingPlan numberingPlan = ssfConfigData.getCalledPartyBCDNumberNumberingPlan();
+                calledPartyBCDNumber = capProvider.getCAPParameterFactory().createCalledPartyBCDNumber(addressNature, numberingPlan, calledPartyBCDNumberAddr);
+            }
+            String callingPartyNumberAddr = ssfConfigData.getCallingPartyNumberAddress();
+            IsupNatureOfAddressIndicator callingPartyNumberNAI = ssfConfigData.getCallingPartyNumberNatureOfAddress();
+            IsupNumberingPlanIndicator callingPartyNumberNP = ssfConfigData.getCallingPartyNumberNumberingPlan();
+            CallingPartyNumber callingPartyNumberIsup = capProvider.getISUPParameterFactory().createCallingPartyNumber();
+            callingPartyNumberIsup.setAddress(callingPartyNumberAddr);
+            callingPartyNumberIsup.setNatureOfAddresIndicator(callingPartyNumberNAI.getCode());
+            callingPartyNumberIsup.setNumberingPlanIndicator(callingPartyNumberNP.getCode());
+            callingPartyNumberIsup.setNumberIncompleteIndicator(CallingPartyNumber._NI_COMPLETE);
+            callingPartyNumberIsup.setAddressRepresentationREstrictedIndicator(CallingPartyNumber._APRI_ALLOWED);
+            callingPartyNumberIsup.setScreeningIndicator(CallingPartyNumber._SI_NETWORK_PROVIDED);
+            CallingPartyNumberCap callingPartyNumber = capProvider.getCAPParameterFactory().createCallingPartyNumberCap(
+                    callingPartyNumberIsup);
+
+            String mscAddressAddr = ssfConfigData.getMscAddressAddress();
+            AddressNature mscAddressNature = ssfConfigData.getMscAddressNatureOfAddress();
+            NumberingPlan mscAddressNP = ssfConfigData.getMscAddressNumberingPlan();
+            ISDNAddressString mscAddress = capProvider.getMAPParameterFactory().createISDNAddressString(mscAddressNature, mscAddressNP, mscAddressAddr);
+
+            curDialog.addInitialDPRequest(serviceKey, calledPartyNumber, callingPartyNumber, null, null, null, null, null, null, null, null,
+                    null, eventTypeBCSM, null, null, null, null, null, null, null, false, null, null, null, null, null, mscAddress, calledPartyBCDNumber,
                     null, false, null);
 
             curDialog.send();
