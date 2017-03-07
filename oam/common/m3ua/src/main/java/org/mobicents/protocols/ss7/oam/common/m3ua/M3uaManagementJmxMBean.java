@@ -22,9 +22,6 @@
 package org.mobicents.protocols.ss7.oam.common.m3ua;
 
 import org.mobicents.protocols.ss7.m3ua.As;
-import org.mobicents.protocols.ss7.m3ua.ExchangeType;
-import org.mobicents.protocols.ss7.m3ua.Functionality;
-import org.mobicents.protocols.ss7.m3ua.IPSPType;
 import org.mobicents.protocols.ss7.m3ua.M3UAManagement;
 
 /**
@@ -35,7 +32,7 @@ import org.mobicents.protocols.ss7.m3ua.M3UAManagement;
  */
 public interface M3uaManagementJmxMBean extends M3UAManagement {
 
-    As createAppServer(String asName, Functionality functionality, ExchangeType exchangeType, IPSPType ipspType, String rc,
+    As createAppServer(String asName, String functionality, String exchangeType, String ipspType, String rc,
             int trafficMode, int minAspActive, String na) throws Exception;
 
 }
