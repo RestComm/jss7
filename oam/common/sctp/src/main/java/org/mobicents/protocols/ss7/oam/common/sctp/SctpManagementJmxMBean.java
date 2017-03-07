@@ -22,7 +22,6 @@
 package org.mobicents.protocols.ss7.oam.common.sctp;
 
 import org.mobicents.protocols.api.Association;
-import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.api.Management;
 import org.mobicents.protocols.api.Server;
 
@@ -33,13 +32,13 @@ import org.mobicents.protocols.api.Server;
  *
  */
 public interface SctpManagementJmxMBean extends Management {
-    Server addSctpServer(String serverName, String hostAddress, int port, IpChannelType ipChannelType,
+    Server addSctpServer(String serverName, String hostAddress, int port, String ipChannelType,
             boolean acceptAnonymousConnections, int maxConcurrentConnectionsCount, String extraHostAddresses) throws Exception;
 
     Association addSctpAssociation(String hostAddress, int hostPort, String peerAddress, int peerPort, String assocName,
-            IpChannelType ipChannelType, String extraHostAddresses) throws Exception;
+            String ipChannelType, String extraHostAddresses) throws Exception;
 
     Association addSctpServerAssociation(String peerAddress, int peerPort, String serverName, String assocName,
-            IpChannelType ipChannelType) throws Exception;
+            String ipChannelType) throws Exception;
 
 }
