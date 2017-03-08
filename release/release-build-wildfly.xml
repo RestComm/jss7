@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="Release_build" default="deploy">
 
+	<path id="xmltask.path">
+	    <pathelement path="${basedir}/xmltask.jar" />
+	</path>
+	<taskdef name="xmltask" classpathref="xmltask.path" classname="com.oopsconsultancy.xmltask.ant.XmlTask" />
+
 	<property name="home" value="${ant.file.Release_build}/../" />
 
 	<!-- SYSTEM RELATED -->
@@ -9,6 +14,7 @@
 	<property name="jboss.deploy" value="${jboss.home}/standalone/deployments" />
 
 	<property name="jboss.modules.path" value="${jboss.home}/modules/system/layers/base" />
+	<property name="jboss.standalone.path" value="${jboss.home}/standalone" />
 	<property name="restcomm-ss7.path" value="${jboss.modules.path}/org/mobicents/ss7" />
 
 	<condition property="file_url" value="file:/">
@@ -23,56 +29,122 @@
 
 	<target name="deploy">
 
+		<!-- adding of "name="com/sun/nio/sctp"/>" into jdk/main/module.xml -->
+		<xmltask source="${jboss.modules.path}/sun/jdk/main/module.xml" dest="${jboss.modules.path}/sun/jdk/main/module.xml">
+			<remove path="/:module/:dependencies/:system/:paths/:path[@name='com/sun/nio/sctp']"/>
+			<insert path="/:module/:dependencies/:system/:paths/:path[last()]" position="after">
+				<![CDATA[<path xmlns="urn:jboss:module:1.3" name="com/sun/nio/sctp"/>]]> 
+			</insert>
+		</xmltask> 
+
+		<!-- adding of "org.mobicents.ss7.modules" name="com/sun/nio/sctp"/>" into /org/restcomm/slee/container/lib/main/module.xml -->
+		<xmltask source="${jboss.modules.path}/org/restcomm/slee/container/lib/main/module.xml" dest="${jboss.modules.path}/org/restcomm/slee/container/lib/main/module.xml">
+			<remove path="/:module/:dependencies/:module[@name='org.mobicents.ss7.modules']"/>
+			<insert path="/:module/:dependencies/:module[last()]" position="after">
+				<![CDATA[<module xmlns="urn:jboss:module:1.0" name="org.mobicents.ss7.modules" export="true"/>]]> 
+			</insert>
+		</xmltask> 
+
+		<!-- adding of a security domain into standalone.xml -->
+		<xmltask source="${jboss.standalone.path}/configuration/standalone.xml" dest="${jboss.standalone.path}/configuration/standalone.xml">
+			<remove path="/:server/:profile/*[local-name()='subsystem']/*[local-name()='security-domains']/*[local-name()='security-domain' and @name='jmx-console']"/>
+			<insert path="/:server/:profile/*[local-name()='subsystem']/*[local-name()='security-domains']/*[local-name()='security-domain'][last()]" position="after" file="template/security-domains.txt"></insert>
+		</xmltask> 
+
+		<!-- adding of "<extension module="org.mobicents.ss7.extension"/>" into standalone.xml -->
+		<xmltask source="${jboss.standalone.path}/configuration/standalone.xml" dest="${jboss.standalone.path}/configuration/standalone.xml">
+			<insert path="/:server/:extensions/:extension[last()]" position="after">
+				<![CDATA[<extension xmlns="urn:jboss:domain:4.2" module="org.mobicents.ss7.extension"/>]]> 
+			</insert>
+		</xmltask>
+
+		<!-- adding of ss7 subsystem into standalone.xml -->
+		<xmltask source="${jboss.standalone.path}/configuration/standalone.xml" dest="${jboss.standalone.path}/configuration/standalone.xml">
+			<remove path="/:server/:profile/*[local-name()='subsystem'][*[local-name()='mbean'][@reflection]]"/>
+			<insert path="/:server/:profile/*[local-name()='subsystem'][last()]" position="after" file="template/wildfly-jss7-subsystem.txt"></insert>
+		</xmltask> 
+
 		<!-- Copy jSS7 Extension with Modules -->
 		<copy overwrite="true" todir="${restcomm-ss7.path}">
-			<fileset dir="./restcomm-ss7-service/extension">
-				<include name="**" />
+			<fileset dir="${basedir}/restcomm-ss7-service">
+				<include name="*/**" />
 			</fileset>
-			<fileset dir="./restcomm-ss7-service/modules">
-				<include name="**" />
+			<fileset dir="${basedir}/restcomm-ss7-service">
+				<include name="*/**" />
 			</fileset>
 		</copy>
 
-		<!-- Update WildFly configuration with adding jSS7 Extension and Subsystem -->
-		<replace file="${jboss.home}/standalone/configuration/standalone.xml">
-			<replacetoken><![CDATA[</extensions>]]></replacetoken>
-			<replacevalue><![CDATA[    <extension module="org.mobicents.ss7.extension"/>
-	</extensions>]]></replacevalue>
-		</replace>
-
-		<loadfile property="subsystem.config" srcFile="${basedir}/wildfly-jss7-subsystem.txt" failonerror="true"/>
-		<replace file="${jboss.home}/standalone/configuration/standalone.xml" value="${subsystem.config}">
-			<replacetoken><![CDATA[</profile>]]></replacetoken>
-			<replacevalue><![CDATA[
-	</profile>]]></replacevalue>
-		</replace>
-
 		<copy overwrite="true" todir="${jboss.home}/bin">
-			<fileset dir="./shell/bin">
+			<fileset dir="${basedir}/../ss7/shell/bin">
 				<include name="**" />
 			</fileset>			
 		</copy>
 
 		<copy overwrite="true" todir="${jboss.home}/lib">
-			<fileset dir="./shell/lib">
+			<fileset dir="${basedir}/../ss7/shell/lib">
 				<include name="**" />
 			</fileset>			
 		</copy>
 
 		<copy overwrite="true" todir="${jboss.deploy}">
-			<fileset dir="./../oam/new-ui">
+			<fileset dir="${basedir}/../oam/new-ui">
 				<include name="**" />
+			</fileset>			
+		</copy>
+
+		<copy overwrite="true" todir="${jboss.standalone.path}/configuration">
+			<fileset dir="${basedir}/template">
+				<include name="jmx-roles.properties" />
+				<include name="jmx-users.properties" />
 			</fileset>			
 		</copy>
 
 	</target>
 
 	<target name="undeploy">
+
+		<xmltask source="${jboss.modules.path}/sun/jdk/main/module.xml" dest="${jboss.modules.path}/sun/jdk/main/module.xml">
+			<remove path="/:module/:dependencies/:system/:paths/:path[@name='com/sun/nio/sctp']"/>
+		</xmltask> 
+
+		<xmltask source="${jboss.modules.path}/org/restcomm/slee/container/lib/main/module.xml" dest="${jboss.modules.path}/org/restcomm/slee/container/lib/main/module.xml">
+			<remove path="/:module/:dependencies/:module[@name='org.mobicents.ss7.modules']"/>
+		</xmltask> 
+
+		<xmltask source="${jboss.standalone.path}/configuration/standalone.xml" dest="${jboss.standalone.path}/configuration/standalone.xml">
+			<remove path="/:server/:profile/*[local-name()='subsystem']/*[local-name()='security-domains']/*[local-name()='security-domain' and @name='jmx-console']"/>
+		</xmltask> 
+
+		<xmltask source="${jboss.standalone.path}/configuration/standalone.xml" dest="${jboss.standalone.path}/configuration/standalone.xml">
+			<remove path="/:server/:extensions/:extension[@module='org.mobicents.ss7.extension']"/>
+		</xmltask>
+
+		<xmltask source="${jboss.standalone.path}/configuration/standalone.xml" dest="${jboss.standalone.path}/configuration/standalone.xml">
+			<remove path="/:server/:profile/*[local-name()='subsystem'][*[local-name()='mbean'][@reflection]]"/>
+		</xmltask>
+
 		<delete dir="${restcomm-ss7.path}" />
+
 		<delete file="${jboss.deploy}/jss7-management-console.war" />
 		<delete file="${jboss.deploy}/jolokia.war" />
+
 		<delete file="${jboss.home}/bin/ss7-cli.sh" />
 		<delete file="${jboss.home}/bin/ss7-cli.bat" />
+
+		<delete file="${jboss.home}/lib/jansi-*.jar" />
+		<delete file="${jboss.home}/lib/javolution-*.jar" />
+		<delete file="${jboss.home}/lib/jreadline-*.jar" />
+		<delete file="${jboss.home}/lib/linkset-cli.jar" />
+		<delete file="${jboss.home}/lib/m3ua-cli-m3ua.jar" />
+		<delete file="${jboss.home}/lib/m3ua-cli-sctp.jar" />
+		<delete file="${jboss.home}/lib/restcomm-ss7-shell.jar" />
+		<delete file="${jboss.home}/lib/sccp-cli.jar" />
+		<delete file="${jboss.home}/lib/shell-transport-8.0.0-SNAPSHOT.jar" />
+		<delete file="${jboss.home}/lib/tcap-ansi-cli.jar" />
+		<delete file="${jboss.home}/lib/tcap-cli.jar" />
+
+		<delete file="${jboss.standalone.path}/configuration/jmx-roles.properties" />
+		<delete file="${jboss.standalone.path}/configuration/jmx-users.properties" />
 	</target>
 
 </project>

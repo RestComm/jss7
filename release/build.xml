@@ -182,10 +182,10 @@
               todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true"/>
 
         <!-- Copy files for deploying/undeployng jSS7 to JBoss 5 and WildFly -->
-        <copy file="${jss7.dir}/release/release-build-jboss5.xml" tofile="${restcomm.jss7.dist}/ss7-jboss/build-jboss5.xml"
+        <copy file="${jss7.dir}/release/release-build-jboss5.xml" tofile="${restcomm.jss7.dist}/ss7-jboss/build.xml"
               failonerror="true"/>
 
-    	<copy file="${jss7.dir}/release/release-build-wildfly.xml" tofile="${restcomm.jss7.dist}/ss7-wildfly/build-wildfly.xml"
+    	<copy file="${jss7.dir}/release/release-build-wildfly.xml" tofile="${restcomm.jss7.dist}/ss7-wildfly/build.xml"
               failonerror="true"/>
         <copy file="${jss7.dir}/release/wildfly-jss7-subsystem.txt" tofile="${restcomm.jss7.dist}/ss7-wildfly/template/wildfly-jss7-subsystem.txt"
               failonerror="true"/>
@@ -196,6 +196,8 @@
         <copy file="${jss7.dir}/release/jmx-roles.properties" tofile="${restcomm.jss7.dist}/ss7-wildfly/template/jmx-roles.properties"
               failonerror="true"/>
         <copy file="${jss7.dir}/release/jmx-users.properties" tofile="${restcomm.jss7.dist}/ss7-wildfly/template/jmx-users.properties"
+              failonerror="true"/>
+    	<copy file="${jss7.dir}/release/xmltask.jar" tofile="${restcomm.jss7.dist}/ss7-wildfly/xmltask.jar"
               failonerror="true"/>
 
         <!-- Copy templates for JBoss 5 -->
