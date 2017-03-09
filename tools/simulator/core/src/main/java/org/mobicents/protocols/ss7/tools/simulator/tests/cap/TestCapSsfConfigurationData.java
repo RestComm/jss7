@@ -69,7 +69,7 @@ public class TestCapSsfConfigurationData {
     private CapApplicationContextSsf capApplicationContext = new CapApplicationContextSsf(
             CapApplicationContextSsf.VAL_CAP_V1_gsmSSF_to_gsmSCF);
 
-    private Integer serviceKey = 10;
+    private int serviceKey = 10;
     private EventTypeBCSM idpEventTypeBCSM = EventTypeBCSM.collectedInfo;
 
     private boolean useCldInsteadOfCldBCDNumber= false;
@@ -237,35 +237,56 @@ public class TestCapSsfConfigurationData {
             String cpv = (String) xml.get(CAP_APPLICATION_CONTEXT, String.class);
             ssf.capApplicationContext = CapApplicationContextSsf.createInstance(cpv);
 
-            ssf.serviceKey = (Integer) xml.get(SERVICE_KEY, Integer.class);
+            Integer vali = (Integer) xml.get(SERVICE_KEY, Integer.class);
+            if (vali != null)
+                ssf.serviceKey = vali;
             String eventTypeBCSM = (String) xml.get(IDP_EVENT_TYPE_BCSM, String.class);
-            ssf.idpEventTypeBCSM = EventTypeBCSM.valueOf(eventTypeBCSM);
+            if (eventTypeBCSM != null)
+                ssf.idpEventTypeBCSM = EventTypeBCSM.valueOf(eventTypeBCSM);
 
-            ssf.useCldInsteadOfCldBCDNumber = (Boolean) xml.get(USE_CLD_INSTEAD_OF_CLDBCD_NUMBER, Boolean.class);
+            Boolean valb = (Boolean) xml.get(USE_CLD_INSTEAD_OF_CLDBCD_NUMBER, Boolean.class);
+            if (valb != null)
+                ssf.useCldInsteadOfCldBCDNumber = valb;
 
-            ssf.callingPartyNumberAddress = (String) xml.get(CALLING_PARTY_NUMBER_ADDRES, String.class);
+            String vals = (String) xml.get(CALLING_PARTY_NUMBER_ADDRES, String.class);
+            if (vals != null)
+                ssf.callingPartyNumberAddress = vals;
             String clgNai = (String) xml.get(CALLING_PARTY_NUMBER_NAI, String.class);
-            ssf.callingPartyNumberNatureOfAddress =  IsupNatureOfAddressIndicator.valueOf(clgNai);
+            if (clgNai != null)
+                ssf.callingPartyNumberNatureOfAddress = IsupNatureOfAddressIndicator.valueOf(clgNai);
             String clgNPI = (String) xml.get(CALLING_PARTY_NUMBER_NPI, String.class);
-            ssf.callingPartyNumberNumberingPlan = IsupNumberingPlanIndicator.valueOf(clgNPI);
+            if (clgNPI != null)
+                ssf.callingPartyNumberNumberingPlan = IsupNumberingPlanIndicator.valueOf(clgNPI);
 
-            ssf.calledPartyBCDNumberAddress = (String) xml.get(CALLED_PARTY_BCD_NUMBER_ADDRES, String.class);
+            vals = (String) xml.get(CALLED_PARTY_BCD_NUMBER_ADDRES, String.class);
+            if (vals != null)
+                ssf.calledPartyBCDNumberAddress = vals;
             String calledPartyBCDNumberAddressNature = (String) xml.get(CALLED_PARTY_BCD_NUMBER_TON, String.class);
-            ssf.calledPartyBCDNumberAddressNature = AddressNature.valueOf(calledPartyBCDNumberAddressNature);
+            if (calledPartyBCDNumberAddressNature != null)
+                ssf.calledPartyBCDNumberAddressNature = AddressNature.valueOf(calledPartyBCDNumberAddressNature);
             String calledPartyBCDNumberNP = (String) xml.get(CALLED_PARTY_BCD_NUMBER_NPI, String.class);
-            ssf.calledPartyBCDNumberNumberingPlan = NumberingPlan.valueOf(calledPartyBCDNumberNP);
+            if (calledPartyBCDNumberNP != null)
+                ssf.calledPartyBCDNumberNumberingPlan = NumberingPlan.valueOf(calledPartyBCDNumberNP);
 
-            ssf.calledPartyNumberAddress = (String) xml.get(CALLED_PARTY_NUMBER_ADDRES, String.class);
+            vals = (String) xml.get(CALLED_PARTY_NUMBER_ADDRES, String.class);
+            if (vals != null)
+                ssf.calledPartyNumberAddress = vals;
             String cldNAI = (String) xml.get(CALLED_PARTY_NUMBER_NAI, String.class);
-            ssf.calledPartyNumberNatureOfAddress = IsupNatureOfAddressIndicator.valueOf(cldNAI);
+            if (cldNAI != null)
+                ssf.calledPartyNumberNatureOfAddress = IsupNatureOfAddressIndicator.valueOf(cldNAI);
             String cldNPI = (String) xml.get(CALLED_PARTY_NUMBER_NPI, String.class);
-            ssf.calledPartyNumberNumberingPlan = IsupNumberingPlanIndicator.valueOf(cldNPI);
+            if (cldNPI != null)
+                ssf.calledPartyNumberNumberingPlan = IsupNumberingPlanIndicator.valueOf(cldNPI);
 
-            ssf.mscAddressAddress = (String) xml.get(MSC_ADDRESS_ADDRES, String.class);
+            vals = (String) xml.get(MSC_ADDRESS_ADDRES, String.class);
+            if (vals != null)
+                ssf.mscAddressAddress = vals;
             String mscAddressNature = (String) xml.get(MSC_ADDRESS_NA, String.class);
-            ssf.mscAddressNatureOfAddress = AddressNature.valueOf(mscAddressNature);
+            if (mscAddressNature != null)
+                ssf.mscAddressNatureOfAddress = AddressNature.valueOf(mscAddressNature);
             String mscAddrNP = (String) xml.get(MSC_ADDRESS_NPI, String.class);
-            ssf.mscAddressNumberingPlan = NumberingPlan.valueOf(mscAddrNP);
+            if (mscAddrNP != null)
+                ssf.mscAddressNumberingPlan = NumberingPlan.valueOf(mscAddrNP);
 
         }
     };

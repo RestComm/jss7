@@ -128,17 +128,23 @@ public class TestCapScfConfigurationData {
         public void read(InputElement xml, TestCapScfConfigurationData scf) throws XMLStreamException {
             String cpv = (String) xml.get(CAP_APPLICATION_CONTEXT, String.class);
             scf.capApplicationContext = CapApplicationContextScf.createInstance(cpv);
+
             scf.conDestRouteAddrAddress = (String) xml.get(CON_DESTINATION_ROUTING_ADDRESS_ADDRES, String.class);
             String cldNAI = (String) xml.get(CON_DESTINATION_ROUTING_ADDRESS_NAI, String.class);
-            scf.conDestRouteAddrNatureOfAddress = IsupNatureOfAddressIndicator.valueOf(cldNAI);
+            if (cldNAI != null)
+                scf.conDestRouteAddrNatureOfAddress = IsupNatureOfAddressIndicator.valueOf(cldNAI);
             String cldNPI = (String) xml.get(CON_DESTINATION_ROUTING_ADDRESS_NPI, String.class);
-            scf.conDestRouteAddrNumberingPlan = IsupNumberingPlanIndicator.valueOf(cldNPI);
+            if (cldNPI != null)
+                scf.conDestRouteAddrNumberingPlan = IsupNumberingPlanIndicator.valueOf(cldNPI);
             String relCauseValue = (String) xml.get(REL_CAUSE_VALUE, String.class);
-            scf.relCauseValue = IsupCauseIndicatorCauseValue.valueOf(relCauseValue);
+            if (relCauseValue != null)
+                scf.relCauseValue = IsupCauseIndicatorCauseValue.valueOf(relCauseValue);
             String relCodingStandardInd = (String) xml.get(REL_CODING_STANDARD_IND, String.class);
-            scf.relCodingStandardInd = IsupCauseIndicatorCodingStandard.valueOf(relCodingStandardInd);
+            if (relCodingStandardInd != null)
+                scf.relCodingStandardInd = IsupCauseIndicatorCodingStandard.valueOf(relCodingStandardInd);
             String relLocationInd = (String) xml.get(REL_LOCATION_IND, String.class);
-            scf.relLocationInd = IsupCauseIndicatorLocation.valueOf(relLocationInd);
+            if (relLocationInd != null)
+                scf.relLocationInd = IsupCauseIndicatorLocation.valueOf(relLocationInd);
         }
     };
 }
