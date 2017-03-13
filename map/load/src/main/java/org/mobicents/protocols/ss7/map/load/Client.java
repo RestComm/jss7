@@ -175,7 +175,7 @@ public class Client extends TestHarness {
         this.clientM3UAMgmt.removeAllResourses();
 
         // m3ua as create rc <rc> <ras-name>
-        RoutingContext rc = factory.createRoutingContext(new long[] { 100L });
+        RoutingContext rc = factory.createRoutingContext(new long[] { TestHarness.ROUTING_CONTEXT });
         TrafficModeType trafficModeType = factory.createTrafficModeType(TrafficModeType.Loadshare);
         this.clientM3UAMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, IPSPType.CLIENT, rc, trafficModeType, 1, null);
 
