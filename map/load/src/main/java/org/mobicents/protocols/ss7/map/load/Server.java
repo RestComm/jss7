@@ -34,6 +34,7 @@ import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
 import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl;
+import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
@@ -167,10 +168,11 @@ public class Server extends TestHarness {
 
         // Step 1 : Create App Server
 
-        RoutingContext rc = factory.createRoutingContext(new long[] { 100L });
+        RoutingContext rc = factory.createRoutingContext(new long[] { 101L });
         TrafficModeType trafficModeType = factory.createTrafficModeType(TrafficModeType.Loadshare);
+        NetworkAppearance na = factory.createNetworkAppearance(102L);
         As as = this.serverM3UAMgmt.createAs("RAS1", Functionality.SGW, ExchangeType.SE, IPSPType.CLIENT, rc, trafficModeType,
-                1, null);
+                1, na);
 
         // Step 2 : Create ASP
         AspFactory aspFactor = this.serverM3UAMgmt.createAspFactory("RASP1", SERVER_ASSOCIATION_NAME);
