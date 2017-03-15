@@ -89,7 +89,7 @@
 			<jvmarg value="-XX:+PrintGCDetails" />
 			<jvmarg value="-XX:+PrintGCTimeStamps" />
 			-->
-			<arg value="tcp" /> <!-- socket type -->
+			<arg value="sctp" /> <!-- socket type -->
 			<arg value="127.0.0.1" /> <!-- Client IP -->
 			<arg value="8011" /> <!-- Client Port -->
 			<arg value="127.0.0.1" /> <!-- Server Ip -->
@@ -110,7 +110,7 @@
 			<jvmarg value="-Dlog.file.name=log4j-client.log" />
 			<arg value="1000000" /> <!-- number of Dialogs -->
 			<arg value="100" /> <!-- Concurrent Dialogs -->
-			<arg value="tcp" /> <!-- socket type -->
+			<arg value="sctp" /> <!-- socket type -->
 			<arg value="127.0.0.1" /> <!-- Client IP -->
 			<arg value="8011" /> <!-- Client Port -->
 			<arg value="127.0.0.1" /> <!-- Server Ip -->
