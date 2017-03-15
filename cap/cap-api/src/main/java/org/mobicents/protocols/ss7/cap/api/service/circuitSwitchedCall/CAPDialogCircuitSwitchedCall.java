@@ -354,13 +354,6 @@ public interface CAPDialogCircuitSwitchedCall extends CAPDialog {
 
     Long addCollectInformationRequest(int customInvokeTimeout) throws CAPException;
 
-    Long addSplitLegRequest(LegID legIDToSplit, Integer newCallSegmentId, CAPExtensions extensions) throws CAPException;
-
-    Long addSplitLegRequest(int customInvokeTimeout, LegID legIDToSplit, Integer newCallSegmentId,
-            CAPExtensions extensions) throws CAPException;
-
-    void addSplitLegResponse(long invokeId) throws CAPException;
-
     Long addCallGapRequest(GapCriteria gapCriteria, GapIndicators gapIndicators,
                            ControlType controlType, GapTreatment gapTreatment,
                            CAPExtensions capExtension) throws CAPException;

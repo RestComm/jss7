@@ -156,7 +156,7 @@ public class CallGapRequestTest {
         InformationToSend informationToSend = new InformationToSendImpl(inbandInfo);
         GapTreatment gapTreatment = new GapTreatmentImpl(informationToSend);
 
-        ArrayList<ExtensionField> fieldsList = new ArrayList<>();
+        ArrayList<ExtensionField> fieldsList = new ArrayList<ExtensionField>();
         ExtensionField extensionField = new ExtensionFieldImpl(Integer.MIN_VALUE, CriticalityType.typeIgnore, getDigitsData2());
         fieldsList.add(extensionField);
         CAPExtensions cAPExtensions = new CAPExtensionsImpl(fieldsList);
@@ -240,7 +240,7 @@ public class CallGapRequestTest {
         InformationToSendImpl informationToSend = new InformationToSendImpl(inbandInfo);
         GapTreatmentImpl gapTreatment = new GapTreatmentImpl(informationToSend);
 
-        ArrayList<ExtensionField> fieldsList = new ArrayList<>();
+        ArrayList<ExtensionField> fieldsList = new ArrayList<ExtensionField>();
         byte[] data3 = new byte[]{13, 14, 15, 16};
         ExtensionFieldImpl extensionField = new ExtensionFieldImpl(Integer.MIN_VALUE, CriticalityType.typeIgnore, data3);
         fieldsList.add(extensionField);

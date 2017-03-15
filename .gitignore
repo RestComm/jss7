@@ -145,3 +145,8 @@ docs/sources-*/src
 /SccpStack_management2.xml
 /SccpStack_sccpresource2.xml
 /SccpStack_sccprouter2.xml
+/DialogIdleEndTest_1_management.xml
+/DialogIdleEndTest_2_management.xml
+/DialogIdleEndTestSccpStack1_management2.xml
+/DialogIdleEndTestSccpStack2_management2.xml
+/DialogIdRangeTest_management.xml

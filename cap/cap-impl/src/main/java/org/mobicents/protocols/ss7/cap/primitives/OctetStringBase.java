@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.cap.api.CAPParsingComponentExceptionReason;
  *
  */
 public class OctetStringBase implements CAPAsnPrimitive {
+    private static final char[] digits = "0123456789ABCDEF".toCharArray();
 
     protected byte[] data;
 
