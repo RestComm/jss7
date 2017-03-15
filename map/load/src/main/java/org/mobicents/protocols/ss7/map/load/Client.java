@@ -31,6 +31,7 @@ import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
 import org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl;
+import org.mobicents.protocols.ss7.m3ua.parameter.NetworkAppearance;
 import org.mobicents.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.mobicents.protocols.ss7.m3ua.parameter.TrafficModeType;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
@@ -156,9 +157,10 @@ public class Client extends TestHarness {
         this.clientM3UAMgmt.removeAllResourses();
 
         // m3ua as create rc <rc> <ras-name>
-        RoutingContext rc = factory.createRoutingContext(new long[] { 100L });
+        RoutingContext rc = factory.createRoutingContext(new long[] { 101L });
         TrafficModeType trafficModeType = factory.createTrafficModeType(TrafficModeType.Loadshare);
-        this.clientM3UAMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, IPSPType.CLIENT, rc, trafficModeType, 1, null);
+        NetworkAppearance na = factory.createNetworkAppearance(102L);
+        this.clientM3UAMgmt.createAs("AS1", Functionality.IPSP, ExchangeType.SE, IPSPType.CLIENT, rc, trafficModeType, 1, na);
 
         // Step 2 : Create ASP
         this.clientM3UAMgmt.createAspFactory("ASP1", CLIENT_ASSOCIATION_NAME);

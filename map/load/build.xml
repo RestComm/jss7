@@ -89,11 +89,11 @@
 			<jvmarg value="-XX:+PrintGCDetails" />
 			<jvmarg value="-XX:+PrintGCTimeStamps" />
 			-->
-			<arg value="sctp" /> <!-- socket type -->
+			<arg value="tcp" /> <!-- socket type -->
 			<arg value="127.0.0.1" /> <!-- Client IP -->
-			<arg value="2345" /> <!-- Client Port -->
+			<arg value="8011" /> <!-- Client Port -->
 			<arg value="127.0.0.1" /> <!-- Server Ip -->
-			<arg value="3434" /> <!-- Server Port -->
+			<arg value="8012" /> <!-- Server Port -->
 			<arg value="1" /> <!-- Client PC -->
 			<arg value="2" /> <!-- Server PC -->
 			<arg value="2" /> <!-- NI -->
@@ -108,13 +108,13 @@
 		<mkdir dir="client" />
 		<java classname="${packageprefix}.Client" fork="true" maxmemory="2048m" classpathref="project.class.path" dir="client">
 			<jvmarg value="-Dlog.file.name=log4j-client.log" />
-			<arg value="1000000" /> <!-- numbe of Dialogs -->
-			<arg value="2000" /> <!-- Concurrent Dialogs -->
-			<arg value="sctp" /> <!-- socket type -->
+			<arg value="1000000" /> <!-- number of Dialogs -->
+			<arg value="100" /> <!-- Concurrent Dialogs -->
+			<arg value="tcp" /> <!-- socket type -->
 			<arg value="127.0.0.1" /> <!-- Client IP -->
-			<arg value="2345" /> <!-- Client Port -->
+			<arg value="8011" /> <!-- Client Port -->
 			<arg value="127.0.0.1" /> <!-- Server Ip -->
-			<arg value="3434" /> <!-- Server Port -->
+			<arg value="8012" /> <!-- Server Port -->
 			<arg value="1" /> <!-- Client PC -->
 			<arg value="2" /> <!-- Server PC -->
 			<arg value="2" /> <!-- NI -->
