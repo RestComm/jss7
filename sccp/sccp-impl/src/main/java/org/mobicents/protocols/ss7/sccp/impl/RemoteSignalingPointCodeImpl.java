@@ -47,10 +47,12 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSign
 
     }
 
-    public RemoteSignalingPointCodeImpl(int remoteSpc, int remoteSpcFlag, int mask) {
+    public RemoteSignalingPointCodeImpl(int remoteSpc, int remoteSpcFlag, int mask, boolean isProhibited) {
         this.remoteSpc = remoteSpc;
         this.remoteSpcFlag = remoteSpcFlag;
         this.mask = mask;
+        this.remoteSccpProhibited = isProhibited;
+        this.remoteSpcProhibited = isProhibited;
     }
 
     public int getRemoteSpc() {
@@ -71,6 +73,11 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSign
 
     public boolean isRemoteSccpProhibited() {
         return remoteSccpProhibited;
+    }
+
+    protected void setProhibitedState(boolean remoteSpcProhibited, boolean remoteSccpProhibited) {
+        this.remoteSpcProhibited = remoteSpcProhibited;
+        this.remoteSccpProhibited = remoteSccpProhibited;
     }
 
     protected void setRemoteSpcProhibited(boolean remoteSpcProhibited) {
