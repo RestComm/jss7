@@ -55,8 +55,12 @@ public class MAPOpenInfoTest {
     }
 
     private byte[] getDataEri() {
-        return new byte[] { -96, 35, -128, 6, 17, 33, 34, 17, 33, 34, -127, 7, -111, 19, 38, -104, -122, 3, -16, -126, 9, -106,
-                2, 36, -128, 3, 0, -128, 0, -14, -125, 5, -111, -128, 55, 33, -12 };
+        return new byte[] { (byte) 160, 36, (byte) 128, 9, (byte) 150, 2, 36, (byte) 128, 3, 0, (byte) 128, 0, (byte) 242,
+                (byte) 129, 7, (byte) 145, 19, 38, (byte) 152, (byte) 134, 3, (byte) 240, (byte) 130, 7, (byte) 145, 17, 33,
+                34, 17, 33, 34, (byte) 131, 5, (byte) 145, (byte) 128, 55, 33, (byte) 244 };
+
+//        return new byte[] { -96, 35, -128, 6, 17, 33, 34, 17, 33, 34, -127, 7, -111, 19, 38, -104, -122, 3, -16, -126, 9, -106,
+//                2, 36, -128, 3, 0, -128, 0, -14, -125, 5, -111, -128, 55, 33, -12 };
     }
 
     @Test(groups = { "functional.decode", "dialog" })
@@ -141,7 +145,7 @@ public class MAPOpenInfoTest {
 
         assertNull(mapOpenInfoImpl.getExtensionContainer());
         assertTrue(mapOpenInfoImpl.getEriStyle());
-        assertTrue(mapOpenInfoImpl.getEriImsi().getData().equals("111222111222"));
+        assertTrue(mapOpenInfoImpl.getEriMsisdn().getAddress().equals("111222111222"));
 
         AddressString eriVlrNo = mapOpenInfoImpl.getEriVlrNo();
         assertEquals(eriVlrNo.getAddressNature(), AddressNature.international_number);
@@ -194,7 +198,7 @@ public class MAPOpenInfoTest {
         mapOpenInfoImpl.setExtensionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
 
         mapOpenInfoImpl.setEriStyle(true);
-        mapOpenInfoImpl.setEriImsi(servFact.createIMSI("111222111222"));
+        mapOpenInfoImpl.setEriMsisdn(servFact.createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "111222111222"));
         mapOpenInfoImpl.setEriVlrNo(servFact.createAddressString(AddressNature.international_number, NumberingPlan.ISDN,
                 "0873124"));
 

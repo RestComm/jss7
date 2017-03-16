@@ -29,7 +29,6 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.dialog.Reason;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.MessageType;
@@ -353,7 +352,7 @@ public interface MAPDialog extends Serializable {
      * @param imsi
      * @param vlrNo
      */
-    void addEricssonData(IMSI imsi, AddressString vlrNo);
+    void addEricssonData(AddressString imsi, AddressString vlrNo);
 
     /**
     * Return the value of the IdleTaskTimeout of the TCAP Dialog in milliseconds.

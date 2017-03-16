@@ -1101,10 +1101,10 @@ public class MAPFunctionalTest extends SccpHarness {
 
             @Override
             public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference,
-                    IMSI eriImsi, AddressString eriVlrNo) {
+                    AddressString eriImsi, AddressString eriVlrNo) {
                 super.onDialogRequestEricsson(mapDialog, destReference, origReference, eriImsi, eriVlrNo);
                 assertNotNull(eriImsi);
-                assertEquals(eriImsi.getData(), "12345");
+                assertEquals(eriImsi.getAddress(), "12345");
 
                 assertNotNull(eriVlrNo);
                 assertEquals(eriVlrNo.getAddress(), "556677");

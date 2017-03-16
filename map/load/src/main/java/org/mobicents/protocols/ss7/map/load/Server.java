@@ -51,7 +51,6 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
@@ -270,7 +269,7 @@ public class Server extends TestHarness {
 
     @Override
     public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference,
-            IMSI imsi, AddressString vlr) {
+            AddressString imsi, AddressString vlr) {
         if (logger.isDebugEnabled()) {
             logger.debug(String.format("onDialogRequest for DialogId=%d DestinationReference=%s OriginReference=%s ",
                     mapDialog.getLocalDialogId(), destReference, origReference));

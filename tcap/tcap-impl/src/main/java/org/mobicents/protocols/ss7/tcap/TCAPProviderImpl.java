@@ -1168,20 +1168,22 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         int cntCongLevel1 = 0;
         int cntCongLevel2 = 0;
         int cntCongLevel3 = 0;
-        for (NetworkIdState state : networkIdStateList.values()) {
-            if (!state.isAvailavle())
-                cntNotAvailable++;
-            if (state.getCongLevel() >= 1) {
-                cntCongLevel1++;
-            }
-            if (state.getCongLevel() >= 2) {
-                cntCongLevel1++;
-                cntCongLevel2++;
-            }
-            if (state.getCongLevel() >= 3) {
-                cntCongLevel1++;
-                cntCongLevel2++;
-                cntCongLevel3++;
+        if (networkIdStateList != null) {
+            for (NetworkIdState state : networkIdStateList.values()) {
+                if (!state.isAvailavle())
+                    cntNotAvailable++;
+                if (state.getCongLevel() >= 1) {
+                    cntCongLevel1++;
+                }
+                if (state.getCongLevel() >= 2) {
+                    cntCongLevel1++;
+                    cntCongLevel2++;
+                }
+                if (state.getCongLevel() >= 3) {
+                    cntCongLevel1++;
+                    cntCongLevel2++;
+                    cntCongLevel3++;
+                }
             }
         }
 
