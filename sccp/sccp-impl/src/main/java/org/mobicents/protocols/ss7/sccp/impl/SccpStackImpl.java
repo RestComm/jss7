@@ -205,6 +205,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     protected final TextBuilder persistFile = TextBuilder.newInstance();
 
     protected String persistDir = null;
+    private boolean rspProhibitedByDefault;
 
     private volatile int segmentationLocalRef = 0;
     private volatile int slsCounter = 0;
@@ -236,6 +237,14 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
     public void setPersistDir(String persistDir) {
         this.persistDir = persistDir;
+    }
+
+    public void setRspProhibitedByDefault(boolean rspProhibitedByDefault) {
+        this.rspProhibitedByDefault = rspProhibitedByDefault;
+    }
+
+    public boolean isRspProhibitedByDefault() {
+        return rspProhibitedByDefault;
     }
 
     public SccpProvider getSccpProvider() {
@@ -587,7 +596,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         this.router.setPersistDir(this.persistDir);
         this.router.start();
 
-        this.sccpResource = new SccpResourceImpl(this.name);
+        this.sccpResource = new SccpResourceImpl(this.name, this.rspProhibitedByDefault);
         this.sccpResource.setPersistDir(this.persistDir);
         this.sccpResource.start();
 
