@@ -300,7 +300,8 @@ public class Client extends EventTestHarness {
                 NumberingPlan.ISDN, "1115550000");
         AddressString destReference = this.mapParameterFactory.createAddressString(AddressNature.international_number,
                 NumberingPlan.land_mobile, "888777");
-        IMSI eriImsi = this.mapParameterFactory.createIMSI("12345");
+        AddressString eriImsi = this.mapParameterFactory.createAddressString(AddressNature.international_number,
+                NumberingPlan.land_mobile, "12345");
         AddressString eriVlrNo = this.mapParameterFactory.createAddressString(AddressNature.international_number,
                 NumberingPlan.land_mobile, "556677");
 

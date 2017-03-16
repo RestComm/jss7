@@ -1,5 +1,5 @@
 /*
- * JBoss, Home of Professional Open Source
+ * TeleStax, Open Source Cloud Communications
  * Copyright 2011, Red Hat, Inc. and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -32,19 +32,30 @@ import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.primitives.AddressStringImpl;
-import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPAsnPrimitive;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 
 /**
- * Below is Ericsson MAP-OpenInfo
- *
- * MAP−OpenInfo ::= SEQUENCE ( imsi (0) IMSI OPTIONAL, originationReference (1) AddressString OPTIONAL, msisdn (2)
- * AddressString, ... vlrNo (3) AddressString OPTIONAL )
- *
+<code>
+MAP-OpenInfo ::= SEQUENCE {
+  destinationReference [0] AddressString OPTIONAL,
+  originationReference [1] AddressString OPTIONAL,
+-- WS modification: Ericsson proprietary fields
+  callingMsisdn        [2] AddressString OPTIONAL,
+  callingVlrAddress    [3] AddressString OPTIONAL,
+-- WS modification: Ericsson proprietary fields
+  ...,
+  extensionContainer ExtensionContainer OPTIONAL
+  -- extensionContainer must not be used in version 2
+}
+
+Another (old) version of Ericsson :
+MAP OpenInfo ::= SEQUENCE ( imsi (0) IMSI OPTIONAL, originationReference (1) AddressString OPTIONAL,
+  msisdn (2) AddressString, ... vlrNo (3) AddressString OPTIONAL )
+<code>
+
  * @author amit bhayani
  * @author sergey vetyutnev
  *
@@ -67,7 +78,7 @@ public class MAPOpenInfoImpl implements MAPAsnPrimitive {
     private MAPExtensionContainer extensionContainer;
 
     private boolean eriStyle;
-    private IMSI eriImsi;
+    private AddressString eriMsisdn;
     private AddressString eriVlrNo;
 
     public AddressString getDestReference() {
@@ -86,8 +97,8 @@ public class MAPOpenInfoImpl implements MAPAsnPrimitive {
         return this.eriStyle;
     }
 
-    public IMSI getEriImsi() {
-        return eriImsi;
+    public AddressString getEriMsisdn() {
+        return eriMsisdn;
     }
 
     public AddressString getEriVlrNo() {
@@ -110,8 +121,8 @@ public class MAPOpenInfoImpl implements MAPAsnPrimitive {
         this.eriStyle = eriStyle;
     }
 
-    public void setEriImsi(IMSI eriImsi) {
-        this.eriImsi = eriImsi;
+    public void setEriMsisdn(AddressString eriMsisdn) {
+        this.eriMsisdn = eriMsisdn;
     }
 
     public void setEriVlrNo(AddressString eriVlrNo) {
@@ -158,32 +169,11 @@ public class MAPOpenInfoImpl implements MAPAsnPrimitive {
     }
 
     private void _decode(AsnInputStream ais, int length) throws MAPParsingComponentException, IOException, AsnException {
-
-        // Definitioon from GSM 09.02 version 5.15.1 Page 690
-        // map-open [0] IMPLICIT SEQUENCE {
-        // destinationReference [0] IMPLICIT OCTET STRING ( SIZE( 1 .. 20 ) )
-        // OPTIONAL,
-        // originationReference [1] IMPLICIT OCTET STRING ( SIZE( 1 .. 20 ) )
-        // OPTIONAL,
-        // ... ,
-        // extensionContainer SEQUENCE {
-        // privateExtensionList [0] IMPLICIT SEQUENCE ( SIZE( 1 .. 10 ) ) OF
-        // SEQUENCE {
-        // extId MAP-EXTENSION .&extensionId ( {
-        // ,
-        // ...} ) ,
-        // extType MAP-EXTENSION .&ExtensionType ( {
-        // ,
-        // ...} { @extId } ) OPTIONAL} OPTIONAL,
-        // pcs-Extensions [1] IMPLICIT SEQUENCE {
-        // ... } OPTIONAL,
-        // ... } OPTIONAL},
-
         this.destReference = null;
         this.origReference = null;
         this.extensionContainer = null;
         this.eriStyle = false;
-        this.eriImsi = null;
+        this.eriMsisdn = null;
         this.eriVlrNo = null;
 
         AsnInputStream localAis = ais.readSequenceStreamData(length);
@@ -208,13 +198,15 @@ public class MAPOpenInfoImpl implements MAPAsnPrimitive {
                 case Tag.CLASS_CONTEXT_SPECIFIC:
                     switch (tag) {
                         case DESTINATION_REF_TAG:
-                            if (this.eriStyle) {
-                                this.eriImsi = new IMSIImpl();
-                                ((IMSIImpl) this.eriImsi).decodeAll(localAis);
-                            } else {
-                                this.destReference = new AddressStringImpl();
-                                ((AddressStringImpl) this.destReference).decodeAll(localAis);
-                            }
+                            // if (this.eriStyle) {
+                            // this.eriImsi = new AddressStringImpl();
+                            // ((AddressStringImpl) this.eriImsi).decodeAll(localAis);
+                            // } else {
+
+                            this.destReference = new AddressStringImpl();
+                            ((AddressStringImpl) this.destReference).decodeAll(localAis);
+
+                            // }
                             break;
 
                         case ORIGINATION_REF_TAG:
@@ -223,8 +215,8 @@ public class MAPOpenInfoImpl implements MAPAsnPrimitive {
                             break;
 
                         case ERI_MSISDN_TAG:
-                            this.destReference = new AddressStringImpl();
-                            ((AddressStringImpl) this.destReference).decodeAll(localAis);
+                            this.eriMsisdn = new AddressStringImpl();
+                            ((AddressStringImpl) this.eriMsisdn).decodeAll(localAis);
                             break;
 
                         case ERI_NLR_NO_TAG:
@@ -278,16 +270,12 @@ public class MAPOpenInfoImpl implements MAPAsnPrimitive {
     public void encodeData(AsnOutputStream asnOS) throws MAPException {
 
         if (this.eriStyle) {
-
-            if (this.destReference == null)
-                throw new MAPException(
-                        "Error when encoding MAPOpenInf Ericsson style: destReference parameter must not be null");
-
-            if (this.eriImsi != null)
-                ((IMSIImpl) this.eriImsi).encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, DESTINATION_REF_TAG);
+            if (this.destReference != null)
+                ((AddressStringImpl) this.destReference).encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, DESTINATION_REF_TAG);
             if (this.origReference != null)
                 ((AddressStringImpl) this.origReference).encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, ORIGINATION_REF_TAG);
-            ((AddressStringImpl) this.destReference).encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, ERI_MSISDN_TAG);
+            if (this.eriMsisdn != null)
+                ((AddressStringImpl) this.eriMsisdn).encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, ERI_MSISDN_TAG);
             if (this.eriVlrNo != null)
                 ((AddressStringImpl) this.eriVlrNo).encodeAll(asnOS, Tag.CLASS_CONTEXT_SPECIFIC, ERI_NLR_NO_TAG);
         } else {
@@ -302,4 +290,38 @@ public class MAPOpenInfoImpl implements MAPAsnPrimitive {
                 ((MAPExtensionContainerImpl) this.extensionContainer).encodeAll(asnOS);
         }
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("MAPOpenInfo[");
+        if (destReference != null) {
+            sb.append("destReference=");
+            sb.append(destReference);
+        }
+        if (origReference != null) {
+            sb.append(", origReference=");
+            sb.append(origReference);
+        }
+        if (extensionContainer != null) {
+            sb.append("extensionContainer=");
+            sb.append(extensionContainer);
+        }
+        if (eriStyle) {
+            sb.append(", eriStyle");
+        }
+        if (eriMsisdn != null) {
+            sb.append(", eriMsisdn=");
+            sb.append(eriMsisdn);
+        }
+        if (eriVlrNo != null) {
+            sb.append(", eriVlrNo=");
+            sb.append(eriVlrNo);
+        }
+        sb.append("]");
+
+        return sb.toString();
+    }
+
 }

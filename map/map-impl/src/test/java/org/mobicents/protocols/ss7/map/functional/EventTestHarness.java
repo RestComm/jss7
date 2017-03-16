@@ -11,7 +11,6 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.IstCommandRequest;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.IstCommandResponse;
@@ -384,7 +383,7 @@ public class EventTestHarness implements MAPDialogListener, MAPServiceSupplement
      * org.mobicents.protocols.ss7.map.api.primitives.AddressString)
      */
     public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference,
-            IMSI eriImsi, AddressString eriVlrNo) {
+            AddressString eriImsi, AddressString eriVlrNo) {
         this.logger.debug("onDialogRequestEricsson");
         TestEvent te = TestEvent.createReceivedEvent(EventType.DialogEricssonRequest, mapDialog, sequence++);
         this.observerdEvents.add(te);

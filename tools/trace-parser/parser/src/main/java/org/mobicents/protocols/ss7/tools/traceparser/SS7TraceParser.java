@@ -118,7 +118,6 @@ import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
 import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.IstCommandRequest;
 import org.mobicents.protocols.ss7.map.api.service.callhandling.IstCommandResponse;
@@ -1589,7 +1588,7 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
 
     @Override
     public void onDialogRequestEricsson(MAPDialog mapDialog, AddressString destReference, AddressString origReference,
-            IMSI eriImsi, AddressString eriVlrNo) {
+            AddressString eriImsi, AddressString eriVlrNo) {
 
         DialogImplWrapper di = (DialogImplWrapper) ((MAPDialogImpl) mapDialog).getTcapDialog();
         if (mapDialog.getApplicationContext() != null) {
