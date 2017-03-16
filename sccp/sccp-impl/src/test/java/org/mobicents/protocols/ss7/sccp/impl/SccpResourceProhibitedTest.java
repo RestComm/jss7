@@ -26,23 +26,20 @@ import org.mobicents.protocols.ss7.Util;
 import org.mobicents.protocols.ss7.sccp.ConcernedSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.*;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
 
 /**
- * @author amit bhayani
+ * @author gennadiy dubina
  *
  */
-public class SccpResourceTest {
+public class SccpResourceProhibitedTest {
 
     private SccpResourceImpl resource = null;
 
-    public SccpResourceTest() {
+    public SccpResourceProhibitedTest() {
     }
 
     @BeforeClass
@@ -53,23 +50,53 @@ public class SccpResourceTest {
     public static void tearDownClass() throws Exception {
     }
 
-    @BeforeMethod
-    public void setUp() {
-        resource = new SccpResourceImpl("SccpResourceTest");
-        resource.setPersistDir(Util.getTmpTestDir());
-        resource.start();
-        resource.removeAllResourses();
-
-    }
-
     @AfterMethod
     public void tearDown() {
         resource.removeAllResourses();
         resource.stop();
     }
 
+    @Test(groups = { "sccpresource", "functional.sccp" })
+    public void testProhibitedTrue() throws Exception {
+        resource = new SccpResourceImpl("SccpResourceTest", true);
+        resource.setPersistDir(Util.getTmpTestDir());
+        resource.start();
+        resource.removeAllResourses();
+
+        resource.addRemoteSpc(1, 6034, 0, 0);
+        resource.addRemoteSpc(2, 6045, 0, 0);
+
+        assertTrue(resource.getRemoteSpc(1).isRemoteSpcProhibited());
+        assertTrue(resource.getRemoteSpc(1).isRemoteSccpProhibited());
+
+        assertTrue(resource.getRemoteSpc(2).isRemoteSpcProhibited());
+        assertTrue(resource.getRemoteSpc(2).isRemoteSccpProhibited());
+    }
+
+    @Test(groups = { "sccpresource", "functional.sccp" })
+    public void testProhibitedFalse() throws Exception {
+        resource = new SccpResourceImpl("SccpResourceTest", false);
+        resource.setPersistDir(Util.getTmpTestDir());
+        resource.start();
+        resource.removeAllResourses();
+
+        resource.addRemoteSpc(1, 6034, 0, 0);
+        resource.addRemoteSpc(2, 6045, 0, 0);
+
+        assertFalse(resource.getRemoteSpc(1).isRemoteSpcProhibited());
+        assertFalse(resource.getRemoteSpc(1).isRemoteSccpProhibited());
+
+        assertFalse(resource.getRemoteSpc(2).isRemoteSpcProhibited());
+        assertFalse(resource.getRemoteSpc(2).isRemoteSccpProhibited());
+    }
+
     @Test(groups = { "sccpresource", "functional.encode" })
     public void testSerialization() throws Exception {
+
+        resource = new SccpResourceImpl("SccpResourceTest", true);
+        resource.setPersistDir(Util.getTmpTestDir());
+        resource.start();
+        resource.removeAllResourses();
 
         resource.addRemoteSpc(1, 6034, 0, 0);
         resource.addRemoteSpc(2, 6045, 0, 0);
@@ -80,7 +107,7 @@ public class SccpResourceTest {
         resource.addConcernedSpc(1, 603);
         resource.addConcernedSpc(2, 604);
 
-        SccpResourceImpl resource1 = new SccpResourceImpl("SccpResourceTest");
+        SccpResourceImpl resource1 = new SccpResourceImpl("SccpResourceTest", true);
         resource1.setPersistDir(Util.getTmpTestDir());
         resource1.start();
 
@@ -89,11 +116,11 @@ public class SccpResourceTest {
         assertNotNull(rsp1Temp);
         assertEquals(rsp1Temp.getRemoteSpc(), 6034);
 
-        assertFalse(resource1.getRemoteSpc(1).isRemoteSpcProhibited());
-        assertFalse(resource1.getRemoteSpc(1).isRemoteSccpProhibited());
+        assertTrue(resource1.getRemoteSpc(1).isRemoteSpcProhibited());
+        assertTrue(resource1.getRemoteSpc(1).isRemoteSccpProhibited());
 
-        assertFalse(resource1.getRemoteSpc(2).isRemoteSpcProhibited());
-        assertFalse(resource1.getRemoteSpc(2).isRemoteSccpProhibited());
+        assertTrue(resource1.getRemoteSpc(2).isRemoteSpcProhibited());
+        assertTrue(resource1.getRemoteSpc(2).isRemoteSccpProhibited());
 
         assertEquals(resource1.getRemoteSsns().size(), 2);
         RemoteSubSystem rss1Temp = resource1.getRemoteSsn(1);
