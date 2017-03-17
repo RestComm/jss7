@@ -89,8 +89,8 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
 
     @Override
     public Association addSctpAssociation(String hostAddress, int hostPort, String peerAddress, int peerPort, String assocName,
-            IpChannelType ipChannelType, String extraHostAddresses) throws Exception {
-        this.wrappedSctpManagement.addAssociation(hostAddress, hostPort, peerAddress, peerPort, assocName, ipChannelType,
+            String ipChannelType, String extraHostAddresses) throws Exception {
+        this.wrappedSctpManagement.addAssociation(hostAddress, hostPort, peerAddress, peerPort, assocName, IpChannelType.valueOf(ipChannelType.toUpperCase()),
                 (extraHostAddresses != null && !extraHostAddresses.isEmpty()) ? extraHostAddresses.split(",") : null);
         return null;
     }
@@ -123,10 +123,19 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
         return null;
     }
 
+//    @Override
+//    public Server addSctpServer(String serverName, String hostAddress, int port, IpChannelType ipChannelType,
+//            boolean acceptAnonymousConnections, int maxConcurrentConnectionsCount, String extraHostAddresses) throws Exception {
+//        this.wrappedSctpManagement.addServer(serverName, hostAddress, port, ipChannelType, acceptAnonymousConnections,
+//                maxConcurrentConnectionsCount,
+//                (extraHostAddresses != null && !extraHostAddresses.isEmpty()) ? extraHostAddresses.split(",") : null);
+//        return null;
+//    }
     @Override
-    public Server addSctpServer(String serverName, String hostAddress, int port, IpChannelType ipChannelType,
-            boolean acceptAnonymousConnections, int maxConcurrentConnectionsCount, String extraHostAddresses) throws Exception {
-        this.wrappedSctpManagement.addServer(serverName, hostAddress, port, ipChannelType, acceptAnonymousConnections,
+    public Server addSctpServer(String serverName, String hostAddress, int port, String ipChannelType,
+       boolean acceptAnonymousConnections, int maxConcurrentConnectionsCount, String extraHostAddresses)
+       throws Exception {
+    this.wrappedSctpManagement.addServer(serverName, hostAddress, port, IpChannelType.valueOf(ipChannelType.toUpperCase()), acceptAnonymousConnections,
                 maxConcurrentConnectionsCount,
                 (extraHostAddresses != null && !extraHostAddresses.isEmpty()) ? extraHostAddresses.split(",") : null);
         return null;
@@ -138,7 +147,6 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
         this.wrappedSctpManagement.addServerAssociation(peerAddress, peerPort, serverName, assocName);
         return null;
     }
-
     @Override
     public Association addServerAssociation(String peerAddress, int peerPort, String serverName, String assocName,
             IpChannelType ipChannelType) throws Exception {
@@ -148,8 +156,8 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
 
     @Override
     public Association addSctpServerAssociation(String peerAddress, int peerPort, String serverName, String assocName,
-            IpChannelType ipChannelType) throws Exception {
-        this.wrappedSctpManagement.addServerAssociation(peerAddress, peerPort, serverName, assocName, ipChannelType);
+            String ipChannelType) throws Exception {
+        this.wrappedSctpManagement.addServerAssociation(peerAddress, peerPort, serverName, assocName, IpChannelType.valueOf(ipChannelType.toUpperCase()));
         return null;
     }
 
