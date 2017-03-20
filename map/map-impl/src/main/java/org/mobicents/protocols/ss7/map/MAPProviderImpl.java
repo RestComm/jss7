@@ -2150,4 +2150,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
         }
     }
 
+    @Override
+    public int getCurrentDialogsCount() {
+        return this.tcapProvider.getCurrentDialogsCount();
+    }
+
 }

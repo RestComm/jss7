@@ -102,4 +102,9 @@ public interface CAPProvider extends Serializable {
 
     CAPServiceSms getCAPServiceSms();
 
+    /**
+     * @return current count of active TCAP dialogs
+     */
+    int getCurrentDialogsCount();
+
 }

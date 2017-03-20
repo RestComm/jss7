@@ -1297,4 +1297,9 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
             throw new CAPException(e.getMessage(), e);
         }
     }
+
+    @Override
+    public int getCurrentDialogsCount() {
+        return this.tcapProvider.getCurrentDialogsCount();
+    }
 }

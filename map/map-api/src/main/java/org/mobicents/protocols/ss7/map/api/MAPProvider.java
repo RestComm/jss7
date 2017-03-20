@@ -98,4 +98,9 @@ public interface MAPProvider extends Serializable {
 
     MAPServiceLsm getMAPServiceLsm();
 
+    /**
+     * @return current count of active TCAP dialogs
+     */
+    int getCurrentDialogsCount();
+
 }
