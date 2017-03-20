@@ -349,7 +349,8 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
     }
 
-    protected long getCurrentDialogsCount() {
+    @Override
+    public int getCurrentDialogsCount() {
         return this.dialogs.size();
     }
 
