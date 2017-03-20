@@ -2183,4 +2183,9 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
         return this.tcapProvider.getCumulativeCongestionLevel();
     }
 
+    @Override
+    public int getCurrentDialogsCount() {
+        return this.tcapProvider.getCurrentDialogsCount();
+    }
+
 }

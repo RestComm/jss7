@@ -1331,4 +1331,9 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
         return this.tcapProvider.getCumulativeCongestionLevel();
     }
 
+    @Override
+    public int getCurrentDialogsCount() {
+        return this.tcapProvider.getCurrentDialogsCount();
+    }
+
 }

@@ -132,4 +132,9 @@ public interface TCAPProvider extends Serializable {
      */
     int getCumulativeCongestionLevel();
 
+    /**
+     * @return current count of active TCAP dialogs
+     */
+    int getCurrentDialogsCount();
+
 }
