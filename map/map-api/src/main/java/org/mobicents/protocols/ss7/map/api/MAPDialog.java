@@ -349,10 +349,10 @@ public interface MAPDialog extends Serializable {
     /**
      * This method should be invoked after MAPDialog creation if Ericsson-style ASN.1 syntax is used
      *
-     * @param imsi
-     * @param vlrNo
+     * @param eriMsisdn
+     * @param eriVlrNo
      */
-    void addEricssonData(AddressString imsi, AddressString vlrNo);
+    void addEricssonData(AddressString eriMsisdn, AddressString eriVlrNo);
 
     /**
     * Return the value of the IdleTaskTimeout of the TCAP Dialog in milliseconds.
