@@ -205,7 +205,8 @@ public class AsImpl implements XMLSerializable, As {
         this.peerFSM.createTransition(TransitionState.AS_STATE_CHANGE_INACTIVE, AsState.DOWN.toString(),
                 AsState.INACTIVE.toString());
         this.peerFSM.createTransition(TransitionState.ASP_DOWN, AsState.DOWN.toString(), AsState.DOWN.toString());
-
+        this.peerFSM.createTransition(TransitionState.AS_STATE_CHANGE_ACTIVE, AsState.DOWN.toString(),
+                AsState.ACTIVE.toString()).setHandler(new THPeerAsInActToAct(this, this.peerFSM));
         // ******************************************************************/
         // STATE INACTIVE /
         // ******************************************************************/
