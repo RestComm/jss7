@@ -18,12 +18,12 @@
 
 	<dependencies>
 		<dependency>
-			<!-- This comes in container. -->
-			<groupId>org.jboss.jbossas</groupId>
-			<artifactId>jboss-as-system-jmx</artifactId>
-			<version>${jboss.version}</version>
-			<scope>compile</scope>
+			<groupId>org.wildfly</groupId>
+			<artifactId>wildfly-system-jmx</artifactId>
+			<version>${version.wildfly.as}</version>
+			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
 			<artifactId>asn</artifactId>
 			<groupId>org.mobicents.protocols.asn</groupId>

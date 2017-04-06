@@ -1,6 +1,6 @@
 /*
- * TeleStax, Open Source Cloud Communications
- * Copyright 2012, Telestax Inc and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -19,52 +19,19 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package org.mobicents.ss7;
+package org.mobicents.protocols.ss7.scheduler;
 
 /**
- *
- * @author kulikov
+ * @author sergey.povarnin
  */
-public interface SS7ServiceMBean {
-    String ONAME = "org.mobicents.ss7:service=SS7Service";
+public interface SchedulerMBean {
 
-    void start() throws Exception;
+    void setClock(Clock clock);
 
-    void stop();
+    Clock getClock();
 
-    /**
-     * Returns SCCP Provider jndi name.
-     */
-    String getJndiName();
+    double getMissRate();
 
-    /**
-     * Returns SS7 Name for this release
-     *
-     * @return
-     */
-    String getSS7Name();
-
-    /**
-     * Get Vendor supporting this SS7
-     *
-     * @return
-     */
-    String getSS7Vendor();
-
-    /**
-     * Return SS7 version of this release
-     *
-     * @return
-     */
-    String getSS7Version();
-
-    String getSS7ServiceName();
-
-    boolean isStarted();
-
-    Object getStack();
-
-    void setStack(Object stack);
+    long getWorstExecutionTime();
 
 }
