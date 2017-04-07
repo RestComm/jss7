@@ -1,0 +1,4 @@
+We need to add into:
+modules/system/layers/base/sun/jdk/main - module.xml:
+                <path name="com/sun/nio/sctp"/>
+
