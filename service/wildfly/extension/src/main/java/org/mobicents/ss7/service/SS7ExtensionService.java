@@ -1067,7 +1067,7 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
 
         try {
             SS7Service isupSS7Service = new SS7Service(isupServiceName);
-            isupSS7Service.setJndiName(jndiName);
+//            isupSS7Service.setJndiName(jndiName);
             isupSS7Service.setStack(isupStack.getIsupProvider());
 
             this.beanSS7Services.put(beanName, isupSS7Service);
@@ -1152,7 +1152,7 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
 
         try {
             SS7Service tcapSS7Service = new SS7Service(tcapServiceName);
-            tcapSS7Service.setJndiName(jndiName);
+//            tcapSS7Service.setJndiName(jndiName);
             tcapSS7Service.setStack(tcapStack.getProvider());
 
             this.beanSS7Services.put(beanName, tcapSS7Service);
@@ -1201,7 +1201,7 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
 
         try {
             SS7Service mapSS7Service = new SS7Service(mapServiceName);
-            mapSS7Service.setJndiName(jndiName);
+//            mapSS7Service.setJndiName(jndiName);
             mapSS7Service.setStack(mapStack.getMAPProvider());
 
             this.beanSS7Services.put(beanName, mapSS7Service);
@@ -1251,7 +1251,7 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
 
         try {
             SS7Service capSS7Service = new SS7Service(capServiceName);
-            capSS7Service.setJndiName(jndiName);
+//            capSS7Service.setJndiName(jndiName);
             capSS7Service.setStack(capStack.getCAPProvider());
 
             this.beanSS7Services.put(beanName, capSS7Service);
