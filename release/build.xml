@@ -175,11 +175,11 @@
               failonerror="true"/>
 
         <!-- Copy files for deploying/undeployng jSS7 to JBoss 5 and WildFly -->
-        <copy file="/release/release-build-jboss5.xml" tofile="${restcomm.jss7.dist}/ss7/build-jboss5.xml"
+        <copy file="${jss7.dir}/release/release-build-jboss5.xml" tofile="${restcomm.jss7.dist}/ss7/build-jboss5.xml"
               failonerror="true"/>
-        <copy file="/release/release-build-wildfly.xml" tofile="${restcomm.jss7.dist}/ss7/build-wildfly.xml"
+        <copy file="${jss7.dir}/release/release-build-wildfly.xml" tofile="${restcomm.jss7.dist}/ss7/build-wildfly.xml"
               failonerror="true"/>
-        <copy file="/release/wildfly-jss7-subsystem.txt" tofile="${restcomm.jss7.dist}/ss7/wildfly-jss7-subsystem.txt"
+        <copy file="${jss7.dir}/release/wildfly-jss7-subsystem.txt" tofile="${restcomm.jss7.dist}/ss7/wildfly-jss7-subsystem.txt"
               failonerror="true"/>
 
         <!-- Copy templates for JBoss 5 -->
