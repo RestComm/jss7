@@ -13,7 +13,7 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.mobicents.protocols.api.Management;
-import org.mobicents.protocols.sctp.netty.NettySctpManagementImpl;
+import org.mobicents.protocols.sctp.ManagementImpl;
 import org.mobicents.protocols.ss7.cap.CAPStackImpl;
 import org.mobicents.protocols.ss7.isup.impl.CircuitManagerImpl;
 import org.mobicents.protocols.ss7.isup.impl.ISUPStackImpl;
@@ -124,10 +124,10 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
     log.info("dataDir: "+dataDir);
 
     //
-    NettySctpManagementImpl sctpManagement = null;
+    ManagementImpl sctpManagement = null;
     StandardMBean sctpManagementMBean = null;
     try {
-      sctpManagement = new NettySctpManagementImpl("SCTPManagement");
+      sctpManagement = new ManagementImpl("SCTPManagement");
       String res = getPropertyString("SCTPManagement", "persistDir", "DEFAULT");
       log.info("res: "+res);
       sctpManagement.setPersistDir(dataDir);

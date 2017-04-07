@@ -108,18 +108,6 @@ public class DahdiMtp3UserPart implements Mtp3UserPart {
     }
 
     @Override
-    public int getDeliveryMessageThreadCount() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public void setDeliveryMessageThreadCount(int deliveryMessageThreadCount) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public void start() throws Exception {
         // TODO Auto-generated method stub
 
