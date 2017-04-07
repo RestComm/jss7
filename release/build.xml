@@ -97,18 +97,18 @@
         </copy>
 
         <echo>Copy SS7 - SWG</echo>
-        <copy todir="${restcomm.jss7.dist}/ss7/restcomm-ss7-sgw" failonerror="true">
+        <copy todir="${restcomm.jss7.dist}/ss7-jboss/restcomm-ss7-sgw" failonerror="true">
             <fileset dir="${jss7.dir}/sgw/boot/target/restcomm-sgw">
                 <include name="**"/>
             </fileset>
         </copy>
 
-        <!--echo>Copy SS7 native libs</echo>
+        <!-- echo>Copy SS7 native libs</echo>
         <copy todir="${restcomm.jss7.dist}/ss7/native" failonerror="true">
                 <fileset dir="${jss7.dir}/sgw/boot/target/restcomm-sgw/native">
                         <include name="**" />
                 </fileset>
-        </copy-->
+        </copy -->
 
         <echo>Copy Protocols</echo>
         <copy todir="${restcomm.jss7.dist}/ss7/protocols" failonerror="true">
@@ -175,40 +175,55 @@
               failonerror="true"/>
 
         <!-- Copy files for deploying/undeployng jSS7 to JBoss 5 and WildFly -->
-        <copy file="${jss7.dir}/release/release-build-jboss5.xml" tofile="${restcomm.jss7.dist}/ss7/build-jboss5.xml"
+        <copy file="${jss7.dir}/release/release-build-jboss5.xml" tofile="${restcomm.jss7.dist}/ss7-jboss/build-jboss5.xml"
               failonerror="true"/>
-        <copy file="${jss7.dir}/release/release-build-wildfly.xml" tofile="${restcomm.jss7.dist}/ss7/build-wildfly.xml"
+
+    	<copy file="${jss7.dir}/release/release-build-wildfly.xml" tofile="${restcomm.jss7.dist}/ss7-wildfly/build-wildfly.xml"
               failonerror="true"/>
-        <copy file="${jss7.dir}/release/wildfly-jss7-subsystem.txt" tofile="${restcomm.jss7.dist}/ss7/wildfly-jss7-subsystem.txt"
+        <copy file="${jss7.dir}/release/wildfly-jss7-subsystem.txt" tofile="${restcomm.jss7.dist}/ss7-wildfly/template/wildfly-jss7-subsystem.txt"
+              failonerror="true"/>
+        <copy file="${jss7.dir}/release/security-domains.txt" tofile="${restcomm.jss7.dist}/ss7-wildfly/template/security-domains.txt"
+              failonerror="true"/>
+        <copy file="${jss7.dir}/release/deployment_manual.txt" tofile="${restcomm.jss7.dist}/ss7-wildfly/deployment_manual.txt"
+              failonerror="true"/>
+        <copy file="${jss7.dir}/release/jmx-roles.properties" tofile="${restcomm.jss7.dist}/ss7-wildfly/template/jmx-roles.properties"
+              failonerror="true"/>
+        <copy file="${jss7.dir}/release/jmx-users.properties" tofile="${restcomm.jss7.dist}/ss7-wildfly/template/jmx-users.properties"
               failonerror="true"/>
 
         <!-- Copy templates for JBoss 5 -->
-        <copy todir="${restcomm.jss7.dist}/ss7/template/META-INF-dialogic/" failonerror="true">
-            <fileset dir="${jss7.dir}/service/src/main/config-dialogic">
+        <copy todir="${restcomm.jss7.dist}/ss7-jboss/template/META-INF-dialogic/" failonerror="true">
+            <fileset dir="${jss7.dir}/service/jboss/src/main/config-dialogic">
                 <include name="**"/>
             </fileset>
         </copy>
-        <copy todir="${restcomm.jss7.dist}/ss7/template/META-INF-m3ua-dialogic/" failonerror="true">
-            <fileset dir="${jss7.dir}/service/src/main/config-m3ua-dialogic">
+        <copy todir="${restcomm.jss7.dist}/ss7-jboss/template/META-INF-m3ua-dialogic/" failonerror="true">
+            <fileset dir="${jss7.dir}/service/jboss/src/main/config-m3ua-dialogic">
                 <include name="**"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${restcomm.jss7.dist}/ss7-jboss/template/log4j/" failonerror="true">
+            <fileset dir="${jss7.dir}/service/jboss/src/main/log4j">
+                <include name="**" />
             </fileset>
         </copy>
 
         <!-- Copy RestComm SS7 Service for JBoss 5 -->
-        <copy todir="${restcomm.jss7.dist}/ss7/restcomm-ss7-service" failonerror="true">
-            <fileset dir="${jss7.dir}/service/target/restcomm-ss7-service">
+        <copy todir="${restcomm.jss7.dist}/ss7-jboss/restcomm-ss7-service" failonerror="true">
+            <fileset dir="${jss7.dir}/service/jboss/target/restcomm-ss7-service">
                 <include name="**"/>
             </fileset>
         </copy>
 
         <!-- Copy RestComm SS7 Service for WildFly -->
-        <copy todir="${restcomm.jss7.dist}/ss7/restcomm-ss7-service/extension" failonerror="true">
-            <fileset dir="${jss7.dir}/build/wildfly/extension/target/module">
+        <copy todir="${restcomm.jss7.dist}/ss7-wildfly/restcomm-ss7-service/extension" failonerror="true">
+            <fileset dir="${jss7.dir}/service/wildfly/extension/target/module">
                 <include name="**"/>
             </fileset>
         </copy>
-        <copy todir="${restcomm.jss7.dist}/ss7/restcomm-ss7-service/modules" failonerror="true">
-            <fileset dir="${jss7.dir}/build/wildfly/modules/target/module">
+        <copy todir="${restcomm.jss7.dist}/ss7-wildfly/restcomm-ss7-service/modules" failonerror="true">
+            <fileset dir="${jss7.dir}/service/wildfly/modules/target/module">
                 <include name="**"/>
             </fileset>
         </copy>
@@ -346,6 +361,11 @@
     <target name="clean">
         <delete dir="${release.dir}"/>
         <delete dir="${base.dir}/checkout"/>
+		<delete>
+			<fileset dir="${base.dir}">
+				<include name="restcomm-jss7-*.*" />
+			</fileset>
+		</delete>
     </target>
 
 </project>
