@@ -2,6 +2,8 @@ package org.mobicents.ss7.service;
 
 import javolution.util.FastList;
 import javolution.util.FastMap;
+import org.jboss.dmr.ModelNode;
+import org.jboss.dmr.Property;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.ServiceName;
@@ -40,33 +42,37 @@ import org.mobicents.ss7.management.console.ShellServer;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.StandardMBean;
-import java.util.HashMap;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class SS7ExtensionService implements Service<SS7ExtensionService> {
 
-  Map<String, String> mbeanProp = new HashMap<String, String>();
-
-  public void addMbean(String mbeanName) {
-    log.info("addProperty: "+mbeanName);
-  }
-
-  public void addProperty(String mbeanName, String propertyName, String propertyValue) {
-    log.info("addProperty: "+propertyName);
-    this.mbeanProp.put(mbeanName+"::"+propertyName, propertyValue);
-  }
-
   private String getPropertyString(String mbeanName, String propertyName, String defaultValue) {
-    String result = mbeanProp.get(mbeanName+"::"+propertyName);
+    String result = defaultValue;
+    ModelNode propertyNode = peek(fullModel, "mbean", mbeanName, "property", propertyName);
+    if (propertyNode != null && propertyNode.isDefined()) {
+      //log.debug("propertyNode: "+propertyNode);
+      // todo: test TYPE?
+      result = propertyNode.get("value").asString();
+    }
     return (result == null) ? defaultValue : result;
   }
 
   private int getPropertyInt(String mbeanName, String propertyName, int defaultValue) {
-    String result = mbeanProp.get(mbeanName+"::"+propertyName);
-    return (result == null) ? defaultValue : Integer.parseInt(result);
+    int result = defaultValue;
+    ModelNode propertyNode = peek(fullModel, "mbean", mbeanName, "property", propertyName);
+    if (propertyNode != null && propertyNode.isDefined()) {
+      //log.debug("propertyNode: "+propertyNode);
+      // todo: test TYPE?
+      result = propertyNode.get("value").asInt();
+    }
+    return result;
   }
 
+  ////
   public static final SS7ExtensionService INSTANCE = new SS7ExtensionService();
 
   private final Logger log = Logger.getLogger(SS7ExtensionService.class);
@@ -81,6 +87,22 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
   }
   private final LinkedList<String> registeredMBeans = new LinkedList<String>();
 
+  private ModelNode fullModel;
+  private Map<String, Object> beanObjects = new FastMap<String, Object>();
+  private RoutingLabelFormat routingLabelFormat;
+  private Map<String, Mtp3UserPart> mtp3UserPartsConfig = new FastMap<String, Mtp3UserPart>();
+
+  public void setModel(ModelNode model) {
+    this.fullModel = model;
+  }
+
+  private ModelNode peek(ModelNode node, String... args) {
+    for (String arg : args) {
+      if (!node.hasDefined(arg)) { return null; }
+      node = node.get(arg);
+    }
+    return node;
+  }
 
   @Override
   public SS7ExtensionService getValue() throws IllegalStateException, IllegalArgumentException {
@@ -96,12 +118,17 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
     StandardMBean sctpManagementMBean = null;
     try {
       sctpManagement = new NettySctpManagementImpl("SCTPManagement");
-      sctpManagement.setPersistDir(getPropertyString("SCTPManagement", "persistDir", "DEFAULT"));
+      String res = getPropertyString("SCTPManagement", "persistDir", "DEFAULT");
+      log.debug("res: "+res);
+      sctpManagement.setPersistDir(res);
 
       sctpManagementMBean = new StandardMBean(sctpManagement, org.mobicents.protocols.api.Management.class);
     } catch (Exception e) {
       log.warn("SCTPManagement MBean creating is failed: "+e);
     }
+
+    this.beanObjects.put("SCTPManagement", sctpManagement);
+    registerMBean(sctpManagementMBean, "org.mobicents.ss7:name=SCTPManagement");
 
     //
     SCTPShellExecutor sctpShellExecutor = new SCTPShellExecutor();
@@ -116,41 +143,53 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
       log.warn("SCTPShellExecutor MBean creating is failed: "+e);
     }
 
-    //
-    RoutingLabelFormat routingLabelFormat = RoutingLabelFormat.getInstance("ITU");
+    this.beanObjects.put("SCTPShellExecutor", sctpShellExecutor);
+    registerMBean(sctpShellExecutorMBean, "org.mobicents.ss7:name=SCTPShellExecutor");
 
     //
-    M3UAManagementImpl m3uaManagement = null;
-    StandardMBean m3uaManagementMBean = null;
-    try {
-      m3uaManagement = new M3UAManagementImpl("Mtp3UserPart", "Restcomm-jSS7");
-      m3uaManagement.setPersistDir(getPropertyString("Mtp3UserPart", "persistDir", "DEFAULT"));
-      m3uaManagement.setRoutingLabelFormat(routingLabelFormat);
-      m3uaManagement.setTransportManagement(sctpManagement);
-      m3uaManagement.setMaxSequenceNumber(getPropertyInt("Mtp3UserPart", "maxSequenceNumber", 256));
-      m3uaManagement.setMaxAsForRoute(getPropertyInt("Mtp3UserPart", "maxAsForRoute", 2));
-      m3uaManagement.setDeliveryMessageThreadCount(getPropertyInt("Mtp3UserPart", "deliveryMessageThreadCount", 1));
-
-      m3uaManagementMBean = new StandardMBean(m3uaManagement, org.mobicents.protocols.ss7.m3ua.M3UAManagement.class);
-    } catch (Exception e) {
-      log.warn("Mtp3UserPart MBean creating is failed: "+e);
-    }
+    this.routingLabelFormat = RoutingLabelFormat.getInstance("ITU");
 
     //
+    createMtp3UserParts();
+
+    // todo: check default mtp3UserPart
+    Mtp3UserPart mtp3UserPartDefault = (Mtp3UserPart)this.beanObjects.get("Mtp3UserPart");
+    log.warn("mtp3UserPartDefault: "+mtp3UserPartDefault);
+
+    // todo: check if exists
     M3UAShellExecutor m3uaShellExecutor = null;
-    StandardMBean m3uaShellExecutorMBean = null;
-    try {
-      Map<String, M3UAManagementImpl> m3uaManagements = new FastMap<String, M3UAManagementImpl>();
-      m3uaManagements.put("Mtp3UserPart", m3uaManagement);
-      m3uaShellExecutor = new M3UAShellExecutor();
-      m3uaShellExecutor.setM3uaManagements(m3uaManagements);
 
-      m3uaShellExecutorMBean = new StandardMBean(m3uaShellExecutor, org.mobicents.ss7.management.console.ShellExecutor.class);
-    } catch (Exception e) {
-      log.warn("M3UAShellExecutor MBean creating is failed: "+e);
+    ModelNode m3uaShellExecutorIsNeeded = peek(fullModel, "mbean", "M3UAShellExecutor");
+    if (m3uaShellExecutorIsNeeded != null) {
+      StandardMBean m3uaShellExecutorMBean = null;
+      try {
+        Map<String, M3UAManagementImpl> m3uaManagements = new FastMap<String, M3UAManagementImpl>();
+        //m3uaManagements.put("Mtp3UserPart", (M3UAManagementImpl) mtp3UserPartDefault);
+
+        // todo: get from config
+        ModelNode mtp3UserPartsNode = peek(fullModel, "mbean", "M3UAShellExecutor", "property", "mtp3UserParts");
+        if (mtp3UserPartsNode != null) {
+          for (Property prop: mtp3UserPartsNode.get("entry").asPropertyList()) {
+            M3UAManagementImpl userPart = (M3UAManagementImpl) this.beanObjects.get(prop.getValue().get("value").asString());
+            System.out.println("value: " + prop.getValue().get("value").asString());
+            System.out.println("userPart: " + userPart);
+            m3uaManagements.put(prop.getValue().get("key").asString(), userPart);
+          }
+        }
+
+        m3uaShellExecutor = new M3UAShellExecutor();
+        m3uaShellExecutor.setM3uaManagements(m3uaManagements);
+
+        m3uaShellExecutorMBean = new StandardMBean(m3uaShellExecutor, org.mobicents.ss7.management.console.ShellExecutor.class);
+      } catch (Exception e) {
+        log.warn("M3UAShellExecutor MBean creating is failed: " + e);
+      }
+
+      this.beanObjects.put("M3UAShellExecutor", m3uaShellExecutor);
+      registerMBean(m3uaShellExecutorMBean, "org.mobicents.ss7:name=M3UAShellExecutor");
     }
 
-    //
+    // no props
     DefaultClock ss7Clock = null;
     StandardMBean ss7ClockMBean = null;
     try {
@@ -161,7 +200,10 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
       log.warn("SS7Clock MBean creating is failed: "+e);
     }
 
-    //
+    this.beanObjects.put("SS7Clock", ss7Clock);
+    registerMBean(ss7ClockMBean, "org.mobicents.ss7:name=SS7Clock");
+
+    // no props
     Scheduler schedulerMBean = null;
     try {
       schedulerMBean = new Scheduler();
@@ -170,12 +212,27 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
       log.warn("SS7Scheduler MBean creating is failed: "+e);
     }
 
-    //
+    this.beanObjects.put("SS7Scheduler", schedulerMBean);
+    registerMBean(schedulerMBean, "org.mobicents.ss7:name=SS7Scheduler");
+
+    // mtp3UserParts
+    // todo: persistDir
     SccpStackImpl sccpStack = null;
     StandardMBean sccpStackMBean = null;
     try {
       Map<Integer, Mtp3UserPart> mtp3UserParts = new FastMap<Integer, Mtp3UserPart>();
-      mtp3UserParts.put(1, m3uaManagement);
+
+      // todo: get from config
+      ModelNode mtp3UserPartsNode = peek(fullModel, "mbean", "SccpStack", "property", "mtp3UserParts");
+      if (mtp3UserPartsNode != null) {
+        for (Property prop: mtp3UserPartsNode.get("entry").asPropertyList()) {
+          Mtp3UserPart userPart = (Mtp3UserPart) this.beanObjects.get(prop.getValue().get("value").asString());
+          System.out.println("value: " + prop.getValue().get("value").asString());
+          System.out.println("userPart: " + userPart);
+          mtp3UserParts.put(prop.getValue().get("key").asInt(), userPart);
+        }
+      }
+
       sccpStack = new SccpStackImpl("SccpStack");
       sccpStack.setPersistDir(getPropertyString("SccpStack", "persistDir", "DEFAULT"));
       sccpStack.setMtp3UserParts(mtp3UserParts);
@@ -185,7 +242,11 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
       log.warn("SccpStack MBean creating is failed: "+e);
     }
 
-    //
+    this.beanObjects.put("SccpStack", sccpStack);
+    registerMBean(sccpStackMBean, "org.mobicents.ss7:name=SccpStack");
+
+
+    // no props
     SccpExecutor sccpExecutor = null;
     StandardMBean sccpExecutorMBean = null;
     try {
@@ -199,7 +260,10 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
       log.warn("SccpExecutor MBean creating is failed: "+e);
     }
 
-    //
+    this.beanObjects.put("SccpExecutor", sccpExecutor);
+    registerMBean(sccpExecutorMBean, "org.mobicents.ss7:name=SccpExecutor");
+
+    // todo: persistDir, previewMode
     TCAPStackImpl tcapStackMap = null;
     StandardMBean tcapStackMapMBean = null;
     try {
@@ -212,7 +276,10 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
       log.warn("TcapStackMap MBean creating is failed: "+e);
     }
 
-    //
+    this.beanObjects.put("TcapStackMap", tcapStackMap);
+    registerMBean(tcapStackMapMBean, "org.mobicents.ss7:name=TcapStackMap");
+
+    // todo: persistDir, previewMode
     TCAPStackImpl tcapStackCap = null;
     StandardMBean tcapStackCapMBean = null;
     try {
@@ -225,7 +292,10 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
       log.warn("TcapStackCap MBean creating is failed: "+e);
     }
 
-    //
+    this.beanObjects.put("TcapStackCap", tcapStackCap);
+    registerMBean(tcapStackCapMBean, "org.mobicents.ss7:name=TcapStackCap");
+
+    // todo: persistDir, previewMode
     TCAPStackImpl tcapStack = null;
     StandardMBean tcapStackMBean = null;
     try {
@@ -238,7 +308,10 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
       log.warn("TcapStack MBean creating is failed: "+e);
     }
 
-    //
+    this.beanObjects.put("TcapStack", tcapStack);
+    registerMBean(tcapStackMBean, "org.mobicents.ss7:name=TcapStack");
+
+    // no props?
     TCAPExecutor tcapExecutor = null;
     StandardMBean tcapExecutorMBean = null;
     try {
@@ -246,6 +319,7 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
       tcapStacks.put("TcapStackMap", tcapStackMap);
       tcapStacks.put("TcapStackCap", tcapStackCap);
       tcapStacks.put("TcapStack", tcapStack);
+
       tcapExecutor = new TCAPExecutor();
       tcapExecutor.setTcapStacks(tcapStacks);
 
@@ -254,7 +328,10 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
       log.warn("TcapExecutor MBean creating is failed: "+e);
     }
 
-    //
+    this.beanObjects.put("TcapExecutor", tcapExecutor);
+    registerMBean(tcapExecutorMBean, "org.mobicents.ss7:name=TcapExecutor");
+
+    // constructor: shellExecutors?
     ShellServer shellExecutorMBean = null;
     try {
       FastList<ShellExecutor> shellExecutors = new FastList<ShellExecutor>();
@@ -262,6 +339,7 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
       shellExecutors.add(m3uaShellExecutor);
       shellExecutors.add(sctpShellExecutor);
       shellExecutors.add(tcapExecutor);
+
       shellExecutorMBean = new ShellServer(schedulerMBean, shellExecutors);
       shellExecutorMBean.setAddress(getPropertyString("ShellExecutor", "address", "${jboss.bind.address}"));
       shellExecutorMBean.setPort(getPropertyInt("ShellExecutor", "port", 3435));
@@ -269,6 +347,8 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
     } catch (Exception e) {
       log.warn("ShellExecutor MBean creating is failed: "+e);
     }
+
+    ////
 
     //
     CAPStackImpl capStack = null;
@@ -305,7 +385,7 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
     StandardMBean isupStackMBean = null;
     try {
       isupStack = new ISUPStackImpl(schedulerMBean, 22234, 2);
-      isupStack.setMtp3UserPart(m3uaManagement);
+      isupStack.setMtp3UserPart((M3UAManagementImpl)mtp3UserPartDefault);
       isupStack.setCircuitManager(circuitManager);
       isupStackMBean = new StandardMBean(isupStack, org.mobicents.protocols.ss7.isup.ISUPStack.class);
     } catch (Exception e) {
@@ -353,7 +433,7 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
 
     //
     M3uaManagementJmx restcommM3uaManagementMBean = null;
-    restcommM3uaManagementMBean = new M3uaManagementJmx(ss7ManagementMBean, m3uaManagement);
+    restcommM3uaManagementMBean = new M3uaManagementJmx(ss7ManagementMBean, (M3UAManagementImpl)mtp3UserPartDefault);
 
     //
     SccpManagementJmx restcommSccpManagementMBean = null;
@@ -375,23 +455,6 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
     ////
 
     //// register MBeans
-    registerMBean(sctpManagementMBean, "org.mobicents.ss7:name=SCTPManagement");
-    registerMBean(sctpShellExecutorMBean, "org.mobicents.ss7:name=SCTPShellExecutor");
-
-    registerMBean(m3uaManagementMBean, "org.mobicents.ss7:name=Mtp3UserPart");
-    registerMBean(m3uaShellExecutorMBean, "org.mobicents.ss7:name=M3UAShellExecutor");
-
-    registerMBean(ss7ClockMBean, "org.mobicents.ss7:name=SS7Clock");
-    registerMBean(schedulerMBean, "org.mobicents.ss7:name=SS7Scheduler");
-
-    registerMBean(sccpStackMBean, "org.mobicents.ss7:name=SccpStack");
-    registerMBean(sccpExecutorMBean, "org.mobicents.ss7:name=SccpExecutor");
-
-    registerMBean(tcapStackMapMBean, "org.mobicents.ss7:name=TcapStackMap");
-    registerMBean(tcapStackCapMBean, "org.mobicents.ss7:name=TcapStackCap");
-    registerMBean(tcapStackMBean, "org.mobicents.ss7:name=TcapStack");
-    registerMBean(tcapExecutorMBean, "org.mobicents.ss7:name=TcapExecutor");
-
     registerMBean(shellExecutorMBean, "org.mobicents.ss7:name=ShellExecutor");
 
     registerMBean(circuitManagerMBean, "org.mobicents.ss7:name=CircuitManager");
@@ -493,6 +556,7 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
     }
 
     //
+    /*
     try {
       restcommTcapManagementMBean.start();
     } catch (Exception e) {
@@ -512,7 +576,133 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
     } catch (Exception e) {
       e.printStackTrace();
     }
+    */
+  }
 
+  private void createMtp3UserParts() {
+    ModelNode mbeansNode = peek(fullModel, "mbean");
+    for (ModelNode node: mbeansNode.asList()) {
+      for (Property prop: node.asPropertyList()) {
+        String type = prop.getValue().get("type").asString();
+        if (type.equals("Mtp3UserPart")) {
+          Mtp3UserPart userPart = createMtp3UserPart(prop.getValue());
+          this.mtp3UserPartsConfig.put(prop.getValue().get("name").asString(), userPart);
+        }
+      }
+    }
+  }
+
+  private Mtp3UserPart createMtp3UserPart(ModelNode mtp3UserPartNode) {
+    Mtp3UserPart mtp3UserPart = null;
+    StandardMBean mtp3UserPartMBean = null;
+
+    Object mtp3UserPartObject = null;
+    if (mtp3UserPartNode != null) {
+      String className = mtp3UserPartNode.get("class").asString();
+      String interfaceName = mtp3UserPartNode.get("interface").asString();
+
+      ModelNode mtp3UserPartParams = peek(mtp3UserPartNode, "constructor", "classic", "parameter");
+      List<Property> params = mtp3UserPartParams.asPropertyList();
+
+      try {
+        Class<?> clazz = Class.forName(className);
+        Class[] ctorParamTypes = null;
+        if (params.size() > 0) {
+          ctorParamTypes = new Class[params.size()];
+          int count = 0;
+          for (Property param : params) {
+            ctorParamTypes[count] = String.class;
+            count++;
+          }
+        }
+
+        Object[] ctorArgs = null;
+        if (params.size() > 0) {
+          ctorArgs = new Object[params.size()];
+          int count = 0;
+          for (Property param : params) {
+            ctorArgs[count] = param.getName();
+            count++;
+          }
+        }
+
+        Constructor<?> ctor = clazz.getConstructor(ctorParamTypes);
+        mtp3UserPartObject = ctor.newInstance(ctorArgs);
+
+        System.out.println("object: " + mtp3UserPartObject);
+        System.out.println("object: " + mtp3UserPartObject.getClass().getCanonicalName());
+
+        if (mtp3UserPartObject instanceof Mtp3UserPart) {
+          System.out.println("mtp3UserPartObject is instance of Mtp3UserPart");
+          mtp3UserPart = (Mtp3UserPart)mtp3UserPartObject;
+
+          invokeSetProperty(mtp3UserPartObject, "routingLabelFormat", this.routingLabelFormat);
+
+          List<Property> properties = mtp3UserPartNode.get("property").asPropertyList();
+          for (Property property: properties) {
+            if (!property.getValue().get("type").asString().equals("Bean")) {
+              invokeSetProperty(mtp3UserPartObject,
+                      property.getValue().get("name").asString(),
+                      property.getValue().get("value").asString());
+            } else {
+              invokeSetProperty(mtp3UserPartObject,
+                      property.getValue().get("name").asString(),
+                      this.beanObjects.get(property.getValue().get("value").asString()));
+            }
+          }
+
+          this.beanObjects.put(mtp3UserPartNode.get("name").asString(), mtp3UserPart);
+          mtp3UserPartMBean = new StandardMBean(mtp3UserPart, org.mobicents.protocols.ss7.mtp.Mtp3UserPart.class);
+          registerMBean(mtp3UserPartMBean, "org.mobicents.ss7:name="+mtp3UserPartNode.get("name").asString());
+
+          return mtp3UserPart;
+        }
+
+      } catch (Exception e) {
+        log.warn("Cant create Mtp3UserPart MBean: "+e);
+      }
+    }
+
+    return null;
+  }
+
+  private void invokeSetProperty(Object object, String property, Object propertyValue) {
+    try {
+      boolean found = false;
+      for (Method method : object.getClass().getDeclaredMethods()) {
+        //log.debug(method.getName());
+        if (method.getName().equals("set"+property.substring(0, 1).toUpperCase()+property.substring(1))) {
+          found = true;
+
+          if (method.getParameterTypes()[0].getCanonicalName().equals("int")) {
+            method.invoke(object, Integer.parseInt((String)propertyValue));
+          } else {
+            method.invoke(object, propertyValue);
+          }
+
+          log.info("invokeSetProperty executed successfully on object: "+object+" for property: "+property);
+        }
+      }
+      if (!found) {
+        for (Method method : object.getClass().getSuperclass().getDeclaredMethods()) {
+          //log.debug(method.getName());
+          if (method.getName().equals("set"+property.substring(0, 1).toUpperCase()+property.substring(1))) {
+            found = true;
+
+            if (method.getParameterTypes()[0].getCanonicalName().equals("int")) {
+              method.invoke(object, Integer.parseInt((String)propertyValue));
+            } else {
+              method.invoke(object, propertyValue);
+            }
+
+            log.info("invokeSetProperty executed successfully on superclass of object: "+object+" for property: "+property);
+          }
+        }
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   @Override

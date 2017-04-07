@@ -3,7 +3,9 @@ package org.mobicents.ss7.extension;
 import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
+import org.jboss.as.controller.PathAddress;
 import org.jboss.as.controller.ServiceVerificationHandler;
+import org.jboss.as.controller.registry.Resource;
 import org.jboss.as.jmx.MBeanServerService;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
@@ -41,7 +43,10 @@ class SubsystemAdd extends AbstractBoottimeAddStepHandler {
                               ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers)
       throws OperationFailedException {
 
+    ModelNode fullModel = Resource.Tools.readModel(context.readResource(PathAddress.EMPTY_ADDRESS));
+
     SS7ExtensionService service = SS7ExtensionService.INSTANCE;
+    service.setModel(fullModel);
 
     ServiceName name = SS7ExtensionService.getServiceName();
     ServiceController<SS7ExtensionService> controller = context.getServiceTarget()
