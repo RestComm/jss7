@@ -1,6 +1,15 @@
 We need to add into:
 modules/system/layers/base/sun/jdk/main/module.xml:
                 <path name="com/sun/nio/sctp"/>
-org/telestax/slee/container/lib/main/module.xml
+modules/system/layers/base/org/restcomm/slee/container/lib/main/module.xml
                 <module name="org.mobicents.ss7.modules" export="true"/>
 
+standalone/configuration/standalone.xml - security-domains
+                <security-domain name="jmx-console" cache-type="default">
+                    <authentication>
+                        <login-module code="org.jboss.security.auth.spi.UsersRolesLoginModule" flag="required">
+                            <module-option name="usersProperties" value="${jboss.server.config.dir}/jmx-users.properties"/>
+                            <module-option name="rolesProperties" value="${jboss.server.config.dir}/jmx-roles.properties"/>
+                        </login-module>
+                    </authentication>
+                </security-domain>
