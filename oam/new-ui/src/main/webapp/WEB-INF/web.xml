@@ -5,6 +5,7 @@
    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 	<display-name>Restcomm jSS7 Management</display-name> 
 	
+	<!--
    <security-constraint>
      <web-resource-collection>
        <web-resource-name>HtmlAdaptor</web-resource-name>
@@ -12,20 +13,23 @@
          role JBossAdmin to access the HTML JMX console web application
        </description>
        <url-pattern>/*</url-pattern>
-	<!--
+	!-
        <http-method>GET</http-method>
        <http-method>POST</http-method>
-	-->
+	-
      </web-resource-collection>
      <auth-constraint>
        <role-name>JBossAdmin</role-name>
      </auth-constraint>
    </security-constraint>
+	-->
 
+	<!--
    <login-config>
       <auth-method>BASIC</auth-method>
       <realm-name>JBoss JMX Console</realm-name>
    </login-config>
+	-->
 
    <security-role>
       <role-name>JBossAdmin</role-name>
