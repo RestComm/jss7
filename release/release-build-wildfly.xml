@@ -139,7 +139,7 @@
 		<delete file="${jboss.home}/lib/m3ua-cli-sctp.jar" />
 		<delete file="${jboss.home}/lib/restcomm-ss7-shell.jar" />
 		<delete file="${jboss.home}/lib/sccp-cli.jar" />
-		<delete file="${jboss.home}/lib/shell-transport-8.0.0-SNAPSHOT.jar" />
+		<delete file="${jboss.home}/lib/shell-transport-*.jar" />
 		<delete file="${jboss.home}/lib/tcap-ansi-cli.jar" />
 		<delete file="${jboss.home}/lib/tcap-cli.jar" />
 
