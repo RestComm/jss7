@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="urn:jboss:module:1.3" name="${module.name}">
+
+    <resources>
+        <resource-root path="${project.artifactId}-${project.version}.jar"/>
+    </resources>
+
+    <dependencies>
+        <module name="javax.api"/>
+        <!--
+        <module name="org.apache.log4j"/>
+        <module name="javax.persistence.api"/>
+        <module name="javax.transaction.api"/>
+        -->
+
+        <module name="org.jboss.staxmapper"/>
+        <module name="org.jboss.as.controller"/>
+        <module name="org.jboss.as.jmx"/>
+        <module name="org.jboss.as.server"/>
+        <module name="org.jboss.as.transactions"/>
+        <module name="org.jboss.as.naming"/>
+        <module name="org.jboss.as.connector"/>
+        <module name="org.jboss.modules"/>
+        <module name="org.jboss.msc"/>
+        <module name="org.jboss.logging"/>
+
+        <!-- -->
+        <!--
+        <module name="org.jboss.vfs"/>
+        <module name="org.javassist"/>
+        <module name="org.hibernate"/>
+        <module name="org.infinispan"/>
+        -->
+
+        <module name="org.mobicents.ss7.modules"/>
+
+    </dependencies>
+</module>
