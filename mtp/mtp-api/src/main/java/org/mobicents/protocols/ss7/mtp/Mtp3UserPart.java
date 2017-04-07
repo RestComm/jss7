@@ -31,6 +31,10 @@ import java.io.IOException;
  */
 public interface Mtp3UserPart {
 
+    void start() throws Exception;
+
+    void stop() throws Exception;
+
     /**
      * Add {@link Mtp3UserPartListener}
      *
