@@ -8,11 +8,11 @@
         <version>7.3.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ss7-build-wildfly</artifactId>
+	<artifactId>restcomm-ss7-wildfly</artifactId>
 
     <packaging>pom</packaging>
 
-    <name>Restcomm jSS7 :: ${project.artifactId}</name>
+	<name>Restcomm jSS7 :: Service :: WildFly :: ${project.artifactId}</name>
 
     <properties>
         <version.wildfly>10.1.0.Final</version.wildfly>

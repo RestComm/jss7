@@ -8,9 +8,9 @@
         <version>7.3.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ss7-build-wildfly-extension</artifactId>
+    <artifactId>restcomm-ss7-wildfly-extension</artifactId>
 
-    <name>Restcomm jSS7 :: ${project.artifactId}</name>
+	<name>Restcomm jSS7 :: Service :: WildFly :: ${project.artifactId}</name>
 
     <properties>
         <module.name>org.mobicents.ss7.extension</module.name>
