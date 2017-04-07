@@ -19,11 +19,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.mobicents.ss7.management.console;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +41,6 @@ import org.jboss.security.SecurityContext;
 import org.jboss.security.SecurityContextFactory;
 import org.jboss.security.audit.AuditEvent;
 import org.jboss.security.audit.AuditLevel;
-import org.jboss.security.authentication.JBossCachedAuthenticationManager;
 import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.mobicents.protocols.ss7.scheduler.Task;
 import org.mobicents.ss7.management.transceiver.ChannelProvider;
@@ -54,7 +55,7 @@ import org.mobicents.ss7.management.transceiver.ShellServerChannel;
  * @author amit bhayani
  *
  */
-public class ShellServer extends Task implements ShellServerMBean {
+public abstract class ShellServer extends Task implements ShellServerMBean {
     Logger logger = Logger.getLogger(ShellServer.class);
 
     public static final String CONNECTED_MESSAGE = "Connected to %s %s %s";
@@ -84,8 +85,6 @@ public class ShellServer extends Task implements ShellServerMBean {
 
     private int port;
 
-    //private org.jboss.security.plugins.JaasSecurityManager jaasSecurityManager = null;
-    private JBossCachedAuthenticationManager jbossAuthManagement = null;
     private String securityDomain = null;
     private String userName = null;
     private String password = null;
@@ -156,18 +155,19 @@ public class ShellServer extends Task implements ShellServerMBean {
         if (this.securityDomain != null) {
             InitialContext initialContext = new InitialContext();
 
-            // JBoss 5
-            //this.jaasSecurityManager = (JaasSecurityManager) initialContext.lookup(this.securityDomain);
-
-            // WildFly
-            Object jaasAuthManagement = initialContext.lookup("java:jboss/jaas/" + this.getSecurityDomain());
-            logger.debug("jaas Object: "+jaasAuthManagement);
-            if (jaasAuthManagement != null && jaasAuthManagement instanceof JBossCachedAuthenticationManager) {
-                logger.info("jaas Object: "+jaasAuthManagement.getClass());
-                this.jbossAuthManagement = (JBossCachedAuthenticationManager)jaasAuthManagement;
-            }
+            startSecurityManager(initialContext, securityDomain);
         }
     }
+
+    protected abstract void startSecurityManager(InitialContext initialContext, String securityDomain) throws NamingException;
+
+    protected abstract void putPrincipal(Map map, Principal principal);
+
+    protected abstract boolean isAuthManagementLoaded();
+
+    protected abstract boolean isValid(Principal principal, Object credential);
+
+    protected abstract String getLocalSecurityDomain();
 
     public void stop() {
         this.started = false;
@@ -219,8 +219,7 @@ public class ShellServer extends Task implements ShellServerMBean {
                             if (this.securityDomain != null) {
                                 Map map = new HashMap();
                                 map.put(AUDIT_MESSAGE, "logout success");
-                                //map.put("principal", this.jaasSecurityManager.getPrincipal(principal));
-                                map.put("principal", this.principal);
+                                putPrincipal(map, principal);
                                 this.securityContext.getAuditManager().audit(new AuditEvent(AuditLevel.SUCCESS, map));
                             }
 
@@ -236,12 +235,12 @@ public class ShellServer extends Task implements ShellServerMBean {
                             this.password = rxMessage;
                             this.txMessage = "";
 
-                            if(jbossAuthManagement == null) {
+                            if (!isAuthManagementLoaded()) {
                                 logger.error("Cant authenticate because AuthenticationManagement is null!");
 
                             } else {
                                 this.principal = new SimplePrincipal(this.userName);
-                                boolean isValid = this.jbossAuthManagement.isValid(principal, this.password);
+                                boolean isValid = this.isValid(principal, this.password);
                                 if (!isValid) {
                                     chan.send(messageFactory.createMessage(CONNECTED_AUTHENTICATION_FAILED));
                                     logger.warn(String.format("Authentication to CLI failed for username=%s", this.userName));
@@ -249,13 +248,11 @@ public class ShellServer extends Task implements ShellServerMBean {
                                 } else {
 
                                     // Audit Stuff
-                                    this.securityContext = SecurityContextFactory.createSecurityContext(this.jbossAuthManagement
-                                            .getSecurityDomain());
+                                    this.securityContext = SecurityContextFactory.createSecurityContext(getLocalSecurityDomain());
 
                                     Map map = new HashMap();
                                     map.put(AUDIT_MESSAGE, "login success");
-                                    //map.put("principal", this.jaasSecurityManager.getPrincipal(principal));
-                                    map.put("principal", this.principal);
+                                    putPrincipal(map, principal);
                                     this.securityContext.getAuditManager().audit(new AuditEvent(AuditLevel.SUCCESS, map));
 
                                     this.txMessage = " ";
@@ -283,8 +280,7 @@ public class ShellServer extends Task implements ShellServerMBean {
                                     Map map = new HashMap();
                                     map.put(AUDIT_COMMAND, rxMessage);
                                     map.put(AUDIT_COMMAND_RESPONSE, "Invalid command");
-                                    //map.put("principal", this.jaasSecurityManager.getPrincipal(principal));
-                                    map.put("principal", this.principal);
+                                    putPrincipal(map, principal);
                                     this.securityContext.getAuditManager().audit(new AuditEvent(AuditLevel.INFO, map));
                                 }
 
@@ -296,8 +292,7 @@ public class ShellServer extends Task implements ShellServerMBean {
                                     Map map = new HashMap();
                                     map.put(AUDIT_COMMAND, rxMessage);
                                     map.put(AUDIT_COMMAND_RESPONSE, this.txMessage);
-                                    //map.put("principal", this.jaasSecurityManager.getPrincipal(principal));
-                                    map.put("principal", this.principal);
+                                    putPrincipal(map, principal);
                                     this.securityContext.getAuditManager().audit(new AuditEvent(AuditLevel.INFO, map));
                                 }
 

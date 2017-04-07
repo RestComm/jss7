@@ -217,7 +217,7 @@
 	<!-- Shell Service -->
 	<!-- ==================================================================== -->
 	<!-- Define Shell Executor -->
-	<bean name="ShellExecutor" class="org.mobicents.ss7.management.console.ShellServer">
+	<bean name="ShellExecutor" class="org.mobicents.ss7.management.console.ShellServerJboss">
 		<constructor>
 			<parameter>
 				<inject bean="SS7Scheduler" />

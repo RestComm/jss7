@@ -73,6 +73,7 @@ import org.mobicents.ss7.SS7Service;
 import org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart;
 import org.mobicents.ss7.management.console.ShellExecutor;
 import org.mobicents.ss7.management.console.ShellServer;
+import org.mobicents.ss7.management.console.ShellServerWildFly;
 
 /**
 *
@@ -228,7 +229,7 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
             int port = getPropertyInt("ShellExecutor", "port", 3435);
             String securityDomain = getPropertyString("ShellExecutor", "securityDomain", "jmx-console");
 
-            shellExecutorMBean = new ShellServer(schedulerMBean, shellExecutors);
+            shellExecutorMBean = new ShellServerWildFly(schedulerMBean, shellExecutors);
             shellExecutorMBean.setAddress(address);
             shellExecutorMBean.setPort(port);
             shellExecutorMBean.setSecurityDomain(securityDomain);
