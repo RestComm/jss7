@@ -69,6 +69,8 @@
         <module name="org.jboss.as.naming"/>
         <module name="org.jboss.as.transactions"/>
         <module name="org.jboss.as.system-jmx"/>
+        <module name="org.jboss.as.security" export="true"/>
+        <module name="org.picketbox" export="true"/>
         <module name="org.jboss.modules"/>
         <module name="org.jboss.msc"/>
         <module name="org.jboss.jts"/>
