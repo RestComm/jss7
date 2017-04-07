@@ -3,7 +3,6 @@
 
     <resources>
         <resource-root path="javolution-${javolution.version}.jar"/>
-        <resource-root path="netty-all-${netty.version}.jar"/>
 
         <resource-root path="congestion-${project.version}.jar"/>
         <resource-root path="scheduler-${project.version}.jar"/>
