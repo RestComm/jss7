@@ -52,6 +52,16 @@
 			<artifactId>javolution</artifactId>
 			<version>${javolution.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.mobicents.protocols.stream</groupId>
+            <artifactId>stream</artifactId>
+            <version>${stream.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-email</artifactId>
+            <version>1.3.2</version>
+        </dependency>
 
         <!-- Congestion -->
         <dependency>
