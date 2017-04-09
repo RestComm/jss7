@@ -205,11 +205,13 @@
             </fileset>
         </copy>
 
+<!--
         <copy todir="${restcomm.jss7.dist}/ss7-jboss/template/log4j/" failonerror="true">
             <fileset dir="${jss7.dir}/service/jboss/src/main/log4j">
                 <include name="**" />
             </fileset>
         </copy>
+-->
 
         <!-- Copy RestComm SS7 Service for JBoss 5 -->
         <copy todir="${restcomm.jss7.dist}/ss7-jboss/restcomm-ss7-service" failonerror="true">
