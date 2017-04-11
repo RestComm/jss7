@@ -5,21 +5,61 @@ If you wish to remove {this-platform} {this-application} you can do so by deleti
 If you installed it as a JBoss Service then you must remember to clean up the SS7 Service files within the JBoss directory by undeploying the service as shown below.
 The procedure below can be ignored if you installed the Stack as a standalone component.
 
-.Procedure: Uninstalling {this-platform}  SS7 Service
+.Procedure: Uninstalling {this-platform} SS7 Service from JBoss 5.1.0.GA
 Undeploy: 
-[source]
+[source,subs="attributes"]
 ----
-[usr1]$ cd -/ss7
+[usr1]$ cd {path}/ss7-jboss
 [usr1]$ ant undeploy
 ----  
 Result: 
-[source]
+[source,subs="attributes"]
 ----
-Buildfile: /home/vinu/Downloads/restcomm-jss7-6.1.3.GA/ss7/build.xml
+Buildfile: ../{path}/ss7-jboss/build.xml
 
 undeploy:
-   [delete] Deleting directory /home/vinu/Downloads/restcomm-jss7-6.1.3.GA/ss7/${system.JBOSS_HOME}/server/default/deploy/mobicents-ss7-service
+   [delete] Deleting directory JBOSS_HOME/server/default/deploy/restcomm-ss7-service
+   [delete] Deleting: JBOSS_HOME/server/default/deploy/jss7-management-console.war
+   [delete] Deleting: JBOSS_HOME/server/default/deploy/jolokia.war
+   [delete] Deleting: JBOSS_HOME/bin/ss7-cli.sh
+   [delete] Deleting: JBOSS_HOME/bin/ss7-cli.bat
 
 BUILD SUCCESSFUL
 Total time: 0 seconds
 ----  
+
+.Procedure: Uninstalling {this-platform} SS7 Service from WildFly 10.1.0.Final
+Undeploy:
+[source,subs="attributes"]
+----
+[usr1]$ cd {path}/ss7-wildfly
+[usr1]$ ant undeploy
+----
+Result:
+[source,subs="attributes"]
+----
+Buildfile: ../{path}/ss7-wildfly/build.xml
+
+undeploy:
+   [delete] Deleting directory JBOSS_HOME/modules/system/layers/base/org/mobicents/ss7
+   [delete] Deleting: JBOSS_HOME/standalone/deployments/jss7-management-console.war
+   [delete] Deleting: JBOSS_HOME/standalone/deployments/jolokia.war
+   [delete] Deleting: JBOSS_HOME/bin/ss7-cli.sh
+   [delete] Deleting: JBOSS_HOME/bin/ss7-cli.bat
+   [delete] Deleting JBOSS_HOME/lib/jansi-1.8.jar
+   [delete] Deleting JBOSS_HOME/lib/javolution-5.5.1.jar
+   [delete] Deleting JBOSS_HOME/lib/jreadline-0.17.jar
+   [delete] Deleting JBOSS_HOME/lib/shell-transport-8.0.84.jar
+   [delete] Deleting: JBOSS_HOME/lib/linkset-cli.jar
+   [delete] Deleting: JBOSS_HOME/lib/m3ua-cli-m3ua.jar
+   [delete] Deleting: JBOSS_HOME/lib/m3ua-cli-sctp.jar
+   [delete] Deleting: JBOSS_HOME/lib/restcomm-ss7-shell.jar
+   [delete] Deleting: JBOSS_HOME/lib/sccp-cli.jar
+   [delete] Deleting: JBOSS_HOME/lib/tcap-ansi-cli.jar
+   [delete] Deleting: JBOSS_HOME/lib/tcap-cli.jar
+   [delete] Deleting: JBOSS_HOME/standalone/configuration/jmx-roles.properties
+   [delete] Deleting: JBOSS_HOME/standalone/configuration/jmx-users.properties
+
+BUILD SUCCESSFUL
+Total time: 0 seconds
+----
