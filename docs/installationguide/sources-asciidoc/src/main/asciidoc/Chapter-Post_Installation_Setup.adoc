@@ -21,11 +21,12 @@ By using the {this-platform}  SS7 Service you will be able to configure the SS7 
 The SS7 Service wraps SS7 Level 4 (i.e., MAP, CAP and ISUP) and the lower layers and exposes via JNDI, such that the layer above can perform the look-up and use it in any application.
  
 
-.Procedure: Installing {this-platform}  SS7 Service
+.Procedure: Installing {this-platform} SS7 Service to JBoss 5.1.0.GA
+
 . Pre-Requisites:
 +
-* The {this-platform} SS7 Service binary requires that you have JBoss Application Server installed and `JBOSS_HOME` Environment variable set properly. The latest binaries of JBoss Application Server can by obtained from {slee-binary-url}. For more details on setting the `JBOSS_HOME` variable, please refer to the section <<_jboss_home_setup>>. 
-* Ant 1.6 (or higher) must be used to install the binary.
+* The {this-platform} SS7 Service binary requires that you have JBoss Application Server installed and `JBOSS_HOME` Environment variable set properly. The latest binaries of JBoss Application Server can by obtained from {slee2-binary-url}. For more details on setting the `JBOSS_HOME` variable, please refer to the section <<_jboss_home_setup>>.
+* `Ant 1.9` (or higher) must be used to install the binary.
   Instructions for using Ant, including install, can be found at http://ant.apache.org/.
 * If you are using the SS7 board on server, you must ensure that the `java.library.path` variable is set to point to the directory containing the native component.
   Alternatively you can copy it to the JBoss native library path manually. 
@@ -34,10 +35,9 @@ The SS7 Service wraps SS7 Level 4 (i.e., MAP, CAP and ISUP) and the lower layers
 +
 * You can now deploy the service using the `ant deploy` command as shown below: 
 +
-[source]
+[source,subs="attributes"]
 ----
-
-[usr1]$ cd -/ss7
+[usr1]$ cd {path}/ss7-jboss
 [usr1]$ ant deploy
 ----      
 
@@ -45,15 +45,57 @@ The SS7 Service wraps SS7 Level 4 (i.e., MAP, CAP and ISUP) and the lower layers
 +
 * If the service has been deployed successfully, you will find the below message appear on screen:
 +
-[source]
+[source,subs="attributes"]
 ----
 
-Buildfile: /home/vinu/Downloads/restcomm-jss7-3.0.0/ss7/build.xml
+Buildfile: ../{path}/ss7-jboss/build.xml
 
 deploy:
-     [copy] Copying 38 files to /home/vinu/Downloads/restcomm-jss7-3.0.0/ss7/${system.JBOSS_HOME}/server/default/deploy/restcomm-ss7-service
-     [copy] Copying 2 files to /home/vinu/Downloads/restcomm-jss7-3.0.0/ss7/${system.JBOSS_HOME}/bin
-     [copy] Copying 9 files to /home/vinu/Downloads/restcomm-jss7-3.0.0/ss7/${system.JBOSS_HOME}/lib
+     [copy] Copying 47 files to JBOSS_HOME/server/default/deploy/restcomm-ss7-service
+     [copy] Copying 2 files to JBOSS_HOME/bin
+     [copy] Copying 11 files to JBOSS_HOME/lib
+     [copy] Copying 2 files to JBOSS_HOME/server/default/deploy
+
+BUILD SUCCESSFUL
+----
+
+* You have now deployed {this-platform} SS7 Service successfully.
+  Note that this procedure will also install the Shell Components (shell scripts and libraries) on this machine.
+
+.Procedure: Installing {this-platform} SS7 Service to WildFly 10.1.0.Final
+
+. Pre-Requisites:
++
+* The {this-platform} SS7 Service binary requires that you have WildFly installed and `JBOSS_HOME` Environment variable set properly. The latest binaries of WildFly can by obtained from {slee7-binary-url}. For more details on setting the `JBOSS_HOME` variable, please refer to the section <<_jboss_home_setup>>.
+* `Ant 1.9` (or higher) must be used to install the binary.
+  Instructions for using Ant, including install, can be found at http://ant.apache.org/.
+* If you are using the SS7 board on server, you must ensure that the `java.library.path` variable is set to point to the directory containing the native component.
+  Alternatively you can copy it to the JBoss native library path manually.
+
+. Deploying the SS7 Service:
++
+* You can now deploy the service using the `ant deploy` command as shown below:
++
+[source,subs="attributes"]
+----
+[usr1]$ cd {path}/ss7-wildfly
+[usr1]$ ant deploy
+----
+
+. Result:
++
+* If the service has been deployed successfully, you will find the below message appear on screen:
++
+[source,subs="attributes"]
+----
+
+Buildfile: ../{path}/ss7-wildfly/build.xml
+
+deploy:
+     [copy] Copying 48 files to JBOSS_HOME/modules/system/layers/base/org/mobicents/ss7
+     [copy] Copying 2 files to JBOSS_HOME/bin
+     [copy] Copying 11 files to JBOSS_HOME/lib
+     [copy] Copying 2 files to JBOSS_HOME/standalone/deployments
 
 BUILD SUCCESSFUL
 ----
@@ -90,7 +132,7 @@ For more details on using the Shell and the commands available, please refer to 
 +
 * You must have JBoss Application Server installed and `JBOSS_HOME` Environment variable set properly.
   For more details on setting the `JBOSS_HOME` variable, please refer to the section <<_jboss_home_setup>>. 
-* Ant 1.6 (or higher) must be used to install the binary.
+* `Ant 1.9` (or higher) must be used to install the binary.
   Instructions for using Ant, including install, can be found at http://ant.apache.org/.
 
 . Copy [path]_{this-platform}-{this-application}-{project-version}/ss7_ to any folder of your choice in any machine that supports the requirements specified. 

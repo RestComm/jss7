@@ -1,4 +1,5 @@
 [[_setup_downloading]]
+
 = Downloading
 
 Installing {this-platform} {this-application} is easy and quick with the binary download.
@@ -10,28 +11,30 @@ You can either download the binary release or download the source code and set u
 The binary release is available for download at TeleStax Customer Support Portal {this-release-binary-url} 
 
 .Procedure: Binary Download
-. Download the zip file [path]_-.zip_ to any folder of your choice. 
+. Download the zip file _{path}.zip_ to any folder of your choice.
 . Extract the contents of the zip file. 
 +
+
+[source,subs="attributes"]
 ----
-Downloads]$ unzip -.zip
+Downloads]$ unzip {path}.zip
 ----						
 . Verify the contents of the newly created directory.
 
-When you download the binary release, you will notice that the top level directory is named [path]_-_ and immediately below this are five sub-directories named [path]_asn_, [path]__docs_, [path]_oam_, [path]_sctp_ and [path]_ss7_,  encompassing the major services and libraries that make up {this-platform}  {this-application} .
+When you download the binary release, you will notice that the top level directory is named _{path}_ and immediately below this are 7 sub-directories named _asn_, __docs_, _oam_, _sctp_, _ss7_, _ss7-jboss_ and _ss7-wildfly_ encompassing the major services and libraries that make up {this-platform}  {this-application} .
 For details on what is included in the sub-directories, please refer to the {this-platform}  {this-application}  User Guide. 
 
 The major functional modules of the {this-application} are: 
 
-. SS7 Service [dir: [path]_{this-folder}-ss7-service_]
-. Signaling Gateway [dir: [path]_{this-folder}-ss7-sgw_]
-. Shell [dir: [path]_shell_]
-. SS7 Simulator [dir: [path]_{this-folder}-ss7-simulator_]
+. SS7 Service [dir: _{this-folder}-ss7-service_]
+. Signaling Gateway [dir: _{this-folder}-ss7-sgw_]
+. Shell [dir: _shell_]
+. SS7 Simulator [dir: _{this-folder}-ss7-simulator_]
 
 [subs="attributes"]
 ----
 
-|- {this-folder}-jss7-<version>
+|- {this-folder}-jss7-{project-version}
 		|- asn	
 
 		|- _docs
@@ -43,11 +46,18 @@ The major functional modules of the {this-application} are:
 		|- ss7
 				|+ protocols
 				|+ shell
-				|+ {this-folder}-ss7-service
-				|+ {this-folder}-ss7-sgw
 				|+ {this-folder}-ss7-simulator
 				|+ {this-folder}-ss7-trace-parser
+
+		|- ss7-jboss
+				|+ {this-folder}-ss7-service
+				|+ {this-folder}-ss7-sgw
 				|+ template
+
+		|- ss7-wildfly
+                |+ {this-folder}-ss7-service
+                |+ template
+
 ----
 
 [[_source_code]]
@@ -74,9 +84,9 @@ Instructions to Download `jmxtools:jar` for building Simulator source code are a
 * The webpage will display a list of Java Platform Technology Downloads.
   From the list, select "Java Management Extension (JMX) 1.2.1" 
 * Read and understand the License Agreement and then press "Accept License Agreement". 
-* Download the [path]_jmx-1_2_1-ri.zip_ file. 
-* Extract [path]_lib/jmxtools:jar_					
-* Once extracted, place this file in your maven repository as [path]_.m2/repository/com/sun/jdmk/jmxtools/1.2.1/jmxtools-1.2.1.jar_ file if [path]_.m2/repository_ is a root of this repository.
+* Download the _jmx-1_2_1-ri.zip_ file.
+* Extract _lib/jmxtools:jar_
+* Once extracted, place this file in your maven repository as _.m2/repository/com/sun/jdmk/jmxtools/1.2.1/jmxtools-1.2.1.jar_ file if _.m2/repository_ is a root of this repository.
   Alternatively you can register it. 
 
 [[_source_building]]
@@ -87,14 +97,13 @@ Instructions to Download `jmxtools:jar` for building Simulator source code are a
 +
 Checkout a specific release source using GIT.
 The base URL to clone from is {this-release-source-code-url}.
-Then add the specific release version, in the below example we are downloading the version "3.0.0". 
+Then add the specific release version, in the below example we are downloading the version {project-version}.
 +
-[source]
+[source,subs="attributes"]
 ----
-
-[usr]$ git clone 
+[usr]$ git clone {this-release-source-code-url} jss7
 [usr]$ cd jss7
-[usr]$ git checkout 3.0.0
+[usr]$ git checkout {project-version}
 ----
 
 . Building the source code
@@ -110,9 +119,8 @@ NOTE: At the moment, native modules are supported only for Linux OS.
 +
 To build {this-platform} {this-application} without building any native libraries use the default profile as shown below.
 +
-[source]
+[source,subs="attributes"]
 ----
-
 [usr]$ cd jss7
 [usr]$ mvn install
 ----
@@ -124,9 +132,8 @@ NOTE: If you are using {this-platform} {this-application} without any native dep
 Use this profile only if the linux server on which this code is built has `dahdi` module installed.
 Make sure you pass the "include.zap" system property with a value pointing to the directory where `dahdi` is installed
 +
-[source]
+[source,subs="attributes"]
 ----
-
 [usr]$ cd jss7
 [usr]$ mvn install -Pdahdilinux -Dinclude.zap=/usr/include/dahdi
 ----
@@ -134,9 +141,8 @@ Make sure you pass the "include.zap" system property with a value pointing to th
 
 . Use Ant to build the binary.
 +
-[source]
+[source,subs="attributes"]
 ----
-
 [usr]$ cd jss7/release
 [usr]$ ant
 ----
@@ -146,9 +152,9 @@ Make sure you pass the "include.zap" system property with a value pointing to th
 === Development Trunk Source Building
 
 To build from development trunk source, follow the same procedure as above but at the time of checkout do not switch to the specific release tag. 
-[source]
+[source,subs="attributes"]
 ----
-[usr]$ git clone 
+[usr]$ git clone {this-release-source-code-url} jss7
 [usr]$ cd jss7
 [usr]$ git checkout
 ----  

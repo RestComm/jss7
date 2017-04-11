@@ -82,7 +82,8 @@
 								<this-release-source-code-url>${docs.this.release.source.code.url}</this-release-source-code-url>
 								<this-trunk-source-code-url>${docs.this.trunk.source.code.url}</this-trunk-source-code-url>
 								<this-release-binary-url>${docs.this.release.binary.url}</this-release-binary-url>
-								<slee-binary-url>${docs.slee.binary.url}</slee-binary-url>
+								<slee2-binary-url>${docs.slee2.binary.url}</slee2-binary-url>
+								<slee7-binary-url>${docs.slee7.binary.url}</slee7-binary-url>
 								<toclevels-value>2</toclevels-value>
 							</attributes>
 							<preserveDirectories>true</preserveDirectories>
@@ -118,7 +119,8 @@
 								<this-release-source-code-url>${docs.this.release.source.code.url}</this-release-source-code-url>
 								<this-trunk-source-code-url>${docs.this.trunk.source.code.url}</this-trunk-source-code-url>
 								<this-release-binary-url>${docs.this.release.binary.url}</this-release-binary-url>
-								<slee-binary-url>${docs.slee.binary.url}</slee-binary-url>
+                                <slee2-binary-url>${docs.slee2.binary.url}</slee2-binary-url>
+                                <slee7-binary-url>${docs.slee7.binary.url}</slee7-binary-url>
 								<toclevels-value>2</toclevels-value>
 							</attributes>
 							<preserveDirectories>true</preserveDirectories>
@@ -192,7 +194,8 @@
 										<this-release-source-code-url>${docs.this.release.source.code.url}</this-release-source-code-url>
 										<this-trunk-source-code-url>${docs.this.trunk.source.code.url}</this-trunk-source-code-url>
 										<this-release-binary-url>${docs.this.release.binary.url}</this-release-binary-url>
-										<slee-binary-url>${docs.slee.binary.url}</slee-binary-url>
+                                        <slee2-binary-url>${docs.slee2.binary.url}</slee2-binary-url>
+                                        <slee7-binary-url>${docs.slee7.binary.url}</slee7-binary-url>
 										<toclevels-value>6</toclevels-value>
 									</attributes>
 								</configuration>
