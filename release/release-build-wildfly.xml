@@ -131,15 +131,23 @@
 		<delete file="${jboss.home}/bin/ss7-cli.sh" />
 		<delete file="${jboss.home}/bin/ss7-cli.bat" />
 
-		<delete file="${jboss.home}/lib/jansi-*.jar" />
-		<delete file="${jboss.home}/lib/javolution-*.jar" />
-		<delete file="${jboss.home}/lib/jreadline-*.jar" />
+		<delete verbose="true">
+			<fileset dir="${jboss.home}/lib" includes="**/jansi-*.jar"/>
+		</delete>
+		<delete verbose="true">
+			<fileset dir="${jboss.home}/lib" includes="**/javolution-*.jar"/>
+		</delete>
+		<delete verbose="true">
+			<fileset dir="${jboss.home}/lib" includes="**/jreadline-*.jar"/>
+		</delete>
+		<delete verbose="true">
+			<fileset dir="${jboss.home}/lib" includes="**/shell-transport-*.jar"/>
+		</delete>
 		<delete file="${jboss.home}/lib/linkset-cli.jar" />
 		<delete file="${jboss.home}/lib/m3ua-cli-m3ua.jar" />
 		<delete file="${jboss.home}/lib/m3ua-cli-sctp.jar" />
 		<delete file="${jboss.home}/lib/restcomm-ss7-shell.jar" />
 		<delete file="${jboss.home}/lib/sccp-cli.jar" />
-		<delete file="${jboss.home}/lib/shell-transport-8.0.0-SNAPSHOT.jar" />
 		<delete file="${jboss.home}/lib/tcap-ansi-cli.jar" />
 		<delete file="${jboss.home}/lib/tcap-cli.jar" />
 
