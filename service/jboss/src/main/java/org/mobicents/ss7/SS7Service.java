@@ -109,10 +109,11 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
 
     @Override
     public void stopService() {
-        try {
-            unbind(jndiName);
-        } catch (Exception e) {
-
+        if (jndiName != null) {
+            try {
+                unbind(jndiName);
+            } catch (Exception e) {
+            }
         }
 
         logger.info(generateMessageWithLogo("service stopped"));
@@ -122,20 +123,22 @@ public class SS7Service extends ServiceMBeanSupport implements SS7ServiceMBean {
      * Binds trunk object to the JNDI under the jndiName.
      */
     private void rebind(Object stack) throws NamingException {
-        Context ctx = new InitialContext();
-        String[] tokens = jndiName.split("/");
+        if (jndiName != null) {
+            Context ctx = new InitialContext();
+            String[] tokens = jndiName.split("/");
 
-        for (int i = 0; i < tokens.length - 1; i++) {
-            if (tokens[i].trim().length() > 0) {
-                try {
-                    ctx = (Context) ctx.lookup(tokens[i]);
-                } catch (NamingException e) {
-                    ctx = ctx.createSubcontext(tokens[i]);
+            for (int i = 0; i < tokens.length - 1; i++) {
+                if (tokens[i].trim().length() > 0) {
+                    try {
+                        ctx = (Context) ctx.lookup(tokens[i]);
+                    } catch (NamingException e) {
+                        ctx = ctx.createSubcontext(tokens[i]);
+                    }
                 }
             }
-        }
 
-        ctx.bind(tokens[tokens.length - 1], stack);
+            ctx.bind(tokens[tokens.length - 1], stack);
+        }
     }
 
     /**

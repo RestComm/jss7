@@ -1,0 +1,31 @@
+Actions needed for deployment:
+
+1) Download and unzip SLEE release for WildFly
+
+2) add "<path name="com/sun/nio/sctp"/>" entry into file
+<wildfly>/modules/system/layers/base/sun/jdk/main/module.xml - section "<dependencies>/<system>/<paths>"
+
+3) add "<module name="org.mobicents.ss7.modules" export="true"/>" entry into file
+<wildfly>/modules/system/layers/base/org/restcomm/slee/container/lib/main/module.xml - section "<dependencies>"
+
+4) copy "<security-domain name="jmx-console" cache-type="default"> ..." entry from the file "ss7-wildfly/template/security-domains.txt" into file
+<wildfly>/standalone/configuration/standalone.xml - section "<profile>/<subsystem xmlns="urn:jboss:domain:security:1.2">/<security-domains>"
+
+5) add "<extension module="org.mobicents.ss7.extension"/>" entry into file
+<wildfly>/standalone/configuration/standalone.xml - section <extensions> 
+
+6) copy "<subsystem xmlns="urn:org.restcomm:ss7-wildfly:1.0"> ..." entry from the file "ss7-wildfly/template/wildfly-jss7-subsystem.txt" into file
+<wildfly>/standalone/configuration/standalone.xml - section <profile>
+
+7) copy content of "ss7-wildfly/restcomm-ss7-service" folder (folders "modules" and "extension") into 
+<wildfly>/modules/system/layers/base/org/mobicents/ss7/
+
+8) copy content of "ss7/shell" folder (folders "bin" and "lib") into 
+<wildfly>
+
+9) copy content of "oam/new-ui" folder (two "war" files) into 
+<wildfly>/standalone/deployments
+
+10) copy files "jmx-roles.properties" and "jmx-users.properties" from "ss7-wildfly/template" folder into 
+<wildfly>/standalone/configuration folder (if such files are absent there) 
+

@@ -28,13 +28,13 @@
 		</copy>
 
 		<copy overwrite="true" todir="${jboss.home}/bin">
-			<fileset dir="./shell/bin">
+			<fileset dir="./../ss7/shell/bin">
 				<include name="**" />
 			</fileset>			
 		</copy>
 
 		<copy overwrite="true" todir="${jboss.home}/lib">
-			<fileset dir="./shell/lib">
+			<fileset dir="./../ss7/shell/lib">
 				<include name="**" />
 			</fileset>			
 		</copy>

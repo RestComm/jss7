@@ -1,0 +1,56 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="urn:org.restcomm:ss7-wildfly:1.0"
+            xmlns="urn:org.restcomm:ss7-wildfly:1.0"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified"
+            version="1.0">
+
+    <!-- The subsystem root element -->
+    <xs:element name="subsystem" type="subsystemType"/>
+
+    <xs:complexType name="subsystemType">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="mbean" type="mbeanType"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="mbeanType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="type" type="xs:string" use="required"/>
+        <xs:attribute name="class" type="xs:string" use="required"/>
+        <xs:attribute name="interface" type="xs:string" use="required"/>
+        <xs:attribute name="enabled" type="xs:boolean" use="required"/>
+        <xs:attribute name="reflection" type="xs:boolean" use="required"/>
+        <xs:choice minOccurs="0" maxOccurs="1">
+            <xs:element name="constructor" type="constructorType"/>
+        </xs:choice>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="property" type="propertyType"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="constructorType">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="parameter" type="parameterType"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="parameterType">
+    </xs:complexType>
+
+    <xs:complexType name="propertyType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="type" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string" use="required"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="entry" type="entryType"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="entryType">
+        <xs:attribute name="key" type="xs:string" use="required"/>
+        <xs:attribute name="type" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string" use="required"/>
+    </xs:complexType>
+
+</xs:schema>

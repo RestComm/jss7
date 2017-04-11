@@ -15,14 +15,23 @@
 	<properties>
 	</properties>
 
-	 <build>
-                <finalName>jss7-management-console</finalName>
-                <plugins>
-                    <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-war-plugin</artifactId>
-                            <version>2.3</version>
-                    </plugin>
+	<build>
+		<finalName>jss7-management-console</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.3</version>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>deploy-module-jboss</id>
+			<build>
+				<finalName>jss7-management-console</finalName>
+				<plugins>
 					<plugin>
 						<artifactId>maven-antrun-plugin</artifactId>
 						<executions>
@@ -55,6 +64,49 @@
 							</execution>
 						</executions>
 					</plugin>                        
-                </plugins>
-        </build>
+				</plugins>
+			</build>
+        </profile>
+
+		<profile>
+			<id>deploy-module-wildfly</id>
+			<build>
+				<finalName>jss7-management-console</finalName>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<echo>
+											${jboss.home}server/default/deploy
+										</echo>
+										<copy file="${project.build.directory}/jss7-management-console.war" todir="${jboss.home}/standalone/deployments" />
+									</tasks>
+								</configuration>
+							</execution>
+							<execution>
+								<id>undeploy</id>
+								<phase>clean</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<delete failonerror="false" file="${jboss.home}/standalone/deployments/jss7-management-console.war" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>                        
+				</plugins>
+			</build>
+        </profile>
+	</profiles>
 </project>

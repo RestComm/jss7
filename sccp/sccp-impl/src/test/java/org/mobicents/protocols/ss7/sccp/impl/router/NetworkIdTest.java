@@ -310,6 +310,18 @@ public class NetworkIdTest implements SccpListener {
             // TODO Auto-generated method stub
             return null;
         }
+
+        @Override
+        public void start() throws Exception {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void stop() throws Exception {
+            // TODO Auto-generated method stub
+            
+        }
     }
 
     @Override

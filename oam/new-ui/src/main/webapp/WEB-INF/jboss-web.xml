@@ -4,5 +4,5 @@
    
 <jboss-web>
    <!-- security-domain to enable security.  -->
-      <security-domain>java:/jaas/jmx-console</security-domain>
+   <security-domain>jmx-console</security-domain>
 </jboss-web>
