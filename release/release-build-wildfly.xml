@@ -45,11 +45,12 @@
 			</insert>
 		</xmltask> 
 
-		<!-- adding of a security domain into standalone.xml -->
+
+		<!-- adding of a security domain into standalone.xml
 		<xmltask source="${jboss.standalone.path}/configuration/standalone.xml" dest="${jboss.standalone.path}/configuration/standalone.xml">
 			<remove path="/:server/:profile/*[local-name()='subsystem']/*[local-name()='security-domains']/*[local-name()='security-domain' and @name='jmx-console']"/>
 			<insert path="/:server/:profile/*[local-name()='subsystem']/*[local-name()='security-domains']/*[local-name()='security-domain'][last()]" position="after" file="template/security-domains.txt"></insert>
-		</xmltask> 
+		</xmltask> -->
 
 		<!-- adding of "<extension module="org.mobicents.ss7.extension"/>" into standalone.xml -->
 		<xmltask source="${jboss.standalone.path}/configuration/standalone.xml" dest="${jboss.standalone.path}/configuration/standalone.xml">
@@ -92,12 +93,14 @@
 			</fileset>			
 		</copy>
 
+		<!--
 		<copy overwrite="true" todir="${jboss.standalone.path}/configuration">
 			<fileset dir="${basedir}/template">
 				<include name="jmx-roles.properties" />
 				<include name="jmx-users.properties" />
 			</fileset>			
 		</copy>
+		-->
 
 	</target>
 
@@ -111,9 +114,11 @@
 			<remove path="/:module/:dependencies/:module[@name='org.mobicents.ss7.modules']"/>
 		</xmltask> 
 
+		<!--
 		<xmltask source="${jboss.standalone.path}/configuration/standalone.xml" dest="${jboss.standalone.path}/configuration/standalone.xml">
 			<remove path="/:server/:profile/*[local-name()='subsystem']/*[local-name()='security-domains']/*[local-name()='security-domain' and @name='jmx-console']"/>
-		</xmltask> 
+		</xmltask>
+		 -->
 
 		<xmltask source="${jboss.standalone.path}/configuration/standalone.xml" dest="${jboss.standalone.path}/configuration/standalone.xml">
 			<remove path="/:server/:extensions/:extension[@module='org.mobicents.ss7.extension']"/>
@@ -151,8 +156,10 @@
 		<delete file="${jboss.home}/lib/tcap-ansi-cli.jar" />
 		<delete file="${jboss.home}/lib/tcap-cli.jar" />
 
+		<!--
 		<delete file="${jboss.standalone.path}/configuration/jmx-roles.properties" />
 		<delete file="${jboss.standalone.path}/configuration/jmx-users.properties" />
+		-->
 	</target>
 
 </project>
