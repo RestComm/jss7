@@ -15,8 +15,6 @@
 
 	<name>RestComm jSS7 :: ${project.artifactId}</name>
 
-
-
 	<properties>
 		<!-- maven.test.skip>false</maven.test.skip -->
 		<restcomm.tools.mavenplugin.eclipse.version>
@@ -39,6 +37,10 @@
 		<sctp.version>1.7.8</sctp.version> <!-- 1.6.0.FINAL -->
 		<commons.version>1.0.0.CR1</commons.version>
 		<dialogic.version>6.7.1</dialogic.version>
+
+
+		<version.wildfly.as>10.1.0.Final</version.wildfly.as>
+		<version.wildfly.core>2.2.0.Final</version.wildfly.core>
 
 		<!-- lic dep -->
 	</properties>

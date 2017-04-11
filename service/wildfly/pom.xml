@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.mobicents.protocols.ss7</groupId>
+        <artifactId>restcomm-service-parent</artifactId>
+        <version>7.3.0-SNAPSHOT</version>
+    </parent>
+
+	<artifactId>restcomm-ss7-wildfly</artifactId>
+
+    <packaging>pom</packaging>
+
+	<name>Restcomm jSS7 :: Service :: WildFly :: ${project.artifactId}</name>
+
+    <properties>
+        <version.wildfly>10.1.0.Final</version.wildfly>
+        <version.wildfly.core>2.2.0.Final</version.wildfly.core>
+    </properties>
+
+    <modules>
+        <module>modules</module>
+        <module>extension</module>
+    </modules>
+
+</project>

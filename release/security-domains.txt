@@ -1,0 +1,8 @@
+                <security-domain xmlns="urn:jboss:domain:security:1.2" name="jmx-console" cache-type="default">
+                    <authentication>
+                        <login-module code="org.jboss.security.auth.spi.UsersRolesLoginModule" flag="required">
+                            <module-option name="usersProperties" value="${jboss.server.config.dir}/jmx-users.properties"/>
+                            <module-option name="rolesProperties" value="${jboss.server.config.dir}/jmx-roles.properties"/>
+                        </login-module>
+                    </authentication>
+                </security-domain>

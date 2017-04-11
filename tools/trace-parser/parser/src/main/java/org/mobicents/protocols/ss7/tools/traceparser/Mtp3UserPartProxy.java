@@ -91,4 +91,16 @@ public class Mtp3UserPartProxy implements Mtp3UserPart {
         return false;
     }
 
+    @Override
+    public void start() throws Exception {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void stop() throws Exception {
+        // TODO Auto-generated method stub
+
+    }
+
 }

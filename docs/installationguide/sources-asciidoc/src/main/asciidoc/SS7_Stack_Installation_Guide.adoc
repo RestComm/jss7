@@ -8,6 +8,8 @@
 :toclevels: {toclevels-value}
 :sectnumlevels: 4
 
+:path: {this-folder}-{this-application}-{project-version}
+
 :leveloffset: 1
 
 include::Book_Info.adoc[]
