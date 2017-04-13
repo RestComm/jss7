@@ -192,6 +192,16 @@ public class TcapManagementJmx implements TcapManagementJmxMBean, CounterMediato
     }
 
     @Override
+    public void setSlsRange(int val) throws Exception{
+        this.wrappedTCAPStack.setSlsRange(val);
+    }
+
+    @Override
+    public int getSlsRange() {
+        return this.wrappedTCAPStack.getSlsRange();
+    }
+
+    @Override
     public void setStatisticsEnabled(boolean val) throws Exception {
         this.wrappedTCAPStack.setStatisticsEnabled(val);
     }
