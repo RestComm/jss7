@@ -692,6 +692,8 @@ public class TCAPStackImpl implements TCAPStack {
 
             writer.write(this.slsRange, SLS_RANGE, Integer.class);
 
+            writer.write(this.statisticsEnabled, STATISTICS_ENABLED, Boolean.class);
+
 
             writer.close();
         } catch (Exception e) {
@@ -779,6 +781,9 @@ public class TCAPStackImpl implements TCAPStack {
             vali = reader.read(SLS_RANGE, Integer.class);
             if (vali != null)
                 this.slsRange = vali;
+            volb = reader.read(STATISTICS_ENABLED, Boolean.class);
+            if (volb != null)
+                this.statisticsEnabled = volb;
 
             reader.close();
         } catch (XMLStreamException ex) {
