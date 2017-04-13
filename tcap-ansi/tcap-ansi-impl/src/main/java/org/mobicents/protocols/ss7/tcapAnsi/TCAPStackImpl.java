@@ -62,6 +62,8 @@ public class TCAPStackImpl implements TCAPStack {
     private static final String DIALOG_ID_RANGE_END = "dialogidrangeend";
     private static final String PREVIEW_MODE = "previewmode";
     private static final String STATISTICS_ENABLED = "statisticsenabled";
+    private static final String SLS_RANGE = "slsrange";
+
 
     // default value of idle timeout and after TC_END remove of task.
     public static final long _DIALOG_TIMEOUT = 60000;
@@ -94,6 +96,11 @@ public class TCAPStackImpl implements TCAPStack {
     private long dialogIdRangeEnd = Integer.MAX_VALUE;
     private boolean previewMode = false;
     private boolean statisticsEnabled = false;
+
+    // SLS value
+    private int slsRange = 0;
+    public static final int SLS_RANGE_ODD = 1;
+    public static final int SLS_RANGE_EVEN = 2;
 
     public TCAPStackImpl(String name) {
         super();
@@ -334,6 +341,16 @@ public class TCAPStackImpl implements TCAPStack {
         return previewMode;
     }
 
+    public void setSlsRange(int slsRange) {
+        this.slsRange = slsRange;
+        this.store();
+
+    }
+
+    public int getSlsRange() {
+        return this.slsRange;
+    }
+
     @Override
     public void setStatisticsEnabled(boolean val) throws Exception {
         if (!this.started)
@@ -369,7 +386,10 @@ public class TCAPStackImpl implements TCAPStack {
             writer.write(this.dialogIdRangeStart, DIALOG_ID_RANGE_START, Long.class);
             writer.write(this.dialogIdRangeEnd, DIALOG_ID_RANGE_END, Long.class);
 
+
             writer.write(this.statisticsEnabled, STATISTICS_ENABLED, Boolean.class);
+
+            writer.write(this.slsRange, SLS_RANGE, Integer.class);
 
             writer.close();
         } catch (Exception e) {
@@ -401,9 +421,14 @@ public class TCAPStackImpl implements TCAPStack {
             if (vall != null)
                 this.dialogIdRangeEnd = vall;
 
+
             Boolean volb = reader.read(STATISTICS_ENABLED, Boolean.class);
             if (volb != null)
                 this.statisticsEnabled = volb;
+
+            vali = reader.read(SLS_RANGE, Integer.class);
+            if (vali != null)
+                this.slsRange = vali;
 
             reader.close();
         } catch (XMLStreamException ex) {

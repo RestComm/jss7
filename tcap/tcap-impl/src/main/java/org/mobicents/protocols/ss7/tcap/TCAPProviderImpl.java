@@ -180,11 +180,21 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
     // get next Seq Control value available
     private synchronized int getNextSeqControl() {
+
         seqControl++;
         if (seqControl > 255) {
             seqControl = 0;
 
         }
+
+        if (this.stack.getSlsRange() == this.stack.SLS_RANGE_ODD) {
+            if (seqControl % 2 == 0)
+                seqControl+=1;
+        } else if (this.stack.getSlsRange() == this.stack.SLS_RANGE_EVEN) {
+            if (seqControl %2 != 0)
+                seqControl+=1;
+        }
+
         return seqControl;
     }
 

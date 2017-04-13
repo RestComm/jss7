@@ -45,6 +45,7 @@ public class TcapCommandHandler extends CommandHandlerWithHelp {
 //        set.addChild("previewmode");
         set.addChild("donotsendprotocolversion");
         set.addChild("statisticsenabled");
+        set.addChild("slsrange");
 
         Node get = parent.addChild("get");
         get.addChild("dialogidletimeout");
@@ -56,6 +57,7 @@ public class TcapCommandHandler extends CommandHandlerWithHelp {
         get.addChild("donotsendprotocolversion");
         get.addChild("statisticsenabled");
         get.addChild("ssn");
+        get.addChild("slsrange");
 
     };
 

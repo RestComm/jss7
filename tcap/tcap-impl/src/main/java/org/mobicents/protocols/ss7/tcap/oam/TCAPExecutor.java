@@ -184,7 +184,11 @@ public class TCAPExecutor implements ShellExecutor {
         } else if (parName.equals("statisticsenabled")) {
             boolean val = Boolean.parseBoolean(options[3]);
             this.tcapStack.setStatisticsEnabled(val);
-        } else {
+        } else if (parName.equals("slsrange")) {
+            int val = Integer.parseInt(options[3]);
+            this.tcapStack.setSlsRange(val);
+        }
+        else {
             return TCAPOAMMessage.INVALID_COMMAND;
         }
 
@@ -230,7 +234,10 @@ public class TCAPExecutor implements ShellExecutor {
                 sb.append(this.tcapStack.getStatisticsEnabled());
             } else if (parName.equals("ssn")) {
                 sb.append(this.tcapStack.getSubSystemNumber());
-            } else {
+            } else if (parName.equals("slsrange")) {
+                sb.append(this.tcapStack.getSlsRange());
+            }
+            else {
                 return TCAPOAMMessage.INVALID_COMMAND;
             }
 
@@ -284,6 +291,11 @@ public class TCAPExecutor implements ShellExecutor {
                 sb.append("subsystemnumber = ");
                 sb.append(tcapStackImpl.getSubSystemNumber());
                 sb.append("\n");
+
+                sb.append("slsrange = ");
+                sb.append(tcapStackImpl.getSlsRange());
+                sb.append("\n");
+
                 sb.append("*******************");
                 sb.append("\n");
                 sb.append("\n");

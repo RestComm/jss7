@@ -165,4 +165,18 @@ public interface TCAPStack {
      */
     int getSubSystemNumber();
 
+    /**
+     * Set value for slsRange for this TCAP Stack.
+     *
+     * @param val
+     */
+    void setSlsRange(int val) throws Exception;
+
+    /**
+     * Returns the SlsRange that this TCAP Stack is registered for
+     *
+     * @return
+     */
+    int getSlsRange();
+
 }
