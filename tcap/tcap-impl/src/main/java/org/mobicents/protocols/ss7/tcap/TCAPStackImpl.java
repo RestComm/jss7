@@ -63,6 +63,7 @@ public class TCAPStackImpl implements TCAPStack {
     private static final String PREVIEW_MODE = "previewmode";
     private static final String DO_NOT_SEND_PROTOCOL_VERSION = "donotsendprotocolversion";
     private static final String STATISTICS_ENABLED = "statisticsenabled";
+    private static final String SLS_RANGE = "slsrange";
 
 
     private static final XMLBinding binding = new XMLBinding();
@@ -99,6 +100,11 @@ public class TCAPStackImpl implements TCAPStack {
     private boolean statisticsEnabled = false;
 
     private int ssn = -1;
+
+    // SLS value
+    private int slsRange = 0;
+    public static final int SLS_RANGE_ODD = 1;
+    public static final int SLS_RANGE_EVEN = 2;
 
     public TCAPStackImpl(String name) {
         super();
@@ -348,6 +354,20 @@ public class TCAPStackImpl implements TCAPStack {
         return previewMode;
     }
 
+    public void setSlsRange(int val) throws Exception  {
+
+        if (val < 0 || val > 2) {
+            throw new Exception("SlsRange value is invalid");
+        }
+
+        this.slsRange = val;
+        this.store();
+    }
+
+    public int getSlsRange() {
+        return this.slsRange;
+    }
+
     @Override
     public void setDoNotSendProtocolVersion(boolean val) throws Exception {
         if (!this.started)
@@ -407,6 +427,9 @@ public class TCAPStackImpl implements TCAPStack {
 
             writer.write(this.statisticsEnabled, STATISTICS_ENABLED, Boolean.class);
 
+            writer.write(this.slsRange, SLS_RANGE, Integer.class);
+
+
             writer.close();
         } catch (Exception e) {
             this.logger.error(
@@ -448,6 +471,10 @@ public class TCAPStackImpl implements TCAPStack {
             volb = reader.read(STATISTICS_ENABLED, Boolean.class);
             if (volb != null)
                 this.statisticsEnabled = volb;
+
+            vali = reader.read(SLS_RANGE, Integer.class);
+            if (vali != null)
+                this.slsRange = vali;
 
             reader.close();
         } catch (XMLStreamException ex) {
