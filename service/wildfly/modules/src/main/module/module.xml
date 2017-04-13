@@ -75,5 +75,7 @@
         <module name="org.jboss.msc"/>
         <module name="org.jboss.jts"/>
         <module name="org.jboss.logging"/>
+
+        <!-- lic dep -->
     </dependencies>
 </module>
