@@ -386,10 +386,9 @@ public class TCAPStackImpl implements TCAPStack {
             writer.write(this.dialogIdRangeStart, DIALOG_ID_RANGE_START, Long.class);
             writer.write(this.dialogIdRangeEnd, DIALOG_ID_RANGE_END, Long.class);
 
+            writer.write(this.slsRange, SLS_RANGE, Integer.class);
 
             writer.write(this.statisticsEnabled, STATISTICS_ENABLED, Boolean.class);
-
-            writer.write(this.slsRange, SLS_RANGE, Integer.class);
 
             writer.close();
         } catch (Exception e) {
@@ -421,14 +420,13 @@ public class TCAPStackImpl implements TCAPStack {
             if (vall != null)
                 this.dialogIdRangeEnd = vall;
 
+            vali = reader.read(SLS_RANGE, Integer.class);
+            if (vali != null)
+                this.slsRange = vali;
 
             Boolean volb = reader.read(STATISTICS_ENABLED, Boolean.class);
             if (volb != null)
                 this.statisticsEnabled = volb;
-
-            vali = reader.read(SLS_RANGE, Integer.class);
-            if (vali != null)
-                this.slsRange = vali;
 
             reader.close();
         } catch (XMLStreamException ex) {

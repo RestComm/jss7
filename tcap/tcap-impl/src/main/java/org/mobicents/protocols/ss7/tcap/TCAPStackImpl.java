@@ -425,9 +425,9 @@ public class TCAPStackImpl implements TCAPStack {
 
             writer.write(this.doNotSendProtocolVersion, DO_NOT_SEND_PROTOCOL_VERSION, Boolean.class);
 
-            writer.write(this.statisticsEnabled, STATISTICS_ENABLED, Boolean.class);
-
             writer.write(this.slsRange, SLS_RANGE, Integer.class);
+
+            writer.write(this.statisticsEnabled, STATISTICS_ENABLED, Boolean.class);
 
 
             writer.close();
@@ -468,13 +468,12 @@ public class TCAPStackImpl implements TCAPStack {
             volb = reader.read(DO_NOT_SEND_PROTOCOL_VERSION, Boolean.class);
             if (volb != null)
                 this.doNotSendProtocolVersion = volb;
-            volb = reader.read(STATISTICS_ENABLED, Boolean.class);
-            if (volb != null)
-                this.statisticsEnabled = volb;
-
             vali = reader.read(SLS_RANGE, Integer.class);
             if (vali != null)
                 this.slsRange = vali;
+            volb = reader.read(STATISTICS_ENABLED, Boolean.class);
+            if (volb != null)
+                this.statisticsEnabled = volb;
 
             reader.close();
         } catch (XMLStreamException ex) {
