@@ -22,10 +22,6 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
-import static org.testng.Assert.*;
-
-import java.io.IOException;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
@@ -66,6 +62,10 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * 
@@ -157,10 +157,11 @@ public class NetworkIdTest implements SccpListener {
         router.addRoutingAddress(4, primaryAddr2_L);
 
         SccpAddress pattern = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("*", 1), 0, 0);
-        router.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.LOCAL, pattern, "K", 1, 1, null, 1);
-        router.addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.LOCAL, pattern, "K", 2, 2, null, 2);
-        router.addRule(3, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.REMOTE, pattern, "K", 3, 3, null, 1);
-        router.addRule(4, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.REMOTE, pattern, "K", 4, 4, null, 2);
+        SccpAddress patternDefaultCalling = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("*", 1), 0, 0);
+        router.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.LOCAL, pattern, "K", 1, 1, null, 1, patternDefaultCalling);
+        router.addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.LOCAL, pattern, "K", 2, 2, null, 2, patternDefaultCalling);
+        router.addRule(3, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.REMOTE, pattern, "K", 3, 3, null, 1, patternDefaultCalling);
+        router.addRule(4, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.REMOTE, pattern, "K", 4, 4, null, 2, patternDefaultCalling);
         // int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType
         // originationType, SccpAddress pattern, String mask, int pAddressId,
         // int sAddressId, Integer newCallingPartyAddressAddressId, int networkId

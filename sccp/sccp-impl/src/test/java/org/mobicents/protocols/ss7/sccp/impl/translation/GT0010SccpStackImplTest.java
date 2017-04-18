@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.translation;
 
-import static org.testng.Assert.assertTrue;
-
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.OriginationType;
@@ -33,13 +31,14 @@ import org.mobicents.protocols.ss7.sccp.impl.User;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
-import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle0010;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author amit bhayani
@@ -97,10 +96,12 @@ public class GT0010SccpStackImplTest extends SccpHarness {
         SccpAddress rule1SccpAddress = super.sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, super.sccpProvider1.getParameterFactory().createGlobalTitle(GT2_pattern_digits, 0), 0, getSSN());
         SccpAddress rule2SccpAddress = super.sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, super.sccpProvider1.getParameterFactory().createGlobalTitle(
                 GT1_pattern_digits, 0), 0, getSSN());
+        SccpAddress patternDefaultCalling = super.sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, super.sccpProvider1.getParameterFactory().createGlobalTitle("*", 0), 0, 0);
+
         super.router1.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, rule1SccpAddress,
-                "K/R/K", 22, -1, null, 0);
+                "K/R/K", 22, -1, null, 0, patternDefaultCalling);
         super.router2.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, rule2SccpAddress,
-                "R/R/R", 33, -1, null, 0);
+                "R/R/R", 33, -1, null, 0, patternDefaultCalling);
 
         // now create users, we need to override matchX methods, since our rules do kinky stuff with digits, plus
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN()) {
