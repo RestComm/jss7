@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.translation;
 
-import static org.testng.Assert.assertTrue;
-
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
@@ -40,6 +38,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author amit bhayani
@@ -108,9 +108,9 @@ public class GT0011SccpStackImplTest extends SccpHarness {
                 super.sccpProvider1.getParameterFactory().createGlobalTitle(GT1_pattern_digits, 0, NumberingPlan.ISDN_MOBILE,
                         null), 0, getSSN());
         super.router1.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, rule1SccpAddress,
-                "K/R/K", 22, -1, null, 0);
+                "K/R/K", 22, -1, null, 0, rule1SccpAddress, "K/R/K");
         super.router2.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, rule2SccpAddress,
-                "R/R/R", 33, -1, null, 0);
+                "R/R/R", 33, -1, null, 0, rule2SccpAddress, "R/R/R");
 
         // now create users, we need to override matchX methods, since our rules
         // do kinky stuff with digits, plus
@@ -188,9 +188,9 @@ public class GT0011SccpStackImplTest extends SccpHarness {
                 super.sccpProvider1.getParameterFactory().createGlobalTitle(GT1_pattern_digits, 0, NumberingPlan.ISDN_MOBILE,
                         null), 0, getSSN());
         super.router1.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, rule1SccpAddress,
-                "K/R/K", 22, -1, null, 0);
+                "K/R/K", 22, -1, null, 0, rule1SccpAddress, "K/R/K");
         super.router2.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, rule2SccpAddress,
-                "R/K/R", 33, -1, null, 0);
+                "R/K/R", 33, -1, null, 0, rule2SccpAddress, "R/K/R");
 
         // add rules for incoming messages,
 
@@ -210,9 +210,9 @@ public class GT0011SccpStackImplTest extends SccpHarness {
         rule2SccpAddress = super.sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, super.sccpProvider1.getParameterFactory().createGlobalTitle("02/?", 0,
                 NumberingPlan.ISDN_TELEPHONY, null), 0, getSSN());
         super.router1.addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, rule1SccpAddress,
-                "K/K/K", 44, -1, null, 0);
+                "K/K/K", 44, -1, null, 0, rule1SccpAddress, "K/K/K");
         super.router2.addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, rule2SccpAddress,
-                "K/K", 66, -1, null, 0);
+                "K/K", 66, -1, null, 0, rule2SccpAddress, "K/K");
 
         // now create users, we need to override matchX methods, since our rules
         // do kinky stuff with digits, plus

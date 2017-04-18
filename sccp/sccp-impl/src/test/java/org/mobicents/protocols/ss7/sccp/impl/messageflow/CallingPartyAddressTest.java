@@ -22,10 +22,6 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.messageflow;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-
 import org.mobicents.protocols.ss7.Util;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
@@ -42,6 +38,10 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  *
@@ -128,7 +128,7 @@ public class CallingPartyAddressTest extends SccpHarness {
                 RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
                 sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), 0, 0);
         sccpStack1.getRouter().addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K",
-                1, -1, null, 0);
+                1, -1, null, 0, pattern, "K");
 
         SccpAddress a3 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
                 sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), 0, 0);
@@ -145,7 +145,7 @@ public class CallingPartyAddressTest extends SccpHarness {
         // present newCallingPartyAddress
         sccpStack1.getRouter().removeRule(1);
         sccpStack1.getRouter().addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K",
-                1, -1, 2, 0);
+                1, -1, 2, 0, pattern, "K");
 
         message = this.sccpProvider1.getMessageFactory().createDataMessageClass1(a3, a1, getDataSrc(), 0, 8, true, null, null);
         sccpProvider1.send(message);
