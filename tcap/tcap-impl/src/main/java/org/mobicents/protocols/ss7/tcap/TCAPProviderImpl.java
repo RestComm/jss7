@@ -187,10 +187,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
         }
 
-        if (this.stack.getSlsRange() == this.stack.SLS_RANGE_ODD) {
+        if (this.stack.getSlsRangeType() == SlsRangeType.Odd) {
             if (seqControl % 2 == 0)
                 seqControl+=1;
-        } else if (this.stack.getSlsRange() == this.stack.SLS_RANGE_EVEN) {
+        } else if (this.stack.getSlsRangeType() == SlsRangeType.Even) {
             if (seqControl %2 != 0)
                 seqControl+=1;
         }

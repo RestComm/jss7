@@ -185,7 +185,7 @@ public class TCAPExecutor implements ShellExecutor {
             boolean val = Boolean.parseBoolean(options[3]);
             this.tcapStack.setStatisticsEnabled(val);
         } else if (parName.equals("slsrange")) {
-            int val = Integer.parseInt(options[3]);
+            String val = String.valueOf( options[3]);
             this.tcapStack.setSlsRange(val);
         }
         else {
