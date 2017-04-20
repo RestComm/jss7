@@ -247,10 +247,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
     // get next Seq Control value available
 
-        if (this.stack.getSlsRange() == this.stack.SLS_RANGE_ODD) {
+        if (this.stack.getSlsRangeType() == SlsRangeType.Odd) {
             if (res % 2 == 0)
                 res+=1;
-        } else if (this.stack.getSlsRange() == this.stack.SLS_RANGE_EVEN) {
+        } else if (this.stack.getSlsRangeType() == SlsRangeType.Even) {
             if (res %2 != 0)
                 res+=1;
         }

@@ -420,8 +420,6 @@ EXAMPLES
 On TCAP management page, click on pencil against the 'Statistics Enabled' property and text box becomes editable.
 Change value and save. 
 
-<<<<<<< HEAD
-
 [[_tcap_property_executordelaythreshold]]
 === Thresholds for Executors congestion control
 

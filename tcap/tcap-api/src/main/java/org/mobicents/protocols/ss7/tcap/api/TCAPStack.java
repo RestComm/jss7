@@ -371,13 +371,13 @@ public interface TCAPStack {
      *
      * @param val
      */
-    void setSlsRange(int val) throws Exception;
+    void setSlsRange(String val) throws Exception;
 
     /**
      * Returns the SlsRange that this TCAP Stack is registered for
      *
      * @return
      */
-    int getSlsRange();
+    String getSlsRange();
 
 }
