@@ -46,6 +46,7 @@ import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.SlsRangeType;
 import org.mobicents.protocols.ss7.tcapAnsi.api.ComponentPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcapAnsi.api.DialogPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPException;
@@ -183,10 +184,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
         }
 
-        if (this.stack.getSlsRange() == this.stack.SLS_RANGE_ODD) {
+        if (this.stack.getSlsRangeType() == SlsRangeType.Odd) {
             if (seqControl % 2 == 0)
                 seqControl+=1;
-        } else if (this.stack.getSlsRange() == this.stack.SLS_RANGE_EVEN) {
+        } else if (this.stack.getSlsRangeType() == SlsRangeType.Even) {
             if (seqControl %2 != 0)
                 seqControl+=1;
         }
