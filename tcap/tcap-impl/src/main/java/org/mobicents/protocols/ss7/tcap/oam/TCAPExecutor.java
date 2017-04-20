@@ -230,7 +230,7 @@ public class TCAPExecutor implements ShellExecutor {
             this.tcapStack.setCongControl_blockingIncomingTcapMessages(val);
 
         } else if (parName.equals("slsrange")) {
-            int val = Integer.parseInt(options[3]);
+            String val = String.valueOf( options[3]);
             this.tcapStack.setSlsRange(val);
         }
         else {

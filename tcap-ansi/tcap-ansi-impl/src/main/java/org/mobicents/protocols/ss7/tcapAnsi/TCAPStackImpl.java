@@ -37,6 +37,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPCounterEventsListener;
+import org.mobicents.protocols.ss7.tcap.SlsRangeType;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPCounterProvider;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPStack;
@@ -133,9 +134,7 @@ public class TCAPStackImpl implements TCAPStack {
     private double[] congControl_BackToNormalMemoryThreshold = new double[] { 72, 82, 92 };
 
     // SLS value
-    private int slsRange = 0;
-    public static final int SLS_RANGE_ODD = 1;
-    public static final int SLS_RANGE_EVEN = 2;
+    private SlsRangeType slsRange = SlsRangeType.All;
 
     public TCAPStackImpl(String name) {
         super();
@@ -378,13 +377,26 @@ public class TCAPStackImpl implements TCAPStack {
         return previewMode;
     }
 
-    public void setSlsRange(int slsRange) {
-        this.slsRange = slsRange;
-        this.store();
+    public void setSlsRange(String val) throws Exception {
 
+        if (val.equals(SlsRangeType.All.toString()))  {
+            this.slsRange = SlsRangeType.All;
+        } else if (val.equals(SlsRangeType.Odd.toString())) {
+            this.slsRange = SlsRangeType.Odd;
+        } else if (val.equals(SlsRangeType.Even.toString())) {
+            this.slsRange = SlsRangeType.Even;
+        } else {
+            throw new Exception("SlsRange value is invalid");
+        }
+
+        this.store();
     }
 
-    public int getSlsRange() {
+    public String getSlsRange() {
+        return this.slsRange.toString();
+    }
+
+    public SlsRangeType getSlsRangeType() {
         return this.slsRange;
     }
 
@@ -649,7 +661,7 @@ public class TCAPStackImpl implements TCAPStack {
                         Double.class);
             }
 
-            writer.write(this.slsRange, SLS_RANGE, Integer.class);
+            writer.write(this.slsRange.toString(), SLS_RANGE, String.class);
 
             writer.write(this.statisticsEnabled, STATISTICS_ENABLED, Boolean.class);
 
@@ -721,9 +733,9 @@ public class TCAPStackImpl implements TCAPStack {
                 this.congControl_BackToNormalMemoryThreshold[2] = valTB3;
             }
 
-            vali = reader.read(SLS_RANGE, Integer.class);
-            if (vali != null)
-                this.slsRange = vali;
+            String vals = reader.read(SLS_RANGE, String.class);
+            if (vals != null)
+                this.slsRange = Enum.valueOf(SlsRangeType.class, vals);
 
             Boolean volb = reader.read(STATISTICS_ENABLED, Boolean.class);
             if (volb != null)
