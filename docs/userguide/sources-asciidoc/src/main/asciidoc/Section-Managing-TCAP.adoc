@@ -435,7 +435,7 @@ Name
 	tcap set slsrange
 
 SYNOPSIS
-	tcap set slsrange <0 | 1 | 2> stackname <stack-name>
+	tcap set slsrange <All | Odd | Even> stackname <stack-name>
 
 DESCRIPTION
 	slsRanger: set the value of SLS to odd or even or both.
@@ -444,9 +444,9 @@ PARAMETERS
 
 	Standard Parameters
 
-	<0>	-	If set to 0, SLS number can be odd or even value
-	<1>	-	If set to 1, SLS number can get only odd value
-	<2>	-	If set to 2, SLS number can get only even value
+	<All>	-	If set to All, SLS number can be odd or even value
+	<Odd>	-	If set to Odd, SLS number can get only odd value
+	<Even>	-	If set to Even, SLS number can get only even value
 
 	Optional Parameters
 
@@ -455,7 +455,7 @@ PARAMETERS
 					will be used.
 
 EXAMPLES
-	tcap set slsrange 0
+	tcap set slsrange All
 ----
 
 [[_tcap_property_slsrange_gui]]

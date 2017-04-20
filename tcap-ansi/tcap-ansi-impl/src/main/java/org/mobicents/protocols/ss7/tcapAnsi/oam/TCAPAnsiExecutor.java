@@ -150,7 +150,7 @@ public class TCAPAnsiExecutor implements ShellExecutor {
             boolean val = Boolean.parseBoolean(options[4]);
             tcapStackImpl.setStatisticsEnabled(val);
         }else if (parName.equals("slsranger")) {
-            int val = Integer.parseInt(options[3]);
+            String val = String.valueOf(options[3]);
             tcapStackImpl.setSlsRange(val);
         } else {
             return TCAPAnsiOAMMessage.INVALID_COMMAND;
