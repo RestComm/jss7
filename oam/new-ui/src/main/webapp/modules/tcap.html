@@ -123,6 +123,7 @@
 												var doNotSendProtocolVersion = response.value.DoNotSendProtocolVersion;
 												var statisticsEnabled = response.value.StatisticsEnabled;
 												var ssn = response.value.SubSystemNumber;
+												var slsRange = response.value.SlsRange;
 												
 												var isTcapStarted = response.value.Started;
 												
@@ -293,8 +294,23 @@
 																			'</td>'+
 																		    '</tr>'+																		    
 														
-														
-																														
+																			'<tr data-toggle="tooltip" title="if set to All, SLS value can get both odd or even numbers. If set to Odd, SLS value can get only odd numbers. If set to Even, SLS value can get only even numbers.">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">SLS Range</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'slsRange-input" class="control-group">'+
+																				'<span id="' + name +'slsRange-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + slsRange + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'SlsRange\', \'' + name+"slsRange" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"slsRange"+']\').toggle(); $(\'input[id^='+name+"slsRange"+']\').focus();"></i>' +
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'slsRange-text">' + slsRange + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"slsRange"+']\').toggle(); $(\'input[id^='+name+"slsRange"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+
+
 														'				</tbody>'+
 														'			</table>'+ 												
 														'		</div>'+

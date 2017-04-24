@@ -149,6 +149,9 @@ public class TCAPAnsiExecutor implements ShellExecutor {
         } else if (parName.equals("statisticsenabled")) {
             boolean val = Boolean.parseBoolean(options[4]);
             tcapStackImpl.setStatisticsEnabled(val);
+        }else if (parName.equals("slsranger")) {
+            String val = String.valueOf(options[3]);
+            tcapStackImpl.setSlsRange(val);
         } else {
             return TCAPAnsiOAMMessage.INVALID_COMMAND;
         }
@@ -196,6 +199,8 @@ public class TCAPAnsiExecutor implements ShellExecutor {
                 sb.append(tcapStackImpl.getPreviewMode());
             } else if (parName.equals("statisticsenabled")) {
                 sb.append(tcapStackImpl.getStatisticsEnabled());
+            }else if (parName.equals("slsrange")) {
+                sb.append(tcapStackImpl.getSlsRange());
             } else {
                 return TCAPAnsiOAMMessage.INVALID_COMMAND;
             }
@@ -243,6 +248,11 @@ public class TCAPAnsiExecutor implements ShellExecutor {
                 sb.append("statisticsenabled = ");
                 sb.append(tcapStackImpl.getStatisticsEnabled());
                 sb.append("\n");
+
+                sb.append("slsrange = ");
+                sb.append(tcapStackImpl.getSlsRange());
+                sb.append("\n");
+
                 sb.append("*******************");
                 sb.append("\n");
                 sb.append("\n");

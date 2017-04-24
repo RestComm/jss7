@@ -367,4 +367,17 @@ public interface TCAPStack {
      */
     void setTCAPCounterEventsListener(TCAPCounterEventsListener tcapCounterEventsListener);
 
+    /** Set value for slsRange for this TCAP Stack.
+     *
+     * @param val
+     */
+    void setSlsRange(String val) throws Exception;
+
+    /**
+     * Returns the SlsRange that this TCAP Stack is registered for
+     *
+     * @return
+     */
+    String getSlsRange();
+
 }

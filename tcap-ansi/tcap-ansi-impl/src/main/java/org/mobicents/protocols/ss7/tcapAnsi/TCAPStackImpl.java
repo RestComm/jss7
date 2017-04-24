@@ -37,6 +37,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPCounterEventsListener;
+import org.mobicents.protocols.ss7.tcap.SlsRangeType;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPCounterProvider;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPStack;
@@ -63,6 +64,8 @@ public class TCAPStackImpl implements TCAPStack {
     private static final String DIALOG_ID_RANGE_END = "dialogidrangeend";
     private static final String PREVIEW_MODE = "previewmode";
     private static final String STATISTICS_ENABLED = "statisticsenabled";
+    private static final String SLS_RANGE = "slsrange";
+
 
     private static final String CONG_CONTROL_BLOCKING_INCOMING_TCAP_MESSAGES = "congControl_blockingIncomingTcapMessages";
     private static final String CONG_CONTROL_EXECUTOR_DELAY_THRESHOLD_1 = "congControl_ExecutorDelayThreshold_1";
@@ -129,6 +132,9 @@ public class TCAPStackImpl implements TCAPStack {
     // MemoryMonitor Thresholds: a percent of occupied memory after which MemoryMonitor resumes to the
     // congestion level 0, 1 or 2
     private double[] congControl_BackToNormalMemoryThreshold = new double[] { 72, 82, 92 };
+
+    // SLS value
+    private SlsRangeType slsRange = SlsRangeType.All;
 
     public TCAPStackImpl(String name) {
         super();
@@ -369,6 +375,29 @@ public class TCAPStackImpl implements TCAPStack {
 
     public boolean getPreviewMode() {
         return previewMode;
+    }
+
+    public void setSlsRange(String val) throws Exception {
+
+        if (val.equals(SlsRangeType.All.toString()))  {
+            this.slsRange = SlsRangeType.All;
+        } else if (val.equals(SlsRangeType.Odd.toString())) {
+            this.slsRange = SlsRangeType.Odd;
+        } else if (val.equals(SlsRangeType.Even.toString())) {
+            this.slsRange = SlsRangeType.Even;
+        } else {
+            throw new Exception("SlsRange value is invalid");
+        }
+
+        this.store();
+    }
+
+    public String getSlsRange() {
+        return this.slsRange.toString();
+    }
+
+    public SlsRangeType getSlsRangeType() {
+        return this.slsRange;
     }
 
     @Override
@@ -632,6 +661,8 @@ public class TCAPStackImpl implements TCAPStack {
                         Double.class);
             }
 
+            writer.write(this.slsRange.toString(), SLS_RANGE, String.class);
+
             writer.write(this.statisticsEnabled, STATISTICS_ENABLED, Boolean.class);
 
             writer.close();
@@ -701,6 +732,10 @@ public class TCAPStackImpl implements TCAPStack {
                 this.congControl_BackToNormalMemoryThreshold[1] = valTB2;
                 this.congControl_BackToNormalMemoryThreshold[2] = valTB3;
             }
+
+            String vals = reader.read(SLS_RANGE, String.class);
+            if (vals != null)
+                this.slsRange = Enum.valueOf(SlsRangeType.class, vals);
 
             Boolean volb = reader.read(STATISTICS_ENABLED, Boolean.class);
             if (volb != null)
