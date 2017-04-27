@@ -79,6 +79,7 @@ public class CounterProviderManagement implements CounterProviderManagementMBean
     private int minuteProcessed;
     private int secondProcessed;
     private final StatsPrinter statsPrinter;
+    private final CsvStatsPrinter csvStatsPrinter;
 
     /**
      * A list of registered CounterMediator by there names
@@ -100,6 +101,7 @@ public class CounterProviderManagement implements CounterProviderManagementMBean
         this.logger = Logger.getLogger(CounterProviderManagement.class.getCanonicalName() + "-" + this.name);
 
         this.statsPrinter = new StatsPrinter();
+        this.csvStatsPrinter = new CsvStatsPrinter();
     }
 
     @Override
@@ -328,6 +330,7 @@ public class CounterProviderManagement implements CounterProviderManagementMBean
             if (cm != null) {
                 SourceValueSet svs1 = cc.getLastSourceValueSet();
                 this.statsPrinter.printStats(cc);
+                this.csvStatsPrinter.printCsvStats(cc);
 
                 int durationInSeconds = cc.getDuration();
                 if (!cc.isShortCampaign()) {
