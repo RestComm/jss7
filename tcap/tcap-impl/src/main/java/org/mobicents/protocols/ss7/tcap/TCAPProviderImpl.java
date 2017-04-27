@@ -180,7 +180,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
     // get next Seq Control value available
     private synchronized int getNextSeqControl() {
-
         seqControl++;
         if (seqControl > 255) {
             seqControl = 0;
@@ -189,10 +188,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
         if (this.stack.getSlsRangeType() == SlsRangeType.Odd) {
             if (seqControl % 2 == 0)
-                seqControl+=1;
+                seqControl++;
         } else if (this.stack.getSlsRangeType() == SlsRangeType.Even) {
             if (seqControl %2 != 0)
-                seqControl+=1;
+                seqControl++;
         }
 
         return seqControl;
