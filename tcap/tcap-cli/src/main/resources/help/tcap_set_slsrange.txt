@@ -2,7 +2,7 @@ Name
 	tcap set slsrange
 
 SYNOPSIS
-	tcap set slsrange <All | Odd | 2Even> stackname <stack-name>
+	tcap set slsrange <All | Odd | Even> stackname <stack-name>
 
 DESCRIPTION
 	slsRanger: set the value of SLS to odd or even or both.

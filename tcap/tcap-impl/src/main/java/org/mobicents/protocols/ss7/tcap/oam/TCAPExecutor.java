@@ -419,6 +419,7 @@ public class TCAPExecutor implements ShellExecutor {
 
                 sb.append("blockingincomingtcapmessages = ");
                 sb.append(tcapStackImpl.isCongControl_blockingIncomingTcapMessages());
+                sb.append("\n");
 
                 sb.append("slsrange = ");
                 sb.append(tcapStackImpl.getSlsRange());
