@@ -53,7 +53,6 @@ import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.tcap.SlsRangeType;
 import org.mobicents.protocols.ss7.tcapAnsi.api.ComponentPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcapAnsi.api.DialogPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPException;

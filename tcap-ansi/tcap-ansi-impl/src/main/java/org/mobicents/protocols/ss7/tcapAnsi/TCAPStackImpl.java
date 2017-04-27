@@ -37,7 +37,6 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPCounterEventsListener;
-import org.mobicents.protocols.ss7.tcap.SlsRangeType;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPCounterProvider;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPStack;
