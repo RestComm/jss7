@@ -6,7 +6,9 @@ SYNOPSIS
 
 DESCRIPTION
 	Possible values are false or true. Sets which bit of SLS will be used
-	for loadbalancing between Linkset.
+	for loadbalancing between Linkset. True value means lowest bit of SLS
+	is used for loadbalancing between Linkset, false value means highest bit
+	of SLS is used.
 
 PARAMETERS
 

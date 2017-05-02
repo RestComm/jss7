@@ -194,7 +194,7 @@ EXAMPLES
 [[_m3ua_property_heartbeattime_gui]]
 ==== Using GUI
 
-On M3UA management page, click on pencil against the 'Worker Threads' property and text box becomes editable.
+On M3UA management page, click on pencil against the 'heartbeatTime' property and text box becomes editable.
 Change value and save. 
 
 [[_m3ua_property_deliverymessagethreadcount]]
@@ -240,7 +240,7 @@ DESCRIPTION
 [[_m3ua_property_deliverymessagethreadcount_gui]]
 ==== Using GUI
 
-In the M3UA management page, you can view the current settings of the 'Max As for Route' property.
+In the M3UA management page, you can view the current settings of the 'DeliveryMessageThreadCount' property.
 But as explained above, you cannot change the settings in the GUI.
 For more details about this parameter, refer to the detailed description about the parameter in the above section for CLI.
 
@@ -293,7 +293,7 @@ DESCRIPTION
 [[_m3ua_property_routinglabelformat_gui]]
 ==== Using GUI
 
-In the M3UA management page, you can view the current settings of the 'MTP3 RoutingLabel Format' property.
+In the M3UA management page, you can view the current settings of the 'RoutingLabelFormat' property.
 But as explained above, you cannot change the settings in the GUI.
 For more details about this parameter, refer to the detailed description about the parameter in the above section for CLI.
 
@@ -316,7 +316,9 @@ SYNOPSIS
 
 DESCRIPTION
 	Possible values are false or true. Sets which bit of SLS will be used
-	for loadbalancing between Linkset.
+	for loadbalancing between Linkset. True value means lowest bit of SLS
+	is used for loadbalancing between Linkset, false value means highest bit
+	of SLS is used.
 	
 PARAMETERS
 
@@ -339,7 +341,7 @@ EXAMPLES
 [[_m3ua_property_uselsbforlinksetselection_gui]]
 ==== Using GUI
 
-On M3UA management page, click on pencil against the 'Worker Threads' property and text box becomes editable.
+On M3UA management page, click on pencil against the 'Use the lowest bit for link set selection' property and text box becomes editable.
 Change value and save.
 
 [[_managing_show_m3ua_asp]]

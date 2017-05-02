@@ -243,6 +243,11 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
         super.setDeliveryMessageThreadCount(deliveryMessageThreadCount);
     }
 
+    @Override
+    public String getRoutingLabelFormatStr() {
+        return super.getRoutingLabelFormat().toString();
+    }
+
     public Management getTransportManagement() {
         return transportManagement;
     }
