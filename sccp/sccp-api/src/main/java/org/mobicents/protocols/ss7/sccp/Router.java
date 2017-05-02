@@ -21,9 +21,9 @@
  */
 package org.mobicents.protocols.ss7.sccp;
 
-import java.util.Map;
-
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+
+import java.util.Map;
 
 /**
  *
@@ -71,10 +71,12 @@ public interface Router {
     Map<Integer, LongMessageRule> getLongMessageRules();
 
     void addRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern, String mask, int pAddressId,
-            int sAddressId, Integer newCallingPartyAddressAddressId, int networkId) throws Exception;
+            int sAddressId, Integer newCallingPartyAddressAddressId, int networkId, SccpAddress patternCallingAddress,
+                 String maskCallingAddress) throws Exception;
 
     void modifyRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern, String mask, int pAddressId,
-            int sAddressId, Integer newCallingPartyAddressAddressId, int networkId) throws Exception;
+            int sAddressId, Integer newCallingPartyAddressAddressId, int networkId, SccpAddress patternCallingAddress,
+                    String maskCallingAddress) throws Exception;
 
     Rule getRule(int id);
 

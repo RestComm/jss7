@@ -22,12 +22,7 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.oam;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Set;
-
 import javolution.util.FastMap;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.AddressIndicator;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
@@ -50,6 +45,10 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.ss7.management.console.ShellExecutor;
+
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -741,7 +740,8 @@ public class SccpExecutor implements ShellExecutor {
      * sccp rule create <id> <mask> <address-indicator> <point-code> <subsystem-number> <translation-type> <numbering-plan>
      * <nature-of-address-indicator> <digits> <ruleType> <primary-address-id> backup-addressid <backup-address-id>
      * loadsharing-algo <loadsharing-algorithm> newcgparty-addressid <new-callingPartyAddress-id> origination-type
-     * <originationType> stackname <stack-name>
+     * <originationType> calling-ai <address-indicator> calling-pc <point-code> calling-ssn <calling-subsystem-number> calling-tt <calling-translation-type> calling-np<calling-numbering-plan>
+     * calling-nai <calling-nature-of-address-indicator> mask-calling<callingAddress-mask> mask-calling-digits<calling-digits> stackname <stack-name>
      * </p>
      *
      * @param options
@@ -782,6 +782,16 @@ public class SccpExecutor implements ShellExecutor {
         OriginationType originationType = OriginationType.ALL;
         int networkId = 0;
 
+        // Calling Address fields with default values
+        int callingAI = 19;
+        int callingPC = -1;
+        int callingSSN = -1;
+        int callingTT = 0;
+        int callingNP = 1;
+        int callingNAI = 4;
+        String callingMask = "K";
+        String callingDigits = null; // having it null means no matching for callingSccpAddress
+
         while (count < options.length) {
             String key = options[count++];
             if (key == null) {
@@ -807,8 +817,24 @@ public class SccpExecutor implements ShellExecutor {
 
                 this.sccpStack = sccpStaclImpl;
             } else if (key.equals("networkid")) {
-                String networkIdS = options[count++];
-                networkId = Integer.parseInt(networkIdS);
+                String networkIdS = options[ count++ ];
+                networkId = Integer.parseInt( networkIdS );
+            } else if (key.equals( "calling-ai" )) {
+                callingAI = Integer.parseInt( options[count++] );
+            } else if (key.equals( "calling-pc" )) {
+                callingPC = Integer.parseInt( options[count++] );
+            } else if (key.equals( "calling-ssn" )) {
+                callingSSN = Integer.parseInt( options[count++] );
+            } else if (key.equals( "calling-tt" )) {
+                callingTT = Integer.parseInt( options[count++] );
+            } else if (key.equals( "calling-np" )) {
+                callingNP = Integer.parseInt( options[count++] );
+            } else if (key.equals( "calling-nai" )) {
+                callingNAI = Integer.parseInt( options[count++] );
+            } else if (key.equals( "mask-calling" )) {
+                callingMask = options[count++];
+            } else if (key.equals( "mask-calling-digits" )) {
+                callingDigits = options[count++];
             } else {
                 return SccpOAMMessage.INVALID_COMMAND;
             }
@@ -816,9 +842,14 @@ public class SccpExecutor implements ShellExecutor {
 
         this.setDefaultValue();
         SccpAddress pattern = this.createAddress(options, 5, true);
+        SccpAddress callingPattern  = null;
+        if ( callingDigits == null ) {
+            callingPattern = this.createAddress( callingAI, callingPC, callingSSN, callingTT, callingNP, callingNAI, callingDigits, true );
+        }
 
-        this.sccpStack.getRouter().addRule(ruleId, ruleType, algo, originationType, pattern, mask, pAddressId, sAddressId,
-                newcgpartyAddressId, networkId);
+        this.sccpStack.getRouter().addRule( ruleId, ruleType, algo, originationType, pattern, mask, pAddressId, sAddressId,
+                newcgpartyAddressId, networkId, callingPattern, callingMask );
+
         return String.format(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, this.sccpStack.getName());
     }
 
@@ -858,6 +889,16 @@ public class SccpExecutor implements ShellExecutor {
         OriginationType originationType = OriginationType.ALL;
         int networkId = 0;
 
+        // Calling Address fields with default values
+        int callingAI = 19;
+        int callingPC = -1;
+        int callingSSN = -1;
+        int callingTT = 0;
+        int callingNP = 1;
+        int callingNAI = 4;
+        String callingMask = "K";
+        String callingDigits = null;
+
         while (count < options.length) {
             String key = options[count++];
             if (key == null) {
@@ -885,15 +926,36 @@ public class SccpExecutor implements ShellExecutor {
             } else if (key.equals("networkid")) {
                 String networkIdS = options[count++];
                 networkId = Integer.parseInt(networkIdS);
-            } else {
+            } else if (key.equals( "calling-ai" )) {
+                callingAI = Integer.parseInt( options[count++] );
+            } else if (key.equals( "calling-pc" )) {
+                callingPC = Integer.parseInt( options[count++] );
+            } else if (key.equals( "calling-ssn" )) {
+                callingSSN = Integer.parseInt( options[count++] );
+            } else if (key.equals( "calling-tt" )) {
+                callingTT = Integer.parseInt( options[count++] );
+            } else if (key.equals( "calling-np" )) {
+                callingNP = Integer.parseInt( options[count++] );
+            } else if (key.equals( "calling-nai" )) {
+                callingNAI = Integer.parseInt( options[count++] );
+            } else if (key.equals( "mask-calling" )) {
+                callingMask = options[count++];
+            } else if (key.equals( "mask-calling-digits" )) {
+                callingDigits = options[count++];
+            }  else {
                 return SccpOAMMessage.INVALID_COMMAND;
             }
         }
 
         this.setDefaultValue();
         SccpAddress pattern = this.createAddress(options, 5, true);
+        SccpAddress callingPattern  = null;
+        if ( callingDigits == null ) {
+            callingPattern = this.createAddress( callingAI, callingPC, callingSSN, callingTT, callingNP, callingNAI, callingDigits, true );
+        }
+
         this.sccpStack.getRouter().modifyRule(ruleId, ruleType, algo, originationType, pattern, mask, pAddressId, sAddressId,
-                newcgpartyAddressId, networkId);
+                newcgpartyAddressId, networkId, callingPattern, callingMask);
         return String.format(SccpOAMMessage.RULE_SUCCESSFULLY_MODIFIED, this.sccpStack.getName());
     }
 
@@ -1016,15 +1078,15 @@ public class SccpExecutor implements ShellExecutor {
 
         // sccp address create <id> <address-indicator> <point-code> <subsystemnumber> <translation-type> <numbering-plan>
         // <nature-of-address-indicator> <digits>
+        return createAddress(Integer.parseInt(options[index++]), Integer.parseInt(options[index++]), Integer.parseInt(options[index++]),
+                Integer.parseInt(options[index++]), Integer.parseInt(options[index++]), Integer.parseInt(options[index++]),
+                options[index++], isRule);
+    }
+
+    private SccpAddress createAddress(int ai, int pc, int ssn, int tt, int npValue, int naiValue, String digits, boolean isRule) throws Exception {
         SccpAddress sccpAddress = null;
 
-        int ai = Integer.parseInt(options[index++]);
-        int pc = 0;
-        int ssn = 0;
-
         AddressIndicator aiObj = new AddressIndicator((byte) ai, SccpProtocolVersion.ITU);
-        pc = Integer.parseInt(options[index++]);
-        ssn = Integer.parseInt(options[index++]);
 
 //        if (aiObj.isSSNPresent() && ssn == 0) {
 //            throw new Exception(
@@ -1040,11 +1102,8 @@ public class SccpExecutor implements ShellExecutor {
             throw new Exception(String.format("Point code parameter is mandatory and must be > 0"));
         }
 
-        int tt = Integer.parseInt(options[index++]);
-        NumberingPlan np = NumberingPlan.valueOf(Integer.parseInt(options[index++]));
-        NatureOfAddress nai = NatureOfAddress.valueOf(Integer.parseInt(options[index++]));
-
-        String digits = options[index++];
+        NumberingPlan np = NumberingPlan.valueOf(npValue);
+        NatureOfAddress nai = NatureOfAddress.valueOf(naiValue);
 
         GlobalTitle gt = null;
 

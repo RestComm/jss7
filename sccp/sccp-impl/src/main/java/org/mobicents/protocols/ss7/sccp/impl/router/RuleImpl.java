@@ -22,12 +22,9 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
-import java.io.Serializable;
-
 import javolution.text.CharArray;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
@@ -50,6 +47,8 @@ import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle0010;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle0011;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle0100;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+
+import java.io.Serializable;
 
 /**
  * @author amit bhayani
@@ -86,6 +85,8 @@ public class RuleImpl implements Rule, Serializable {
     private static final String SECONDARY_ADDRESS = "saddress";
     private static final String NEW_CALLING_PARTY_ADDRESS = "ncpaddress";
     private static final String MASK = "mask";
+    private static final String MASK_CALLING_ADDRESS = "maskCallingAddress";
+    private static final String PATTERN_CALLING_ADDRESS = "patternCallingAddress";
 
     private static final String SEPARATOR = ";";
 
@@ -95,6 +96,7 @@ public class RuleImpl implements Rule, Serializable {
 
     /** Pattern used for selecting rule */
     private SccpAddress pattern;
+    private SccpAddress patternCallingAddress;
 
     private int ruleId;
 
@@ -108,6 +110,10 @@ public class RuleImpl implements Rule, Serializable {
 
     private String[] maskPattern = null;
 
+    private String maskCallingAddress = null;
+
+    private String[] maskCallignSccpAddressPattern = null;
+
     public static final int MIN_SIGNIFICANT_SSN = 1;
     public static final int MAX_SIGNIFICANT_SSN = 255;
 
@@ -119,14 +125,18 @@ public class RuleImpl implements Rule, Serializable {
      * Creates new routing rule.
      *
      */
-    public RuleImpl(RuleType ruleType, LoadSharingAlgorithm loadSharingAlgo, OriginationType originationType,
-            SccpAddress pattern, String mask, int networkId) {
+    public RuleImpl( RuleType ruleType, LoadSharingAlgorithm loadSharingAlgo, OriginationType originationType,
+                     SccpAddress pattern, String mask, int networkId, SccpAddress patternCallingAddress, String maskCallingAddress ) {
         this.ruleType = ruleType;
         this.pattern = pattern;
         this.mask = mask;
         this.networkId = networkId;
         this.setLoadSharingAlgorithm(loadSharingAlgo);
         this.setOriginationType(originationType);
+
+        // Calling SCCP Address
+        this.patternCallingAddress = patternCallingAddress;
+        this.maskCallingAddress = maskCallingAddress;
 
         configure();
     }
@@ -185,6 +195,7 @@ public class RuleImpl implements Rule, Serializable {
 
     private void configure() {
         this.maskPattern = this.mask.split("/");
+        this.maskCallignSccpAddressPattern = this.maskCallingAddress.split("/");
     }
 
     public int getPrimaryAddressId() {
@@ -217,6 +228,10 @@ public class RuleImpl implements Rule, Serializable {
 
     public void setNetworkId(int networkId) {
         this.networkId = networkId;
+    }
+
+    public SccpAddress getPatternCallingAddress() {
+        return patternCallingAddress;
     }
 
     /**

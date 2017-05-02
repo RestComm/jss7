@@ -22,12 +22,7 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.congestion;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
 import javolution.util.FastMap;
-
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
@@ -47,6 +42,11 @@ import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author Sergey Vetyutnev
@@ -82,10 +82,10 @@ public class NetworkIdAffectedPCTest {
         router.addRoutingAddress(3, sccpAddress3);
         router.addRoutingAddress(4, sccpAddress4);
 
-        router.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.ALL, pattern, "K", 1, -1, null, 1);
-        router.addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 2, -1, null, 2);
-        router.addRule(3, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.REMOTE, pattern, "K", 3, -1, null, 3);
-        router.addRule(4, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.ALL, pattern, "K", 4, -1, null, 11);
+        router.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.ALL, pattern, "K", 1, -1, null, 1, pattern, "K");
+        router.addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 2, -1, null, 2, pattern, "K");
+        router.addRule(3, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.REMOTE, pattern, "K", 3, -1, null, 3, pattern, "K");
+        router.addRule(4, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.ALL, pattern, "K", 4, -1, null, 11, pattern, "K");
 
         map = router.getNetworkIdList(101);
         assertEquals(map.size(), 1);
@@ -124,7 +124,7 @@ public class NetworkIdAffectedPCTest {
         RemoteSignalingPointCodeImpl rspc2 = (RemoteSignalingPointCodeImpl) sccpStack.getSccpResource().getRemoteSpc(2);
 
         router.removeRule(2);
-        router.addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 2, -1, null, 1);
+        router.addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 2, -1, null, 1, pattern, "K");
         map = router.getNetworkIdList(101);
         assertEquals(map.size(), 1);
         state = map.get(1);
@@ -134,7 +134,7 @@ public class NetworkIdAffectedPCTest {
 
         sccpAddress2 = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt1, 101, 8);
         router.removeRule(2);
-        router.addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 1, -1, null, 1);
+        router.addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 1, -1, null, 1, pattern, "K");
         map = router.getNetworkIdList(101);
         assertEquals(map.size(), 1);
         state = map.get(1);
@@ -148,8 +148,8 @@ public class NetworkIdAffectedPCTest {
         sccpAddress2 = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt1, 102, 8);
         router.addRoutingAddress(1, sccpAddress1);
         router.addRoutingAddress(2, sccpAddress2);
-        router.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 1, -1, null, 1);
-        router.addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 2, -1, null, 1);
+        router.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 1, -1, null, 1, pattern, "K");
+        router.addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 2, -1, null, 1, pattern, "K");
         sccpStack.getSccpResource().addRemoteSpc(1, 101, 0, 0);
         sccpStack.getSccpResource().addRemoteSpc(2, 102, 0, 0);
         rspc1 = (RemoteSignalingPointCodeImpl) sccpStack.getSccpResource().getRemoteSpc(1);
@@ -196,7 +196,7 @@ public class NetworkIdAffectedPCTest {
         // Dominant
         router.removeRule(1);
         router.removeRule(2);
-        router.addRule(1, RuleType.DOMINANT, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 1, 2, null, 1);
+        router.addRule(1, RuleType.DOMINANT, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 1, 2, null, 1, pattern, "K");
         SccpRspProxy.setCurrentRestrictionLevel(rspc1, 0);
         SccpRspProxy.setRemoteSpcProhibited(rspc1, false);
         SccpRspProxy.setCurrentRestrictionLevel(rspc2, 0);
@@ -248,7 +248,7 @@ public class NetworkIdAffectedPCTest {
 
         // Loadsharing
         router.removeRule(1);
-        router.addRule(1, RuleType.LOADSHARED, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 1, 2, null, 1);
+        router.addRule(1, RuleType.LOADSHARED, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 1, 2, null, 1, pattern, "K");
         SccpRspProxy.setCurrentRestrictionLevel(rspc1, 0);
         SccpRspProxy.setRemoteSpcProhibited(rspc1, false);
         SccpRspProxy.setCurrentRestrictionLevel(rspc2, 0);
@@ -310,8 +310,8 @@ public class NetworkIdAffectedPCTest {
 
         // two affected networkIDs 
         router.removeRule(1);
-        router.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 1, -1, null, 1);
-        router.addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 2, -1, null, 2);
+        router.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 1, -1, null, 1, pattern, "K");
+        router.addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 2, -1, null, 2, pattern, "K");
         SccpRspProxy.setCurrentRestrictionLevel(rspc1, 4);
         SccpRspProxy.setRemoteSpcProhibited(rspc1, false);
         SccpRspProxy.setCurrentRestrictionLevel(rspc2, 2);

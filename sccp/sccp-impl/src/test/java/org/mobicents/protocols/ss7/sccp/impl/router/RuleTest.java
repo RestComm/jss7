@@ -22,19 +22,9 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
 import javolution.xml.XMLBinding;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
-
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
@@ -55,6 +45,15 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author amit bhayani
@@ -94,7 +93,7 @@ public class RuleTest {
         SccpAddress primaryAddress = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, factory.createGlobalTitle( "917797706077/-",0, NumberingPlan.ISDN_TELEPHONY, null, NatureOfAddress.INTERNATIONAL), 792,
                 8);
 
-        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K/R", 0);
+        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K/R", 0, pattern, "K/R");
         rule.setPrimaryAddressId(1);
 
         SccpAddress address = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("917797706077",0,
@@ -137,7 +136,7 @@ public class RuleTest {
         SccpAddress pattern = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("123456789", 1), 0, 0);
         SccpAddress primaryAddress = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, factory.createGlobalTitle("-"), 123, 8);
 
-        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "R", 0);
+        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "R", 0, pattern, "R");
         rule.setPrimaryAddressId(1);
 
         SccpAddress address = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("123456789", 1), 0, 0);
@@ -164,7 +163,7 @@ public class RuleTest {
 
         SccpAddress primaryAddress = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("333/---/4", 1), 123, 0);
 
-        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "R/K/R", 0);
+        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "R/K/R", 0, pattern, "R/K/R");
         rule.setPrimaryAddressId(1);
 
         SccpAddress address = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("1234567", 1), 0, 0);
@@ -191,7 +190,7 @@ public class RuleTest {
 
         SccpAddress primaryAddress = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("-/-"), 123, 8);
 
-        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "R/K", 0);
+        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "R/K", 0, pattern, "R/K");
         rule.setPrimaryAddressId(1);
 
         SccpAddress address = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("4414257897897", 1), 0, 0);
@@ -217,7 +216,7 @@ public class RuleTest {
 
         SccpAddress primaryAddress = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, factory.createGlobalTitle("-"), 123, 8);
 
-        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K", 0);
+        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K", 0, pattern, "K");
         rule.setPrimaryAddressId(1);
 
         SccpAddress address = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("4414257897897", 1), 0, 0);
@@ -244,7 +243,7 @@ public class RuleTest {
 
         SccpAddress primaryAddress = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("-"), 6045, 6);
 
-        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K", 0);
+        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K", 0, pattern, "K");
         rule.setPrimaryAddressId(1);
 
         SccpAddress address = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("4414257897897",0,
@@ -277,7 +276,7 @@ public class RuleTest {
 
         SccpAddress primaryAddress = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("-", 1), 123, 0);
 
-        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K", 0);
+        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K", 0, pattern, "K");
         rule.setPrimaryAddressId(1);
 
         SccpAddress address = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("1234567", 1), 0, 8);
@@ -303,7 +302,7 @@ public class RuleTest {
 
         SccpAddress primaryAddress = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("-", 1), 123, 0);
 
-        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K", 0);
+        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K", 0, pattern, "K");
         rule.setPrimaryAddressId(1);
 
         SccpAddress address = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("55", 1), 0, 8);
@@ -320,7 +319,7 @@ public class RuleTest {
 
         SccpAddress primaryAddress = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("-/-", 1), 123, 0);
 
-        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K/K", 0);
+        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K/K", 0, pattern, "K/K");
         rule.setPrimaryAddressId(1);
 
         SccpAddress address = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("222", 1), 0, 8);
@@ -363,17 +362,17 @@ public class RuleTest {
         SccpMessage msgRemoteOrig = mesFact.createMessage(type, 101, 102, 0, buf, SccpProtocolVersion.ITU, 0);
 
         RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.LOCAL,
-                pattern, "K", 0);
+                pattern, "K", 0, pattern, "K");
         rule.setPrimaryAddressId(1);
         assertTrue(rule.matches(address, msgLocalOrig.getIsMtpOriginated(), 0));
         assertFalse(rule.matches(address, msgRemoteOrig.getIsMtpOriginated(), 0));
 
-        rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.REMOTE, pattern, "K", 0);
+        rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.REMOTE, pattern, "K", 0, pattern, "K");
         rule.setPrimaryAddressId(1);
         assertFalse(rule.matches(address, msgLocalOrig.getIsMtpOriginated(), 0));
         assertTrue(rule.matches(address, msgRemoteOrig.getIsMtpOriginated(), 0));
 
-        rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K", 0);
+        rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K", 0, pattern, "K");
         rule.setPrimaryAddressId(1);
         assertTrue(rule.matches(address, msgLocalOrig.getIsMtpOriginated(), 0));
         assertTrue(rule.matches(address, msgRemoteOrig.getIsMtpOriginated(), 0));
@@ -392,7 +391,7 @@ public class RuleTest {
         //TODO: XXX: this is not used at all ?
         SccpAddress newClgPartyAddress = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("92300010321", 0, NumberingPlan.ISDN_TELEPHONY, null, NatureOfAddress.INTERNATIONAL), 0, 146);
 
-        RuleImpl rule = new RuleImpl(RuleType.BROADCAST, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "R", 0);
+        RuleImpl rule = new RuleImpl(RuleType.BROADCAST, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "R", 0, pattern, "R");
         rule.setPrimaryAddressId(1);
         rule.setSecondaryAddressId(2);
         rule.setNewCallingPartyAddressId(3);
@@ -436,7 +435,7 @@ public class RuleTest {
 
         SccpAddress newClgPartyAddress = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("92300010321", 0, NumberingPlan.ISDN_TELEPHONY, null, NatureOfAddress.INTERNATIONAL), 0, 146);
 
-        RuleImpl rule = new RuleImpl(RuleType.DOMINANT, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K/K", 0);
+        RuleImpl rule = new RuleImpl(RuleType.DOMINANT, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K/K", 0, pattern, "K/K");
         rule.setPrimaryAddressId(1);
         rule.setNewCallingPartyAddressId(3);
 
@@ -474,7 +473,7 @@ public class RuleTest {
 
         SccpAddress primaryAddress = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("-/-"), 123, 8);
 
-        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "R/K", 0);
+        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "R/K", 0, pattern, "R/K");
         rule.setPrimaryAddressId(1);
 
         // Writes
@@ -501,7 +500,7 @@ public class RuleTest {
         assertEquals(aiOut.getSecondaryAddressId(), 0);
         assertNull(aiOut.getNewCallingPartyAddressId());
 
-        rule = new RuleImpl(RuleType.BROADCAST, LoadSharingAlgorithm.Bit2, OriginationType.LOCAL, pattern, "R/K", 0);
+        rule = new RuleImpl(RuleType.BROADCAST, LoadSharingAlgorithm.Bit2, OriginationType.LOCAL, pattern, "R/K", 0, pattern, "R/K");
         rule.setPrimaryAddressId(11);
         rule.setSecondaryAddressId(12);
         rule.setNewCallingPartyAddressId(13);
@@ -541,7 +540,7 @@ public class RuleTest {
 
         SccpAddress primaryAddress = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("333/---/4", 1), 123, 0);
 
-        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "R/K/R", 0);
+        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "R/K/R", 0, pattern, "R/K/R");
         rule.setPrimaryAddressId(1);
         rule.setSecondaryAddressId(2);
 
