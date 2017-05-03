@@ -21,8 +21,6 @@
  */
 package org.mobicents.protocols.ss7.oam.common.sccp;
 
-import java.util.Map;
-
 import org.mobicents.protocols.ss7.indicator.AddressIndicator;
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
@@ -39,6 +37,8 @@ import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+
+import java.util.Map;
 
 /**
  * @author Amit Bhayani
@@ -105,9 +105,9 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
     @Override
     public void addRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType,
             SccpAddress pattern, String mask, int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId,
-            int networkId) throws Exception {
+            int networkId, SccpAddress patternCallingAddress) throws Exception {
         this.wrappedRouter.addRule(id, ruleType, algo, originationType, pattern, mask, pAddressId, sAddressId,
-                newCallingPartyAddressAddressId, networkId);
+                newCallingPartyAddressAddressId, networkId, patternCallingAddress);
     }
 
     /*
@@ -242,9 +242,10 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
     @Override
     public void modifyRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType,
             SccpAddress pattern, String mask, int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId,
-            int networkId) throws Exception {
+            int networkId, SccpAddress patternCallingAddress
+                           ) throws Exception {
         this.wrappedRouter.modifyRule(id, ruleType, algo, originationType, pattern, mask, pAddressId, sAddressId,
-                newCallingPartyAddressAddressId, networkId);
+                newCallingPartyAddressAddressId, networkId, patternCallingAddress);
     }
 
     /*
@@ -347,14 +348,17 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
 
     @Override
     public void addRule(int id, String ruleType, String algo, String originationType, int ai, int pc, int ssn, int tt, int np,
-            int nao, String digits, String mask, int pAddressId, int sAddressId, int newCallingPartyAddressAddressId, int networkId)
+            int nao, String digits, String mask, int pAddressId, int sAddressId, int newCallingPartyAddressAddressId, int networkId,
+                        int callingai, int callingpc, int callingssn, int callingtt, int callingnp,int callingnao, String callingdigits)
             throws Exception {
 
         SccpAddress patternAddress = this.createSccpAddress(ai, pc, ssn, tt, np, nao, digits);
 
+        SccpAddress patternAddressCalling = this.createSccpAddress(callingai, callingpc, callingssn, callingtt, callingnp, callingnao, callingdigits);
+
         this.wrappedRouter.addRule(id, RuleType.getInstance(ruleType), LoadSharingAlgorithm.getInstance(algo),
                 OriginationType.getInstance(originationType), patternAddress, mask, pAddressId, sAddressId,
-                newCallingPartyAddressAddressId == -1 ? null : newCallingPartyAddressAddressId, networkId);
+                newCallingPartyAddressAddressId == -1 ? null : newCallingPartyAddressAddressId, networkId, patternAddressCalling);
 
     }
 

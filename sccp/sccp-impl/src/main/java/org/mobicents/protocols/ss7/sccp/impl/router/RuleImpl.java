@@ -22,12 +22,9 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
-import java.io.Serializable;
-
 import javolution.text.CharArray;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.GlobalTitleIndicator;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
@@ -50,6 +47,8 @@ import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle0010;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle0011;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle0100;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+
+import java.io.Serializable;
 
 /**
  * @author amit bhayani
@@ -86,6 +85,7 @@ public class RuleImpl implements Rule, Serializable {
     private static final String SECONDARY_ADDRESS = "saddress";
     private static final String NEW_CALLING_PARTY_ADDRESS = "ncpaddress";
     private static final String MASK = "mask";
+    private static final String PATTERN_CALLING_ADDRESS = "patternCallingAddress";
 
     private static final String SEPARATOR = ";";
 
@@ -95,6 +95,7 @@ public class RuleImpl implements Rule, Serializable {
 
     /** Pattern used for selecting rule */
     private SccpAddress pattern;
+    private SccpAddress patternCallingAddress;
 
     private int ruleId;
 
@@ -108,6 +109,8 @@ public class RuleImpl implements Rule, Serializable {
 
     private String[] maskPattern = null;
 
+
+
     public static final int MIN_SIGNIFICANT_SSN = 1;
     public static final int MAX_SIGNIFICANT_SSN = 255;
 
@@ -119,14 +122,17 @@ public class RuleImpl implements Rule, Serializable {
      * Creates new routing rule.
      *
      */
-    public RuleImpl(RuleType ruleType, LoadSharingAlgorithm loadSharingAlgo, OriginationType originationType,
-            SccpAddress pattern, String mask, int networkId) {
+    public RuleImpl( RuleType ruleType, LoadSharingAlgorithm loadSharingAlgo, OriginationType originationType,
+                     SccpAddress pattern, String mask, int networkId, SccpAddress patternCallingAddress) {
         this.ruleType = ruleType;
         this.pattern = pattern;
         this.mask = mask;
         this.networkId = networkId;
         this.setLoadSharingAlgorithm(loadSharingAlgo);
         this.setOriginationType(originationType);
+
+        // Calling SCCP Address
+        this.patternCallingAddress = patternCallingAddress;
 
         configure();
     }
@@ -219,6 +225,10 @@ public class RuleImpl implements Rule, Serializable {
         this.networkId = networkId;
     }
 
+    public SccpAddress getPatternCallingAddress() {
+        return patternCallingAddress;
+    }
+
     /**
      * Translate specified address according to the rule.
      *
@@ -301,7 +311,7 @@ public class RuleImpl implements Rule, Serializable {
         }
     }
 
-    public boolean matches(SccpAddress address, boolean isMtpOriginated, int msgNetworkId) {
+    public boolean matches(SccpAddress address, SccpAddress callingAddress, boolean isMtpOriginated, int msgNetworkId) {
         if (logger.isTraceEnabled()) {
             logger.trace(String.format("Matching rule Id=%s Rule=[%s]", this.getRuleId(), this.toString()));
         }
@@ -345,9 +355,28 @@ public class RuleImpl implements Rule, Serializable {
             return false;
         }
 
+
+        if ( !matchGt( address, pattern ) ) {
+            return false; // Called GT didn't match. No point in going forward to match calling
+        }
+
+        if ( patternCallingAddress == null || callingAddress == null) {
+            // callingAddress or pattern is null then we consider it a match
+            return true;
+        }
+        // SSN matching for calling address just as for called address
+        if ( !isSsnMatch( callingAddress, patternCallingAddress ) ) {
+            return false;
+        }
+
+        // finally match on calling GT
+        return matchGt( callingAddress, patternCallingAddress );
+    }
+
+    private boolean matchGt( SccpAddress address, SccpAddress patternAddress ) {
         // Routing on GTT
         GlobalTitleIndicator gti = address.getAddressIndicator().getGlobalTitleIndicator();
-        GlobalTitle patternGT = pattern.getGlobalTitle();
+        GlobalTitle patternGT = patternAddress.getGlobalTitle();
         switch (gti) {
             case GLOBAL_TITLE_INCLUDES_NATURE_OF_ADDRESS_INDICATOR_ONLY:
                 GlobalTitle0001 gt = (GlobalTitle0001) address.getGlobalTitle();
@@ -456,7 +485,7 @@ public class RuleImpl implements Rule, Serializable {
                 }
 
                 // digits must match
-                if (!matchPattern(gt2.getDigits(), pattern.getGlobalTitle().getDigits())) {
+                if (!matchPattern(gt2.getDigits(), patternAddress.getGlobalTitle().getDigits())) {
                     if (logger.isDebugEnabled()) {
                         logger.debug(String.format("digits didn't match. Pattern digits=%s Address Digits=%s Return  False",
                                 patternGT.getDigits(), gt2.getDigits()));
@@ -486,7 +515,7 @@ public class RuleImpl implements Rule, Serializable {
                 }
 
                 // digits must match
-                if (!matchPattern(gt3.getDigits(), pattern.getGlobalTitle().getDigits())) {
+                if (!matchPattern(gt3.getDigits(), patternAddress.getGlobalTitle().getDigits())) {
                     if (logger.isDebugEnabled()) {
                         logger.debug(String.format("digits didn't match. Pattern digits=%s Address Digits=%s Return  False",
                                 patternGT.getDigits(), gt3.getDigits()));
@@ -642,6 +671,7 @@ public class RuleImpl implements Rule, Serializable {
             else
                 rule.newCallingPartyAddressId = null;
             rule.pattern = xml.get(PATTERN, SccpAddressImpl.class);
+            rule.patternCallingAddress = xml.get(PATTERN_CALLING_ADDRESS, SccpAddressImpl.class);
             rule.configure();
         }
 
@@ -656,6 +686,8 @@ public class RuleImpl implements Rule, Serializable {
             if (rule.newCallingPartyAddressId != null)
                 xml.setAttribute(NEW_CALLING_PARTY_ADDRESS, rule.newCallingPartyAddressId);
             xml.add((SccpAddressImpl)rule.pattern, PATTERN, SccpAddressImpl.class);
+            if ( rule.patternCallingAddress != null )
+                xml.add( ( SccpAddressImpl ) rule.patternCallingAddress, PATTERN_CALLING_ADDRESS, SccpAddressImpl.class );
         }
     };
 
@@ -723,6 +755,13 @@ public class RuleImpl implements Rule, Serializable {
         buff.append(this.networkId);
         buff.append(CLOSE_BRACKET);
 
+        if ( patternCallingAddress != null ) {
+            buff.append(SEPARATOR);
+            buff.append(PATTERN_CALLING_ADDRESS);
+            buff.append(OPEN_BRACKET);
+            buff.append( patternCallingAddress.toString() );
+            buff.append(CLOSE_BRACKET);
+        }
         return buff.toString();
     }
 }

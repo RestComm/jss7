@@ -22,15 +22,7 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.congestion;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Properties;
-
 import javolution.util.FastMap;
-
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
@@ -63,6 +55,13 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.ss7.congestion.ExecutorCongestionMonitor;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Properties;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author Sergey Vetyutnev
@@ -107,7 +106,7 @@ public class CongestionLevelTest {
                 NatureOfAddress.INTERNATIONAL);
         SccpAddress sccpAddress1 = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt1, 101, 8);
         router.addRoutingAddress(1, sccpAddress1);
-        router.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.ALL, pattern, "K", 1, -1, null, 1);
+        router.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.ALL, pattern, "K", 1, -1, null, 1, pattern);
 
         listenerProxy = new SccpListenerProxy();
         sccpStack.getSccpProvider().registerSccpListener(8, listenerProxy);

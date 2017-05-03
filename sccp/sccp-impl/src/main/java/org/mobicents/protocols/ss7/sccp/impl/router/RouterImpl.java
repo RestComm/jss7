@@ -22,25 +22,12 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import javolution.text.TextBuilder;
 import javolution.util.FastMap;
 import javolution.xml.XMLBinding;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 import javolution.xml.stream.XMLStreamException;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.LongMessageRule;
@@ -63,6 +50,18 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.GlobalTitle0100Impl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.NoGlobalTitle;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>
@@ -273,11 +272,11 @@ public class RouterImpl implements Router {
      * @param calledParty called party address
      * @return the rule with match to the called party address
      */
-    public Rule findRule(SccpAddress calledParty, boolean isMtpOriginated, int msgNetworkId) {
+    public Rule findRule(SccpAddress calledParty, SccpAddress callingParty, boolean isMtpOriginated, int msgNetworkId) {
 
         for (FastMap.Entry<Integer, Rule> e = this.rulesMap.head(), end = this.rulesMap.tail(); (e = e.getNext()) != end;) {
             Rule rule = e.getValue();
-            if (rule.matches(calledParty, isMtpOriginated, msgNetworkId)) {
+            if (rule.matches(calledParty, callingParty, isMtpOriginated, msgNetworkId)) {
                 return rule;
             }
         }
@@ -386,7 +385,7 @@ public class RouterImpl implements Router {
     }
 
     public void addRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern, String mask,
-            int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId, int networkId) throws Exception {
+            int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId, int networkId, SccpAddress patternCallingAddress) throws Exception {
 
         Rule ruleTmp = this.getRule(id);
 
@@ -428,7 +427,7 @@ public class RouterImpl implements Router {
         }
 
         synchronized (this) {
-            RuleImpl rule = new RuleImpl(ruleType, algo, originationType, pattern, mask, networkId);
+            RuleImpl rule = new RuleImpl(ruleType, algo, originationType, pattern, mask, networkId, patternCallingAddress);
             rule.setPrimaryAddressId(pAddressId);
             rule.setSecondaryAddressId(sAddressId);
             rule.setNewCallingPartyAddressId(newCallingPartyAddressAddressId);
@@ -461,7 +460,7 @@ public class RouterImpl implements Router {
     }
 
     public void modifyRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern, String mask,
-            int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId, int networkId) throws Exception {
+            int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId, int networkId, SccpAddress patternCallingAddress) throws Exception {
         Rule ruleTmp = this.getRule(id);
 
         if (ruleTmp == null) {
@@ -500,14 +499,17 @@ public class RouterImpl implements Router {
             throw new Exception(SccpOAMMessage.RULETYPE_NOT_SOLI_SEC_ADD_MANDATORY);
         }
         synchronized (this) {
-            RuleImpl rule = new RuleImpl(ruleType, algo, originationType, pattern, mask, networkId);
+            RuleImpl rule = new RuleImpl(ruleType, algo, originationType, pattern, mask, networkId, patternCallingAddress);
             rule.setPrimaryAddressId(pAddressId);
             rule.setSecondaryAddressId(sAddressId);
             rule.setNewCallingPartyAddressId(newCallingPartyAddressAddressId);
 
             rule.setRuleId(id);
-            RuleImpl[] rulesArray = new RuleImpl[(this.rulesMap.size() + 1)];
+            RuleImpl[] rulesArray = new RuleImpl[(this.rulesMap.size())];
             int count = 0;
+
+            // Remove the old rule so that it doesn't overwrite the new modifications
+            this.removeRule( id );
 
             for (FastMap.Entry<Integer, Rule> e = this.rulesMap.head(), end = this.rulesMap.tail(); (e = e.getNext()) != end;) {
                 Integer ruleId = e.getKey();

@@ -21,9 +21,9 @@
  */
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
-import java.util.Comparator;
-
 import org.mobicents.protocols.ss7.sccp.OriginationType;
+
+import java.util.Comparator;
 
 /**
  * <p>
@@ -70,6 +70,7 @@ public class RuleComparator implements Comparator<RuleImpl> {
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
     public int compare(RuleImpl o1, RuleImpl o2) {
+
         String digits1 = o1.getPattern().getGlobalTitle().getDigits();
         String digits2 = o2.getPattern().getGlobalTitle().getDigits();
 
@@ -82,6 +83,30 @@ public class RuleComparator implements Comparator<RuleImpl> {
             return -1;
         if (o1.getOriginationType() == OriginationType.ALL && o2.getOriginationType() != OriginationType.ALL)
             return 1;
+
+        // Check if digits are exactly same. In that case we sort based on the callingDigits
+        if ( digits1.equals( digits2 )) {
+            // if rule1 has calling party and rule2 doesn't then we put rule1 first
+            if ( o1.getPatternCallingAddress() != null && o2.getPatternCallingAddress() == null ) {
+                return -1;
+            } else if ( o1.getPatternCallingAddress() == null && o2.getPatternCallingAddress() != null ) {
+                return 1;
+            } else if ( o1.getPatternCallingAddress() != null && o2.getPatternCallingAddress() != null ) {
+                // both have calling party addresses. lets compare these 2
+                digits1 = o1.getPatternCallingAddress().getGlobalTitle().getDigits();
+                digits2 = o2.getPatternCallingAddress().getGlobalTitle().getDigits();
+
+                // Normalize rule. Remove all separator
+                digits1 = digits1.replaceAll(SECTION_SEPARTOR, "");
+                digits2 = digits2.replaceAll(SECTION_SEPARTOR, "");
+
+                return compareDigits( digits1, digits2 );
+            }
+        }
+        return compareDigits( digits1, digits2 );
+    }
+
+    private int compareDigits( String digits1, String digits2 ) {
 
         // If any digit is just wildcard "*" return 1 indicating it should be
         // below the other
@@ -105,7 +130,6 @@ public class RuleComparator implements Comparator<RuleImpl> {
         }
 
         return 1;
-
     }
 
     /**
