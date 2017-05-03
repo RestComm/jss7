@@ -741,7 +741,7 @@ public class SccpExecutor implements ShellExecutor {
      * <nature-of-address-indicator> <digits> <ruleType> <primary-address-id> backup-addressid <backup-address-id>
      * loadsharing-algo <loadsharing-algorithm> newcgparty-addressid <new-callingPartyAddress-id> origination-type
      * <originationType> networkid <network-id> calling-ai <address-indicator> calling-pc <point-code> calling-ssn <calling-subsystem-number> calling-tt <calling-translation-type> calling-np <calling-numbering-plan>
-     * calling-nai <calling-nature-of-address-indicator> calling-digits <calling-digits> stackname <stack-name>
+     * calling-nai <calling-nature-of-address-indicator> calling-digits-pattern <calling-digits-pattern> stackname <stack-name>
      * </p>
      *
      * @param options
@@ -783,12 +783,12 @@ public class SccpExecutor implements ShellExecutor {
         int networkId = 0;
 
         // Calling Address fields with default values
-        int callingAI = 18;
+        int callingAI = -1;
         int callingPC = -1;
         int callingSSN = -1;
-        int callingTT = 0;
-        int callingNP = 1;
-        int callingNAI = 4;
+        int callingTT = -1;
+        int callingNP = -1;
+        int callingNAI = -1;
         String callingDigits = null; // having it default as * means everythign matches
 
         while (count < options.length) {
@@ -830,7 +830,7 @@ public class SccpExecutor implements ShellExecutor {
                 callingNP = Integer.parseInt( options[count++] );
             } else if (key.equals( "calling-nai" )) {
                 callingNAI = Integer.parseInt( options[count++] );
-            } else if (key.equals( "calling-digits" )) {
+            } else if (key.equals( "calling-digits-pattern" )) {
                 callingDigits = options[count++];
             } else {
                 return SccpOAMMessage.INVALID_COMMAND;
@@ -840,7 +840,7 @@ public class SccpExecutor implements ShellExecutor {
         this.setDefaultValue();
         SccpAddress pattern = this.createAddress(options, 5, true);
         SccpAddress callingPattern  = null;
-        if ( callingDigits != null ) {
+        if ( callingDigits != null && !callingDigits.isEmpty()) {
             callingPattern = this.createAddress( callingAI, callingPC, callingSSN, callingTT, callingNP, callingNAI, callingDigits, true );
         }
 
@@ -887,12 +887,12 @@ public class SccpExecutor implements ShellExecutor {
         int networkId = 0;
 
         // Calling Address fields with default values
-        int callingAI = 18;
+        int callingAI = -1;
         int callingPC = -1;
         int callingSSN = -1;
-        int callingTT = 0;
-        int callingNP = 1;
-        int callingNAI = 4;
+        int callingTT = -1;
+        int callingNP = -1;
+        int callingNAI = -1;
         String callingDigits = null; // having it default as null means no matching on callingPattern
         // TODO: Validate the AI/TT/NP/NAI in case callingDigits are provided
 
@@ -935,7 +935,7 @@ public class SccpExecutor implements ShellExecutor {
                 callingNP = Integer.parseInt( options[count++] );
             } else if (key.equals( "calling-nai" )) {
                 callingNAI = Integer.parseInt( options[count++] );
-            } else if (key.equals( "calling-digits" )) {
+            } else if (key.equals( "calling-digits-pattern" )) {
                 callingDigits = options[count++];
             }  else {
                 return SccpOAMMessage.INVALID_COMMAND;
@@ -945,7 +945,7 @@ public class SccpExecutor implements ShellExecutor {
         this.setDefaultValue();
         SccpAddress pattern = this.createAddress(options, 5, true);
         SccpAddress callingPattern  = null;
-        if ( callingDigits != null ) {
+        if ( callingDigits != null && !callingDigits.isEmpty()) {
             callingPattern = this.createAddress( callingAI, callingPC, callingSSN, callingTT, callingNP, callingNAI, callingDigits, true );
         }
 

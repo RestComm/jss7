@@ -357,6 +357,14 @@ public class RouterTest {
         router.addRule(8, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern8, "R/K", 8,
                 -1, null, 0, patternDefaultCalling);
 
+        // Rule 9 // with missing callingAddress
+
+        SccpAddress pattern9 = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("999/2/*", 1), 0, 0);
+        SccpAddress primaryAddr9 = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("111/-/-", 1), 123, 0);
+        router.addRoutingAddress(9, primaryAddr9);
+        router.addRule(9, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern9, "R/K/K",9,
+                -1, null, 0, null);
+
         // TEST find rule
 
         // Rule 6
@@ -369,6 +377,16 @@ public class RouterTest {
         assertEquals(RuleType.SOLITARY, rule.getRuleType());
         assertEquals(-1, rule.getSecondaryAddressId());
         assertEquals("K", rule.getMask());
+
+
+        // Rule 9
+        calledParty = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("999234", 1), 0, 0);
+        rule = router.findRule(calledParty, callingParty, false, 0);
+        assertEquals(LoadSharingAlgorithm.Undefined, rule.getLoadSharingAlgorithm());
+        assertEquals(pattern9, rule.getPattern());
+        assertEquals(RuleType.SOLITARY, rule.getRuleType());
+        assertEquals(-1, rule.getSecondaryAddressId());
+        assertEquals("R/K/K", rule.getMask());
 
         // Rule 7
         calledParty = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("1234567890", 1), 0, 0);
@@ -477,6 +495,28 @@ public class RouterTest {
                 null, 0, patternCalling4);
 
 
+        // Rule 5
+        SccpAddress pattern5 = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
+                factory.createGlobalTitle("*", 1),0, 0);
+        SccpAddress primaryAddr5 = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
+                factory.createGlobalTitle("333", 1), 123, 0);
+        router.addRoutingAddress(5, primaryAddr5);
+        SccpAddress patternCalling5 = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
+                factory.createGlobalTitle("900/????/1", 1), 0, 0);
+
+        router.addRule(5, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern5, "R", 5, -1,
+                null, 0, patternCalling5);
+
+
+        // Rule 6
+        SccpAddress pattern6 = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
+                factory.createGlobalTitle("800/????/9", 1),0, 0);
+        router.addRoutingAddress(6, primaryAddr1);
+
+        router.addRule(6, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern4, "K/K/R", 6, -1,
+                null, 0, null);
+
+
         // Rule Tests
 
         // Rule 3
@@ -489,6 +529,16 @@ public class RouterTest {
         assertEquals(-1, rule.getSecondaryAddressId());
         assertEquals("K/R/K", rule.getMask());
 
+        // Rule 6
+        callingParty = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle( "90012031", 1), 0, 0);
+        rule = router.findRule(calledParty, callingParty, false, 0);
+        assertEquals(LoadSharingAlgorithm.Undefined, rule.getLoadSharingAlgorithm());
+        assertEquals(pattern6, rule.getPattern());
+        assertEquals(RuleType.SOLITARY, rule.getRuleType());
+        assertEquals(-1, rule.getSecondaryAddressId());
+        assertEquals("K/K/R", rule.getMask());
+
+
         // Rule 1
         callingParty = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle( "9001203", 1), 0, 0);
         rule = router.findRule(calledParty, callingParty, false, 0);
@@ -497,6 +547,17 @@ public class RouterTest {
         assertEquals(RuleType.SOLITARY, rule.getRuleType());
         assertEquals(-1, rule.getSecondaryAddressId());
         assertEquals("R/K/R", rule.getMask());
+
+        // Rule 5
+        SccpAddress calledParty9 = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle( "712345", 1), 0, 0);
+        callingParty = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle( "90012031", 1), 0, 0);
+        rule = router.findRule(calledParty9, callingParty, false, 0);
+        assertEquals(LoadSharingAlgorithm.Undefined, rule.getLoadSharingAlgorithm());
+        assertEquals(pattern5, rule.getPattern());
+        assertEquals(patternCalling5, rule.getPatternCallingAddress());
+        assertEquals(RuleType.SOLITARY, rule.getRuleType());
+        assertEquals(-1, rule.getSecondaryAddressId());
+        assertEquals("R", rule.getMask());
 
         // Rule 4
         callingParty = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle( "90012031", 1), 0, 0);
