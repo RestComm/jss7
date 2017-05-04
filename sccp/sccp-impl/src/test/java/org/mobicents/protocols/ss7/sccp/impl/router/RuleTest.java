@@ -544,6 +544,72 @@ public class RuleTest {
 
     }
 
+    @Test(groups = { "router", "functional.encode" })
+    public void testSerialization2() throws Exception {
+        SccpAddress pattern = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("441425/*", 1), 0, 0);
+
+        SccpAddress primaryAddress = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("-/-"), 123, 8);
+
+        RuleImpl rule = new RuleImpl(RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "R/K", 0, null);
+        rule.setPrimaryAddressId(1);
+
+        // Writes
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(output);
+        writer.setIndentation("\t"); // Optional (use tabulation for
+        // indentation).
+        writer.write(rule, "Rule", RuleImpl.class);
+        writer.close();
+
+        System.out.println(output.toString());
+
+        ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
+        XMLObjectReader reader = XMLObjectReader.newInstance(input);
+        RuleImpl aiOut = reader.read("Rule", RuleImpl.class);
+
+        assertNotNull(aiOut);
+        assertEquals(aiOut.getRuleType(), RuleType.SOLITARY);
+        assertEquals(aiOut.getLoadSharingAlgorithm(), LoadSharingAlgorithm.Undefined);
+        assertEquals(aiOut.getOriginationType(), OriginationType.ALL);
+        assertTrue(aiOut.getPattern().getGlobalTitle().getDigits().equals("441425/*"));
+        assertTrue(aiOut.getMask().equals("R/K"));
+        assertEquals(aiOut.getPrimaryAddressId(), 1);
+        assertEquals(aiOut.getSecondaryAddressId(), 0);
+        assertNull(aiOut.getNewCallingPartyAddressId());
+        assertNull(aiOut.getPatternCallingAddress());
+
+        rule = new RuleImpl(RuleType.BROADCAST, LoadSharingAlgorithm.Bit2, OriginationType.LOCAL, pattern, "R/K", 0, null);
+        rule.setPrimaryAddressId(11);
+        rule.setSecondaryAddressId(12);
+        rule.setNewCallingPartyAddressId(13);
+
+        // Writes
+        output = new ByteArrayOutputStream();
+        writer = XMLObjectWriter.newInstance(output);
+        writer.setIndentation("\t"); // Optional (use tabulation for
+        // indentation).
+        writer.write(rule, "Rule", RuleImpl.class);
+        writer.close();
+
+        System.out.println(output.toString());
+
+        input = new ByteArrayInputStream(output.toByteArray());
+        reader = XMLObjectReader.newInstance(input);
+        aiOut = reader.read("Rule", RuleImpl.class);
+
+        assertNotNull(aiOut);
+        assertEquals(aiOut.getRuleType(), RuleType.BROADCAST);
+        assertEquals(aiOut.getLoadSharingAlgorithm(), LoadSharingAlgorithm.Bit2);
+        assertEquals(aiOut.getOriginationType(), OriginationType.LOCAL);
+        assertTrue(aiOut.getPattern().getGlobalTitle().getDigits().equals("441425/*"));
+        assertTrue(aiOut.getMask().equals("R/K"));
+        assertEquals(aiOut.getPrimaryAddressId(), 11);
+        assertEquals(aiOut.getSecondaryAddressId(), 12);
+        assertEquals((int) aiOut.getNewCallingPartyAddressId(), 13);
+        assertNull(aiOut.getPatternCallingAddress());
+
+    }
+
     /**
      * Test of toString method, of class Rule.
      */

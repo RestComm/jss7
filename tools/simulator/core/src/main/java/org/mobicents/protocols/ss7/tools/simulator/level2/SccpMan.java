@@ -367,11 +367,11 @@ public class SccpMan implements SccpManMBean, Stoppable {
                     0);
             String mask = "K";
             ((RouterImpl) this.router).addRule(1, RuleType.SOLITARY, null, OriginationType.LOCAL, pattern, mask, 1,
-                    -1, null, 0, pattern, mask);
+                    -1, null, 0, pattern);
             pattern = parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, this.createGlobalTitle("*"), 0, 0);
             mask = "R";
             ((RouterImpl) this.router).addRule(2, RuleType.SOLITARY, null, OriginationType.REMOTE, pattern, mask, 2,
-                    -1, null, 0, pattern, mask);
+                    -1, null, 0, pattern);
         }
     }
 
