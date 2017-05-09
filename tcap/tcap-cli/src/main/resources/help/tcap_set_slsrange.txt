@@ -1,0 +1,25 @@
+Name
+	tcap set slsrange
+
+SYNOPSIS
+	tcap set slsrange <All | Odd | Even> stackname <stack-name>
+
+DESCRIPTION
+	slsRanger: set the value of SLS to odd or even or both.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<All>	-	If set to All, SLS number can be odd or even value
+	<Odd>	-	If set to Odd, SLS number can get only odd value
+	<Even>	-	If set to Even, SLS number can get only even value
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed.
+					If not passed, the first stack configured in ShellExecutor
+					will be used.
+
+EXAMPLES
+	tcap set slsrange All

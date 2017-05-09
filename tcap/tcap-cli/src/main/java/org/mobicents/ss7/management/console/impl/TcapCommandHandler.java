@@ -58,6 +58,7 @@ public class TcapCommandHandler extends CommandHandlerWithHelp {
         set.addChild("backtonormalmemorythreshold_2");
         set.addChild("backtonormalmemorythreshold_3");
         set.addChild("blockingincomingtcapmessages");
+        set.addChild("slsrange");
 
         Node get = parent.addChild("get");
         get.addChild("dialogidletimeout");
@@ -82,6 +83,7 @@ public class TcapCommandHandler extends CommandHandlerWithHelp {
         get.addChild("backtonormalmemorythreshold_2");
         get.addChild("backtonormalmemorythreshold_3");
         get.addChild("blockingincomingtcapmessages");
+        get.addChild("slsrange");
 
     };
 

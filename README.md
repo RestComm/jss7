@@ -26,7 +26,7 @@ Download binary from [here](https://github.com/RestComm/jss7/releases) or Contin
 
 ## Maven Repository
 
-Artifacts are available at [Sonatype Maven Repo](https://oss.sonatype.org/content/repositories/releases/org/RestComm) which are also synched to central
+Artifacts are available at [Sonatype Maven Repo](https://oss.sonatype.org/content/repositories/releases/org/restcomm) which are also synched to central
 
 ## Wiki
 

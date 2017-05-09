@@ -229,7 +229,11 @@ public class TCAPExecutor implements ShellExecutor {
             boolean val = Boolean.parseBoolean(options[3]);
             this.tcapStack.setCongControl_blockingIncomingTcapMessages(val);
 
-        } else {
+        } else if (parName.equals("slsrange")) {
+            String val = String.valueOf( options[3]);
+            this.tcapStack.setSlsRange(val);
+        }
+        else {
             return TCAPOAMMessage.INVALID_COMMAND;
         }
 
@@ -307,7 +311,10 @@ public class TCAPExecutor implements ShellExecutor {
             } else if (parName.equals("blockingincomingtcapmessages")) {
                 sb.append(this.tcapStack.isCongControl_blockingIncomingTcapMessages());
 
-            } else {
+            } else if (parName.equals("slsrange")) {
+                sb.append(this.tcapStack.getSlsRange());
+            }
+            else {
                 return TCAPOAMMessage.INVALID_COMMAND;
             }
 
@@ -412,6 +419,10 @@ public class TCAPExecutor implements ShellExecutor {
 
                 sb.append("blockingincomingtcapmessages = ");
                 sb.append(tcapStackImpl.isCongControl_blockingIncomingTcapMessages());
+                sb.append("\n");
+
+                sb.append("slsrange = ");
+                sb.append(tcapStackImpl.getSlsRange());
                 sb.append("\n");
 
                 sb.append("*******************");

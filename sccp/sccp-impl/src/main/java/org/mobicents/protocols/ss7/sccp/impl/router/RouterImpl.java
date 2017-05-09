@@ -461,44 +461,45 @@ public class RouterImpl implements Router {
 
     public void modifyRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern, String mask,
             int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId, int networkId, SccpAddress patternCallingAddress) throws Exception {
-        Rule ruleTmp = this.getRule(id);
-
-        if (ruleTmp == null) {
-            throw new Exception(String.format(SccpOAMMessage.RULE_DOESNT_EXIST, name));
-        }
-
-        int maskumberOfSecs = (mask.split("/").length - 1);
-        int patternNumberOfSecs = (pattern.getGlobalTitle().getDigits().split("/").length - 1);
-
-        if (maskumberOfSecs != patternNumberOfSecs) {
-            throw new Exception(SccpOAMMessage.SEC_MISMATCH_PATTERN);
-        }
-
-        SccpAddress pAddress = this.getRoutingAddress(pAddressId);
-
-        if (pAddress == null) {
-            throw new Exception(String.format(SccpOAMMessage.NO_PRIMARY_ADDRESS, pAddressId));
-        }
-        int primAddNumberOfSecs = (pattern.getGlobalTitle().getDigits().split("/").length - 1);
-        if (maskumberOfSecs != primAddNumberOfSecs) {
-            throw new Exception(SccpOAMMessage.SEC_MISMATCH_PRIMADDRESS);
-        }
-
-        if (sAddressId != -1) {
-            SccpAddress sAddress = this.getRoutingAddress(sAddressId);
-            if (sAddress == null) {
-                throw new Exception(String.format(SccpOAMMessage.NO_BACKUP_ADDRESS, sAddressId));
-            }
-            int secAddNumberOfSecs = (pattern.getGlobalTitle().getDigits().split("/").length - 1);
-            if (maskumberOfSecs != secAddNumberOfSecs) {
-                throw new Exception(SccpOAMMessage.SEC_MISMATCH_SECADDRESS);
-            }
-        }
-
-        if (sAddressId == -1 && ruleType != RuleType.SOLITARY) {
-            throw new Exception(SccpOAMMessage.RULETYPE_NOT_SOLI_SEC_ADD_MANDATORY);
-        }
         synchronized (this) {
+            Rule ruleTmp = this.getRule(id);
+
+            if (ruleTmp == null) {
+                throw new Exception(String.format(SccpOAMMessage.RULE_DOESNT_EXIST, name));
+            }
+
+            int maskumberOfSecs = (mask.split("/").length - 1);
+            int patternNumberOfSecs = (pattern.getGlobalTitle().getDigits().split("/").length - 1);
+
+            if (maskumberOfSecs != patternNumberOfSecs) {
+                throw new Exception(SccpOAMMessage.SEC_MISMATCH_PATTERN);
+            }
+
+            SccpAddress pAddress = this.getRoutingAddress(pAddressId);
+
+            if (pAddress == null) {
+                throw new Exception(String.format(SccpOAMMessage.NO_PRIMARY_ADDRESS, pAddressId));
+            }
+            int primAddNumberOfSecs = (pattern.getGlobalTitle().getDigits().split("/").length - 1);
+            if (maskumberOfSecs != primAddNumberOfSecs) {
+                throw new Exception(SccpOAMMessage.SEC_MISMATCH_PRIMADDRESS);
+            }
+
+            if (sAddressId != -1) {
+                SccpAddress sAddress = this.getRoutingAddress(sAddressId);
+                if (sAddress == null) {
+                    throw new Exception(String.format(SccpOAMMessage.NO_BACKUP_ADDRESS, sAddressId));
+                }
+                int secAddNumberOfSecs = (pattern.getGlobalTitle().getDigits().split("/").length - 1);
+                if (maskumberOfSecs != secAddNumberOfSecs) {
+                    throw new Exception(SccpOAMMessage.SEC_MISMATCH_SECADDRESS);
+                }
+            }
+
+            if (sAddressId == -1 && ruleType != RuleType.SOLITARY) {
+                throw new Exception(SccpOAMMessage.RULETYPE_NOT_SOLI_SEC_ADD_MANDATORY);
+            }
+
             RuleImpl rule = new RuleImpl(ruleType, algo, originationType, pattern, mask, networkId, patternCallingAddress);
             rule.setPrimaryAddressId(pAddressId);
             rule.setSecondaryAddressId(sAddressId);

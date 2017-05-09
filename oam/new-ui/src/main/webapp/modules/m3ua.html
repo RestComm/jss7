@@ -452,7 +452,10 @@
 															var started = response.value.Started;
 															var maxSequenceNumber = response.value.MaxSequenceNumber;
 															var maxAsForRoute = response.value.MaxAsForRoute;
+															var deliveryMessageThreadCount = response.value.DeliveryMessageThreadCount;
+															var routingLabelFormatStr = response.value.RoutingLabelFormatStr;
 															var heartbeatTime = response.value.HeartbeatTime;
+															var useLsbForLinksetSelection = response.value.UseLsbForLinksetSelection;
 															
 															var isM3uaStarted = true;
 															
@@ -523,9 +526,23 @@
 																	'<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
 																    '</tr>'+	
 																    
+																	'<tr data-toggle="tooltip" title="Threads count for processing of incoming messages. This property cannot be updated while stack is running. Set this value in jboss-beans.xml">'+
+																	'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																	'<td style="font-size: 0.9em;">DeliveryMessageThreadCount</td>'+
+																	'<td style="font-size: 0.9em; padding: 0;">'+ deliveryMessageThreadCount  + '</td>'+
+																	'<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
+																    '</tr>'+	
+																    
+																	'<tr data-toggle="tooltip" title="MTP3 RoutingLabel Format. This property cannot be updated while stack is running. Set this value in jboss-beans.xml">'+
+																	'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																	'<td style="font-size: 0.9em;">RoutingLabelFormat</td>'+
+																	'<td style="font-size: 0.9em; padding: 0;">'+ routingLabelFormatStr  + '</td>'+
+																	'<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
+																    '</tr>'+	
+																    
 																	'<tr data-toggle="tooltip" title="Each ASP can send HEART_BEAT to peer to determine the availability of link. If there is no traffic M3UA will initiate heart beat every heartbeatTime milli seconds. If 3 consecutive HEART_BEAT are missed, stack will close and re-initiate connection.">'+
 																	'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
-																	'<td style="font-size: 0.9em;">heartbeatTime</td>'+
+																	'<td style="font-size: 0.9em;">HeartbeatTime</td>'+
 																	'<td style="font-size: 0.9em; padding: 0;">'+
 																		'<div id="div-' + name +'heartbeatTime-input" class="control-group">'+
 																		'<span id="' + name +'heartbeatTime-input" style="display: none;">'+
@@ -537,6 +554,23 @@
 																		'<span id="' +name + 'heartbeatTime-text">' + heartbeatTime + '</span>'+
 																	'</td>'+
 																	'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"heartbeatTime"+']\').toggle(); $(\'input[id^='+name+"heartbeatTime"+']\').focus();"></i>' +
+																	'</td>'+
+																    '</tr>'+																    
+																    
+																	'<tr data-toggle="tooltip" title="Sets which bit of SLS will be used for loadbalancing between Linkset. True value means lowest bit of SLS is used for loadbalancing between Linkset, false value means highest bit of SLS is used.">'+
+																	'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																	'<td style="font-size: 0.9em;">Use the lowest bit for link set selection</td>'+
+																	'<td style="font-size: 0.9em; padding: 0;">'+
+																		'<div id="div-' + name +'useLsbForLinksetSelection-input" class="control-group">'+
+																		'<span id="' + name +'useLsbForLinksetSelection-input" style="display: none;">'+
+																			'<input type="text" class="input-small" value="' + useLsbForLinksetSelection + '" /> ' +
+																			'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'UseLsbForLinksetSelection\', \'' + name+"useLsbForLinksetSelection" + '\')"></i> ' +
+																			'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"useLsbForLinksetSelection"+']\').toggle(); $(\'input[id^='+name+"useLsbForLinksetSelection"+']\').focus();"></i>' + 
+																		'</span>'+
+																		'</div>' +
+																		'<span id="' +name + 'useLsbForLinksetSelection-text">' + useLsbForLinksetSelection + '</span>'+
+																	'</td>'+
+																	'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"useLsbForLinksetSelection"+']\').toggle(); $(\'input[id^='+name+"useLsbForLinksetSelection"+']\').focus();"></i>' +
 																	'</td>'+
 																    '</tr>'+																    
 																	

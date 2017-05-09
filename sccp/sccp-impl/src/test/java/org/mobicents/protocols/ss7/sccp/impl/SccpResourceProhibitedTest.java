@@ -58,7 +58,7 @@ public class SccpResourceProhibitedTest {
 
     @Test(groups = { "sccpresource", "functional.sccp" })
     public void testProhibitedTrue() throws Exception {
-        resource = new SccpResourceImpl("SccpResourceTest", true);
+        resource = new SccpResourceImpl("SccpResourceProhibitedTest", true);
         resource.setPersistDir(Util.getTmpTestDir());
         resource.start();
         resource.removeAllResourses();
@@ -75,7 +75,7 @@ public class SccpResourceProhibitedTest {
 
     @Test(groups = { "sccpresource", "functional.sccp" })
     public void testProhibitedFalse() throws Exception {
-        resource = new SccpResourceImpl("SccpResourceTest", false);
+        resource = new SccpResourceImpl("SccpResourceProhibitedTest", false);
         resource.setPersistDir(Util.getTmpTestDir());
         resource.start();
         resource.removeAllResourses();
@@ -93,7 +93,7 @@ public class SccpResourceProhibitedTest {
     @Test(groups = { "sccpresource", "functional.encode" })
     public void testSerialization() throws Exception {
 
-        resource = new SccpResourceImpl("SccpResourceTest", true);
+        resource = new SccpResourceImpl("SccpResourceProhibitedTest", true);
         resource.setPersistDir(Util.getTmpTestDir());
         resource.start();
         resource.removeAllResourses();
@@ -107,7 +107,7 @@ public class SccpResourceProhibitedTest {
         resource.addConcernedSpc(1, 603);
         resource.addConcernedSpc(2, 604);
 
-        SccpResourceImpl resource1 = new SccpResourceImpl("SccpResourceTest", true);
+        SccpResourceImpl resource1 = new SccpResourceImpl("SccpResourceProhibitedTest", true);
         resource1.setPersistDir(Util.getTmpTestDir());
         resource1.start();
 

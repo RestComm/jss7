@@ -211,9 +211,9 @@ public class Server extends TestHarness {
                 NatureOfAddress.INTERNATIONAL);
         SccpAddress pattern = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt, 0, 0);
         this.sccpStack.getRouter().addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.REMOTE, pattern,
-                "K", 1, -1, null, 0, null, "");
+                "K", 1, -1, null, 0, null);
         this.sccpStack.getRouter().addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern,
-                "K", 2, -1, null, 0, null, "");
+                "K", 2, -1, null, 0, null);
     }
 
     private void initTCAP() throws Exception {

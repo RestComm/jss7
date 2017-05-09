@@ -228,7 +228,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     // get next Seq Control value available
     protected int getNextSeqControl() {
         int res = seqControl.getAndIncrement();
-        return res & 0xFF;
 
         // if (!seqControl.compareAndSet(256, 1)) {
         // return seqControl.getAndIncrement();
@@ -242,6 +241,17 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         //
         // }
         // return seqControl;
+
+        if (this.stack.getSlsRangeType() == SlsRangeType.Odd) {
+            if (res % 2 == 0)
+                res++;
+        } else if (this.stack.getSlsRangeType() == SlsRangeType.Even) {
+            if (res %2 != 0)
+                res++;
+        }
+        res = res & 0xFF;
+
+        return res;
     }
 
     /*

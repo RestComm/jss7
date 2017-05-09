@@ -273,6 +273,26 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     }
 
     @Override
+    public boolean isUseLsbForLinksetSelection() {
+        return this.wrappedM3UAManagement.isUseLsbForLinksetSelection();
+    }
+
+    @Override
+    public void setUseLsbForLinksetSelection(boolean useLsbForLinksetSelection) throws Exception {
+        this.wrappedM3UAManagement.setUseLsbForLinksetSelection(useLsbForLinksetSelection);
+    }
+
+    @Override
+    public int getDeliveryMessageThreadCount() {
+        return this.wrappedM3UAManagement.getDeliveryMessageThreadCount();
+    }
+
+    @Override
+    public String getRoutingLabelFormatStr() {
+        return this.wrappedM3UAManagement.getRoutingLabelFormatStr();
+    }
+
+    @Override
     public boolean isStarted() {
         return this.wrappedM3UAManagement.isStarted();
     }

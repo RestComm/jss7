@@ -1,0 +1,19 @@
+Name
+	tcap get slsrange
+
+SYNOPSIS
+	tcap get slsrange stackname <stack-name>
+
+DESCRIPTION
+	Gets value for slsrange.
+
+PARAMETERS
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed.
+					If not passed, the first stack configured in ShellExecutor
+					will be used.
+
+EXAMPLES
+	tcap get slsrange
