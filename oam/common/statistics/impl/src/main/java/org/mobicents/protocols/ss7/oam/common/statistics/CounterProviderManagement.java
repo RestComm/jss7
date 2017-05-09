@@ -45,6 +45,7 @@ import org.mobicents.protocols.ss7.oam.common.statistics.api.CounterCampaign;
 import org.mobicents.protocols.ss7.oam.common.statistics.api.CounterDef;
 import org.mobicents.protocols.ss7.oam.common.statistics.api.CounterDefSet;
 import org.mobicents.protocols.ss7.oam.common.statistics.api.CounterMediator;
+import org.mobicents.protocols.ss7.oam.common.statistics.api.CounterOutputFormat;
 import org.mobicents.protocols.ss7.oam.common.statistics.api.CounterType;
 import org.mobicents.protocols.ss7.oam.common.statistics.api.CounterValueSet;
 import org.mobicents.protocols.ss7.oam.common.statistics.api.SourceValueCounter;
@@ -79,6 +80,7 @@ public class CounterProviderManagement implements CounterProviderManagementMBean
     private int minuteProcessed;
     private int secondProcessed;
     private final StatsPrinter statsPrinter;
+    private final CsvStatsPrinter csvStatsPrinter;
 
     /**
      * A list of registered CounterMediator by there names
@@ -100,6 +102,7 @@ public class CounterProviderManagement implements CounterProviderManagementMBean
         this.logger = Logger.getLogger(CounterProviderManagement.class.getCanonicalName() + "-" + this.name);
 
         this.statsPrinter = new StatsPrinter();
+        this.csvStatsPrinter = new CsvStatsPrinter();
     }
 
     @Override
@@ -226,16 +229,16 @@ public class CounterProviderManagement implements CounterProviderManagementMBean
     }
 
     @Override
-    public void createCampaign(String campaignName, String counterSetName, int duration) throws Exception {
-        this.doCreateCampaign(campaignName, counterSetName, duration, false);
+    public void createCampaign(String campaignName, String counterSetName, int duration, int outputFormat) throws Exception {
+        this.doCreateCampaign(campaignName, counterSetName, duration, false, outputFormat);
     }
 
     @Override
-    public void createShortCampaign(String campaignName, String counterSetName, int duration) throws Exception {
-        this.doCreateCampaign(campaignName, counterSetName, duration, true);
+    public void createShortCampaign(String campaignName, String counterSetName, int duration, int outputFormat) throws Exception {
+        this.doCreateCampaign(campaignName, counterSetName, duration, true, outputFormat);
     }
 
-    private void doCreateCampaign(String campaignName, String counterSetName, int duration, boolean shortCampaign)
+    private void doCreateCampaign(String campaignName, String counterSetName, int duration, boolean shortCampaign, int outputFormat)
             throws Exception {
         if (campaignName == null) {
             throw new Exception("Campaign Name cannot be null");
@@ -251,6 +254,9 @@ public class CounterProviderManagement implements CounterProviderManagementMBean
         if (duration != 5 && duration != 10 && duration != 15 && duration != 20 && duration != 30 && duration != 60)
             throw new Exception("Duration may be only 5, 10, 15, 20, 30 or 60 minutes/seconds");
 
+        if (outputFormat != 0 && outputFormat != 1 && outputFormat != 2)
+            throw new Exception("Output format may be only CSV, verbose or CSV and verbose");
+
         CounterMediator cm = lstCounterDefSet.get(counterSetName);
         if (cm == null) {
             throw new Exception("CounterMediator is null for counterSetName=" + counterSetName);
@@ -259,7 +265,7 @@ public class CounterProviderManagement implements CounterProviderManagementMBean
         synchronized (this) {
             CounterDefSet counterSet = cm.getCounterDefSet(counterSetName);
             CounterCampaignImpl camp = new CounterCampaignImpl(campaignName, counterSetName, counterSet, duration,
-                    shortCampaign);
+                    shortCampaign, outputFormat);
             lstCounterCampaign.put(campaignName, camp);
             this.store();
         }
@@ -327,7 +333,24 @@ public class CounterProviderManagement implements CounterProviderManagementMBean
             }
             if (cm != null) {
                 SourceValueSet svs1 = cc.getLastSourceValueSet();
-                this.statsPrinter.printStats(cc);
+                CounterOutputFormat outputFormat = CounterOutputFormat.getInstance(cc.getOutputFormat());
+                if (outputFormat != null) {
+                    switch (outputFormat) {
+                        case CSV:
+                            this.csvStatsPrinter.printCsvStats(cc);
+                            break;
+                        case VERBOSE:
+                            this.statsPrinter.printStats(cc);
+                            break;
+                        case CSV_AND_VERBOSE:
+                            this.statsPrinter.printStats(cc);
+                            this.csvStatsPrinter.printCsvStats(cc);
+                            break;
+                    }
+                } else {
+                    logger.info("Output format not set for campaign: " + cc.getName() + ", using default");
+                    this.statsPrinter.printStats(cc);
+                }
 
                 int durationInSeconds = cc.getDuration();
                 if (!cc.isShortCampaign()) {

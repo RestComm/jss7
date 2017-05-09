@@ -57,6 +57,12 @@ public interface CounterCampaign extends Serializable {
     int getDuration();
 
     /**
+     * statistics output format
+     * @return
+     */
+    int getOutputFormat();
+
+    /**
      * Returns counters definitions
      * @return
      */
