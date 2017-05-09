@@ -127,7 +127,7 @@ public class RegistrationTest {
         CounterMediator cm = counterProvider.getCounterMediatorLst().get(cmName);
         assertEquals(cm, tcapManagement);
 
-        counterProvider.createCampaign("camp_01", csName, 10);
+        counterProvider.createCampaign("camp_01", csName, 10, 1);
         assertEquals(counterProvider.getCampaignsList().length, 1);
         CounterCampaign cc = counterProvider.getCampaign("camp_01");
         assertEquals(cc.getCounterSetName(), csName);
@@ -156,7 +156,7 @@ public class RegistrationTest {
         assertEquals(cc.getCounterSet(), cds);
         assertFalse(cc.isShortCampaign());
 
-        counterProvider.createShortCampaign("camp_02", csName, 20);
+        counterProvider.createShortCampaign("camp_02", csName, 20, 1);
         assertEquals(counterProvider.getCampaignsList().length, 2);
         cc = counterProvider.getCampaign("camp_02");
         assertEquals(cc.getCounterSetName(), csName);
@@ -188,7 +188,7 @@ public class RegistrationTest {
         CounterMediator cm = counterProvider.getCounterMediatorLst().get(cmName);
         assertEquals(cm, tcapManagement);
 
-        counterProvider.createCampaign("camp_01", csName, 10);
+        counterProvider.createCampaign("camp_01", csName, 10, 1);
         assertEquals(counterProvider.getCampaignsList().length, 1);
         CounterCampaign cc = counterProvider.getCampaign("camp_01");
         assertEquals(cc.getCounterSetName(), csName);
@@ -236,7 +236,7 @@ public class RegistrationTest {
         String cmName = tcapManagement.getCounterMediatorName();
         CounterDefSet cds = tcapManagement.getCounterDefSet(csName);
 
-        counterProvider.createCampaign("camp_01", csName, 60);
+        counterProvider.createCampaign("camp_01", csName, 60, 1);
         Date tm1 = new Date(2010, 1, 1, 10, 0, 0);
         Date tm2 = new Date(2010, 1, 1, 11, 0, 0);
 

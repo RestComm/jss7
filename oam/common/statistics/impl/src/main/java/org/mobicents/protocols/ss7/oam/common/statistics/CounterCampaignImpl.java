@@ -44,12 +44,14 @@ public class CounterCampaignImpl implements CounterCampaign {
     private static final String NAME = "name";
     private static final String COUNTER_SET_NAME = "counterSetName";
     private static final String DURATION = "duration";
+    private static final String OUTPUT_FORMAT = "outputFormat";
     private static final String SHORT_CAMPAIGN = "shortCampaign";
 
     private String name;
     private CounterDefSet counterSet;
     private String counterSetName;
     private int duration;
+    private int outputFormat;
     private boolean shortCampaign;
 
     private Date startTime;
@@ -60,11 +62,12 @@ public class CounterCampaignImpl implements CounterCampaign {
     public CounterCampaignImpl() {
     }
 
-    public CounterCampaignImpl(String name, String counterSetName, CounterDefSet counterSet, int duration, boolean shortCampaign) {
+    public CounterCampaignImpl(String name, String counterSetName, CounterDefSet counterSet, int duration, boolean shortCampaign, int outputFormat) {
         this.name = name;
         this.counterSetName = counterSetName;
         this.counterSet = counterSet;
         this.duration = duration;
+        this.outputFormat = outputFormat;
         this.shortCampaign = shortCampaign;
     }
 
@@ -81,6 +84,11 @@ public class CounterCampaignImpl implements CounterCampaign {
     @Override
     public int getDuration() {
        return duration;
+    }
+
+    @Override
+    public int getOutputFormat() {
+        return outputFormat;
     }
 
     @Override
@@ -140,6 +148,7 @@ public class CounterCampaignImpl implements CounterCampaign {
             counterCampaign.counterSetName = xml.getAttribute(COUNTER_SET_NAME, "");
             counterCampaign.shortCampaign = xml.getAttribute(SHORT_CAMPAIGN, false);
             counterCampaign.duration = xml.getAttribute(DURATION, 60);
+            counterCampaign.outputFormat = xml.getAttribute(OUTPUT_FORMAT, 1);
         }
 
         public void write(CounterCampaignImpl counterCampaign, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
@@ -147,6 +156,7 @@ public class CounterCampaignImpl implements CounterCampaign {
             xml.setAttribute(COUNTER_SET_NAME, counterCampaign.getCounterSetName());
             xml.setAttribute(SHORT_CAMPAIGN, counterCampaign.isShortCampaign());
             xml.setAttribute(DURATION, counterCampaign.getDuration());
+            xml.setAttribute(OUTPUT_FORMAT, counterCampaign.getOutputFormat());
         }
     };
 
