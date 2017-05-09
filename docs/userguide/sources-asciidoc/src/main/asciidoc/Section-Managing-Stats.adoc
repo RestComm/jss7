@@ -17,7 +17,8 @@ image::images/GUI_Campaign_Management.png[]
 
 Click on 'Create Statistics Campaign' button to create new campaign.
 Select the stack from 'Counter Definition Set Name' drop down on which you want to define new campaign.
-Next select the time period from 'Duration' drop down and enter unique 'Campaign Name'. 
+Next select the time period from 'Duration' drop down and enter unique 'Campaign Name'.
+An 'Output format' field allows you to select a type of statistics logging: CSV, verbose or both of them.
 
 IMPORTANT: The stack on which new campaign is defined must have set 'Statistics Enabled' property to true 
 
@@ -36,7 +37,7 @@ Last tab also displays the 'Start Time' and 'End Time' representing time duratio
  
 
 .GUI - Campaigns View
-image::images/GUI_Campaign_Management_View.png[]
+image::images/GUI_Campaign_Management_view.png[]
 
 [NOTE]
 ====
@@ -59,16 +60,23 @@ If you wish to have stats logged, you must configure the settings in the file [p
 If you are running the platform as standalone, then you should configure in [path]_log4j.xml_. 
 
 Logging stats to main server log file::
-If you wish to have the stats logged in the main server log file located at [path]_jboss-5.1.0.GA/server/default/log/server.log_,  then you must add a new category to the [path]_jboss-log4j.xml_ as shown below and set priority value to "DEBUG". 
+If you wish to have the stats logged in the main server log file located at [path]_jboss-5.1.0.GA/server/default/log/server.log_,  then you must add a new category to the [path]_jboss-log4j.xml_ as shown below and set priority value to "DEBUG". For verbose stats:
 ----
 
 <category name="org.mobicents.protocols.ss7.oam.common.statistics.StatsPrinter" additivity="false"> 
 	    <priority value="DEBUG" /> 
 </category>
 ----		
+and for a CSV stats:
+----
 
-Logging stats to a separate stats log file::
-If you wish to have the stats logged to a separate log file located at [path]_jboss-5.1.0.GA/server/default/log/stats.log_,  then you must add a new appender to the [path]_jboss-log4j.xml_ and change category as shown below.
+<category name="org.mobicents.protocols.ss7.oam.common.statistics.CsvStatsPrinter" additivity="false">
+	    <priority value="DEBUG" />
+</category>
+----
+
+Logging stats to a separate stats log files::
+If you wish to have the stats logged to a separate log files located at [path]_jboss-5.1.0.GA/server/default/log/stats.log_ and [path]_jboss-5.1.0.GA/server/default/log/csvstats.log_,  then you must add a new appenders to the [path]_jboss-log4j.xml_ and change category as shown below.
 You must set the priority value to "DEBUG". 
 ----
 
@@ -89,6 +97,25 @@ You must set the priority value to "DEBUG".
 <category name="org.mobicents.protocols.ss7.oam.common.statistics.StatsPrinter" additivity="false"> 
 <priority value="DEBUG" /> 
 <appender-ref ref="STATS"/> 
+</category>
+
+<appender name="CSVSTATS" class="org.jboss.logging.appender.DailyRollingFileAppender">
+<errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
+<param name="File" value="$
+{jboss.server.home.dir}
+/log/csvstats.log"/>
+<param name="Append" value="true"/>
+<param name="MaxFileSize" value="500KB" />
+<param name="MaxBackupIndex" value="1" />
+<param name="Threshold" value="DEBUG"/>
+<param name="DatePattern" value="'.'yyyy-MM-dd"/>
+<layout class="org.apache.log4j.PatternLayout">
+<param name="ConversionPattern" value="%d %-5p [%c] %m%n"/>
+</layout>
+</appender>
+<category name="org.mobicents.protocols.ss7.oam.common.statistics.CsvStatsPrinter" additivity="false">
+<priority value="DEBUG" />
+<appender-ref ref="CSVSTATS"/>
 </category>
 ----		
 

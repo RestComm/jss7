@@ -54,7 +54,7 @@
 									</div>
 									
 									<div id="div-durationBtnGrp" class="control-group">
-										<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="duration for which statistcs will be collected">
+										<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="duration for which statistics will be collected">
 											<span class="add-on">Duration</span>
 											<select id="duration-Select" >
 												<option value="5">5 Sec</option>
@@ -78,6 +78,17 @@
 											<span class="add-on">Campaign Name</span>
 											<input id="campaignName" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="Campaign Name" />
 										</span>					
+									</div>
+
+									<div id="div-outputFormatBtnGrp" class="control-group">
+										<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="type of statistics output format that will be presented in file">
+											<span class="add-on">Output format</span>
+											<select id="outputFormat-Select" >
+												<option value="0">CSV</option>
+												<option value="1">verbose</option>
+												<option value="2">CSV and verbose</option>
+											</select>
+										</span>
 									</div>
 		
 									<button id="add-campaign-btnname" onclick="addCampaign();" class="btn btn btn-primary" >Create</button> 
@@ -127,6 +138,9 @@
 						
 						e = document.getElementById("duration-Select");
 						var duration = e.options[e.selectedIndex].value;
+
+						e = document.getElementById("outputFormat-Select");
+						var outputFormat = e.options[e.selectedIndex].value;
 						
 						var methodName = "createShortCampaign";
 						
@@ -143,7 +157,7 @@
 							$("#create-campaign-error").hide();
 						}
 						
-						jolokia.execute("org.mobicents.ss7:layer=COUNTER,name=CounterHost,type=Management",methodName, campaignName,cntDefSetName,duration, 
+						jolokia.execute("org.mobicents.ss7:layer=COUNTER,name=CounterHost,type=Management",methodName, campaignName,cntDefSetName,duration,outputFormat,
 								{
 									success: function(value) {
 										refreshCampaignsList();
@@ -169,6 +183,7 @@
 										var name = response.name;
 										var counterSetName = response.counterSetName;
 										var duration = response.duration;
+										var outputFormat = response.outputFormat;
 										var counterSet = response.counterSet;
 										var counterDefs = counterSet.counterDefs;
 										var isShortCampaign = response.shortCampaign;
@@ -183,6 +198,15 @@
 										
 										if(counterValueSet){
 											counterValues = counterValueSet.counterValues;
+										}
+
+										var outputFormatString;
+										if(outputFormat == 0){
+											outputFormatString = "CSV";
+										} else if(outputFormat == 1){
+											outputFormatString = "verbose";
+										} else if(outputFormat == 2){
+											outputFormatString = "CSV and verbose";
 										}
 										
 										$('#div-ss7-campaigns-details').append(
@@ -225,7 +249,14 @@
 												'					<td style="font-size: 0.9em;">Duration</td>'+
 												'					<td style="font-size: 0.9em; padding: 0;">' + duration + ' '+ durationUnit+'</td>'+
 												'					<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
-												'					</tr>'+												
+												'					</tr>'+
+
+												'					<tr data-toggle="tooltip" title="statistics output format">'+
+												'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-dashboard"></i></td>'+
+												'					<td style="font-size: 0.9em;">Output format</td>'+
+												'					<td style="font-size: 0.9em; padding: 0;">' + outputFormatString + '</td>'+
+												'					<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
+												'					</tr>'+
 
 												'				</tbody>'+
 												'			</table>'	+
@@ -347,7 +378,7 @@
 										
 										$("#ss7-sccp-settings-"+name).show();
 										
-										logToConsole('INFO', 'Campaign ' + campaignName + ' deatils retrieved.');
+										logToConsole('INFO', 'Campaign ' + campaignName + ' details retrieved.');
 									},
 									error: function(value){
 										errorUID = ("st" + new Date().getTime()).hashCode();
