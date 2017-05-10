@@ -256,6 +256,7 @@ public class CounterProviderManagement implements CounterProviderManagementMBean
 
         if (outputFormat != 0 && outputFormat != 1 && outputFormat != 2)
             throw new Exception("Output format may be only CSV, verbose or CSV and verbose");
+        CounterOutputFormat counterOutputFormat = CounterOutputFormat.getInstance(outputFormat);
 
         CounterMediator cm = lstCounterDefSet.get(counterSetName);
         if (cm == null) {
@@ -265,7 +266,7 @@ public class CounterProviderManagement implements CounterProviderManagementMBean
         synchronized (this) {
             CounterDefSet counterSet = cm.getCounterDefSet(counterSetName);
             CounterCampaignImpl camp = new CounterCampaignImpl(campaignName, counterSetName, counterSet, duration,
-                    shortCampaign, outputFormat);
+                    shortCampaign, counterOutputFormat);
             lstCounterCampaign.put(campaignName, camp);
             this.store();
         }
@@ -333,7 +334,7 @@ public class CounterProviderManagement implements CounterProviderManagementMBean
             }
             if (cm != null) {
                 SourceValueSet svs1 = cc.getLastSourceValueSet();
-                CounterOutputFormat outputFormat = CounterOutputFormat.getInstance(cc.getOutputFormat());
+                CounterOutputFormat outputFormat = cc.getOutputFormat();
                 if (outputFormat != null) {
                     switch (outputFormat) {
                         case CSV:
