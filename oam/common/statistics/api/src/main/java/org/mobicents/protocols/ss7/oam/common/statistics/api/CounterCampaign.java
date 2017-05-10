@@ -60,7 +60,13 @@ public interface CounterCampaign extends Serializable {
      * statistics output format
      * @return
      */
-    int getOutputFormat();
+    CounterOutputFormat getOutputFormat();
+
+    /**
+     * statistics output format
+     * @return
+     */
+    int getOutputFormatInt();
 
     /**
      * Returns counters definitions
