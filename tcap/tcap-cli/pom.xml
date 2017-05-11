@@ -42,7 +42,45 @@
 	<profiles>
 		<profile>
 			<!-- Adds the files to JBoss AS -->
-			<id>jboss</id>
+			<id>deploy-module-jboss5</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<copy todir="${jboss.home}/lib" file="${project.build.directory}/${project.build.finalName}.jar" />
+									</tasks>
+								</configuration>
+							</execution>
+							<execution>
+								<id>undeploy</id>
+								<phase>clean</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<delete failonerror="fals" file="${jboss.home}/lib/${project.build.finalName}.jar" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<!-- Adds the files to JBoss AS -->
+			<id>deploy-module-wildfly</id>
 			<build>
 				<plugins>
 					<plugin>
