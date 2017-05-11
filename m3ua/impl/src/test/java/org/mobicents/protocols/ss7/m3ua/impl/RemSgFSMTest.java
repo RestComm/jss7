@@ -1777,6 +1777,18 @@ public class RemSgFSMTest {
             // TODO Auto-generated method stub
             return false;
         }
+
+        @Override
+        public int getBufferSize() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setBufferSize(int arg0) throws Exception {
+            // TODO Auto-generated method stub
+            
+        }
     }
 
     class Mtp3UserPartListenerimpl implements Mtp3UserPartListener {

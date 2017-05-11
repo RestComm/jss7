@@ -211,6 +211,11 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
     }
 
     @Override
+    public int getBufferSize() {
+        return this.wrappedSctpManagement.getBufferSize();
+    }
+
+    @Override
     public boolean isSingleThread() {
         return this.wrappedSctpManagement.isSingleThread();
     }
@@ -265,6 +270,11 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
     @Override
     public void setWorkerThreads(int workerThreads) throws Exception {
         this.wrappedSctpManagement.setWorkerThreads(workerThreads);
+    }
+
+    @Override
+    public void setBufferSize(int bufferSize) throws Exception {
+        this.wrappedSctpManagement.setBufferSize(bufferSize);
     }
 
     @Override

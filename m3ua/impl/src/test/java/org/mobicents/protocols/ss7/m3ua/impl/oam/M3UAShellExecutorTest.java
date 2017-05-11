@@ -555,5 +555,17 @@ public class M3UAShellExecutorTest {
             return false;
         }
 
+        @Override
+        public int getBufferSize() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setBufferSize(int arg0) throws Exception {
+            // TODO Auto-generated method stub
+            
+        }
+
     }
 }
