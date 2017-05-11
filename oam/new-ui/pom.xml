@@ -28,7 +28,7 @@
 
 	<profiles>
 		<profile>
-			<id>deploy-module-jboss</id>
+			<id>deploy-module-jboss5</id>
 			<build>
 				<finalName>jss7-management-console</finalName>
 				<plugins>
