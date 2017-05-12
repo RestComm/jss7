@@ -963,13 +963,13 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
             for (Property property : properties) {
                 String pName = property.getName();
                 if (pName.equals("maxSequenceNumber")) {
-                    int vali = property.getValue().asInt();
+                    int vali = property.getValue().get("value").asInt();
                     m3uaManagement.setMaxSequenceNumber(vali);
                 } else if (pName.equals("maxAsForRoute")) {
-                    int vali = property.getValue().asInt();
+                    int vali = property.getValue().get("value").asInt();
                     m3uaManagement.setMaxAsForRoute(vali);
                 } else if (pName.equals("deliveryMessageThreadCount")) {
-                    int vali = property.getValue().asInt();
+                    int vali = property.getValue().get("value").asInt();
                     m3uaManagement.setDeliveryMessageThreadCount(vali);
                 }
             }
