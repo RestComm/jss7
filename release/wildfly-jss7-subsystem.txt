@@ -1,5 +1,5 @@
         <subsystem xmlns="urn:org.restcomm:ss7-wildfly:1.0">
-            <mbean name="SCTPManagement" type="SCTPManagement" class="org.mobicents.protocols.sctp.netty.NettySctpManagementImpl" interface="empty" enabled="true" reflection="false">
+            <mbean name="SCTPManagement" type="SCTPManagement" class="org.mobicents.protocols.sctp.SctpManagementImpl" interface="empty" enabled="true" reflection="false">
 <!--
                 <property name="optionSctpDisableFragments" type="bool" value="true"/>
                 <property name="optionSctpFragmentInterleave" type="int" value="0"/>
