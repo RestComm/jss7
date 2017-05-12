@@ -1,0 +1,28 @@
+            <periodic-rotating-file-handler autoflush="true" name="STATS">
+                <formatter>
+                    <named-formatter name="PATTERN"/>
+                </formatter>
+                <file path="stats.log" relative-to="jboss.server.log.dir"/>
+                <suffix value=".yyyy-MM-dd"/>
+                <append value="true"/>
+            </periodic-rotating-file-handler>
+            <periodic-rotating-file-handler autoflush="true" name="CSVSTATS">
+                <formatter>
+                    <named-formatter name="PATTERN"/>
+                </formatter>
+                <file path="csvstats.log" relative-to="jboss.server.log.dir"/>
+                <suffix value=".yyyy-MM-dd"/>
+                <append value="true"/>
+            </periodic-rotating-file-handler>
+            <logger category="org.mobicents.protocols.ss7.oam.common.statistics.StatsPrinter">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="STATS"/>
+                </handlers>
+            </logger>
+            <logger category="org.mobicents.protocols.ss7.oam.common.statistics.CsvStatsPrinter">
+                <level name="DEBUG"/>
+                <handlers>
+                    <handler name="CSVSTATS"/>
+                </handlers>
+            </logger>
