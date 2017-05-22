@@ -757,6 +757,13 @@
 						var ruleaddsnpi = $("#ruleaddsnpi"+name).val();
 						var ruleaddsnai = $("#ruleaddsnai"+name).val();
 						var ruleaddsGt = $("#ruleaddsGt"+name).val();
+						var ruleaddscgind = $("#ruleaddscgind"+name).val();
+						var ruleaddcgspc = $("#ruleaddscgpc"+name).val();
+						var ruleaddscgssn = $("#ruleaddscgssn"+name).val();
+						var ruleaddscgtt = $("#ruleaddscgtt"+name).val();
+						var ruleaddscgnpi = $("#ruleaddscgnpi"+name).val();
+						var ruleaddscgnai = $("#ruleaddscgnai"+name).val();
+						var ruleaddscgGt = $("#ruleaddscgGt"+name).val();
 						
 						var e = document.getElementById("ruleTypeInput"+name);
 						var ruleType = e.options[e.selectedIndex].text;
@@ -874,8 +881,8 @@
 								{
 									type: "EXEC",
 									mbean: mbeanSearch,
-									operation: "addRule(int,java.lang.String,java.lang.String,java.lang.String,int,int,int,int,int,int,java.lang.String,java.lang.String,int,int,int,int)",
-									arguments: [ruleId,ruleType,ruleLoadShare,ruleOrigType,ruleaddsind,ruleaddspc,ruleaddsssn,ruleaddstt,ruleaddsnpi,ruleaddsnai,ruleaddsGt,ruleMask,ruleprimAdd,rulebackupAdd,rulenecgparAdd,rulenid]
+									operation: "addRule(int,java.lang.String,java.lang.String,java.lang.String,int,int,int,int,int,int,java.lang.String,java.lang.String,int,int,int,int, int, int, int, int, int, int, java.lang.String)",
+									arguments: [ruleId,ruleType,ruleLoadShare,ruleOrigType,ruleaddsind,ruleaddspc,ruleaddsssn,ruleaddstt,ruleaddsnpi,ruleaddsnai,ruleaddsGt,ruleMask,ruleprimAdd,rulebackupAdd,rulenecgparAdd,rulenid,ruleaddscgind,ruleaddcgspc,ruleaddscgssn,ruleaddscgtt,ruleaddscgnpi,ruleaddscgnai,ruleaddscgGt]
 								},
 								{
 									success: function(value) {
@@ -1587,6 +1594,7 @@
 																	'					<th>Mask</th>'+
 																	'					<th>LoadSharing Algorithm</th>'+
 																	'					<th>Pattern SccpAddress</th>'+
+																	'					<th>Pattern SccpCallingAddress</th>'+
 																	'					<th>Primary Address ID</th>'+
 																	'					<th>Secondary Address ID</th>'+
 																	'					<th>New CallingParty Address ID</th>'+
@@ -1749,8 +1757,57 @@
 																	'    								<span class="add-on">Network Id</span>'+
 																	'      								<input id="rulenid'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="Network Id" />'+
 																	'  								</span>'+	
-																	'							</div>'+																		
-																	
+																	'							</div>'+
+
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="address indicator is the first field in a SCCP Party Address (called/calling) and is one octet in length. Its function is to indicate which information elements are present so that the address can be interpreted. In other words, it indicates the type of addressing information that is to be found in the address field. The addressing information from the original global title is then compared with the passed address information to match the rule.">'+
+																	'    								<span class="add-on">Calling Address Indicator</span>'+
+																	'      								<input id="ruleaddscgind'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="Calling Address Indicator" />'+
+																	'  								</span>'+
+																	'							</div>'+
+
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="MTP Signaling Point Code. This is ignored if Bit 0 of address-indicator is not set">'+
+																	'    								<span class="add-on">Calling Point Code</span>'+
+																	'      								<input id="ruleaddscgpc'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="Point Code" />'+
+																	'  								</span>'+
+																	'							</div>'+
+
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="this is ignored if Bit 1 of address-indicator is not set">'+
+																	'    								<span class="add-on">Calling Subsystem Number</span>'+
+																	'      								<input id="ruleaddscgssn'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="Subsystem Number" />'+
+																	'  								</span>'+
+																	'							</div>'+
+
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="is ignored if GT Indicator is 0000 or 0001. Values are 0 Unknown, 1 - 63 International Service, 64 - 127 Spare, 128 - 254 National Network Specific, 255 Reserved for Expansion">'+
+																	'    								<span class="add-on">Calling Translation Type</span>'+
+																	'      								<input id="ruleaddscgtt'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="Translation Type" />'+
+																	'  								</span>'+
+																	'							</div>'+
+
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="Number Plan (NP) field specifies the numbering plan which the address information follows. This is ignored if GT Indicator is 0000, 0001 or 0010. Values are 0 Unknown, 1 ISDN/Telephony Number Plan (Recommendations E.163 and E.164), 2 Generic Numbering Plan, 3 Data Numbering Plan (Recommendations X.121), 4 Telex Numbering Plan (Recommendations F.69), 5 Maritime Mobile Numbering Plan (Recommendations E.210, E.211), 6 Land Mobile Numbering Plan (Recommendations E.212), 7 ISDN/Mobile Numbering Plan (Recommendations E.214), 8 to 13 Spare, 14 Private Network or Network-Specific Numbering Plan, 15 Reserved">'+
+																	'    								<span class="add-on">Calling Numbering Plan</span>'+
+																	'      								<input id="ruleaddscgnpi'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="Numbering Plan" />'+
+																	'  								</span>'+
+																	'							</div>'+
+
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="Nature of Address Indicator (NAI) field defines the address range for a specific numbering plan. This is only used if GT Indicator is 0100. Values are 0 Unknown, 1 Subscriber Number, 2 Reserved for National use, 3 National Significant Number, 4 International Number, 5 to 127 Spare">'+
+																	'    								<span class="add-on">Calling Nature of Address</span>'+
+																	'      								<input id="ruleaddscgnai'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="Nature of Address" />'+
+																	'  								</span>'+
+																	'							</div>'+
+
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="The calling digits should match with theses digits as per the rule specified: * wildcard - matches any number of digits, ? wildcard - matches exactly one digit. The separator / has no effect in calling party as there is no masking. In case this field is left empty then no rule matching based on calling SCCP address is performed and calling ai/pc/ssn/tt/np/nai fields are ignored. The calling address is only matched if more than 1 calledDigits patterns are exactly same.">'+
+																	'    								<span class="add-on">Calling GlobalTitle Digits</span>'+
+																	'      								<input id="ruleaddscgGt'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="GlobalTitle Digits" />'+
+																	'  								</span>'+
+																	'							</div>'+
+
 																	'							<button id="add-address-btn'+name+'" onclick="addRule(\'' + name + '\');" class="btn btn btn-primary" >Create</button> '+
 																	'						</span>'+					
 																	'					</p>'+
@@ -2108,53 +2165,63 @@
 																var newcgpartyAddressid = value.newCallingPartyAddressId;
 																var newCallingPartyAddressId = value.newCallingPartyAddressId;
 																var originationType = value.originationType;
-																
-																var pattern = value.pattern;
-																
-																var pc = pattern.signalingPointCode;
-																var ssn = pattern.subsystemNumber;
-																var aitmp = pattern.addressIndicator;
-																var ai = decodeAi(aitmp.reservedForNationalUseBit, aitmp.routingIndicator, aitmp.globalTitleIndicator, aitmp.sSNPresent, aitmp.pCPresent); 
-																
-																var gt = pattern.globalTitle;
-																
-																var gtIndicator = gt.globalTitleIndicator;
-																var digits = gt.digits;
-																
-																var nid = value.networkId;
-																
-																var gtType="AI="+ai+"<br/>PC="+pc+"<br/>SSN="+ssn+"<br/>";
-																var tt="NA";
-																var np="NA";
-																var es="NA";
-																var nai="NA";
-																
-																if(gtIndicator == "NO_GLOBAL_TITLE_INCLUDED"){
-																	gtType += "No Global Title";
-																} else if(gtIndicator == "GLOBAL_TITLE_INCLUDES_NATURE_OF_ADDRESS_INDICATOR_ONLY"){
-																	nai = gt.natureOfAddress;
-																	gtType += "GT0001(nai=" + nai + " digits=" + digits + ")";
-																} else if(gtIndicator == "GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_ONLY"){
-																	tt = gt.translationType;
-																	gtType += "GT0010(tt="+tt+" digits="+digits+")";
-																} else if(gtIndicator == "GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_AND_ENCODING_SCHEME"){
-																	tt = gt.translationType;
-																	np =gt.numberingPlan;
-																	gtType += "GT0011(tt="+tt+" np="+ np +" es="+es+" digits="+digits+")";
-																} else if(gtIndicator == "GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS"){
-																	tt = gt.translationType;
-																	np =gt.numberingPlan;
-																	nai = gt.natureOfAddress;											
-																	gtType += "GT0100(tt="+tt+" np="+np+" nai="+nai+" es="+es+" digits="+digits+")";
+                                                                var nid = value.networkId;
+
+																function getGtType(pattern) {
+																	if (pattern == null ) {
+																		return "NONE";
+																	}
+																	var pc = pattern.signalingPointCode;
+                                                                    var ssn = pattern.subsystemNumber;
+                                                                    var aitmp = pattern.addressIndicator;
+                                                                    var ai = decodeAi(aitmp.reservedForNationalUseBit, aitmp.routingIndicator, aitmp.globalTitleIndicator, aitmp.sSNPresent, aitmp.pCPresent);
+
+                                                                    var gt = pattern.globalTitle;
+
+                                                                    var gtIndicator = gt.globalTitleIndicator;
+                                                                    var digits = gt.digits;
+
+
+                                                                    var gtType="AI="+ai+"<br/>PC="+pc+"<br/>SSN="+ssn+"<br/>";
+                                                                    var tt="NA";
+                                                                    var np="NA";
+                                                                    var es="NA";
+                                                                    var nai="NA";
+
+                                                                    if(gtIndicator == "NO_GLOBAL_TITLE_INCLUDED"){
+                                                                        gtType += "No Global Title";
+                                                                    } else if(gtIndicator == "GLOBAL_TITLE_INCLUDES_NATURE_OF_ADDRESS_INDICATOR_ONLY"){
+                                                                        nai = gt.natureOfAddress;
+                                                                        gtType += "GT0001(nai=" + nai + " digits=" + digits + ")";
+                                                                    } else if(gtIndicator == "GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_ONLY"){
+                                                                        tt = gt.translationType;
+                                                                        gtType += "GT0010(tt="+tt+" digits="+digits+")";
+                                                                    } else if(gtIndicator == "GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_AND_ENCODING_SCHEME"){
+                                                                        tt = gt.translationType;
+                                                                        np =gt.numberingPlan;
+                                                                        gtType += "GT0011(tt="+tt+" np="+ np +" es="+es+" digits="+digits+")";
+                                                                    } else if(gtIndicator == "GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS"){
+                                                                        tt = gt.translationType;
+                                                                        np =gt.numberingPlan;
+                                                                        nai = gt.natureOfAddress;
+                                                                        gtType += "GT0100(tt="+tt+" np="+np+" nai="+nai+" es="+es+" digits="+digits+")";
+                                                                    }
+
+                                                                    return gtType;
 																}
-																
+
+																var calledGtType = getGtType(value.pattern);
+																var callingGtType = getGtType(value.patternCallingAddress);
+
+
 																$('#rules-list-table'+name).children('tbody').append('<tr class="rule-row"><td style="vertical-align: middle; text-align: center;"><i style="color: #CC9522;" class="icon-list-alt"></i></td>'+
 																		'<td>' + key + '</td>' + 
 																		'<td>' + ruleType + '</td>' + 
 																		'<td>' + ruleMask + '</td>' + 
 																		'<td>' + loadSharingAlgorithm + '</td>' + 
-																		'<td>' + gtType + '</td>' + 
-																		'<td>' + primaryAddressId + '</td>' + 
+																		'<td>' + calledGtType + '</td>' +
+																		'<td>' + callingGtType + '</td>' +
+																		'<td>' + primaryAddressId + '</td>' +
 																		'<td>' + secondaryAddressId + '</td>' + 
 																		'<td>' + newcgpartyAddressid + '</td>' + 
 																		'<td>' + originationType + '</td>' + 

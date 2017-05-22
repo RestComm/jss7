@@ -355,7 +355,7 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
         SccpAddress patternAddress = this.createSccpAddress(ai, pc, ssn, tt, np, nao, digits);
 
         SccpAddress patternAddressCalling = null;
-        if (callingdigits != null) {
+        if (callingdigits != null && !callingdigits.isEmpty()) {
             patternAddressCalling = this.createSccpAddress(callingai, callingpc, callingssn, callingtt, callingnp, callingnao,
                     callingdigits);
         }
