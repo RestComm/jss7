@@ -86,9 +86,9 @@ import org.mobicents.protocols.ss7.map.service.supplementary.MAPServiceSupplemen
 import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.tcap.DialogImpl;
 import org.mobicents.protocols.ss7.tcap.api.MessageType;
+import org.mobicents.protocols.ss7.tcap.api.NamedTCListener;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
-import org.mobicents.protocols.ss7.tcap.api.TCListener;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
@@ -134,7 +134,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
  * @author sergey vetyutnev
  *
  */
-public class MAPProviderImpl implements MAPProvider, TCListener {
+public class MAPProviderImpl implements MAPProvider, NamedTCListener {
 
     protected final transient Logger loger;
 
@@ -164,6 +164,11 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
     private final transient MAPServiceSupplementary mapServiceSupplementary = new MAPServiceSupplementaryImpl(this);
     private final transient MAPServiceSms mapServiceSms = new MAPServiceSmsImpl(this);
     private final transient MAPServiceLsm mapServiceLsm = new MAPServiceLsmImpl(this);
+    protected String name;
+
+    protected MAPProviderImpl() {
+        this.loger = Logger.getLogger(MAPStackImpl.class.getCanonicalName());
+    }
 
     /**
      * public common methods
@@ -172,6 +177,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
     public MAPProviderImpl(String name, TCAPProvider tcapProvider) {
         this.loger = Logger.getLogger(MAPStackImpl.class.getCanonicalName() + "-" + name);
 
+        this.name = name;
         this.tcapProvider = tcapProvider;
 
         this.mapServices.add(this.mapServiceMobility);
@@ -181,6 +187,10 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
         this.mapServices.add(this.mapServiceSupplementary);
         this.mapServices.add(this.mapServiceSms);
         this.mapServices.add(this.mapServiceLsm);
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     public TCAPProvider getTCAPProvider() {
