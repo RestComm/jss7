@@ -41,6 +41,18 @@ package org.mobicents.protocols.ss7.sccp.message;
 public interface SccpMessage {
 
     int MESSAGE_TYPE_UNDEFINED = -1;
+    int MESSAGE_TYPE_CR = 0x01;
+    int MESSAGE_TYPE_CC = 0x02;
+    int MESSAGE_TYPE_CREF = 0x03;
+    int MESSAGE_TYPE_RLSD = 0x04;
+    int MESSAGE_TYPE_RLC = 0x05;
+    int MESSAGE_TYPE_DT1 = 0x06;
+    int MESSAGE_TYPE_DT2 = 0x07;
+    int MESSAGE_TYPE_AK = 0x08;
+    int MESSAGE_TYPE_RSR = 0x0D;
+    int MESSAGE_TYPE_RSC = 0x0E;
+    int MESSAGE_TYPE_ERR = 0x0F;
+    int MESSAGE_TYPE_IT = 0x10;
     int MESSAGE_TYPE_UDT = 0x09;
     int MESSAGE_TYPE_UDTS = 0x0A;
     int MESSAGE_TYPE_XUDT = 0x11;
