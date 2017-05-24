@@ -57,6 +57,13 @@ public class ProtocolClassImpl extends AbstractParameter implements ProtocolClas
     public ProtocolClassImpl() {
     }
 
+    public ProtocolClassImpl(int pClass) {
+        if (pClass != 2 && pClass != 3) {
+            throw new IllegalStateException("This constructor is only for protocol class 2 or 3");
+        }
+        this.pClass = pClass;
+    }
+
     public ProtocolClassImpl(int pClass, boolean returnMessageOnError) {
         this.pClass = pClass;
         if (pClass == 0 || pClass == 1)
@@ -70,10 +77,16 @@ public class ProtocolClassImpl extends AbstractParameter implements ProtocolClas
     }
 
     public boolean getReturnMessageOnError() {
+        if (pClass != 0 && pClass != 1) {
+            throw new IllegalArgumentException("Protocol class 0 or 1 is required");
+        }
         return (this.msgHandling & HANDLING_RET_ERR) != 0 ? true : false;
     }
 
     public void clearReturnMessageOnError() {
+        if (pClass != 0 && pClass != 1) {
+            throw new IllegalArgumentException("Protocol class 0 or 1 is required");
+        }
         int mask = HANDLING_RET_ERR ^ (-1);
         this.msgHandling = this.msgHandling & mask;
     }
