@@ -102,7 +102,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
     private static final Logger logger = Logger.getLogger(TCAPProviderImpl.class); // listenres
 
-    private transient List<TCListener> tcListeners = new CopyOnWriteArrayList<TCListener>();
+    protected transient List<TCListener> tcListeners = new CopyOnWriteArrayList<TCListener>();
     protected transient ScheduledExecutorService _EXECUTOR;
     // boundry for Uni directional dialogs :), tx id is always encoded
     // on 4 octets, so this is its max value

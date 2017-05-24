@@ -44,6 +44,11 @@ public class CAPStackImpl implements CAPStack {
 
     private final String name;
 
+    protected CAPStackImpl(String name) {
+         this.name = name;
+         this.state = State.CONFIGURED;
+    }
+
     public CAPStackImpl(String name, SccpProvider sccpPprovider, int ssn) {
         this.name = name;
         this.tcapStack = new TCAPStackImpl(name, sccpPprovider, ssn);

@@ -44,6 +44,11 @@ public class MAPStackImpl implements MAPStack {
 
     private final String name;
 
+    protected MAPStackImpl(String name) {
+        this.name = name;
+        this.state = State.CONFIGURED;
+    }
+
     public MAPStackImpl(String name, SccpProvider sccpPprovider, int ssn) {
         this.name = name;
         this.tcapStack = new TCAPStackImpl(name, sccpPprovider, ssn);

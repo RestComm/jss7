@@ -141,6 +141,10 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
     private final transient CAPServiceGprs capServiceGprs = new CAPServiceGprsImpl(this);
     private final transient CAPServiceSms capServiceSms = new CAPServiceSmsImpl(this);
 
+    protected CAPProviderImpl() {
+        this.loger = Logger.getLogger(CAPStackImpl.class.getCanonicalName());
+    }
+
     public CAPProviderImpl(String name, TCAPProvider tcapProvider) {
         this.tcapProvider = tcapProvider;
 
