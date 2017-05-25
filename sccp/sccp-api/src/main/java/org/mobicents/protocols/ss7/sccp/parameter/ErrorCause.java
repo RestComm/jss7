@@ -23,11 +23,10 @@
 package org.mobicents.protocols.ss7.sccp.parameter;
 
 public interface ErrorCause {
-    //TODO: use enum, see ReturnCause
     /**
      * Gets the value of this parameter.
      *
      * @return the value of this parameter.
      */
-    int getValue();
+    ErrorCauseValue getValue();
 }
