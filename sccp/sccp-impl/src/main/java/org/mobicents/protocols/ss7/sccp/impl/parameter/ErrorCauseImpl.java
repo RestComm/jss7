@@ -25,28 +25,40 @@ package org.mobicents.protocols.ss7.sccp.impl.parameter;
 import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.message.ParseException;
 import org.mobicents.protocols.ss7.sccp.parameter.ErrorCause;
+import org.mobicents.protocols.ss7.sccp.parameter.ErrorCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class ErrorCauseImpl extends AbstractParameter implements ErrorCause {
-    private byte value;
+public class ErrorCauseImpl extends AbstractParameter  implements ErrorCause {
+
+    private ErrorCauseValue value;
+    private int digValue;
 
     public ErrorCauseImpl() {
+        value = ErrorCauseValue.UNQUALIFIED;
+        this.digValue = value.getValue();
     }
 
-    public ErrorCauseImpl(int value) {
-        this.value = (byte)value;
+    public ErrorCauseImpl(ErrorCauseValue value) {
+        this.value = value;
+        if (value != null)
+            this.digValue = value.getValue();
     }
 
-    public int getValue() {
+    public ErrorCauseImpl(int digValue) {
+        this.digValue = digValue;
+        value = ErrorCauseValue.getInstance(digValue);
+    }
+
+    public ErrorCauseValue getValue() {
         return value;
     }
 
-    public void setValue(int value) {
-        this.value = (byte)value;
+    public int getDigitalValue() {
+        return digValue;
     }
 
     @Override
@@ -55,7 +67,7 @@ public class ErrorCauseImpl extends AbstractParameter implements ErrorCause {
             if (in.read() != 1) {
                 throw new ParseException();
             }
-            this.value = (byte)in.read();
+            this.digValue = in.read();
         } catch (IOException ioe) {
             throw new ParseException(ioe);
         }
@@ -65,7 +77,7 @@ public class ErrorCauseImpl extends AbstractParameter implements ErrorCause {
     public void encode(final OutputStream os, final boolean removeSpc, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
         try {
             os.write(1);
-            os.write(this.value);
+            os.write(this.digValue);
         } catch (IOException ioe) {
             throw new ParseException(ioe);
         }
@@ -76,14 +88,23 @@ public class ErrorCauseImpl extends AbstractParameter implements ErrorCause {
         if (b.length < 1) {
             throw new ParseException();
         }
-        this.value = b[0];
+        this.digValue = b[0];
 
     }
 
     @Override
     public byte[] encode(final boolean removeSpc, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
-        return new byte[] { this.value };
+        return new byte[] { (byte)this.digValue };
     }
+
+    public String toString() {
+        if (this.value != null)
+            return this.value.toString();
+        else {
+            return ((Integer) this.digValue).toString();
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -92,11 +113,10 @@ public class ErrorCauseImpl extends AbstractParameter implements ErrorCause {
         ErrorCauseImpl that = (ErrorCauseImpl) o;
 
         return value == that.value;
-
     }
 
     @Override
     public int hashCode() {
-        return value;
+        return digValue;
     }
 }

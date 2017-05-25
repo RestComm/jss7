@@ -26,27 +26,38 @@ import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.message.ParseException;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.RefusalCause;
+import org.mobicents.protocols.ss7.sccp.parameter.RefusalCauseValue;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 public class RefusalCauseImpl extends AbstractParameter implements RefusalCause {
-    private byte value;
+    private RefusalCauseValue value;
+    private int digValue;
 
     public RefusalCauseImpl() {
+        value = RefusalCauseValue.UNQUALIFIED;
+        this.digValue = value.getValue();
     }
 
-    public RefusalCauseImpl(int value) {
-        this.value = (byte)value;
+    public RefusalCauseImpl(RefusalCauseValue value) {
+        this.value = value;
+        if (value != null)
+            this.digValue = value.getValue();
     }
 
-    public int getValue() {
+    public RefusalCauseImpl(int digValue) {
+        this.digValue = digValue;
+        value = RefusalCauseValue.getInstance(digValue);
+    }
+
+    public RefusalCauseValue getValue() {
         return value;
     }
 
-    public void setValue(int value) {
-        this.value = (byte)value;
+    public int getDigitalValue() {
+        return digValue;
     }
 
     @Override
@@ -55,7 +66,8 @@ public class RefusalCauseImpl extends AbstractParameter implements RefusalCause 
             if (in.read() != 1) {
                 throw new ParseException();
             }
-            this.value = (byte)in.read();
+            this.digValue = in.read();
+            this.value = RefusalCauseValue.getInstance(this.digValue);
         } catch (IOException ioe) {
             throw new ParseException(ioe);
         }
@@ -65,7 +77,7 @@ public class RefusalCauseImpl extends AbstractParameter implements RefusalCause 
     public void encode(final OutputStream os, final boolean removeSpc, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
         try {
             os.write(1);
-            os.write(this.value);
+            os.write(this.digValue);
         } catch (IOException ioe) {
             throw new ParseException(ioe);
         }
@@ -76,14 +88,24 @@ public class RefusalCauseImpl extends AbstractParameter implements RefusalCause 
         if (b.length < 1) {
             throw new ParseException();
         }
-        this.value = b[0];
+        this.digValue = b[0];
+        this.value = RefusalCauseValue.getInstance(this.digValue);
 
     }
 
     @Override
     public byte[] encode(final boolean removeSpc, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
-        return new byte[] { this.value };
+        return new byte[] { (byte)this.digValue };
     }
+
+    public String toString() {
+        if (this.value != null)
+            return this.value.toString();
+        else {
+            return ((Integer) this.digValue).toString();
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -92,11 +114,10 @@ public class RefusalCauseImpl extends AbstractParameter implements RefusalCause 
         RefusalCauseImpl that = (RefusalCauseImpl) o;
 
         return value == that.value;
-
     }
 
     @Override
     public int hashCode() {
-        return value;
+        return digValue;
     }
 }
