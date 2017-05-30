@@ -67,6 +67,7 @@ public class ReleaseCauseImpl extends AbstractParameter  implements ReleaseCause
                 throw new ParseException();
             }
             this.digValue = in.read();
+            this.value = ReleaseCauseValue.getInstance(digValue);
         } catch (IOException ioe) {
             throw new ParseException(ioe);
         }
@@ -88,7 +89,7 @@ public class ReleaseCauseImpl extends AbstractParameter  implements ReleaseCause
             throw new ParseException();
         }
         this.digValue = b[0];
-
+        this.value = ReleaseCauseValue.getInstance(digValue);
     }
 
     @Override

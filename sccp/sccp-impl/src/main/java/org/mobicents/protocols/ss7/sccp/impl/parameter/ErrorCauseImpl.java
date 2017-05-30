@@ -68,6 +68,7 @@ public class ErrorCauseImpl extends AbstractParameter  implements ErrorCause {
                 throw new ParseException();
             }
             this.digValue = in.read();
+            this.value = ErrorCauseValue.getInstance(digValue);
         } catch (IOException ioe) {
             throw new ParseException(ioe);
         }
@@ -89,7 +90,7 @@ public class ErrorCauseImpl extends AbstractParameter  implements ErrorCause {
             throw new ParseException();
         }
         this.digValue = b[0];
-
+        this.value = ErrorCauseValue.getInstance(digValue);
     }
 
     @Override
