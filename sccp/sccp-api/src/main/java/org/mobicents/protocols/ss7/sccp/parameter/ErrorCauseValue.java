@@ -42,7 +42,7 @@ public enum ErrorCauseValue {
 
     public static ErrorCauseValue getInstance(int code) {
         switch (code) {
-            
+
         case 0x0:
             return LRN_MISMATCH_UNASSIGNED_DESTINATION_LRN;
         case 0x1:
