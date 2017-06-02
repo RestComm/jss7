@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,20 +20,25 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.sccp.parameter;
+package org.mobicents.protocols.ss7.sccp.message;
 
-public interface ErrorCause {
-    /**
-     * Gets the value of this parameter.
-     *
-     * @return the value of this parameter.
-     */
-    ErrorCauseValue getValue();
+import org.mobicents.protocols.ss7.sccp.parameter.Importance;
+import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
+import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCause;
 
-    /**
-     * Gets the digital value of this parameter.
-     *
-     * @return the digital value of this parameter.
-     */
-    int getDigitalValue();
+public interface SccpConnRlsdMessage extends SccpMessage {
+    LocalReference getDestinationLocalReferenceNumber();
+    void setDestinationLocalReferenceNumber(LocalReference number);
+
+    LocalReference getSourceLocalReferenceNumber();
+    void setSourceLocalReferenceNumber(LocalReference number);
+
+    ReleaseCause getReleaseCause();
+    void setReleaseCause(ReleaseCause value);
+
+    byte[] getUserData();
+    void setUserData(byte[] data);
+
+    Importance getImportance();
+    void setImportance(Importance importance);
 }

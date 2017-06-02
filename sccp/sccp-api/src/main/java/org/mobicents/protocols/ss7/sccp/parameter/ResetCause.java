@@ -29,4 +29,11 @@ public interface ResetCause {
      * @return the value of this parameter.
      */
     ResetCauseValue getValue();
+
+    /**
+     * Gets the digital value of this parameter.
+     *
+     * @return the digital value of this parameter.
+     */
+    int getDigitalValue();
 }

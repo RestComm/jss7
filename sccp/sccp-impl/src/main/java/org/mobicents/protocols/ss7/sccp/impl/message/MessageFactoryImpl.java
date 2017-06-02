@@ -85,7 +85,7 @@ public class MessageFactoryImpl implements MessageFactory {
                 importance);
     }
 
-    public SccpMessageImpl createMessage(int type, int opc, int dpc, int sls, InputStream in, final SccpProtocolVersion sccpProtocolVersion, int networkId)
+    public SccpMessageImpl createMessage(int type, int opc, int dpc, int sls, int networkId)
             throws ParseException {
         SccpMessageImpl msg = null;
         switch (type) {
@@ -100,8 +100,61 @@ public class MessageFactoryImpl implements MessageFactory {
             case SccpMessage.MESSAGE_TYPE_LUDTS:
                 msg = new SccpNoticeMessageImpl(this.sccpStackImpl.getMaxDataMessage(), type, opc, dpc, sls, networkId);
                 break;
-        }
 
+            case SccpMessage.MESSAGE_TYPE_CR:
+                msg = new SccpConnCrMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                break;
+
+            case SccpMessage.MESSAGE_TYPE_CC:
+                msg = new SccpConnCcMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                break;
+
+            case SccpMessage.MESSAGE_TYPE_CREF:
+                msg = new SccpConnCrefMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                break;
+
+            case SccpMessage.MESSAGE_TYPE_RLSD:
+                msg = new SccpConnRlsdMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                break;
+
+            case SccpMessage.MESSAGE_TYPE_RLC:
+                msg = new SccpConnRlcMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                break;
+
+            case SccpMessage.MESSAGE_TYPE_DT1:
+                msg = new SccpConnDt1MessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                break;
+
+            case SccpMessage.MESSAGE_TYPE_DT2:
+                msg = new SccpConnDt2MessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                break;
+
+            case SccpMessage.MESSAGE_TYPE_AK:
+                msg = new SccpConnAkMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                break;
+
+            case SccpMessage.MESSAGE_TYPE_RSR:
+                msg = new SccpConnRsrMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                break;
+
+            case SccpMessage.MESSAGE_TYPE_RSC:
+                msg = new SccpConnRscMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                break;
+
+            case SccpMessage.MESSAGE_TYPE_ERR:
+                msg = new SccpConnErrMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                break;
+
+            case SccpMessage.MESSAGE_TYPE_IT:
+                msg = new SccpConnItMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                break;
+        }
+        return msg;
+    }
+
+    public SccpMessageImpl createMessage(int type, int opc, int dpc, int sls, InputStream in, final SccpProtocolVersion sccpProtocolVersion, int networkId)
+            throws ParseException {
+        SccpMessageImpl msg = createMessage(type, opc, dpc, sls, networkId);
         if (msg != null) {
             msg.decode(in, sccpStackImpl.getSccpProvider().getParameterFactory(), sccpProtocolVersion);
         } else if (logger.isEnabledFor(Level.WARN)) {

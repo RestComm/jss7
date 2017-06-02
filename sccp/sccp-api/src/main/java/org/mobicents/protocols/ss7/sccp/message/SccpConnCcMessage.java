@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -23,22 +23,12 @@
 package org.mobicents.protocols.ss7.sccp.message;
 
 import org.mobicents.protocols.ss7.sccp.parameter.Credit;
-import org.mobicents.protocols.ss7.sccp.parameter.ErrorCause;
-import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
 import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
-import org.mobicents.protocols.ss7.sccp.parameter.ReceiveSequenceNumber;
-import org.mobicents.protocols.ss7.sccp.parameter.RefusalCause;
-import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCause;
-import org.mobicents.protocols.ss7.sccp.parameter.ResetCause;
-import org.mobicents.protocols.ss7.sccp.parameter.ReturnCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
-import org.mobicents.protocols.ss7.sccp.parameter.SegmentingReassembling;
-import org.mobicents.protocols.ss7.sccp.parameter.SequencingSegmenting;
 
-public interface SccpConnMessage extends SccpMessage {
+public interface SccpConnCcMessage extends SccpMessage {
     LocalReference getDestinationLocalReferenceNumber();
     void setDestinationLocalReferenceNumber(LocalReference number);
 
@@ -48,47 +38,14 @@ public interface SccpConnMessage extends SccpMessage {
     SccpAddress getCalledPartyAddress();
     void setCalledPartyAddress(SccpAddress address);
 
-    SccpAddress getCallingPartyAddress();
-    void setCallingPartyAddress(SccpAddress address);
-
     ProtocolClass getProtocolClass();
     void setProtocolClass(ProtocolClass value);
-
-    SegmentingReassembling getSegmentingReassembling();
-    void setSegmentingReassembling(SegmentingReassembling value);
-
-    ReceiveSequenceNumber getReceiveSequenceNumber();
-    void setReceiveSequenceNumber(ReceiveSequenceNumber value);
-
-    SequencingSegmenting getSequencingSegmenting();
-    void setSequencingSegmenting(SequencingSegmenting value);
 
     Credit getCredit();
     void setCredit(Credit value);
 
-    ReleaseCause getReleaseCause();
-    void setReleaseCause(ReleaseCause value);
-
-    ReturnCause getReturnCause();
-    void setReturnCause(ReturnCause value);
-
-    ResetCause getResetCause();
-    void setResetCause(ResetCause value);
-
-    ErrorCause getErrorCause();
-    void setErrorCause(ErrorCause value);
-
     byte[] getUserData();
     void setUserData(byte[] data);
-
-    RefusalCause getRefusalCause();
-    void setRefusalCause(RefusalCause value);
-
-    HopCounter getHopCounter();
-    void setHopCounter(HopCounter counter);
-
-    Segmentation getSegmentation();
-    void setSegmentation(Segmentation segmentation);
 
     Importance getImportance();
     void setImportance(Importance importance);

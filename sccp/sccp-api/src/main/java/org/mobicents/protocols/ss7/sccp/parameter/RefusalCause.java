@@ -29,4 +29,11 @@ public interface RefusalCause {
      * @return the value of this parameter.
      */
     RefusalCauseValue getValue();
+
+    /**
+     * Gets the digital value of this parameter.
+     *
+     * @return the digital value of this parameter.
+     */
+    int getDigitalValue();
 }

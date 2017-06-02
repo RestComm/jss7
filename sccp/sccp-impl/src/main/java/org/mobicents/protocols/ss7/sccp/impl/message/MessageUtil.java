@@ -40,7 +40,7 @@ public class MessageUtil {
     }
 
     public static int calculateXudtFieldsLengthWithoutData(int calledPartyLen, int callingPartyLen, boolean segmented,
-            boolean importancePresense) {
+                                                           boolean importancePresense) {
         // 10 = 3 (fixed fields length) + 4 (variable fields pointers) + 3
         // (variable fields lengths)
         int res = 10 + calledPartyLen + callingPartyLen;
@@ -60,7 +60,7 @@ public class MessageUtil {
     }
 
     public static int calculateLudtFieldsLengthWithoutData(int calledPartyLen, int callingPartyLen, boolean segmented,
-            boolean importancePresense) {
+                                                           boolean importancePresense) {
         // 15 = 3 (fixed fields length) + 8 (variable fields pointers) + 4 (variable fields lengths)
         int res = 15 + calledPartyLen + callingPartyLen;
         if (segmented || importancePresense)
@@ -68,6 +68,78 @@ public class MessageUtil {
         if (segmented)
             res += 6;
         if (importancePresense)
+            res += 3;
+
+        return res;
+    }
+
+    public static int calculateCrFieldsLengthWithoutData(int calledPartyLen, boolean creditPresence, int callingPartyLen,
+                                                         boolean hopCounterPresence, boolean importancePresence) {
+        // 11 = 8 (fixed fields length) + 2 (pointers) + 1 (variable field length)
+        int res = 11;
+        if (calledPartyLen > 0 || creditPresence || callingPartyLen > 0 || hopCounterPresence || importancePresence)
+            res++; // optional part present - adding End of optional parameters
+        if (calledPartyLen > 0) {
+            // + field type octet, length octet
+            res += calledPartyLen + 2;
+        }
+        if (creditPresence)
+            res += 3;
+        if (callingPartyLen > 0) {
+            // + field type octet, length octet
+            res += callingPartyLen + 2;
+        }
+        if (hopCounterPresence) {
+            res += 3;
+        }
+        if (importancePresence) {
+            res += 3;
+        }
+
+        return res;
+    }
+
+    public static int calculateCcFieldsLengthWithoutData(boolean creditPresence, int calledPartyLen, boolean dataPresence,
+                                                         boolean importancePresence) {
+        // 12 = 11 (fixed fields length) + 1 (pointers)
+        int res = 12;
+        if (creditPresence || calledPartyLen != 0 || dataPresence || importancePresence)
+            res++; // optional part present - adding End of optional parameters
+        if (creditPresence)
+            res += 3;
+        // when it's 0 it will be ignored
+        res += calledPartyLen + 2; // + type field, length
+        if (dataPresence)
+            res += 2; // field type, length
+        if (importancePresence)
+            res += 3;
+
+        return res;
+    }
+
+    public static int calculateCrefFieldsLengthWithoutData(int calledPartyAddressLen, boolean importancePresence) {
+        // 6 = 5 (fixed fields length) + 1 (pointers)
+        int res = 6;
+
+        if (calledPartyAddressLen != 0 || importancePresence)
+            res++; // optional part present - adding End of optional parameters
+        // when it's 0 it will be ignored
+        res += calledPartyAddressLen + 2; // + type field, length
+        if (importancePresence)
+            res += 3;
+
+        return res;
+    }
+
+    public static int calculateRlsdFieldsLengthWithoutData(boolean dataPresence, boolean importancePresence) {
+        // 9 = 8 (fixed fields length) + 1 (pointers)
+
+        int res = 9;
+        if (dataPresence || importancePresence)
+            res++; // optional part present - adding End of optional parameters
+        if (dataPresence)
+            res += 2; // type field, field length
+        if (importancePresence)
             res += 3;
 
         return res;
