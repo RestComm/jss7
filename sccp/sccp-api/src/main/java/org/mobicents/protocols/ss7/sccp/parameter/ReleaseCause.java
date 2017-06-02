@@ -29,4 +29,11 @@ public interface ReleaseCause {
      * @return the value of this parameter.
      */
     ReleaseCauseValue getValue();
+
+    /**
+     * Gets the digital value of this parameter.
+     *
+     * @return the digital value of this parameter.
+     */
+    int getDigitalValue();
 }

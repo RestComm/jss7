@@ -35,13 +35,35 @@ public enum EncodingResult {
     ReturnFailure,
     // Exception: data==null or has zero length
     DataMissed,
-    // Exception: data length exceeds maximum possible safe length (2560)
+    // Exception: data length exceeds maximum possible safe length (2560) or corresponding max data size for used message type
     DataMaxLengthExceeded,
     // Exception: CalledPartyAddress is missed
     CalledPartyAddressMissing,
     // Exception: CallingPartyAddress is missed
     CallingPartyAddressMissing,
     // Exception: ProtocolClass is missed
-    ProtocolClassMissing;
-
+    ProtocolClassMissing,
+    // Exception: SourceLocalReferenceNumber is missing
+    SourceLocalReferenceNumberMissing,
+    // Exception: MessageTypeMissing
+    MessageTypeMissing,
+    // Exception: DestinationLocalReferenceNumber is missing
+    DestinationLocalReferenceNumberMissing,
+    // Exception: ReleaseCause is missing
+    ReleaseCauseMissing,
+    // Exception: RefusalCause is missing
+    RefusalCauseMissing,
+    // Exception: SegmentingReassembling is missing
+    SegmentingReassemblingMissing,
+    // Exception: ReceiveSequenceNumber is missing
+    ReceiveSequenceNumberMissing,
+    // Exception: Credit is missing
+    CreditMissing,
+    // Exception: ResetCause is missing
+    ResetCauseMissing,
+    // Exception: ErrorCause is missing
+    ErrorCauseMissing,
+    // Exception: SequencingSegmenting is missing
+    SequencingSegmentingMissing,
+    SegmentationNotSupported
 }

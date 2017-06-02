@@ -28,5 +28,5 @@ public interface SegmentingReassembling {
      *
      * @return the value of this parameter.
      */
-    boolean getValue();
+    boolean isMoreData();
 }

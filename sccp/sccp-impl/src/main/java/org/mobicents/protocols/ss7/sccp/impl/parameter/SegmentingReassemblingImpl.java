@@ -42,7 +42,7 @@ public class SegmentingReassemblingImpl extends AbstractParameter implements Seg
         this.value = (value) ? (byte)1 : 0;
     }
 
-    public boolean getValue() {
+    public boolean isMoreData() {
         return value == 1;
     }
 

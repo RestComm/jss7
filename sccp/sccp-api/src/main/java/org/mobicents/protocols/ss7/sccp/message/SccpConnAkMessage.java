@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -20,20 +20,19 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.sccp.parameter;
+package org.mobicents.protocols.ss7.sccp.message;
 
-public interface ErrorCause {
-    /**
-     * Gets the value of this parameter.
-     *
-     * @return the value of this parameter.
-     */
-    ErrorCauseValue getValue();
+import org.mobicents.protocols.ss7.sccp.parameter.Credit;
+import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
+import org.mobicents.protocols.ss7.sccp.parameter.ReceiveSequenceNumber;
 
-    /**
-     * Gets the digital value of this parameter.
-     *
-     * @return the digital value of this parameter.
-     */
-    int getDigitalValue();
+public interface SccpConnAkMessage extends SccpMessage {
+    LocalReference getDestinationLocalReferenceNumber();
+    void setDestinationLocalReferenceNumber(LocalReference number);
+
+    ReceiveSequenceNumber getReceiveSequenceNumber();
+    void setReceiveSequenceNumber(ReceiveSequenceNumber value);
+
+    Credit getCredit();
+    void setCredit(Credit value);
 }
