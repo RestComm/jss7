@@ -1605,6 +1605,10 @@ Among rules with the same values for OriginationType (All or localOriginated/rem
   For example between Digit1 "80/??/0/???/9" and Digit 2 "800/?????/9", Digit2 is above Digit1.				When a Rule is compared during Translation, comparison always starts from the top of the list.
 . If 2 rules have exactly same digits then rules are sorted using the above logic for calling digits.
 
+Parameters backup-addressid (when ruleType parameter is "solitary"), loadsharing-algo (when ruleType parameter is not "loadshared"), newcgparty-addressid, origination-type, networkid, stackname and parameters for a calling party address (calling-ai, calling-pc, calling-ssn, calling-tt, calling-np, calling-nai, calling-digits-pattern) are optional. If newcgparty-addressid is not specified then calling party address will not be changed. If origination-type is not specified then a rule applies to
+all messages regardless of their origination. If networkid is not specified then networkid will be assigned to 0. If stackname is not specified then a rule will be applied to a default SCCP stack. If calling party address parameters are not specified then only called party address patterns will be taken into account.
+
+
 [[_managing_sccp_rule_create_cli]]
 === Using CLI
 
@@ -1621,7 +1625,11 @@ SYNOPSIS
 	<ruleType> <primary-address-id> backup-addressid <backup-address-id> 
 	loadsharing-algo <loadsharing-algorithm> newcgparty-addressid 
 	<new-callingPartyAddress-id> origination-type <originationType>
-	stackname <stack-name> networkid <networkId>
+	networkid <networkId> calling-ai <calling-address-indicator>
+	calling-pc <calling-point-code> calling-ssn <calling-subsystem-number>
+	calling-tt <calling-translation-type> calling-np <calling-numbering-plan>
+	calling-nai <calling-nature-of-address-indicator>
+	calling-digits-pattern <calling-digits-pattern> stackname <stack-name>
 
 DESCRIPTION
 	This command is used to create a new SCCP Routing Rule. You must ensure that 
@@ -2060,7 +2068,11 @@ SYNOPSIS
 	<ruleType> <primary-address-id> backup-addressid <backup-address-id> 
 	loadsharing-algo <loadsharing-algorithm> newcgparty-addressid 
 	<new-callingPartyAddress-id> origination-type <originationType>
-	stackname <stack-name> networkid <networkId>
+	networkid <networkId> calling-ai <calling-address-indicator>
+	calling-pc <calling-point-code> calling-ssn <calling-subsystem-number>
+	calling-tt <calling-translation-type> calling-np <calling-numbering-plan>
+	calling-nai <calling-nature-of-address-indicator>
+	calling-digits-pattern <calling-digits-pattern> stackname <stack-name>
 
 DESCRIPTION
 	This command is used to modify the values of a SCCP Route previously defined.

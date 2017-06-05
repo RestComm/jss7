@@ -1083,18 +1083,11 @@ public class SccpExecutor implements ShellExecutor {
 
         AddressIndicator aiObj = new AddressIndicator((byte) ai, SccpProtocolVersion.ITU);
 
-//        if (aiObj.isSSNPresent() && ssn == 0) {
-//            throw new Exception(
-//                    String.format("Address Indicator %d indicates that SSN is present, however SSN passed is 0", ai));
-//        }
-//
-//        if (aiObj.isPCPresent() && pc == 0) {
-//            throw new Exception(String.format(
-//                    "Address Indicator %d indicates that PointCode is present, however PointCode passed is 0", ai));
-//        }
-
         if (!isRule && pc <= 0) {
             throw new Exception(String.format("Point code parameter is mandatory and must be > 0"));
+        }
+        if (aiObj.getGlobalTitleIndicator() == null) {
+            throw new Exception(String.format("GlobalTitle type is not recognizes, possible bad AddressIndicator value"));
         }
 
         NumberingPlan np = NumberingPlan.valueOf(npValue);

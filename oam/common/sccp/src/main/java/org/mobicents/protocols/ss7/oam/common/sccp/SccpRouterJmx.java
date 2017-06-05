@@ -316,6 +316,10 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
             throw new Exception(String.format("Address Indicator %d indicates that PointCode is present, however PointCode passed is 0", ai));
         }
 
+        if (aiObj.getGlobalTitleIndicator() == null) {
+            throw new Exception(String.format("GlobalTitle type is not recognizes, possible bad AddressIndicator value"));
+        }
+
         NumberingPlan npObj = NumberingPlan.valueOf(np);
         NatureOfAddress naiObj = NatureOfAddress.valueOf(nao);
         //TODO: encoding scheme?
