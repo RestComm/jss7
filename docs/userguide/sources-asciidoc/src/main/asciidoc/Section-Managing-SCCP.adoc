@@ -1602,7 +1602,8 @@ Among rules with the same values for OriginationType (All or localOriginated/rem
 . Between Rules with two GT digits both having wildcard "?", the one with the least number of wildcard "?" is at the top of the list.
   For example, Digit1 "800/????/9" will be above Digit2 "800/?????/9"
 . Between Rules with two GT digits both having an equal number of wildcard "?", the digit whose first appearance of "?" is after other, is at the top of the list.
-  For example between Digit1 "80/??/0/???/9" and Digit 2 "800/?????/9", Digit2 is above Digit1.				When a Rule is compared during Translation, comparison always starts from the top of the list. 
+  For example between Digit1 "80/??/0/???/9" and Digit 2 "800/?????/9", Digit2 is above Digit1.				When a Rule is compared during Translation, comparison always starts from the top of the list.
+. If 2 rules have exactly same digits then rules are sorted using the above logic for calling digits.
 
 [[_managing_sccp_rule_create_cli]]
 === Using CLI
@@ -1984,12 +1985,46 @@ PARAMETERS
                     be set to "0" when a Rule creation.
                     Refer <xref linkend="design_multitenancy"/>.
 
+    <calling-address-indicator>
+                -   Address indicator for calling address matching.
+                    See above address-indicator
+
+    <calling-point-code>
+                -   Pointcode of calling sccp address. MTP Signaling Point Code.
+                    This is ignored if Bit '0' of address-indicator is not set.
+
+    <calling-subsystem-number>
+                -   This is ignored if Bit '1' of address-indicator is
+                    not set.
+
+    <calling-translation-type>
+                -   This is ignored if GT Indicator is 0000 or 0001.
+                    See <translation-type> above for more details.
+
+    <calling-numbering-plan>
+                -   A digital parameter that specifies to which virtual SS7
+                    network this rule belongs. If this parameter
+                    is skipped - networkId will be set to "0" by default.
+
+    <calling-nature-of-address-indicator>
+                -   The Nature of Address Indicator (NAI) field
+                    defines the address range for a specific numbering
+                    plan. This is only used if GT Indicator is 0100.
+
+     <calling-digits-pattern>
+                -   Specifies the string of digits for pattern matching.
+                    There is no mask for calling digits, hence the division separator is ignored.
+                    See above <digits> for more information on pattern matching.
+
 EXAMPLES
 	sccp rule create 1 R 71 2 8 0 0 3 123456789 solitary 1
 
 	sccp rule create 2 R 71 2 8 0 0 3 123456789 dominant 1 1
 
 	sccp rule create 2 R 71 2 8 0 0 3 123456789 loadshared 1 1 bit4
+
+    sccp rule create 21 R 71 2 8 0 0 3 123456789 dominant 2 backup-addressid 1 loadsharing-algo bit3 newcgparty-addressid 1 origination-type remoteoriginated calling-ai 18 calling-pc 0 calling-ssn 0 calling-tt 0 calling-nai 0 calling-np 0 calling-digits-pattern 567*
+
 ----
 
 [[_managing_sccp_rule_create_gui]]
@@ -2358,6 +2393,37 @@ PARAMETERS
                     belongs a Rule. If this parameter is skipped - networkId will
                     be set to "0" when a Rule creation.
                     Refer <xref linkend="design_multitenancy"/>.
+
+   <calling-address-indicator>
+               -   Address indicator for calling address matching.
+                   See above address-indicator
+
+   <calling-point-code>
+               -   Pointcode of calling sccp address. MTP Signaling Point Code.
+                   This is ignored if Bit '0' of address-indicator is not set.
+
+   <calling-subsystem-number>
+               -   This is ignored if Bit '1' of address-indicator is
+                   not set.
+
+   <calling-translation-type>
+               -   This is ignored if GT Indicator is 0000 or 0001.
+                   See <translation-type> above for more details.
+
+   <calling-numbering-plan>
+               -   A digital parameter that specifies to which virtual SS7
+                   network this rule belongs. If this parameter
+                   is skipped - networkId will be set to "0" by default.
+
+   <calling-nature-of-address-indicator>
+               -   The Nature of Address Indicator (NAI) field
+                   defines the address range for a specific numbering
+                   plan. This is only used if GT Indicator is 0100.
+
+    <calling-digits-pattern>
+               -   Specifies the string of digits for pattern matching.
+                   There is no mask for calling digits, hence the division separator is ignored.
+                   See above <digits> for more information on pattern matching.
 ----
 
 [[_managing_sccp_rule_delete]]
