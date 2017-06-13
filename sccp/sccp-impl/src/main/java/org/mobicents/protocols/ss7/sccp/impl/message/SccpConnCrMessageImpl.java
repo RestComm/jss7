@@ -58,12 +58,12 @@ public class SccpConnCrMessageImpl extends SccpMessageImpl implements SccpConnCr
     protected HopCounter hopCounter;
     protected Importance importance;
 
-    protected SccpConnCrMessageImpl(int maxDataLen, int sls, int localSsn) {
-        super(maxDataLen, MESSAGE_TYPE_CR, sls, localSsn);
+    protected SccpConnCrMessageImpl(int sls, int localSsn) {
+        super(130, MESSAGE_TYPE_CR, sls, localSsn);
     }
 
-    protected SccpConnCrMessageImpl(int maxDataLen, int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
-        super(maxDataLen, MESSAGE_TYPE_CR, incomingOpc, incomingDpc, incomingSls, networkId);
+    protected SccpConnCrMessageImpl(int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
+        super(130, MESSAGE_TYPE_CR, incomingOpc, incomingDpc, incomingSls, networkId);
     }
 
     @Override

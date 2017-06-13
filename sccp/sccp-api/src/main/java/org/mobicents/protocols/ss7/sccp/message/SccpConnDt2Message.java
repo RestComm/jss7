@@ -25,6 +25,11 @@ package org.mobicents.protocols.ss7.sccp.message;
 import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.SequencingSegmenting;
 
+/**
+ *
+ * This interface represents a SCCP data form 2 message for connection-oriented protocol class 3.
+ *
+ */
 public interface SccpConnDt2Message extends SccpMessage {
     LocalReference getDestinationLocalReferenceNumber();
     void setDestinationLocalReferenceNumber(LocalReference number);

@@ -26,6 +26,11 @@ import org.mobicents.protocols.ss7.sccp.parameter.Credit;
 import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ReceiveSequenceNumber;
 
+/**
+ *
+ * This interface represents a SCCP data acknowledgement message for connection-oriented protocol class 3.
+ *
+ */
 public interface SccpConnAkMessage extends SccpMessage {
     LocalReference getDestinationLocalReferenceNumber();
     void setDestinationLocalReferenceNumber(LocalReference number);

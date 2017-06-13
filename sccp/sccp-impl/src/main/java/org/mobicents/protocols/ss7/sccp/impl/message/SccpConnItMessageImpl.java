@@ -49,12 +49,12 @@ public class SccpConnItMessageImpl extends SccpMessageImpl implements SccpConnIt
     protected SequencingSegmenting sequencingSegmenting;
     protected Credit credit;
 
-    protected SccpConnItMessageImpl(int maxDataLen, int sls, int localSsn) {
-        super(maxDataLen, MESSAGE_TYPE_IT, sls, localSsn);
+    protected SccpConnItMessageImpl(int sls, int localSsn) {
+        super(0, MESSAGE_TYPE_IT, sls, localSsn);
     }
 
-    protected SccpConnItMessageImpl(int maxDataLen, int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
-        super(maxDataLen, MESSAGE_TYPE_IT, incomingOpc, incomingDpc, incomingSls, networkId);
+    protected SccpConnItMessageImpl(int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
+        super(0, MESSAGE_TYPE_IT, incomingOpc, incomingDpc, incomingSls, networkId);
     }
 
     @Override

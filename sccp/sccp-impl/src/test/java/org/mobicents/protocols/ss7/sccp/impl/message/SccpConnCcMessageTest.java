@@ -32,7 +32,6 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.CreditImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -123,7 +122,7 @@ public class SccpConnCcMessageTest {
     @Test(groups = { "SccpMessage", "functional.encode" })
     public void testEncode() throws Exception {
         // ---- no optional params
-        SccpConnCcMessageImpl original = (SccpConnCcMessageImpl) messageFactory.createMessage(SccpMessage.MESSAGE_TYPE_CC, 1, 2, 0, 0);
+        SccpConnCcMessageImpl original = new SccpConnCcMessageImpl(0, 0);
         original.setDestinationLocalReferenceNumber(new LocalReferenceImpl(2));
         original.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
         original.setProtocolClass(new ProtocolClassImpl(3));
@@ -133,7 +132,7 @@ public class SccpConnCcMessageTest {
         assertEquals(encoded.getSolidData(), this.getDataCcNoOptParams());
 
         // ---- one optional param
-        original = (SccpConnCcMessageImpl) messageFactory.createMessage(SccpMessage.MESSAGE_TYPE_CC, 1, 2, 0, 0);
+        original = new SccpConnCcMessageImpl(0, 0);
         original.setDestinationLocalReferenceNumber(new LocalReferenceImpl(2));
         original.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
         original.setProtocolClass(new ProtocolClassImpl(3));
@@ -144,7 +143,7 @@ public class SccpConnCcMessageTest {
         assertEquals(encoded.getSolidData(), this.getDataCcOneOptParam());
 
         // ---- all param
-        original = (SccpConnCcMessageImpl) messageFactory.createMessage(SccpMessage.MESSAGE_TYPE_CC, 1, 2, 0, 0);
+        original = new SccpConnCcMessageImpl(0, 0);
         original.setDestinationLocalReferenceNumber(new LocalReferenceImpl(2));
         original.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
         original.setProtocolClass(new ProtocolClassImpl(3));

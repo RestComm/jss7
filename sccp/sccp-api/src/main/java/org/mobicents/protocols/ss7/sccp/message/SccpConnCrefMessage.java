@@ -27,6 +27,11 @@ import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.RefusalCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
+/**
+ *
+ * This interface represents a SCCP connection refused message for connection-oriented protocol classes 2 and 3.
+ *
+ */
 public interface SccpConnCrefMessage extends SccpMessage {
     LocalReference getDestinationLocalReferenceNumber();
     void setDestinationLocalReferenceNumber(LocalReference number);

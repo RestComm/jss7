@@ -27,6 +27,11 @@ import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SequencingSegmenting;
 
+/**
+ *
+ * This interface represents a SCCP inactivity test message for connection-oriented protocol classes 2 and 3.
+ *
+ */
 public interface SccpConnItMessage extends SccpMessage {
     LocalReference getDestinationLocalReferenceNumber();
     void setDestinationLocalReferenceNumber(LocalReference number);

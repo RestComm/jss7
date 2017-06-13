@@ -29,7 +29,6 @@ import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ResetCauseImpl;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ResetCauseValue;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -76,7 +75,7 @@ public class SccpConnRsrMessageTest {
 
     @Test(groups = { "SccpMessage", "functional.encode" })
     public void testEncode() throws Exception {
-        SccpConnRsrMessageImpl original = (SccpConnRsrMessageImpl) messageFactory.createMessage(SccpMessage.MESSAGE_TYPE_RSR, 1, 2, 0, 0);
+        SccpConnRsrMessageImpl original = new SccpConnRsrMessageImpl(0, 0);
         original.setDestinationLocalReferenceNumber(new LocalReferenceImpl(1));
         original.setSourceLocalReferenceNumber(new LocalReferenceImpl(2));
         original.setResetCause(new ResetCauseImpl(ResetCauseValue.ACCESS_OPERATIONAL));

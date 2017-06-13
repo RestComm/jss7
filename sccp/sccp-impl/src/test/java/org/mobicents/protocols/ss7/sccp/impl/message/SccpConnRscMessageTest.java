@@ -28,7 +28,6 @@ import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -72,7 +71,7 @@ public class SccpConnRscMessageTest {
 
     @Test(groups = { "SccpMessage", "functional.encode" })
     public void testEncode() throws Exception {
-        SccpConnRscMessageImpl original = (SccpConnRscMessageImpl) messageFactory.createMessage(SccpMessage.MESSAGE_TYPE_RSC, 1, 2, 0, 0);
+        SccpConnRscMessageImpl original = new SccpConnRscMessageImpl(0, 0);
         original.setDestinationLocalReferenceNumber(new LocalReferenceImpl(1));
         original.setSourceLocalReferenceNumber(new LocalReferenceImpl(2));
 
