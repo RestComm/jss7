@@ -24,12 +24,10 @@ package org.mobicents.protocols.ss7.sccp.impl.message;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.Util;
-import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.*;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -74,7 +72,7 @@ public class SccpConnDt2MessageTest {
 
     @Test(groups = { "SccpMessage", "functional.encode" })
     public void testEncode() throws Exception {
-        SccpConnDt2MessageImpl original = (SccpConnDt2MessageImpl) messageFactory.createMessage(SccpMessage.MESSAGE_TYPE_DT2, 1, 2, 0, 0);
+        SccpConnDt2MessageImpl original = new SccpConnDt2MessageImpl(stack.getMaxDataMessage(), 0, 0);
         original.setDestinationLocalReferenceNumber(new LocalReferenceImpl(1));
         original.setSequencingSegmenting(new SequencingSegmentingImpl());
         original.setUserData(new byte[] {1, 2, 3, 4, 5});

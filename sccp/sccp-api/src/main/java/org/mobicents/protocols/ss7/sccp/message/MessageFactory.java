@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.sccp.message;
 
 import java.io.Serializable;
 
+import org.mobicents.protocols.ss7.sccp.parameter.Credit;
 import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
 import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -73,4 +74,26 @@ public interface MessageFactory extends Serializable {
     // SccpAddress callingParty, byte[] data,
     // HopCounter hopCounter, Importance importance);
 
+    /**
+     * Create a SCCP connection request message (class 2)
+     *
+     * @param calledParty
+     * @param callingParty This parameter is optional
+     * @param data       This parameter is optional
+     * @param importance This parameter is optional
+     * @return
+     */
+    SccpConnCrMessage createConnectMessageClass2(int localSsn, SccpAddress calledParty, SccpAddress callingParty, byte[] data, Importance importance);
+
+    /**
+     * Create a SCCP connection request message (class 3)
+     *
+     * @param calledParty
+     * @param callingParty This parameter is optional
+     * @param credit
+     * @param data       This parameter is optional
+     * @param importance This parameter is optional
+     * @return
+     */
+    SccpConnCrMessage createConnectMessageClass3(int localSsn, SccpAddress calledParty, SccpAddress callingParty, Credit credit, byte[] data, Importance importance);
 }

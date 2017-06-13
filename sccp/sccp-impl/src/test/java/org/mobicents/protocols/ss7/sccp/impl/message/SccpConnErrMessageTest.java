@@ -29,7 +29,6 @@ import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ErrorCauseImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ErrorCauseValue;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -73,7 +72,7 @@ public class SccpConnErrMessageTest {
 
     @Test(groups = { "SccpMessage", "functional.encode" })
     public void testEncode() throws Exception {
-        SccpConnErrMessageImpl original = (SccpConnErrMessageImpl) messageFactory.createMessage(SccpMessage.MESSAGE_TYPE_ERR, 1, 2, 0, 0);
+        SccpConnErrMessageImpl original = new SccpConnErrMessageImpl(0, 0);
         original.setDestinationLocalReferenceNumber(new LocalReferenceImpl(1));
         original.setErrorCause(new ErrorCauseImpl(ErrorCauseValue.LRN_MISMATCH_INCONSISTENT_SOURCE_LRN));
 

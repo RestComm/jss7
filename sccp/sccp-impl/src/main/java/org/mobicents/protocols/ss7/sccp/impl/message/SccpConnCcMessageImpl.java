@@ -56,12 +56,12 @@ public class SccpConnCcMessageImpl extends SccpMessageImpl implements SccpConnCc
     protected byte[] userData;
     protected Importance importance;
 
-    protected SccpConnCcMessageImpl(int maxDataLen, int sls, int localSsn) {
-        super(maxDataLen, MESSAGE_TYPE_CC, sls, localSsn);
+    protected SccpConnCcMessageImpl(int sls, int localSsn) {
+        super(130, MESSAGE_TYPE_CC, sls, localSsn);
     }
 
-    protected SccpConnCcMessageImpl(int maxDataLen, int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
-        super(maxDataLen, MESSAGE_TYPE_CC, incomingOpc, incomingDpc, incomingSls, networkId);
+    protected SccpConnCcMessageImpl(int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
+        super(130, MESSAGE_TYPE_CC, incomingOpc, incomingDpc, incomingSls, networkId);
     }
 
     @Override

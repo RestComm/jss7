@@ -40,12 +40,12 @@ public class SccpConnRscMessageImpl extends SccpMessageImpl implements SccpConnR
     protected LocalReference destinationLocalReferenceNumber;
     protected LocalReference sourceLocalReferenceNumber;
 
-    protected SccpConnRscMessageImpl(int maxDataLen, int sls, int localSsn) {
-        super(maxDataLen, MESSAGE_TYPE_RSC, sls, localSsn);
+    protected SccpConnRscMessageImpl(int sls, int localSsn) {
+        super(0, MESSAGE_TYPE_RSC, sls, localSsn);
     }
 
-    protected SccpConnRscMessageImpl(int maxDataLen, int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
-        super(maxDataLen, MESSAGE_TYPE_RSC, incomingOpc, incomingDpc, incomingSls, networkId);
+    protected SccpConnRscMessageImpl(int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
+        super(0, MESSAGE_TYPE_RSC, incomingOpc, incomingDpc, incomingSls, networkId);
     }
 
     @Override

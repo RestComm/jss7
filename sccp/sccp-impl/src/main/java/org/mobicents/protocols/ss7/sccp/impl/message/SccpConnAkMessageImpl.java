@@ -45,12 +45,12 @@ public class SccpConnAkMessageImpl extends SccpMessageImpl implements SccpConnAk
     protected ReceiveSequenceNumber receiveSequenceNumber;
     protected Credit credit;
 
-    protected SccpConnAkMessageImpl(int maxDataLen, int sls, int localSsn) {
-        super(maxDataLen, MESSAGE_TYPE_AK, sls, localSsn);
+    protected SccpConnAkMessageImpl(int sls, int localSsn) {
+        super(0, MESSAGE_TYPE_AK, sls, localSsn);
     }
 
-    protected SccpConnAkMessageImpl(int maxDataLen, int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
-        super(maxDataLen, MESSAGE_TYPE_AK, incomingOpc, incomingDpc, incomingSls, networkId);
+    protected SccpConnAkMessageImpl(int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
+        super(0, MESSAGE_TYPE_AK, incomingOpc, incomingDpc, incomingSls, networkId);
     }
 
     @Override

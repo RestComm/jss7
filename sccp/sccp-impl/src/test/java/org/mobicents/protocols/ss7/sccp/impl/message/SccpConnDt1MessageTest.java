@@ -28,7 +28,6 @@ import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
 import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.*;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -73,7 +72,7 @@ public class SccpConnDt1MessageTest {
 
     @Test(groups = { "SccpMessage", "functional.encode" })
     public void testEncode() throws Exception {
-        SccpConnDt1MessageImpl original = (SccpConnDt1MessageImpl) messageFactory.createMessage(SccpMessage.MESSAGE_TYPE_DT1, 1, 2, 0, 0);
+        SccpConnDt1MessageImpl original = new SccpConnDt1MessageImpl(stack.getMaxDataMessage(), 0, 0);
         original.setDestinationLocalReferenceNumber(new LocalReferenceImpl(1));
         original.setSegmentingReassembling(new SegmentingReassemblingImpl(false));
         original.setUserData(new byte[] {1, 2, 3, 4, 5});

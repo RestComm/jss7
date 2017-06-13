@@ -31,7 +31,6 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.CreditImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SequencingSegmentingImpl;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -78,7 +77,7 @@ public class SccpConnItMessageTest {
 
     @Test(groups = { "SccpMessage", "functional.encode" })
     public void testEncode() throws Exception {
-        SccpConnItMessageImpl original = (SccpConnItMessageImpl) messageFactory.createMessage(SccpMessage.MESSAGE_TYPE_IT, 1, 2, 0, 0);
+        SccpConnItMessageImpl original = new SccpConnItMessageImpl(0, 0);
         original.setDestinationLocalReferenceNumber(new LocalReferenceImpl(1));
         original.setSourceLocalReferenceNumber(new LocalReferenceImpl(2));
         original.setProtocolClass(new ProtocolClassImpl(3));

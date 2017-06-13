@@ -32,8 +32,7 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.CreditImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.HopCounterImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -132,41 +131,34 @@ public class SccpConnCrMessageTest {
     @Test(groups = { "SccpMessage", "functional.encode" })
     public void testEncode() throws Exception {
         // ---- no optional params
-        SccpConnCrMessageImpl original = (SccpConnCrMessageImpl) messageFactory.createMessage(SccpMessage.MESSAGE_TYPE_CR, 1, 2, 0, 0);
+        SccpAddress calledAddress = stack.getSccpProvider().getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, 0, 8);
 
+        SccpConnCrMessageImpl original = (SccpConnCrMessageImpl) messageFactory.createConnectMessageClass3(8, calledAddress, null,null, null, null);
         original.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
-        original.setProtocolClass(new ProtocolClassImpl(3));
-        original.setCalledPartyAddress(stack.getSccpProvider().getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null,0,  8));
 
         EncodingResultData encoded = original.encode(stack, LongMessageRuleType.LONG_MESSAGE_FORBBIDEN, 272, logger, false, SccpProtocolVersion.ITU);
 
         assertEquals(encoded.getSolidData(), this.getDataCrNoOptParams());
 
         // ---- one optional param
-        original = (SccpConnCrMessageImpl) messageFactory.createMessage(SccpMessage.MESSAGE_TYPE_CR, 1, 2, 0, 0);
+        original = (SccpConnCrMessageImpl) messageFactory.createConnectMessageClass3(8, calledAddress, null,null, null, new ImportanceImpl((byte)5));
         original.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
-        original.setProtocolClass(new ProtocolClassImpl(3));
-        original.setCalledPartyAddress(stack.getSccpProvider().getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null,0,  8));
-        original.setImportance(new ImportanceImpl((byte)5));
 
         encoded = original.encode(stack, LongMessageRuleType.LONG_MESSAGE_FORBBIDEN, 272, logger, false, SccpProtocolVersion.ITU);
 
         assertEquals(encoded.getSolidData(), this.getDataCrOneOptParam());
 
         // ---- all param
-        original = (SccpConnCrMessageImpl) messageFactory.createMessage(SccpMessage.MESSAGE_TYPE_CR, 1, 2, 0, 0);
-        original.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
-        original.setProtocolClass(new ProtocolClassImpl(3));
-        original.setCalledPartyAddress(stack.getSccpProvider().getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null,0,  8));
+        SccpAddress callingAddress = stack.getSccpProvider().getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, 1, 8);
 
-        original.setCredit(new CreditImpl(10));
-        original.setCallingPartyAddress(stack.getSccpProvider().getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null,1, 8));
-        original.setUserData(new byte[] {1, 2, 3, 4});
+        original = (SccpConnCrMessageImpl) messageFactory.createConnectMessageClass3(8, calledAddress, callingAddress, new CreditImpl(10),
+                new byte[] {1, 2, 3, 4}, new ImportanceImpl((byte)5));
+        original.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
         original.setHopCounter(new HopCounterImpl(15));
-        original.setImportance(new ImportanceImpl((byte)5));
 
         encoded = original.encode(stack, LongMessageRuleType.LONG_MESSAGE_FORBBIDEN, 272, logger, false, SccpProtocolVersion.ITU);
 
         assertEquals(encoded.getSolidData(), this.getDataCrAllParams());
     }
 }
+

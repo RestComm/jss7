@@ -29,6 +29,11 @@ import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
+/**
+ *
+ * This interface represents a SCCP connection request message for connection-oriented protocol classes 2 and 3.
+ *
+ */
 public interface SccpConnCrMessage extends SccpMessage {
 
     LocalReference getSourceLocalReferenceNumber();

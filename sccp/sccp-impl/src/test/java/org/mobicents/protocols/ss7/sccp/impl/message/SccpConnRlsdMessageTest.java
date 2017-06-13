@@ -30,7 +30,6 @@ import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ReleaseCauseImpl;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCauseValue;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -112,7 +111,7 @@ public class SccpConnRlsdMessageTest {
     @Test(groups = { "SccpMessage", "functional.encode" })
     public void testEncode() throws Exception {
         // ---- no optional params
-        SccpConnRlsdMessageImpl original = (SccpConnRlsdMessageImpl) messageFactory.createMessage(SccpMessage.MESSAGE_TYPE_RLSD, 1, 2, 0, 0);
+        SccpConnRlsdMessageImpl original = new SccpConnRlsdMessageImpl(0, 0);
         original.setDestinationLocalReferenceNumber(new LocalReferenceImpl(2));
         original.setSourceLocalReferenceNumber(new LocalReferenceImpl(3));
         original.setReleaseCause(new ReleaseCauseImpl(ReleaseCauseValue.ACCESS_CONGESTION));
@@ -122,7 +121,7 @@ public class SccpConnRlsdMessageTest {
         assertEquals(encoded.getSolidData(), this.getDataRlsdNoOptParams());
 
         // ---- one optional param
-        original = (SccpConnRlsdMessageImpl) messageFactory.createMessage(SccpMessage.MESSAGE_TYPE_RLSD, 1, 2, 0, 0);
+        original = new SccpConnRlsdMessageImpl(0, 0);
         original.setDestinationLocalReferenceNumber(new LocalReferenceImpl(2));
         original.setSourceLocalReferenceNumber(new LocalReferenceImpl(3));
         original.setReleaseCause(new ReleaseCauseImpl(ReleaseCauseValue.ACCESS_CONGESTION));
@@ -133,7 +132,7 @@ public class SccpConnRlsdMessageTest {
         assertEquals(encoded.getSolidData(), this.getDataRlsdOneOptParam());
 
         // ---- all param
-        original = (SccpConnRlsdMessageImpl) messageFactory.createMessage(SccpMessage.MESSAGE_TYPE_RLSD, 1, 2, 0, 0);
+        original = new SccpConnRlsdMessageImpl(0, 0);
         original.setDestinationLocalReferenceNumber(new LocalReferenceImpl(2));
         original.setSourceLocalReferenceNumber(new LocalReferenceImpl(3));
         original.setReleaseCause(new ReleaseCauseImpl(ReleaseCauseValue.ACCESS_CONGESTION));

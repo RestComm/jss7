@@ -42,12 +42,12 @@ public class SccpConnErrMessageImpl extends SccpMessageImpl implements SccpConnE
     protected LocalReference destinationLocalReferenceNumber;
     protected ErrorCause errorCause;
 
-    protected SccpConnErrMessageImpl(int maxDataLen, int sls, int localSsn) {
-        super(maxDataLen, MESSAGE_TYPE_ERR, sls, localSsn);
+    protected SccpConnErrMessageImpl(int sls, int localSsn) {
+        super(0, MESSAGE_TYPE_ERR, sls, localSsn);
     }
 
-    protected SccpConnErrMessageImpl(int maxDataLen, int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
-        super(maxDataLen, MESSAGE_TYPE_ERR, incomingOpc, incomingDpc, incomingSls, networkId);
+    protected SccpConnErrMessageImpl(int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
+        super(0, MESSAGE_TYPE_ERR, incomingOpc, incomingDpc, incomingSls, networkId);
     }
 
     @Override

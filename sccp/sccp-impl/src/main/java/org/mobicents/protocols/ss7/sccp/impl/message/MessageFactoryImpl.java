@@ -22,8 +22,6 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.message;
 
-import java.io.InputStream;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
@@ -31,13 +29,17 @@ import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.ParseException;
+import org.mobicents.protocols.ss7.sccp.message.SccpConnCrMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.Credit;
 import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
 import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+
+import java.io.InputStream;
 
 /**
  *
@@ -85,7 +87,28 @@ public class MessageFactoryImpl implements MessageFactory {
                 importance);
     }
 
-    public SccpMessageImpl createMessage(int type, int opc, int dpc, int sls, int networkId)
+    public SccpConnCrMessage createConnectMessageClass2(int localSsn, SccpAddress calledAddress, SccpAddress callingAddress, byte[] data, Importance importance) {
+        SccpConnCrMessageImpl message = new SccpConnCrMessageImpl(sccpStackImpl.newSls(), localSsn);
+        message.setCalledPartyAddress(calledAddress);
+        message.setCallingPartyAddress(callingAddress);
+        message.setProtocolClass(new ProtocolClassImpl(2));
+        message.setUserData(data);
+        message.setImportance(importance);
+        return message;
+    }
+
+    public SccpConnCrMessage createConnectMessageClass3(int localSsn, SccpAddress calledAddress, SccpAddress callingAddress, Credit credit, byte[] data, Importance importance) {
+        SccpConnCrMessageImpl message = new SccpConnCrMessageImpl(sccpStackImpl.newSls(), localSsn);
+        message.setCalledPartyAddress(calledAddress);
+        message.setCallingPartyAddress(callingAddress);
+        message.setProtocolClass(new ProtocolClassImpl(3));
+        message.setCredit(credit);
+        message.setUserData(data);
+        message.setImportance(importance);
+        return message;
+    }
+
+    public SccpMessageImpl createMessage(int type, int opc, int dpc, int sls, InputStream in, final SccpProtocolVersion sccpProtocolVersion, int networkId)
             throws ParseException {
         SccpMessageImpl msg = null;
         switch (type) {
@@ -102,23 +125,23 @@ public class MessageFactoryImpl implements MessageFactory {
                 break;
 
             case SccpMessage.MESSAGE_TYPE_CR:
-                msg = new SccpConnCrMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                msg = new SccpConnCrMessageImpl(opc, dpc, sls, networkId);
                 break;
 
             case SccpMessage.MESSAGE_TYPE_CC:
-                msg = new SccpConnCcMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                msg = new SccpConnCcMessageImpl(opc, dpc, sls, networkId);
                 break;
 
             case SccpMessage.MESSAGE_TYPE_CREF:
-                msg = new SccpConnCrefMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                msg = new SccpConnCrefMessageImpl(opc, dpc, sls, networkId);
                 break;
 
             case SccpMessage.MESSAGE_TYPE_RLSD:
-                msg = new SccpConnRlsdMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                msg = new SccpConnRlsdMessageImpl(opc, dpc, sls, networkId);
                 break;
 
             case SccpMessage.MESSAGE_TYPE_RLC:
-                msg = new SccpConnRlcMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                msg = new SccpConnRlcMessageImpl(opc, dpc, sls, networkId);
                 break;
 
             case SccpMessage.MESSAGE_TYPE_DT1:
@@ -130,31 +153,26 @@ public class MessageFactoryImpl implements MessageFactory {
                 break;
 
             case SccpMessage.MESSAGE_TYPE_AK:
-                msg = new SccpConnAkMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                msg = new SccpConnAkMessageImpl(opc, dpc, sls, networkId);
                 break;
 
             case SccpMessage.MESSAGE_TYPE_RSR:
-                msg = new SccpConnRsrMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                msg = new SccpConnRsrMessageImpl(opc, dpc, sls, networkId);
                 break;
 
             case SccpMessage.MESSAGE_TYPE_RSC:
-                msg = new SccpConnRscMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                msg = new SccpConnRscMessageImpl(opc, dpc, sls, networkId);
                 break;
 
             case SccpMessage.MESSAGE_TYPE_ERR:
-                msg = new SccpConnErrMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                msg = new SccpConnErrMessageImpl(opc, dpc, sls, networkId);
                 break;
 
             case SccpMessage.MESSAGE_TYPE_IT:
-                msg = new SccpConnItMessageImpl(this.sccpStackImpl.getMaxDataMessage(), opc, dpc, sls, networkId);
+                msg = new SccpConnItMessageImpl(opc, dpc, sls, networkId);
                 break;
         }
-        return msg;
-    }
 
-    public SccpMessageImpl createMessage(int type, int opc, int dpc, int sls, InputStream in, final SccpProtocolVersion sccpProtocolVersion, int networkId)
-            throws ParseException {
-        SccpMessageImpl msg = createMessage(type, opc, dpc, sls, networkId);
         if (msg != null) {
             msg.decode(in, sccpStackImpl.getSccpProvider().getParameterFactory(), sccpProtocolVersion);
         } else if (logger.isEnabledFor(Level.WARN)) {

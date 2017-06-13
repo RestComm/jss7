@@ -31,16 +31,13 @@ import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.RefusalCauseImpl;
-import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.RefusalCauseValue;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
 
-import static org.mobicents.protocols.ss7.sccp.message.SccpMessage.MESSAGE_TYPE_CREF;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -121,7 +118,7 @@ public class SccpConnCrefMessageTest {
     @Test(groups = { "SccpMessage", "functional.encode" })
     public void testEncode() throws Exception {
         // ---- no optional params
-        SccpConnCrefMessageImpl original = (SccpConnCrefMessageImpl) messageFactory.createMessage(MESSAGE_TYPE_CREF,1,2, 0, 0);
+        SccpConnCrefMessageImpl original = new SccpConnCrefMessageImpl(0, 0);
         original.setDestinationLocalReferenceNumber(new LocalReferenceImpl(2));
         original.setRefusalCause(new RefusalCauseImpl(RefusalCauseValue.ACCESS_CONGESTION));
 
@@ -130,7 +127,7 @@ public class SccpConnCrefMessageTest {
         assertEquals(encoded.getSolidData(), this.getDataCrefNoOptParams());
 
         // ---- one optional param
-        original = (SccpConnCrefMessageImpl) messageFactory.createMessage(MESSAGE_TYPE_CREF,1, 2, 0, 0);
+        original = new SccpConnCrefMessageImpl(0, 0);
         original.setDestinationLocalReferenceNumber(new LocalReferenceImpl(2));
         original.setRefusalCause(new RefusalCauseImpl(RefusalCauseValue.ACCESS_CONGESTION));
         original.setCalledPartyAddress(stack.getSccpProvider().getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null,0,  8));
@@ -140,7 +137,7 @@ public class SccpConnCrefMessageTest {
         assertEquals(encoded.getSolidData(), this.getDataCrefOneOptParam());
 
         // ---- all param
-        original = (SccpConnCrefMessageImpl) messageFactory.createMessage( MESSAGE_TYPE_CREF, 1, 2, 0, 0);
+        original = new SccpConnCrefMessageImpl(0, 0);
         original.setDestinationLocalReferenceNumber(new LocalReferenceImpl(2));
         original.setRefusalCause(new RefusalCauseImpl(RefusalCauseValue.ACCESS_CONGESTION));
         original.setCalledPartyAddress(stack.getSccpProvider().getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null,0,  8));
