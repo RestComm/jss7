@@ -41,7 +41,7 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.TCQueryIndicati
  */
 public class Server extends EventTestHarness {
 
-    private Component[] components;
+    protected Component[] components;
 
     /**
      * @param stack
