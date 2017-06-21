@@ -119,6 +119,7 @@ public class DialogImpl implements Dialog {
     private ProtocolVersion protocolVersion;
     private SccpAddress localAddress;
     private SccpAddress remoteAddress;
+    private int localSsn;
 
     private Future idleTimerFuture;
     private boolean idleTimerActionTaken = false;
@@ -398,6 +399,20 @@ public class DialogImpl implements Dialog {
     /*
      * (non-Javadoc)
      *
+     * @see org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#getSsn()
+     */
+    @Override
+    public int getLocalSsn() {
+        return localSsn;
+    }
+
+    public void setLocalSsn(int newSsn) {
+        localSsn = newSsn;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
      * @see org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#isEstabilished()
      */
     public boolean isEstabilished() {
@@ -543,7 +558,7 @@ public class DialogImpl implements Dialog {
                     this.provider.getStack().getCounterProviderImpl().updateTcQuerySentCount();
                 }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
-                        this.seqControl, this.getNetworkId());
+                        this.seqControl, this.getNetworkId(), this.localSsn);
                 this.scheduledComponentList.clear();
             } catch (Throwable e) {
                 if (logger.isEnabledFor(Level.ERROR)) {
@@ -612,7 +627,7 @@ public class DialogImpl implements Dialog {
                         this.provider.getStack().getCounterProviderImpl().updateTcConversationSentCount();
                     }
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
-                            this.localAddress, this.seqControl, this.getNetworkId());
+                            this.localAddress, this.seqControl, this.getNetworkId(), this.localSsn);
                     this.setState(TRPseudoState.Active);
                     this.scheduledComponentList.clear();
                 } catch (Exception e) {
@@ -646,7 +661,7 @@ public class DialogImpl implements Dialog {
                         this.provider.getStack().getCounterProviderImpl().updateTcConversationSentCount();
                     }
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
-                            this.localAddress, this.seqControl, this.getNetworkId());
+                            this.localAddress, this.seqControl, this.getNetworkId(), this.localSsn);
                     this.scheduledComponentList.clear();
                 } catch (Exception e) {
                     // FIXME: remove freshly added invokes to free invoke ID??
@@ -736,7 +751,7 @@ public class DialogImpl implements Dialog {
                     this.provider.getStack().getCounterProviderImpl().updateTcResponseSentCount();
                 }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
-                        this.seqControl, this.getNetworkId());
+                        this.seqControl, this.getNetworkId(), this.localSsn);
 
                 this.scheduledComponentList.clear();
             } catch (Exception e) {
@@ -800,7 +815,7 @@ public class DialogImpl implements Dialog {
                     this.provider.getStack().getCounterProviderImpl().updateTcUniSentCount();
                 }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
-                        this.seqControl, this.getNetworkId());
+                        this.seqControl, this.getNetworkId(), this.localSsn);
                 this.scheduledComponentList.clear();
             } catch (Exception e) {
                 if (logger.isEnabledFor(Level.ERROR)) {
@@ -861,7 +876,7 @@ public class DialogImpl implements Dialog {
                         this.provider.getStack().getCounterProviderImpl().updateTcUserAbortSentCount();
                     }
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
-                            this.localAddress, this.seqControl, this.getNetworkId());
+                            this.localAddress, this.seqControl, this.getNetworkId(), this.localSsn);
 
                     this.scheduledComponentList.clear();
                 } catch (Exception e) {

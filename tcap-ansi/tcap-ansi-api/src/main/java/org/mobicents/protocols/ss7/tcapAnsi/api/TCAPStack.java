@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.tcapAnsi.api;
 
+import java.util.List;
+
 /**
  * @author baranowb
  *
@@ -40,6 +42,8 @@ public interface TCAPStack {
      * @return
      */
     String getPersistDir();
+
+    int getSubSystemNumber();
 
     /**
      * Returns stack provider.
@@ -137,6 +141,12 @@ public interface TCAPStack {
      * @return if areviewMode is active
      */
     boolean getPreviewMode();
+
+    void setExtraSsns(List<Integer> extraSsnsNew) throws Exception;
+
+    List<Integer> getExtraSsns();
+
+    boolean isExtraSsnPresent(int ssn);
 
     void setStatisticsEnabled(boolean val) throws Exception;
 
