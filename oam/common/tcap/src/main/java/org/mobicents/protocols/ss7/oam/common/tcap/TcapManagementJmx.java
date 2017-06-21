@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.oam.common.tcap;
 
+import java.util.List;
 import java.util.Map;
 
 import javolution.util.FastMap;
@@ -496,6 +497,21 @@ public class TcapManagementJmx implements TcapManagementJmxMBean, CounterMediato
 
             return null;
         }
+    }
+
+    @Override
+    public void setExtraSsns(List<Integer> extraSsnsNew) throws Exception {
+        this.wrappedTCAPStack.setExtraSsns(extraSsnsNew);
+    }
+
+    @Override
+    public List<Integer> getExtraSsns() {
+        return this.getExtraSsns();
+    }
+
+    @Override
+    public boolean isExtraSsnPresent(int ssn) {
+        return this.isExtraSsnPresent(ssn);
     }
 
 }

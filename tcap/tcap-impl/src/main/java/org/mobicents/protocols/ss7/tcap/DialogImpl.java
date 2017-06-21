@@ -138,6 +138,7 @@ public class DialogImpl implements Dialog {
 
     private SccpAddress localAddress;
     private SccpAddress remoteAddress;
+    private int localSsn;
 
     private Future idleTimerFuture;
     private boolean idleTimerActionTaken = false;
@@ -410,6 +411,20 @@ public class DialogImpl implements Dialog {
     /*
      * (non-Javadoc)
      *
+     * @see org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#getSsn()
+     */
+    @Override
+    public int getLocalSsn() {
+        return localSsn;
+    }
+
+    public void setLocalSsn(int newSsn) {
+        localSsn = newSsn;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
      * @see org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog#getLocalAddress()
      */
     public SccpAddress getLocalAddress() {
@@ -566,7 +581,7 @@ public class DialogImpl implements Dialog {
                     this.provider.getStack().getCounterProviderImpl().updateTcBeginSentCount();
                 }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
-                        this.seqControl, this.networkId);
+                        this.seqControl, this.networkId, this.localSsn);
                 this.scheduledComponentList.clear();
             } catch (Throwable e) {
                 // FIXME: remove freshly added invokes to free invoke ID??
@@ -646,7 +661,7 @@ public class DialogImpl implements Dialog {
                         this.provider.getStack().getCounterProviderImpl().updateTcContinueSentCount();
                     }
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
-                            this.localAddress, this.seqControl, this.networkId);
+                            this.localAddress, this.seqControl, this.networkId, this.localSsn);
                     this.setState(TRPseudoState.Active);
                     this.scheduledComponentList.clear();
                 } catch (Exception e) {
@@ -677,7 +692,7 @@ public class DialogImpl implements Dialog {
                     tcbm.encode(aos);
                     this.provider.getStack().getCounterProviderImpl().updateTcContinueSentCount();
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
-                            this.localAddress, this.seqControl, this.networkId);
+                            this.localAddress, this.seqControl, this.networkId, this.localSsn);
                     this.scheduledComponentList.clear();
                 } catch (Exception e) {
                     // FIXME: remove freshly added invokes to free invoke ID??
@@ -804,7 +819,7 @@ public class DialogImpl implements Dialog {
                     this.provider.getStack().getCounterProviderImpl().updateTcEndSentCount();
                 }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
-                        this.seqControl, this.networkId);
+                        this.seqControl, this.networkId, this.localSsn);
 
                 this.scheduledComponentList.clear();
             } catch (Exception e) {
@@ -869,7 +884,7 @@ public class DialogImpl implements Dialog {
                     this.provider.getStack().getCounterProviderImpl().updateTcUniSentCount();
                 }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
-                        this.seqControl, this.networkId);
+                        this.seqControl, this.networkId, this.localSsn);
                 this.scheduledComponentList.clear();
             } catch (Exception e) {
                 if (logger.isEnabledFor(Level.ERROR)) {
@@ -974,7 +989,7 @@ public class DialogImpl implements Dialog {
                         this.provider.getStack().getCounterProviderImpl().updateTcUserAbortSentCount();
                     }
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
-                            this.localAddress, this.seqControl, this.networkId);
+                            this.localAddress, this.seqControl, this.networkId, this.localSsn);
 
                     this.scheduledComponentList.clear();
                 } catch (Exception e) {
@@ -1818,7 +1833,8 @@ public class DialogImpl implements Dialog {
                     if (this.provider.getStack().getStatisticsEnabled()) {
                         this.provider.getStack().getCounterProviderImpl().updateTcPAbortSentCount();
                     }
-                    this.provider.send(aos.toByteArray(), false, this.remoteAddress, this.localAddress, this.seqControl, this.networkId);
+                    this.provider.send(aos.toByteArray(), false, this.remoteAddress, this.localAddress, this.seqControl,
+                            this.networkId, this.localSsn);
                 } catch (Exception e) {
                     if (logger.isEnabledFor(Level.ERROR)) {
                         logger.error("Failed to send message: ", e);
