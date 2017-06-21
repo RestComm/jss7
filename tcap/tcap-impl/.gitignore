@@ -1,0 +1,15 @@
+/CreateDialogTest_management.xml
+/DialogIdleEndTest1_management.xml
+/DialogIdleEndTest2_management.xml
+/DialogIdleTest_management.xml
+/DialogIdRangeTest_management.xml
+/DialogMngConcurrentTest_management.xml
+/PreviewModeFunctionalTest_management.xml
+/TCAPAbnormalTest_management.xml
+/TCAPComponentsTest_management.xml
+/TCAPCongestionTest1_management.xml
+/TCAPCongestionTest2_management.xml
+/TCAPFunctionalTest_management.xml
+/TCAPStatTest1_management.xml
+/TCAPStatTest2_management.xml
+/MsgLog.pcap
