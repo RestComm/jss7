@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.tcap.api;
 
+import java.util.List;
+
 /**
  * @author baranowb
  */
@@ -139,6 +141,12 @@ public interface TCAPStack {
      * @return if areviewMode is active
      */
     boolean getPreviewMode();
+
+    void setExtraSsns(List<Integer> extraSsnsNew) throws Exception;
+
+    List<Integer> getExtraSsns();
+
+    boolean isExtraSsnPresent(int ssn);
 
     void setDoNotSendProtocolVersion(boolean val) throws Exception;
 

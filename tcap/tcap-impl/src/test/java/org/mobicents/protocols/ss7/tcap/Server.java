@@ -41,7 +41,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
  */
 public class Server extends EventTestHarness {
 
-    private Component[] components;
+    protected Component[] components;
 
     /**
      * @param stack

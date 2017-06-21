@@ -26,8 +26,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.List;
 
 import javolution.text.TextBuilder;
+import javolution.util.FastList;
 import javolution.xml.XMLBinding;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
@@ -112,6 +114,7 @@ public class TCAPStackImpl implements TCAPStack {
     private long dialogIdRangeStart = 1;
     private long dialogIdRangeEnd = Integer.MAX_VALUE;
     private boolean previewMode = false;
+    private List<Integer> extraSsns = new FastList<Integer>();
     private boolean doNotSendProtocolVersion = false;
     private boolean statisticsEnabled = false;
 
@@ -387,6 +390,33 @@ public class TCAPStackImpl implements TCAPStack {
 
     public boolean getPreviewMode() {
         return previewMode;
+    }
+
+    public void setExtraSsns(List<Integer> extraSsnsNew) throws Exception {
+        if (this.started)
+            throw new Exception("ExtraSsns parameter can be updated only when TCAP stack is NOT running");
+
+        if (extraSsnsNew != null) {
+            synchronized (this) {
+                List<Integer> extraSsnsTemp = new FastList<Integer>();
+                extraSsnsTemp.addAll(extraSsnsNew);
+                this.extraSsns = extraSsnsTemp;
+            }
+        }
+    }
+
+    public List<Integer> getExtraSsns() {
+        return extraSsns;
+    }
+
+    public boolean isExtraSsnPresent(int ssn) {
+        if (this.ssn == ssn)
+            return true;
+        if (extraSsns != null) {
+            if (extraSsns.contains(ssn))
+                return true;
+        }
+        return false;
     }
 
     public void setSlsRange(String val) throws Exception  {
