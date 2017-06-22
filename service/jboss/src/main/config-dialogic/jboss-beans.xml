@@ -189,6 +189,13 @@
 		</constructor>
 		<property name="persistDir">${jboss.server.data.dir}</property>
 		<property name="previewMode">false</property>
+		<!--
+		<property name="extraSsns">
+			<list class="javolution.util.FastList" elementClass="java.lang.Integer">
+				<value>6</value>
+			</list>
+		</property>
+		-->
 	</bean>
 
 	<bean name="TcapStackCap" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
@@ -201,6 +208,13 @@
 		</constructor>
 		<property name="persistDir">${jboss.server.data.dir}</property>
 		<property name="previewMode">false</property>
+		<!--
+		<property name="extraSsns">
+			<list class="javolution.util.FastList" elementClass="java.lang.Integer">
+				<value>147</value>
+			</list>
+		</property>
+		-->
 	</bean>
 
 	<bean name="TcapStack" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
@@ -213,6 +227,13 @@
 		</constructor>
 		<property name="persistDir">${jboss.server.data.dir}</property>
 		<property name="previewMode">false</property>
+		<!--
+		<property name="extraSsns">
+			<list class="javolution.util.FastList" elementClass="java.lang.Integer">
+				<value>10</value>
+			</list>
+		</property>
+		-->
 	</bean>
 
 	<bean name="TcapExecutor" class="org.mobicents.protocols.ss7.tcap.oam.TCAPExecutor">
