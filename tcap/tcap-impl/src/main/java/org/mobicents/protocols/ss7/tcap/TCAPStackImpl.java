@@ -382,6 +382,20 @@ public class TCAPStackImpl implements TCAPStack {
         return false;
     }
 
+    @Override
+    public String getSubSystemNumberList() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.ssn);
+        if (extraSsns != null) {
+            for (Integer iSsn : extraSsns) {
+                sb.append(", ");
+                sb.append(iSsn);
+            }
+        }
+
+        return sb.toString();
+    }
+
     public void setSlsRange(String val) throws Exception  {
 
         if (val.equals(SlsRangeType.All.toString()))  {

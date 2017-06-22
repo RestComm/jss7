@@ -148,6 +148,8 @@ public interface TCAPStack {
 
     boolean isExtraSsnPresent(int ssn);
 
+    String getSubSystemNumberList();
+
     void setDoNotSendProtocolVersion(boolean val) throws Exception;
 
     boolean getDoNotSendProtocolVersion();
