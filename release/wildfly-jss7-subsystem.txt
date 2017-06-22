@@ -70,16 +70,32 @@
                 <property name="sccpStack" type="Bean" value="SccpStack"/>
                 <property name="ssn" type="int" value="8"/>
                 <property name="previewMode" type="bool" value="false"/>
+<!--
+                <property name="extraSsns" type="Map" value="empty">
+                    <entry key="1" type="int" value="6"/>
+                    <entry key="2" type="int" value="5"/>
+                </property>
+-->
             </mbean>
             <mbean name="TcapStackCap" type="TcapStack" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false">
                 <property name="sccpStack" type="Bean" value="SccpStack"/>
                 <property name="ssn" type="int" value="146"/>
                 <property name="previewMode" type="bool" value="false"/>
+<!--
+                <property name="extraSsns" type="Map" value="empty">
+                    <entry key="1" type="int" value="147"/>
+                </property>
+-->
             </mbean>
             <mbean name="TcapStack" type="TcapStack" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false">
                 <property name="sccpStack" type="Bean" value="SccpStack"/>
                 <property name="ssn" type="int" value="9"/>
                 <property name="previewMode" type="bool" value="false"/>
+<!--
+                <property name="extraSsns" type="Map" value="empty">
+                    <entry key="1" type="int" value="10"/>
+                </property>
+-->
             </mbean>
             <mbean name="TcapExecutor" type="TcapExecutor" class="org.mobicents.protocols.ss7.tcap.oam.TCAPExecutor" enabled="true" reflection="false"/>
             <mbean name="TCAPSS7Service" type="TCAPSS7Service" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false">

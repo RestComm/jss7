@@ -1124,11 +1124,25 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
         int ssn = getPropertyInt(beanName, "ssn", 8);
         boolean previewMode = getPropertyBoolean(beanName, "previewMode", false);
 
+        ModelNode extraSsnsNode = peek(fullModel, "mbean", beanName, "property", "extraSsns");
+        List<Integer> extraSsnsNew = new FastList<Integer>();
+
+        if (extraSsnsNode != null) {
+            for (Property prop : extraSsnsNode.get("entry").asPropertyList()) {
+                int key = prop.getValue().get("key").asInt();
+                int ssnVal = prop.getValue().get("value").asInt();
+                extraSsnsNew.add(ssnVal);
+            }
+        }
+
         TCAPStackImpl tcapStack = null;
         try {
             tcapStack = new TCAPStackImpl(beanName, sccpStack.getSccpProvider(), ssn);
             tcapStack.setPersistDir(dataDir);
             tcapStack.setPreviewMode(previewMode);
+            if (extraSsnsNew != null && extraSsnsNew.size() > 0) {
+                tcapStack.setExtraSsns(extraSsnsNew);
+            }
 
             this.beanTcapStacks.put(beanName, tcapStack);
         } catch (Exception e) {

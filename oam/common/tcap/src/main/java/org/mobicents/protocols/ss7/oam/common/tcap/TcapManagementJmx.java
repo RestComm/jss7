@@ -506,12 +506,17 @@ public class TcapManagementJmx implements TcapManagementJmxMBean, CounterMediato
 
     @Override
     public List<Integer> getExtraSsns() {
-        return this.getExtraSsns();
+        return this.wrappedTCAPStack.getExtraSsns();
     }
 
     @Override
     public boolean isExtraSsnPresent(int ssn) {
-        return this.isExtraSsnPresent(ssn);
+        return this.wrappedTCAPStack.isExtraSsnPresent(ssn);
+    }
+
+    @Override
+    public String getSubSystemNumberList() {
+        return this.wrappedTCAPStack.getSubSystemNumberList();
     }
 
 }

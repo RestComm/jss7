@@ -122,7 +122,7 @@
 												var previewMode = response.value.PreviewMode;
 												var doNotSendProtocolVersion = response.value.DoNotSendProtocolVersion;
 												var statisticsEnabled = response.value.StatisticsEnabled;
-												var ssn = response.value.SubSystemNumber;
+												var ssn = response.value.SubSystemNumberList;
 												var slsRange = response.value.SlsRange;
 												
 												var isTcapStarted = response.value.Started;
@@ -161,9 +161,9 @@
 														'					<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
 														'					</tr>'+
 														
-														'					<tr data-toggle="tooltip" title="Sub System Number for which this stack is listening. This property cannot be updated while stack is running. Set this value in jboss-beans.xml">'+
+														'					<tr data-toggle="tooltip" title="Sub System Number list for which SSNs this stack is listening. This property cannot be updated while stack is running. Set this value in jboss-beans.xml in constructor (main SSN) and via extraSsns property">'+
 														'					<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
-														'					<td style="font-size: 0.9em;">Sub System Number</td>'+
+														'					<td style="font-size: 0.9em;">Sub System Number List</td>'+
 														'					<td style="font-size: 0.9em; padding: 0;">' + ssn + '</td>'+
 														'					<td style="font-size: 0.9em; padding: 0;">&nbsp;</td>'+
 														'					</tr>'+														
