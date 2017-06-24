@@ -66,6 +66,7 @@ public class SccpForm extends JDialog {
     private JTextField tbNi;
     private JTextField tbRemoteSsn;
     private JTextField tbLocalSsn;
+    private JTextField tbLocalSsn2;
     private JTextField tbTranslationType;
     private JComboBox cbGlobalTitleType;
     private JComboBox cbAddressNature;
@@ -174,7 +175,7 @@ public class SccpForm extends JDialog {
 
         tbLocalSsn = new JTextField();
         tbLocalSsn.setColumns(10);
-        tbLocalSsn.setBounds(445, 70, 129, 20);
+        tbLocalSsn.setBounds(445, 70, 53, 20);
         panel.add(tbLocalSsn);
 
         JLabel lblLocalSsn = new JLabel("Local Ssn");
@@ -267,6 +268,11 @@ public class SccpForm extends JDialog {
         cbSccpProtocolVersion = new JComboBox();
         cbSccpProtocolVersion.setBounds(197, 101, 141, 20);
         panel.add(cbSccpProtocolVersion);
+        
+        tbLocalSsn2 = new JTextField();
+        tbLocalSsn2.setColumns(10);
+        tbLocalSsn2.setBounds(521, 70, 53, 20);
+        panel.add(tbLocalSsn2);
     }
 
     public void setData(SccpManMBean sccp) {
@@ -298,6 +304,7 @@ public class SccpForm extends JDialog {
         tbNi.setText(((Integer) this.sccp.getNi()).toString());
         tbRemoteSsn.setText(((Integer) this.sccp.getRemoteSsn()).toString());
         tbLocalSsn.setText(((Integer) this.sccp.getLocalSsn()).toString());
+        tbLocalSsn2.setText(((Integer) this.sccp.getLocalSsn2()).toString());
         tbTranslationType.setText(((Integer) this.sccp.getTranslationType()).toString());
 
         tbCallingPartyAddressDigits.setText(this.sccp.getCallingPartyAddressDigits());
@@ -315,10 +322,12 @@ public class SccpForm extends JDialog {
             case 1:
                 tbRemoteSsn.setText("8");
                 tbLocalSsn.setText("8");
+                tbLocalSsn2.setText("0");
                 break;
             case 2:
                 tbRemoteSsn.setText("146");
                 tbLocalSsn.setText("146");
+                tbLocalSsn2.setText("0");
                 break;
         }
 
@@ -350,10 +359,12 @@ public class SccpForm extends JDialog {
             case 1:
                 tbRemoteSsn.setText("8");
                 tbLocalSsn.setText("8");
+                tbLocalSsn2.setText("0");
                 break;
             case 2:
                 tbRemoteSsn.setText("146");
                 tbLocalSsn.setText("146");
+                tbLocalSsn2.setText("0");
                 break;
         }
 
@@ -380,6 +391,7 @@ public class SccpForm extends JDialog {
         int ni = 0;
         int remoteSsn = 0;
         int localSsn = 0;
+        int localSsn2 = 0;
         int translationType = 0;
         try {
             remoteSpc = Integer.parseInt(tbRemoteSpc.getText());
@@ -412,6 +424,12 @@ public class SccpForm extends JDialog {
             return false;
         }
         try {
+            localSsn2 = Integer.parseInt(tbLocalSsn2.getText());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Exception when parsing LocalSsn2 value: " + e.toString());
+            return false;
+        }
+        try {
             translationType = Integer.parseInt(tbTranslationType.getText());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Exception when parsing TranslationType value: " + e.toString());
@@ -425,6 +443,7 @@ public class SccpForm extends JDialog {
         this.sccp.setNi(ni);
         this.sccp.setRemoteSsn(remoteSsn);
         this.sccp.setLocalSsn(localSsn);
+        this.sccp.setLocalSsn2(localSsn2);
         this.sccp.setTranslationType(translationType);
 
         this.sccp.setGlobalTitleType((GlobalTitleType) cbGlobalTitleType.getSelectedItem());

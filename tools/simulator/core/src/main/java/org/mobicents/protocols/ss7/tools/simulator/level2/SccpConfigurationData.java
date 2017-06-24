@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.level2;
 
+import javolution.text.CharArray;
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
@@ -42,6 +43,7 @@ public class SccpConfigurationData {
     protected static final String NI = "ni";
     protected static final String REMOTE_SSN = "remoteSsn";
     protected static final String LOCAL_SSN = "localSsn";
+    protected static final String LOCAL_SSN2 = "localSsn2";
     protected static final String GLOBAL_TITLE_TYPE = "globalTitleType";
     protected static final String ADDRESS_NATURE = "addressNature";
     protected static final String NUMBERING_PLAN = "numberingPlan";
@@ -53,6 +55,7 @@ public class SccpConfigurationData {
     private int remoteSpc = 0;
     private int localSpc = 0;
     private int localSsn;
+    private int localSsn2;
     private int remoteSsn;
     private int ni = 0;
     private GlobalTitleType globalTitleType = new GlobalTitleType(GlobalTitleType.VAL_TT_NP_ES_NOA);
@@ -92,6 +95,14 @@ public class SccpConfigurationData {
 
     public void setLocalSsn(int localSsn) {
         this.localSsn = localSsn;
+    }
+
+    public int getLocalSsn2() {
+        return localSsn2;
+    }
+
+    public void setLocalSsn2(int localSsn2) {
+        this.localSsn2 = localSsn2;
     }
 
     public int getRemoteSsn() {
@@ -168,6 +179,7 @@ public class SccpConfigurationData {
             xml.setAttribute(NI, sccp.getNi());
             xml.setAttribute(REMOTE_SSN, sccp.getRemoteSsn());
             xml.setAttribute(LOCAL_SSN, sccp.getLocalSsn());
+            xml.setAttribute(LOCAL_SSN2, sccp.getLocalSsn2());
             xml.setAttribute(TRANSLATION_TYTE, sccp.getTranslationType());
 
             xml.add(sccp.getGlobalTitleType().toString(), GLOBAL_TITLE_TYPE, String.class);
@@ -184,6 +196,9 @@ public class SccpConfigurationData {
             sccp.setNi(xml.getAttribute(NI).toInt());
             sccp.setRemoteSsn(xml.getAttribute(REMOTE_SSN).toInt());
             sccp.setLocalSsn(xml.getAttribute(LOCAL_SSN).toInt());
+            CharArray ca = xml.getAttribute(LOCAL_SSN2);
+            if (ca != null)
+                sccp.setLocalSsn2(ca.toInt());
             sccp.setTranslationType(xml.getAttribute(TRANSLATION_TYTE).toInt());
 
             String gtt = (String) xml.get(GLOBAL_TITLE_TYPE, String.class);

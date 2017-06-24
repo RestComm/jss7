@@ -53,6 +53,10 @@ public interface SccpManMBean {
 
     void setLocalSsn(int val);
 
+    int getLocalSsn2();
+
+    void setLocalSsn2(int val);
+
     GlobalTitleType getGlobalTitleType();
 
     String getGlobalTitleType_Value();

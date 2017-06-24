@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.level3;
 
+import javolution.util.FastList;
+
 import org.apache.log4j.Level;
 import org.mobicents.protocols.ss7.map.MAPStackImpl;
 import org.mobicents.protocols.ss7.map.api.MAPProvider;
@@ -237,7 +239,7 @@ public class MapMan implements MapManMBean, Stoppable {
 
     public boolean start() {
         try {
-            this.initMap(this.sccpStack, this.testerHost.getSccpMan().getLocalSsn());
+            this.initMap(this.sccpStack, this.testerHost.getSccpMan().getLocalSsn(), this.testerHost.getSccpMan().getLocalSsn2());
             this.testerHost.sendNotif(SOURCE_NAME, "TCAP+MAP has been started", "", Level.INFO);
             return true;
         } catch (Throwable e) {
@@ -260,9 +262,16 @@ public class MapMan implements MapManMBean, Stoppable {
     public void execute() {
     }
 
-    private void initMap(SccpStack sccpStack, int ssn) throws Exception {
+    private void initMap(SccpStack sccpStack, int ssn, int extraSsn) throws Exception {
 
         this.mapStack = new MAPStackImpl("Simulator", sccpStack.getSccpProvider(), ssn);
+
+        if (extraSsn > 0) {
+            FastList<Integer> extraSsnsNew = new FastList<Integer>();
+            extraSsnsNew.add(extraSsn);
+            this.mapStack.getTCAPStack().setExtraSsns(extraSsnsNew);
+        }
+
         this.mapStack.start();
     }
 
