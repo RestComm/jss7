@@ -22,6 +22,8 @@
 
 package org.mobicents.protocols.ss7.tools.simulator.level3;
 
+import javolution.util.FastList;
+
 import org.apache.log4j.Level;
 import org.mobicents.protocols.ss7.cap.CAPStackImpl;
 import org.mobicents.protocols.ss7.cap.api.CAPProvider;
@@ -106,7 +108,7 @@ public class CapMan implements CapManMBean, Stoppable {
 
     public boolean start() {
         try {
-            this.initCap(this.sccpStack, this.testerHost.getSccpMan().getLocalSsn());
+            this.initCap(this.sccpStack, this.testerHost.getSccpMan().getLocalSsn(), this.testerHost.getSccpMan().getLocalSsn2());
             this.testerHost.sendNotif(SOURCE_NAME, "TCAP+CAP has been started", "", Level.INFO);
             return true;
         } catch (Throwable e) {
@@ -129,9 +131,16 @@ public class CapMan implements CapManMBean, Stoppable {
     public void execute() {
     }
 
-    private void initCap(SccpStack sccpStack, int ssn) throws Exception {
+    private void initCap(SccpStack sccpStack, int ssn, int extraSsn) throws Exception {
 
         this.capStack = new CAPStackImpl("Simulator", sccpStack.getSccpProvider(), ssn);
+
+        if (extraSsn > 0) {
+            FastList<Integer> extraSsnsNew = new FastList<Integer>();
+            extraSsnsNew.add(extraSsn);
+            this.capStack.getTCAPStack().setExtraSsns(extraSsnsNew);
+        }
+
         this.capStack.start();
     }
 

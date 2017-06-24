@@ -153,6 +153,17 @@ public class SccpMan implements SccpManMBean, Stoppable {
     }
 
     @Override
+    public int getLocalSsn2() {
+        return this.testerHost.getConfigurationData().getSccpConfigurationData().getLocalSsn2();
+    }
+
+    @Override
+    public void setLocalSsn2(int val) {
+        this.testerHost.getConfigurationData().getSccpConfigurationData().setLocalSsn2(val);
+        this.testerHost.markStore();
+    }
+
+    @Override
     public GlobalTitleType getGlobalTitleType() {
         return this.testerHost.getConfigurationData().getSccpConfigurationData().getGlobalTitleType();
     }

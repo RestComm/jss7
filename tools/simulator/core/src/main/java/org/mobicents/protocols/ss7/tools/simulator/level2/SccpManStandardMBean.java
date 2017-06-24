@@ -55,6 +55,7 @@ public class SccpManStandardMBean extends StandardMBean {
                 new MBeanAttributeInfo("Ni", int.class.getName(), "Network indicator", true, true, false),
                 new MBeanAttributeInfo("RemoteSsn", int.class.getName(), "Remote SSN number", true, true, false),
                 new MBeanAttributeInfo("LocalSsn", int.class.getName(), "Local SSN number", true, true, false),
+                new MBeanAttributeInfo("LocalSsn2", int.class.getName(), "Second Local SSN number", true, true, false),
                 new MBeanAttributeInfo("GlobalTitleType", GlobalTitleType.class.getName(),
                         "GlobalTitle type for creating SccpAddress (when routing on GT)", true, true, false),
                 new MBeanAttributeInfo("GlobalTitleType_Value", String.class.getName(),
