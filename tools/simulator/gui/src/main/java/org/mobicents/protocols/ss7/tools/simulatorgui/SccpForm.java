@@ -268,7 +268,7 @@ public class SccpForm extends JDialog {
         cbSccpProtocolVersion = new JComboBox();
         cbSccpProtocolVersion.setBounds(197, 101, 141, 20);
         panel.add(cbSccpProtocolVersion);
-        
+
         tbLocalSsn2 = new JTextField();
         tbLocalSsn2.setColumns(10);
         tbLocalSsn2.setBounds(521, 70, 53, 20);
