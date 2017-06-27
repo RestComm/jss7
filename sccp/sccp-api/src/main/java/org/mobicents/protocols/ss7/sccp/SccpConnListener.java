@@ -20,23 +20,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.sccp.message;
+package org.mobicents.protocols.ss7.sccp;
 
-import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
-import org.mobicents.protocols.ss7.sccp.parameter.SequencingSegmenting;
+import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
+import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 
-/**
- *
- * This interface represents a SCCP data form 2 message for connection-oriented protocol class 3.
- *
- */
-public interface SccpConnDt2Message extends SccpConnMessage {
-    LocalReference getDestinationLocalReferenceNumber();
-    void setDestinationLocalReferenceNumber(LocalReference number);
+import java.io.Serializable;
 
-    SequencingSegmenting getSequencingSegmenting();
-    void setSequencingSegmenting(SequencingSegmenting value);
+public interface SccpConnListener extends Serializable {
 
-    byte[] getUserData();
-    void setUserData(byte[] data);
+
 }

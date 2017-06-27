@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
+import org.mobicents.protocols.ss7.sccp.SccpConnection;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SignallingPointStatus;
@@ -36,13 +37,16 @@ import org.mobicents.protocols.ss7.sccp.message.SccpAddressedMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.Credit;
+import org.mobicents.protocols.ss7.sccp.parameter.Importance;
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * @author baranowb
  * @author abhayani
  */
-public class User implements SccpListener {
+public class User extends BaseSccpListener implements SccpListener {
     protected SccpProvider provider;
     protected SccpAddress address;
     protected SccpAddress dest;
@@ -193,6 +197,11 @@ public class User implements SccpListener {
     public void onNetworkIdState(int networkId, NetworkIdState networkIdState) {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public void onConnectIndication(SccpConnection conn, SccpAddress calledAddress, SccpAddress callingAddress, ProtocolClass clazz, Credit credit, byte[] data, Importance importance) throws Exception {
+        conn.confirm(null);
     }
 
 }
