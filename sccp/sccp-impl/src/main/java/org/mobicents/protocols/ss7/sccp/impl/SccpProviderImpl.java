@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.sccp.impl;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javolution.util.FastList;
 import javolution.util.FastMap;
@@ -32,16 +33,25 @@ import javolution.util.FastMap;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
+import org.mobicents.protocols.ss7.sccp.MaxConnectionCountReached;
 import org.mobicents.protocols.ss7.sccp.NetworkIdState;
+import org.mobicents.protocols.ss7.sccp.SccpConnListener;
+import org.mobicents.protocols.ss7.sccp.SccpConnection;
+import org.mobicents.protocols.ss7.sccp.SccpConnectionState;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpManagementEventListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
+import org.mobicents.protocols.ss7.sccp.message.SccpConnCrMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.ss7.congestion.ExecutorCongestionMonitor;
 
@@ -140,6 +150,23 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
 
     protected FastMap<Integer, SccpListener> getAllSccpListeners() {
         return ssnToListener;
+    }
+
+    @Override
+    public SccpConnection newConnection(int localSsn, ProtocolClass protocol) throws MaxConnectionCountReached {
+        return stack.newConnection(localSsn, protocol);
+    }
+
+    @Override
+    public FastMap<LocalReference, SccpConnection> getConnections() {
+        FastMap<LocalReference, SccpConnection> connections = new FastMap<>();
+
+        if (stack.connections != null) {
+            for (Map.Entry<Integer, SccpConnectionImpl> entry: stack.connections.entrySet()) {
+                connections.put(new LocalReferenceImpl(entry.getKey()), entry.getValue());
+            }
+        }
+        return connections;
     }
 
     public void send(SccpDataMessage message) throws IOException {
