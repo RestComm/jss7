@@ -34,7 +34,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * This interface represents a SCCP connection request message for connection-oriented protocol classes 2 and 3.
  *
  */
-public interface SccpConnCrMessage extends SccpMessage {
+public interface SccpConnCrMessage extends SccpConnMessage, SccpAddressedMessage {
 
     LocalReference getSourceLocalReferenceNumber();
     void setSourceLocalReferenceNumber(LocalReference number);
@@ -56,7 +56,10 @@ public interface SccpConnCrMessage extends SccpMessage {
 
     HopCounter getHopCounter();
     void setHopCounter(HopCounter counter);
+    boolean reduceHopCounter();
 
     Importance getImportance();
     void setImportance(Importance importance);
+
+    boolean getSccpCreatesSls();
 }
