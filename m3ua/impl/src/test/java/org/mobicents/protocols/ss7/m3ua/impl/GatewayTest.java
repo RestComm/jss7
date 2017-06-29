@@ -138,7 +138,7 @@ public class GatewayTest {
         System.out.println("Starting Client");
         client.start();
 
-        Thread.sleep(10000);
+        Thread.sleep(12000);
 
         // Both AS and ASP should be ACTIVE now
         assertEquals(AspState.getState(remAsp.getPeerFSM().getState().getName()), AspState.ACTIVE);
