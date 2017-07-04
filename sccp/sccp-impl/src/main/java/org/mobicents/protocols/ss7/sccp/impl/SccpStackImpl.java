@@ -25,7 +25,6 @@ package org.mobicents.protocols.ss7.sccp.impl;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import javolution.text.TextBuilder;
 import javolution.util.FastMap;
-import javolution.util.FastSet;
 import javolution.xml.XMLBinding;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
@@ -64,6 +63,8 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCcMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlcMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlsdMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRscMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRsrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpSegmentableMessageImpl;
@@ -201,6 +202,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     // The count of threads that will be used for message delivering to
     // SccpListener's for SCCP user -> SCCP -> SCCP user transit (without MTP part)
     protected int deliveryTransferMessageThreadCount = 4;
+    protected int timerExecutorsThreadCount = 10;
 
     private boolean previewMode = false;
 
@@ -219,7 +221,6 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     protected SccpCongestionControl sccpCongestionControl;
 
     protected FastMap<Integer, SccpConnectionImpl> connections = new FastMap<Integer, SccpConnectionImpl>();
-    protected FastSet<Integer> referenceNumbersUsed = new FastSet<Integer>();
 
     protected int referenceNumberCounterMax = 0xffffff;
 
@@ -365,6 +366,18 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
         if (deliveryMessageThreadCount > 0 && deliveryMessageThreadCount <= 100)
             this.deliveryTransferMessageThreadCount = deliveryMessageThreadCount;
+    }
+
+    public int getTimerExecutorsThreadCount() {
+        return timerExecutorsThreadCount;
+    }
+
+    public void setTimerExecutorsThreadCount(int timerExecutorsThreadCount) throws Exception {
+        if (this.isStarted())
+            throw new Exception("ConnectionTimersThreadCount parameter can be updated only when SCCP stack is NOT running");
+
+        if (timerExecutorsThreadCount > 0 && timerExecutorsThreadCount <= 100)
+            this.timerExecutorsThreadCount = timerExecutorsThreadCount;
     }
 
     public void setSstTimerDuration_Min(int sstTimerDuration_Min) throws Exception {
@@ -788,7 +801,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         this.sccpManagement.start();
         logger.info("Starting MSU handler...");
 
-        this.timerExecutors = Executors.newScheduledThreadPool(1);
+        this.timerExecutors = Executors.newScheduledThreadPool(timerExecutorsThreadCount);
 
         // initiating of SCCP delivery executors
         // TODO: we do it for ITU standard, may be we may configure it for other standard's (different SLS count) maxSls and
@@ -894,7 +907,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         return connections.get(number.getValue());
     }
 
-    public int getConnectionNumber() {
+    public int getConnectionsNumber() {
         return connections.size();
     }
 
@@ -909,7 +922,6 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         synchronized (this) {
             refNumber = newReferenceNumber();
             connections.put(refNumber, conn);
-            referenceNumbersUsed.add(refNumber);
         }
         conn.setLocalReference(new LocalReferenceImpl(refNumber));
         return conn;
@@ -918,6 +930,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     protected void removeConnection(LocalReference ref) {
         synchronized (this) {
             SccpConnectionImpl conn = connections.get(ref.getValue());
+            conn.stopTimers();
             conn.setState(SccpConnectionState.CLOSED);
             connections.remove(ref.getValue());
         }
@@ -930,11 +943,11 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             }
 
             // 0 and reference numbers values which are > 0
-            if (referenceNumbersUsed.size() == referenceNumberCounterMax + 1) {
+            if (connections.size() == referenceNumberCounterMax + 1) {
                 throw new MaxConnectionCountReached(String.format("Can't open more connections than %d", referenceNumberCounterMax + 1));
             }
 
-            while (referenceNumbersUsed.contains(referenceNumberCounter)) {
+            while (connections.keySet().contains(referenceNumberCounter)) {
                 referenceNumberCounter++;
             }
             return referenceNumberCounter;
@@ -1363,6 +1376,16 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
                 SccpConnMessage connMsg = (SccpConnMessage)msg;
                 sccpRoutingControl.routeMssgFromMtp(connMsg);
 
+            } else if (msg instanceof SccpConnRsrMessageImpl) {
+                SccpConnRsrMessageImpl msgRsr = (SccpConnRsrMessageImpl)msg;
+
+                sccpRoutingControl.routeMssgFromMtp(msgRsr);
+
+            } else if (msg instanceof SccpConnRscMessageImpl) {
+                SccpConnRscMessageImpl msgRsc = (SccpConnRscMessageImpl)msg;
+
+                sccpRoutingControl.routeMssgFromMtp(msgRsc);
+
             } else if (msg instanceof SccpConnMessage) {
                 SccpConnMessage connMsg = (SccpConnMessage)msg;
                 LocalReference ref = getDln(connMsg);
@@ -1514,9 +1537,35 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             Integer vali = reader.read(Z_MARGIN_UDT_MSG, Integer.class);
             if (vali != null)
                 this.zMarginXudtMessage = vali;
+
+            vali = reader.read(CONN_EST_TIMER_DELAY, Integer.class);
+            if (vali != null)
+                this.connEstTimerDelay = vali;
+            vali = reader.read(IAS_TIMER_DELAY, Integer.class);
+            if (vali != null)
+                this.iasTimerDelay = vali;
+            vali = reader.read(IAR_TIMER_DELAY, Integer.class);
+            if (vali != null)
+                this.iarTimerDelay = vali;
+            vali = reader.read(REL_TIMER_DELAY, Integer.class);
+            if (vali != null)
+                this.relTimerDelay = vali;
+            vali = reader.read(REPEAT_REL_TIMER_DELAY, Integer.class);
+            if (vali != null)
+                this.repeatRelTimerDelay = vali;
+            vali = reader.read(INT_TIMER_DELAY, Integer.class);
+            if (vali != null)
+                this.intTimerDelay = vali;
+            vali = reader.read(GUARD_TIMER_DELAY, Integer.class);
+            if (vali != null)
+                this.guardTimerDelay = vali;
+            vali = reader.read(RESET_TIMER_DELAY, Integer.class);
+            if (vali != null)
+                this.resetTimerDelay = vali;
             vali = reader.read(REASSEMBLY_TIMER_DELAY, Integer.class);
             if (vali != null)
                 this.reassemblyTimerDelay = vali;
+
             vali = reader.read(MAX_DATA_MSG, Integer.class);
             if (vali != null)
                 this.maxDataMessage = vali;

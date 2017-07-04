@@ -1,15 +1,15 @@
 package org.mobicents.protocols.ss7.sccp.impl;
 
-import io.netty.util.concurrent.DefaultThreadFactory;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.SccpConnectionState;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCcMessageImpl;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrefMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlcMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlsdMessageImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.RefusalCauseImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRscMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRsrMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.ReleaseCauseImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnCrMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.Credit;
@@ -17,15 +17,22 @@ import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.RefusalCause;
 import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCause;
+import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.ResetCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 import java.io.IOException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+
+import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.CLOSED;
+import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.CR_RECEIVED;
+import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.CR_SENT;
+import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.ESTABLISHED;
+import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.NEW;
+import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.RSR_RECEIVED;
+import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.RSR_SENT;
 
 public class BaseSccpConnectionImpl {
     protected final Logger logger;
@@ -40,6 +47,7 @@ public class BaseSccpConnectionImpl {
     private LocalReference localReference;
     private LocalReference remoteReference;
 
+    private ConnEstProcess connEstProcess;
     private IasProcess iasProcess;
     private IarProcess iarProcess;
     private RelProcess relProcess;
@@ -49,7 +57,6 @@ public class BaseSccpConnectionImpl {
     private ResetProcess resetProcess;
     private ReassemblyProcess reassemblyProcess;
 
-    private ScheduledExecutorService executor;
     private ReentrantLock connectionLock = new ReentrantLock();
     private int remoteDpc;
     private SccpListener listener;
@@ -60,12 +67,11 @@ public class BaseSccpConnectionImpl {
         this.sls = sls;
         this.localSsn = localSsn;
         this.protocolClass = protocol;
-        this.executor = Executors.newScheduledThreadPool(9, new DefaultThreadFactory(String.format("%s-Connection-%d-Thread",
-                stack.getName(), localSsn)));
-        this.state = SccpConnectionState.NEW;
+        this.state = NEW;
         this.logger = Logger.getLogger(BaseSccpConnectionImpl.class.getCanonicalName() + "-" + stack.name);
         this.listener = stack.sccpProvider.getSccpListener(localSsn);
 
+        connEstProcess = new ConnEstProcess();
         iasProcess = new IasProcess();
         iarProcess = new IarProcess();
         relProcess = new RelProcess();
@@ -117,7 +123,17 @@ public class BaseSccpConnectionImpl {
     }
 
     public void reset(ResetCause reason) throws Exception {
+        if (state != SccpConnectionState.ESTABLISHED) {
+            throw new IllegalStateException();
+        }
 
+        SccpConnRsrMessageImpl rsr = new SccpConnRsrMessageImpl(sls, localSsn);
+        rsr.setSourceLocalReferenceNumber(localReference);
+        rsr.setDestinationLocalReferenceNumber(remoteReference);
+        rsr.setResetCause(reason);
+        state = SccpConnectionState.RSR_SENT;
+        sendMessage(rsr);
+        resetProcess.startTimer();
     }
 
     public void disconnect(ReleaseCause reason, byte[] data) throws Exception {
@@ -129,9 +145,9 @@ public class BaseSccpConnectionImpl {
         rlsd.setDestinationLocalReferenceNumber(remoteReference);
         rlsd.setReleaseCause(reason);
         rlsd.setSourceLocalReferenceNumber(localReference);
-        state = SccpConnectionState.CLOSED;
-        send(rlsd);
-        stack.removeConnection(localReference);
+        rlsd.setUserData(data);
+        sendMessage(rlsd);
+        relProcess.startTimer();
     }
 
     public void disconnect(RefusalCause reason, byte[] data) throws Exception {
@@ -139,23 +155,27 @@ public class BaseSccpConnectionImpl {
         SccpConnCrefMessageImpl cref = new SccpConnCrefMessageImpl(sls, localSsn);
         cref.setDestinationLocalReferenceNumber(remoteReference);
         cref.setRefusalCause(reason);
+        cref.setUserData(data);
 //        ans.setOutgoingDpc();
-        send(cref);
+        sendMessage(cref);
     }
 
     public void confirm(SccpAddress respondingAddress) throws Exception {
+        if (state != SccpConnectionState.CR_RECEIVED) {
+            throw new IllegalStateException();
+        }
         SccpConnCcMessageImpl message = new SccpConnCcMessageImpl(sls, localSsn);
         message.setSourceLocalReferenceNumber(localReference);
         message.setDestinationLocalReferenceNumber(remoteReference);
         message.setProtocolClass(protocolClass);
         message.setCalledPartyAddress(respondingAddress);
 
-        send(message);
+        sendMessage(message);
 
         this.state = SccpConnectionState.ESTABLISHED;
     }
 
-    private void send(SccpConnMessage message) throws Exception {
+    private void sendMessage(SccpConnMessage message) throws Exception {
         if (stack.state != SccpStackImpl.State.RUNNING) {
             logger.error("Trying to send SCCP message from SCCP user but SCCP stack is not RUNNING");
             return;
@@ -171,33 +191,31 @@ public class BaseSccpConnectionImpl {
     }
 
     public void setState(SccpConnectionState state) {
+        if (!(this.state == NEW && state == CR_SENT
+                || this.state == NEW && state == CR_RECEIVED
+                || this.state == CR_RECEIVED && state == ESTABLISHED
+                || this.state == CR_SENT && state == ESTABLISHED
+                || this.state == ESTABLISHED && state == CLOSED
+                || this.state == ESTABLISHED && state == RSR_SENT
+                || this.state == ESTABLISHED && state == RSR_RECEIVED
+                || this.state == RSR_SENT && state == ESTABLISHED
+                || this.state == RSR_RECEIVED && state == ESTABLISHED
+        )) {
+            throw new IllegalStateException();
+        }
         this.state = state;
-    }
-
-    private void fail(RuntimeException t) throws RuntimeException {
-        throw t;
     }
 
     public void establish(SccpConnCrMessage message) throws IOException {
         try {
             message.setSourceLocalReferenceNumber(localReference);
 
-            if (stack.state != SccpStackImpl.State.RUNNING) {
-                logger.error("Trying to send SCCP message from SCCP user but SCCP stack is not RUNNING");
-                return;
-            }
-
             if (message.getCalledPartyAddress() == null) {
                 throw new IOException("Message to send must have filled CalledPartyAddress field");
             }
 
-            try {
-                this.sccpRoutingControl.routeMssgFromSccpUser(message);
-            } catch (Exception e) {
-                // log here Exceptions from MTP3 level
-                logger.error("IOException when sending the message to MTP3 level: " + e.getMessage(), e);
-                throw e;
-            }
+            sendMessage(message);
+            connEstProcess.startTimer();
 
             setState(SccpConnectionState.CR_SENT);
 
@@ -222,6 +240,45 @@ public class BaseSccpConnectionImpl {
         this.listener = listener;
     }
 
+    protected void stopTimers() {
+        connEstProcess.stopTimer();
+        iasProcess.stopTimer();
+        iarProcess.stopTimer();
+        relProcess.stopTimer();
+        repeatRelProcess.stopTimer();
+        intProcess.stopTimer();
+        guardProcess.stopTimer();
+        resetProcess.stopTimer();
+        reassemblyProcess.stopTimer();
+    }
+
+
+    protected void handleCCMessage(SccpConnCcMessageImpl message) {
+        remoteReference = message.getSourceLocalReferenceNumber();
+        connEstProcess.stopTimer();
+        setState(SccpConnectionState.ESTABLISHED);
+    }
+
+    protected void handleRSCMessage(SccpConnRscMessageImpl msg) {
+        resetProcess.stopTimer();
+        setState(SccpConnectionState.ESTABLISHED);
+    }
+
+    protected void handleRLCMessage(SccpConnRlcMessageImpl msg) {
+        stack.removeConnection(localReference);
+    }
+
+    protected void handleRSRMessage(SccpConnRsrMessageImpl msg) throws Exception {
+        setState(SccpConnectionState.RSR_RECEIVED);
+
+        SccpConnRscMessageImpl rsc = new SccpConnRscMessageImpl(sls, localSsn);
+        rsc.setDestinationLocalReferenceNumber(remoteReference);
+        rsc.setSourceLocalReferenceNumber(localReference);
+        sendMessage(rsc);
+
+        setState(SccpConnectionState.ESTABLISHED);
+    }
+
     /*
      * Timer for waiting for connection confirm message
      */
@@ -235,8 +292,10 @@ public class BaseSccpConnectionImpl {
             try {
                 connectionLock.lock();
 
-                // do smt...
+                disconnect(new ReleaseCauseImpl(ReleaseCauseValue.SCCP_FAILURE), new byte[] {});
 
+            } catch (Exception e) {
+                logger.error(e);
             } finally {
                 connectionLock.unlock();
             }
@@ -277,7 +336,8 @@ public class BaseSccpConnectionImpl {
             try {
                 connectionLock.lock();
 
-                // do smt...
+                repeatRelProcess.stopTimer();
+                stack.removeConnection(localReference);
 
             } finally {
                 connectionLock.unlock();
@@ -298,8 +358,12 @@ public class BaseSccpConnectionImpl {
             try {
                 connectionLock.lock();
 
-                // do smt...
+                disconnect(new ReleaseCauseImpl(ReleaseCauseValue.SCCP_FAILURE), new byte[] {});
+                intProcess.startTimer();
+                repeatRelProcess.startTimer();
 
+            } catch (Exception e) {
+                logger.error(e);
             } finally {
                 connectionLock.unlock();
             }
@@ -319,8 +383,11 @@ public class BaseSccpConnectionImpl {
             try {
                 connectionLock.lock();
 
-                // do smt...
+                disconnect(new ReleaseCauseImpl(ReleaseCauseValue.SCCP_FAILURE), new byte[] {});
+                repeatRelProcess.startTimer();
 
+            } catch (Exception e) {
+                logger.error(e);
             } finally {
                 connectionLock.unlock();
             }
@@ -383,8 +450,11 @@ public class BaseSccpConnectionImpl {
             try {
                 connectionLock.lock();
 
-                // do smt...
+                disconnect(new ReleaseCauseImpl(ReleaseCauseValue.SCCP_FAILURE), new byte[] {});
+                stack.removeConnection(localReference);
 
+            } catch (Exception e) {
+                logger.error(e);
             } finally {
                 connectionLock.unlock();
             }
@@ -422,9 +492,9 @@ public class BaseSccpConnectionImpl {
             try {
                 connectionLock.lock();
                 if (this.future != null) {
-                    fail(new IllegalStateException());
+                    logger.error(new IllegalStateException());
                 }
-                this.future = executor.schedule(this, delay, TimeUnit.MILLISECONDS);
+                this.future = stack.timerExecutors.schedule(this, delay, TimeUnit.MILLISECONDS);
 
             } finally {
                 connectionLock.unlock();
