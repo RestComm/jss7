@@ -49,6 +49,8 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrefMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlcMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlsdMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRscMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRsrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpNoticeMessageImpl;
@@ -202,6 +204,9 @@ public class SccpRoutingControl {
     protected void routeMssgFromMtp(SccpConnMessage msg) throws Exception {
         LocalReference ref = getDln(msg);
         SccpConnectionImpl conn = sccpStackImpl.getConnection(ref);
+        if (conn == null) {
+            return;
+        }
 
         int ssn = conn.getLocalSsn();
 
@@ -224,8 +229,7 @@ public class SccpRoutingControl {
                 if (logger.isDebugEnabled()) {
                     logger.debug(String.format("Local deliver : SCCP CC Message=%s", msg.toString()));
                 }
-//                        listener.onMessage((SccpDataMessage) msg);
-                conn.setState(SccpConnectionState.ESTABLISHED);
+                conn.handleCCMessage((SccpConnCcMessageImpl)msg);
                 listener.onConnectConfirm(conn);
 
             } else if (msg instanceof SccpConnRlsdMessageImpl) {
@@ -236,24 +240,44 @@ public class SccpRoutingControl {
 
                 listener.onDisconnectIndication(conn, rlsd.getReleaseCause(), rlsd.getUserData());
 
+                SccpConnRlcMessageImpl rlc = new SccpConnRlcMessageImpl(conn.getSls(), conn.getLocalSsn());
+                rlc.setSourceLocalReferenceNumber(conn.getLocalReference());
+                rlc.setDestinationLocalReferenceNumber(conn.getRemoteReference());
+                rlc.setOutgoingDpc(conn.getRemoteDpc());
+                send((SccpConnMessage) rlc);
+
                 sccpStackImpl.removeConnection(ref);
 
             } if (msg instanceof SccpConnRlcMessageImpl) {
                 if (logger.isDebugEnabled()) {
-                    logger.debug(String.format("Local deliver : SCCP RLSD Message=%s", msg.toString()));
+                    logger.debug(String.format("Local deliver : SCCP RLC Message=%s", msg.toString()));
                 }
-                SccpConnRlcMessageImpl rlc = (SccpConnRlcMessageImpl)msg;
+                conn.handleRLCMessage((SccpConnRlcMessageImpl)msg);
 
                 listener.onDisconnectConfirm(conn);
 
             } if (msg instanceof SccpConnCrefMessageImpl) {
                 if (logger.isDebugEnabled()) {
-                    logger.debug(String.format("Local deliver : SCCP RLSD Message=%s", msg.toString()));
+                    logger.debug(String.format("Local deliver : SCCP CREF Message=%s", msg.toString()));
                 }
                 SccpConnCrefMessageImpl cref = (SccpConnCrefMessageImpl)msg;
 
                 listener.onDisconnectIndication(conn, cref.getRefusalCause(), cref.getUserData());
 
+            } if (msg instanceof SccpConnRsrMessageImpl) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug(String.format("Local deliver : SCCP RSR Message=%s", msg.toString()));
+                }
+                SccpConnRsrMessageImpl rsr = (SccpConnRsrMessageImpl) msg;
+                conn.handleRSRMessage(rsr);
+                listener.onResetIndication(conn, rsr.getResetCause());
+
+            } if (msg instanceof SccpConnRscMessageImpl) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug(String.format("Local deliver : SCCP RSC Message=%s", msg.toString()));
+                }
+                conn.handleRSCMessage((SccpConnRscMessageImpl) msg);
+                listener.onResetConfirm(conn);
             }
 
         } catch (Exception e) {
@@ -297,6 +321,7 @@ public class SccpRoutingControl {
                     SccpConnectionImpl conn = sccpStackImpl.newConnection(msg.getCalledPartyAddress().getSubsystemNumber(), msg.getProtocolClass());
                     conn.setRemoteReference(msg.getSourceLocalReferenceNumber());
                     conn.setRemoteDpc(msg.getIncomingOpc());
+                    conn.setState(SccpConnectionState.CR_RECEIVED);
 
                     conn.getListener().onConnectIndication(conn, msg.getCalledPartyAddress(), msg.getCallingPartyAddress(),
                             msg.getProtocolClass(), msg.getCredit(), msg.getUserData(), msg.getImportance());
@@ -1628,9 +1653,7 @@ public class SccpRoutingControl {
                     // Notify Listener
                     try {
                         if (msg instanceof SccpConnCcMessageImpl) {
-                            SccpConnCcMessageImpl cc = (SccpConnCcMessageImpl)msg;
-                            conn.setRemoteReference(cc.getSourceLocalReferenceNumber());
-                            conn.setState(SccpConnectionState.ESTABLISHED);
+                            conn.handleCCMessage((SccpConnCcMessageImpl)msg);
                             listener.onConnectConfirm(conn);
 
                         } else if (msg instanceof SccpConnRlsdMessageImpl) {
@@ -1645,8 +1668,24 @@ public class SccpRoutingControl {
                             send((SccpConnMessage) rlc);
 
                         } else if (msg instanceof SccpConnRlcMessageImpl) {
-                            SccpConnMessage connMsg = (SccpConnMessage)msg;
+                            conn.handleRLCMessage((SccpConnRlcMessageImpl)msg);
                             listener.onDisconnectConfirm(conn);
+
+                        } else if (msg instanceof SccpConnRsrMessageImpl) {
+                            if (logger.isDebugEnabled()) {
+                                logger.debug(String.format("Local deliver : SCCP RSR Message=%s", msg.toString()));
+                            }
+
+                            SccpConnRsrMessageImpl rsr = (SccpConnRsrMessageImpl) msg;
+                            conn.handleRSRMessage(rsr);
+                            listener.onResetIndication(conn, rsr.getResetCause());
+
+                        } if (msg instanceof SccpConnRscMessageImpl) {
+                            if (logger.isDebugEnabled()) {
+                                logger.debug(String.format("Local deliver : SCCP RSC Message=%s", msg.toString()));
+                            }
+                            conn.handleRSCMessage((SccpConnRscMessageImpl)msg);
+                            listener.onResetConfirm(conn);
                         }
 
                     } catch (Exception e) {

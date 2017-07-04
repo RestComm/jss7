@@ -40,6 +40,7 @@ import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.Credit;
 import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.parameter.ResetCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -53,6 +54,7 @@ public class User extends BaseSccpListener implements SccpListener {
     protected int ssn;
     // protected SccpMessage msg;
     protected List<SccpMessage> messages = new ArrayList<SccpMessage>();
+    protected int resetCount;
 
     public User(SccpProvider provider, SccpAddress address, SccpAddress dest, int ssn) {
         this.provider = provider;
@@ -204,4 +206,17 @@ public class User extends BaseSccpListener implements SccpListener {
         conn.confirm(null);
     }
 
+    @Override
+    public void onResetIndication(SccpConnection conn, ResetCause reason) {
+        resetCount++;
+    }
+
+    @Override
+    public void onResetConfirm(SccpConnection conn) {
+        resetCount++;
+    }
+
+    public int getResetCount() {
+        return resetCount;
+    }
 }
