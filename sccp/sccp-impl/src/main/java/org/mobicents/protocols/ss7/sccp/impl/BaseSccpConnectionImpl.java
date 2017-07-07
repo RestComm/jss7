@@ -191,19 +191,21 @@ public class BaseSccpConnectionImpl {
     }
 
     public void setState(SccpConnectionState state) {
-        if (!(this.state == NEW && state == CR_SENT
-                || this.state == NEW && state == CR_RECEIVED
-                || this.state == CR_RECEIVED && state == ESTABLISHED
-                || this.state == CR_SENT && state == ESTABLISHED
-                || this.state == ESTABLISHED && state == CLOSED
-                || this.state == ESTABLISHED && state == RSR_SENT
-                || this.state == ESTABLISHED && state == RSR_RECEIVED
-                || this.state == RSR_SENT && state == ESTABLISHED
-                || this.state == RSR_RECEIVED && state == ESTABLISHED
-        )) {
-            throw new IllegalStateException();
+        synchronized (this) {
+            if (!(this.state == NEW && state == CR_SENT
+                    || this.state == NEW && state == CR_RECEIVED
+                    || this.state == CR_RECEIVED && state == ESTABLISHED
+                    || this.state == CR_SENT && state == ESTABLISHED
+                    || this.state == ESTABLISHED && state == CLOSED
+                    || this.state == ESTABLISHED && state == RSR_SENT
+                    || this.state == ESTABLISHED && state == RSR_RECEIVED
+                    || this.state == RSR_SENT && state == ESTABLISHED
+                    || this.state == RSR_RECEIVED && state == ESTABLISHED
+            )) {
+                throw new IllegalStateException();
+            }
+            this.state = state;
         }
-        this.state = state;
     }
 
     public void establish(SccpConnCrMessage message) throws IOException {
