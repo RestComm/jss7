@@ -1,6 +1,7 @@
 # RestComm Java SS7 Stack and Services
 
 [![Join the chat at https://gitter.im/RestComm/jss7](https://badges.gitter.im/RestComm/jss7.svg)](https://gitter.im/RestComm/jss7?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2FRestComm%2Fjss7.svg?type=shield)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2FRestComm%2Fjss7?ref=badge_shield)
 
 ## Introduction
 
@@ -19,6 +20,9 @@ jSS7 is lead by [TeleStax, Inc.](http://www.telestax.com/) and developed collabo
 ## License
 
 RestComm jSS7 is licensed under dual license policy. The default license is the Free Open Source [GNU Affero GPL v3.0](http://www.gnu.org/licenses/agpl-3.0.html). Alternatively a commercial license can be obtained from Telestax ([contact form](http://www.telestax.com/contactus/#InquiryForm))
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2FRestComm%2Fjss7.svg?type=large)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2FRestComm%2Fjss7?ref=badge_large)
 
 ## Downloads
 
