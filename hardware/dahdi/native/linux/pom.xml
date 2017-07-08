@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.hardware</groupId>
 		<artifactId>restcomm-dahdi-native</artifactId>
-		<version>8.0.0-SNAPSHOT</version>
+		<version>8.0.107</version>
 	</parent>
 
 	<artifactId>librestcomm-dahdi-linux</artifactId>
