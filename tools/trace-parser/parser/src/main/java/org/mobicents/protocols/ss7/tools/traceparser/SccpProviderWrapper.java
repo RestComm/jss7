@@ -26,7 +26,9 @@ import java.io.IOException;
 
 import javolution.util.FastMap;
 
+import org.mobicents.protocols.ss7.sccp.MaxConnectionCountReached;
 import org.mobicents.protocols.ss7.sccp.NetworkIdState;
+import org.mobicents.protocols.ss7.sccp.SccpConnection;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpManagementEventListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
@@ -36,7 +38,9 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.ss7.congestion.ExecutorCongestionMonitor;
 
@@ -114,6 +118,18 @@ public class SccpProviderWrapper implements SccpProvider {
 
     @Override
     public ExecutorCongestionMonitor[] getExecutorCongestionMonitorList() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public SccpConnection newConnection(int localSsn, ProtocolClass protocolClass) throws MaxConnectionCountReached {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public FastMap<LocalReference, SccpConnection> getConnections() {
         // TODO Auto-generated method stub
         return null;
     }
