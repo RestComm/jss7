@@ -48,11 +48,6 @@ import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
 
-/**
- *
- * @author sergey vetyutnev
- *
- */
 public class ConnectionTest extends SccpHarness {
 
     private SccpAddress a1, a2;

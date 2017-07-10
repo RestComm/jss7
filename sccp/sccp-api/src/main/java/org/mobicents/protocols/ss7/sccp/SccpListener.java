@@ -30,7 +30,6 @@ import org.mobicents.protocols.ss7.sccp.parameter.Credit;
 import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.RefusalCause;
-import org.mobicents.protocols.ss7.sccp.parameter.RefusalCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCause;
 import org.mobicents.protocols.ss7.sccp.parameter.ResetCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;

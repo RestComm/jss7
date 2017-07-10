@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.SccpConnectionState;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCcMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrefMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlcMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlsdMessageImpl;
@@ -182,7 +183,7 @@ public class BaseSccpConnectionImpl {
         }
 
         try {
-            this.sccpRoutingControl.routeMssgFromSccpUser(message);
+            this.sccpRoutingControl.routeMssgFromSccpUserConn(message);
         } catch (Exception e) {
             // log here Exceptions from MTP3 level
             logger.error("IOException when sending the message to MTP3 level: " + e.getMessage(), e);
@@ -254,6 +255,11 @@ public class BaseSccpConnectionImpl {
         reassemblyProcess.stopTimer();
     }
 
+    protected void handleCRMessage(SccpConnCrMessageImpl message) {
+        remoteReference = message.getSourceLocalReferenceNumber();
+        remoteDpc = message.getIncomingOpc();
+        setState(SccpConnectionState.CR_RECEIVED);
+    }
 
     protected void handleCCMessage(SccpConnCcMessageImpl message) {
         remoteReference = message.getSourceLocalReferenceNumber();
@@ -281,20 +287,17 @@ public class BaseSccpConnectionImpl {
         setState(SccpConnectionState.ESTABLISHED);
     }
 
-    /*
-     * Timer for waiting for connection confirm message
-     */
     private class ConnEstProcess extends BaseProcess implements Runnable {
         {
             delay = stack.getConnEstTimerDelay();
         }
 
         @Override
-        public void run()   {
+        public void run() {
             try {
                 connectionLock.lock();
 
-                disconnect(new ReleaseCauseImpl(ReleaseCauseValue.SCCP_FAILURE), new byte[] {});
+                disconnect(new ReleaseCauseImpl(ReleaseCauseValue.SCCP_FAILURE), new byte[]{});
 
             } catch (Exception e) {
                 logger.error(e);
@@ -304,16 +307,13 @@ public class BaseSccpConnectionImpl {
         }
     }
 
-    /*
-     * Timer for delay to send a message on a conn IT on a connection section when there are no messages to send
-     */
     private class IasProcess extends BaseProcess implements Runnable {
         {
             delay = stack.getIasTimerDelay();
         }
 
         @Override
-        public void run()  {
+        public void run() {
             try {
                 connectionLock.lock();
 
@@ -325,16 +325,13 @@ public class BaseSccpConnectionImpl {
         }
     }
 
-    /*
-     * Waiting to receive a message on a connection section
-     */
     private class IarProcess extends BaseProcess implements Runnable {
         {
             delay = stack.getIarTimerDelay();
         }
 
         @Override
-        public void run()  {
+        public void run() {
             try {
                 connectionLock.lock();
 
@@ -347,20 +344,17 @@ public class BaseSccpConnectionImpl {
         }
     }
 
-    /*
-     * Waiting for release complete message
-     */
     private class RelProcess extends BaseProcess implements Runnable {
         {
             delay = stack.getRelTimerDelay();
         }
 
         @Override
-        public void run()  {
+        public void run() {
             try {
                 connectionLock.lock();
 
-                disconnect(new ReleaseCauseImpl(ReleaseCauseValue.SCCP_FAILURE), new byte[] {});
+                disconnect(new ReleaseCauseImpl(ReleaseCauseValue.SCCP_FAILURE), new byte[]{});
                 intProcess.startTimer();
                 repeatRelProcess.startTimer();
 
@@ -372,20 +366,17 @@ public class BaseSccpConnectionImpl {
         }
     }
 
-    /*
-     * Waiting for release complete message; or to repeat sending released message after the initial T(rel) expiry
-     */
     private class RepeatRelProcess extends BaseProcess implements Runnable {
         {
             delay = stack.getRepeatRelTimerDelay();
         }
 
         @Override
-        public void run()  {
+        public void run() {
             try {
                 connectionLock.lock();
 
-                disconnect(new ReleaseCauseImpl(ReleaseCauseValue.SCCP_FAILURE), new byte[] {});
+                disconnect(new ReleaseCauseImpl(ReleaseCauseValue.SCCP_FAILURE), new byte[]{});
                 repeatRelProcess.startTimer();
 
             } catch (Exception e) {
@@ -396,17 +387,13 @@ public class BaseSccpConnectionImpl {
         }
     }
 
-    /*
-     * Waiting for release complete message; or to release connection resources, freeze the LRN and alert a maintenance
-     * function after the initial T(rel) expiry
-     */
     private class IntProcess extends BaseProcess implements Runnable {
         {
             delay = stack.getIntTimerDelay();
         }
 
         @Override
-        public void run()  {
+        public void run() {
             try {
                 connectionLock.lock();
 
@@ -418,16 +405,13 @@ public class BaseSccpConnectionImpl {
         }
     }
 
-    /*
-     * Waiting to resume normal procedure for temporary connection sections during the restart procedure (see 3.8)
-     */
     private class GuardProcess extends BaseProcess implements Runnable {
         {
             delay = stack.getGuardTimerDelay();
         }
 
         @Override
-        public void run()  {
+        public void run() {
             try {
                 connectionLock.lock();
 
@@ -439,20 +423,17 @@ public class BaseSccpConnectionImpl {
         }
     }
 
-    /*
-     * Waiting to release temporary connection section or alert maintenance function after reset request message is sent
-     */
     private class ResetProcess extends BaseProcess implements Runnable {
         {
             delay = stack.getResetTimerDelay();
         }
 
         @Override
-        public void run()  {
+        public void run() {
             try {
                 connectionLock.lock();
 
-                disconnect(new ReleaseCauseImpl(ReleaseCauseValue.SCCP_FAILURE), new byte[] {});
+                disconnect(new ReleaseCauseImpl(ReleaseCauseValue.SCCP_FAILURE), new byte[]{});
                 stack.removeConnection(localReference);
 
             } catch (Exception e) {
@@ -463,17 +444,13 @@ public class BaseSccpConnectionImpl {
         }
     }
 
-    /*
-     * Waiting to receive all the segments of the remaining segments, single segmented message after receiving the first
-     * segment
-     */
     private class ReassemblyProcess extends BaseProcess implements Runnable {
         {
             delay = stack.getReassemblyTimerDelay();
         }
 
         @Override
-        public void run()  {
+        public void run() {
             try {
                 connectionLock.lock();
 
@@ -517,7 +494,7 @@ public class BaseSccpConnectionImpl {
         }
 
         @Override
-        public void run()  {
+        public void run() {
         }
     }
 }
