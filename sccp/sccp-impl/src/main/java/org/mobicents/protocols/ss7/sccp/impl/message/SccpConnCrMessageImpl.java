@@ -358,4 +358,21 @@ public class SccpConnCrMessageImpl extends SccpMessageImpl implements SccpConnCr
         addressImpl.decode(buffer, factory, sccpProtocolVersion);
         return addressImpl;
     }
+
+    public boolean reduceHopCounter() {
+        if (this.hopCounter != null) {
+            int val = this.hopCounter.getValue();
+            if (--val <= 0) {
+                val = 0;
+            }
+            ((HopCounterImpl)this.hopCounter).setValue(val);
+            if (val == 0)
+                return false;
+        }
+        return true;
+    }
+
+    public boolean getSccpCreatesSls() {
+        return false;
+    }
 }
