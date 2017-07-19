@@ -26,6 +26,14 @@ import java.io.Serializable;
 
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.Credit;
+import org.mobicents.protocols.ss7.sccp.parameter.Importance;
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.parameter.RefusalCause;
+import org.mobicents.protocols.ss7.sccp.parameter.RefusalCauseValue;
+import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCause;
+import org.mobicents.protocols.ss7.sccp.parameter.ResetCause;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  *
@@ -86,4 +94,24 @@ public interface SccpListener extends Serializable {
      */
     void onNetworkIdState(int networkId, NetworkIdState networkIdState);
 
+
+    // N-CONNECT
+    // can call conn.confirm() or conn.disconnect(...) with refuse reason and data
+    void onConnectIndication(SccpConnection conn, SccpAddress calledAddress, SccpAddress callingAddress,
+                             ProtocolClass clazz, Credit credit, // QoS, credit is set only for class 3
+                             byte[] data, Importance importance) throws Exception;
+    // N-CONNECT
+    void onConnectConfirm(SccpConnection conn);
+
+    // N-DISCONNECT
+    void onDisconnectIndication(SccpConnection conn, ReleaseCause reason, byte[] data);
+    void onDisconnectIndication(SccpConnection conn, RefusalCause reason, byte[] data);
+
+    void onResetIndication(SccpConnection conn, ResetCause reason);
+
+    void onResetConfirm(SccpConnection conn);
+
+    void onData(SccpConnection conn);
+
+    void onDisconnectConfirm(SccpConnection conn);
 }

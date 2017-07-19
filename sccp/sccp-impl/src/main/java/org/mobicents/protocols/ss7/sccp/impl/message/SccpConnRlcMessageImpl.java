@@ -40,7 +40,7 @@ public class SccpConnRlcMessageImpl extends SccpMessageImpl implements SccpConnR
     protected LocalReference destinationLocalReferenceNumber;
     protected LocalReference sourceLocalReferenceNumber;
 
-    protected SccpConnRlcMessageImpl(int sls, int localSsn) {
+    public SccpConnRlcMessageImpl(int sls, int localSsn) {
         super(0, MESSAGE_TYPE_RLC, sls, localSsn);
     }
 

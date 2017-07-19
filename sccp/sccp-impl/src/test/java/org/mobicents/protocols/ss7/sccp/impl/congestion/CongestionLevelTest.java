@@ -40,6 +40,7 @@ import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
 import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SignallingPointStatus;
+import org.mobicents.protocols.ss7.sccp.impl.BaseSccpListener;
 import org.mobicents.protocols.ss7.sccp.impl.RemoteSignalingPointCodeImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
@@ -349,7 +350,7 @@ public class CongestionLevelTest {
 
     }
 
-    private class SccpListenerProxy implements SccpListener {
+    private class SccpListenerProxy extends BaseSccpListener implements SccpListener {
 
         private ArrayList<NI_NIS> lst = new ArrayList<NI_NIS>();
 

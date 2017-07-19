@@ -52,7 +52,7 @@ public class SccpConnRlsdMessageImpl extends SccpMessageImpl implements SccpConn
     protected byte[] userData;
     protected Importance importance;
 
-    protected SccpConnRlsdMessageImpl(int sls, int localSsn) {
+    public SccpConnRlsdMessageImpl(int sls, int localSsn) {
         super(130, MESSAGE_TYPE_RLSD, sls, localSsn);
     }
 
