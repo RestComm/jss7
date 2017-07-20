@@ -21,8 +21,6 @@
  */
 package org.mobicents.protocols.ss7.sccp.impl.router;
 
-import org.mobicents.protocols.ss7.sccp.OriginationType;
-
 import java.util.Comparator;
 
 /**
@@ -71,39 +69,45 @@ public class RuleComparator implements Comparator<RuleImpl> {
      */
     public int compare(RuleImpl o1, RuleImpl o2) {
 
-        String digits1 = o1.getPattern().getGlobalTitle().getDigits();
-        String digits2 = o2.getPattern().getGlobalTitle().getDigits();
-
-        // Normalize rule. Remove all separator
-        digits1 = digits1.replaceAll(SECTION_SEPARTOR, "");
-        digits2 = digits2.replaceAll(SECTION_SEPARTOR, "");
-
-        // If a rule 1 is not OriginationType.All and rule 2 is OriginationType.All we put rule 1 first
-        if (o1.getOriginationType() != OriginationType.ALL && o2.getOriginationType() == OriginationType.ALL)
-            return -1;
-        if (o1.getOriginationType() == OriginationType.ALL && o2.getOriginationType() != OriginationType.ALL)
-            return 1;
-
-        // Check if digits are exactly same. In that case we sort based on the callingDigits
-        if ( digits1.equals( digits2 )) {
-            // if rule1 has calling party and rule2 doesn't then we put rule1 first
-            if ( o1.getPatternCallingAddress() != null && o2.getPatternCallingAddress() == null ) {
-                return -1;
-            } else if ( o1.getPatternCallingAddress() == null && o2.getPatternCallingAddress() != null ) {
-                return 1;
-            } else if ( o1.getPatternCallingAddress() != null && o2.getPatternCallingAddress() != null ) {
-                // both have calling party addresses. lets compare these 2
-                digits1 = o1.getPatternCallingAddress().getGlobalTitle().getDigits();
-                digits2 = o2.getPatternCallingAddress().getGlobalTitle().getDigits();
-
-                // Normalize rule. Remove all separator
-                digits1 = digits1.replaceAll(SECTION_SEPARTOR, "");
-                digits2 = digits2.replaceAll(SECTION_SEPARTOR, "");
-
-                return compareDigits( digits1, digits2 );
-            }
-        }
-        return compareDigits( digits1, digits2 );
+        return (o1.getRuleId() < o2.getRuleId() ? -1 : 1);
+//        String digits1 = o1.getPattern().getGlobalTitle().getDigits();
+//        String digits2 = o2.getPattern().getGlobalTitle().getDigits();
+//
+//        // Normalize rule. Remove all separator
+//        digits1 = digits1.replaceAll(SECTION_SEPARTOR, "");
+//        digits2 = digits2.replaceAll(SECTION_SEPARTOR, "");
+//
+//        // If a rule 1 is not OriginationType.All and rule 2 is OriginationType.All we put rule 1 first
+//        if (o1.getOriginationType() != OriginationType.ALL && o2.getOriginationType() == OriginationType.ALL)
+//            return -1;
+//        if (o1.getOriginationType() == OriginationType.ALL && o2.getOriginationType() != OriginationType.ALL)
+//            return 1;
+//
+//        // if rule1 has a calling party and rule2 does not then put rule 1 above and do check vice versa
+//        if (o1.getPatternCallingAddress()!=null && o2.getPatternCallingAddress() == null)
+//            return -1;
+//        if ( o1.getPatternCallingAddress() == null && o2.getPatternCallingAddress() != null )
+//            return 1;
+//        // Check if digits are exactly same. In that case we sort based on the callingDigits
+//        if ( digits1.equals( digits2 )) {
+//            // if rule1 has calling party and rule2 doesn't then we put rule1 first
+//            if ( o1.getPatternCallingAddress() != null && o2.getPatternCallingAddress() == null ) {
+//                return -1;
+//            } else if ( o1.getPatternCallingAddress() == null && o2.getPatternCallingAddress() != null ) {
+//                return 1;
+//            } else if ( o1.getPatternCallingAddress() != null && o2.getPatternCallingAddress() != null ) {
+//                // both have calling party addresses. lets compare these 2
+//                digits1 = o1.getPatternCallingAddress().getGlobalTitle().getDigits();
+//                digits2 = o2.getPatternCallingAddress().getGlobalTitle().getDigits();
+//
+//                // Normalize rule. Remove all separator
+//                digits1 = digits1.replaceAll(SECTION_SEPARTOR, "");
+//                digits2 = digits2.replaceAll(SECTION_SEPARTOR, "");
+//
+//                return compareDigits( digits1, digits2 );
+//            }
+//        }
+//        return compareDigits( digits1, digits2 );
     }
 
     private int compareDigits( String digits1, String digits2 ) {
