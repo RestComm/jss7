@@ -33,7 +33,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
  * This interface represents a SCCP connection confirm message for connection-oriented protocol classes 2 and 3.
  *
  */
-public interface SccpConnCcMessage extends SccpMessage {
+public interface SccpConnCcMessage extends SccpConnMessage {
     LocalReference getDestinationLocalReferenceNumber();
     void setDestinationLocalReferenceNumber(LocalReference number);
 
