@@ -22,9 +22,6 @@
 
 package org.mobicents.protocols.ss7.sccp;
 
-import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
-import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
-
 import java.io.Serializable;
 
 public interface SccpConnListener extends Serializable {
