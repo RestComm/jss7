@@ -31,7 +31,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCause;
  * This interface represents a SCCP released message for connection-oriented protocol classes 2 and 3.
  *
  */
-public interface SccpConnRlsdMessage extends SccpMessage {
+public interface SccpConnRlsdMessage extends SccpConnMessage {
     LocalReference getDestinationLocalReferenceNumber();
     void setDestinationLocalReferenceNumber(LocalReference number);
 

@@ -19,7 +19,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
-public class Test implements SccpListener {
+public class Test extends BaseSccpListener implements SccpListener {
     private SccpProvider sccpProvider;
     private SccpAddress localAddress;
     private int localSsn = 8;

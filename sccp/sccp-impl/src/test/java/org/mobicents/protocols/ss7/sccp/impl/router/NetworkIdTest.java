@@ -40,6 +40,7 @@ import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.SignallingPointStatus;
+import org.mobicents.protocols.ss7.sccp.impl.BaseSccpListener;
 import org.mobicents.protocols.ss7.sccp.impl.SccpRoutingControl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.EncodingResultData;
@@ -72,7 +73,7 @@ import static org.testng.Assert.assertEquals;
  * @author sergey vetyutnev
  * 
  */
-public class NetworkIdTest implements SccpListener {
+public class NetworkIdTest extends BaseSccpListener implements SccpListener {
 
     private SccpAddress primaryAddr1_L, primaryAddr1_R;
     private SccpAddress primaryAddr2_L, primaryAddr2_R;

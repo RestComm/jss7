@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
+import org.mobicents.protocols.ss7.sccp.SccpConnection;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SignallingPointStatus;
@@ -36,19 +37,24 @@ import org.mobicents.protocols.ss7.sccp.message.SccpAddressedMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.Credit;
+import org.mobicents.protocols.ss7.sccp.parameter.Importance;
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.parameter.ResetCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * @author baranowb
  * @author abhayani
  */
-public class User implements SccpListener {
+public class User extends BaseSccpListener implements SccpListener {
     protected SccpProvider provider;
     protected SccpAddress address;
     protected SccpAddress dest;
     protected int ssn;
     // protected SccpMessage msg;
     protected List<SccpMessage> messages = new ArrayList<SccpMessage>();
+    protected int resetCount;
 
     public User(SccpProvider provider, SccpAddress address, SccpAddress dest, int ssn) {
         this.provider = provider;
@@ -195,4 +201,22 @@ public class User implements SccpListener {
         
     }
 
+    @Override
+    public void onConnectIndication(SccpConnection conn, SccpAddress calledAddress, SccpAddress callingAddress, ProtocolClass clazz, Credit credit, byte[] data, Importance importance) throws Exception {
+        conn.confirm(null);
+    }
+
+    @Override
+    public void onResetIndication(SccpConnection conn, ResetCause reason) {
+        resetCount++;
+    }
+
+    @Override
+    public void onResetConfirm(SccpConnection conn) {
+        resetCount++;
+    }
+
+    public int getResetCount() {
+        return resetCount;
+    }
 }
