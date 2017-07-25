@@ -59,12 +59,6 @@ import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.congestion.SccpCongestionControl;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpAddressedMessageImpl;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCcMessageImpl;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrMessageImpl;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlcMessageImpl;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlsdMessageImpl;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRscMessageImpl;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRsrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpSegmentableMessageImpl;
@@ -98,7 +92,6 @@ import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculat
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculateUdtFieldsLengthWithoutData;
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculateXudtFieldsLengthWithoutData;
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculateXudtFieldsLengthWithoutData2;
-import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.getDln;
 
 /**
  *
@@ -1312,7 +1305,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
                                             .format("Reassembly function failure: when receiving a next segment message order is missing. SccpMessageSegment=%s",
                                                     msg));
                                 }
-                                this.sccpRoutingControl.sendSccpError(sgmMsgFst, ReturnCauseValue.CANNOT_REASEMBLE);
+                                this.sccpRoutingControl.sendSccpError(sgmMsgFst, ReturnCauseValue.CANNOT_REASEMBLE, null);
                                 return;
                             }
 
@@ -1355,52 +1348,15 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
                 }
 
                 sccpRoutingControl.routeMssgFromMtp(msgAddr);
-            } else if (msg instanceof SccpConnCrMessageImpl) {
-                SccpConnCrMessageImpl msgCr = (SccpConnCrMessageImpl)msg;
-
-                sccpRoutingControl.routeMssgFromMtp(msgCr);
-
-            } else if (msg instanceof SccpConnCcMessageImpl) {
-                SccpConnCcMessageImpl cc = (SccpConnCcMessageImpl)msg;
-                LocalReference ref = getDln(cc);
-                SccpConnectionImpl conn = getConnection(ref);
-                conn.setRemoteReference(cc.getSourceLocalReferenceNumber());
-                sccpRoutingControl.routeMssgFromMtp(cc);
-
-            } else if (msg instanceof SccpConnRlsdMessageImpl) {
-                SccpConnMessage connMsg = (SccpConnMessage)msg;
-                sccpRoutingControl.routeMssgFromMtp(connMsg);
-
-
-            } else if (msg instanceof SccpConnRlcMessageImpl) {
-                SccpConnMessage connMsg = (SccpConnMessage)msg;
-                sccpRoutingControl.routeMssgFromMtp(connMsg);
-
-            } else if (msg instanceof SccpConnRsrMessageImpl) {
-                SccpConnRsrMessageImpl msgRsr = (SccpConnRsrMessageImpl)msg;
-
-                sccpRoutingControl.routeMssgFromMtp(msgRsr);
-
-            } else if (msg instanceof SccpConnRscMessageImpl) {
-                SccpConnRscMessageImpl msgRsc = (SccpConnRscMessageImpl)msg;
-
-                sccpRoutingControl.routeMssgFromMtp(msgRsc);
 
             } else if (msg instanceof SccpConnMessage) {
-                SccpConnMessage connMsg = (SccpConnMessage)msg;
-                LocalReference ref = getDln(connMsg);
-                SccpConnectionImpl conn = getConnection(ref);
-                if (conn == null) {
-                    throw new IllegalStateException("No connection");
-                }
-                sccpRoutingControl.routeMssgFromMtp(connMsg);
+                // non-addressed message processing (these are connected-oriented messages in the connected phase)
+                sccpRoutingControl.routeMssgFromMtpConn((SccpConnMessage)msg);
 
             } else {
-                // TODO: implement non-addresses message processing (these are
-                // connected-oriented messages in the connected phase)
                 logger.warn(String
-                        .format("Rx SCCP message which is not instance of SccpAddressedMessage or SccpSegmentableMessage. Will be dropped. Message=",
-                                msg));
+                        .format("Rx SCCP message which is not instance of SccpAddressedMessage or SccpSegmentableMessage" +
+                                        " and doesn't implement SccpConnMessage. Will be dropped. Message=", msg));
             }
         } catch (Exception e) {
             logger.error("IOException while handling SCCP message: " + e.getMessage(), e);
@@ -1465,7 +1421,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             }
 
             try {
-                sccpRoutingControl.sendSccpError(msg, ReturnCauseValue.CANNOT_REASEMBLE);
+                sccpRoutingControl.sendSccpError(msg, ReturnCauseValue.CANNOT_REASEMBLE, null);
             } catch (Exception e) {
                 logger.warn("IOException when sending an error message", e);
             }
