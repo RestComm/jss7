@@ -124,7 +124,21 @@
 												var statisticsEnabled = response.value.StatisticsEnabled;
 												var ssn = response.value.SubSystemNumberList;
 												var slsRange = response.value.SlsRange;
-												
+
+												var congControl_ExecutorDelayThreshold_1 = response.value.CongControl_ExecutorDelayThreshold_1;
+												var congControl_ExecutorDelayThreshold_2 = response.value.CongControl_ExecutorDelayThreshold_2;
+												var congControl_ExecutorDelayThreshold_3 = response.value.CongControl_ExecutorDelayThreshold_3;
+												var congControl_ExecutorBackToNormalDelayThreshold_1 = response.value.CongControl_ExecutorBackToNormalDelayThreshold_1;
+												var congControl_ExecutorBackToNormalDelayThreshold_2 = response.value.CongControl_ExecutorBackToNormalDelayThreshold_2;
+												var congControl_ExecutorBackToNormalDelayThreshold_3 = response.value.CongControl_ExecutorBackToNormalDelayThreshold_3;
+												var congControl_MemoryThreshold_1 = response.value.CongControl_MemoryThreshold_1;
+												var congControl_MemoryThreshold_2 = response.value.CongControl_MemoryThreshold_2;
+												var congControl_MemoryThreshold_3 = response.value.CongControl_MemoryThreshold_3;
+												var congControl_BackToNormalMemoryThreshold_1 = response.value.CongControl_BackToNormalMemoryThreshold_1;
+												var congControl_BackToNormalMemoryThreshold_2 = response.value.CongControl_BackToNormalMemoryThreshold_2;
+												var congControl_BackToNormalMemoryThreshold_3 = response.value.CongControl_BackToNormalMemoryThreshold_3;
+												var congControl_blockingIncomingTcapMessages = response.value.CongControl_blockingIncomingTcapMessages;
+
 												var isTcapStarted = response.value.Started;
 												
 												$('#tcap-list-table').children('tbody').append('<tr class="service-row" onclick="showTcapDetails(\'' + name + '\')"><td style="vertical-align: middle; text-align: center;"><i style="color: ' + (isTcapStarted ? '#51A351' : '#BD362F') + ';" class="' + (isTcapStarted ? 'icon-play-circle' : 'icon-remove-circle') + '"></i></td>'+
@@ -310,6 +324,228 @@
 																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"slsRange"+']\').toggle(); $(\'input[id^='+name+"slsRange"+']\').focus();"></i>' +
 																			'</td>'+
 																		    '</tr>'+
+
+																			'<tr data-toggle="tooltip" title="ExecutorMonitor Thresholds: delays in seconds (between the time when an incoming message has come from a peer and scheduled for execution and the time when the execution of the message starts) after which ExecutorMonitor becomes the congestion level 1, 2 or 3. This is a threashold for level 1">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">Executor delay threshold 1</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'congControl_ExecutorDelayThreshold_1-input" class="control-group">'+
+																				'<span id="' + name +'congControl_ExecutorDelayThreshold_1-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + congControl_ExecutorDelayThreshold_1 + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControl_ExecutorDelayThreshold_1\', \'' + name+"congControl_ExecutorDelayThreshold_1" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_ExecutorDelayThreshold_1"+']\').toggle(); $(\'input[id^='+name+"congControl_ExecutorDelayThreshold_1"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'congControl_ExecutorDelayThreshold_1-text">' + congControl_ExecutorDelayThreshold_1 + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_ExecutorDelayThreshold_1"+']\').toggle(); $(\'input[id^='+name+"congControl_ExecutorDelayThreshold_1"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+	
+
+																			'<tr data-toggle="tooltip" title="ExecutorMonitor Thresholds: delays in seconds (between the time when an incoming message has come from a peer and scheduled for execution and the time when the execution of the message starts) after which ExecutorMonitor becomes the congestion level 1, 2 or 3. This is a threashold for level 2">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">Executor delay threshold 2</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'congControl_ExecutorDelayThreshold_2-input" class="control-group">'+
+																				'<span id="' + name +'congControl_ExecutorDelayThreshold_2-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + congControl_ExecutorDelayThreshold_2 + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControl_ExecutorDelayThreshold_2\', \'' + name+"congControl_ExecutorDelayThreshold_2" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_ExecutorDelayThreshold_2"+']\').toggle(); $(\'input[id^='+name+"congControl_ExecutorDelayThreshold_2"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'congControl_ExecutorDelayThreshold_2-text">' + congControl_ExecutorDelayThreshold_2 + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_ExecutorDelayThreshold_2"+']\').toggle(); $(\'input[id^='+name+"congControl_ExecutorDelayThreshold_2"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+	
+
+																			'<tr data-toggle="tooltip" title="ExecutorMonitor Thresholds: delays in seconds (between the time when an incoming message has come from a peer and scheduled for execution and the time when the execution of the message starts) after which ExecutorMonitor becomes the congestion level 1, 2 or 3. This is a threashold for level 3">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">Executor delay threshold 3</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'congControl_ExecutorDelayThreshold_3-input" class="control-group">'+
+																				'<span id="' + name +'congControl_ExecutorDelayThreshold_3-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + congControl_ExecutorDelayThreshold_3 + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControl_ExecutorDelayThreshold_3\', \'' + name+"congControl_ExecutorDelayThreshold_3" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_ExecutorDelayThreshold_3"+']\').toggle(); $(\'input[id^='+name+"congControl_ExecutorDelayThreshold_3"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'congControl_ExecutorDelayThreshold_3-text">' + congControl_ExecutorDelayThreshold_3 + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_ExecutorDelayThreshold_3"+']\').toggle(); $(\'input[id^='+name+"congControl_ExecutorDelayThreshold_3"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+	
+
+																			'<tr data-toggle="tooltip" title="ExecutorMonitor Thresholds: delays in seconds (between the time when an incoming message has come from a peer and scheduled for execution and the time when the execution of the message starts) after which ExecutorMonitor resumes to the congestion level 0, 1 or 2. This is a threashold for back to level 0">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">Executor back to normal delay threshold 1</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'congControl_ExecutorBackToNormalDelayThreshold_1-input" class="control-group">'+
+																				'<span id="' + name +'congControl_ExecutorBackToNormalDelayThreshold_1-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + congControl_ExecutorBackToNormalDelayThreshold_1 + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControl_ExecutorBackToNormalDelayThreshold_1\', \'' + name+"congControl_ExecutorBackToNormalDelayThreshold_1" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_ExecutorBackToNormalDelayThreshold_1"+']\').toggle(); $(\'input[id^='+name+"congControl_ExecutorBackToNormalDelayThreshold_1"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'congControl_ExecutorBackToNormalDelayThreshold_1-text">' + congControl_ExecutorBackToNormalDelayThreshold_1 + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_ExecutorBackToNormalDelayThreshold_1"+']\').toggle(); $(\'input[id^='+name+"congControl_ExecutorBackToNormalDelayThreshold_1"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+	
+
+																			'<tr data-toggle="tooltip" title="ExecutorMonitor Thresholds: delays in seconds (between the time when an incoming message has come from a peer and scheduled for execution and the time when the execution of the message starts) after which ExecutorMonitor resumes to the congestion level 0, 1 or 2. This is a threashold for back to level 1">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">Executor back to normal delay threshold 2</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'congControl_ExecutorBackToNormalDelayThreshold_2-input" class="control-group">'+
+																				'<span id="' + name +'congControl_ExecutorBackToNormalDelayThreshold_2-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + congControl_ExecutorBackToNormalDelayThreshold_2 + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControl_ExecutorBackToNormalDelayThreshold_2\', \'' + name+"congControl_ExecutorBackToNormalDelayThreshold_2" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_ExecutorBackToNormalDelayThreshold_2"+']\').toggle(); $(\'input[id^='+name+"congControl_ExecutorBackToNormalDelayThreshold_2"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'congControl_ExecutorBackToNormalDelayThreshold_2-text">' + congControl_ExecutorBackToNormalDelayThreshold_2 + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_ExecutorBackToNormalDelayThreshold_2"+']\').toggle(); $(\'input[id^='+name+"congControl_ExecutorBackToNormalDelayThreshold_2"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+	
+
+																			'<tr data-toggle="tooltip" title="ExecutorMonitor Thresholds: delays in seconds (between the time when an incoming message has come from a peer and scheduled for execution and the time when the execution of the message starts) after which ExecutorMonitor resumes to the congestion level 0, 1 or 2. This is a threashold for back to level 2">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">Executor back to normal delay threshold 3</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'congControl_ExecutorBackToNormalDelayThreshold_3-input" class="control-group">'+
+																				'<span id="' + name +'congControl_ExecutorBackToNormalDelayThreshold_3-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + congControl_ExecutorBackToNormalDelayThreshold_3 + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControl_ExecutorBackToNormalDelayThreshold_3\', \'' + name+"congControl_ExecutorBackToNormalDelayThreshold_3" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_ExecutorBackToNormalDelayThreshold_3"+']\').toggle(); $(\'input[id^='+name+"congControl_ExecutorBackToNormalDelayThreshold_3"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'congControl_ExecutorBackToNormalDelayThreshold_3-text">' + congControl_ExecutorBackToNormalDelayThreshold_3 + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_ExecutorBackToNormalDelayThreshold_3"+']\').toggle(); $(\'input[id^='+name+"congControl_ExecutorBackToNormalDelayThreshold_3"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+	
+
+																			'<tr data-toggle="tooltip" title="MemoryMonitor Thresholds: a percent of occupied memory after which MemoryMonitor becomes the congestion level 1, 2 or 3. This is a threashold for level 1">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">MemoryMonitor threshold 1</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'congControl_MemoryThreshold_1-input" class="control-group">'+
+																				'<span id="' + name +'congControl_MemoryThreshold_1-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + congControl_MemoryThreshold_1 + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControl_MemoryThreshold_1\', \'' + name+"congControl_MemoryThreshold_1" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_MemoryThreshold_1"+']\').toggle(); $(\'input[id^='+name+"congControl_MemoryThreshold_1"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'congControl_MemoryThreshold_1-text">' + congControl_MemoryThreshold_1 + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_MemoryThreshold_1"+']\').toggle(); $(\'input[id^='+name+"congControl_MemoryThreshold_1"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+	
+
+																			'<tr data-toggle="tooltip" title="MemoryMonitor Thresholds: a percent of occupied memory after which MemoryMonitor becomes the congestion level 1, 2 or 3. This is a threashold for level 2">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">MemoryMonitor threshold 2</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'congControl_MemoryThreshold_2-input" class="control-group">'+
+																				'<span id="' + name +'congControl_MemoryThreshold_2-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + congControl_MemoryThreshold_2 + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControl_MemoryThreshold_2\', \'' + name+"congControl_MemoryThreshold_2" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_MemoryThreshold_2"+']\').toggle(); $(\'input[id^='+name+"congControl_MemoryThreshold_2"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'congControl_MemoryThreshold_2-text">' + congControl_MemoryThreshold_2 + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_MemoryThreshold_2"+']\').toggle(); $(\'input[id^='+name+"congControl_MemoryThreshold_2"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+	
+
+																			'<tr data-toggle="tooltip" title="MemoryMonitor Thresholds: a percent of occupied memory after which MemoryMonitor becomes the congestion level 1, 2 or 3. This is a threashold for level 3">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">MemoryMonitor threshold 3</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'congControl_MemoryThreshold_3-input" class="control-group">'+
+																				'<span id="' + name +'congControl_MemoryThreshold_3-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + congControl_MemoryThreshold_3 + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControl_MemoryThreshold_3\', \'' + name+"congControl_MemoryThreshold_3" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_MemoryThreshold_3"+']\').toggle(); $(\'input[id^='+name+"congControl_MemoryThreshold_3"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'congControl_MemoryThreshold_3-text">' + congControl_MemoryThreshold_3 + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_MemoryThreshold_3"+']\').toggle(); $(\'input[id^='+name+"congControl_MemoryThreshold_3"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+	
+
+																			'<tr data-toggle="tooltip" title="MemoryMonitor Thresholds: a percent of occupied memory after which MemoryMonitor resumes to the congestion level 0, 1 or 2. This is a threashold for resuming back to level 0">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">MemoryMonitor back to normal threshold 1</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'congControl_BackToNormalMemoryThreshold_1-input" class="control-group">'+
+																				'<span id="' + name +'congControl_BackToNormalMemoryThreshold_1-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + congControl_BackToNormalMemoryThreshold_1 + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControl_BackToNormalMemoryThreshold_1\', \'' + name+"congControl_BackToNormalMemoryThreshold_1" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_BackToNormalMemoryThreshold_1"+']\').toggle(); $(\'input[id^='+name+"congControl_BackToNormalMemoryThreshold_1"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'congControl_BackToNormalMemoryThreshold_1-text">' + congControl_BackToNormalMemoryThreshold_1 + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_BackToNormalMemoryThreshold_1"+']\').toggle(); $(\'input[id^='+name+"congControl_BackToNormalMemoryThreshold_1"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+	
+
+																			'<tr data-toggle="tooltip" title="MemoryMonitor Thresholds: a percent of occupied memory after which MemoryMonitor resumes to the congestion level 0, 1 or 2. This is a threashold for resuming back to level 1">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">MemoryMonitor back to normal threshold 2</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'congControl_BackToNormalMemoryThreshold_2-input" class="control-group">'+
+																				'<span id="' + name +'congControl_BackToNormalMemoryThreshold_2-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + congControl_BackToNormalMemoryThreshold_2 + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControl_BackToNormalMemoryThreshold_2\', \'' + name+"congControl_BackToNormalMemoryThreshold_2" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_BackToNormalMemoryThreshold_2"+']\').toggle(); $(\'input[id^='+name+"congControl_BackToNormalMemoryThreshold_2"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'congControl_BackToNormalMemoryThreshold_2-text">' + congControl_BackToNormalMemoryThreshold_2 + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_BackToNormalMemoryThreshold_2"+']\').toggle(); $(\'input[id^='+name+"congControl_BackToNormalMemoryThreshold_2"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+	
+
+																			'<tr data-toggle="tooltip" title="MemoryMonitor Thresholds: a percent of occupied memory after which MemoryMonitor resumes to the congestion level 0, 1 or 2. This is a threashold for resuming back to level 2">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">MemoryMonitor back to normal threshold 3</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'congControl_BackToNormalMemoryThreshold_3-input" class="control-group">'+
+																				'<span id="' + name +'congControl_BackToNormalMemoryThreshold_3-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + congControl_BackToNormalMemoryThreshold_3 + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControl_BackToNormalMemoryThreshold_3\', \'' + name+"congControl_BackToNormalMemoryThreshold_3" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_BackToNormalMemoryThreshold_3"+']\').toggle(); $(\'input[id^='+name+"congControl_BackToNormalMemoryThreshold_3"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'congControl_BackToNormalMemoryThreshold_3-text">' + congControl_BackToNormalMemoryThreshold_3 + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_BackToNormalMemoryThreshold_3"+']\').toggle(); $(\'input[id^='+name+"congControl_BackToNormalMemoryThreshold_3"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+	
+
+																			'<tr data-toggle="tooltip" title="if true incoming TCAP messages will be blocked (depending on congestion level, from level 2 - new incoming dialogs are rejected, from level 3 - all incoming messages are rejected)">'+
+																			'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																			'<td style="font-size: 0.9em;">Blocking of incoming TCAP messages</td>'+
+																			'<td style="font-size: 0.9em; padding: 0;">'+
+																				'<div id="div-' + name +'congControl_blockingIncomingTcapMessages-input" class="control-group">'+
+																				'<span id="' + name +'congControl_blockingIncomingTcapMessages-input" style="display: none;">'+
+																					'<input type="text" class="input-small" value="' + congControl_blockingIncomingTcapMessages + '" /> ' +
+																					'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControl_blockingIncomingTcapMessages\', \'' + name+"congControl_blockingIncomingTcapMessages" + '\')"></i> ' +
+																					'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_blockingIncomingTcapMessages"+']\').toggle(); $(\'input[id^='+name+"congControl_blockingIncomingTcapMessages"+']\').focus();"></i>' + 
+																				'</span>'+
+																				'</div>' +
+																				'<span id="' +name + 'congControl_blockingIncomingTcapMessages-text">' + congControl_blockingIncomingTcapMessages + '</span>'+
+																			'</td>'+
+																			'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_blockingIncomingTcapMessages"+']\').toggle(); $(\'input[id^='+name+"congControl_blockingIncomingTcapMessages"+']\').focus();"></i>' +
+																			'</td>'+
+																		    '</tr>'+																		    
+
 
 														'				</tbody>'+
 														'			</table>'+ 												

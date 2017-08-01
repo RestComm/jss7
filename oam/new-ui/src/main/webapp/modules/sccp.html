@@ -953,6 +953,10 @@
 															var reassemblyTimerDelay = response.value.ReassemblyTimerDelay;
 															var previewMode = response.value.PreviewMode;
 															var reservedForNationalUseValueAddressIndicator = response.value.SccpProtocolVersion;
+															var congControlTIMER_A = response.value.CongControlTIMER_A;
+															var congControlTIMER_D = response.value.CongControlTIMER_D;
+															var congControl_Algo = response.value.CongControl_Algo;
+															var congControl_blockingOutgoungSccpMessages = response.value.CongControl_blockingOutgoungSccpMessages;
 															
 															var isSccpStarted = true;
 															
@@ -1154,7 +1158,75 @@
 																	'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"reservedForNationalUseValueAddressIndicator"+']\').toggle(); $(\'input[id^='+name+"reservedForNationalUseValueAddressIndicator"+']\').focus();"></i>' +
 																	'</td>'+
 																    '</tr>'+																    
+
+																	'<tr data-toggle="tooltip" title="Sets the Timer A value in milliseconds. This timer starts at next MTP-STATUS(cong) primitive coming. During this timer no more MTP-STATUS(cong) are accepted. Possible values are between 60 and 1000.">'+
+																	'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																	'<td style="font-size: 0.9em;">Congestion control Timer A</td>'+
+																	'<td style="font-size: 0.9em; padding: 0;">'+
+																		'<div id="div-' + name +'congControlTIMER_A-input" class="control-group">'+
+																		'<span id="' + name +'congControlTIMER_A-input" style="display: none;">'+
+																			'<input type="text" class="input-small" value="' + congControlTIMER_A + '" /> ' +
+																			'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControlTIMER_A\', \'' + name+"congControlTIMER_A" + '\')"></i> ' +
+																			'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControlTIMER_A"+']\').toggle(); $(\'input[id^='+name+"congControlTIMER_A"+']\').focus();"></i>' + 
+																		'</span>'+
+																		'</div>' +
+																		'<span id="' +name + 'congControlTIMER_A-text">' + congControlTIMER_A + '</span>'+
+																	'</td>'+
+																	'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControlTIMER_A"+']\').toggle(); $(\'input[id^='+name+"congControlTIMER_A"+']\').focus();"></i>' +
+																	'</td>'+
+																    '</tr>'+
+
+																	'<tr data-toggle="tooltip" title="Sets the Timer D value in milliseconds. This timer starts after last MTP-STATUS(cong) primitive coming. After end of this timer (without new coming MTP-STATUS(cong)) RSLM (the congestion level) will be reduced. Possible values are between 500 and 10000.">'+
+																	'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																	'<td style="font-size: 0.9em;">Congestion control Timer D</td>'+
+																	'<td style="font-size: 0.9em; padding: 0;">'+
+																		'<div id="div-' + name +'congControlTIMER_D-input" class="control-group">'+
+																		'<span id="' + name +'congControlTIMER_D-input" style="display: none;">'+
+																			'<input type="text" class="input-small" value="' + congControlTIMER_D + '" /> ' +
+																			'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControlTIMER_D\', \'' + name+"congControlTIMER_D" + '\')"></i> ' +
+																			'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControlTIMER_D"+']\').toggle(); $(\'input[id^='+name+"congControlTIMER_D"+']\').focus();"></i>' + 
+																		'</span>'+
+																		'</div>' +
+																		'<span id="' +name + 'congControlTIMER_D-text">' + congControlTIMER_D + '</span>'+
+																	'</td>'+
+																	'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControlTIMER_D"+']\').toggle(); $(\'input[id^='+name+"congControlTIMER_D"+']\').focus();"></i>' +
+																	'</td>'+
+																    '</tr>'+
 																    
+																	'<tr data-toggle="tooltip" title="Sets the algorithm of the congestion control at SCCP level for outgoing messages. Possible values are international or levelDepended. international algorithm - only one level is provided by MTP3 level (in MTP-STATUS primitive). Each MTP-STATUS increases N / M levels. international algorithm - MTP3 level (MTP-STATUS primitive) provides 3 levels of a congestion (1-3) and SCCP congestion will increase to the next level after MTP-STATUS next level increase (MTP-STATUS 1 to N up to 3, MTP-STATUS 2 to N up to 5, MTP-STATUS 3 to N up to 7).">'+
+																	'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																	'<td style="font-size: 0.9em;">Congestion control algorithm (international/levelDepended)</td>'+
+																	'<td style="font-size: 0.9em; padding: 0;">'+
+																		'<div id="div-' + name +'congControl_Algo-input" class="control-group">'+
+																		'<span id="' + name +'congControl_Algo-input" style="display: none;">'+
+																			'<input type="text" class="input-small" value="' + congControl_Algo + '" /> ' +
+																			'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControl_Algo\', \'' + name+"congControl_Algo" + '\')"></i> ' +
+																			'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_Algo"+']\').toggle(); $(\'input[id^='+name+"congControl_Algo"+']\').focus();"></i>' + 
+																		'</span>'+
+																		'</div>' +
+																		'<span id="' +name + 'congControl_Algo-text">' + congControl_Algo + '</span>'+
+																	'</td>'+
+																	'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_Algo"+']\').toggle(); $(\'input[id^='+name+"congControl_Algo"+']\').focus();"></i>' +
+																	'</td>'+
+																    '</tr>'+																    
+																    
+																	'<tr data-toggle="tooltip" title="Sets the value of if outgoing SCCP messages will be blocked in congestion. (depending on message type, UDP messages from level N=6). true means that message will be blocken in the congestion case, false means not.">'+
+																	'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																	'<td style="font-size: 0.9em;">Congestion control: if outgoing SCCP messages will be blocked in congestion</td>'+
+																	'<td style="font-size: 0.9em; padding: 0;">'+
+																		'<div id="div-' + name +'congControl_blockingOutgoungSccpMessages-input" class="control-group">'+
+																		'<span id="' + name +'congControl_blockingOutgoungSccpMessages-input" style="display: none;">'+
+																			'<input type="text" class="input-small" value="' + congControl_blockingOutgoungSccpMessages + '" /> ' +
+																			'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'CongControl_blockingOutgoungSccpMessages\', \'' + name+"congControl_blockingOutgoungSccpMessages" + '\')"></i> ' +
+																			'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_blockingOutgoungSccpMessages"+']\').toggle(); $(\'input[id^='+name+"congControl_blockingOutgoungSccpMessages"+']\').focus();"></i>' + 
+																		'</span>'+
+																		'</div>' +
+																		'<span id="' +name + 'congControl_blockingOutgoungSccpMessages-text">' + congControl_blockingOutgoungSccpMessages + '</span>'+
+																	'</td>'+
+																	'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"congControl_blockingOutgoungSccpMessages"+']\').toggle(); $(\'input[id^='+name+"congControl_blockingOutgoungSccpMessages"+']\').focus();"></i>' +
+																	'</td>'+
+																    '</tr>'+																    
+
 																    
 																	'				</tbody>'+
 																	'			</table>'+ 												
