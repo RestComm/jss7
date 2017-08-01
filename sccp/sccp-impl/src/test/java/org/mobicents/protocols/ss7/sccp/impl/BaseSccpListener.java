@@ -110,7 +110,7 @@ public class BaseSccpListener implements SccpListener {
     }
 
     @Override
-    public void onData(SccpConnection conn) {
+    public void onData(SccpConnection conn, byte[] data) {
 
     }
 

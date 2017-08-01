@@ -156,6 +156,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     protected int resetTimerDelay = 15000;
     protected int reassemblyTimerDelay = 15000;
 
+    protected int sendTimeout = 1000;
+
     // Max available Sccp message data for all messages
     protected int maxDataMessage = 2560;
     // remove PC from calledPartyAddress when sending to MTP3
@@ -722,6 +724,14 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         this.reassemblyTimerDelay = reassemblyTimerDelay;
 
         this.store();
+    }
+
+    public int getSendTimeout() {
+        return sendTimeout;
+    }
+
+    public void setSendTimeout(int sendTimeout) {
+        this.sendTimeout = sendTimeout;
     }
 
     public synchronized int newSegmentationLocalRef() {
@@ -1356,7 +1366,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             } else {
                 logger.warn(String
                         .format("Rx SCCP message which is not instance of SccpAddressedMessage or SccpSegmentableMessage" +
-                                        " and doesn't implement SccpConnMessage. Will be dropped. Message=", msg));
+                                " and doesn't implement SccpConnMessage. Will be dropped. Message=", msg));
             }
         } catch (Exception e) {
             logger.error("IOException while handling SCCP message: " + e.getMessage(), e);

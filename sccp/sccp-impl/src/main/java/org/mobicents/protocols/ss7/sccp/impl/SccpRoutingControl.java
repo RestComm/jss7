@@ -43,9 +43,12 @@ import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.impl.message.EncodingResultData;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpAddressedMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnAkMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCcMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrefMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt1MessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt2MessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlcMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlsdMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRscMessageImpl;
@@ -251,7 +254,7 @@ public class SccpRoutingControl {
 
                 sccpStackImpl.removeConnection(ref);
 
-            } if (msg instanceof SccpConnRlcMessageImpl) {
+            } else if (msg instanceof SccpConnRlcMessageImpl) {
                 if (logger.isDebugEnabled()) {
                     logger.debug(String.format("Local deliver : SCCP RLC Message=%s", msg.toString()));
                 }
@@ -259,7 +262,7 @@ public class SccpRoutingControl {
 
                 listener.onDisconnectConfirm(conn);
 
-            } if (msg instanceof SccpConnCrefMessageImpl) {
+            } else if (msg instanceof SccpConnCrefMessageImpl) {
                 if (logger.isDebugEnabled()) {
                     logger.debug(String.format("Local deliver : SCCP CREF Message=%s", msg.toString()));
                 }
@@ -267,7 +270,7 @@ public class SccpRoutingControl {
 
                 listener.onDisconnectIndication(conn, cref.getRefusalCause(), cref.getUserData());
 
-            } if (msg instanceof SccpConnRsrMessageImpl) {
+            } else if (msg instanceof SccpConnRsrMessageImpl) {
                 if (logger.isDebugEnabled()) {
                     logger.debug(String.format("Local deliver : SCCP RSR Message=%s", msg.toString()));
                 }
@@ -275,12 +278,24 @@ public class SccpRoutingControl {
                 conn.handleRSRMessage(rsr);
                 listener.onResetIndication(conn, rsr.getResetCause());
 
-            } if (msg instanceof SccpConnRscMessageImpl) {
+            } else if (msg instanceof SccpConnRscMessageImpl) {
                 if (logger.isDebugEnabled()) {
                     logger.debug(String.format("Local deliver : SCCP RSC Message=%s", msg.toString()));
                 }
                 conn.handleRSCMessage((SccpConnRscMessageImpl) msg);
                 listener.onResetConfirm(conn);
+            } else if (msg instanceof SccpConnDt1MessageImpl) {
+                SccpConnDt1MessageImpl dt = (SccpConnDt1MessageImpl) msg;
+                if (conn.handleDT1Message(dt)) {
+                    listener.onData(conn, dt.getUserData());
+                }
+            } else if (msg instanceof SccpConnDt2MessageImpl) {
+                SccpConnDt2MessageImpl dt2 = (SccpConnDt2MessageImpl) msg;
+                if (conn.handleDT2Message(dt2)) {
+                    listener.onData(conn, dt2.getUserData());
+                }
+            } else if (msg instanceof SccpConnAkMessageImpl) {
+                conn.handleAkMessage((SccpConnAkMessageImpl) msg);
             }
 
         } catch (Exception e) {
@@ -541,7 +556,7 @@ public class SccpRoutingControl {
     }
 
     private TranslationAddressCheckingResult checkTranslationAddress(SccpAddressedMessageImpl msg, Rule rule,
-            SccpAddress translationAddress, String destName) {
+                                                                     SccpAddress translationAddress, String destName) {
 
         if (translationAddress == null) {
             if (logger.isEnabledFor(Level.WARN)) {
@@ -1075,12 +1090,18 @@ public class SccpRoutingControl {
                             conn.handleRSRMessage(rsr);
                             listener.onResetIndication(conn, rsr.getResetCause());
 
-                        } if (msg instanceof SccpConnRscMessageImpl) {
+                        } else if (msg instanceof SccpConnRscMessageImpl) {
                             if (logger.isDebugEnabled()) {
                                 logger.debug(String.format("Local deliver : SCCP RSC Message=%s", msg.toString()));
                             }
                             conn.handleRSCMessage((SccpConnRscMessageImpl)msg);
                             listener.onResetConfirm(conn);
+                        } else if (msg instanceof SccpConnDt1MessageImpl) {
+                            conn.handleDT1Message((SccpConnDt1MessageImpl)msg);
+                        } else if (msg instanceof SccpConnDt2MessageImpl) {
+                            conn.handleDT2Message((SccpConnDt2MessageImpl)msg);
+                        } else if (msg instanceof SccpConnAkMessageImpl) {
+                            conn.handleAkMessage((SccpConnAkMessageImpl) msg);
                         }
 
                     } catch (Exception e) {
@@ -1235,7 +1256,7 @@ public class SccpRoutingControl {
                 ans = (SccpNoticeMessageImpl) messageFactory.createNoticeMessage(msg.getType(), returnCause,
                         msg.getCallingPartyAddress(), msg.getCalledPartyAddress(), msgData.getData(), msgData.getHopCounter(),
                         msgData.getImportance());
-            //} else {
+                //} else {
                 // TODO: Implement return errors for connection-oriented messages
             }
         } else {

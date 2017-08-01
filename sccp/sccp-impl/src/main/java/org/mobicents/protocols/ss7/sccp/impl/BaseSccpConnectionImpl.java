@@ -3,14 +3,22 @@ package org.mobicents.protocols.ss7.sccp.impl;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.SccpConnectionState;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnAkMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCcMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrefMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt1MessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt2MessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlcMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlsdMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRscMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRsrMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.CreditImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.ReceiveSequenceNumberImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ReleaseCauseImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.ResetCauseImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.SegmentingReassemblingImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.SequencingSegmentingImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnCrMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.Credit;
@@ -36,8 +44,9 @@ import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.RSR_RECEIVED;
 import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.RSR_SENT;
 
 public class BaseSccpConnectionImpl {
-    protected final Logger logger;
+    private static final int SLEEP_DELAY = 15;
 
+    protected final Logger logger;
     protected SccpStackImpl stack;
     protected SccpRoutingControl sccpRoutingControl;
 
@@ -61,9 +70,11 @@ public class BaseSccpConnectionImpl {
     private ReentrantLock connectionLock = new ReentrantLock();
     private int remoteDpc;
     private SccpListener listener;
+    private FlowControlWindows windows;
 
     public BaseSccpConnectionImpl(int sls, int localSsn, ProtocolClass protocol, SccpStackImpl stack, SccpRoutingControl sccpRoutingControl) {
         this.stack = stack;
+        this.windows = new FlowControlWindows(stack.name);
         this.sccpRoutingControl = sccpRoutingControl;
         this.sls = sls;
         this.localSsn = localSsn;
@@ -111,8 +122,53 @@ public class BaseSccpConnectionImpl {
         return false;
     }
 
-    public void send(byte[] data) {
+    public void send(byte[] data) throws Exception {
+        if (protocolClass.getProtocolClass() == 2) {
+            if (state != ESTABLISHED ) {
+                int totalDelay = 0;
+                while (totalDelay <= stack.getSendTimeout() && state != ESTABLISHED) {
+                    Thread.sleep(SLEEP_DELAY);
+                    totalDelay += SLEEP_DELAY;
+                }
+                if (state != ESTABLISHED) {
+                    throw new IllegalStateException("Send timeout reached ");
+                }
+            }
+        } else {
+            if (state != ESTABLISHED || windows.sendSequenceWindowExhausted()) {
+                int totalDelay = 0;
+                while (totalDelay <= stack.getSendTimeout() && (state != ESTABLISHED || windows.sendSequenceWindowExhausted())) {
+                    Thread.sleep(SLEEP_DELAY);
+                    totalDelay += SLEEP_DELAY;
+                }
+                if ((state != ESTABLISHED) || windows.sendSequenceWindowExhausted()) {
+                    throw new IllegalStateException("Send timeout reached ");
+                }
+            }
+        }
 
+        synchronized (this) {
+            if (protocolClass.getProtocolClass() == 2) {
+                SccpConnDt1MessageImpl msg = new SccpConnDt1MessageImpl(255, sls, localSsn);
+                msg.setDestinationLocalReferenceNumber(remoteReference);
+                msg.setSegmentingReassembling(new SegmentingReassemblingImpl(false));
+                msg.setUserData(data);
+
+                msg.setSourceLocalReferenceNumber(localReference);
+                sendMessage(msg);
+            } else {
+                SccpConnDt2MessageImpl msg = new SccpConnDt2MessageImpl(255, sls, localSsn);
+                msg.setDestinationLocalReferenceNumber(remoteReference);
+                msg.setSequencingSegmenting(new SequencingSegmentingImpl(windows.getSendSequenceNumber(), windows.getReceiveSequenceNumber(), false));
+
+                windows.incrementSendSequenceNumber();
+
+                msg.setUserData(data);
+
+                msg.setSourceLocalReferenceNumber(localReference);
+                sendMessage(msg);
+            }
+        }
     }
 
     public SccpConnectionState getState() {
@@ -120,14 +176,13 @@ public class BaseSccpConnectionImpl {
     }
 
     public Credit getCredit() {
-        return null;
+        return new CreditImpl(windows.getCredit());
     }
 
     public void reset(ResetCause reason) throws Exception {
         if (state != SccpConnectionState.ESTABLISHED) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("reset");
         }
-
         SccpConnRsrMessageImpl rsr = new SccpConnRsrMessageImpl(sls, localSsn);
         rsr.setSourceLocalReferenceNumber(localReference);
         rsr.setDestinationLocalReferenceNumber(remoteReference);
@@ -139,7 +194,7 @@ public class BaseSccpConnectionImpl {
 
     public void disconnect(ReleaseCause reason, byte[] data) throws Exception {
         if (state != SccpConnectionState.ESTABLISHED) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("disconnect");
         }
 
         SccpConnRlsdMessageImpl rlsd = new SccpConnRlsdMessageImpl(sls, localSsn);
@@ -163,13 +218,17 @@ public class BaseSccpConnectionImpl {
 
     public void confirm(SccpAddress respondingAddress) throws Exception {
         if (state != SccpConnectionState.CR_RECEIVED) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("confirm");
         }
         SccpConnCcMessageImpl message = new SccpConnCcMessageImpl(sls, localSsn);
         message.setSourceLocalReferenceNumber(localReference);
         message.setDestinationLocalReferenceNumber(remoteReference);
         message.setProtocolClass(protocolClass);
         message.setCalledPartyAddress(respondingAddress);
+        if (protocolClass.getProtocolClass() == 3) {
+            message.setCredit(new CreditImpl(1));
+            windows.setCredit(message.getCredit().getValue());
+        }
 
         sendMessage(message);
 
@@ -181,7 +240,6 @@ public class BaseSccpConnectionImpl {
             logger.error("Trying to send SCCP message from SCCP user but SCCP stack is not RUNNING");
             return;
         }
-
         try {
             this.sccpRoutingControl.routeMssgFromSccpUserConn(message);
         } catch (Exception e) {
@@ -203,7 +261,7 @@ public class BaseSccpConnectionImpl {
                     || this.state == RSR_SENT && state == ESTABLISHED
                     || this.state == RSR_RECEIVED && state == ESTABLISHED
             )) {
-                throw new IllegalStateException();
+                throw new IllegalStateException("state change error");
             }
             this.state = state;
         }
@@ -212,6 +270,10 @@ public class BaseSccpConnectionImpl {
     public void establish(SccpConnCrMessage message) throws IOException {
         try {
             message.setSourceLocalReferenceNumber(localReference);
+            if (protocolClass.getProtocolClass() == 3) {
+                message.setCredit(new CreditImpl(1));
+                windows.setCredit(message.getCredit().getValue());
+            }
 
             if (message.getCalledPartyAddress() == null) {
                 throw new IOException("Message to send must have filled CalledPartyAddress field");
@@ -258,12 +320,18 @@ public class BaseSccpConnectionImpl {
     protected void handleCRMessage(SccpConnCrMessageImpl message) {
         remoteReference = message.getSourceLocalReferenceNumber();
         remoteDpc = message.getIncomingOpc();
+        if (message.getCredit() != null) {
+            windows.setCredit(message.getCredit().getValue());
+        }
         setState(SccpConnectionState.CR_RECEIVED);
     }
 
     protected void handleCCMessage(SccpConnCcMessageImpl message) {
         remoteReference = message.getSourceLocalReferenceNumber();
         connEstProcess.stopTimer();
+        if (message.getCredit() != null) {
+            windows.setCredit(message.getCredit().getValue());
+        }
         setState(SccpConnectionState.ESTABLISHED);
     }
 
@@ -285,6 +353,48 @@ public class BaseSccpConnectionImpl {
         sendMessage(rsc);
 
         setState(SccpConnectionState.ESTABLISHED);
+    }
+
+    public synchronized boolean handleDT1Message(SccpConnDt1MessageImpl msg) throws Exception {
+        if (state != ESTABLISHED) {
+            logger.error(state + " Message discarded " + msg);
+            return false;
+        }
+
+        return true;
+    }
+
+    public synchronized boolean handleDT2Message(SccpConnDt2MessageImpl msg) throws Exception {
+        if (state != ESTABLISHED) {
+            logger.error(state + " Message discarded " + msg);
+            return false;
+        }
+        FlowControlWindows.SendSequenceNumberHandlingResult result = windows.handleSequenceNumbers(
+                (byte)msg.getSequencingSegmenting().getSendSequenceNumber(),
+                (byte)msg.getSequencingSegmenting().getReceiveSequenceNumber());
+        if (result.isResetNeeded()) {
+            reset(new ResetCauseImpl(result.getResetCause()));
+            return false;
+        }
+        if (result.isEndReached()) {
+            SccpConnAkMessageImpl msgAk = new SccpConnAkMessageImpl(sls, localSsn);
+            msgAk.setDestinationLocalReferenceNumber(remoteReference);
+            msgAk.setReceiveSequenceNumber(new ReceiveSequenceNumberImpl(windows.getLastReceiveSequenceNumberSent()));
+            msgAk.setCredit(getCredit());
+
+            msgAk.setSourceLocalReferenceNumber(localReference);
+
+            sendMessage(msgAk);
+        }
+
+        return true;
+    }
+
+    public synchronized void handleAkMessage(SccpConnAkMessageImpl msg) throws Exception {
+        FlowControlWindows.SendSequenceNumberHandlingResult result = windows.handleSequenceNumbers(null, (byte)msg.getReceiveSequenceNumber().getValue());
+        if (result.isResetNeeded()) {
+            reset(new ResetCauseImpl(result.getResetCause()));
+        }
     }
 
     private class ConnEstProcess extends BaseProcess implements Runnable {
