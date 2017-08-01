@@ -45,7 +45,10 @@ public class SccpConnAkMessageImpl extends SccpMessageImpl implements SccpConnAk
     protected ReceiveSequenceNumber receiveSequenceNumber;
     protected Credit credit;
 
-    protected SccpConnAkMessageImpl(int sls, int localSsn) {
+    // isn't sent over network, used in send message methods
+    protected LocalReference sourceLocalReferenceNumber;
+
+    public SccpConnAkMessageImpl(int sls, int localSsn) {
         super(0, MESSAGE_TYPE_AK, sls, localSsn);
     }
 
@@ -138,5 +141,13 @@ public class SccpConnAkMessageImpl extends SccpMessageImpl implements SccpConnAk
         } catch (IOException e) {
             throw new ParseException(e);
         }
+    }
+
+    public LocalReference getSourceLocalReferenceNumber() {
+        return sourceLocalReferenceNumber;
+    }
+
+    public void setSourceLocalReferenceNumber(LocalReference sourceLocalReferenceNumber) {
+        this.sourceLocalReferenceNumber = sourceLocalReferenceNumber;
     }
 }

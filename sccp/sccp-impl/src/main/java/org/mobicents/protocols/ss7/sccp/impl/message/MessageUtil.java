@@ -160,6 +160,12 @@ public class MessageUtil {
             sln = ((SccpConnRsrMessageImpl)msg).getSourceLocalReferenceNumber();
         } else if (msg instanceof SccpConnRscMessageImpl) {
             sln = ((SccpConnRscMessageImpl)msg).getSourceLocalReferenceNumber();
+        } else if (msg instanceof SccpConnDt1MessageImpl) {
+            sln = ((SccpConnDt1MessageImpl)msg).getSourceLocalReferenceNumber();
+        } else if (msg instanceof SccpConnDt2MessageImpl) {
+            sln = ((SccpConnDt2MessageImpl)msg).getSourceLocalReferenceNumber();
+        } else if (msg instanceof SccpConnAkMessageImpl) {
+            sln = ((SccpConnAkMessageImpl)msg).getSourceLocalReferenceNumber();
         } else {
             throw new IllegalStateException("Not implemented");
         }
@@ -178,6 +184,12 @@ public class MessageUtil {
             dln = ((SccpConnRsrMessageImpl)msg).getDestinationLocalReferenceNumber();
         } else if (msg instanceof SccpConnRscMessageImpl) {
             dln = ((SccpConnRscMessageImpl)msg).getDestinationLocalReferenceNumber();
+        } else if (msg instanceof SccpConnDt1MessageImpl) {
+            dln = ((SccpConnDt1MessageImpl)msg).getDestinationLocalReferenceNumber();
+        } else if (msg instanceof SccpConnDt2MessageImpl) {
+            dln = ((SccpConnDt2MessageImpl)msg).getDestinationLocalReferenceNumber();
+        }  else if (msg instanceof SccpConnAkMessageImpl) {
+            dln = ((SccpConnAkMessageImpl)msg).getDestinationLocalReferenceNumber();
         } else {
             throw new IllegalStateException("Not implemented");
         }
