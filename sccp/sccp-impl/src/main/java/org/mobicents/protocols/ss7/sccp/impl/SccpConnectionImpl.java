@@ -8,4 +8,8 @@ public class SccpConnectionImpl extends BaseSccpConnectionImpl implements SccpCo
     public SccpConnectionImpl(int localSsn, ProtocolClass protocol, SccpStackImpl stack, SccpRoutingControl sccpRoutingControl) {
         super(stack.newSls(), localSsn, protocol, stack, sccpRoutingControl);
     }
+
+    protected void callListenerOnData(byte[] data) {
+        listener.onData(this, data);
+    }
 }

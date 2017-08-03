@@ -156,7 +156,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     protected int resetTimerDelay = 15000;
     protected int reassemblyTimerDelay = 15000;
 
-    protected int sendTimeout = 1000;
+    protected int sendTimeout = 5000;
 
     // Max available Sccp message data for all messages
     protected int maxDataMessage = 2560;

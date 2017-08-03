@@ -35,7 +35,7 @@ public interface SccpConnection {
 
     void reset(ResetCause reason) throws Exception;
 
-    void disconnect(RefusalCause reason, byte[] data) throws Exception;
+    void refuse(RefusalCause reason, byte[] data) throws Exception;
     void disconnect(ReleaseCause reason, byte[] data) throws Exception;
 
     void confirm(SccpAddress respondingAddress) throws Exception;
