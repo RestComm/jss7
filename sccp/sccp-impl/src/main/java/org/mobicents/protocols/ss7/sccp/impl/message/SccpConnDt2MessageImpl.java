@@ -39,13 +39,17 @@ import org.mobicents.protocols.ss7.sccp.parameter.SequencingSegmenting;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 public class SccpConnDt2MessageImpl extends SccpMessageImpl implements SccpConnDt2Message {
     protected LocalReference destinationLocalReferenceNumber;
     protected SequencingSegmenting sequencingSegmenting;
     protected byte[] userData;
 
-    protected SccpConnDt2MessageImpl(int maxDataLen, int sls, int localSsn) {
+    // isn't sent over network, used in send message methods
+    protected LocalReference sourceLocalReferenceNumber;
+
+    public SccpConnDt2MessageImpl(int maxDataLen, int sls, int localSsn) {
         super(maxDataLen, MESSAGE_TYPE_DT2, sls, localSsn);
     }
 
@@ -170,5 +174,13 @@ public class SccpConnDt2MessageImpl extends SccpMessageImpl implements SccpConnD
         } catch (IOException e) {
             throw new ParseException(e);
         }
+    }
+
+    public LocalReference getSourceLocalReferenceNumber() {
+        return sourceLocalReferenceNumber;
+    }
+
+    public void setSourceLocalReferenceNumber(LocalReference sourceLocalReferenceNumber) {
+        this.sourceLocalReferenceNumber = sourceLocalReferenceNumber;
     }
 }

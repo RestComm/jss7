@@ -33,14 +33,18 @@ import java.util.logging.Logger;
 import javolution.util.FastMap;
 import junit.framework.Assert;
 
+import org.mobicents.protocols.ss7.sccp.MaxConnectionCountReached;
 import org.mobicents.protocols.ss7.sccp.NetworkIdState;
+import org.mobicents.protocols.ss7.sccp.SccpConnection;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpManagementEventListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.DialogImpl;
 import org.mobicents.protocols.ss7.tcap.PreviewDialogData;
@@ -416,6 +420,18 @@ public class DialogPreviewModeMngConcurrentTest {
 
         @Override
         public ExecutorCongestionMonitor[] getExecutorCongestionMonitorList() {
+            return null;
+        }
+
+        @Override
+        public SccpConnection newConnection(int localSsn, ProtocolClass protocolClass) throws MaxConnectionCountReached {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public FastMap<LocalReference, SccpConnection> getConnections() {
+            // TODO Auto-generated method stub
             return null;
         }
     }
