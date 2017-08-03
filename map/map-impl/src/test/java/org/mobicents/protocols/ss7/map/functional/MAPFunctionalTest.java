@@ -7353,6 +7353,250 @@ TC-END + SendRoutingInformationResponse
 
     }
 
+
+    /**
+<code>
+MAV V3
+TC-BEGIN + SendRoutingInformation
+  TC-CONTINUE + SendRoutingInformationResponse-NonLast
+TC-CONTINUE
+  TC-END + SendRoutingInformationResponse-Last
+</code>
+     */
+    @Test(groups = { "functional.flow", "dialog" })
+    public void testSendRoutingInformation_V3_NonLast() throws Exception {
+
+        Client client = new Client(stack1, this, peer1Address, peer2Address) {
+            private int dialogStep;
+
+            @Override
+            public void onSendRoutingInformationResponse(SendRoutingInformationResponse response) {
+                super.onSendRoutingInformationResponse(response);
+
+                SendRoutingInformationResponseImpl ind = (SendRoutingInformationResponseImpl) response;
+
+                if (dialogStep == 0) {
+                    IMSI imsi = ind.getIMSI();
+                    ExtendedRoutingInfo extRoutingInfo = ind.getExtendedRoutingInfo();
+                    RoutingInfo routingInfo = extRoutingInfo.getRoutingInfo();
+                    ISDNAddressString roamingNumber = routingInfo.getRoamingNumber();
+
+                    assertNotNull(imsi);
+                    assertEquals(imsi.getData(), "011220200198227");
+                    assertNotNull(roamingNumber);
+                    assertEquals(roamingNumber.getAddressNature(), AddressNature.international_number);
+                    assertEquals(roamingNumber.getNumberingPlan(), NumberingPlan.ISDN);
+                    assertEquals(roamingNumber.getAddress(), "79273605819");
+
+                    assertNull(ind.getVmscAddress());
+
+                    long mapProtocolVersion = ind.getMapProtocolVersion();
+                    assertEquals(mapProtocolVersion, 3);
+                    assertTrue(ind.isReturnResultNotLast());
+
+                    dialogStep++;
+                    
+                    
+                } else if (dialogStep == 1) {
+                    ISDNAddressString isdn = ind.getVmscAddress();
+                    assertEquals(isdn.getAddress(), "22233300");
+                    assertFalse(ind.isReturnResultNotLast());
+
+                    assertNull(ind.getIMSI());
+
+                    long mapProtocolVersion = ind.getMapProtocolVersion();
+                    assertEquals(mapProtocolVersion, 3);
+                    assertFalse(ind.isReturnResultNotLast());
+
+                    dialogStep++;
+                } else {
+                    fail("Wrong dialogStep - in testSendRoutingInformation_V3_NonLast - Client " + dialogStep);
+                }
+            }
+
+            @Override
+            public void onDialogDelimiter(MAPDialog mapDialog) {
+                super.onDialogDelimiter(mapDialog);
+                try {
+                    if (dialogStep == 1) {
+                        mapDialog.send();
+                    }
+                } catch (MAPException e) {
+                    this.error("Error while sending testSendRoutingInformation_V3_NonLast - empty TC-CONTINUE", e);
+                    fail("Error while sending testSendRoutingInformation_V3_NonLast - empty TC-CONTINUE");
+                }
+            }
+
+        };
+
+        Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
+            private int dialogStep;
+            private long invokeId;
+
+            @Override
+            public void onSendRoutingInformationRequest(SendRoutingInformationRequest request) {
+                super.onSendRoutingInformationRequest(request);
+
+                MAPDialogCallHandling d = request.getMAPDialog();
+                SendRoutingInformationRequestImpl ind = (SendRoutingInformationRequestImpl) request;
+                invokeId = ind.getInvokeId();
+
+                long mapProtocolVersion = ind.getMapProtocolVersion();
+                ISDNAddressString msisdn = ind.getMsisdn();
+                InterrogationType type = ind.getInterogationType();
+                ISDNAddressString gmsc = ind.getGmscOrGsmSCFAddress();
+
+                assertEquals(mapProtocolVersion, 3);
+                assertNotNull(msisdn);
+                assertNotNull(type);
+                assertNotNull(gmsc);
+                assertEquals(msisdn.getAddressNature(), AddressNature.international_number);
+                assertEquals(msisdn.getNumberingPlan(), NumberingPlan.ISDN);
+                assertTrue(msisdn.getAddress().equals("29113123311"));
+                assertEquals(gmsc.getAddressNature(), AddressNature.international_number);
+                assertEquals(gmsc.getNumberingPlan(), NumberingPlan.ISDN);
+                assertTrue(gmsc.getAddress().equals("49883700292"));
+                assertEquals(type, InterrogationType.forwarding);
+            }
+
+            @Override
+            public void onDialogDelimiter(MAPDialog mapDialog) {
+                super.onDialogDelimiter(mapDialog);
+                try {
+
+                    MAPDialogCallHandling d = (MAPDialogCallHandling)mapDialog;
+
+                    if (dialogStep == 0) {
+                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendRoutingInformationResp, null, sequence++));
+
+                        IMSI imsi = this.mapParameterFactory.createIMSI("011220200198227");
+
+                        ISDNAddressString roamingNumber = this.mapParameterFactory.createISDNAddressString(
+                                AddressNature.international_number, NumberingPlan.ISDN, "79273605819");
+                        RoutingInfo routingInfo = this.mapParameterFactory.createRoutingInfo(roamingNumber);
+                        ExtendedRoutingInfo extRoutingInfo = this.mapParameterFactory.createExtendedRoutingInfo(routingInfo);
+
+                        CUGCheckInfo cugCheckInfo = null;
+                        boolean cugSubscriptionFlag = false;
+                        CellGlobalIdOrServiceAreaIdFixedLength cellGlobalIdOrServiceAreaIdFixedLength = this.mapParameterFactory
+                                .createCellGlobalIdOrServiceAreaIdFixedLength(250, 1, 1111, 222);
+                        CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI = this.mapParameterFactory
+                                .createCellGlobalIdOrServiceAreaIdOrLAI(cellGlobalIdOrServiceAreaIdFixedLength);
+                        LocationInformationGPRS locationInformationGPRS = this.mapParameterFactory
+                                .createLocationInformationGPRS(cellGlobalIdOrServiceAreaIdOrLAI, null, null, null, null, null,
+                                        false, null, false, null);
+                        SubscriberInfo subscriberInfo = this.mapParameterFactory.createSubscriberInfo(null, null, null,
+                                locationInformationGPRS, null, null, null, null, null);
+                        ArrayList<SSCode> ssList = null;
+                        ExtBasicServiceCode basicService = null;
+                        boolean forwardingInterrogationRequired = false;
+                        ISDNAddressString vmscAddress = null;
+                        MAPExtensionContainer extensionContainer = null;
+                        NAEAPreferredCI naeaPreferredCI = null;
+                        CCBSIndicators ccbsIndicators = null;
+                        NumberPortabilityStatus nrPortabilityStatus = null;
+                        Integer istAlertTimer = null;
+                        SupportedCamelPhases supportedCamelPhases = null;
+                        OfferedCamel4CSIs offeredCamel4CSIs = null;
+                        RoutingInfo routingInfo2 = null;
+                        ArrayList<SSCode> ssList2 = null;
+                        ExtBasicServiceCode basicService2 = null;
+                        AllowedServices allowedServices = null;
+                        UnavailabilityCause unavailabilityCause = null;
+                        boolean releaseResourcesSupported = false;
+                        ExternalSignalInfo gsmBearerCapability = null;
+
+                        d.addSendRoutingInformationResponse_NonLast(invokeId, imsi, extRoutingInfo,
+                                cugCheckInfo, cugSubscriptionFlag, subscriberInfo, ssList, basicService,
+                                forwardingInterrogationRequired, vmscAddress, extensionContainer, naeaPreferredCI,
+                                ccbsIndicators, null, nrPortabilityStatus, istAlertTimer, supportedCamelPhases,
+                                offeredCamel4CSIs, routingInfo2, ssList2, basicService2, allowedServices, unavailabilityCause,
+                                releaseResourcesSupported, gsmBearerCapability);
+                        d.send();
+                        dialogStep++;
+                    } else if (dialogStep == 1) {
+                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.SendRoutingInformationResp, null, sequence++));
+
+                        ISDNAddressString vmscAddress = this.mapParameterFactory.createISDNAddressString(
+                                AddressNature.international_number, NumberingPlan.ISDN, "22233300");
+                        d.addSendRoutingInformationResponse(invokeId, null, null, null, false, null, null,
+                                null, false, vmscAddress, null, null, null, null, null, null, null, null, null, null, null,
+                                null, null, false, null);
+
+                        d.close(false);
+                        dialogStep++;
+                    } else {
+                        fail("Wrong dialogStep - in testSendRoutingInformation_V3_NonLast - Client " + dialogStep);
+                    }
+                } catch (MAPException e) {
+                    this.error("Error while sending testSendRoutingInformation_V3_NonLast - error of sending of back a response", e);
+                    fail("Error while sending the - error of sending of back a response");
+                }
+            }
+        };
+
+        long stamp = System.currentTimeMillis();
+        int count = 0;
+        // Client side events
+        List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+        TestEvent te = TestEvent.createSentEvent(EventType.SendRoutingInformation, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.SendRoutingInformationResp, null, count++,
+                (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.SendRoutingInformationResp, null, count++,
+                (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        clientExpectedEvents.add(te);
+
+        count = 0;
+        // Server side events
+        List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+        te = TestEvent.createReceivedEvent(EventType.DialogRequest, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.SendRoutingInformation, null, count++,
+                (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.SendRoutingInformationResp, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.SendRoutingInformationResp, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        serverExpectedEvents.add(te);
+
+        this.saveTrafficInFile();
+        
+        client.sendSendRoutingInformation_V3();
+        waitForEnd();
+
+        client.compareEvents(clientExpectedEvents);
+        server.compareEvents(serverExpectedEvents);
+
+    }
+
     /**
 <code>
 TC-BEGIN + SendRoutingInformation MAV V2

@@ -163,6 +163,9 @@ public interface MAPDialogMobility extends MAPDialog {
     void addSendIdentificationResponse(long invokeId, IMSI imsi, AuthenticationSetList authenticationSetList,
             CurrentSecurityContext currentSecurityContext, MAPExtensionContainer extensionContainer) throws MAPException;
 
+    void addSendIdentificationResponse_NonLast(long invokeId, IMSI imsi, AuthenticationSetList authenticationSetList,
+            CurrentSecurityContext currentSecurityContext, MAPExtensionContainer extensionContainer) throws MAPException;
+
     Long addUpdateGprsLocationRequest(int customInvokeTimeout, IMSI imsi, ISDNAddressString sgsnNumber,
             GSNAddress sgsnAddress, MAPExtensionContainer extensionContainer, SGSNCapability sgsnCapability,
             boolean informPreviousNetworkEntity, boolean psLCSNotSupportedByUE, GSNAddress vGmlcAddress, ADDInfo addInfo,
@@ -205,6 +208,9 @@ public interface MAPDialogMobility extends MAPDialog {
     void addSendAuthenticationInfoResponse(long invokeId, AuthenticationSetList authenticationSetList,
             MAPExtensionContainer extensionContainer, EpsAuthenticationSetList epsAuthenticationSetList) throws MAPException;
 
+    void addSendAuthenticationInfoResponse_NonLast(long invokeId, AuthenticationSetList authenticationSetList,
+            MAPExtensionContainer extensionContainer, EpsAuthenticationSetList epsAuthenticationSetList) throws MAPException;
+
     Long addAuthenticationFailureReportRequest(IMSI imsi, FailureCause failureCause, MAPExtensionContainer extensionContainer, Boolean reAttempt,
             AccessType accessType, byte[] rand, ISDNAddressString vlrNumber, ISDNAddressString sgsnNumber) throws MAPException;
 
@@ -239,7 +245,10 @@ public interface MAPDialogMobility extends MAPDialog {
             RequestedInfo requestedInfo, ISDNAddressString gsmSCFAddress, MAPExtensionContainer extensionContainer)
             throws MAPException;
 
-    void addAnyTimeInterrogationResponse(long invokeId, SubscriberInfo subscriberInfo,
+    void addAnyTimeInterrogationResponse(long invokeId, SubscriberInfo subscriberInfo, MAPExtensionContainer extensionContainer)
+            throws MAPException;
+
+    void addAnyTimeInterrogationResponse_NonLast(long invokeId, SubscriberInfo subscriberInfo,
             MAPExtensionContainer extensionContainer) throws MAPException;
 
     long addAnyTimeSubscriptionInterrogationRequest(SubscriberIdentity subscriberIdentity, RequestedSubscriptionInfo requestedSubscriptionInfo,
@@ -254,6 +263,12 @@ public interface MAPDialogMobility extends MAPDialog {
             ArrayList<MSISDNBS> msisdnBsList, ArrayList<CSGSubscriptionData> csgSubscriptionDataList, CallWaitingData callWaitingData,
             CallHoldData callHoldData, ClipData clipData, ClirData clirData, EctData ectData) throws MAPException;
 
+    void addAnyTimeSubscriptionInterrogationResponse_NonLast(long invokeId, CallForwardingData callForwardingData, CallBarringData callBarringData, ODBInfo odbInfo,
+            CAMELSubscriptionInfo camelSubscriptionInfo, SupportedCamelPhases supportedVlrCamelPhases, SupportedCamelPhases supportedSgsnCamelPhases,
+            MAPExtensionContainer extensionContainer, OfferedCamel4CSIs offeredCamel4CSIsInVlr, OfferedCamel4CSIs offeredCamel4CSIsInSgsn,
+            ArrayList<MSISDNBS> msisdnBsList, ArrayList<CSGSubscriptionData> csgSubscriptionDataList, CallWaitingData callWaitingData,
+            CallHoldData callHoldData, ClipData clipData, ClirData clirData, EctData ectData) throws MAPException;
+
     long addProvideSubscriberInfoRequest(IMSI imsi, LMSI lmsi, RequestedInfo requestedInfo, MAPExtensionContainer extensionContainer, EMLPPPriority callPriority)
             throws MAPException;
 
@@ -261,6 +276,8 @@ public interface MAPDialogMobility extends MAPDialog {
             EMLPPPriority callPriority) throws MAPException;
 
     void addProvideSubscriberInfoResponse(long invokeId, SubscriberInfo subscriberInfo, MAPExtensionContainer extensionContainer) throws MAPException;
+
+    void addProvideSubscriberInfoResponse_NonLast(long invokeId, SubscriberInfo subscriberInfo, MAPExtensionContainer extensionContainer) throws MAPException;
 
     // -- Subscriber Management services
     Long addInsertSubscriberDataRequest(IMSI imsi, ISDNAddressString msisdn, Category category,

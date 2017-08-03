@@ -26,12 +26,16 @@ import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.MobilityMessage;
 
 /**
- *
- MAP V3: SendAuthenticationInfoRes ::= [3] SEQUENCE { authenticationSetList AuthenticationSetList OPTIONAL, extensionContainer
- * ExtensionContainer OPTIONAL, ..., eps-AuthenticationSetList [2] EPS-AuthenticationSetList OPTIONAL }
- *
- * MAP V2: SendAuthenticationInfoRes ::= AuthenticationSetList
- *
+<code>
+MAP V3: SendAuthenticationInfoRes ::= [3] SEQUENCE {
+  authenticationSetList AuthenticationSetList OPTIONAL,
+  extensionContainer ExtensionContainer OPTIONAL,
+  ...,
+  eps-AuthenticationSetList [2] EPS-AuthenticationSetList OPTIONAL
+}
+
+MAP V2: SendAuthenticationInfoRes ::= AuthenticationSetList
+</code>
  *
  * @author sergey vetyutnev
  *
