@@ -20,7 +20,7 @@ public interface IDialogDataStorage {
     void init(TCAPStackImpl tcapStack);
     ITimerFacility createTimerFacility();
 
-    void beginTransaction();
+    void beginTransaction() throws Exception;
 
-    void commitTransaction();
+    void commitTransaction() throws Exception;
 }
