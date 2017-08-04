@@ -28,6 +28,7 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.CAPDialogImpl;
 import org.mobicents.protocols.ss7.cap.CAPProviderImpl;
 import org.mobicents.protocols.ss7.cap.CAPServiceBaseImpl;
+import org.mobicents.protocols.ss7.cap.CAPServiceType;
 import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
@@ -74,7 +75,7 @@ public class CAPServiceGprsImpl extends CAPServiceBaseImpl implements CAPService
             throw new CAPException("Cannot create CAPDialogGprs because CAPServiceGprsl is not activated");
 
         Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress, localTrId);
-        CAPDialogGprsImpl dialog = new CAPDialogGprsImpl(appCntx, tcapDialog, this.capProviderImpl, this);
+        CAPDialogGprsImpl dialog = new CAPDialogGprsImpl(appCntx, tcapDialog, this.capProviderImpl, CAPServiceType.CAP_SERVICE_GPRS);
 
         this.putCAPDialogIntoCollection(dialog);
 
@@ -93,7 +94,7 @@ public class CAPServiceGprsImpl extends CAPServiceBaseImpl implements CAPService
 
     @Override
     protected CAPDialogImpl createNewDialogIncoming(CAPApplicationContext appCntx, Dialog tcapDialog) {
-        return new CAPDialogGprsImpl(appCntx, tcapDialog, this.capProviderImpl, this);
+        return new CAPDialogGprsImpl(appCntx, tcapDialog, this.capProviderImpl, CAPServiceType.CAP_SERVICE_GPRS);
     }
 
     @Override

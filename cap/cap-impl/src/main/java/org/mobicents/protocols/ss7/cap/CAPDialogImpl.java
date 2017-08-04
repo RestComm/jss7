@@ -60,17 +60,48 @@ public abstract class CAPDialogImpl implements CAPDialog {
 
     private static final Logger logger = Logger.getLogger(CAPDialogImpl.class);
 
-    protected Dialog tcapDialog = null;
-    protected CAPProviderImpl capProviderImpl = null;
-    protected CAPServiceBase capService = null;
+    protected transient Dialog tcapDialog = null;
+    protected transient CAPProviderImpl capProviderImpl = null;
+
+    protected final CAPServiceType capServiceType;
+    private final Long localDialogId;
+
+    public void setTcapDialog(Dialog d) {
+        this.tcapDialog=d;
+    }
+    public void setCAPProviderImpl(CAPProviderImpl c) {
+        capProviderImpl=c;
+    }
+
+    public CAPServiceBase getService() {
+        switch(capServiceType) {
+            case CAP_SERVICE_CALL:
+                return capProviderImpl.getCAPServiceCircuitSwitchedCall();
+            case CAP_SERVICE_SMS:
+                return capProviderImpl.getCAPServiceSms();
+            case CAP_SERVICE_GPRS:
+                return capProviderImpl.getCAPServiceGprs();
+        }
+        // unreachable ??
+        return null;
+    }
 
     // Application Context of this Dialog
-    protected CAPApplicationContext appCntx;
+    protected final CAPApplicationContext appCntx;
 
-    protected CAPGprsReferenceNumber gprsReferenceNumber = null;
-    protected CAPGprsReferenceNumber receivedGprsReferenceNumber;
+    private CAPGprsReferenceNumber gprsReferenceNumber = null;
+    private CAPGprsReferenceNumber receivedGprsReferenceNumber;
 
-    protected CAPDialogState state = CAPDialogState.Idle;
+    private CAPDialogState state = CAPDialogState.Idle;
+
+    protected void updateStoredData() {
+        tcapDialog.setUserObject(this);
+    }
+
+    protected void setReceivedGprsReferenceNumber(CAPGprsReferenceNumber n) {
+        this.receivedGprsReferenceNumber=n;
+        updateStoredData();
+    }
 
     // protected boolean normalDialogShutDown = false;
 
@@ -80,12 +111,15 @@ public abstract class CAPDialogImpl implements CAPDialog {
     protected MessageType tcapMessageType;
     protected DelayedAreaState delayedAreaState;
 
+    private Object userObject;
+
     protected CAPDialogImpl(CAPApplicationContext appCntx, Dialog tcapDialog, CAPProviderImpl capProviderImpl,
-            CAPServiceBase capService) {
+            CAPServiceType capServiceType) {
+        this.localDialogId=tcapDialog.getLocalDialogId();
         this.appCntx = appCntx;
         this.tcapDialog = tcapDialog;
         this.capProviderImpl = capProviderImpl;
-        this.capService = capService;
+        this.capServiceType = capServiceType;
     }
 
     public SccpAddress getLocalAddress() {
@@ -132,16 +166,16 @@ public abstract class CAPDialogImpl implements CAPDialog {
     }
 
     public Long getLocalDialogId() {
-        return tcapDialog.getLocalDialogId();
+        return localDialogId;
     }
 
     public Long getRemoteDialogId() {
+        if(tcapDialog==null)
+            return null;
         return tcapDialog.getRemoteDialogId();
     }
 
-    public CAPServiceBase getService() {
-        return this.capService;
-    }
+
 
     public Dialog getTcapDialog() {
         return tcapDialog;
@@ -205,6 +239,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
         }
 
         this.state = newState;
+        updateStoredData();
         // if (newState == CAPDialogState.Expunged) {
         // this.capProviderImpl.removeDialog(tcapDialog.getDialogId());
         // this.capProviderImpl.deliverDialogRelease(this);
@@ -213,6 +248,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
 
     public void setGprsReferenceNumber(CAPGprsReferenceNumber gprsReferenceNumber) {
         this.gprsReferenceNumber = gprsReferenceNumber;
+        updateStoredData();
     }
 
     public CAPGprsReferenceNumber getGprsReferenceNumber() {
@@ -507,12 +543,16 @@ public abstract class CAPDialogImpl implements CAPDialog {
         }
     }
 
+    /*
+     * CAP uses tcap level userObject to store instances of CAPDialogImpl
+     */
     public Object getUserObject() {
-        return this.tcapDialog.getUserObject();
+        return userObject;
     }
 
     public void setUserObject(Object userObject) {
-        this.tcapDialog.setUserObject(userObject);
+        this.userObject=userObject;
+        updateStoredData();
     }
 
     @Override
@@ -583,18 +623,17 @@ public abstract class CAPDialogImpl implements CAPDialog {
         throw new CAPException("Bad TCAP Dialog state: " + this.tcapDialog.getState());
     }
 
+
+    // toString may be invoked without transient fields fully set
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("CAPDialog: LocalDialogId=").append(this.getLocalDialogId()).append(" RemoteDialogId=")
-                .append(this.getRemoteDialogId()).append(" CAPDialogState=").append(this.getState())
-                .append(" CAPApplicationContext=").append(this.appCntx).append(" TCAPDialogState=")
-                .append(this.tcapDialog.getState());
+        sb.append("CAPDialog: LocalDialogId=").append(this.getLocalDialogId()).append(" CAPDialogState=").append(this.getState())
+                .append(" CAPApplicationContext=").append(this.appCntx);
         return sb.toString();
     }
 
     protected enum DelayedAreaState {
         No, Continue, End, PrearrangedEnd;
     }
-
 }

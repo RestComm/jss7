@@ -22,13 +22,6 @@
 
 package org.mobicents.protocols.ss7.tcap;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.fail;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
@@ -59,6 +52,13 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 /**
  *
@@ -300,22 +300,22 @@ public class PreviewModeFunctionalTest {
         msg.setIncomingOpc(101);
         msg.setIncomingDpc(102);
         this.sccpProv.sccpListener.onMessage(msg);
-        assertEquals(this.tcapStack1.getDialogPreviewList().size(), 1);
+        assertEquals(((TCAPProviderImpl)this.tcapStack1.getProvider()).getPreviewDialogDataStorage().getSize(), 1);
         msg = (SccpDataMessageImpl) messageFactory.createDataMessageClass1(addr1, addr2, m2, 0, 0, false, null, null);
         msg.setIncomingOpc(102);
         msg.setIncomingDpc(101);
         this.sccpProv.sccpListener.onMessage(msg);
-        assertEquals(this.tcapStack1.getDialogPreviewList().size(), 2);
+        assertEquals(((TCAPProviderImpl)this.tcapStack1.getProvider()).getPreviewDialogDataStorage().getSize(), 2);
         msg = (SccpDataMessageImpl) messageFactory.createDataMessageClass1(addr2, addr1, m3, 0, 0, false, null, null);
         msg.setIncomingOpc(101);
         msg.setIncomingDpc(102);
         this.sccpProv.sccpListener.onMessage(msg);
-        assertEquals(this.tcapStack1.getDialogPreviewList().size(), 2);
+        assertEquals(((TCAPProviderImpl)this.tcapStack1.getProvider()).getPreviewDialogDataStorage().getSize(), 2);
         msg = (SccpDataMessageImpl) messageFactory.createDataMessageClass1(addr1, addr2, m4, 0, 0, false, null, null);
         msg.setIncomingOpc(102);
         msg.setIncomingDpc(101);
         this.sccpProv.sccpListener.onMessage(msg);
-        assertEquals(this.tcapStack1.getDialogPreviewList().size(), 0);
+        assertEquals(((TCAPProviderImpl)this.tcapStack1.getProvider()).getPreviewDialogDataStorage().getSize(), 0);
 
         EventTestHarness.doCompareEvents(observerdEvents, expectedEvents);
     }
@@ -458,10 +458,10 @@ public class PreviewModeFunctionalTest {
         msg.setIncomingOpc(101);
         msg.setIncomingDpc(102);
         this.sccpProv.sccpListener.onMessage(msg);
-        assertEquals(this.tcapStack1.getDialogPreviewList().size(), 1);
+        assertEquals(((TCAPProviderImpl)this.tcapStack1.getProvider()).getPreviewDialogDataStorage().getSize(), 1);
 
         Thread.sleep(3000);
-        assertEquals(this.tcapStack1.getDialogPreviewList().size(), 0);
+        assertEquals(((TCAPProviderImpl)this.tcapStack1.getProvider()).getPreviewDialogDataStorage().getSize(), 0);
 
         EventTestHarness.doCompareEvents(observerdEvents, expectedEvents);
     }
@@ -509,16 +509,16 @@ public class PreviewModeFunctionalTest {
         msg.setIncomingOpc(101);
         msg.setIncomingDpc(102);
         this.sccpProv.sccpListener.onMessage(msg);
-        assertEquals(this.tcapStack1.getDialogPreviewList().size(), 1);
+        assertEquals(((TCAPProviderImpl)this.tcapStack1.getProvider()).getPreviewDialogDataStorage().getSize(), 1);
         msg = (SccpDataMessageImpl) messageFactory.createDataMessageClass1(addr1, addr2, m2, 0, 0, false, null, null);
         msg.setIncomingOpc(101);
         msg.setIncomingDpc(102);
         this.sccpProv.sccpListener.onMessage(msg);
-        assertEquals(this.tcapStack1.getDialogPreviewList().size(), 1);
+        assertEquals(((TCAPProviderImpl)this.tcapStack1.getProvider()).getPreviewDialogDataStorage().getSize(), 1);
 
         this.tcapStack1.setMaxDialogs(100);
         this.sccpProv.sccpListener.onMessage(msg);
-        assertEquals(this.tcapStack1.getDialogPreviewList().size(), 2);
+        assertEquals(((TCAPProviderImpl)this.tcapStack1.getProvider()).getPreviewDialogDataStorage().getSize(), 2);
 
         EventTestHarness.doCompareEvents(observerdEvents, expectedEvents);
     }

@@ -232,7 +232,6 @@ import org.mobicents.protocols.ss7.sccp.parameter.Segmentation;
 import org.mobicents.protocols.ss7.scheduler.DefaultClock;
 import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.mobicents.protocols.ss7.statistics.api.LongValue;
-import org.mobicents.protocols.ss7.tcap.DialogImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPCounterProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
@@ -263,6 +262,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
+import org.mobicents.protocols.ss7.tcap.data.PreviewDialogImpl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -290,7 +290,7 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
     private boolean needInterrupt = false;
     private String errorMessage = null;
     private PrintWriter pw;
-    private DialogImpl curTcapDialog;
+    private PreviewDialogImpl curTcapDialog;
     private int msgCount;
     private String persistDir;
 
@@ -801,8 +801,10 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
                 this.tcapProvider.onMessage(message);
             }
 
-            if (this.curTcapDialog == null || this.curTcapDialog.getPrevewDialogData() == null
-                    || this.curTcapDialog.getPrevewDialogData().getUpperDialog() == null) {
+            if (this.curTcapDialog == null) {
+                return;
+            }
+            if( this.curTcapDialog.getPrevewDialogData().getUpperDialog() == null) {
                 return;
             }
 
@@ -2313,19 +2315,25 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
 
     }
 
+    void setCurTcapDialog(Dialog d) {
+        if(d instanceof PreviewDialogImpl) {
+            curTcapDialog=(PreviewDialogImpl)d;
+        }
+    }
+
     @Override
     public void onTCBegin(TCBeginIndication ind) {
-        this.curTcapDialog = (DialogImpl) ind.getDialog();
+        setCurTcapDialog(ind.getDialog());
     }
 
     @Override
     public void onTCContinue(TCContinueIndication ind) {
-        this.curTcapDialog = (DialogImpl) ind.getDialog();
+        setCurTcapDialog(ind.getDialog());
     }
 
     @Override
     public void onTCEnd(TCEndIndication ind) {
-        this.curTcapDialog = (DialogImpl) ind.getDialog();
+        setCurTcapDialog(ind.getDialog());
     }
 
     @Override
@@ -2336,17 +2344,17 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
 
     @Override
     public void onTCPAbort(TCPAbortIndication ind) {
-        this.curTcapDialog = (DialogImpl) ind.getDialog();
+        setCurTcapDialog(ind.getDialog());
     }
 
     @Override
     public void onTCUni(TCUniIndication ind) {
-        this.curTcapDialog = (DialogImpl) ind.getDialog();
+        setCurTcapDialog(ind.getDialog());
     }
 
     @Override
     public void onTCUserAbort(TCUserAbortIndication ind) {
-        this.curTcapDialog = (DialogImpl) ind.getDialog();
+        setCurTcapDialog(ind.getDialog());
     }
 
     @Override

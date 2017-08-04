@@ -22,23 +22,21 @@
 
 package org.mobicents.protocols.ss7.tcap.asn;
 
-import java.io.IOException;
-import java.util.concurrent.Future;
-
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
-import org.mobicents.protocols.ss7.tcap.DialogImpl;
 import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
 import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
-import org.mobicents.protocols.ss7.tcap.api.tc.component.OperationState;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ComponentType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.GeneralProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
 import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
+
+import java.io.IOException;
 
 /**
  * @author baranowb
@@ -47,15 +45,11 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
  *
  */
 public class InvokeImpl implements Invoke {
-
+    private transient Dialog dialog;
     // local to stack
     private InvokeClass invokeClass = InvokeClass.Class1;
     private long invokeTimeout = TCAPStackImpl._EMPTY_INVOKE_TIMEOUT;
-    private OperationState state = OperationState.Idle;
-    private Future timerFuture;
-    private OperationTimerTask operationTimerTask = new OperationTimerTask(this);
-    private TCAPProviderImpl provider;
-    private DialogImpl dialog;
+    private transient TCAPProviderImpl provider;
 
     public InvokeImpl() {
         // Set Default Class
@@ -75,7 +69,7 @@ public class InvokeImpl implements Invoke {
 
     // optional
     private Long linkedId;
-    private Invoke linkedInvoke;
+    private transient Invoke linkedInvoke;
 
     // mandatory
     private OperationCode operationCode;
@@ -190,7 +184,7 @@ public class InvokeImpl implements Invoke {
     @Override
     public String toString() {
         return "Invoke[invokeId=" + invokeId + ", linkedId=" + linkedId + ", operationCode=" + operationCode + ", parameter="
-                + parameter + ", invokeClass=" + invokeClass + ", state=" + state + "]";
+                + parameter + ", invokeClass=" + invokeClass + "]";
     }
 
     /*
@@ -299,146 +293,10 @@ public class InvokeImpl implements Invoke {
         this.invokeTimeout = invokeTimeout;
     }
 
-    // ////////////////////
-    // set methods for //
-    // relevant data //
-    // ///////////////////
-    /**
-     * @return the provider
-     */
-    public TCAPProviderImpl getProvider() {
-        return provider;
-    }
-
-    /**
-     * @param provider the provider to set
-     */
     public void setProvider(TCAPProviderImpl provider) {
         this.provider = provider;
     }
 
-    /**
-     * @return the dialog
-     */
-    public DialogImpl getDialog() {
-        return dialog;
-    }
-
-    /**
-     * @param dialog the dialog to set
-     */
-    public void setDialog(DialogImpl dialog) {
-        this.dialog = dialog;
-    }
-
-    /**
-     * @return the state
-     */
-    public OperationState getState() {
-        return state;
-    }
-
-    /**
-     * @param state the state to set
-     */
-    public void setState(OperationState state) {
-        if (this.dialog == null) {
-            // bad call on server side.
-            return;
-        }
-        OperationState old = this.state;
-        this.state = state;
-        if (old != state) {
-
-            switch (state) {
-                case Sent:
-                    // start timer
-                    this.startTimer();
-                    break;
-                case Idle:
-                case Reject_W:
-                    this.stopTimer();
-                    dialog.operationEnded(this);
-            }
-            if (state == OperationState.Sent) {
-
-            } else if (state == OperationState.Idle || state == OperationState.Reject_W) {
-
-            }
-
-        }
-    }
-
-    public void onReturnResultLast() {
-        this.setState(OperationState.Idle);
-
-    }
-
-    public void onError() {
-        this.setState(OperationState.Idle);
-
-    }
-
-    public void onReject() {
-        this.setState(OperationState.Idle);
-    }
-
-    public synchronized void startTimer() {
-        if (this.dialog == null || this.dialog.getPreviewMode())
-            return;
-
-        this.stopTimer();
-        if (this.invokeTimeout > 0)
-            this.timerFuture = this.provider.createOperationTimer(this.operationTimerTask, this.invokeTimeout);
-    }
-
-    public synchronized void stopTimer() {
-
-        if (this.timerFuture != null) {
-            this.timerFuture.cancel(false);
-            this.timerFuture = null;
-        }
-
-    }
-
-    public boolean isErrorReported() {
-        if (this.invokeClass == InvokeClass.Class1 || this.invokeClass == InvokeClass.Class2) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isSuccessReported() {
-        if (this.invokeClass == InvokeClass.Class1 || this.invokeClass == InvokeClass.Class3) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private class OperationTimerTask implements Runnable {
-        InvokeImpl invoke;
-
-        OperationTimerTask(InvokeImpl invoke) {
-            this.invoke = invoke;
-        }
-
-        public void run() {
-
-            try {
-                dialog.getDialogLock().lock();
-
-                // op failed, we must delete it from dialog and notify!
-                timerFuture = null;
-                setState(OperationState.Idle);
-                // TC-L-CANCEL
-                ((DialogImpl) invoke.dialog).operationTimedOut(invoke);
-            } finally {
-                dialog.getDialogLock().unlock();
-            }
-        }
-
-    }
-
+    public void setDialog(Dialog d) { this.dialog=d;}
+    public Dialog getDialog() { return dialog;}
 }

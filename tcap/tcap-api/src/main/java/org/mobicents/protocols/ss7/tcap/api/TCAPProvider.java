@@ -22,10 +22,10 @@
 
 package org.mobicents.protocols.ss7.tcap.api;
 
-import java.io.Serializable;
-
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+
+import java.io.Serializable;
 
 /**
  *
@@ -88,4 +88,12 @@ public interface TCAPProvider extends Serializable {
      * @return current count of active TCAP dialogs
      */
     int getCurrentDialogsCount();
+
+
+    /**
+     * get existing dialog based local dialog id
+     * @param localDialogId
+     * @return
+     */
+    Dialog getDialog(Long localDialogId);
 }

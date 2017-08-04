@@ -22,11 +22,7 @@
 
 package org.mobicents.protocols.ss7.tools.traceparser;
 
-import java.util.HashMap;
-import java.util.concurrent.ScheduledExecutorService;
-
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.tcap.DialogImpl;
 import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.TRPseudoState;
@@ -39,6 +35,10 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCAbortMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
+import org.mobicents.protocols.ss7.tcap.data.DialogImpl;
+import org.mobicents.protocols.ss7.tcap.data.IDialogData;
+
+import java.util.HashMap;
 
 /**
  *
@@ -52,9 +52,8 @@ public class DialogImplWrapper extends DialogImpl {
     protected int curOpcOrig;
     protected int curOpc;
 
-    public DialogImplWrapper(SccpAddress localAddress, SccpAddress remoteAddress, Long origTransactionId, boolean structured,
-            ScheduledExecutorService executor, TCAPProviderImpl provider, int seqControl) {
-        super(localAddress, remoteAddress, origTransactionId, structured, executor, provider, seqControl, true);
+    public DialogImplWrapper(TCAPProviderImpl provider, IDialogData data) {
+        super(provider,data);
     }
 
     public int getAcnValue() {

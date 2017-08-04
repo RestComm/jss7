@@ -22,23 +22,27 @@
 
 package org.mobicents.protocols.ss7.tcap;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-
 import javolution.text.TextBuilder;
+import javolution.util.FastList;
 import javolution.xml.XMLBinding;
 import javolution.xml.XMLObjectReader;
 import javolution.xml.XMLObjectWriter;
 import javolution.xml.stream.XMLStreamException;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPCounterProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
+import org.mobicents.protocols.ss7.tcap.data.IDialogDataStorage;
+import org.mobicents.protocols.ss7.tcap.data.ITimerFacility;
+import org.mobicents.protocols.ss7.tcap.data.LocalDialogDataStorage;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.List;
 
 /**
  * @author amit bhayani
@@ -96,13 +100,17 @@ public class TCAPStackImpl implements TCAPStack {
     private long dialogIdRangeStart = 1;
     private long dialogIdRangeEnd = Integer.MAX_VALUE;
     private boolean previewMode = false;
+    private List<Integer> extraSsns = new FastList<Integer>();
     private boolean doNotSendProtocolVersion = false;
     private boolean statisticsEnabled = false;
+
+    private IDialogDataStorage dialogDataStorage;
 
     private int ssn = -1;
 
     // SLS value
     private SlsRangeType slsRange = SlsRangeType.All;
+    private ITimerFacility timerFacility;
 
     public TCAPStackImpl(String name) {
         super();
@@ -116,12 +124,18 @@ public class TCAPStackImpl implements TCAPStack {
 
     public TCAPStackImpl(String name, SccpProvider sccpProvider, int ssn) {
         this(name);
-
         this.sccpProvider = sccpProvider;
-        this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, ssn);
-        this.tcapCounterProvider = new TCAPCounterProviderImpl(this.tcapProvider);
-
         this.ssn = ssn;
+    }
+
+
+    public IDialogDataStorage getDialogDataStorage() {
+        return dialogDataStorage;
+    }
+
+    public void setDialogDataStorage(IDialogDataStorage ds) {
+        ds.init(this);
+        this.dialogDataStorage=ds;
     }
 
     @Override
@@ -179,10 +193,11 @@ public class TCAPStackImpl implements TCAPStack {
         if (this.invokeTimeout < 0) {
             throw new IllegalArgumentException("InvokeTimeout value must be greater or equal to zero.");
         }
-
+        if(dialogDataStorage==null)
+            dialogDataStorage=new LocalDialogDataStorage();
+        this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, ssn);
         this.tcapCounterProvider = new TCAPCounterProviderImpl(this.tcapProvider);
         tcapProvider.start();
-
         this.started = true;
     }
 
@@ -219,6 +234,11 @@ public class TCAPStackImpl implements TCAPStack {
      * @see org.mobicents.protocols.ss7.tcap.api.TCAPStack#getProvider()
      */
     public TCAPProvider getProvider() {
+
+        return tcapProvider;
+    }
+
+    public TCAPProviderImpl getProviderImpl() {
 
         return tcapProvider;
     }
@@ -352,6 +372,47 @@ public class TCAPStackImpl implements TCAPStack {
         return previewMode;
     }
 
+    public void setExtraSsns(List<Integer> extraSsnsNew) throws Exception {
+        if (this.started)
+            throw new Exception("ExtraSsns parameter can be updated only when TCAP stack is NOT running");
+
+        if (extraSsnsNew != null) {
+            synchronized (this) {
+                List<Integer> extraSsnsTemp = new FastList<Integer>();
+                extraSsnsTemp.addAll(extraSsnsNew);
+                this.extraSsns = extraSsnsTemp;
+            }
+        }
+    }
+
+    public List<Integer> getExtraSsns() {
+        return extraSsns;
+    }
+
+    public boolean isExtraSsnPresent(int ssn) {
+        if (this.ssn == ssn)
+            return true;
+        if (extraSsns != null) {
+            if (extraSsns.contains(ssn))
+                return true;
+        }
+        return false;
+    }
+
+    // @Override
+    public String getSubSystemNumberList() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.ssn);
+        if (extraSsns != null) {
+            for (Integer iSsn : extraSsns) {
+                sb.append(", ");
+                sb.append(iSsn);
+            }
+        }
+
+        return sb.toString();
+    }
+
     public void setSlsRange(String val) throws Exception  {
 
         if (val.equals(SlsRangeType.All.toString()))  {
@@ -407,6 +468,7 @@ public class TCAPStackImpl implements TCAPStack {
     public boolean getStatisticsEnabled() {
         return statisticsEnabled;
     }
+
 
     /**
      * Persist
@@ -484,12 +546,10 @@ public class TCAPStackImpl implements TCAPStack {
             volb = reader.read(STATISTICS_ENABLED, Boolean.class);
             if (volb != null)
                 this.statisticsEnabled = volb;
-
             reader.close();
         } catch (XMLStreamException ex) {
             // this.logger.info(
             // "Error while re-creating Linksets from persisted file", ex);
         }
     }
-
 }

@@ -22,15 +22,7 @@
 
 package org.mobicents.protocols.ss7.cap;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 import javolution.util.FastList;
-import javolution.util.FastMap;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -71,7 +63,6 @@ import org.mobicents.protocols.ss7.isup.impl.message.parameter.ISUPParameterFact
 import org.mobicents.protocols.ss7.map.MAPParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.tcap.DialogImpl;
 import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
@@ -111,6 +102,13 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnError;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnErrorProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
+import org.mobicents.protocols.ss7.tcap.data.PreviewDialogImpl;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -124,9 +122,6 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
 
     private transient Collection<CAPDialogListener> dialogListeners = new FastList<CAPDialogListener>().shared();
-
-    protected transient FastMap<Long, CAPDialogImpl> dialogs = new FastMap<Long, CAPDialogImpl>().shared();
-
     private transient TCAPProvider tcapProvider = null;
 
     private final transient CAPParameterFactory capParameterFactory = new CAPParameterFactoryImpl();
@@ -206,10 +201,14 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
     }
 
     @Override
-    public CAPDialog getCAPDialog(Long dialogId) {
-        //synchronized (this.dialogs) {
-            return this.dialogs.get(dialogId);
-        //}
+    public CAPDialog getCAPDialog(Long localDialogId) {
+        Dialog tcapDialog=tcapProvider.getDialog(localDialogId);
+        if(tcapDialog==null)
+            return null;
+        CAPDialogImpl capDlg=(CAPDialogImpl)tcapDialog.getUserObject();
+        capDlg.setCAPProviderImpl(this);
+        capDlg.setTcapDialog(tcapDialog);
+        return capDlg;
     }
 
     public void start() {
@@ -222,15 +221,13 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
     }
 
     protected void addDialog(CAPDialogImpl dialog) {
-        //synchronized (this.dialogs) {
-            this.dialogs.put(dialog.getLocalDialogId(), dialog);
-        //}
+        Dialog tcapDialog=tcapProvider.getDialog(dialog.getLocalDialogId());
+        tcapDialog.setUserObject(dialog);
     }
 
-    protected CAPDialogImpl removeDialog(Long dialogId) {
-        //synchronized (this.dialogs) {
-            return this.dialogs.remove(dialogId);
-        //}
+    protected final CAPDialogImpl removeDialog(Long dialogId) {
+        // dialog data is stored in TCAP dialog, when TCAP dialog goes away so does CAP Dialog
+        return (CAPDialogImpl)getCAPDialog(dialogId);
     }
 
     private void SendUnsupportedAcn(ApplicationContextName acn, Dialog dialog, String cs) {
@@ -378,7 +375,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
             this.addDialog(capDialogImpl);
             capDialogImpl.tcapMessageType = MessageType.Begin;
-            capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
+            capDialogImpl.setReceivedGprsReferenceNumber(referenceNumber);
 
             capDialogImpl.setState(CAPDialogState.InitialReceived);
 
@@ -400,7 +397,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
             finishComponentProcessingState(capDialogImpl);
 
             if (this.getTCAPProvider().getPreviewMode()) {
-                DialogImpl dimp = (DialogImpl) tcBeginIndication.getDialog();
+                PreviewDialogImpl dimp = (PreviewDialogImpl) tcBeginIndication.getDialog();
                 dimp.getPrevewDialogData().setUpperDialog(capDialogImpl);
             }
         } finally {
@@ -438,7 +435,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
         CAPDialogImpl capDialogImpl;
         if (this.getTCAPProvider().getPreviewMode()) {
-            capDialogImpl = (CAPDialogImpl) (((DialogImpl) tcapDialog).getPrevewDialogData().getUpperDialog());
+            capDialogImpl = (CAPDialogImpl) (((PreviewDialogImpl) tcapDialog).getPrevewDialogData().getUpperDialog());
         } else {
             capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getLocalDialogId());
         }
@@ -464,7 +461,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
                 if (userInfo != null) {
                     referenceNumber = ParseUserInfo(userInfo, tcContinueIndication.getDialog());
                 }
-                capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
+                capDialogImpl.setReceivedGprsReferenceNumber(referenceNumber);
 
                 if (tcContinueIndication.getApplicationContextName() != null)
                     this.deliverDialogAccept(capDialogImpl, referenceNumber);
@@ -520,7 +517,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
                     if (userInfo != null) {
                         referenceNumber = ParseUserInfo(userInfo, tcContinueIndication.getDialog());
                     }
-                    capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
+                    capDialogImpl.setReceivedGprsReferenceNumber(referenceNumber);
 
                     capDialogImpl.delayedAreaState = CAPDialogImpl.DelayedAreaState.No;
 
@@ -562,7 +559,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
         CAPDialogImpl capDialogImpl;
         if (this.getTCAPProvider().getPreviewMode()) {
-            capDialogImpl = (CAPDialogImpl) (((DialogImpl) tcapDialog).getPrevewDialogData().getUpperDialog());
+            capDialogImpl = (CAPDialogImpl) (((PreviewDialogImpl) tcapDialog).getPrevewDialogData().getUpperDialog());
         } else {
             capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getLocalDialogId());
         }
@@ -587,7 +584,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
                 if (userInfo != null) {
                     referenceNumber = ParseUserInfo(userInfo, tcEndIndication.getDialog());
                 }
-                capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
+                capDialogImpl.setReceivedGprsReferenceNumber(referenceNumber);
 
                 if (tcEndIndication.getApplicationContextName() != null)
                     this.deliverDialogAccept(capDialogImpl, referenceNumber);
@@ -637,7 +634,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
                     if (userInfo != null) {
                         referenceNumber = ParseUserInfo(userInfo, tcEndIndication.getDialog());
                     }
-                    capDialogImpl.receivedGprsReferenceNumber = referenceNumber;
+                    capDialogImpl.setReceivedGprsReferenceNumber(referenceNumber);
 
                     this.deliverDialogAccept(capDialogImpl, referenceNumber);
                     if (capDialogImpl.getState() == CAPDialogState.Expunged) {
@@ -714,7 +711,8 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
     @Override
     public void onDialogReleased(Dialog tcapDialog) {
 
-        CAPDialogImpl capDialogImpl = (CAPDialogImpl) this.removeDialog(tcapDialog.getLocalDialogId());
+        CAPDialogImpl capDialogImpl = (CAPDialogImpl) tcapDialog.getUserObject();
+        this.removeDialog(capDialogImpl.getLocalDialogId());
 
         if (capDialogImpl != null) {
             try {
@@ -732,7 +730,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
         CAPDialogImpl capDialogImpl;
         if (this.getTCAPProvider().getPreviewMode()) {
-            capDialogImpl = (CAPDialogImpl) (((DialogImpl) tcapDialog).getPrevewDialogData().getUpperDialog());
+            capDialogImpl = (CAPDialogImpl) (((PreviewDialogImpl) tcapDialog).getPrevewDialogData().getUpperDialog());
         } else {
             capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getLocalDialogId());
         }
@@ -761,7 +759,7 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
 
         CAPDialogImpl capDialogImpl;
         if (this.getTCAPProvider().getPreviewMode()) {
-            capDialogImpl = (CAPDialogImpl) (((DialogImpl) tcapDialog).getPrevewDialogData().getUpperDialog());
+            capDialogImpl = (CAPDialogImpl) (((PreviewDialogImpl) tcapDialog).getPrevewDialogData().getUpperDialog());
         } else {
             capDialogImpl = (CAPDialogImpl) this.getCAPDialog(tcapDialog.getLocalDialogId());
         }

@@ -22,14 +22,8 @@
 
 package org.mobicents.protocols.ss7.map;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 import javolution.util.FastList;
 import javolution.util.FastMap;
-
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
@@ -82,7 +76,6 @@ import org.mobicents.protocols.ss7.map.service.oam.MAPServiceOamImpl;
 import org.mobicents.protocols.ss7.map.service.pdpContextActivation.MAPServicePdpContextActivationImpl;
 import org.mobicents.protocols.ss7.map.service.sms.MAPServiceSmsImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.MAPServiceSupplementaryImpl;
-import org.mobicents.protocols.ss7.tcap.DialogImpl;
 import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
@@ -125,6 +118,12 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnErrorProblemType;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResult;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultProblemType;
+import org.mobicents.protocols.ss7.tcap.data.PreviewDialogImpl;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -651,7 +650,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
             finishComponentProcessingState(mapDialogImpl);
 
             if (this.getTCAPProvider().getPreviewMode()) {
-                DialogImpl dimp = (DialogImpl) tcBeginIndication.getDialog();
+                PreviewDialogImpl dimp = (PreviewDialogImpl) tcBeginIndication.getDialog();
                 dimp.getPrevewDialogData().setUpperDialog(mapDialogImpl);
             }
         } finally {
@@ -689,7 +688,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
         MAPDialogImpl mapDialogImpl;
         if (this.getTCAPProvider().getPreviewMode()) {
-            mapDialogImpl = (MAPDialogImpl) (((DialogImpl) tcapDialog).getPrevewDialogData().getUpperDialog());
+            mapDialogImpl = (MAPDialogImpl) (((PreviewDialogImpl) tcapDialog).getPrevewDialogData().getUpperDialog());
         } else {
             mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getLocalDialogId());
         }
@@ -908,7 +907,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
         MAPDialogImpl mapDialogImpl;
         if (this.getTCAPProvider().getPreviewMode()) {
-            mapDialogImpl = (MAPDialogImpl) (((DialogImpl) tcapDialog).getPrevewDialogData().getUpperDialog());
+            mapDialogImpl = (MAPDialogImpl) (((PreviewDialogImpl) tcapDialog).getPrevewDialogData().getUpperDialog());
         } else {
             mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getLocalDialogId());
         }
@@ -1118,7 +1117,6 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
     }
 
     public void onInvokeTimeout(Invoke invoke) {
-
         MAPDialogImpl mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(((InvokeImpl) invoke).getDialog().getLocalDialogId());
 
         if (mapDialogImpl != null) {
@@ -1179,7 +1177,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
         MAPDialogImpl mapDialogImpl;
         if (this.getTCAPProvider().getPreviewMode()) {
-            mapDialogImpl = (MAPDialogImpl) (((DialogImpl) tcapDialog).getPrevewDialogData().getUpperDialog());
+            mapDialogImpl = (MAPDialogImpl) (((PreviewDialogImpl) tcapDialog).getPrevewDialogData().getUpperDialog());
         } else {
             mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getLocalDialogId());
         }
@@ -1262,7 +1260,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
         MAPDialogImpl mapDialogImpl;
         if (this.getTCAPProvider().getPreviewMode()) {
-            mapDialogImpl = (MAPDialogImpl) (((DialogImpl) tcapDialog).getPrevewDialogData().getUpperDialog());
+            mapDialogImpl = (MAPDialogImpl) (((PreviewDialogImpl) tcapDialog).getPrevewDialogData().getUpperDialog());
         } else {
             mapDialogImpl = (MAPDialogImpl) this.getMAPDialog(tcapDialog.getLocalDialogId());
         }

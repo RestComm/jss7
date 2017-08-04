@@ -28,6 +28,7 @@ import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.cap.CAPDialogImpl;
 import org.mobicents.protocols.ss7.cap.CAPProviderImpl;
 import org.mobicents.protocols.ss7.cap.CAPServiceBaseImpl;
+import org.mobicents.protocols.ss7.cap.CAPServiceType;
 import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPDialog;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
@@ -84,7 +85,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
         Dialog tcapDialog = this.createNewTCAPDialog(origAddress, destAddress, localTrId);
         tcapDialog.setRelayedLocalDialogId(relayedLocalTrId);
         CAPDialogCircuitSwitchedCallImpl dialog = new CAPDialogCircuitSwitchedCallImpl(appCntx, tcapDialog,
-                this.capProviderImpl, this);
+                this.capProviderImpl, CAPServiceType.CAP_SERVICE_CALL);
 
         this.putCAPDialogIntoCollection(dialog);
 
@@ -107,7 +108,7 @@ public class CAPServiceCircuitSwitchedCallImpl extends CAPServiceBaseImpl implem
 
     @Override
     protected CAPDialogImpl createNewDialogIncoming(CAPApplicationContext appCntx, Dialog tcapDialog) {
-        return new CAPDialogCircuitSwitchedCallImpl(appCntx, tcapDialog, this.capProviderImpl, this);
+        return new CAPDialogCircuitSwitchedCallImpl(appCntx, tcapDialog, this.capProviderImpl, CAPServiceType.CAP_SERVICE_CALL);
     }
 
     @Override

@@ -22,15 +22,13 @@
 
 package org.mobicents.protocols.ss7.cap.service.circuitSwitchedCall;
 
-import java.util.ArrayList;
-
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.ss7.cap.CAPDialogImpl;
 import org.mobicents.protocols.ss7.cap.CAPProviderImpl;
+import org.mobicents.protocols.ss7.cap.CAPServiceType;
 import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
 import org.mobicents.protocols.ss7.cap.api.CAPException;
 import org.mobicents.protocols.ss7.cap.api.CAPOperationCode;
-import org.mobicents.protocols.ss7.cap.api.CAPServiceBase;
 import org.mobicents.protocols.ss7.cap.api.gap.GapCriteria;
 import org.mobicents.protocols.ss7.cap.api.gap.GapIndicators;
 import org.mobicents.protocols.ss7.cap.api.gap.GapTreatment;
@@ -97,6 +95,8 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author sergey vetyutnev
@@ -107,7 +107,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 public class CAPDialogCircuitSwitchedCallImpl extends CAPDialogImpl implements CAPDialogCircuitSwitchedCall {
 
     protected CAPDialogCircuitSwitchedCallImpl(CAPApplicationContext appCntx, Dialog tcapDialog,
-            CAPProviderImpl capProviderImpl, CAPServiceBase capService) {
+            CAPProviderImpl capProviderImpl, CAPServiceType capService) {
         super(appCntx, tcapDialog, capProviderImpl, capService);
     }
 
