@@ -45,7 +45,10 @@ public class SccpConnDt1MessageImpl extends SccpMessageImpl implements SccpConnD
     protected SegmentingReassembling segmentingReassembling;
     protected byte[] userData;
 
-    protected SccpConnDt1MessageImpl(int maxDataLen, int sls, int localSsn) {
+    // isn't sent over network, used in send message methods
+    protected LocalReference sourceLocalReferenceNumber;
+
+    public SccpConnDt1MessageImpl(int maxDataLen, int sls, int localSsn) {
         super(maxDataLen, MESSAGE_TYPE_DT1, sls, localSsn);
     }
 
@@ -170,5 +173,13 @@ public class SccpConnDt1MessageImpl extends SccpMessageImpl implements SccpConnD
         } catch (IOException e) {
             throw new ParseException(e);
         }
+    }
+
+    public LocalReference getSourceLocalReferenceNumber() {
+        return sourceLocalReferenceNumber;
+    }
+
+    public void setSourceLocalReferenceNumber(LocalReference sourceLocalReferenceNumber) {
+        this.sourceLocalReferenceNumber = sourceLocalReferenceNumber;
     }
 }

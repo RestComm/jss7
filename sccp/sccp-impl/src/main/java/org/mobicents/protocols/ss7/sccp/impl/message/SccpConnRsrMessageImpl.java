@@ -43,7 +43,7 @@ public class SccpConnRsrMessageImpl extends SccpMessageImpl implements SccpConnR
     protected LocalReference sourceLocalReferenceNumber;
     protected ResetCause resetCause;
 
-    protected SccpConnRsrMessageImpl(int sls, int localSsn) {
+    public SccpConnRsrMessageImpl(int sls, int localSsn) {
         super(0, MESSAGE_TYPE_RSR, sls, localSsn);
     }
 
