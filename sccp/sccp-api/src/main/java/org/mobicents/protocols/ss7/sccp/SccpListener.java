@@ -110,7 +110,7 @@ public interface SccpListener extends Serializable {
 
     void onResetConfirm(SccpConnection conn);
 
-    void onData(SccpConnection conn);
+    void onData(SccpConnection conn, byte[] data);
 
     void onDisconnectConfirm(SccpConnection conn);
 }

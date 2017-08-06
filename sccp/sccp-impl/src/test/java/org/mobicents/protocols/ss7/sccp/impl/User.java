@@ -54,6 +54,7 @@ public class User extends BaseSccpListener implements SccpListener {
     protected int ssn;
     // protected SccpMessage msg;
     protected List<SccpMessage> messages = new ArrayList<SccpMessage>();
+    protected List<byte[]> receivedData = new ArrayList<>();
     protected int resetCount;
 
     public User(SccpProvider provider, SccpAddress address, SccpAddress dest, int ssn) {
@@ -179,26 +180,26 @@ public class User extends BaseSccpListener implements SccpListener {
     @Override
     public void onCoordResponse(int ssn, int multiplicityIndicator) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void onState(int dpc, int ssn, boolean inService, int multiplicityIndicator) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void onPcState(int dpc, SignallingPointStatus status, Integer restrictedImportanceLevel,
-            RemoteSccpStatus remoteSccpStatus) {
+                          RemoteSccpStatus remoteSccpStatus) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void onNetworkIdState(int networkId, NetworkIdState networkIdState) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
@@ -218,5 +219,14 @@ public class User extends BaseSccpListener implements SccpListener {
 
     public int getResetCount() {
         return resetCount;
+    }
+
+    @Override
+    public void onData(SccpConnection conn, byte[] data) {
+        receivedData.add(data);
+    }
+
+    public List<byte[]> getReceivedData() {
+        return receivedData;
     }
 }

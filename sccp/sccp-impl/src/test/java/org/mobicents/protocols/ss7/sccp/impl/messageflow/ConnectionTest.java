@@ -206,4 +206,108 @@ public class ConnectionTest extends SccpHarness {
         assertEquals(sccpProvider2.getConnections().values().iterator().next().getState(), SccpConnectionState.ESTABLISHED);
         assertEquals(sccpProvider1.getConnections().values().iterator().next().getState(), SccpConnectionState.ESTABLISHED);
     }
+
+    @Test(groups = { "SccpMessage", "functional.connection" })
+    public void testSendDataProtocolClass2() throws Exception {
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+
+        User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+
+        u1.register();
+        u2.register();
+
+        Thread.sleep(100);
+
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
+        crMsg.setProtocolClass(new ProtocolClassImpl(2));
+        crMsg.setCredit(new CreditImpl(100));
+
+        SccpConnection conn1 = sccpProvider1.newConnection(8, new ProtocolClassImpl(2));
+        conn1.establish(crMsg);
+
+        Thread.sleep(100);
+
+        assertEquals(sccpStack2.getConnectionsNumber(), 1);
+        assertEquals(sccpStack1.getConnectionsNumber(), 1);
+        SccpConnection conn2 = sccpProvider2.getConnections().values().iterator().next();
+
+        Thread.sleep(100);
+
+        conn1.send(new byte[]{1, 2, 3, 4, 5});
+
+        Thread.sleep(100);
+
+        assertEquals(u2.getReceivedData().size(), 1);
+        assertEquals(u2.getReceivedData().iterator().next(), new byte[] {1, 2, 3, 4, 5});
+
+        Thread.sleep(100);
+
+        conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), new byte[] {});
+
+        Thread.sleep(200);
+
+        assertEquals(sccpStack1.getConnectionsNumber(), 0);
+        assertEquals(sccpStack2.getConnectionsNumber(), 0);
+
+        assertEquals(conn2.getState(), SccpConnectionState.CLOSED);
+        assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
+    }
+
+    @Test(groups = { "SccpMessage", "functional.connection" })
+    public void testSendDataProtocolClass3() throws Exception {
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+
+        User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+
+        u1.register();
+        u2.register();
+
+        Thread.sleep(100);
+
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
+        crMsg.setProtocolClass(new ProtocolClassImpl(3));
+        crMsg.setCredit(new CreditImpl(100));
+
+        SccpConnection conn1 = sccpProvider1.newConnection(8, new ProtocolClassImpl(3));
+        conn1.establish(crMsg);
+
+        Thread.sleep(100);
+
+        assertEquals(sccpStack2.getConnectionsNumber(), 1);
+        assertEquals(sccpStack1.getConnectionsNumber(), 1);
+        SccpConnection conn2 = sccpProvider2.getConnections().values().iterator().next();
+
+        Thread.sleep(100);
+
+        conn1.send(new byte[]{1, 2, 3, 4, 5, 6, 7, 8});
+
+        for (int i=0; i<=127; i++) {
+            conn2.send(new byte[]{1, (byte)i, (byte)i, (byte)i, (byte)i});
+        }
+
+        conn2.send(new byte[]{1, 2, 3, 4, 5, 6});
+
+        Thread.sleep(100);
+
+        assertEquals(u1.getReceivedData().size(), 129);
+        assertEquals(u2.getReceivedData().size(), 1);
+
+        Thread.sleep(200);
+
+        conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), new byte[] {});
+
+        Thread.sleep(200);
+
+        assertEquals(sccpStack1.getConnectionsNumber(), 0);
+        assertEquals(sccpStack2.getConnectionsNumber(), 0);
+
+        assertEquals(conn2.getState(), SccpConnectionState.CLOSED);
+        assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
+    }
 }
