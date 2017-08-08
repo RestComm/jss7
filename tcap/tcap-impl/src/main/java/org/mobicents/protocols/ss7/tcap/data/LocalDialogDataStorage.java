@@ -1,6 +1,7 @@
 package org.mobicents.protocols.ss7.tcap.data;
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
 import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
@@ -70,8 +71,8 @@ public class LocalDialogDataStorage implements IDialogDataStorage {
 
 
     @Override
-    public ITimerFacility createTimerFacility() {
-        return new LocalTimerFacility(stack.getProviderImpl());
+    public ITimerFacility createTimerFacility(TCAPProviderImpl tp) {
+        return new LocalTimerFacility(tp);
     }
 
     public void beginTransaction() {

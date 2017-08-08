@@ -124,7 +124,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
         previewDialogs=new LocalPreviewDialogDataStorage();
         previewDialogs.setProvider(this);
-        timerFacility=stack.getDialogDataStorage().createTimerFacility();
 
         this.sccpProvider = sccpProvider;
         this.ssn = ssn;
@@ -511,7 +510,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
     void start() {
         logger.info("Starting TCAP Provider");
-
+        this.timerFacility=stack.getDialogDataStorage().createTimerFacility(this);
         this._EXECUTOR = Executors.newScheduledThreadPool(4);
         this.sccpProvider.registerSccpListener(ssn, this);
         logger.info("Registered SCCP listener with ssn " + ssn);
