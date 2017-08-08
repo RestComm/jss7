@@ -445,6 +445,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         Long did = d.getLocalDialogId();
 
         if (!d.getPreviewMode()) {
+            this.doRelease(d);
             synchronized (stack.getDialogDataStorage()) {
                 this.stack.getDialogDataStorage().removeDialog(d);
                 if (this.stack.getStatisticsEnabled()) {
@@ -452,8 +453,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                     this.stack.getCounterProviderImpl().updateMaxDialogsCount(this.stack.getDialogDataStorage().getSize());
                 }
             }
-
-            this.doRelease(d);
         }
     }
 
