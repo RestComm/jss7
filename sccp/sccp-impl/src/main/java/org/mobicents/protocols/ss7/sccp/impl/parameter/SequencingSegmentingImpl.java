@@ -58,7 +58,7 @@ public class SequencingSegmentingImpl extends AbstractParameter implements Seque
 
     @Override
     public boolean isMoreData() {
-        return false;
+        return moreData;
     }
 
     @Override
