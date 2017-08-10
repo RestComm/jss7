@@ -12,7 +12,7 @@
 	<name>Restcomm jSS7 :: MAP :: Api :: ${project.artifactId}</name>
 
 	<dependencies>
-		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 
+		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId>
 			<version>${log4j.version}</version> </dependency> -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -39,6 +39,13 @@
 		<dependency>
 			<groupId>org.mobicents.protocols.ss7.isup</groupId>
 			<artifactId>isup-api</artifactId>
+		</dependency><dependency>
+        <groupId>org.mobicents.protocols.ss7.sccp</groupId>
+        <artifactId>sccp-api</artifactId>
+    </dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+			<artifactId>tcap-api</artifactId>
 		</dependency>
 	</dependencies>
 

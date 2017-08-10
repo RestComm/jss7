@@ -131,8 +131,8 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
                     "addProvideSubscriberLocationRequest: Mandatroy parameters locationType or mlcNumber cannot be null");
         }
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.locationSvcEnquiryContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.locationSvcEnquiryContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3)
             throw new MAPException(
                     "addProvideSubscriberLocationRequest: Bad application context name for addProvideSubscriberLocationRequest: must be locationSvcEnquiryContext_V3");
 
@@ -197,8 +197,8 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
             throw new MAPException("addProvideSubscriberLocationResponse: Mandatroy parameters locationEstimate cannot be null");
         }
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.locationSvcEnquiryContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.locationSvcEnquiryContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3)
             throw new MAPException(
                     "Bad application context name for addProvideSubscriberLocationResponse: must be locationSvcEnquiryContext_V3");
 
@@ -277,8 +277,8 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
         if (lcsEvent == null || lcsClientID == null || lcsLocationInfo == null) {
             throw new MAPException("Mandatroy parameters lCSEvent, lCSClientID or lCSLocationInfo cannot be null");
         }
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.locationSvcEnquiryContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.locationSvcEnquiryContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3)
             throw new MAPException(
                     "Bad application context name for addSubscriberLocationReportRequest: must be locationSvcEnquiryContext_V3");
 
@@ -333,8 +333,8 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
     public void addSubscriberLocationReportResponse(long invokeId, ISDNAddressString naEsrd, ISDNAddressString naEsrk,
             MAPExtensionContainer extensionContainer) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.locationSvcEnquiryContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.locationSvcEnquiryContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3)
             throw new MAPException(
                     "Bad application context name for addSubscriberLocationReportResponse: must be locationSvcEnquiryContext_V3");
 
@@ -383,8 +383,8 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
         if (mlcNumber == null || targetMS == null) {
             throw new MAPException("Mandatroy parameters mlcNumber or targetMS cannot be null");
         }
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.locationSvcGatewayContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.locationSvcGatewayContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3)
             throw new MAPException(
                     "Bad application context name for addSendRoutingInfoForLCSRequest: must be locationSvcGatewayContext_V3");
 
@@ -439,8 +439,8 @@ public class MAPDialogLsmImpl extends MAPDialogImpl implements MAPDialogLsm {
         if (targetMS == null || lcsLocationInfo == null) {
             throw new MAPException("Mandatroy parameters targetMS or lcsLocationInfo cannot be null");
         }
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.locationSvcGatewayContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.locationSvcGatewayContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3)
             throw new MAPException(
                     "Bad application context name for addSendRoutingInfoForLCSResponse: must be locationSvcGatewayContext_V3");
 

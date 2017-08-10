@@ -74,14 +74,14 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
     public Long addForwardShortMessageRequest(int customInvokeTimeout, SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA,
             SmsSignalInfo sm_RP_UI, boolean moreMessagesToSend) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.shortMsgMORelayContext && this.appCntx
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.shortMsgMORelayContext && this.getAppCntx()
                 .getApplicationContextName() != MAPApplicationContextName.shortMsgMTRelayContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1 && this.appCntx
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version1 && this.getAppCntx()
                         .getApplicationContextVersion() != MAPApplicationContextVersion.version2))
             throw new MAPException(
                     "Bad application context name for addForwardShortMessageRequest: must be shortMsgMORelayContext_V1 or V2 or shortMsgMTRelayContext_V1 or V2");
 
-        if (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
+        if (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)
             moreMessagesToSend = false;
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -121,9 +121,9 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 
     public void addForwardShortMessageResponse(long invokeId) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.shortMsgMORelayContext && this.appCntx
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.shortMsgMORelayContext && this.getAppCntx()
                 .getApplicationContextName() != MAPApplicationContextName.shortMsgMTRelayContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1 && this.appCntx
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version1 && this.getAppCntx()
                         .getApplicationContextVersion() != MAPApplicationContextVersion.version2))
             throw new MAPException(
                     "Bad application context name for addForwardShortMessageResponse: must be shortMsgMORelayContext_V1 or V2 or shortMsgMTRelayContext_V1 or V2");
@@ -146,8 +146,8 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
     public Long addMoForwardShortMessageRequest(int customInvokeTimeout, SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA,
             SmsSignalInfo sm_RP_UI, MAPExtensionContainer extensionContainer, IMSI imsi) throws MAPException {
 
-        if (this.appCntx.getApplicationContextName() != MAPApplicationContextName.shortMsgMORelayContext
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+        if (this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.shortMsgMORelayContext
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3)
             throw new MAPException(
                     "Bad application context name for addMoForwardShortMessageRequest: must be shortMsgMORelayContext_V3");
 
@@ -189,8 +189,8 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
     public void addMoForwardShortMessageResponse(long invokeId, SmsSignalInfo sm_RP_UI, MAPExtensionContainer extensionContainer)
             throws MAPException {
 
-        if (this.appCntx.getApplicationContextName() != MAPApplicationContextName.shortMsgMORelayContext
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+        if (this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.shortMsgMORelayContext
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3)
             throw new MAPException(
                     "Bad application context name for addMoForwardShortMessageResponse: must be shortMsgMORelayContext_V3");
 
@@ -230,8 +230,8 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
     public Long addMtForwardShortMessageRequest(int customInvokeTimeout, SM_RP_DA sm_RP_DA, SM_RP_OA sm_RP_OA,
             SmsSignalInfo sm_RP_UI, boolean moreMessagesToSend, MAPExtensionContainer extensionContainer) throws MAPException {
 
-        if (this.appCntx.getApplicationContextName() != MAPApplicationContextName.shortMsgMTRelayContext
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+        if (this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.shortMsgMTRelayContext
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3)
             throw new MAPException(
                     "Bad application context name for addMtForwardShortMessageRequest: must be shortMsgMTRelayContext_V3");
 
@@ -274,8 +274,8 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
     public void addMtForwardShortMessageResponse(long invokeId, SmsSignalInfo sm_RP_UI, MAPExtensionContainer extensionContainer)
             throws MAPException {
 
-        if (this.appCntx.getApplicationContextName() != MAPApplicationContextName.shortMsgMTRelayContext
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+        if (this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.shortMsgMTRelayContext
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3)
             throw new MAPException(
                     "Bad application context name for addMtForwardShortMessageResponse: must be shortMsgMTRelayContext_V3");
 
@@ -317,8 +317,8 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
             AddressString serviceCentreAddress, MAPExtensionContainer extensionContainer, boolean gprsSupportIndicator,
             SM_RP_MTI sM_RP_MTI, SM_RP_SMEA sM_RP_SMEA, TeleserviceCode teleservice) throws MAPException {
 
-        MAPApplicationContextVersion vers = this.appCntx.getApplicationContextVersion();
-        if (this.appCntx.getApplicationContextName() != MAPApplicationContextName.shortMsgGatewayContext
+        MAPApplicationContextVersion vers = this.getAppCntx().getApplicationContextVersion();
+        if (this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.shortMsgGatewayContext
                 || (vers != MAPApplicationContextVersion.version1 && vers != MAPApplicationContextVersion.version2 && vers != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for addSendRoutingInfoForSMRequest: must be shortMsgGatewayContext_V1, V2 or V3");
@@ -362,8 +362,8 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
     public void addSendRoutingInfoForSMResponse(long invokeId, IMSI imsi, LocationInfoWithLMSI locationInfoWithLMSI,
             MAPExtensionContainer extensionContainer, Boolean mwdSet) throws MAPException {
 
-        MAPApplicationContextVersion vers = this.appCntx.getApplicationContextVersion();
-        if (this.appCntx.getApplicationContextName() != MAPApplicationContextName.shortMsgGatewayContext
+        MAPApplicationContextVersion vers = this.getAppCntx().getApplicationContextVersion();
+        if (this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.shortMsgGatewayContext
                 || (vers != MAPApplicationContextVersion.version1 && vers != MAPApplicationContextVersion.version2 && vers != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for addSendRoutingInfoForSMResponse: must be shortMsgGatewayContext_V1, V2 or V3");
@@ -407,8 +407,8 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
             MAPExtensionContainer extensionContainer, boolean gprsSupportIndicator, boolean deliveryOutcomeIndicator,
             SMDeliveryOutcome additionalSMDeliveryOutcome, Integer additionalAbsentSubscriberDiagnosticSM) throws MAPException {
 
-        MAPApplicationContextVersion vers = this.appCntx.getApplicationContextVersion();
-        if (this.appCntx.getApplicationContextName() != MAPApplicationContextName.shortMsgGatewayContext
+        MAPApplicationContextVersion vers = this.getAppCntx().getApplicationContextVersion();
+        if (this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.shortMsgGatewayContext
                 || (vers != MAPApplicationContextVersion.version1 && vers != MAPApplicationContextVersion.version2 && vers != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for addReportSMDeliveryStatusRequest: must be shortMsgGatewayContext_V1, V2 or V3");
@@ -458,8 +458,8 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
     public void addReportSMDeliveryStatusResponse(long invokeId, ISDNAddressString storedMSISDN,
             MAPExtensionContainer extensionContainer) throws MAPException {
 
-        MAPApplicationContextVersion vers = this.appCntx.getApplicationContextVersion();
-        if (this.appCntx.getApplicationContextName() != MAPApplicationContextName.shortMsgGatewayContext
+        MAPApplicationContextVersion vers = this.getAppCntx().getApplicationContextVersion();
+        if (this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.shortMsgGatewayContext
                 || (vers != MAPApplicationContextVersion.version1 && vers != MAPApplicationContextVersion.version2 && vers != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for addReportSMDeliveryStatusResponse: must be shortMsgGatewayContext_V1, V2 or V3");
@@ -503,8 +503,8 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
             MAPExtensionContainer extensionContainer, Integer absentSubscriberDiagnosticSM,
             Integer additionalAbsentSubscriberDiagnosticSM) throws MAPException {
 
-        MAPApplicationContextVersion vers = this.appCntx.getApplicationContextVersion();
-        if (this.appCntx.getApplicationContextName() != MAPApplicationContextName.shortMsgGatewayContext
+        MAPApplicationContextVersion vers = this.getAppCntx().getApplicationContextVersion();
+        if (this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.shortMsgGatewayContext
                 || (vers != MAPApplicationContextVersion.version2 && vers != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for addInformServiceCentreRequest: must be shortMsgGatewayContext_V2 or V3");
@@ -553,14 +553,14 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
     public Long addAlertServiceCentreRequest(int customInvokeTimeout, ISDNAddressString msisdn,
             AddressString serviceCentreAddress) throws MAPException {
 
-        if (this.appCntx.getApplicationContextName() != MAPApplicationContextName.shortMsgAlertContext
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1 && this.appCntx
+        if (this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.shortMsgAlertContext
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version1 && this.getAppCntx()
                         .getApplicationContextVersion() != MAPApplicationContextVersion.version2))
             throw new MAPException(
                     "Bad application context name for addAlertServiceCentreRequest: must be shortMsgAlertContext_V1 or V2");
 
         Invoke invoke;
-        if (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1)
+        if (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version1)
             invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                     .createTCInvokeRequest(InvokeClass.Class4);
         else
@@ -573,7 +573,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
         try {
             // Operation Code
             OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
-            if (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1)
+            if (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version1)
                 oc.setLocalOperationCode((long) MAPOperationCode.alertServiceCentreWithoutResult);
             else
                 oc.setLocalOperationCode((long) MAPOperationCode.alertServiceCentre);
@@ -604,8 +604,8 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 
     public void addAlertServiceCentreResponse(long invokeId) throws MAPException {
 
-        if (this.appCntx.getApplicationContextName() != MAPApplicationContextName.shortMsgAlertContext
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2))
+        if (this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.shortMsgAlertContext
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2))
             throw new MAPException(
                     "Bad application context name for addAlertServiceCentreResponse: must be shortMsgAlertContext_V2");
 
@@ -632,8 +632,8 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
     public Long addReadyForSMRequest(int customInvokeTimeout, IMSI imsi, AlertReason alertReason, boolean alertReasonIndicator,
             MAPExtensionContainer extensionContainer, boolean additionalAlertReasonIndicator) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.mwdMngtContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.mwdMngtContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException("Bad application context name for addReadyForSMRequest: must be mwdMngtContext_V2 or V3");
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -673,8 +673,8 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
     @Override
     public void addReadyForSMResponse(long invokeId, MAPExtensionContainer extensionContainer) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.mwdMngtContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.mwdMngtContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException("Bad application context name for addReadyForSMRequest: must be mwdMngtContext_V2 or V3");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
@@ -687,7 +687,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
         oc.setLocalOperationCode((long) MAPOperationCode.readyForSM);
         resultLast.setOperationCode(oc);
 
-        if (this.appCntx.getApplicationContextVersion().getVersion() >= 3 || extensionContainer != null) {
+        if (this.getAppCntx().getApplicationContextVersion().getVersion() >= 3 || extensionContainer != null) {
 
             ReadyForSMResponseImpl req = new ReadyForSMResponseImpl(extensionContainer);
             AsnOutputStream aos = new AsnOutputStream();
@@ -712,8 +712,8 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
     @Override
     public Long addNoteSubscriberPresentRequest(int customInvokeTimeout, IMSI imsi) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.mwdMngtContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.mwdMngtContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version1))
             throw new MAPException("Bad application context name for addNoteSubscriberPresentRequest: must be mwdMngtContext_V1");
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class4);

@@ -68,8 +68,8 @@ public class MAPDialogPdpContextActivationImpl extends MAPDialogImpl implements 
     public Long addSendRoutingInfoForGprsRequest(int customInvokeTimeout, IMSI imsi, GSNAddress ggsnAddress, ISDNAddressString ggsnNumber,
             MAPExtensionContainer extensionContainer) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.gprsLocationInfoRetrievalContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3 && this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version4))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.gprsLocationInfoRetrievalContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3 && this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version4))
             throw new MAPException("Bad application context name for addSendRoutingInfoForGprsRequest: must be gprsLocationInfoRetrievalContext_V3 or V4");
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -110,8 +110,8 @@ public class MAPDialogPdpContextActivationImpl extends MAPDialogImpl implements 
     public void addSendRoutingInfoForGprsResponse(long invokeId, GSNAddress sgsnAddress, GSNAddress ggsnAddress, Integer mobileNotReachableReason,
             MAPExtensionContainer extensionContainer) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.gprsLocationInfoRetrievalContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3 && this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version4))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.gprsLocationInfoRetrievalContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3 && this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version4))
             throw new MAPException("Bad application context name for addSendRoutingInfoForGprsResponse: must be gprsLocationInfoRetrievalContext_V3 or V4");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()

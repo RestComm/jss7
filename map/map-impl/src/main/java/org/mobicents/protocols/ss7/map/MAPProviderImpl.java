@@ -138,8 +138,6 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
     private transient Collection<MAPDialogListener> dialogListeners = new FastList<MAPDialogListener>().shared();
 
-    protected transient FastMap<Long, MAPDialogImpl> dialogs = new FastMap<Long, MAPDialogImpl>().shared();
-
     /**
      * Congestion sources name list. Congestion is where this collection is not empty
      */
@@ -231,10 +229,13 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
         this.dialogListeners.remove(mapDialogListener);
     }
 
-    public MAPDialog getMAPDialog(Long dialogId) {
-        //synchronized (this.dialogs) {
-            return this.dialogs.get(dialogId);
-        //}
+    public MAPDialogImpl getMAPDialog(Long dialogId) {
+        Dialog tcapDlg = tcapProvider.getDialog(dialogId);
+        MAPDialogImpl dlg=(MAPDialogImpl)tcapDlg.getUserObject();
+        // we need to restore references as the object may have just been deserialized
+        dlg.tcapDialog=tcapDlg;
+        dlg.mapProviderImpl=this;
+        return dlg;
     }
 
     public void start() {
@@ -244,7 +245,6 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
     public void stop() {
         this.tcapProvider.removeTCListener(this);
 
-        this.dialogs.clear();
     }
 
     /**
@@ -252,15 +252,15 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
      */
 
     protected void addDialog(MAPDialogImpl dialog) {
-        //synchronized (this.dialogs) {
-            this.dialogs.put(dialog.getLocalDialogId(), dialog);
-        //}
+        dialog.getTcapDialog().setUserObject(dialog);
     }
 
     protected MAPDialogImpl removeDialog(Long dialogId) {
+        // nothing to do, data is removed together with dialog
         //synchronized (this.dialogs) {
-            return this.dialogs.remove(dialogId);
+        //    return this.dialogs.remove(dialogId);
         //}
+        return getMAPDialog(dialogId);
     }
 
     public void onCongestionFinish(String congName) {
@@ -621,14 +621,14 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
             mapDialogImpl.getTcapDialog().getDialogLock().lock();
 
             this.addDialog(mapDialogImpl);
-            mapDialogImpl.tcapMessageType = MessageType.Begin;
-            mapDialogImpl.receivedOrigReference = origReference;
-            mapDialogImpl.receivedDestReference = destReference;
-            mapDialogImpl.receivedExtensionContainer = extensionContainer;
+            mapDialogImpl.setTcapMessageType(MessageType.Begin);
+            mapDialogImpl.setReceivedOrigReference(origReference);
+            mapDialogImpl.setReceivedDestReference(destReference);
+            mapDialogImpl.setReceivedExtensionContainer(extensionContainer);
 
             mapDialogImpl.setState(MAPDialogState.INITIAL_RECEIVED);
 
-            mapDialogImpl.delayedAreaState = MAPDialogImpl.DelayedAreaState.No;
+            mapDialogImpl.setDelayedAreaState(MAPDialogImpl.DelayedAreaState.No);
 
             if (eriStyle) {
                 this.deliverDialogRequestEri(mapDialogImpl, destReference, origReference, eriMsisdn, eriVlrNo);
@@ -654,6 +654,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
                 dimp.getPrevewDialogData().setUpperDialog(mapDialogImpl);
             }
         } finally {
+            mapDialogImpl.updateData();
             mapDialogImpl.getTcapDialog().getDialogLock().unlock();
         }
     }
@@ -664,7 +665,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
             return;
 
         try {
-            switch (mapDialogImpl.delayedAreaState) {
+            switch (mapDialogImpl.getDelayedAreaState()) {
                 case Continue:
                     mapDialogImpl.send();
                     break;
@@ -676,10 +677,10 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
                     break;
             }
         } catch (MAPException e) {
-            loger.error("Error while finishComponentProcessingState, delayedAreaState=" + mapDialogImpl.delayedAreaState, e);
+            loger.error("Error while finishComponentProcessingState, delayedAreaState=" + mapDialogImpl.getDelayedAreaState(), e);
         }
 
-        mapDialogImpl.delayedAreaState = null;
+        mapDialogImpl.setDelayedAreaState(null);
     }
 
     public void onTCContinue(TCContinueIndication tcContinueIndication) {
@@ -706,7 +707,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
         try {
             mapDialogImpl.getTcapDialog().getDialogLock().lock();
 
-            mapDialogImpl.tcapMessageType = MessageType.Continue;
+            mapDialogImpl.setTcapMessageType(MessageType.Continue);
 
             if (this.getTCAPProvider().getPreviewMode()) {
                 MAPExtensionContainer extensionContainer = null;
@@ -864,7 +865,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
                         }
                     }
 
-                    mapDialogImpl.delayedAreaState = MAPDialogImpl.DelayedAreaState.No;
+                    mapDialogImpl.setDelayedAreaState(MAPDialogImpl.DelayedAreaState.No);
 
                     // Fire MAPAcceptInfo
                     mapDialogImpl.setState(MAPDialogState.ACTIVE);
@@ -876,7 +877,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
                         return;
                     }
                 } else {
-                    mapDialogImpl.delayedAreaState = MAPDialogImpl.DelayedAreaState.No;
+                    mapDialogImpl.setDelayedAreaState(MAPDialogImpl.DelayedAreaState.No);
                 }
 
                 // Now let us decode the Components
@@ -920,7 +921,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
         try {
             mapDialogImpl.getTcapDialog().getDialogLock().lock();
 
-            mapDialogImpl.tcapMessageType = MessageType.End;
+            mapDialogImpl.setTcapMessageType(MessageType.End);
 
             if (this.getTCAPProvider().getPreviewMode()) {
                 MAPExtensionContainer extensionContainer = null;
@@ -1190,7 +1191,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
         try {
             mapDialogImpl.getTcapDialog().getDialogLock().lock();
 
-            mapDialogImpl.tcapMessageType = MessageType.Abort;
+            mapDialogImpl.setTcapMessageType(MessageType.Abort);
 
             PAbortCauseType pAbortCause = tcPAbortIndication.getPAbortCause();
             MAPAbortProviderReason abortProviderReason = MAPAbortProviderReason.ProviderMalfunction;
@@ -1247,6 +1248,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
             mapDialogImpl.setState(MAPDialogState.EXPUNGED);
         } finally {
+            mapDialogImpl.updateData();
             mapDialogImpl.getTcapDialog().getDialogLock().unlock();
         }
     }
@@ -1273,7 +1275,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
         try {
             mapDialogImpl.getTcapDialog().getDialogLock().lock();
 
-            mapDialogImpl.tcapMessageType = MessageType.Abort;
+            mapDialogImpl.setTcapMessageType(MessageType.Abort);
 
             // Trying to parse an userInfo APDU if it exists
             UserInformation userInfo = tcUserAbortIndication.getUserInformation();
@@ -1465,6 +1467,7 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
 
             mapDialogImpl.setState(MAPDialogState.EXPUNGED);
         } finally {
+            mapDialogImpl.updateData();
             mapDialogImpl.getTcapDialog().getDialogLock().unlock();
         }
     }

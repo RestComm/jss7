@@ -83,16 +83,16 @@ public class MAPDialogOamImpl extends MAPDialogImpl implements MAPDialogOam {
         boolean isTracingContext = false;
         boolean isNetworkLocUpContext = false;
         boolean isGprsLocationUpdateContext = false;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.tracingContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1
-                        || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.tracingContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version1
+                        || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isTracingContext = true;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.networkLocUpContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1
-                        || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.networkLocUpContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version1
+                        || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isNetworkLocUpContext = true;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.gprsLocationUpdateContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.gprsLocationUpdateContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isGprsLocationUpdateContext = true;
 
         if (!isTracingContext && !isNetworkLocUpContext && !isGprsLocationUpdateContext)
@@ -139,16 +139,16 @@ public class MAPDialogOamImpl extends MAPDialogImpl implements MAPDialogOam {
         boolean isTracingContext = false;
         boolean isNetworkLocUpContext = false;
         boolean isGprsLocationUpdateContext = false;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.tracingContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1
-                        || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.tracingContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version1
+                        || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isTracingContext = true;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.networkLocUpContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1
-                        || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.networkLocUpContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version1
+                        || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isNetworkLocUpContext = true;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.gprsLocationUpdateContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.gprsLocationUpdateContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isGprsLocationUpdateContext = true;
 
         if (!isTracingContext && !isNetworkLocUpContext && !isGprsLocationUpdateContext)
@@ -160,7 +160,7 @@ public class MAPDialogOamImpl extends MAPDialogImpl implements MAPDialogOam {
 
         resultLast.setInvokeId(invokeId);
 
-        if ((traceSupportIndicator || extensionContainer != null) && this.appCntx.getApplicationContextVersion().getVersion() >= 3) {
+        if ((traceSupportIndicator || extensionContainer != null) && this.getAppCntx().getApplicationContextVersion().getVersion() >= 3) {
             // Operation Code
             OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
             oc.setLocalOperationCode((long) MAPOperationCode.activateTraceMode);
@@ -188,8 +188,8 @@ public class MAPDialogOamImpl extends MAPDialogImpl implements MAPDialogOam {
 
     @Override
     public Long addSendImsiRequest(int customInvokeTimeout, ISDNAddressString msisdn) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.imsiRetrievalContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.imsiRetrievalContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2))
             throw new MAPException("Bad application context name for sendImsiRequest: must be imsiRetrievalContext_V2");
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -228,8 +228,8 @@ public class MAPDialogOamImpl extends MAPDialogImpl implements MAPDialogOam {
 
     @Override
     public void addSendImsiResponse(long invokeId, IMSI imsi) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.imsiRetrievalContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.imsiRetrievalContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2))
             throw new MAPException("Bad application context name for addSendImsiResponse: must be imsiRetrievalContext_V2");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();

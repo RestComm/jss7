@@ -89,8 +89,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
     public Long addRegisterSSRequest(int customInvokeTimeout, SSCode ssCode, BasicServiceCode basicService, AddressString forwardedToNumber,
             ISDNAddressString forwardedToSubaddress, Integer noReplyConditionTime, EMLPPPriority defaultPriority, Integer nbrUser,
             ISDNAddressString longFTNSupported) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)
             throw new MAPException("Bad application context name for addRegisterSSRequest: must be networkFunctionalSsContext_V2");
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -130,8 +130,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
     @Override
     public void addRegisterSSResponse(long invokeId, SSInfo ssInfo) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)
             throw new MAPException("Bad application context name for addRegisterSSResponse: must be networkFunctionalSsContext_V2");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
@@ -166,8 +166,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
     @Override
     public Long addEraseSSRequest(int customInvokeTimeout, SSForBSCode ssForBSCode) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)
             throw new MAPException("Bad application context name for addEraseSSRequest: must be networkFunctionalSsContext_V2");
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -206,8 +206,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
     @Override
     public void addEraseSSResponse(long invokeId, SSInfo ssInfo) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)
             throw new MAPException("Bad application context name for addEraseSSResponse: must be networkFunctionalSsContext_V2");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
@@ -242,8 +242,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
     @Override
     public Long addActivateSSRequest(int customInvokeTimeout, SSForBSCode ssForBSCode) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)
             throw new MAPException("Bad application context name for addActivateSSRequest: must be networkFunctionalSsContext_V2");
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -282,8 +282,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
     @Override
     public void addActivateSSResponse(long invokeId, SSInfo ssInfo) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)
             throw new MAPException("Bad application context name for addActivateSSResponse: must be networkFunctionalSsContext_V2");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
@@ -318,8 +318,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
     @Override
     public Long addDeactivateSSRequest(int customInvokeTimeout, SSForBSCode ssForBSCode) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)
             throw new MAPException("Bad application context name for addDeactivateSSRequest: must be networkFunctionalSsContext_V2");
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -358,8 +358,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
     @Override
     public void addDeactivateSSResponse(long invokeId, SSInfo ssInfo) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)
             throw new MAPException("Bad application context name for addDeactivateSSResponse: must be networkFunctionalSsContext_V2");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
@@ -394,8 +394,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
     @Override
     public Long addInterrogateSSRequest(int customInvokeTimeout, SSForBSCode ssForBSCode) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)
             throw new MAPException("Bad application context name for addInterrogateSSRequest: must be networkFunctionalSsContext_V2");
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -434,8 +434,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
     @Override
     public void addInterrogateSSResponse_SSStatus(long invokeId, SSStatus ssStatus) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)
             throw new MAPException("Bad application context name for addInterrogateSSResponse: must be networkFunctionalSsContext_V2");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
@@ -463,8 +463,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
     @Override
     public void addInterrogateSSResponse_BasicServiceGroupList(long invokeId, ArrayList<BasicServiceCode> basicServiceGroupList) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)
             throw new MAPException("Bad application context name for addInterrogateSSResponse: must be networkFunctionalSsContext_V2");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
@@ -492,8 +492,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
     @Override
     public void addInterrogateSSResponse_ForwardingFeatureList(long invokeId, ArrayList<ForwardingFeature> forwardingFeatureList) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)
             throw new MAPException("Bad application context name for addInterrogateSSResponse: must be networkFunctionalSsContext_V2");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
@@ -521,8 +521,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
     @Override
     public void addInterrogateSSResponse_GenericServiceInfo(long invokeId, GenericServiceInfo genericServiceInfo) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)
             throw new MAPException("Bad application context name for addInterrogateSSResponse: must be networkFunctionalSsContext_V2");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
@@ -555,8 +555,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
     @Override
     public Long addGetPasswordRequest(int customInvokeTimeout, Long linkedId, GuidanceInfo guidanceInfo) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)
             throw new MAPException("Bad application context name for addGetPasswordRequest: must be networkFunctionalSsContext_V2");
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -596,8 +596,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
     @Override
     public void addGetPasswordResponse(long invokeId, Password password) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)
             throw new MAPException("Bad application context name for addGetPasswordResponse: must be networkFunctionalSsContext_V2");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();
@@ -630,8 +630,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
     @Override
     public Long addRegisterPasswordRequest(int customInvokeTimeout, SSCode ssCode) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)
             throw new MAPException("Bad application context name for addRegisterPasswordRequest: must be networkFunctionalSsContext_V2");
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -670,8 +670,8 @@ public class MAPDialogSupplementaryImpl extends MAPDialogImpl implements MAPDial
 
     @Override
     public void addRegisterPasswordResponse(long invokeId, Password password) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
-                || this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkFunctionalSsContext)
+                || this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)
             throw new MAPException("Bad application context name for addRegisterPasswordResponse: must be networkFunctionalSsContext_V2");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCResultLastRequest();

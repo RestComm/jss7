@@ -142,8 +142,8 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements MAPDialo
             ExternalSignalInfo networkSignalInfo2, SuppressMTSS supressMTSS, boolean mtRoamingRetrySupported,
             EMLPPPriority callPriority) throws MAPException {
 
-        MAPApplicationContextVersion vers = this.appCntx.getApplicationContextVersion();
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.locationInfoRetrievalContext)
+        MAPApplicationContextVersion vers = this.getAppCntx().getApplicationContextVersion();
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.locationInfoRetrievalContext)
                 || (vers != MAPApplicationContextVersion.version1 && vers != MAPApplicationContextVersion.version2 && vers != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for addSendRoutingInformationRequest: must be locationInfoRetrievalContext_V1, V2 or V3");
@@ -159,7 +159,7 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements MAPDialo
         invoke.setOperationCode(oc);
 
         if (true) { // validate parameters here...
-            SendRoutingInformationRequestImpl req = new SendRoutingInformationRequestImpl(this.appCntx
+            SendRoutingInformationRequestImpl req = new SendRoutingInformationRequestImpl(this.getAppCntx()
                     .getApplicationContextVersion().getVersion(), msisdn, cugCheckInfo, numberOfForwarding, interrogationType,
                     orInterrogation, orCapability, gmscAddress, callReferenceNumber, forwardingReason, basicServiceGroup,
                     networkSignalInfo, camelInfo, suppressionOfAnnouncement, extensionContainer, alertingPattern, ccbsCall,
@@ -207,8 +207,8 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements MAPDialo
             UnavailabilityCause unavailabilityCause, boolean releaseResourcesSupported, ExternalSignalInfo gsmBearerCapability)
             throws MAPException {
 
-        MAPApplicationContextVersion vers = this.appCntx.getApplicationContextVersion();
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.locationInfoRetrievalContext)
+        MAPApplicationContextVersion vers = this.getAppCntx().getApplicationContextVersion();
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.locationInfoRetrievalContext)
                 || (vers != MAPApplicationContextVersion.version1 && vers != MAPApplicationContextVersion.version2 && vers != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for addSendRoutingInformationResponse: must be locationInfoRetrievalContext_V1, V2 or V3");
@@ -223,7 +223,7 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements MAPDialo
         resultLast.setOperationCode(oc);
 
         if (true) { // validate parameters here...
-            SendRoutingInformationResponseImpl res = new SendRoutingInformationResponseImpl(this.appCntx
+            SendRoutingInformationResponseImpl res = new SendRoutingInformationResponseImpl(this.getAppCntx()
                     .getApplicationContextVersion().getVersion(), imsi, extRoutingInfo, cugCheckInfo, cugSubscriptionFlag,
                     subscriberInfo, ssList, basicService, forwardingInterrogationRequired, vmscAddress, extensionContainer,
                     naeaPreferredCI, ccbsIndicators, msisdn, nrPortabilityStatus, istAlertTimer, supportedCamelPhases,
@@ -271,8 +271,8 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements MAPDialo
             boolean mtRoamingRetrySupported, PagingArea pagingArea, EMLPPPriority callPriority, boolean mtrfIndicator,
             ISDNAddressString oldMSCNumber) throws MAPException {
 
-        MAPApplicationContextVersion vers = this.appCntx.getApplicationContextVersion();
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.roamingNumberEnquiryContext)
+        MAPApplicationContextVersion vers = this.getAppCntx().getApplicationContextVersion();
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.roamingNumberEnquiryContext)
                 || (vers != MAPApplicationContextVersion.version1 && vers != MAPApplicationContextVersion.version2 && vers != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for addProvideRoamingNumberRequest: must be roamingNumberEnquiryContext _V1, V2 or V3");
@@ -292,7 +292,7 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements MAPDialo
                 orInterrogation, extensionContainer, alertingPattern, ccbsCall, supportedCamelPhasesInInterrogatingNode,
                 additionalSignalInfo, orNotSupportedInGMSC, prePagingSupported, longFTNSupported, suppressVtCsi,
                 offeredCamel4CSIsInInterrogatingNode, mtRoamingRetrySupported, pagingArea, callPriority, mtrfIndicator,
-                oldMSCNumber, this.appCntx.getApplicationContextVersion().getVersion());
+                oldMSCNumber, this.getAppCntx().getApplicationContextVersion().getVersion());
         AsnOutputStream aos = new AsnOutputStream();
         req.encodeData(aos);
 
@@ -321,8 +321,8 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements MAPDialo
             MAPExtensionContainer extensionContainer, boolean releaseResourcesSupported, ISDNAddressString vmscAddress)
             throws MAPException {
 
-        MAPApplicationContextVersion vers = this.appCntx.getApplicationContextVersion();
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.roamingNumberEnquiryContext)
+        MAPApplicationContextVersion vers = this.getAppCntx().getApplicationContextVersion();
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.roamingNumberEnquiryContext)
                 || (vers != MAPApplicationContextVersion.version1 && vers != MAPApplicationContextVersion.version2 && vers != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for addProvideRoamingNumberResponse: must be roamingNumberEnquiryContext_V1, V2 or V3");
@@ -337,7 +337,7 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements MAPDialo
         resultLast.setOperationCode(oc);
 
         ProvideRoamingNumberResponseImpl res = new ProvideRoamingNumberResponseImpl(roamingNumber, extensionContainer,
-                releaseResourcesSupported, vmscAddress, this.appCntx.getApplicationContextVersion().getVersion());
+                releaseResourcesSupported, vmscAddress, this.getAppCntx().getApplicationContextVersion().getVersion());
         AsnOutputStream aos = new AsnOutputStream();
         res.encodeData(aos);
 
@@ -359,8 +359,8 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements MAPDialo
 
     @Override
     public Long addIstCommandRequest(int customInvokeTimeout, IMSI imsi, MAPExtensionContainer extensionContainer) throws MAPException {
-        MAPApplicationContextVersion vers = this.appCntx.getApplicationContextVersion();
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.ServiceTerminationContext)
+        MAPApplicationContextVersion vers = this.getAppCntx().getApplicationContextVersion();
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.ServiceTerminationContext)
                 || (vers != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for addIstCommandRequest: must be ServiceTerminationContext_V3");
@@ -402,8 +402,8 @@ public class MAPDialogCallHandlingImpl extends MAPDialogImpl implements MAPDialo
     @Override
     public void addIstCommandResponse(long invokeId, MAPExtensionContainer extensionContainer) throws MAPException {
 
-        MAPApplicationContextVersion vers = this.appCntx.getApplicationContextVersion();
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.ServiceTerminationContext)
+        MAPApplicationContextVersion vers = this.getAppCntx().getApplicationContextVersion();
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.ServiceTerminationContext)
                 || (vers != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for addIstCommandResponse: must be ServiceTerminationContext_V3");

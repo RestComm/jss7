@@ -177,8 +177,8 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
             MAPExtensionContainer extensionContainer, RequestingNodeType requestingNodeType, PlmnId requestingPlmnId,
             Integer numberOfRequestedAdditionalVectors, boolean additionalVectorsAreForEPS) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.infoRetrievalContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.appCntx
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.infoRetrievalContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.getAppCntx()
                         .getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for sendAuthenticationInfoRequest: must be infoRetrievalContext_V2 or V3");
@@ -195,7 +195,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         if (imsi != null) {
             // parameter is optional: is no imsi is included we will not add a parameter
-            SendAuthenticationInfoRequestImpl req = new SendAuthenticationInfoRequestImpl(this.appCntx
+            SendAuthenticationInfoRequestImpl req = new SendAuthenticationInfoRequestImpl(this.getAppCntx()
                     .getApplicationContextVersion().getVersion(), imsi, numberOfRequestedVectors, segmentationProhibited,
                     immediateResponsePreferred, reSynchronisationInfo, extensionContainer, requestingNodeType,
                     requestingPlmnId, numberOfRequestedAdditionalVectors, additionalVectorsAreForEPS);
@@ -226,8 +226,8 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
     public void addSendAuthenticationInfoResponse(long invokeId, AuthenticationSetList authenticationSetList,
             MAPExtensionContainer extensionContainer, EpsAuthenticationSetList epsAuthenticationSetList) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.infoRetrievalContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.appCntx
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.infoRetrievalContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.getAppCntx()
                         .getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for addSendAuthenticationInfoResponse: must be infoRetrievalContext_V2 or V3");
@@ -243,7 +243,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
             oc.setLocalOperationCode((long) MAPOperationCode.sendAuthenticationInfo);
             resultLast.setOperationCode(oc);
 
-            SendAuthenticationInfoResponseImpl req = new SendAuthenticationInfoResponseImpl(this.appCntx
+            SendAuthenticationInfoResponseImpl req = new SendAuthenticationInfoResponseImpl(this.getAppCntx()
                     .getApplicationContextVersion().getVersion(), authenticationSetList, extensionContainer,
                     epsAuthenticationSetList);
             AsnOutputStream aos = new AsnOutputStream();
@@ -271,8 +271,8 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
     public Long addAuthenticationFailureReportRequest(int customInvokeTimeout, IMSI imsi, FailureCause failureCause, MAPExtensionContainer extensionContainer,
             Boolean reAttempt, AccessType accessType, byte[] rand, ISDNAddressString vlrNumber, ISDNAddressString sgsnNumber) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.authenticationFailureReportContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.authenticationFailureReportContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException("Bad application context name for authenticationFailureReportRequest: must be authenticationFailureReportContext_V3");
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -313,8 +313,8 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
     @Override
     public void addAuthenticationFailureReportResponse(long invokeId, MAPExtensionContainer extensionContainer) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.authenticationFailureReportContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.authenticationFailureReportContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException("Bad application context name for authenticationFailureReportResponse: must be authenticationFailureReportContext_V3");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
@@ -358,9 +358,9 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
             GSNAddress vGmlcAddress, ADDInfo addInfo, PagingArea pagingArea, boolean skipSubscriberDataUpdate,
             boolean restorationIndicator) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkLocUpContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
-                        && this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.appCntx
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkLocUpContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version1
+                        && this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.getAppCntx()
                         .getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for UpdateLocationRequest: must be networkLocUpContext_V1, V2 or V3");
@@ -375,7 +375,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         oc.setLocalOperationCode((long) MAPOperationCode.updateLocation);
         invoke.setOperationCode(oc);
 
-        UpdateLocationRequestImpl req = new UpdateLocationRequestImpl(this.appCntx.getApplicationContextVersion().getVersion(),
+        UpdateLocationRequestImpl req = new UpdateLocationRequestImpl(this.getAppCntx().getApplicationContextVersion().getVersion(),
                 imsi, mscNumber, roamingNumber, vlrNumber, lmsi, extensionContainer, vlrCapability,
                 informPreviousNetworkEntity, csLCSNotSupportedByUE, vGmlcAddress, addInfo, pagingArea,
                 skipSubscriberDataUpdate, restorationIndicator);
@@ -405,9 +405,9 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
     public void addUpdateLocationResponse(long invokeId, ISDNAddressString hlrNumber, MAPExtensionContainer extensionContainer,
             boolean addCapability, boolean pagingAreaCapability) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkLocUpContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
-                        && this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.appCntx
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkLocUpContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version1
+                        && this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.getAppCntx()
                         .getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for UpdateLocationResponse: must be networkLocUpContext_V1, V2 or V3");
@@ -422,7 +422,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         oc.setLocalOperationCode((long) MAPOperationCode.updateLocation);
         resultLast.setOperationCode(oc);
 
-        UpdateLocationResponseImpl req = new UpdateLocationResponseImpl(this.appCntx.getApplicationContextVersion()
+        UpdateLocationResponseImpl req = new UpdateLocationResponseImpl(this.getAppCntx().getApplicationContextVersion()
                 .getVersion(), hlrNumber, extensionContainer, addCapability, pagingAreaCapability);
         AsnOutputStream aos = new AsnOutputStream();
         req.encodeData(aos);
@@ -467,8 +467,8 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
             RequestedInfo requestedInfo, ISDNAddressString gsmSCFAddress, MAPExtensionContainer extensionContainer)
             throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.anyTimeEnquiryContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.anyTimeEnquiryContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for AnyTimeInterrogationRequest: must be networkLocUpContext_V3");
 
@@ -518,8 +518,8 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
     public void addAnyTimeInterrogationResponse(long invokeId, SubscriberInfo subscriberInfo,
             MAPExtensionContainer extensionContainer) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.anyTimeEnquiryContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.anyTimeEnquiryContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for AnyTimeInterrogationRequest: must be networkLocUpContext_V3");
 
@@ -557,8 +557,8 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
     public long addProvideSubscriberInfoRequest(long customInvokeTimeout, IMSI imsi, LMSI lmsi, RequestedInfo requestedInfo,
             MAPExtensionContainer extensionContainer, EMLPPPriority callPriority) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.subscriberInfoEnquiryContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.subscriberInfoEnquiryContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException("Bad application context name for ProvideSubscriberInfoRequest: must be subscriberInfoEnquiryContext_V3");
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -600,8 +600,8 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
     @Override
     public void addProvideSubscriberInfoResponse(long invokeId, SubscriberInfo subscriberInfo, MAPExtensionContainer extensionContainer) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.subscriberInfoEnquiryContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.subscriberInfoEnquiryContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for ProvideSubscriberInfoResponse: must be subscriberInfoEnquiryContext_V3");
 
@@ -640,9 +640,9 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
     public Long addCheckImeiRequest(long customInvokeTimeout, IMEI imei, RequestedEquipmentInfo requestedEquipmentInfo,
             MAPExtensionContainer extensionContainer) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.equipmentMngtContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
-                        && this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.appCntx
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.equipmentMngtContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version1
+                        && this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.getAppCntx()
                         .getApplicationContextVersion() != MAPApplicationContextVersion.version3)) {
             throw new MAPException(
                     "Bad application context name for CheckImeiRequest: must be equipmentMngtContext_V1, V2 or V3");
@@ -660,7 +660,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         oc.setLocalOperationCode((long) MAPOperationCode.checkIMEI);
         invoke.setOperationCode(oc);
 
-        CheckImeiRequestImpl req = new CheckImeiRequestImpl(this.appCntx.getApplicationContextVersion().getVersion(), imei,
+        CheckImeiRequestImpl req = new CheckImeiRequestImpl(this.getAppCntx().getApplicationContextVersion().getVersion(), imei,
                 requestedEquipmentInfo, extensionContainer);
 
         AsnOutputStream aos = new AsnOutputStream();
@@ -689,9 +689,9 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
     @Override
     public void addCheckImeiResponse(long invokeId, EquipmentStatus equipmentStatus, UESBIIu bmuef,
             MAPExtensionContainer extensionContainer) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.equipmentMngtContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
-                        && this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.appCntx
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.equipmentMngtContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version1
+                        && this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.getAppCntx()
                         .getApplicationContextVersion() != MAPApplicationContextVersion.version3)) {
             throw new MAPException(
                     "Bad application context name for CheckImeiResponse: must be equipmentMngtContext_V1, V2 or V3");
@@ -706,7 +706,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         oc.setLocalOperationCode((long) MAPOperationCode.checkIMEI);
         resultLast.setOperationCode(oc);
 
-        CheckImeiResponseImpl resp = new CheckImeiResponseImpl(this.appCntx.getApplicationContextVersion().getVersion(),
+        CheckImeiResponseImpl resp = new CheckImeiResponseImpl(this.getAppCntx().getApplicationContextVersion().getVersion(),
                 equipmentStatus, bmuef, extensionContainer);
         AsnOutputStream aos = new AsnOutputStream();
         resp.encodeData(aos);
@@ -732,9 +732,9 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
     public Long addCheckImeiRequest_Huawei(long customInvokeTimeout, IMEI imei, RequestedEquipmentInfo requestedEquipmentInfo,
             MAPExtensionContainer extensionContainer, IMSI imsi) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.equipmentMngtContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
-                        && this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.appCntx
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.equipmentMngtContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version1
+                        && this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.getAppCntx()
                         .getApplicationContextVersion() != MAPApplicationContextVersion.version3)) {
             throw new MAPException(
                     "Bad application context name for CheckImeiRequest: must be equipmentMngtContext_V1, V2 or V3");
@@ -752,7 +752,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         oc.setLocalOperationCode((long) MAPOperationCode.checkIMEI);
         invoke.setOperationCode(oc);
 
-        CheckImeiRequestImpl req = new CheckImeiRequestImpl(this.appCntx.getApplicationContextVersion().getVersion(), imei,
+        CheckImeiRequestImpl req = new CheckImeiRequestImpl(this.getAppCntx().getApplicationContextVersion().getVersion(), imei,
                 requestedEquipmentInfo, extensionContainer);
         req.setIMSI(imsi);
 
@@ -857,18 +857,18 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         boolean isSubscriberDataMngtContext = false;
         boolean isNetworkLocUpContext = false;
         boolean isGprsLocationUpdateContext = false;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.subscriberDataMngtContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1
-                        || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.appCntx
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.subscriberDataMngtContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version1
+                        || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.getAppCntx()
                         .getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isSubscriberDataMngtContext = true;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.networkLocUpContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1
-                        || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.appCntx
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.networkLocUpContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version1
+                        || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.getAppCntx()
                         .getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isNetworkLocUpContext = true;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.gprsLocationUpdateContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.gprsLocationUpdateContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isGprsLocationUpdateContext = true;
         if (isSubscriberDataMngtContext == false && isNetworkLocUpContext == false && isGprsLocationUpdateContext == false)
             throw new MAPException(
@@ -887,7 +887,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         oc.setLocalOperationCode((long) MAPOperationCode.insertSubscriberData);
         invoke.setOperationCode(oc);
 
-        InsertSubscriberDataRequestImpl req = new InsertSubscriberDataRequestImpl(this.appCntx.getApplicationContextVersion()
+        InsertSubscriberDataRequestImpl req = new InsertSubscriberDataRequestImpl(this.getAppCntx().getApplicationContextVersion()
                 .getVersion(), imsi, msisdn, category, subscriberStatus, bearerServiceList, teleserviceList, provisionedSS,
                 odbData, roamingRestrictionDueToUnsupportedFeature, regionalSubscriptionData, vbsSubscriptionData,
                 vgcsSubscriptionData, vlrCamelSubscriptionInfo, extensionContainer, naeaPreferredCI, gprsSubscriptionData,
@@ -939,18 +939,18 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         boolean isSubscriberDataMngtContext = false;
         boolean isNetworkLocUpContext = false;
         boolean isGprsLocationUpdateContext = false;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.subscriberDataMngtContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1
-                        || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.appCntx
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.subscriberDataMngtContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version1
+                        || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.getAppCntx()
                         .getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isSubscriberDataMngtContext = true;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.networkLocUpContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1
-                        || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.appCntx
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.networkLocUpContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version1
+                        || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.getAppCntx()
                         .getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isNetworkLocUpContext = true;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.gprsLocationUpdateContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.gprsLocationUpdateContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isGprsLocationUpdateContext = true;
         if (isSubscriberDataMngtContext == false && isNetworkLocUpContext == false && isGprsLocationUpdateContext == false)
             throw new MAPException(
@@ -968,8 +968,8 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         if ((teleserviceList != null || bearerServiceList != null || ssList != null || odbGeneralData != null || regionalSubscriptionResponse != null
                 || supportedCamelPhases != null || extensionContainer != null || offeredCamel4CSIs != null || supportedFeatures != null)
-                && this.appCntx.getApplicationContextVersion().getVersion() != 1) {
-            InsertSubscriberDataResponseImpl resp = new InsertSubscriberDataResponseImpl(this.appCntx.getApplicationContextVersion().getVersion(),
+                && this.getAppCntx().getApplicationContextVersion().getVersion() != 1) {
+            InsertSubscriberDataResponseImpl resp = new InsertSubscriberDataResponseImpl(this.getAppCntx().getApplicationContextVersion().getVersion(),
                     teleserviceList, bearerServiceList, ssList, odbGeneralData, regionalSubscriptionResponse, supportedCamelPhases, extensionContainer,
                     offeredCamel4CSIs, supportedFeatures);
             AsnOutputStream aos = new AsnOutputStream();
@@ -1012,9 +1012,9 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
             boolean apnOiReplacementWithdraw, boolean csgSubscriptionDeleted) throws MAPException {
 
         boolean isSubscriberDataMngtContext = false;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.subscriberDataMngtContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1
-                        || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.subscriberDataMngtContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version1
+                        || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isSubscriberDataMngtContext = true;
         if (isSubscriberDataMngtContext == false)
             throw new MAPException("Bad application context name for DeleteSubscriberDataRequest: must be subscriberDataMngtContext_V1, V2 or V3");
@@ -1065,9 +1065,9 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
             MAPExtensionContainer extensionContainer) throws MAPException {
 
         boolean isSubscriberDataMngtContext = false;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.subscriberDataMngtContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1
-                        || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.subscriberDataMngtContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version1
+                        || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isSubscriberDataMngtContext = true;
         if (isSubscriberDataMngtContext == false)
             throw new MAPException("Bad application context name for DeleteSubscriberDataResponse: must be subscriberDataMngtContext_V1, V2 or V3");
@@ -1081,7 +1081,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         oc.setLocalOperationCode((long) MAPOperationCode.deleteSubscriberData);
         resultLast.setOperationCode(oc);
 
-        if ((regionalSubscriptionResponse != null || extensionContainer != null) && this.appCntx.getApplicationContextVersion().getVersion() != 1) {
+        if ((regionalSubscriptionResponse != null || extensionContainer != null) && this.getAppCntx().getApplicationContextVersion().getVersion() != 1) {
             DeleteSubscriberDataResponseImpl resp = new DeleteSubscriberDataResponseImpl(regionalSubscriptionResponse, extensionContainer);
             AsnOutputStream aos = new AsnOutputStream();
             resp.encodeData(aos);
@@ -1113,9 +1113,9 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
             boolean mtrfSupportedAndAuthorized, boolean mtrfSupportedAndNotAuthorized, ISDNAddressString newMSCNumber,
             ISDNAddressString newVLRNumber, LMSI newLmsi) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.locationCancellationContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
-                        && this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.appCntx
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.locationCancellationContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version1
+                        && this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.getAppCntx()
                         .getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for CancelLocationRequest: must be locationCancellationContext_V1, V2 or V3");
@@ -1132,7 +1132,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         CancelLocationRequestImpl req = new CancelLocationRequestImpl(imsi, imsiWithLmsi, cancellationType, extensionContainer,
                 typeOfUpdate, mtrfSupportedAndAuthorized, mtrfSupportedAndNotAuthorized, newMSCNumber, newVLRNumber, newLmsi,
-                this.appCntx.getApplicationContextVersion().getVersion());
+                this.getAppCntx().getApplicationContextVersion().getVersion());
 
         AsnOutputStream aos = new AsnOutputStream();
         req.encodeData(aos);
@@ -1161,9 +1161,9 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
     @Override
     public void addCancelLocationResponse(long invokeId, MAPExtensionContainer extensionContainer) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.locationCancellationContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1
-                        && this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.appCntx
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.locationCancellationContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version1
+                        && this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.getAppCntx()
                         .getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for CancelLocationResponse: must be locationCancellationContext_V1, V2 or V3");
@@ -1211,8 +1211,8 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
             LAIFixedLength previousLAI, Integer hopCounter, boolean mtRoamingForwardingSupported,
             ISDNAddressString newVLRNumber, LMSI lmsi) throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.interVlrInfoRetrievalContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.appCntx
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.interVlrInfoRetrievalContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.getAppCntx()
                         .getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for SendIdentificationRequest: must be interVlrInfoRetrievalContext_V2 or V3");
@@ -1229,7 +1229,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         SendIdentificationRequestImpl req = new SendIdentificationRequestImpl(tmsi, numberOfRequestedVectors,
                 segmentationProhibited, extensionContainer, mscNumber, previousLAI, hopCounter, mtRoamingForwardingSupported,
-                newVLRNumber, lmsi, this.appCntx.getApplicationContextVersion().getVersion());
+                newVLRNumber, lmsi, this.getAppCntx().getApplicationContextVersion().getVersion());
 
         AsnOutputStream aos = new AsnOutputStream();
         req.encodeData(aos);
@@ -1257,8 +1257,8 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
     @Override
     public void addSendIdentificationResponse(long invokeId, IMSI imsi, AuthenticationSetList authenticationSetList,
             CurrentSecurityContext currentSecurityContext, MAPExtensionContainer extensionContainer) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.interVlrInfoRetrievalContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.appCntx
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.interVlrInfoRetrievalContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2 && this.getAppCntx()
                         .getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for CancelLocationResponse: must be interVlrInfoRetrievalContext_V2 or V3");
@@ -1274,7 +1274,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         resultLast.setOperationCode(oc);
 
         SendIdentificationResponseImpl req = new SendIdentificationResponseImpl(imsi, authenticationSetList,
-                currentSecurityContext, extensionContainer, this.appCntx.getApplicationContextVersion().getVersion());
+                currentSecurityContext, extensionContainer, this.getAppCntx().getApplicationContextVersion().getVersion());
 
         AsnOutputStream aos = new AsnOutputStream();
         req.encodeData(aos);
@@ -1298,8 +1298,8 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
             boolean ueReachableIndicator, boolean epsSubscriptionDataNotNeeded, UESRVCCCapability uesrvccCapability)
             throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.gprsLocationUpdateContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.gprsLocationUpdateContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for UpdateGprsLocationRequest: must be gprsLocationUpdateContext_V3");
 
@@ -1317,7 +1317,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
                 extensionContainer, sgsnCapability, informPreviousNetworkEntity, psLCSNotSupportedByUE, vGmlcAddress, addInfo,
                 epsInfo, servingNodeTypeIndicator, skipSubscriberDataUpdate, usedRATType, gprsSubscriptionDataNotNeeded,
                 nodeTypeIndicator, areaRestricted, ueReachableIndicator, epsSubscriptionDataNotNeeded, uesrvccCapability,
-                this.appCntx.getApplicationContextVersion().getVersion());
+                this.getAppCntx().getApplicationContextVersion().getVersion());
 
         AsnOutputStream aos = new AsnOutputStream();
         req.encodeData(aos);
@@ -1362,8 +1362,8 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
             MAPExtensionContainer extensionContainer, boolean addCapability, boolean sgsnMmeSeparationSupported)
             throws MAPException {
 
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.gprsLocationUpdateContext)
-                || (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.gprsLocationUpdateContext)
+                || (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3))
             throw new MAPException(
                     "Bad application context name for UpdateGprsLocationResponse: must be gprsLocationUpdateContext_V3");
 
@@ -1397,9 +1397,9 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
     @Override
     public Long addPurgeMSRequest(int customInvokeTimeout, IMSI imsi, ISDNAddressString vlrNumber,
             ISDNAddressString sgsnNumber, MAPExtensionContainer extensionContainer) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.msPurgingContext)
-                || ((this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
-                && (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.msPurgingContext)
+                || ((this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+                && (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)))
             throw new MAPException(
                     "Bad application context name for PurgeMSRequest: must be msPurgingContext_V2 or msPurgingContext_V3");
 
@@ -1413,7 +1413,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         oc.setLocalOperationCode((long) MAPOperationCode.purgeMS);
         invoke.setOperationCode(oc);
 
-        PurgeMSRequestImpl req = new PurgeMSRequestImpl(imsi, vlrNumber, sgsnNumber, extensionContainer, this.appCntx
+        PurgeMSRequestImpl req = new PurgeMSRequestImpl(imsi, vlrNumber, sgsnNumber, extensionContainer, this.getAppCntx()
                 .getApplicationContextVersion().getVersion());
 
         AsnOutputStream aos = new AsnOutputStream();
@@ -1449,8 +1449,8 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
     @Override
     public void addPurgeMSResponse(long invokeId, boolean freezeTMSI, boolean freezePTMSI,
             MAPExtensionContainer extensionContainer, boolean freezeMTMSI) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.msPurgingContext)
-                || ((this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3) && (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.msPurgingContext)
+                || ((this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3) && (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)))
             throw new MAPException("Bad application context name for PurgeMSResponse: must be msPurgingContext_V3 OR  msPurgingContext_V2");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
@@ -1465,7 +1465,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         PurgeMSResponseImpl resp = new PurgeMSResponseImpl(freezeTMSI, freezePTMSI, extensionContainer, freezeMTMSI);
 
-        if (this.appCntx.getApplicationContextVersion().getVersion() >= 3 && (freezeTMSI || freezePTMSI || extensionContainer != null || freezeMTMSI)) {
+        if (this.getAppCntx().getApplicationContextVersion().getVersion() >= 3 && (freezeTMSI || freezePTMSI || extensionContainer != null || freezeMTMSI)) {
             AsnOutputStream aos = new AsnOutputStream();
             resp.encodeData(aos);
 
@@ -1488,8 +1488,8 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
     @Override
     public Long addResetRequest(int customInvokeTimeout, NetworkResource networkResource, ISDNAddressString hlrNumber, ArrayList<IMSI> hlrList)
             throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.resetContext)
-                || ((this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2) && (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version1)))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.resetContext)
+                || ((this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2) && (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version1)))
             throw new MAPException("Bad application context name for ResetRequest: must be resetContext_V1 or V2");
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class4);
@@ -1502,7 +1502,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         oc.setLocalOperationCode((long) MAPOperationCode.reset);
         invoke.setOperationCode(oc);
 
-        int version = this.appCntx.getApplicationContextVersion().getVersion();
+        int version = this.getAppCntx().getApplicationContextVersion().getVersion();
         ResetRequestImpl req = new ResetRequestImpl(networkResource, hlrNumber, hlrList, version);
 
         AsnOutputStream aos = new AsnOutputStream();
@@ -1535,9 +1535,9 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
     @Override
     public Long addForwardCheckSSIndicationRequest(int customInvokeTimeout) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkLocUpContext)
-                || ((this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3)
-                        && (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2) && (this.appCntx
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkLocUpContext)
+                || ((this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3)
+                        && (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2) && (this.getAppCntx()
                         .getApplicationContextVersion() != MAPApplicationContextVersion.version1)))
             throw new MAPException("Bad application context name for ForwardCheckSSIndicationRequest: must be networkLocUpContext_V1, V2 or V3");
 
@@ -1575,8 +1575,8 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
     @Override
     public Long addRestoreDataRequest(int customInvokeTimeout, IMSI imsi, LMSI lmsi, VLRCapability vlrCapability, MAPExtensionContainer extensionContainer,
             boolean restorationIndicator) throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkLocUpContext)
-                || ((this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3) && (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkLocUpContext)
+                || ((this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3) && (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)))
             throw new MAPException("Bad application context name for RestoreDataRequest: must be networkLocUpContext_V2 or networkLocUpContext_V3");
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
@@ -1617,8 +1617,8 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
     @Override
     public void addRestoreDataResponse(long invokeId, ISDNAddressString hlrNumber, boolean msNotReachable, MAPExtensionContainer extensionContainer)
             throws MAPException {
-        if ((this.appCntx.getApplicationContextName() != MAPApplicationContextName.networkLocUpContext)
-                || ((this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version3) && (this.appCntx.getApplicationContextVersion() != MAPApplicationContextVersion.version2)))
+        if ((this.getAppCntx().getApplicationContextName() != MAPApplicationContextName.networkLocUpContext)
+                || ((this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version3) && (this.getAppCntx().getApplicationContextVersion() != MAPApplicationContextVersion.version2)))
             throw new MAPException("Bad application context name for RestoreDataResponse: must be networkLocUpContext_V2 or networkLocUpContext_V3");
 
         ReturnResultLast resultLast = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
@@ -1664,16 +1664,16 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         boolean isTracingContext = false;
         boolean isNetworkLocUpContext = false;
         boolean isGprsLocationUpdateContext = false;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.tracingContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1
-                        || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.tracingContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version1
+                        || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isTracingContext = true;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.networkLocUpContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1
-                        || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.networkLocUpContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version1
+                        || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isNetworkLocUpContext = true;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.gprsLocationUpdateContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.gprsLocationUpdateContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isGprsLocationUpdateContext = true;
 
         if (!isTracingContext && !isNetworkLocUpContext && !isGprsLocationUpdateContext)
@@ -1720,16 +1720,16 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
         boolean isTracingContext = false;
         boolean isNetworkLocUpContext = false;
         boolean isGprsLocationUpdateContext = false;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.tracingContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1
-                        || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.tracingContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version1
+                        || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isTracingContext = true;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.networkLocUpContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version1
-                        || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.networkLocUpContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version1
+                        || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version2 || this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isNetworkLocUpContext = true;
-        if ((this.appCntx.getApplicationContextName() == MAPApplicationContextName.gprsLocationUpdateContext)
-                && (this.appCntx.getApplicationContextVersion() == MAPApplicationContextVersion.version3))
+        if ((this.getAppCntx().getApplicationContextName() == MAPApplicationContextName.gprsLocationUpdateContext)
+                && (this.getAppCntx().getApplicationContextVersion() == MAPApplicationContextVersion.version3))
             isGprsLocationUpdateContext = true;
 
         if (!isTracingContext && !isNetworkLocUpContext && !isGprsLocationUpdateContext)
@@ -1741,7 +1741,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         resultLast.setInvokeId(invokeId);
 
-        if ((traceSupportIndicator || extensionContainer != null) && this.appCntx.getApplicationContextVersion().getVersion() >= 3) {
+        if ((traceSupportIndicator || extensionContainer != null) && this.getAppCntx().getApplicationContextVersion().getVersion() >= 3) {
             // Operation Code
             OperationCode oc = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createOperationCode();
             oc.setLocalOperationCode((long) MAPOperationCode.activateTraceMode);
