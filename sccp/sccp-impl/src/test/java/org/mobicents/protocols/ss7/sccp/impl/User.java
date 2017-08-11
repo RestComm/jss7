@@ -204,7 +204,7 @@ public class User extends BaseSccpListener implements SccpListener {
 
     @Override
     public void onConnectIndication(SccpConnection conn, SccpAddress calledAddress, SccpAddress callingAddress, ProtocolClass clazz, Credit credit, byte[] data, Importance importance) throws Exception {
-        conn.confirm(null);
+        conn.confirm(null, credit);
     }
 
     @Override

@@ -3,30 +3,68 @@ package org.mobicents.protocols.ss7.sccp.impl;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.parameter.ResetCauseValue;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class FlowControlWindows {
     protected final Logger logger;
-    private int credit = 0;
 
-    private byte sendFlowControlWindowStart = 0;
-    private byte sendFlowControlWindowEnd = 127;
+    private byte sendFlowControlWindowStartNumber = 0;
+    private int sendFlowControlWindowSize = 127;
 
-    private byte receiveFlowControlWindowStart = 0;
-    private byte receiveFlowControlWindowEnd = 127;
+    private byte receiveFlowControlWindowStartNumber = 0;
+    private int receiveFlowControlWindowSize = 127;
 
     private byte lastReceiveSequenceNumberReceived;
     private byte lastReceiveSequenceNumberSent;
+
+    private byte nextSendSequenceNumber = 0;
+    private byte nextReceiveSequenceNumber = 0;
 
     public FlowControlWindows(String name) {
         this.logger = Logger.getLogger(FlowControlWindows.class.getCanonicalName() + "-" + name);
     }
 
-    public synchronized void setCredit(int credit) {
-        if (credit > 128) {
+    private Set<Byte> getAllowedReceiveFlowControlNumbers() {
+        Set<Byte> numbers = new HashSet<>();
+        int number = receiveFlowControlWindowStartNumber;
+        for (int i = 0; i < receiveFlowControlWindowSize; i++) {
+            numbers.add((byte)number);
+            number++;
+            if (number > 127) {
+                number = 0;
+            }
+        }
+        return numbers;
+    }
+
+    private Set<Byte> getAllowedSendFlowControlNumbers() {
+        Set<Byte> numbers = new HashSet<>();
+        int number = sendFlowControlWindowStartNumber;
+        for (int i = 0; i < sendFlowControlWindowSize; i++) {
+            numbers.add((byte)number);
+            number++;
+            if (number > 127) {
+                number = 0;
+            }
+        }
+        return numbers;
+    }
+
+    public synchronized void setSendCredit(int credit) {
+        if (credit > 127) {
             throw new IllegalArgumentException("Window size is too high");
         }
-        this.credit = credit;
-        this.sendFlowControlWindowEnd = (byte)(credit - 1);
-        this.receiveFlowControlWindowEnd = (byte)(credit - 1);
+        sendFlowControlWindowStartNumber = 0;
+        sendFlowControlWindowSize = credit;
+    }
+
+    public synchronized void setReceiveCredit(int credit) {
+        if (credit > 127) {
+            throw new IllegalArgumentException("Window size is too high");
+        }
+        this.receiveFlowControlWindowStartNumber = 0;
+        this.receiveFlowControlWindowSize = credit;
     }
 
     public synchronized SendSequenceNumberHandlingResult handleSequenceNumbers(Byte sendSequenceNumber, byte receiveSequenceNumber) {
@@ -35,22 +73,24 @@ public class FlowControlWindows {
         ResetCauseValue cause = null;
 
         if (sendSequenceNumber != null) {
-            if (sendSequenceNumber == receiveFlowControlWindowStart
-                    && sendSequenceNumber <= receiveFlowControlWindowEnd) {
+            Set<Byte> allowedReceiveFlowControlNumbers = getAllowedReceiveFlowControlNumbers();
+            if (sendSequenceNumber == nextReceiveSequenceNumber
+                    && allowedReceiveFlowControlNumbers.contains(sendSequenceNumber)) {
                 incrementReceiveSequenceNumber();
             } else {
                 needReset = true;
                 cause = ResetCauseValue.MESSAGE_OUT_OF_ORDER_INCORRECT_PS;
             }
-            endReached = sendSequenceNumber == receiveFlowControlWindowEnd;
+            allowedReceiveFlowControlNumbers = getAllowedReceiveFlowControlNumbers();
+            endReached = !allowedReceiveFlowControlNumbers.contains(nextReceiveSequenceNumber);
         }
 
         if ((receiveSequenceNumber >= lastReceiveSequenceNumberReceived)
-                && (receiveSequenceNumber <= sendFlowControlWindowStart)) {
+                && (receiveSequenceNumber <= nextSendSequenceNumber)) {
             if (logger.isTraceEnabled()) {
-                logger.trace(String.format("P(S) was eq %d, set value to %d", sendFlowControlWindowStart, receiveSequenceNumber));
+                logger.trace(String.format("P(S) was eq %d, set value to %d", nextSendSequenceNumber, receiveSequenceNumber));
             }
-            sendFlowControlWindowStart = receiveSequenceNumber;
+            sendFlowControlWindowStartNumber = receiveSequenceNumber;
         } else {
             needReset = true;
             cause = ResetCauseValue.MESSAGE_OUT_OF_ORDER_INCORRECT_PR;
@@ -60,53 +100,63 @@ public class FlowControlWindows {
         return new SendSequenceNumberHandlingResult(needReset, cause, endReached);
     }
 
-
-
     public synchronized byte getLastReceiveSequenceNumberSent() {
-        receiveFlowControlWindowStart = lastReceiveSequenceNumberSent;
+//        receiveFlowControlWindowStart = lastReceiveSequenceNumberSent;
         return lastReceiveSequenceNumberSent;
     }
 
-    public synchronized int getCredit() {
-        return credit;
+    public synchronized int getSendCredit() {
+        return sendFlowControlWindowSize;
+    }
+
+    public synchronized int getReceiveCredit() {
+        return receiveFlowControlWindowSize;
     }
 
     public synchronized byte getSendSequenceNumber() {
-        byte sendSequenceNumber = sendFlowControlWindowStart;
-        if (sendSequenceNumber > sendFlowControlWindowEnd) {
+        byte sendSequenceNumber = nextSendSequenceNumber;
+        if (!getAllowedSendFlowControlNumbers().contains(sendSequenceNumber)) {
             throw new IllegalStateException("P(S) is larger than send window end");
         }
         if (logger.isTraceEnabled()) {
-            logger.trace(String.format("returned P(S) = %d", sendFlowControlWindowStart));
+            logger.trace(String.format("returned P(S) = %d", nextSendSequenceNumber));
         }
         return sendSequenceNumber;
     }
 
     public synchronized boolean sendSequenceWindowExhausted() {
-        return sendFlowControlWindowStart > sendFlowControlWindowEnd;
+        return !getAllowedSendFlowControlNumbers().contains(nextSendSequenceNumber);
     }
 
     public synchronized byte getReceiveSequenceNumber() {
-        byte receiveSequenceNumber = receiveFlowControlWindowStart;
+        byte receiveSequenceNumber = nextReceiveSequenceNumber;
         lastReceiveSequenceNumberSent = receiveSequenceNumber;
         return receiveSequenceNumber;
     }
 
     public synchronized void incrementSendSequenceNumber() {
-        if (sendFlowControlWindowStart + 1 > 127) {
-            sendFlowControlWindowStart = 0;
+        if (nextSendSequenceNumber + 1 > 127) {
+            nextSendSequenceNumber = 0;
         }
-        sendFlowControlWindowStart++;
+        nextSendSequenceNumber++;
         if (logger.isTraceEnabled()) {
-            logger.trace(String.format("set P(S) = ", sendFlowControlWindowStart));
+            logger.trace(String.format("set P(S) = ", nextSendSequenceNumber));
         }
     }
 
     private synchronized void incrementReceiveSequenceNumber() {
-        if (receiveFlowControlWindowStart + 1 > 127) {
-            receiveFlowControlWindowStart = 0;
+        if (nextReceiveSequenceNumber + 1 > 127) {
+            nextReceiveSequenceNumber = 0;
         }
-        receiveFlowControlWindowStart++;
+        nextReceiveSequenceNumber++;
+    }
+
+    public void reloadSendSequenceNumber() {
+        nextSendSequenceNumber = sendFlowControlWindowStartNumber;
+    }
+
+    public void reloadReceiveSequenceNumber() {
+        nextReceiveSequenceNumber = receiveFlowControlWindowStartNumber;
     }
 
     public static class SendSequenceNumberHandlingResult {

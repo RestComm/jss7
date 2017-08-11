@@ -29,7 +29,8 @@ public interface SccpConnection {
     SccpConnectionState getState();
 
     // for protocol class 3 only
-    Credit getCredit();
+    Credit getSendCredit();
+    Credit getReceiveCredit();
 
     void establish(SccpConnCrMessage message) throws IOException;
 
@@ -38,7 +39,7 @@ public interface SccpConnection {
     void refuse(RefusalCause reason, byte[] data) throws Exception;
     void disconnect(ReleaseCause reason, byte[] data) throws Exception;
 
-    void confirm(SccpAddress respondingAddress) throws Exception;
+    void confirm(SccpAddress respondingAddress, Credit credit) throws Exception;
 
     SccpListener getListener();
 }
