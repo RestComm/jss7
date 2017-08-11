@@ -272,7 +272,6 @@ public abstract class MAPDialogImpl implements MAPDialog, Serializable {
 
             this.setState(MAPDialogState.EXPUNGED);
         } finally {
-            updateData();
             this.getTcapDialog().getDialogLock().unlock();
         }
     }
