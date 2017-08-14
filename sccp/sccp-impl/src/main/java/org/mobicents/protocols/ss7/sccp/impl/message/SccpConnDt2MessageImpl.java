@@ -39,7 +39,6 @@ import org.mobicents.protocols.ss7.sccp.parameter.SequencingSegmenting;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 public class SccpConnDt2MessageImpl extends SccpMessageImpl implements SccpConnDt2Message {
     protected LocalReference destinationLocalReferenceNumber;
