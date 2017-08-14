@@ -45,13 +45,20 @@ import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
+import org.mobicents.protocols.ss7.sccp.SccpConnection;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SignallingPointStatus;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.Credit;
+import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.parameter.RefusalCause;
+import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCause;
+import org.mobicents.protocols.ss7.sccp.parameter.ResetCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcapAnsi.api.ComponentPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcapAnsi.api.DialogPrimitiveFactory;
@@ -1232,6 +1239,46 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         }
 
         networkIdStateList.put(ni, networkIdState);
+    }
+
+    @Override
+    public void onConnectIndication(SccpConnection conn, SccpAddress calledAddress, SccpAddress callingAddress, ProtocolClass clazz, Credit credit, byte[] data, Importance importance) throws Exception {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onConnectConfirm(SccpConnection conn) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onDisconnectIndication(SccpConnection conn, ReleaseCause reason, byte[] data) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onDisconnectIndication(SccpConnection conn, RefusalCause reason, byte[] data) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onResetIndication(SccpConnection conn, ResetCause reason) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onResetConfirm(SccpConnection conn) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onData(SccpConnection conn, byte[] data) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onDisconnectConfirm(SccpConnection conn) {
+        // TODO Auto-generated method stub
     }
 
     @Override

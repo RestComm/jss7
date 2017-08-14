@@ -52,7 +52,7 @@ public class SccpConnCrefMessageImpl extends SccpMessageImpl implements SccpConn
     protected RefusalCause refusalCause;
     protected Importance importance;
 
-    protected SccpConnCrefMessageImpl(int sls, int localSsn) {
+    public SccpConnCrefMessageImpl(int sls, int localSsn) {
         super(130, MESSAGE_TYPE_CREF, sls, localSsn);
     }
 
