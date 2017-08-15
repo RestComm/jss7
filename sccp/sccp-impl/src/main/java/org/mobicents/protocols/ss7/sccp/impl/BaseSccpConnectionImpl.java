@@ -147,7 +147,7 @@ public abstract class BaseSccpConnectionImpl {
                     totalDelay += SLEEP_DELAY;
                 }
                 if (state != ESTABLISHED) {
-                    throw new IllegalStateException("Send timeout reached ");
+                    throw new IllegalStateException("Send timeout reached due to state " + state);
                 }
             }
 
@@ -203,19 +203,20 @@ public abstract class BaseSccpConnectionImpl {
         return state;
     }
 
-    public Credit getCredit() {
-        return new CreditImpl(windows.getCredit());
+    public Credit getSendCredit() {
+        return new CreditImpl(windows.getSendCredit());
+    }
+
+    public Credit getReceiveCredit() {
+        return new CreditImpl(windows.getReceiveCredit());
     }
 
     public void reset(ResetCause reason) throws Exception {
-        if (state != SccpConnectionState.ESTABLISHED) {
-            throw new IllegalStateException("reset");
-        }
         SccpConnRsrMessageImpl rsr = new SccpConnRsrMessageImpl(sls, localSsn);
         rsr.setSourceLocalReferenceNumber(localReference);
         rsr.setDestinationLocalReferenceNumber(remoteReference);
         rsr.setResetCause(reason);
-        state = SccpConnectionState.RSR_SENT;
+        state = RSR_SENT;
         sendMessage(rsr);
         resetProcess.startTimer();
     }
@@ -247,8 +248,8 @@ public abstract class BaseSccpConnectionImpl {
         setState(CLOSED);
     }
 
-    public void confirm(SccpAddress respondingAddress) throws Exception {
-        if (state != SccpConnectionState.CR_RECEIVED) {
+    public void confirm(SccpAddress respondingAddress, Credit credit) throws Exception {
+        if (state != CR_RECEIVED) {
             throw new IllegalStateException("confirm");
         }
         SccpConnCcMessageImpl message = new SccpConnCcMessageImpl(sls, localSsn);
@@ -257,8 +258,8 @@ public abstract class BaseSccpConnectionImpl {
         message.setProtocolClass(protocolClass);
         message.setCalledPartyAddress(respondingAddress);
         if (protocolClass.getProtocolClass() == 3) {
-            message.setCredit(new CreditImpl(1));
-            windows.setCredit(message.getCredit().getValue());
+            message.setCredit(credit);
+            windows.setReceiveCredit(message.getCredit().getValue());
         }
 
         sendMessage(message);
@@ -309,8 +310,7 @@ public abstract class BaseSccpConnectionImpl {
         try {
             message.setSourceLocalReferenceNumber(localReference);
             if (protocolClass.getProtocolClass() == 3) {
-                message.setCredit(new CreditImpl(1));
-                windows.setCredit(message.getCredit().getValue());
+                windows.setReceiveCredit(message.getCredit().getValue());
             }
 
             if (message.getCalledPartyAddress() == null) {
@@ -320,7 +320,7 @@ public abstract class BaseSccpConnectionImpl {
             sendMessage(message);
             connEstProcess.startTimer();
 
-            setState(SccpConnectionState.CR_SENT);
+            setState(CR_SENT);
 
         } catch (Exception e) {
             throw new IOException(e);
@@ -359,16 +359,16 @@ public abstract class BaseSccpConnectionImpl {
         remoteReference = message.getSourceLocalReferenceNumber();
         remoteDpc = message.getIncomingOpc();
         if (message.getCredit() != null) {
-            windows.setCredit(message.getCredit().getValue());
+            windows.setSendCredit(message.getCredit().getValue());
         }
-        setState(SccpConnectionState.CR_RECEIVED);
+        setState(CR_RECEIVED);
     }
 
     protected void handleCCMessage(SccpConnCcMessageImpl message) {
         remoteReference = message.getSourceLocalReferenceNumber();
         connEstProcess.stopTimer();
         if (message.getCredit() != null) {
-            windows.setCredit(message.getCredit().getValue());
+            windows.setSendCredit(message.getCredit().getValue());
         }
         setState(SccpConnectionState.ESTABLISHED);
     }
@@ -383,7 +383,7 @@ public abstract class BaseSccpConnectionImpl {
     }
 
     protected void handleRSRMessage(SccpConnRsrMessageImpl msg) throws Exception {
-        setState(SccpConnectionState.RSR_RECEIVED);
+        setState(RSR_RECEIVED);
 
         SccpConnRscMessageImpl rsc = new SccpConnRscMessageImpl(sls, localSsn);
         rsc.setDestinationLocalReferenceNumber(remoteReference);
@@ -446,9 +446,11 @@ public abstract class BaseSccpConnectionImpl {
             SccpConnAkMessageImpl msgAk = new SccpConnAkMessageImpl(sls, localSsn);
             msgAk.setDestinationLocalReferenceNumber(remoteReference);
             msgAk.setReceiveSequenceNumber(new ReceiveSequenceNumberImpl(windows.getLastReceiveSequenceNumberSent()));
-            msgAk.setCredit(getCredit());
+            msgAk.setCredit(getSendCredit());
 
             msgAk.setSourceLocalReferenceNumber(localReference);
+
+            windows.reloadReceiveSequenceNumber();
 
             sendMessage(msgAk);
         }
@@ -463,6 +465,7 @@ public abstract class BaseSccpConnectionImpl {
         if (result.isResetNeeded()) {
             reset(new ResetCauseImpl(result.getResetCause()));
         } else {
+            windows.reloadSendSequenceNumber();
             if (!windows.sendSequenceWindowExhausted()) {
                 setState(ESTABLISHED);
             }

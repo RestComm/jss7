@@ -1272,7 +1272,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     }
 
     @Override
-    public void onData(SccpConnection conn) {
+    public void onData(SccpConnection conn, byte[] data) {
         // TODO Auto-generated method stub
     }
 
