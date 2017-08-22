@@ -420,7 +420,7 @@ public class M3UAShellExecutor implements ShellExecutor {
 
     private String executeM3UA(String[] args) {
         try {
-            if (args.length < 2 || args.length > 15) {
+            if (args.length < 2 || args.length > 19) {
                 // any command will have atleast 3 args
                 return M3UAOAMMessages.INVALID_COMMAND;
             }
