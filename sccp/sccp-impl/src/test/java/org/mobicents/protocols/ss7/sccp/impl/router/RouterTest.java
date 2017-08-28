@@ -593,7 +593,7 @@ public class RouterTest {
         SccpAddress patternDefaultCalling = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
                 factory.createGlobalTitle("*", 1), 0, 0);
         // Rule 1
-        primaryAddr1 = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("999", 1),123, 
+        primaryAddr1 = factory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, factory.createGlobalTitle("999", 1),123,
                 0);
         router.addRoutingAddress(1, primaryAddr1);
 
