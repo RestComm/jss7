@@ -1004,12 +1004,14 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
                             // for MAP version >= 2 - accepts only if only ERROR
                             // & REJECT components are present
                             boolean notOnlyErrorReject = false;
-                            for (Component c : tcEndIndication.getComponents()) {
-                                if (c.getType() != ComponentType.ReturnError && c.getType() != ComponentType.Reject) {
-                                    notOnlyErrorReject = true;
-                                    break;
+                            Component[] comps = tcEndIndication.getComponents();
+                            if(comps!=null)
+                                for (Component c : comps) {
+                                    if (c.getType() != ComponentType.ReturnError && c.getType() != ComponentType.Reject) {
+                                        notOnlyErrorReject = true;
+                                        break;
+                                    }
                                 }
-                            }
                             if (notOnlyErrorReject) {
                                 loger.error(String.format(
                                         "Received first TC-END for MAPDialog=%s. But no application-context-name included",
