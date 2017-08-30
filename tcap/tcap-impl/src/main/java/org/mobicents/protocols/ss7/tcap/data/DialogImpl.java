@@ -1352,9 +1352,6 @@ public class DialogImpl extends DialogBaseImpl {
         if (components == null) {
             return null;
         }
-// TODO: remove me
-        data.listTCAPOpeartions();
-
         List<Component> resultingIndications = new ArrayList<Component>();
         for (Component ci : components) {
             Long invokeId;
