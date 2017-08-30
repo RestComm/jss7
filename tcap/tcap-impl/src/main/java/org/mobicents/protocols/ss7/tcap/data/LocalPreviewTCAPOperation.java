@@ -109,11 +109,6 @@ public class LocalPreviewTCAPOperation implements ITCAPOperation {
     }
 
     @Override
-    public void setInvoke(Invoke i) {
-        this.invoke=i;
-    }
-
-    @Override
     public Invoke getInvoke() {
         return invoke;
     }

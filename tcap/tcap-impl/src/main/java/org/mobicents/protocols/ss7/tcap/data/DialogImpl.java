@@ -1352,6 +1352,8 @@ public class DialogImpl extends DialogBaseImpl {
         if (components == null) {
             return null;
         }
+// TODO: remove me
+        data.listTCAPOpeartions();
 
         List<Component> resultingIndications = new ArrayList<Component>();
         for (Component ci : components) {
@@ -1427,13 +1429,13 @@ public class DialogImpl extends DialogBaseImpl {
                         p.setReturnResultProblemType(ReturnResultProblemType.ReturnResultUnexpected);
                         addReject(resultingIndications, ci.getInvokeId(), p);
                     } else {
+                        ReturnResultLastImpl rri = (ReturnResultLastImpl) ci;
+                        if (rri.getOperationCode() == null)
+                            rri.setOperationCode(operation.getInvoke().getOperationCode());
                         operation.onReturnResultLast();
                         if (operation.isSuccessReported()) {
                             resultingIndications.add(ci);
                         }
-                        ReturnResultLastImpl rri = (ReturnResultLastImpl) ci;
-                        if (rri.getOperationCode() == null)
-                            rri.setOperationCode(operation.getInvoke().getOperationCode());
                     }
                     break;
 
@@ -1519,6 +1521,7 @@ public class DialogImpl extends DialogBaseImpl {
             data.setState(newState);
             if (newState == TRPseudoState.Expunged) {
                 stopIdleTimer();
+
                 provider.release(this);
             }
         } finally {

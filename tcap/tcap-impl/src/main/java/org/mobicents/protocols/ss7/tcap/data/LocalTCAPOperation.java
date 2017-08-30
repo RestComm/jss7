@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class LocalTCAPOperation implements Serializable, ITCAPOperation {
 
     private transient LocalDialogData data;
-    private Invoke invoke;
+    private final Invoke invoke;
 
     private OperationState state = OperationState.Idle;
     private Object timerHandle;
@@ -117,10 +117,6 @@ public class LocalTCAPOperation implements Serializable, ITCAPOperation {
         }
     }
 
-    @Override
-    public void setInvoke(Invoke i) {
-        this.invoke=i;
-    }
 
     @Override
     public Invoke getInvoke() {

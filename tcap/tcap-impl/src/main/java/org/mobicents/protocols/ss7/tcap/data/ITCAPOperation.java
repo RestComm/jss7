@@ -16,7 +16,7 @@ public interface ITCAPOperation {
     void stopTimer();
     boolean isErrorReported();
     boolean isSuccessReported();
-    void setInvoke(Invoke i);
+//    void setInvoke(Invoke i);
     Invoke getInvoke();
     Long getInvokeId();
     void handleOperationTimeout();
