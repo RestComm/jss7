@@ -207,7 +207,7 @@ public class RouterImpl implements Router {
 
     private String persistDir = null;
 
-    private final RuleComparator ruleComparator = new RuleComparator();
+    private RuleComparatorFactory ruleComparatorFactory = null;
     // rule list
     private RuleMap<Integer, Rule> rulesMap = new RuleMap<Integer, Rule>();
     private SccpAddressMap<Integer, SccpAddressImpl> routingAddresses = new SccpAddressMap<Integer, SccpAddressImpl>();
@@ -221,6 +221,7 @@ public class RouterImpl implements Router {
     public RouterImpl(String name, SccpStack sccpStack) {
         this.name = name;
         this.sccpStack = sccpStack;
+        this.ruleComparatorFactory = RuleComparatorFactory.getInstance("RuleComparatorFactory");
 
         binding.setAlias(RuleImpl.class, RULE);
         binding.setClassAttribute(CLASS_ATTRIBUTE);
@@ -447,7 +448,7 @@ public class RouterImpl implements Router {
             rulesArray[count++] = rule;
 
             // Sort
-            Arrays.sort(rulesArray, ruleComparator);
+            Arrays.sort(rulesArray, this.ruleComparatorFactory.getRuleComparator());
 
             RuleMap<Integer, Rule> newRule = new RuleMap<Integer, Rule>();
             for (int i = 0; i < rulesArray.length; i++) {
@@ -523,7 +524,7 @@ public class RouterImpl implements Router {
             rulesArray[count++] = rule;
 
             // Sort
-            Arrays.sort(rulesArray, ruleComparator);
+            Arrays.sort(rulesArray, this.ruleComparatorFactory.getRuleComparator());
 
             RuleMap<Integer, Rule> newRule = new RuleMap<Integer, Rule>();
             for (int i = 0; i < rulesArray.length; i++) {
