@@ -45,9 +45,7 @@ import java.io.InputStream;
 
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculateRlsdFieldsLengthWithoutData;
 
-public class SccpConnRlsdMessageImpl extends SccpMessageImpl implements SccpConnRlsdMessage {
-    protected LocalReference destinationLocalReferenceNumber;
-    protected LocalReference sourceLocalReferenceNumber;
+public class SccpConnRlsdMessageImpl extends SccpConnReferencedMessageImpl implements SccpConnRlsdMessage {
     protected ReleaseCause releaseCause;
     protected byte[] userData;
     protected Importance importance;
@@ -58,26 +56,6 @@ public class SccpConnRlsdMessageImpl extends SccpMessageImpl implements SccpConn
 
     protected SccpConnRlsdMessageImpl(int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
         super(130, MESSAGE_TYPE_RLSD, incomingOpc, incomingDpc, incomingSls, networkId);
-    }
-
-    @Override
-    public LocalReference getDestinationLocalReferenceNumber() {
-        return destinationLocalReferenceNumber;
-    }
-
-    @Override
-    public void setDestinationLocalReferenceNumber(LocalReference destinationLocalReferenceNumber) {
-        this.destinationLocalReferenceNumber = destinationLocalReferenceNumber;
-    }
-
-    @Override
-    public LocalReference getSourceLocalReferenceNumber() {
-        return sourceLocalReferenceNumber;
-    }
-
-    @Override
-    public void setSourceLocalReferenceNumber(LocalReference sourceLocalReferenceNumber) {
-        this.sourceLocalReferenceNumber = sourceLocalReferenceNumber;
     }
 
     @Override

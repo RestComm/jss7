@@ -38,9 +38,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class SccpConnRsrMessageImpl extends SccpMessageImpl implements SccpConnRsrMessage {
-    protected LocalReference destinationLocalReferenceNumber;
-    protected LocalReference sourceLocalReferenceNumber;
+public class SccpConnRsrMessageImpl extends SccpConnReferencedMessageImpl implements SccpConnRsrMessage {
     protected ResetCause resetCause;
 
     public SccpConnRsrMessageImpl(int sls, int localSsn) {
@@ -49,26 +47,6 @@ public class SccpConnRsrMessageImpl extends SccpMessageImpl implements SccpConnR
 
     protected SccpConnRsrMessageImpl(int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
         super(0, MESSAGE_TYPE_RSR, incomingOpc, incomingDpc, incomingSls, networkId);
-    }
-
-    @Override
-    public LocalReference getDestinationLocalReferenceNumber() {
-        return destinationLocalReferenceNumber;
-    }
-
-    @Override
-    public void setDestinationLocalReferenceNumber(LocalReference number) {
-        this.destinationLocalReferenceNumber = number;
-    }
-
-    @Override
-    public LocalReference getSourceLocalReferenceNumber() {
-        return sourceLocalReferenceNumber;
-    }
-
-    @Override
-    public void setSourceLocalReferenceNumber(LocalReference number) {
-        this.sourceLocalReferenceNumber = number;
     }
 
     @Override

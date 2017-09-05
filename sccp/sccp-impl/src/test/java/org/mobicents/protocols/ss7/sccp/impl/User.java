@@ -32,6 +32,7 @@ import org.mobicents.protocols.ss7.sccp.SccpConnection;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SignallingPointStatus;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.RefusalCauseImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpAddressedMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
@@ -40,6 +41,8 @@ import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.Credit;
 import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.parameter.RefusalCause;
+import org.mobicents.protocols.ss7.sccp.parameter.RefusalCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.ResetCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
@@ -56,6 +59,9 @@ public class User extends BaseSccpListener implements SccpListener {
     protected List<SccpMessage> messages = new ArrayList<SccpMessage>();
     protected List<byte[]> receivedData = new ArrayList<>();
     protected int resetCount;
+    protected int refusedCount;
+    protected int errorCount;
+    protected boolean refuseConnections;
 
     public User(SccpProvider provider, SccpAddress address, SccpAddress dest, int ssn) {
         this.provider = provider;
@@ -204,7 +210,12 @@ public class User extends BaseSccpListener implements SccpListener {
 
     @Override
     public void onConnectIndication(SccpConnection conn, SccpAddress calledAddress, SccpAddress callingAddress, ProtocolClass clazz, Credit credit, byte[] data, Importance importance) throws Exception {
-        conn.confirm(null, credit);
+        if (!refuseConnections) {
+            conn.confirm(null, credit, new byte[] {});
+        } else {
+            conn.refuse(new RefusalCauseImpl(RefusalCauseValue.END_USER_ORIGINATED), new byte[] {});
+            refusedCount++;
+        }
     }
 
     @Override
@@ -217,8 +228,25 @@ public class User extends BaseSccpListener implements SccpListener {
         resetCount++;
     }
 
+    @Override
+    public void onDisconnectIndication(SccpConnection conn, RefusalCause reason, byte[] data) {
+        refusedCount++;
+    }
+
     public int getResetCount() {
         return resetCount;
+    }
+
+    public int getRefusedCount() {
+        return refusedCount;
+    }
+
+    public int getErrorCount() {
+        return errorCount;
+    }
+
+    public void setRefuseConnections(boolean refuseConnections) {
+        this.refuseConnections = refuseConnections;
     }
 
     @Override

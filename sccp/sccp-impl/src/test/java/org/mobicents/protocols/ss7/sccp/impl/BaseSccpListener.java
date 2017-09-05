@@ -85,7 +85,7 @@ public class BaseSccpListener implements SccpListener {
     }
 
     @Override
-    public void onConnectConfirm(SccpConnection conn) {
+    public void onConnectConfirm(SccpConnection conn, byte[] data) {
 
     }
 

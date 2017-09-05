@@ -169,6 +169,7 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
             SccpDataMessageImpl msg = ((SccpDataMessageImpl) message);
             stack.send(msg);
         }catch(Exception e){
+            logger.error(e);
             throw new IOException(e);
         }
     }
