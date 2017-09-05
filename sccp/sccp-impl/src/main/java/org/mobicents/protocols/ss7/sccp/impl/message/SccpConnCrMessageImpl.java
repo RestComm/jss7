@@ -55,11 +55,11 @@ public class SccpConnCrMessageImpl extends SccpAddressedMessageImpl implements S
     protected byte[] userData;
     protected Importance importance;
 
-    protected SccpConnCrMessageImpl(int sls, int localSsn, SccpAddress calledParty, SccpAddress callingParty, HopCounter hopCounter) {
+    public SccpConnCrMessageImpl(int sls, int localSsn, SccpAddress calledParty, SccpAddress callingParty, HopCounter hopCounter) {
         super(130, MESSAGE_TYPE_CR, sls, localSsn, calledParty, callingParty, hopCounter);
     }
 
-    protected SccpConnCrMessageImpl(int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
+    public SccpConnCrMessageImpl(int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
         super(130, MESSAGE_TYPE_CR, incomingOpc, incomingDpc, incomingSls, networkId);
     }
 

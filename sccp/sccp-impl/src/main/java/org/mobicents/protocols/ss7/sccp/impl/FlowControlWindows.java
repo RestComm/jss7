@@ -5,9 +5,11 @@ import org.mobicents.protocols.ss7.sccp.parameter.ResetCauseValue;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class FlowControlWindows {
     protected final Logger logger;
+    protected ReentrantLock windowLock;
 
     private byte sendFlowControlWindowStartNumber = 0;
     private int sendFlowControlWindowSize = 127;
@@ -21,34 +23,9 @@ public class FlowControlWindows {
     private byte nextSendSequenceNumber = 0;
     private byte nextReceiveSequenceNumber = 0;
 
-    public FlowControlWindows(String name) {
+    public FlowControlWindows(String name, ReentrantLock windowLock) {
         this.logger = Logger.getLogger(FlowControlWindows.class.getCanonicalName() + "-" + name);
-    }
-
-    private Set<Byte> getAllowedReceiveFlowControlNumbers() {
-        Set<Byte> numbers = new HashSet<>();
-        int number = receiveFlowControlWindowStartNumber;
-        for (int i = 0; i < receiveFlowControlWindowSize; i++) {
-            numbers.add((byte)number);
-            number++;
-            if (number > 127) {
-                number = 0;
-            }
-        }
-        return numbers;
-    }
-
-    private Set<Byte> getAllowedSendFlowControlNumbers() {
-        Set<Byte> numbers = new HashSet<>();
-        int number = sendFlowControlWindowStartNumber;
-        for (int i = 0; i < sendFlowControlWindowSize; i++) {
-            numbers.add((byte)number);
-            number++;
-            if (number > 127) {
-                number = 0;
-            }
-        }
-        return numbers;
+        this.windowLock = windowLock;
     }
 
     public synchronized void setSendCredit(int credit) {
@@ -73,7 +50,7 @@ public class FlowControlWindows {
         ResetCauseValue cause = null;
 
         if (sendSequenceNumber != null) {
-            Set<Byte> allowedReceiveFlowControlNumbers = getAllowedReceiveFlowControlNumbers();
+            Range allowedReceiveFlowControlNumbers = Range.rangeCountAfter(receiveFlowControlWindowStartNumber, receiveFlowControlWindowSize);
             if (sendSequenceNumber == nextReceiveSequenceNumber
                     && allowedReceiveFlowControlNumbers.contains(sendSequenceNumber)) {
                 incrementReceiveSequenceNumber();
@@ -81,12 +58,11 @@ public class FlowControlWindows {
                 needReset = true;
                 cause = ResetCauseValue.MESSAGE_OUT_OF_ORDER_INCORRECT_PS;
             }
-            allowedReceiveFlowControlNumbers = getAllowedReceiveFlowControlNumbers();
+            allowedReceiveFlowControlNumbers = Range.rangeCountAfter(receiveFlowControlWindowStartNumber, receiveFlowControlWindowSize);
             endReached = !allowedReceiveFlowControlNumbers.contains(nextReceiveSequenceNumber);
         }
 
-        if ((receiveSequenceNumber >= lastReceiveSequenceNumberReceived)
-                && (receiveSequenceNumber <= nextSendSequenceNumber)) {
+        if (Range.rangeFromTo(lastReceiveSequenceNumberReceived, nextSendSequenceNumber).contains(receiveSequenceNumber)) {
             if (logger.isTraceEnabled()) {
                 logger.trace(String.format("P(S) was eq %d, set value to %d", nextSendSequenceNumber, receiveSequenceNumber));
             }
@@ -99,6 +75,19 @@ public class FlowControlWindows {
 
         return new SendSequenceNumberHandlingResult(needReset, cause, endReached);
     }
+
+    /*
+    private boolean isAkNeeded() {
+        try {
+            windowLock.lock();
+            double exhaustionPercentage = (receiveFlowControlWindowSize < 50) ? 0.1 : 0.5;
+            Range receiveFlowControlNumbers = getReceiveFlowControlWindowRange();
+            return !receiveFlowControlNumbers.isInTheFirstPart(exhaustionPercentage, nextReceiveSequenceNumber);
+        } finally {
+            windowLock.unlock();
+        }
+    }
+     */
 
     public synchronized byte getLastReceiveSequenceNumberSent() {
 //        receiveFlowControlWindowStart = lastReceiveSequenceNumberSent;
@@ -115,7 +104,9 @@ public class FlowControlWindows {
 
     public synchronized byte getSendSequenceNumber() {
         byte sendSequenceNumber = nextSendSequenceNumber;
-        if (!getAllowedSendFlowControlNumbers().contains(sendSequenceNumber)) {
+        Range allowedSendFlowControlNumbers = Range.rangeCountAfter(sendFlowControlWindowStartNumber, sendFlowControlWindowSize);
+
+        if (!allowedSendFlowControlNumbers.contains(sendSequenceNumber)) {
             throw new IllegalStateException("P(S) is larger than send window end");
         }
         if (logger.isTraceEnabled()) {
@@ -125,7 +116,7 @@ public class FlowControlWindows {
     }
 
     public synchronized boolean sendSequenceWindowExhausted() {
-        return !getAllowedSendFlowControlNumbers().contains(nextSendSequenceNumber);
+        return !Range.rangeCountAfter(sendFlowControlWindowStartNumber, sendFlowControlWindowSize).contains(nextSendSequenceNumber);
     }
 
     public synchronized byte getReceiveSequenceNumber() {
@@ -152,11 +143,70 @@ public class FlowControlWindows {
     }
 
     public void reloadSendSequenceNumber() {
+        sendFlowControlWindowStartNumber = 0;
         nextSendSequenceNumber = sendFlowControlWindowStartNumber;
     }
 
     public void reloadReceiveSequenceNumber() {
         nextReceiveSequenceNumber = receiveFlowControlWindowStartNumber;
+    }
+
+    public static class Range {
+        private static final int MAX = 128;
+        private final int start;
+        private final int end;
+        private final Integer size;
+
+        private Range(int start, int end) {
+            this.start = start;
+            this.end = end;
+            this.size = null;
+        }
+
+        private Range(int start, int end, int size) {
+            this.start = start;
+            this.end = end;
+            this.size = size;
+        }
+
+        public boolean contains(int number) {
+            if (end < 0 || (size != null && size == 0)) {
+                return false;
+            }
+            if (number == start || number == end) {
+                return true;
+            }
+
+            if (end < start) {
+                return start < number && number < MAX || 0 <= number && number < end;
+            } else {
+                return start < number && number < end;
+            }
+        }
+
+        public static Range rangeFromTo(int start, int end) {
+            return new Range(start, end);
+        }
+
+        public static Range rangeCountAfter(int start, int howFar) {
+            return new Range(start, (start + howFar - 1) % MAX, howFar);
+        }
+
+        public boolean isInTheFirstPart(double percentage, byte number) {
+            if (size == null) {
+                throw new IllegalArgumentException("Not implemented");
+            }
+            if (percentage > 1 || percentage < 0) {
+                throw new IllegalArgumentException();
+            }
+            return rangeCountAfter(start, (int) (size * percentage)).contains(number);
+        }
+
+        @Override
+        public String toString() {
+            return "Range[" + start + ", " + end + "], size=" + size +
+                    '}';
+        }
     }
 
     public static class SendSequenceNumberHandlingResult {
@@ -174,7 +224,13 @@ public class FlowControlWindows {
             return needReset;
         }
 
+        /*
         public boolean isEndReached() {
+            return endReached;
+        }
+        */
+
+        public boolean isAkNeeded() {
             return endReached;
         }
 

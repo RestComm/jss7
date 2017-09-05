@@ -31,7 +31,7 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SequencingSegmentingImpl;
 import org.mobicents.protocols.ss7.sccp.message.ParseException;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnDt2Message;
-import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
+import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.SequencingSegmenting;
@@ -40,13 +40,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class SccpConnDt2MessageImpl extends SccpMessageImpl implements SccpConnDt2Message {
-    protected LocalReference destinationLocalReferenceNumber;
+public class SccpConnDt2MessageImpl extends SccpConnSegmentableMessageImpl implements SccpConnDt2Message {
     protected SequencingSegmenting sequencingSegmenting;
-    protected byte[] userData;
-
-    // isn't sent over network, used in send message methods
-    protected LocalReference sourceLocalReferenceNumber;
 
     public SccpConnDt2MessageImpl(int maxDataLen, int sls, int localSsn) {
         super(maxDataLen, MESSAGE_TYPE_DT2, sls, localSsn);
@@ -57,16 +52,6 @@ public class SccpConnDt2MessageImpl extends SccpMessageImpl implements SccpConnD
     }
 
     @Override
-    public LocalReference getDestinationLocalReferenceNumber() {
-        return destinationLocalReferenceNumber;
-    }
-
-    @Override
-    public void setDestinationLocalReferenceNumber(LocalReference destinationLocalReferenceNumber) {
-        this.destinationLocalReferenceNumber = destinationLocalReferenceNumber;
-    }
-
-    @Override
     public SequencingSegmenting getSequencingSegmenting() {
         return sequencingSegmenting;
     }
@@ -74,16 +59,6 @@ public class SccpConnDt2MessageImpl extends SccpMessageImpl implements SccpConnD
     @Override
     public void setSequencingSegmenting(SequencingSegmenting sequencingSegmenting) {
         this.sequencingSegmenting = sequencingSegmenting;
-    }
-
-    @Override
-    public byte[] getUserData() {
-        return userData;
-    }
-
-    @Override
-    public void setUserData(byte[] userData) {
-        this.userData = userData;
     }
 
     @Override
@@ -175,11 +150,40 @@ public class SccpConnDt2MessageImpl extends SccpMessageImpl implements SccpConnD
         }
     }
 
-    public LocalReference getSourceLocalReferenceNumber() {
-        return sourceLocalReferenceNumber;
+    @Override
+    public boolean isMoreData() {
+        return sequencingSegmenting.isMoreData();
     }
 
-    public void setSourceLocalReferenceNumber(LocalReference sourceLocalReferenceNumber) {
-        this.sourceLocalReferenceNumber = sourceLocalReferenceNumber;
+    @Override
+    public void setMoreData(boolean moreData) {
+        if (sequencingSegmenting == null) {
+            // sendSequenceNumber and receiveSequenceNumber are later re-initialized in MessageSender
+            sequencingSegmenting = new SequencingSegmentingImpl(0,0, moreData);
+        } else {
+            sequencingSegmenting = new SequencingSegmentingImpl(sequencingSegmenting.getSendSequenceNumber(),
+                    sequencingSegmenting.getReceiveSequenceNumber(), moreData);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("Sccp Msg [Type=DT2");
+        sb.append(" networkId=").append(this.networkId).append(" sls=").append(this.sls).append(" incomingOpc=").append(this.incomingOpc)
+                .append(" incomingDpc=").append(this.incomingDpc).append(" outgoingDpc=").append(this.outgoingDpc)
+
+                .append(" destinationLocalReferenceNumber=").append(this.destinationLocalReferenceNumber);
+        if (this.sequencingSegmenting != null) {
+                sb.append(" sequencingSegmenting(").append(this.sequencingSegmenting).append(")");
+        }
+        sb.append(" DataLen=");
+        if (this.userData != null) {
+            sb.append(this.userData.length);
+        } else {
+            sb.append("null");
+        }
+        sb.append("]");
+        return sb.toString();
     }
 }

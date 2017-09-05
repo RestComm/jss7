@@ -1097,7 +1097,7 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
 
         SccpStackImpl sccpStack = null;
         try {
-            sccpStack = new SccpStackImpl(beanName);
+            sccpStack = new SccpStackImpl(schedulerMBean, beanName);
             sccpStack.setPersistDir(dataDir);
             sccpStack.setMtp3UserParts(mtp3UserPartsTemp);
 

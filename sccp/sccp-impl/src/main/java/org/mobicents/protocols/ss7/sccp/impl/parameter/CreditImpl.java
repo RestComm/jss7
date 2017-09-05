@@ -98,4 +98,9 @@ public class CreditImpl extends AbstractParameter implements Credit {
     public int hashCode() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

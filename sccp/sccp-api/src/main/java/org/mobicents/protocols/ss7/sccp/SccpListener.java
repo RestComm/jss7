@@ -100,7 +100,7 @@ public interface SccpListener extends Serializable {
                              ProtocolClass clazz, Credit credit, // QoS, credit is set only for class 3
                              byte[] data, Importance importance) throws Exception;
     // N-CONNECT
-    void onConnectConfirm(SccpConnection conn);
+    void onConnectConfirm(SccpConnection conn, byte[] data);
 
     // N-DISCONNECT
     void onDisconnectIndication(SccpConnection conn, ReleaseCause reason, byte[] data);

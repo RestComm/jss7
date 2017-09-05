@@ -49,8 +49,9 @@ public class Mtp3UserPartImpl extends Mtp3UserPartBaseImpl {
     // protected ConcurrentLinkedQueue<byte[]> readFrom;
     // protected ConcurrentLinkedQueue<byte[]> writeTo;
 
-    private Mtp3UserPartImpl otherPart;
+    private List<Mtp3UserPartImpl> otherParts = new ArrayList<Mtp3UserPartImpl>();
     private ArrayList<Mtp3TransferPrimitive> messages = new ArrayList<Mtp3TransferPrimitive>();
+    private List<Integer> dpcs = new ArrayList<Integer>();
 
     protected boolean saveTrafficInFile = false;
 
@@ -65,7 +66,7 @@ public class Mtp3UserPartImpl extends Mtp3UserPartBaseImpl {
     }
 
     public void setOtherPart(Mtp3UserPartImpl otherPart) {
-        this.otherPart = otherPart;
+        this.otherParts.add(otherPart);
     }
 
     private int tsnNum = (new Random()).nextInt(1000);
@@ -276,9 +277,17 @@ public class Mtp3UserPartImpl extends Mtp3UserPartBaseImpl {
             }
         }
 
-        if (this.otherPart != null)
-            this.otherPart.sendTransferMessageToLocalUser(msg, msg.getSls());
-        else
+        if (!this.otherParts.isEmpty()) {
+            if (otherParts.size() == 1) {
+                this.otherParts.iterator().next().sendTransferMessageToLocalUser(msg, msg.getSls());
+            } else {
+                for (Mtp3UserPartImpl part: otherParts) {
+                    if (part.dpcs.contains(msg.getDpc())) {
+                        part.sendTransferMessageToLocalUser(msg, msg.getSls());
+                    }
+                }
+            }
+        } else
             this.messages.add(msg);
     }
 
@@ -320,5 +329,11 @@ public class Mtp3UserPartImpl extends Mtp3UserPartBaseImpl {
     @Override
     public int getMaxUserDataLength(int dpc) {
         return 1000;
+    }
+
+    public void addDpc(int dpc) {
+        if (!dpcs.contains(dpc)) {
+            dpcs.add(dpc);
+        }
     }
 }

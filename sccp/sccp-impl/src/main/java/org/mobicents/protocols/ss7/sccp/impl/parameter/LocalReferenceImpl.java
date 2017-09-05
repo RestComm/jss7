@@ -112,4 +112,9 @@ public class LocalReferenceImpl extends AbstractParameter implements LocalRefere
     public int hashCode() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return Integer.toString(value);
+    }
 }

@@ -59,6 +59,8 @@ import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.congestion.SccpCongestionControl;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpAddressedMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt1MessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt2MessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpSegmentableMessageImpl;
@@ -72,6 +74,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -92,6 +95,7 @@ import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculat
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculateUdtFieldsLengthWithoutData;
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculateXudtFieldsLengthWithoutData;
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculateXudtFieldsLengthWithoutData2;
+import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.getDln;
 
 /**
  *
@@ -246,7 +250,17 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     private FastMap<Integer, Date> lastCongNotice = new FastMap<Integer, Date>();
     private FastMap<Integer, Date> lastUserPartUnavailNotice = new FastMap<Integer, Date>();
 
+    protected Scheduler scheduler;
+
+    /*
+     * For non-connection oriented protocol class usage
+     */
     public SccpStackImpl(String name) {
+        this(null, name);
+    }
+
+    public SccpStackImpl(Scheduler scheduler, String name) {
+        this.scheduler = scheduler;
 
         binding.setClassAttribute(CLASS_ATTRIBUTE);
 
@@ -905,7 +919,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
     public SccpConnectionImpl getConnection(LocalReference number) {
         if (number == null) {
-            throw new IllegalArgumentException("number can't be null");
+            logger.error("Reference number can't be null");
+            throw new IllegalArgumentException("Reference number can't be null");
         }
         return connections.get(number.getValue());
     }
@@ -919,14 +934,22 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     }
 
     protected SccpConnectionImpl newConnection(int localSsn, ProtocolClass protocol) throws MaxConnectionCountReached {
-
-        SccpConnectionImpl conn = new SccpConnectionImpl(localSsn, protocol, this, sccpRoutingControl);
+        SccpConnectionImpl conn;
         Integer refNumber;
         synchronized (this) {
             refNumber = newReferenceNumber();
+
+            if (protocol.getProtocolClass() == 2) {
+                conn = new SccpConnectionImpl(localSsn, new LocalReferenceImpl(refNumber), protocol, this, sccpRoutingControl);
+            } else if (protocol.getProtocolClass() == 3) {
+                conn = new SccpConnectionWithFlowControlImpl(localSsn, new LocalReferenceImpl(refNumber), protocol, this, sccpRoutingControl);
+            } else {
+                logger.error(String.format("Unsupported connection class %d", protocol.getProtocolClass()));
+                throw new IllegalArgumentException();
+            }
+
             connections.put(refNumber, conn);
         }
-        conn.setLocalReference(new LocalReferenceImpl(refNumber));
         return conn;
     }
 
@@ -947,6 +970,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
             // 0 and reference numbers values which are > 0
             if (connections.size() == referenceNumberCounterMax + 1) {
+                logger.error(String.format("Can't open more connections than %d", referenceNumberCounterMax + 1));
                 throw new MaxConnectionCountReached(String.format("Can't open more connections than %d", referenceNumberCounterMax + 1));
             }
 
@@ -967,6 +991,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
         if (message.getCalledPartyAddress() == null || message.getCallingPartyAddress() == null || message.getData() == null
                 || message.getData().length == 0) {
+            logger.error("Message to send must has filled CalledPartyAddress, CallingPartyAddress and data fields");
             throw new IOException("Message to send must has filled CalledPartyAddress, CallingPartyAddress and data fields");
         }
 
@@ -1247,7 +1272,6 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
                                 mtp3Msg.getSi()));
                 return;
             }
-
             ByteArrayInputStream bais = new ByteArrayInputStream(mtp3Msg.getData());
             DataInputStream in = new DataInputStream(bais);
             int mt = in.readUnsignedByte();
@@ -1361,7 +1385,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
             } else if (msg instanceof SccpConnMessage) {
                 // non-addressed message processing (these are connected-oriented messages in the connected phase)
-                sccpRoutingControl.routeMssgFromMtpConn((SccpConnMessage)msg);
+                sccpRoutingControl.routeMssgFromMtpConn((SccpConnMessage) msg);
 
             } else {
                 logger.warn(String

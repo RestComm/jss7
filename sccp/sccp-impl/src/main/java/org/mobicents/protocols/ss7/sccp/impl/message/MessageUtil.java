@@ -149,23 +149,11 @@ public class MessageUtil {
     }
 
     public static LocalReference getSln(SccpConnMessage msg) {
-        LocalReference sln = null;
-        if (msg instanceof SccpConnRlcMessageImpl) {
-            sln = ((SccpConnRlcMessageImpl)msg).getSourceLocalReferenceNumber();
-        } else if (msg instanceof SccpConnRlsdMessageImpl) {
-            sln = ((SccpConnRlsdMessageImpl)msg).getSourceLocalReferenceNumber();
-        } else if (msg instanceof SccpConnCcMessageImpl) {
-            sln = ((SccpConnCcMessageImpl)msg).getSourceLocalReferenceNumber();
-        } else if (msg instanceof SccpConnRsrMessageImpl) {
-            sln = ((SccpConnRsrMessageImpl)msg).getSourceLocalReferenceNumber();
-        } else if (msg instanceof SccpConnRscMessageImpl) {
-            sln = ((SccpConnRscMessageImpl)msg).getSourceLocalReferenceNumber();
-        } else if (msg instanceof SccpConnDt1MessageImpl) {
-            sln = ((SccpConnDt1MessageImpl)msg).getSourceLocalReferenceNumber();
-        } else if (msg instanceof SccpConnDt2MessageImpl) {
-            sln = ((SccpConnDt2MessageImpl)msg).getSourceLocalReferenceNumber();
-        } else if (msg instanceof SccpConnAkMessageImpl) {
-            sln = ((SccpConnAkMessageImpl)msg).getSourceLocalReferenceNumber();
+        LocalReference sln;
+        if (msg instanceof SccpConnReferencedMessageImpl) {
+            sln = ((SccpConnReferencedMessageImpl)msg).getSourceLocalReferenceNumber();
+        } else if (msg instanceof SccpConnCrMessageImpl) {
+            sln = ((SccpConnCrMessageImpl) msg).getSourceLocalReferenceNumber();
         } else {
             throw new IllegalStateException("Not implemented");
         }
@@ -173,23 +161,9 @@ public class MessageUtil {
     }
 
     public static LocalReference getDln(SccpConnMessage msg) {
-        LocalReference dln = null;
-        if (msg instanceof SccpConnRlcMessageImpl) {
-            dln = ((SccpConnRlcMessageImpl)msg).getDestinationLocalReferenceNumber();
-        } else if (msg instanceof SccpConnRlsdMessageImpl) {
-            dln = ((SccpConnRlsdMessageImpl)msg).getDestinationLocalReferenceNumber();
-        }  else if (msg instanceof SccpConnCcMessageImpl) {
-            dln = ((SccpConnCcMessageImpl)msg).getDestinationLocalReferenceNumber();
-        } else if (msg instanceof SccpConnRsrMessageImpl) {
-            dln = ((SccpConnRsrMessageImpl)msg).getDestinationLocalReferenceNumber();
-        } else if (msg instanceof SccpConnRscMessageImpl) {
-            dln = ((SccpConnRscMessageImpl)msg).getDestinationLocalReferenceNumber();
-        } else if (msg instanceof SccpConnDt1MessageImpl) {
-            dln = ((SccpConnDt1MessageImpl)msg).getDestinationLocalReferenceNumber();
-        } else if (msg instanceof SccpConnDt2MessageImpl) {
-            dln = ((SccpConnDt2MessageImpl)msg).getDestinationLocalReferenceNumber();
-        }  else if (msg instanceof SccpConnAkMessageImpl) {
-            dln = ((SccpConnAkMessageImpl)msg).getDestinationLocalReferenceNumber();
+        LocalReference dln;
+        if (msg instanceof SccpConnReferencedMessageImpl) {
+            dln = ((SccpConnReferencedMessageImpl)msg).getDestinationLocalReferenceNumber();
         } else {
             throw new IllegalStateException("Not implemented");
         }
