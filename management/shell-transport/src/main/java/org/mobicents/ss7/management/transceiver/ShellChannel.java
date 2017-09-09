@@ -158,7 +158,7 @@ public class ShellChannel extends ShellSelectableChannel {
         return txQueue.isEmpty();
     }
 
-    protected void doRead() throws IOException {
+    public void doRead() throws IOException {
         // clean rx buffer
         rxBuffer.clear();
 
@@ -185,7 +185,7 @@ public class ShellChannel extends ShellSelectableChannel {
         }
     }
 
-    protected void doWrite() throws IOException {
+    public void doWrite() throws IOException {
         if (txBuffer.hasRemaining()) {
             ((SocketChannel) channel).write(txBuffer);
         } else if (!txQueue.isEmpty()) {

@@ -85,6 +85,15 @@ public class ChannelSelectionKey {
     }
 
     /**
+     * Tests whether this key's channel is ready for writing.
+     *
+     * @return
+     */
+    public boolean isValid() {
+        return key.isValid();
+    }
+
+    /**
      * <p>
      * Requests that the registration of this key's channel with its selector be canceled. Upon return the key will be invalid
      * </p>

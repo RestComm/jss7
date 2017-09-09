@@ -24,13 +24,8 @@ package org.mobicents.ss7.management.console;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.channels.SelectionKey;
-
-import javolution.util.FastSet;
 
 import org.mobicents.ss7.management.transceiver.ChannelProvider;
-import org.mobicents.ss7.management.transceiver.ChannelSelectionKey;
-import org.mobicents.ss7.management.transceiver.ChannelSelector;
 import org.mobicents.ss7.management.transceiver.Message;
 import org.mobicents.ss7.management.transceiver.ShellChannel;
 
@@ -43,8 +38,6 @@ public class Client {
 
     private ChannelProvider provider;
     private ShellChannel channel;
-    private ChannelSelector selector;
-    private ChannelSelectionKey skey;
 
     private boolean isConnected = false;
 
@@ -63,15 +56,12 @@ public class Client {
         channel = provider.openChannel();
         // channel.bind(new InetSocketAddress(address, port));
 
-        selector = provider.openSelector();
-        skey = channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
-
         channel.connect(endpoint);
         if (channel.isConnectionPending()) {
             while (!channel.isConnected()) {
                 channel.finishConnect();
                 try {
-                    Thread.currentThread().sleep(1);
+                    Thread.sleep(1);
                 } catch (Exception e) {
                 }
             }
@@ -90,50 +80,37 @@ public class Client {
 
         // Wait for 300 secs to get message
         while (count > 0) {
-            FastSet<ChannelSelectionKey> keys = selector.selectNow();
+            if (!channel.isConnected()) {
+                stop();
+                throw new IOException("Channel closed by server");
+            }
 
-            for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record.getNext()) != end;) {
-                ChannelSelectionKey key = (ChannelSelectionKey) keys.valueOf(record);
-                ShellChannel chan = (ShellChannel) key.channel();
-
-                if (!wrote && key.isWritable()) {
-                    if (outgoing != null) {
-                        chan.send(outgoing);
-                    }
-                    wrote = true;
+            if (!wrote) {
+                if (outgoing != null) {
+                    channel.send(outgoing);
+                    channel.doWrite();
                 }
-
-                if (key.isReadable()) {
-                    Message msg = (Message) chan.receive();
+                wrote = true;
+            } else {
+                channel.doRead();
+                Message msg = (Message) channel.receive();
+                if (msg != null) {
                     return msg;
                 }
-            }// End of For loop
+            }
 
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
             }
             count--;
-        }// end of while
+        } // end of while
         throw new IOException("No response from server");
 
     }
 
     protected void stop() {
         this.isConnected = false;
-
-        if (skey != null) {
-            skey.cancel();
-            skey = null;
-        }
-
-        if (selector != null) {
-            try {
-                selector.close();
-            } catch (IOException e) {
-            }
-            selector = null;
-        }
 
         if (channel != null) {
             try {

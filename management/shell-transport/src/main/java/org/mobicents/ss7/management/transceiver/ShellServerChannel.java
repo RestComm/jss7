@@ -25,6 +25,7 @@ package org.mobicents.ss7.management.transceiver;
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.AbstractSelectableChannel;
 
 import org.apache.log4j.Logger;
@@ -59,7 +60,11 @@ public class ShellServerChannel extends ShellSelectableChannel {
      * @throws java.io.IOException
      */
     public ShellChannel accept() throws IOException {
-        return new ShellChannel(chanProvider, ((ServerSocketChannel) channel).accept());
+        SocketChannel newChannel = ((ServerSocketChannel) channel).accept();
+        if (newChannel == null)
+            return null;
+
+        return new ShellChannelExt(chanProvider, newChannel);
     }
 
     /**

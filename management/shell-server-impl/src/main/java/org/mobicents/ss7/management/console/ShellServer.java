@@ -29,7 +29,14 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
@@ -49,6 +56,7 @@ import org.mobicents.ss7.management.transceiver.ChannelSelector;
 import org.mobicents.ss7.management.transceiver.Message;
 import org.mobicents.ss7.management.transceiver.MessageFactory;
 import org.mobicents.ss7.management.transceiver.ShellChannel;
+import org.mobicents.ss7.management.transceiver.ShellChannelExt;
 import org.mobicents.ss7.management.transceiver.ShellServerChannel;
 
 /**
@@ -70,14 +78,12 @@ public abstract class ShellServer extends Task implements ShellServerMBean {
 
     private ChannelProvider provider;
     private ShellServerChannel serverChannel;
-    private ShellChannel channel;
-    private ChannelSelector selector;
     private ChannelSelectionKey skey;
+    private ChannelSelector selector;
+
+    private ConcurrentHashMap<ChannelSelectionKey, ShellChannelExt> channelsMap = new ConcurrentHashMap<ChannelSelectionKey, ShellChannelExt>();
 
     private MessageFactory messageFactory = null;
-
-    private String rxMessage = "";
-    private String txMessage = "";
 
     private volatile boolean started = false;
 
@@ -86,12 +92,13 @@ public abstract class ShellServer extends Task implements ShellServerMBean {
     private int port;
 
     private String securityDomain = null;
-    private String userName = null;
-    private String password = null;
     private SecurityContext securityContext = null;
-    private SimplePrincipal principal = null;
 
     private final FastList<ShellExecutor> shellExecutors = new FastList<ShellExecutor>();
+
+    private static final int EXECUTION_TIMEOUT = 25;
+    private static final int THREAD_POOL_SIZE = 16;
+    private ExecutorService executor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
 
     public ShellServer(Scheduler scheduler, List<ShellExecutor> shellExecutors) throws IOException {
         super(scheduler);
@@ -150,7 +157,7 @@ public abstract class ShellServer extends Task implements ShellServerMBean {
 
         this.started = true;
         this.activate(false);
-        scheduler.submit(this, scheduler.MANAGEMENT_QUEUE);
+        scheduler.submit(this, Scheduler.MANAGEMENT_QUEUE);
 
         if (this.securityDomain != null) {
             InitialContext initialContext = new InitialContext();
@@ -172,226 +179,321 @@ public abstract class ShellServer extends Task implements ShellServerMBean {
     public void stop() {
         this.started = false;
 
-        this.resetSecurity();
-
         try {
             skey.cancel();
-            if (this.channel != null) {
-                this.channel.close();
-                this.channel = null;
+            Set<Entry<ChannelSelectionKey, ShellChannelExt>> channelsEntrySet = channelsMap.entrySet();
+
+            for (Entry<ChannelSelectionKey, ShellChannelExt> entry : channelsEntrySet) {
+                ShellChannelExt channel = entry.getValue();
+                if (channel.isConnected())
+                    channel.close();
             }
+
+            channelsMap.clear();
+
             serverChannel.close();
             selector.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        executor.shutdownNow();
         this.logger.info("Stopped ShellExecutor service");
     }
 
     @Override
     public int getQueueNumber() {
-        return scheduler.MANAGEMENT_QUEUE;
+        return Scheduler.MANAGEMENT_QUEUE;
     }
 
     public long perform() {
         if (!this.started)
             return 0;
 
+        FastSet<ChannelSelectionKey> keys = null;
         try {
-            FastSet<ChannelSelectionKey> keys = selector.selectNow();
-
-            for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record.getNext()) != end;) {
-                ChannelSelectionKey key = (ChannelSelectionKey) keys.valueOf(record);
-
-                if (key.isAcceptable()) {
-                    accept();
-                } else if (key.isReadable()) {
-                    ShellChannel chan = (ShellChannel) key.channel();
-                    Message msg = (Message) chan.receive();
-
-                    if (msg != null) {
-                        rxMessage = msg.toString();
-                        logger.info("received command : " + rxMessage);
-                        if (rxMessage.compareTo("disconnect") == 0) {
-                            this.txMessage = "Bye";
-
-                            if (this.securityDomain != null) {
-                                Map map = new HashMap();
-                                map.put(AUDIT_MESSAGE, "logout success");
-                                putPrincipal(map, principal);
-                                this.securityContext.getAuditManager().audit(new AuditEvent(AuditLevel.SUCCESS, map));
-                            }
-
-                            chan.send(messageFactory.createMessage(txMessage));
-                        } else if (this.securityDomain != null && this.userName == null) {
-                            // The first incoming message should be username
-                            this.userName = rxMessage;
-                            this.txMessage = " ";
-                            chan.send(messageFactory.createMessage(txMessage));
-                            // TODO Authentication
-                        } else if (this.securityDomain != null && this.password == null) {
-                            // The second incoming message should be password
-                            this.password = rxMessage;
-                            this.txMessage = "";
-
-                            if (!isAuthManagementLoaded()) {
-                                logger.error("Cant authenticate because AuthenticationManagement is null!");
-
-                            } else {
-                                this.principal = new SimplePrincipal(this.userName);
-                                boolean isValid = this.isValid(principal, this.password);
-                                if (!isValid) {
-                                    chan.send(messageFactory.createMessage(CONNECTED_AUTHENTICATION_FAILED));
-                                    logger.warn(String.format("Authentication to CLI failed for username=%s", this.userName));
-                                    this.txMessage = "Bye";
-                                } else {
-
-                                    // Audit Stuff
-                                    this.securityContext = SecurityContextFactory.createSecurityContext(getLocalSecurityDomain());
-
-                                    Map map = new HashMap();
-                                    map.put(AUDIT_MESSAGE, "login success");
-                                    putPrincipal(map, principal);
-                                    this.securityContext.getAuditManager().audit(new AuditEvent(AuditLevel.SUCCESS, map));
-
-                                    this.txMessage = " ";
-                                    chan.send(messageFactory.createMessage(txMessage));
-                                }
-                            }
-
-                        } else {
-                            String[] options = rxMessage.split(" ");
-                            ShellExecutor shellExecutor = null;
-                            for (FastList.Node<ShellExecutor> n = this.shellExecutors.head(), end1 = this.shellExecutors.tail(); (n = n
-                                    .getNext()) != end1;) {
-                                ShellExecutor value = n.getValue();
-                                if (value.handles(options[0])) {
-                                    shellExecutor = value;
-                                    break;
-                                }
-                            }
-
-                            if (shellExecutor == null) {
-                                logger.warn(String.format("Received command=\"%s\" for which no ShellExecutor is configured ",
-                                        rxMessage));
-
-                                if (this.securityDomain != null) {
-                                    Map map = new HashMap();
-                                    map.put(AUDIT_COMMAND, rxMessage);
-                                    map.put(AUDIT_COMMAND_RESPONSE, "Invalid command");
-                                    putPrincipal(map, principal);
-                                    this.securityContext.getAuditManager().audit(new AuditEvent(AuditLevel.INFO, map));
-                                }
-
-                                chan.send(messageFactory.createMessage("Invalid command"));
-                            } else {
-                                this.txMessage = shellExecutor.execute(options);
-
-                                if (this.securityDomain != null) {
-                                    Map map = new HashMap();
-                                    map.put(AUDIT_COMMAND, rxMessage);
-                                    map.put(AUDIT_COMMAND_RESPONSE, this.txMessage);
-                                    putPrincipal(map, principal);
-                                    this.securityContext.getAuditManager().audit(new AuditEvent(AuditLevel.INFO, map));
-                                }
-
-                                chan.send(messageFactory.createMessage(this.txMessage));
-                            }
-
-                        } // if (rxMessage.compareTo("disconnect")
-                    } // if (msg != null)
-
-                    // TODO Handle message
-
-                    rxMessage = "";
-
-                } else if (key.isWritable() && txMessage.length() > 0) {
-
-                    if (this.txMessage.compareTo("Bye") == 0) {
-                        this.closeChannel();
-                    }
-                    this.txMessage = "";
-                }
-            }
-        } catch (IOException e) {
-            logger.error("IO Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now", e);
-            try {
-                this.closeChannel();
-            } catch (IOException e1) {
-                logger.error("IO Exception while closing Channel", e);
-            }
+            keys = selector.selectNow();
         } catch (Exception e) {
-            logger.error("Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now", e);
-            try {
-                this.closeChannel();
-            } catch (IOException e1) {
-                logger.error("IO Exception while closing Channel", e);
-            }
+            logger.error("An error occured while selecting selector key", e);
         }
 
+        try {
+            if (keys != null) {
+                for (FastSet.Record record = keys.head(), end = keys.tail(); (record = record.getNext()) != end;) {
+                    ChannelSelectionKey key = (ChannelSelectionKey) keys.valueOf(record);
+                    String txMessage = "";
+                    String rxMessage = "";
+
+                    if (!key.isValid()) {
+                        ShellChannelExt channel = (ShellChannelExt) key.channel();
+                        channelsMap.remove(key);
+                        try {
+                            this.closeChannel(key, channel);
+                        } catch (IOException e1) {
+                            logger.error("IO Exception while closing Channel", e1);
+                        }
+                    } else if (key.isAcceptable()) {
+                        try {
+                            accept();
+                        } catch (IOException e) {
+                            logger.error("IO Exception while operating on ChannelSelectionKey. Cannot accept new channel", e);
+                        } catch (Exception e) {
+                            logger.error("Exception while operating on ChannelSelectionKey. Cannot accept new channel", e);
+                        }
+                    } else if (key.isReadable()) {
+                        ShellChannelExt chan = (ShellChannelExt) key.channel();
+                        try {
+                            Message msg = (Message) chan.receive();
+
+                            if (msg != null) {
+                                rxMessage = msg.toString();
+                                logger.info("received command : " + rxMessage);
+                                if (rxMessage.compareTo("disconnect") == 0) {
+                                    txMessage = "Bye";
+
+                                    if (this.securityDomain != null) {
+                                        Map<String, Object> map = new HashMap<String, Object>();
+                                        map.put(AUDIT_MESSAGE, "logout success");
+                                        putPrincipal(map, chan.getPrincipal());
+                                        this.securityContext.getAuditManager().audit(new AuditEvent(AuditLevel.SUCCESS, map));
+                                    }
+
+                                    chan.send(messageFactory.createMessage(txMessage));
+                                } else if (this.securityDomain != null && chan.getUserName() == null) {
+                                    // The first incoming message should be username
+                                    chan.setUserName(rxMessage);
+                                    txMessage = " ";
+                                    chan.send(messageFactory.createMessage(txMessage));
+                                    // TODO Authentication
+                                } else if (this.securityDomain != null && chan.getPassword() == null) {
+                                    // The second incoming message should be
+                                    // password
+                                    chan.setPassword(rxMessage);
+                                    txMessage = "";
+
+                                    if (!isAuthManagementLoaded()) {
+                                        logger.error("Cant authenticate because AuthenticationManagement is null!");
+
+                                    } else {
+                                        chan.setPrincipal(new SimplePrincipal(chan.getUserName()));
+                                        boolean isValid = this.isValid(chan.getPrincipal(), chan.getPassword());
+                                        if (!isValid) {
+                                            chan.send(messageFactory.createMessage(CONNECTED_AUTHENTICATION_FAILED));
+                                            logger.warn(String.format("Authentication to CLI failed for username=%s",
+                                                    chan.getUserName()));
+                                            txMessage = "Bye";
+                                        } else {
+
+                                            // Audit Stuff
+                                            this.securityContext = SecurityContextFactory
+                                                    .createSecurityContext(getLocalSecurityDomain());
+
+                                            Map<String, Object> map = new HashMap<String, Object>();
+                                            map.put(AUDIT_MESSAGE, "login success");
+                                            putPrincipal(map, chan.getPrincipal());
+                                            this.securityContext.getAuditManager()
+                                                    .audit(new AuditEvent(AuditLevel.SUCCESS, map));
+
+                                            txMessage = " ";
+                                            chan.send(messageFactory.createMessage(txMessage));
+                                        }
+                                    }
+
+                                } else {
+                                    String[] options = rxMessage.split(" ");
+                                    ShellExecutor shellExecutor = null;
+                                    for (FastList.Node<ShellExecutor> n = this.shellExecutors.head(), end1 = this.shellExecutors
+                                            .tail(); (n = n.getNext()) != end1;) {
+                                        ShellExecutor value = n.getValue();
+                                        if (value.handles(options[0])) {
+                                            shellExecutor = value;
+                                            break;
+                                        }
+                                    }
+
+                                    if (shellExecutor == null) {
+                                        logger.warn(String.format(
+                                                "Received command=\"%s\" for which no ShellExecutor is configured ",
+                                                rxMessage));
+
+                                        if (this.securityDomain != null) {
+                                            Map<String, Object> map = new HashMap<String, Object>();
+                                            map.put(AUDIT_COMMAND, rxMessage);
+                                            map.put(AUDIT_COMMAND_RESPONSE, "Invalid command");
+                                            putPrincipal(map, chan.getPrincipal());
+                                            this.securityContext.getAuditManager().audit(new AuditEvent(AuditLevel.INFO, map));
+                                        }
+
+                                        chan.send(messageFactory.createMessage("Invalid command"));
+                                    } else {
+                                        ShellExecutorTask task = new ShellExecutorTask(scheduler, shellExecutor, rxMessage,
+                                                options, chan, key);
+                                        scheduler.submit(task, Scheduler.MANAGEMENT_QUEUE);
+                                    }
+                                }
+
+                                if (txMessage.length() > 0 && txMessage.compareTo("Bye") == 0) {
+                                    logger.info("Channel has somethign to write " + txMessage);
+                                    if (txMessage.compareTo("Bye") == 0) {
+                                        ShellChannelExt channel = (ShellChannelExt) key.channel();
+                                        channelsMap.remove(key);
+                                        try {
+                                            this.closeChannel(key, channel);
+                                        } catch (IOException e1) {
+                                            logger.error("IO Exception while closing Channel", e1);
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (IOException e) {
+                            logger.error(
+                                    "IO Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now",
+                                    e);
+                            try {
+                                this.closeChannel(key, chan);
+                            } catch (IOException e1) {
+                                logger.error("IO Exception while closing Channel", e1);
+                            }
+                        } catch (Exception e) {
+                            logger.error(
+                                    "Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now",
+                                    e);
+                            try {
+                                this.closeChannel(key, chan);
+                            } catch (IOException e1) {
+                                logger.error("IO Exception while closing Channel", e1);
+                            }
+                        }
+
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         if (this.started)
-            scheduler.submit(this, scheduler.MANAGEMENT_QUEUE);
+            scheduler.submit(this, Scheduler.MANAGEMENT_QUEUE);
 
         return 0;
     }
 
     private void accept() throws IOException {
-        ShellChannel channelTmp = serverChannel.accept();
-
+        ShellChannelExt channel = (ShellChannelExt) serverChannel.accept();
         if (logger.isDebugEnabled()) {
-            logger.debug("Accepting client connection. Remote Address= " + channelTmp.getRemoteAddress());
+            logger.info("Accepting client connection. Remote Address= " + channel.getRemoteAddress());
         }
 
-        if (this.channel != null) {
-            String exitmessage = "Already client from " + this.channel.getRemoteAddress()
-                    + " is connected. Closing this connection";
-
-            logger.warn(exitmessage);
-
-            channelTmp.sendImmediate(messageFactory.createMessage(exitmessage));
-
-            channelTmp.close();
-            return;
-        }
-
-        this.channel = channelTmp;
-
-        skey = channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+        ChannelSelectionKey skey = channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+        channelsMap.put(skey, channel);
 
         if (this.securityDomain == null) {
             channel.send(messageFactory.createMessage(String.format(CONNECTED_MESSAGE, this.version.getProperty("name"),
                     this.version.getProperty("version"), this.version.getProperty("vendor"))));
         } else {
-            String tmp = String.format(CONNECTED_MESSAGE, this.version.getProperty("name"),
-                    this.version.getProperty("version"), this.version.getProperty("vendor"));
+            String tmp = String.format(CONNECTED_MESSAGE, this.version.getProperty("name"), this.version.getProperty("version"),
+                    this.version.getProperty("vendor"));
             tmp = tmp + " " + CONNECTED_AUTHENTICATING_MESSAGE;
             channel.send(messageFactory.createMessage(tmp));
         }
     }
 
-    private void closeChannel() throws IOException {
-        this.resetSecurity();
+    private void closeChannel(ChannelSelectionKey key, ShellChannel channel) throws IOException {
+        key.cancel();
         if (channel != null) {
             try {
-                this.channel.close();
+                channel.close();
             } catch (IOException e) {
                 logger.error("Error closing channel", e);
             }
 
-            if (logger.isDebugEnabled()) {
-                logger.debug("Closed client connection. Remote Address= " + this.channel.getRemoteAddress());
-            }
-
-            this.channel = null;
+            // if (logger.isDebugEnabled()) {
+            logger.info("Closed client connection. Remote Address= " + channel.getRemoteAddress());
+            // }
         }
         // skey.cancel();
         // skey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
     }
 
-    private void resetSecurity() {
-        this.userName = null;
-        this.password = null;
-        this.principal = null;
+    class SingleTaskCallable implements Callable<String> {
+        private String[] options;
+        private ShellExecutor shellExecutor;
+
+        public SingleTaskCallable(ShellExecutor shellExecutor, String[] options) {
+            this.shellExecutor = shellExecutor;
+            this.options = options;
+        }
+
+        @Override
+        public String call() throws Exception {
+            return shellExecutor.execute(this.options);
+        }
+    }
+
+    class ShellExecutorTask extends Task {
+
+        private ShellExecutor shellExecutor;
+        private String rxMessage;
+        private String[] options;
+        private ShellChannelExt chan;
+        private ChannelSelectionKey key;
+
+        public ShellExecutorTask(Scheduler scheduler, ShellExecutor shellExecutor, String rxMessage, String[] options,
+                ShellChannelExt chan, ChannelSelectionKey key) {
+            super(scheduler);
+            this.shellExecutor = shellExecutor;
+            this.rxMessage = rxMessage;
+            this.options = options;
+            this.chan = chan;
+            this.key = key;
+        }
+
+        @Override
+        public int getQueueNumber() {
+            return Scheduler.MANAGEMENT_QUEUE;
+        }
+
+        @Override
+        public long perform() {
+            try {
+                String txMessage = null;
+
+                Future<String> future = executor.submit(new SingleTaskCallable(shellExecutor, options));
+                try {
+                    txMessage = future.get(EXECUTION_TIMEOUT, TimeUnit.SECONDS);
+                } catch (Exception ex) {
+                    logger.error("An error occured while waiting on command response", ex);
+                }
+
+                if (securityDomain != null) {
+                    Map<String, Object> map = new HashMap<String, Object>();
+                    map.put(ShellServer.AUDIT_COMMAND, rxMessage);
+                    map.put(ShellServer.AUDIT_COMMAND_RESPONSE, txMessage);
+                    putPrincipal(map, chan.getPrincipal());
+                    securityContext.getAuditManager().audit(new AuditEvent(AuditLevel.INFO, map));
+                }
+
+                if (txMessage == null)
+                    chan.send(messageFactory.createMessage("Operation has timed out on server"));
+                else
+                    chan.send(messageFactory.createMessage(txMessage));
+            } catch (IOException e) {
+                logger.error("IO Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now",
+                        e);
+                try {
+                    closeChannel(key, chan);
+                } catch (IOException e1) {
+                    logger.error("IO Exception while closing Channel", e1);
+                }
+            } catch (Exception e) {
+                logger.error("Exception while operating on ChannelSelectionKey. Client CLI connection will be closed now", e);
+                try {
+                    closeChannel(key, chan);
+                } catch (IOException e1) {
+                    logger.error("IO Exception while closing Channel", e1);
+                }
+            }
+            return 0;
+        }
+
     }
 }
