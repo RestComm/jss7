@@ -58,7 +58,7 @@ public class SccpResourceProhibitedTest {
 
     @Test(groups = { "sccpresource", "functional.sccp" })
     public void testProhibitedTrue() throws Exception {
-        resource = new SccpResourceImpl("SccpResourceTest", true);
+        resource = new SccpResourceImpl("SccpResourceProhibitedTest", true);
         resource.setPersistDir(Util.getTmpTestDir());
         resource.start();
         resource.removeAllResourses();
