@@ -17,6 +17,7 @@
 		<module>shell-client</module>
 		<module>shell-server-api</module>
 		<module>shell-server-impl</module>
+		<module>shell-test</module>
 	</modules>
 
 	<build>

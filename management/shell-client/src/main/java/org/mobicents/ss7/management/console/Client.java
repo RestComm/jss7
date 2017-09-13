@@ -27,6 +27,7 @@ import java.net.InetSocketAddress;
 
 import org.mobicents.ss7.management.transceiver.ChannelProvider;
 import org.mobicents.ss7.management.transceiver.Message;
+import org.mobicents.ss7.management.transceiver.MessageFactory;
 import org.mobicents.ss7.management.transceiver.ShellChannel;
 
 /**
@@ -38,6 +39,7 @@ public class Client {
 
     private ChannelProvider provider;
     private ShellChannel channel;
+    private MessageFactory messageFactory;
 
     private boolean isConnected = false;
 
@@ -45,10 +47,15 @@ public class Client {
 
     public Client() {
         provider = ChannelProvider.provider();
+        messageFactory = provider.createMessageFactory();
     }
 
     public boolean isConnected() {
         return isConnected;
+    }
+
+    public boolean isChannelConnected() {
+        return channel.isConnected();
     }
 
     public void connect(InetSocketAddress endpoint) throws IOException {
@@ -72,7 +79,7 @@ public class Client {
     public Message run(Message outgoing) throws IOException {
 
         if (!this.isConnected) {
-            return provider.getMessageFactory().createMessage("Not yet connected");
+            return messageFactory.createMessage("Not yet connected");
         }
 
         int count = 30;

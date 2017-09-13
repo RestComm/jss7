@@ -151,7 +151,7 @@ public abstract class ShellServer extends Task implements ShellServerMBean {
         selector = provider.openSelector();
         skey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-        messageFactory = ChannelProvider.provider().getMessageFactory();
+        messageFactory = ChannelProvider.provider().createMessageFactory();
 
         this.logger.info(String.format("ShellExecutor listening at %s", inetSocketAddress));
 
