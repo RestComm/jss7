@@ -52,11 +52,13 @@ public class ShellChannel extends ShellSelectableChannel {
 
     // provider instance
     private ChannelProvider provider;
+    private MessageFactory messageFactory;
 
     protected ShellChannel(ChannelProvider provider, AbstractSelectableChannel channel) throws IOException {
         this.channel = channel;
         this.channel.configureBlocking(false);
         this.provider = provider;
+        this.messageFactory = this.provider.createMessageFactory();
 
         // clean transmission buffer
         txBuffer.clear();
@@ -109,26 +111,26 @@ public class ShellChannel extends ShellSelectableChannel {
             throw new ClosedChannelException();
         }
         txQueue.offer(message);
-//Below code was introduced for JSSSEVEN-163. But its not that simple and needs more detailed work
-//        int msgLength = message.getLength();
-//        byte[] orgData = message.getData();
-//
-//        // reduce header size
-//        int maximumByteBufferSize = BYTE_BUFFER_SIZE - MessageFactory.MESSAGE_HEADER_SIZE;
-//        int numberOfBuckets = msgLength / maximumByteBufferSize + (msgLength % maximumByteBufferSize == 0 ? 0 : 1);
-//
-//        for (int count = 0; count < numberOfBuckets; count++) {
-//            byte[] tempData;
-//            if (count == (numberOfBuckets - 1)) {
-//                tempData = new byte[msgLength - (maximumByteBufferSize * count)];
-//            } else {
-//                tempData = new byte[maximumByteBufferSize];
-//            }
-//
-//            System.arraycopy(orgData, (maximumByteBufferSize * count), tempData, 0, tempData.length);
-//            Message tempMessage = new Message(tempData);
-//            txQueue.offer(tempMessage);
-//        }
+        // Below code was introduced for JSSSEVEN-163. But its not that simple and needs more detailed work
+        // int msgLength = message.getLength();
+        // byte[] orgData = message.getData();
+        //
+        // // reduce header size
+        // int maximumByteBufferSize = BYTE_BUFFER_SIZE - MessageFactory.MESSAGE_HEADER_SIZE;
+        // int numberOfBuckets = msgLength / maximumByteBufferSize + (msgLength % maximumByteBufferSize == 0 ? 0 : 1);
+        //
+        // for (int count = 0; count < numberOfBuckets; count++) {
+        // byte[] tempData;
+        // if (count == (numberOfBuckets - 1)) {
+        // tempData = new byte[msgLength - (maximumByteBufferSize * count)];
+        // } else {
+        // tempData = new byte[maximumByteBufferSize];
+        // }
+        //
+        // System.arraycopy(orgData, (maximumByteBufferSize * count), tempData, 0, tempData.length);
+        // Message tempMessage = new Message(tempData);
+        // txQueue.offer(tempMessage);
+        // }
     }
 
     public void sendImmediate(Message message) throws IOException {
@@ -158,7 +160,7 @@ public class ShellChannel extends ShellSelectableChannel {
         return txQueue.isEmpty();
     }
 
-    protected void doRead() throws IOException {
+    public void doRead() throws IOException {
         // clean rx buffer
         rxBuffer.clear();
 
@@ -178,14 +180,14 @@ public class ShellChannel extends ShellSelectableChannel {
         while (rxBuffer.position() < rxBuffer.limit()) {
             // try to read message
 
-            Message message = this.provider.getMessageFactory().createMessage(rxBuffer);
+            Message message = messageFactory.createMessage(rxBuffer);
             if (message != null) {
                 rxQueue.offer(message);
             }
         }
     }
 
-    protected void doWrite() throws IOException {
+    public void doWrite() throws IOException {
         if (txBuffer.hasRemaining()) {
             ((SocketChannel) channel).write(txBuffer);
         } else if (!txQueue.isEmpty()) {
