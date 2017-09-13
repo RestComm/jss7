@@ -105,4 +105,8 @@ public class ChannelProvider {
     public MessageFactory getMessageFactory() {
         return messageFactory;
     }
+
+    public MessageFactory createMessageFactory() {
+        return new MessageFactory();
+    }
 }

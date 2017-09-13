@@ -40,7 +40,7 @@ public class CommandContextImpl implements CommandContext {
 
     public static final String CLOSING_CONNECTION_MESSAGE = "Closing this connection";
 
-    private MessageFactory messageFactory = ChannelProvider.provider().getMessageFactory();
+    private MessageFactory messageFactory = ChannelProvider.provider().createMessageFactory();
 
     private String prompt;
     private String prefix;
