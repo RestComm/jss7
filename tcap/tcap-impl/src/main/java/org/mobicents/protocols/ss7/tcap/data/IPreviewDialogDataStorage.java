@@ -24,7 +24,7 @@ public interface IPreviewDialogDataStorage {
      */
 
 
-int getSize();
+    int getSize();
 
     void setProvider(TCAPProviderImpl tcapProvider);
 }

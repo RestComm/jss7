@@ -1,7 +1,6 @@
 package org.mobicents.protocols.ss7.tcap.data;
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
 import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 
@@ -19,9 +18,6 @@ public interface IDialogDataStorage {
     void stop();
 
     void init(TCAPStackImpl tcapStack);
-    ITimerFacility createTimerFacility(TCAPProviderImpl tp);
-
     void beginTransaction() throws Exception;
-
     void commitTransaction() throws Exception;
 }

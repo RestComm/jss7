@@ -1,4 +1,4 @@
-package org.mobicents.protocols.ss7.tcap.data;
+package org.mobicents.protocols.ss7.tcap.data.local;
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
@@ -7,12 +7,16 @@ import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.InvokeImpl;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Component;
+import org.mobicents.protocols.ss7.tcap.data.IDialog;
+import org.mobicents.protocols.ss7.tcap.data.IDialogData;
+import org.mobicents.protocols.ss7.tcap.data.ITCAPOperation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -23,6 +27,7 @@ public class LocalDialogData implements IDialogData {
     public static final boolean _INVOKEID_FREE = false;
     public static final int _INVOKE_TABLE_SHIFT=128;
     private final HashMap<Long,LocalTCAPOperation> invokes=new HashMap<>();
+    final LocalDialogDataStorage storage;
     private IDialog dialog;
     private Object userObject;
     // lock... ech
@@ -62,6 +67,11 @@ public class LocalDialogData implements IDialogData {
     private long startDialogTime;
     private int networkId;
     private int localSsn;
+
+    LocalDialogData(LocalDialogDataStorage storage) {
+        this.storage=storage;
+
+    }
 
     @Override
     public int getLocalSsn() {
@@ -215,16 +225,6 @@ public class LocalDialogData implements IDialogData {
     @Override
     public void setRemoteAddress(SccpAddress remoteAddress) {
         this.remoteAddress = remoteAddress;
-    }
-
-    @Override
-    public Object getIdleTimerHandle() {
-        return idleTimerHandle;
-    }
-
-    @Override
-    public void setIdleTimerHandle(Object idleTimerHandle) {
-        this.idleTimerHandle=idleTimerHandle;
     }
 
     @Override
@@ -400,5 +400,45 @@ public class LocalDialogData implements IDialogData {
 
     public void freeTcapOperation(LocalTCAPOperation op) {
         invokes.remove(op.getInvokeId());
+    }
+
+    private Object getIdleTimerHandle() {
+        return idleTimerHandle;
+    }
+    private void setIdleTimerHandle(Object idleTimerHandle) {
+        this.idleTimerHandle=idleTimerHandle;
+    }
+
+    public void startIdleTimer() {
+        if (!isStructured())
+            return;
+
+        try {
+            getDialogLock().lock();
+            if (getIdleTimerHandle() != null) {
+                throw new IllegalStateException();
+            }
+            IdleTimerTask t = new IdleTimerTask(getLocalTransactionIdObject());
+            setIdleTimerHandle(storage.getTimerFacility().schedule(t, getIdleTaskTimeout(), TimeUnit.MILLISECONDS));
+        } finally {
+            getDialogLock().unlock();
+        }
+    }
+
+    @Override
+    public void cancelIdleTimer() {
+        if (!isStructured())
+            return;
+
+        try {
+            getDialogLock().lock();
+            Object o=getIdleTimerHandle();
+            if(o==null)
+                return;
+            storage.getTimerFacility().cancel(o);
+            setIdleTimerHandle(null);
+        } finally {
+            getDialogLock().unlock();
+        }
     }
 }

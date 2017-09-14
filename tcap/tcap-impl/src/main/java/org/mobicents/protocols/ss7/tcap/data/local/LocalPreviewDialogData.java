@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.mobicents.protocols.ss7.tcap.data;
+package org.mobicents.protocols.ss7.tcap.data.local;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -30,7 +30,13 @@ import org.mobicents.protocols.ss7.tcap.api.tc.dialog.TRPseudoState;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.UserInformation;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.data.IDialog;
+import org.mobicents.protocols.ss7.tcap.data.IPreviewDialogData;
+import org.mobicents.protocols.ss7.tcap.data.ITCAPOperation;
+import org.mobicents.protocols.ss7.tcap.data.PreviewDialogDataKey;
+import org.mobicents.protocols.ss7.tcap.data.PreviewDialogImpl;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -41,6 +47,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class LocalPreviewDialogData implements IPreviewDialogData {
 
     private static final Logger logger = Logger.getLogger(LocalPreviewDialogData.class);
+    private final LocalPreviewDialogDataStorage storage;
     private LocalPreviewTCAPOperation[] operationsSentA = new LocalPreviewTCAPOperation[256];
     private LocalPreviewTCAPOperation[] operationsSentB = new LocalPreviewTCAPOperation[256];;
 
@@ -92,7 +99,8 @@ public class LocalPreviewDialogData implements IPreviewDialogData {
         return new Long(tmp);
     }
 
-    public LocalPreviewDialogData(TCAPProviderImpl provider, Long dialogId) {
+    public LocalPreviewDialogData(LocalPreviewDialogDataStorage storage, TCAPProviderImpl provider, Long dialogId) {
+        this.storage=storage;
         this.dialogId = dialogId;
         TCAPStack stack = provider.getStack();
         this.idleTaskTimeout = stack.getDialogIdleTimeout();
@@ -129,7 +137,7 @@ public class LocalPreviewDialogData implements IPreviewDialogData {
 
     @Override
     public ITCAPOperation newTCAPOperation(boolean sideB, PreviewDialogImpl previewDialog, Invoke ci) {
-        LocalPreviewTCAPOperation pto=new LocalPreviewTCAPOperation(sideB,previewDialog,ci);
+        LocalPreviewTCAPOperation pto=new LocalPreviewTCAPOperation(sideB, this,previewDialog,ci);
         if(sideB) {
             operationsSentB[getIndexFromInvokeId(ci.getInvokeId())] = pto;
         } else {
@@ -261,14 +269,12 @@ public class LocalPreviewDialogData implements IPreviewDialogData {
         this.remoteAddress=remoteAddress;
     }
 
-    @Override
-    public Object getIdleTimerHandle() {
+    private Object getIdleTimerHandle() {
 
         return idleTimerHandle;
     }
 
-    @Override
-    public void setIdleTimerHandle(Object idleTimerHandle) {
+    private void setIdleTimerHandle(Object idleTimerHandle) {
         this.idleTimerHandle=idleTimerHandle;
     }
 
@@ -392,5 +398,37 @@ public class LocalPreviewDialogData implements IPreviewDialogData {
     @Override
     public Object getUpperDialog() {
         return upperDialog;
+    }
+
+    public void startIdleTimer() {
+        try {
+            getDialogLock().lock();
+            if (getIdleTimerHandle() != null) {
+                throw new IllegalStateException();
+            }
+
+            PreviewIdleTimerTask t = new PreviewIdleTimerTask(getPreviewDialogDataKey1());
+            setIdleTimerHandle(storage.getTimerFacility().schedule(t, getIdleTaskTimeout(), TimeUnit.MILLISECONDS));
+
+        } finally {
+            getDialogLock().unlock();
+        }
+    }
+
+    @Override
+    public void cancelIdleTimer() {
+        if (!isStructured())
+            return;
+
+        try {
+            getDialogLock().lock();
+            Object o=getIdleTimerHandle();
+            if(o==null)
+                return;
+            storage.getTimerFacility().cancel(o);
+            setIdleTimerHandle(null);
+        } finally {
+            getDialogLock().unlock();
+        }
     }
 }

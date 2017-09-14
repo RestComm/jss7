@@ -1,4 +1,4 @@
-package org.mobicents.protocols.ss7.tcap.data;
+package org.mobicents.protocols.ss7.tcap.data.local;
 
 import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
 
@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by piotr.sokolowski on 2017-06-02.
  */
-public class LocalTimerFacility implements ITimerFacility {
+public class LocalTimerFacility implements ITimerFacility<TCAPProviderImpl> {
 
     private TCAPProviderImpl provider;
 

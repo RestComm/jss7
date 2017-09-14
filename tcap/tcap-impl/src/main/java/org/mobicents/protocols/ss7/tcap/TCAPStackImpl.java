@@ -35,8 +35,10 @@ import org.mobicents.protocols.ss7.tcap.api.TCAPCounterProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 import org.mobicents.protocols.ss7.tcap.data.IDialogDataStorage;
-import org.mobicents.protocols.ss7.tcap.data.ITimerFacility;
-import org.mobicents.protocols.ss7.tcap.data.LocalDialogDataStorage;
+import org.mobicents.protocols.ss7.tcap.data.IPreviewDialogDataStorage;
+import org.mobicents.protocols.ss7.tcap.data.local.LocalDialogDataStorage;
+import org.mobicents.protocols.ss7.tcap.data.local.LocalPreviewDialogDataStorage;
+import org.mobicents.protocols.ss7.tcap.data.local.LocalTimerFacility;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -105,12 +107,12 @@ public class TCAPStackImpl implements TCAPStack {
     private boolean statisticsEnabled = false;
 
     private IDialogDataStorage dialogDataStorage;
+    private IPreviewDialogDataStorage previewDialogDataStorage;
 
     private int ssn = -1;
 
     // SLS value
     private SlsRangeType slsRange = SlsRangeType.All;
-    private ITimerFacility timerFacility;
 
     public TCAPStackImpl(String name) {
         super();
@@ -126,15 +128,18 @@ public class TCAPStackImpl implements TCAPStack {
         this(name);
         this.sccpProvider = sccpProvider;
         this.ssn = ssn;
+        this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, ssn);
     }
 
 
     public IDialogDataStorage getDialogDataStorage() {
         return dialogDataStorage;
     }
+    public IPreviewDialogDataStorage getPreviewDialogDataStorage() {
+        return previewDialogDataStorage;
+    }
 
     public void setDialogDataStorage(IDialogDataStorage ds) {
-        ds.init(this);
         this.dialogDataStorage=ds;
     }
 
@@ -193,9 +198,13 @@ public class TCAPStackImpl implements TCAPStack {
         if (this.invokeTimeout < 0) {
             throw new IllegalArgumentException("InvokeTimeout value must be greater or equal to zero.");
         }
+        LocalTimerFacility timerfacility = new LocalTimerFacility(tcapProvider);
         if(dialogDataStorage==null)
-            dialogDataStorage=new LocalDialogDataStorage();
-        this.tcapProvider = new TCAPProviderImpl(sccpProvider, this, ssn);
+            dialogDataStorage=new LocalDialogDataStorage(timerfacility);
+        if(previewDialogDataStorage==null)
+            previewDialogDataStorage=new LocalPreviewDialogDataStorage(timerfacility);
+        dialogDataStorage.init(this);
+        previewDialogDataStorage.setProvider(tcapProvider);
         this.tcapCounterProvider = new TCAPCounterProviderImpl(this.tcapProvider);
         tcapProvider.start();
         this.started = true;

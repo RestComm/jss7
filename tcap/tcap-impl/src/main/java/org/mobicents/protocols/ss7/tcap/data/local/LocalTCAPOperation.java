@@ -1,9 +1,11 @@
-package org.mobicents.protocols.ss7.tcap.data;
+package org.mobicents.protocols.ss7.tcap.data.local;
 
 import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.OperationState;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.data.IDialog;
+import org.mobicents.protocols.ss7.tcap.data.ITCAPOperation;
 
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
@@ -88,13 +90,13 @@ public class LocalTCAPOperation implements Serializable, ITCAPOperation {
 
         this.stopTimer();
         if (this.invoke.getTimeout() > 0)
-            this.timerHandle = this.data.getDialog().getProvider().getTimerFacility().schedule(new OperationTimerTask(this), invoke.getTimeout(), TimeUnit.MILLISECONDS);
+            this.timerHandle = this.data.storage.getTimerFacility().schedule(new OperationTimerTask(this), invoke.getTimeout(), TimeUnit.MILLISECONDS);
     }
 
     @Override
     public synchronized void stopTimer() {
         if (this.timerHandle != null) {
-            this.data.getDialog().getProvider().getTimerFacility().cancel(this.timerHandle);
+            this.data.storage.getTimerFacility().cancel(this.timerHandle);
             timerHandle=null;
         }
     }
@@ -134,7 +136,7 @@ public class LocalTCAPOperation implements Serializable, ITCAPOperation {
 
     }
 
-    private static class OperationTimerTask implements ITimerTask {
+    private static class OperationTimerTask implements ITimerTask<TCAPProviderImpl> {
         final Long dialogId;
         final Long invokeId;
 

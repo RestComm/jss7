@@ -48,9 +48,6 @@ public interface IDialogDataBase {
     SccpAddress getRemoteAddress();
     void setRemoteAddress(SccpAddress remoteAddress);
 
-    Object getIdleTimerHandle();
-    void setIdleTimerHandle(Object idleTimerHandle);
-
     boolean isIdleTimerActionTaken();
     void setIdleTimerActionTaken(boolean idleTimerActionTaken);
 
@@ -84,4 +81,7 @@ public interface IDialogDataBase {
 
     int getLocalSsn();
     void setLocalSsn(int newSsn);
+
+    void startIdleTimer();
+    void cancelIdleTimer();
 }

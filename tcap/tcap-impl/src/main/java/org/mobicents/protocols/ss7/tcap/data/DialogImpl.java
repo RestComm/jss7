@@ -94,7 +94,6 @@ import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCUserAbortIndicationIm
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author baranowb
@@ -1527,50 +1526,11 @@ public class DialogImpl extends DialogBaseImpl {
 
     }
 
+    @Override
     public void startIdleTimer() {
-        if (!data.isStructured())
-            return;
-
-        try {
-            getDialogLock().lock();
-            if (data.getIdleTimerHandle() != null) {
-                throw new IllegalStateException();
-            }
-
-            IdleTimerTask t = new IdleTimerTask(getLocalDialogId());
-            data.setIdleTimerHandle(provider.getTimerFacility().schedule(t, data.getIdleTaskTimeout(), TimeUnit.MILLISECONDS));
-
-        } finally {
-            getDialogLock().unlock();
-        }
+        data.startIdleTimer();
     }
 
-    private static class IdleTimerTask implements ITimerTask {
-        final Long dialogId;
-        IdleTimerTask(Long dialogId) {
-            this.dialogId=dialogId;
-        }
-
-        @Override
-        public String getId() {
-            return "Dialog/IdleTimer/"+dialogId;
-        }
-
-        @Override
-        public void handleTimeEvent(TCAPProviderImpl tpi) {
-            IDialog dlg = tpi.getDialogDataStorage().getDialog(dialogId);
-            dlg.getDialogLock().lock();
-            try {
-                if (dlg == null) {
-                    logger.warn("Handle Idle Timer - dialog not found :" + dialogId);
-                    return;
-                }
-                dlg.handleIdleTimeout();
-            } finally {
-                dlg.getDialogLock().unlock();
-            }
-        }
-    }
 
     // ////////////////////
     // IND like methods //
@@ -1610,9 +1570,26 @@ public class DialogImpl extends DialogBaseImpl {
 
     @Override
     public void handleOperationTimeout(Long invokeId) {
-        ITCAPOperation op = data.getTCAPOperation(invokeId);
-        if(op!=null)
-            op.handleOperationTimeout();
+        getDialogLock().lock();
+        try {
+            this.provider.getDialogDataStorage().beginTransaction();
+            try {
+                ITCAPOperation op = data.getTCAPOperation(invokeId);
+                if (op != null)
+                    op.handleOperationTimeout();
+            } finally {
+                try {
+                    provider.getDialogDataStorage().commitTransaction();
+
+                } catch (Exception e) {
+                    logger.error("Failed to commit operation timeout transaction", e);
+                }
+            }
+        } catch(Exception e) {
+                logger.error("Failed to process operation timeout",e);
+        } finally {
+                getDialogLock().unlock();
+        }
     }
 
     @Override

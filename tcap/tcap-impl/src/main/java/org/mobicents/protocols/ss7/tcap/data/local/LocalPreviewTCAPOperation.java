@@ -1,23 +1,27 @@
-package org.mobicents.protocols.ss7.tcap.data;
+package org.mobicents.protocols.ss7.tcap.data.local;
 
 import org.mobicents.protocols.ss7.tcap.api.tc.component.InvokeClass;
 import org.mobicents.protocols.ss7.tcap.api.tc.component.OperationState;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
+import org.mobicents.protocols.ss7.tcap.data.ITCAPOperation;
+import org.mobicents.protocols.ss7.tcap.data.PreviewDialogImpl;
 
 /**
  * Created by piotr.sokolowski on 2017-06-09.
  */
 public class LocalPreviewTCAPOperation implements ITCAPOperation {
-    public LocalPreviewTCAPOperation(boolean sideB, PreviewDialogImpl dialog, Invoke ci) {
+    public LocalPreviewTCAPOperation(boolean sideB, LocalPreviewDialogData dialog, PreviewDialogImpl previewDialog, Invoke ci) {
         this.dialog=dialog;
         this.invoke=ci;
         this.sideB=sideB;
+        this.previewDialog=previewDialog;
     }
-    private PreviewDialogImpl dialog;
-    private Invoke invoke;
+    private final  PreviewDialogImpl previewDialog;
+    private final LocalPreviewDialogData dialog;
+    private final Invoke invoke;
 
     private OperationState state = OperationState.Idle;
-    private boolean sideB;
+    private final boolean sideB;
 
     public boolean isSideB() {
         return sideB;
@@ -51,7 +55,7 @@ public class LocalPreviewTCAPOperation implements ITCAPOperation {
                     break;
                 case Idle:
                 case Reject_W:
-                    dialog.operationEnded(this);
+                    previewDialog.operationEnded(this);
             }
             if (state == OperationState.Sent) {
 
@@ -125,6 +129,6 @@ public class LocalPreviewTCAPOperation implements ITCAPOperation {
 
     @Override
     public void free() {
-        dialog.data.freeTcapOperation(this);
+        dialog.freeTcapOperation(this);
     }
 }

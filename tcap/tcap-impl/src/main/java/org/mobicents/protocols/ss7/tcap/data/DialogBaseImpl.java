@@ -289,23 +289,33 @@ public abstract class DialogBaseImpl implements IDialog {
 
     public abstract void startIdleTimer();
     public void handleIdleTimeout() {
-        IDialogDataBase data=getBaseData();
         getDialogLock().lock();
         try {
-            data.setIdleTimerHandle(null);
-            data.setIdleTimerActionTaken(false);
-            data.setIdleTimerInvoked(true);
-            provider.timeout(this);
-            // send abort
-            if (data.isIdleTimerActionTaken()) {
-                startIdleTimer();
-            } else {
-                release();
-            }
+            provider.getDialogDataStorage().beginTransaction();
+            try {
+                IDialogDataBase data = getBaseData();
 
+                data.setIdleTimerActionTaken(false);
+                data.setIdleTimerInvoked(true);
+                provider.timeout(this);
+                // send abort
+                if (data.isIdleTimerActionTaken()) {
+                    startIdleTimer();
+                } else {
+                    release();
+                }
+            } finally {
+                getBaseData().setIdleTimerInvoked(false);
+                provider.getDialogDataStorage().commitTransaction();
+            }
+        } catch(Exception e) {
+            logger.error("Failed to process idle timeout",e);
         } finally {
-            data.setIdleTimerInvoked(false);
-            getDialogLock().unlock();
+            try {
+                getDialogLock().unlock();
+            } catch (Exception e) {
+                logger.error("Failed to commit transaction",e);
+            }
         }
     }
 
@@ -319,10 +329,7 @@ public abstract class DialogBaseImpl implements IDialog {
 
         try {
             data.getDialogLock().lock();
-            if (data.getIdleTimerHandle() != null) {
-                provider.getTimerFacility().cancel(data.getIdleTimerHandle());
-                data.setIdleTimerHandle(null);
-            }
+            data.cancelIdleTimer();
         } finally {
             data.getDialogLock().unlock();
         }

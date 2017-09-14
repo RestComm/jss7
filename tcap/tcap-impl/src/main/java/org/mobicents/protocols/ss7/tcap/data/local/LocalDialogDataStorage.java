@@ -1,10 +1,12 @@
-package org.mobicents.protocols.ss7.tcap.data;
+package org.mobicents.protocols.ss7.tcap.data.local;
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
 import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
+import org.mobicents.protocols.ss7.tcap.data.DialogImpl;
+import org.mobicents.protocols.ss7.tcap.data.IDialog;
+import org.mobicents.protocols.ss7.tcap.data.IDialogDataStorage;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by piotr.sokolowski on 2017-06-08.
  */
 public class LocalDialogDataStorage implements IDialogDataStorage {
+    private final LocalTimerFacility timerFacility;
     ConcurrentHashMap<Long,IDialog> dialogs=new ConcurrentHashMap<>();
     private long curDialogId = 0;
 
@@ -21,7 +24,8 @@ public class LocalDialogDataStorage implements IDialogDataStorage {
         this.stack=stack;
     }
 
-    public LocalDialogDataStorage() {
+    public LocalDialogDataStorage(LocalTimerFacility timerFacility) {
+        this.timerFacility=timerFacility;
     }
 
     private boolean checkAvailableTxId(Long id) {
@@ -69,14 +73,7 @@ public class LocalDialogDataStorage implements IDialogDataStorage {
         // this.currentDialogId.set(this.stack.getDialogIdRangeEnd() - 1);
     }
 
-
-    @Override
-    public ITimerFacility createTimerFacility(TCAPProviderImpl tp) {
-        return new LocalTimerFacility(tp);
-    }
-
     public void beginTransaction() {
-
     }
 
     public void commitTransaction() {
@@ -95,7 +92,7 @@ public class LocalDialogDataStorage implements IDialogDataStorage {
         }
         if(stack.getMaxDialogs()>0 && dialogs.size()>=stack.getMaxDialogs())
             throw new TCAPException("Maximum number of dialogs exceeded");
-        LocalDialogData dd=new LocalDialogData();
+        LocalDialogData dd=new LocalDialogData(this);
         dd.setLocalAddress(localAddress);
         dd.setRemoteAddress(remoteAddress);
         if (id != null) {
@@ -147,4 +144,7 @@ public class LocalDialogDataStorage implements IDialogDataStorage {
 
     }
 
+    public ITimerFacility getTimerFacility() {
+        return timerFacility;
+    }
 }

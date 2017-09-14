@@ -78,7 +78,6 @@ import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCUserAbortIndicationIm
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class PreviewDialogImpl extends DialogBaseImpl {
 
@@ -88,7 +87,7 @@ public class PreviewDialogImpl extends DialogBaseImpl {
     private final boolean sideB;
 
 
-    PreviewDialogImpl(TCAPProviderImpl provider,IPreviewDialogData data,boolean sideB) {
+    public PreviewDialogImpl(TCAPProviderImpl provider,IPreviewDialogData data,boolean sideB) {
         super(provider);
         this.data=data;
         this.sideB=sideB;
@@ -677,18 +676,7 @@ public class PreviewDialogImpl extends DialogBaseImpl {
 
 
     public void startIdleTimer() {
-        try {
-            getDialogLock().lock();
-            if (data.getIdleTimerHandle() != null) {
-                throw new IllegalStateException();
-            }
-
-            IdleTimerTask t = new IdleTimerTask(data.getPreviewDialogDataKey1());
-            data.setIdleTimerHandle(provider.getTimerFacility().schedule(t, data.getIdleTaskTimeout(), TimeUnit.MILLISECONDS));
-
-        } finally {
-            getDialogLock().unlock();
-        }
+        data.startIdleTimer();
     }
 
     public PreviewDialogDataKey getPreviewDialogDataKey1() {
@@ -703,28 +691,7 @@ public class PreviewDialogImpl extends DialogBaseImpl {
         return data;
     }
 
-    private static class IdleTimerTask implements ITimerTask {
-        final PreviewDialogDataKey key;
-        IdleTimerTask(PreviewDialogDataKey key) {
-            this.key=key;
-        }
 
-        @Override
-        public String getId() {
-            return "PreviewDialog/IdleTimer/"+key;
-        }
-
-        @Override
-        public void handleTimeEvent(TCAPProviderImpl tpi) {
-            IDialog dlg=tpi.getPreviewDialogDataStorage().getPreviewDialog(key, null, null, null, 0);
-
-            if(dlg!=null) {
-                dlg.handleIdleTimeout();
-            } else {
-                logger.warn("Timeout occurred for preview dialog, which no longer exists:"+key);
-            }
-        }
-    }
 
     public void handleIdleTimeout() {
         getDialogLock().lock();

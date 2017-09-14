@@ -1,8 +1,12 @@
-package org.mobicents.protocols.ss7.tcap.data;
+package org.mobicents.protocols.ss7.tcap.data.local;
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.TCAPProviderImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
+import org.mobicents.protocols.ss7.tcap.data.IDialog;
+import org.mobicents.protocols.ss7.tcap.data.IPreviewDialogDataStorage;
+import org.mobicents.protocols.ss7.tcap.data.PreviewDialogDataKey;
+import org.mobicents.protocols.ss7.tcap.data.PreviewDialogImpl;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -10,9 +14,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by piotr.sokolowski on 2017-06-09.
  */
 public class LocalPreviewDialogDataStorage implements IPreviewDialogDataStorage {
+    private final ITimerFacility timerFacility;
     ConcurrentHashMap<PreviewDialogDataKey,LocalPreviewDialogData> dataMap=new ConcurrentHashMap<>();
     TCAPProviderImpl provider;
     long curDialogId;
+
+    public LocalPreviewDialogDataStorage(ITimerFacility timerFacility) {
+        this.timerFacility=timerFacility;
+    }
 
     public void setProvider(TCAPProviderImpl provider) {
         this.provider=provider;
@@ -81,7 +90,7 @@ public class LocalPreviewDialogDataStorage implements IPreviewDialogDataStorage 
         if(dataMap.size()>=provider.getStack().getMaxDialogs())
             throw new TCAPException("Maximum number of dialogs exceeded");
 
-        LocalPreviewDialogData data=new LocalPreviewDialogData(provider,dialogId);
+        LocalPreviewDialogData data=new LocalPreviewDialogData(this,provider,dialogId);
         data.setLocalAddress(localAddress);
         data.setRemoteAddress(remoteAddress);
         data.setPreviewDialogDataKey1(ky);
@@ -101,5 +110,9 @@ public class LocalPreviewDialogDataStorage implements IPreviewDialogDataStorage 
     @Override
     public int getSize() {
         return dataMap.size();
+    }
+
+    public ITimerFacility getTimerFacility() {
+        return timerFacility;
     }
 }
