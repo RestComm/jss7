@@ -81,7 +81,7 @@
 	<profiles>
 		<profile>
 			<!-- Adds the files to JBoss AS -->
-			<id>jboss</id>
+			<id>deploy-module-jboss5</id>
 			<build>
 				<plugins>
 					<plugin>
