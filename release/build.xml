@@ -11,8 +11,8 @@
     <property name="docs.dir" location="${restcomm.jss7.dist}/_docs"/>
 
     <!--Versions -->
-    <property name="checkout.asn.version" value="2.1.5"/>
-    <property name="checkout.sctp.version" value="1.8.15"/>
+    <property name="checkout.asn.version" value="2.2.0-21"/>
+    <property name="checkout.sctp.version" value="1.8.0-11"/>
     <property name="release.version" value="${jSS7.release.version}"/>
 
 

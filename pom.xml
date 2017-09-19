@@ -32,9 +32,9 @@
 		<compiler.plugin.version>2.0.2</compiler.plugin.version>
 		<compile.source>1.5</compile.source>
 		<!-- restcomm but not strictly ss7 -->
-		<asn.version>2.1.5</asn.version> <!-- 2.0.3.FINAL -->
+		<asn.version>2.2.0-21</asn.version> <!-- 2.0.3.FINAL,2.1.5 -->
 		<stream.version>1.0.0.CR1</stream.version>
-		<sctp.version>1.8.15</sctp.version>
+		<sctp.version>1.8.0-11</sctp.version> <!-- 1.8.15 -->
 		<commons.version>1.0.0.CR1</commons.version>
 		<dialogic.version>6.7.1</dialogic.version>
 
