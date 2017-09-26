@@ -26,6 +26,7 @@ import java.io.Serializable;
 
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.DraftParsedMessage;
 
 /**
  *
@@ -88,4 +89,13 @@ public interface TCAPProvider extends Serializable {
      * @return current count of active TCAP dialogs
      */
     int getCurrentDialogsCount();
+
+    /**
+     * Parsing of encoded TCAP message for getting only message type, origination/destination dialogId
+     *
+     * @param data
+     * @return
+     */
+    DraftParsedMessage parseMessageDraft(byte[] data);
+
 }

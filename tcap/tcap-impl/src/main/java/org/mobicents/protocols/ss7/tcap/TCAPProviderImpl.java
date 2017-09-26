@@ -48,11 +48,13 @@ import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcap.api.DialogPrimitiveFactory;
+import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.TRPseudoState;
+import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.DraftParsedMessage;
 import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.mobicents.protocols.ss7.tcap.asn.DialogPortion;
 import org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDUImpl;
@@ -76,6 +78,7 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.TCEndMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCUniMessage;
 import org.mobicents.protocols.ss7.tcap.tc.component.ComponentPrimitiveFactoryImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.DialogPrimitiveFactoryImpl;
+import org.mobicents.protocols.ss7.tcap.tc.dialog.events.DraftParsedMessageImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCBeginIndicationImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCContinueIndicationImpl;
 import org.mobicents.protocols.ss7.tcap.tc.dialog.events.TCEndIndicationImpl;
@@ -1030,6 +1033,103 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         pdd.stopIdleTimer();
 
         // TODO ??? : create Dialog and invoke "this.doRelease(di);"
+    }
+
+    @Override
+    public DraftParsedMessage parseMessageDraft(byte[] data) {
+        try {
+            DraftParsedMessageImpl res = new DraftParsedMessageImpl();
+
+            AsnInputStream ais = new AsnInputStream(data);
+
+            int tag = ais.readTag();
+
+            if (ais.getTagClass() != Tag.CLASS_APPLICATION) {
+                res.setParsingErrorReason("Message tag class must be CLASS_APPLICATION");
+                return res;
+            }
+
+            switch (tag) {
+                case TCContinueMessage._TAG:
+                    AsnInputStream localAis = ais.readSequenceStream();
+
+                    tag = localAis.readTag();
+                    if (tag != TCContinueMessage._TAG_OTX || localAis.getTagClass() != Tag.CLASS_APPLICATION) {
+                        res.setParsingErrorReason("originatingTransactionId tag/tagClass is bad for TC-CONTINUE message");
+                        return res;
+                    }
+                    byte[] originatingTransactionId = localAis.readOctetString();
+                    res.setOriginationDialogId(Utils.decodeTransactionId(originatingTransactionId));
+
+                    tag = localAis.readTag();
+                    if (tag != TCContinueMessage._TAG_DTX || localAis.getTagClass() != Tag.CLASS_APPLICATION) {
+                        res.setParsingErrorReason("destinationTransactionId tag/tagClass is bad for TC-CONTINUE message");
+                        return res;
+                    }
+                    byte[] destinationTransactionId = localAis.readOctetString();
+                    res.setDestinationDialogId(Utils.decodeTransactionId(destinationTransactionId));
+
+                    res.setMessageType(MessageType.Continue);
+                    break;
+
+                case TCBeginMessage._TAG:
+                    localAis = ais.readSequenceStream();
+
+                    tag = localAis.readTag();
+                    if (tag != TCBeginMessage._TAG_OTX || localAis.getTagClass() != Tag.CLASS_APPLICATION) {
+                        res.setParsingErrorReason("originatingTransactionId tag/tagClass is bad for TC-BEGIN message");
+                        return res;
+                    }
+                    originatingTransactionId = localAis.readOctetString();
+                    res.setOriginationDialogId(Utils.decodeTransactionId(originatingTransactionId));
+
+                    res.setMessageType(MessageType.Begin);
+                    break;
+
+                case TCEndMessage._TAG:
+                    localAis = ais.readSequenceStream();
+
+                    tag = localAis.readTag();
+                    if (tag != TCEndMessage._TAG_DTX || localAis.getTagClass() != Tag.CLASS_APPLICATION) {
+                        res.setParsingErrorReason("destinationTransactionId tag/tagClass is bad for TC-END message");
+                        return res;
+                    }
+                    destinationTransactionId = localAis.readOctetString();
+                    res.setDestinationDialogId(Utils.decodeTransactionId(destinationTransactionId));
+
+                    res.setMessageType(MessageType.End);
+                    break;
+
+                case TCAbortMessage._TAG:
+                    localAis = ais.readSequenceStream();
+
+                    tag = localAis.readTag();
+                    if (tag != TCAbortMessage._TAG_DTX || localAis.getTagClass() != Tag.CLASS_APPLICATION) {
+                        res.setParsingErrorReason("destinationTransactionId tag/tagClass is bad for TC-ABORT message");
+                        return res;
+                    }
+                    destinationTransactionId = localAis.readOctetString();
+                    res.setDestinationDialogId(Utils.decodeTransactionId(destinationTransactionId));
+
+                    res.setMessageType(MessageType.Abort);
+                    break;
+
+                case TCUniMessage._TAG:
+                    res.setMessageType(MessageType.Unidirectional);
+                    break;
+
+                default:
+                    res.setParsingErrorReason("Unrecognized message tag");
+                    break;
+            }
+
+            return res;
+        }
+        catch (Exception e) {
+            DraftParsedMessageImpl res = new DraftParsedMessageImpl();
+            res.setParsingErrorReason("Exception when message parsing: " + e.getMessage());
+            return res;
+        }
     }
 
     protected class PrevewDialogDataKey {
