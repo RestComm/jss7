@@ -55,6 +55,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcapAnsi.api.ComponentPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcapAnsi.api.DialogPrimitiveFactory;
+import org.mobicents.protocols.ss7.tcapAnsi.api.MessageType;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCListener;
@@ -71,15 +72,18 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.TCResponseMessage;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.TCUniMessage;
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.TRPseudoState;
+import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.DraftParsedMessage;
 import org.mobicents.protocols.ss7.tcapAnsi.asn.InvokeImpl;
 import org.mobicents.protocols.ss7.tcapAnsi.asn.TCAbortMessageImpl;
 import org.mobicents.protocols.ss7.tcapAnsi.asn.TCNoticeIndicationImpl;
 import org.mobicents.protocols.ss7.tcapAnsi.asn.TCResponseMessageImpl;
 import org.mobicents.protocols.ss7.tcapAnsi.asn.TCUnidentifiedMessage;
 import org.mobicents.protocols.ss7.tcapAnsi.asn.TcapFactory;
+import org.mobicents.protocols.ss7.tcapAnsi.asn.TransactionID;
 import org.mobicents.protocols.ss7.tcapAnsi.asn.Utils;
 import org.mobicents.protocols.ss7.tcapAnsi.tc.component.ComponentPrimitiveFactoryImpl;
 import org.mobicents.protocols.ss7.tcapAnsi.tc.dialog.events.DialogPrimitiveFactoryImpl;
+import org.mobicents.protocols.ss7.tcapAnsi.tc.dialog.events.DraftParsedMessageImpl;
 import org.mobicents.protocols.ss7.tcapAnsi.tc.dialog.events.TCQueryIndicationImpl;
 import org.mobicents.protocols.ss7.tcapAnsi.tc.dialog.events.TCConversationIndicationImpl;
 import org.mobicents.protocols.ss7.tcapAnsi.tc.dialog.events.TCResponseIndicationImpl;
@@ -1207,6 +1211,110 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     public void onCoordResponse(int ssn, int multiplicityIndicator) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public DraftParsedMessage parseMessageDraft(byte[] data) {
+        try {
+            DraftParsedMessageImpl res = new DraftParsedMessageImpl();
+
+            AsnInputStream ais = new AsnInputStream(data);
+
+            int tag = ais.readTag();
+
+            if (ais.getTagClass() != Tag.CLASS_PRIVATE) {
+                res.setParsingErrorReason("Message tag class must be CLASS_PRIVATE");
+                return res;
+            }
+
+            switch (tag) {
+                case TCConversationMessage._TAG_CONVERSATION_WITH_PERM:
+                case TCConversationMessage._TAG_CONVERSATION_WITHOUT_PERM:
+                    AsnInputStream localAis = ais.readSequenceStream();
+
+                    // transaction portion
+                    TransactionID tid = TcapFactory.readTransactionID(localAis);
+                    if (tid.getFirstElem() == null || tid.getSecondElem() == null) {
+                        res.setParsingErrorReason("TCTCConversationMessage decoding error: a message does not contain both both origination and resination transactionId");
+                        return res;
+                    }
+                    byte[] originatingTransactionId = tid.getFirstElem();
+                    res.setOriginationDialogId(Utils.decodeTransactionId(originatingTransactionId));
+
+                    byte[] destinationTransactionId = tid.getSecondElem();
+                    res.setDestinationDialogId(Utils.decodeTransactionId(destinationTransactionId));
+
+                    if (tag == TCConversationMessage._TAG_CONVERSATION_WITH_PERM)
+                        res.setMessageType(MessageType.ConversationWithPerm);
+                    else
+                        res.setMessageType(MessageType.ConversationWithoutPerm);
+                    break;
+
+                case TCQueryMessage._TAG_QUERY_WITH_PERM:
+                case TCQueryMessage._TAG_QUERY_WITHOUT_PERM:
+                    localAis = ais.readSequenceStream();
+
+                    // transaction portion
+                    tid = TcapFactory.readTransactionID(localAis);
+                    if (tid.getFirstElem() == null || tid.getSecondElem() != null) {
+                        res.setParsingErrorReason("TCQueryMessage decoding error: transactionId must contain only one transactionId");
+                        return res;
+                    }
+                    originatingTransactionId = tid.getFirstElem();
+                    res.setOriginationDialogId(Utils.decodeTransactionId(originatingTransactionId));
+
+                    if (tag == TCQueryMessage._TAG_QUERY_WITH_PERM)
+                        res.setMessageType(MessageType.QueryWithPerm);
+                    else
+                        res.setMessageType(MessageType.QueryWithoutPerm);
+                    break;
+
+                case TCResponseMessage._TAG_RESPONSE:
+                    localAis = ais.readSequenceStream();
+
+                    // transaction portion
+                    tid = TcapFactory.readTransactionID(localAis);
+                    if (tid.getFirstElem() == null || tid.getSecondElem() != null) {
+                        res.setParsingErrorReason("TCResponseMessage decoding error: transactionId must contain only one transactionId");
+                        return res;
+                    }
+                    destinationTransactionId = tid.getFirstElem();
+                    res.setDestinationDialogId(Utils.decodeTransactionId(destinationTransactionId));
+
+                    res.setMessageType(MessageType.Response);
+                    break;
+
+                case TCAbortMessage._TAG_ABORT:
+                    localAis = ais.readSequenceStream();
+
+                    // transaction portion
+                    tid = TcapFactory.readTransactionID(localAis);
+                    if (tid.getFirstElem() == null || tid.getSecondElem() != null) {
+                        res.setParsingErrorReason("TCAbortMessage decoding error: transactionId must contain only one transactionId");
+                        return res;
+                    }
+                    destinationTransactionId = tid.getFirstElem();
+                    res.setDestinationDialogId(Utils.decodeTransactionId(destinationTransactionId));
+
+                    res.setMessageType(MessageType.Abort);
+                    break;
+
+                case TCUniMessage._TAG_UNI:
+                    res.setMessageType(MessageType.Unidirectional);
+                    break;
+
+                default:
+                    res.setParsingErrorReason("Unrecognized message tag");
+                    break;
+            }
+
+            return res;
+        }
+        catch (Exception e) {
+            DraftParsedMessageImpl res = new DraftParsedMessageImpl();
+            res.setParsingErrorReason("Exception when message parsing: " + e.getMessage());
+            return res;
+        }
     }
 
     @Override

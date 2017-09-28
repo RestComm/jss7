@@ -29,6 +29,7 @@ import javolution.util.FastMap;
 import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.Dialog;
+import org.mobicents.protocols.ss7.tcapAnsi.api.tc.dialog.events.DraftParsedMessage;
 
 /**
  *
@@ -136,5 +137,13 @@ public interface TCAPProvider extends Serializable {
      * @return current count of active TCAP dialogs
      */
     int getCurrentDialogsCount();
+
+    /**
+     * Parsing of encoded TCAP-ANSI message for getting only message type, origination/destination dialogId
+     *
+     * @param data
+     * @return
+     */
+    DraftParsedMessage parseMessageDraft(byte[] data);
 
 }
