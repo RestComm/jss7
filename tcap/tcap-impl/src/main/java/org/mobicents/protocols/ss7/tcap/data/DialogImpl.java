@@ -176,7 +176,7 @@ public class DialogImpl extends DialogBaseImpl {
             success|=data.removeScheduledComponent(new IDialogData.ScheduledComponentRemoveFilter() {
                     @Override
                     public boolean filter(Component c) {
-                        return c instanceof InvokeImpl && invokeId.equals(((InvokeImpl)c).getInvokeId());
+                        return c instanceof InvokeImpl && invokeId.equals(c.getInvokeId());
                     }
                 }
             );
@@ -1507,7 +1507,7 @@ public class DialogImpl extends DialogBaseImpl {
             if (data.isStructured())
                 sendComponent(rej);
         } catch (TCAPSendException e) {
-            logger.error(String.format("Error sending Reject component", e));
+            logger.error("Error sending Reject component", e);
         }
     }
 
