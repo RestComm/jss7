@@ -304,15 +304,18 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         di.setLocalSsn(ssn);
     }
 
-    public void send(byte[] data, boolean returnMessageOnError, SccpAddress destinationAddress, SccpAddress originatingAddress,
-            int seqControl, int networkId,int localSsn) throws IOException {
+    public void send(final byte[] data, final boolean returnMessageOnError, final SccpAddress destinationAddress, final SccpAddress originatingAddress,
+                     final int seqControl, final int networkId,final int localSsn) throws IOException {
         if (this.stack.getPreviewMode())
             return;
 
-        SccpDataMessage msg = messageFactory.createDataMessageClass1(destinationAddress, originatingAddress, data, seqControl,
+        final SccpDataMessage msg = messageFactory.createDataMessageClass1(destinationAddress, originatingAddress, data, seqControl,
                 localSsn, returnMessageOnError, null, null);
         msg.setNetworkId(networkId);
-        sccpProvider.send(msg);
+
+        //
+        getDialogDataStorage().sendToSccp(sccpProvider,msg);
+
     }
 
     public int getMaxUserDataLength(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress, int msgNetworkId) {
@@ -905,6 +908,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             this.sendProviderAbort(PAbortCauseType.UnrecognizedMessageType, new byte[0], remoteAddress, localAddress, message.getSls(), networkId);
         }
     }
+
 
     public void onNotice(SccpNoticeMessage msg) {
 

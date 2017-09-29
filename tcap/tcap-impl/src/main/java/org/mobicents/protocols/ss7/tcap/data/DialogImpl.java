@@ -421,6 +421,8 @@ public class DialogImpl extends DialogBaseImpl {
                     }
                 } else if (event.getTerminationType() == TerminationType.PreArranged) {
                     data.clearScheduledComponentList();
+                    release();
+                    return;
                 } else {
                     throw new TCAPSendException("Termination TYPE must be present");
                 }
@@ -467,6 +469,8 @@ public class DialogImpl extends DialogBaseImpl {
                     }
                 } else if (event.getTerminationType() == TerminationType.PreArranged) {
                     data.clearScheduledComponentList();
+                    release();
+                    return;
                 } else {
                     throw new TCAPSendException("Termination TYPE must be present");
                 }

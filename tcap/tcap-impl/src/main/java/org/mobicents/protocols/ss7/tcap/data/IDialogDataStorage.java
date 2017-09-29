@@ -1,8 +1,12 @@
 package org.mobicents.protocols.ss7.tcap.data;
 
+import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
+
+import java.io.IOException;
 
 /**
  * Created by piotr.sokolowski on 2017-06-07.
@@ -20,4 +24,6 @@ public interface IDialogDataStorage {
     void init(TCAPStackImpl tcapStack);
     void beginTransaction() throws Exception;
     void commitTransaction() throws Exception;
+
+    void sendToSccp(SccpProvider sccpProvider, SccpDataMessage msg) throws IOException;
 }

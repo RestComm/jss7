@@ -1,5 +1,7 @@
 package org.mobicents.protocols.ss7.tcap.data.local;
 
+import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.TCAPStackImpl;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
@@ -8,6 +10,7 @@ import org.mobicents.protocols.ss7.tcap.data.DialogImpl;
 import org.mobicents.protocols.ss7.tcap.data.IDialog;
 import org.mobicents.protocols.ss7.tcap.data.IDialogDataStorage;
 
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -15,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class LocalDialogDataStorage implements IDialogDataStorage {
     private final LocalTimerFacility timerFacility;
-    ConcurrentHashMap<Long,IDialog> dialogs=new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Long,IDialog> dialogs=new ConcurrentHashMap<>();
     private long curDialogId = 0;
 
     private TCAPStackImpl stack;
@@ -78,6 +81,11 @@ public class LocalDialogDataStorage implements IDialogDataStorage {
 
     public void commitTransaction() {
 
+    }
+
+    @Override
+    public void sendToSccp(SccpProvider sccpProvider, SccpDataMessage msg) throws IOException {
+        sccpProvider.send(msg);
     }
 
     @Override
