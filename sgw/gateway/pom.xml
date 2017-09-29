@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.sgw</groupId>
 		<artifactId>restcomm-sgw</artifactId>
-		<version>8.0.0-SNAPSHOT</version>
+		<version>8.1.0-20</version>
 	</parent>
 
 	<artifactId>gateway</artifactId>
