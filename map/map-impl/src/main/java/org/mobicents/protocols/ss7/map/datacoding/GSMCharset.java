@@ -153,7 +153,7 @@ public class GSMCharset extends Charset {
             }
             if (!found && extentionTable != null) {
                 for (int i = 0; i < extentionTable.length; i++) {
-                    if (extentionTable[i] == c) {
+                    if (c != 0 && extentionTable[i] == c) {
                         found = true;
                         break;
                     }
@@ -207,7 +207,7 @@ public class GSMCharset extends Charset {
             }
             if (!found && extentionTable != null) {
                 for (int i = 0; i < extentionTable.length; i++) {
-                    if (extentionTable[i] == c) {
+                    if (c != 0 && extentionTable[i] == c) {
                         found = true;
                         cnt += 2;
                         break;
