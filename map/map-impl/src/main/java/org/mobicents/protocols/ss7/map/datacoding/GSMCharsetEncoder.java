@@ -135,7 +135,7 @@ public class GSMCharsetEncoder extends CharsetEncoder {
             // searching a char in the extension character table
             if (!found && this.cs.extensionTable != null) {
                 for (int i = 0; i < this.cs.mainTable.length; i++) {
-                    if (this.cs.extensionTable[i] == c) {
+                    if (c != 0 && this.cs.extensionTable[i] == c) {
                         found = true;
                         this.putByte(GSMCharsetEncoder.ESCAPE, out);
                         this.putByte(i, out);
