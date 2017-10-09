@@ -35,6 +35,7 @@ import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.sccp.impl.congestion.SccpCongestionControl;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
 
 /**
  * @author baranowb
@@ -45,8 +46,15 @@ public class SccpStackImplProxy extends SccpStackImpl {
     /**
 	 *
 	 */
+    public SccpStackImplProxy(Scheduler scheduler, String name) {
+        super(scheduler, name);
+    }
+
+    /**
+     *
+     */
     public SccpStackImplProxy(String name) {
-        super(name);
+        super(null, name);
     }
 
     public SccpManagementProxy getManagementProxy() {

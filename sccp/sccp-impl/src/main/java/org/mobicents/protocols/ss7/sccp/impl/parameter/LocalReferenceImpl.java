@@ -82,8 +82,9 @@ public class LocalReferenceImpl extends AbstractParameter implements LocalRefere
         if (b.length < 3) {
             throw new ParseException();
         }
-        this.value = 0;
-        this.value = b[0] << 16 | b[1] << 8 | b[2];
+        this.value =  (int)b[0] << 16 & 0xFFFFFF;
+        this.value |= (int)b[1] << 8 & 0xFFFF;
+        this.value |= (int)b[2] & 0xFF;
 
     }
 
@@ -110,5 +111,10 @@ public class LocalReferenceImpl extends AbstractParameter implements LocalRefere
     @Override
     public int hashCode() {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return Integer.toString(value);
     }
 }

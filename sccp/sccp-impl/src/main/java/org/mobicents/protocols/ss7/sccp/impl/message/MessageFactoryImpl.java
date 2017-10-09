@@ -88,7 +88,7 @@ public class MessageFactoryImpl implements MessageFactory {
     }
 
     public SccpConnCrMessage createConnectMessageClass2(int localSsn, SccpAddress calledAddress, SccpAddress callingAddress, byte[] data, Importance importance) {
-        SccpConnCrMessageImpl message = new SccpConnCrMessageImpl(sccpStackImpl.newSls(), localSsn);
+        SccpConnCrMessageImpl message = new SccpConnCrMessageImpl(sccpStackImpl.newSls(), localSsn, calledAddress, callingAddress, null);
         message.setCalledPartyAddress(calledAddress);
         message.setCallingPartyAddress(callingAddress);
         message.setProtocolClass(new ProtocolClassImpl(2));
@@ -98,7 +98,7 @@ public class MessageFactoryImpl implements MessageFactory {
     }
 
     public SccpConnCrMessage createConnectMessageClass3(int localSsn, SccpAddress calledAddress, SccpAddress callingAddress, Credit credit, byte[] data, Importance importance) {
-        SccpConnCrMessageImpl message = new SccpConnCrMessageImpl(sccpStackImpl.newSls(), localSsn);
+        SccpConnCrMessageImpl message = new SccpConnCrMessageImpl(sccpStackImpl.newSls(), localSsn, calledAddress, callingAddress, null);
         message.setCalledPartyAddress(calledAddress);
         message.setCallingPartyAddress(callingAddress);
         message.setProtocolClass(new ProtocolClassImpl(3));

@@ -43,12 +43,14 @@ import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPartListener;
 import org.mobicents.protocols.ss7.sccp.LongMessageRule;
 import org.mobicents.protocols.ss7.sccp.LongMessageRuleType;
+import org.mobicents.protocols.ss7.sccp.MaxConnectionCountReached;
 import org.mobicents.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
 import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.Rule;
 import org.mobicents.protocols.ss7.sccp.SccpCongestionControlAlgo;
+import org.mobicents.protocols.ss7.sccp.SccpConnectionState;
 import org.mobicents.protocols.ss7.sccp.SccpManagementEventListener;
 import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
@@ -60,12 +62,17 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpAddressedMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpSegmentableMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SegmentationImpl;
 import org.mobicents.protocols.ss7.sccp.impl.router.RouterImpl;
+import org.mobicents.protocols.ss7.sccp.message.SccpConnMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
+import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -86,6 +93,7 @@ import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculat
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculateUdtFieldsLengthWithoutData;
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculateXudtFieldsLengthWithoutData;
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.calculateXudtFieldsLengthWithoutData2;
+
 /**
  *
  * @author amit bhayani
@@ -101,9 +109,18 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     protected static final String PERSIST_FILE_NAME = "management2.xml";
     private static final String TAB_INDENT = "\t";
     private static final String CLASS_ATTRIBUTE = "type";
-
     private static final String Z_MARGIN_UDT_MSG = "zmarginxudtmessage";
+
+    private static final String CONN_EST_TIMER_DELAY = "connesttimerdelay";
+    private static final String IAS_TIMER_DELAY = "iastimerdelay";
+    private static final String IAR_TIMER_DELAY = "iartimerdelay";
+    private static final String REL_TIMER_DELAY = "reltimerdelay";
+    private static final String REPEAT_REL_TIMER_DELAY = "repeatreltimerdelay";
+    private static final String INT_TIMER_DELAY = "inttimerdelay";
+    private static final String GUARD_TIMER_DELAY = "guardtimerdelay";
+    private static final String RESET_TIMER_DELAY = "resettimerdelay";
     private static final String REASSEMBLY_TIMER_DELAY = "reassemblytimerdelay";
+
     private static final String MAX_DATA_MSG = "maxdatamessage";
     private static final String REMOVE_SPC = "removespc";
     private static final String RESERVED_FOR_NATIONAL_USE_VALUE_ADDRESS_INDICATOR = "reservedfornationalusevalue_addressindicator";
@@ -128,8 +145,20 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     // If the XUDT message data length greater this value, segmentation is
     // needed
     protected int zMarginXudtMessage = 240;
+
     // sccp segmented message reassembling timeout
+    protected int connEstTimerDelay = 15000;
+    protected int iasTimerDelay = 7500 * 60;
+    protected int iarTimerDelay = 16000 * 60;
+    protected int relTimerDelay = 15000;
+    protected int repeatRelTimerDelay = 15000;
+    protected int intTimerDelay = 30000;
+    protected int guardTimerDelay = 24000 * 60;
+    protected int resetTimerDelay = 15000;
     protected int reassemblyTimerDelay = 15000;
+
+    protected int sendTimeout = 10000;
+
     // Max available Sccp message data for all messages
     protected int maxDataMessage = 2560;
     // remove PC from calledPartyAddress when sending to MTP3
@@ -169,6 +198,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     // The count of threads that will be used for message delivering to
     // SccpListener's for SCCP user -> SCCP -> SCCP user transit (without MTP part)
     protected int deliveryTransferMessageThreadCount = 4;
+    protected int timerExecutorsThreadCount = 10;
 
     private boolean previewMode = false;
 
@@ -186,6 +216,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     protected SccpRoutingControl sccpRoutingControl;
     protected SccpCongestionControl sccpCongestionControl;
 
+    protected FastMap<Integer, SccpConnectionImpl> connections = new FastMap<Integer, SccpConnectionImpl>();
+
+    protected int referenceNumberCounterMax = 0xffffff;
+
     protected FastMap<Integer, Mtp3UserPart> mtp3UserParts = new FastMap<Integer, Mtp3UserPart>();
     protected ScheduledExecutorService timerExecutors;
     protected FastMap<MessageReassemblyProcess, SccpSegmentableMessageImpl> reassemplyCache = new FastMap<MessageReassemblyProcess, SccpSegmentableMessageImpl>();
@@ -201,18 +235,29 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     protected final String name;
 
     protected final TextBuilder persistFile = TextBuilder.newInstance();
-
     protected String persistDir = null;
+
     private boolean rspProhibitedByDefault;
 
     private volatile int segmentationLocalRef = 0;
     private volatile int slsCounter = 0;
     private volatile int selectorCounter = 0;
+    protected volatile int referenceNumberCounter = 0;
 
     private FastMap<Integer, Date> lastCongNotice = new FastMap<Integer, Date>();
     private FastMap<Integer, Date> lastUserPartUnavailNotice = new FastMap<Integer, Date>();
 
+    protected Scheduler scheduler;
+
+    /*
+     * For non-connection oriented protocol class usage
+     */
     public SccpStackImpl(String name) {
+        this(null, name);
+    }
+
+    public SccpStackImpl(Scheduler scheduler, String name) {
+        this.scheduler = scheduler;
 
         binding.setClassAttribute(CLASS_ATTRIBUTE);
 
@@ -327,6 +372,18 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
         if (deliveryMessageThreadCount > 0 && deliveryMessageThreadCount <= 100)
             this.deliveryTransferMessageThreadCount = deliveryMessageThreadCount;
+    }
+
+    public int getTimerExecutorsThreadCount() {
+        return timerExecutorsThreadCount;
+    }
+
+    public void setTimerExecutorsThreadCount(int timerExecutorsThreadCount) throws Exception {
+        if (this.isStarted())
+            throw new Exception("ConnectionTimersThreadCount parameter can be updated only when SCCP stack is NOT running");
+
+        if (timerExecutorsThreadCount > 0 && timerExecutorsThreadCount <= 100)
+            this.timerExecutorsThreadCount = timerExecutorsThreadCount;
     }
 
     public void setSstTimerDuration_Min(int sstTimerDuration_Min) throws Exception {
@@ -516,6 +573,152 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         this.store();
     }
 
+    public int getConnEstTimerDelay() {
+        return this.connEstTimerDelay;
+    }
+
+    public void setConnEstTimerDelay(int connEstTimerDelay) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("ConnEstTimerDelay parameter can be updated only when SCCP stack is running");
+
+        // from 1 to 2 minutes
+        if (connEstTimerDelay < 60000)
+            connEstTimerDelay = 60000;
+        if (connEstTimerDelay > 120000)
+            connEstTimerDelay = 120000;
+        this.connEstTimerDelay = connEstTimerDelay;
+
+        this.store();
+    }
+
+    public int getIasTimerDelay() {
+        return this.iasTimerDelay;
+    }
+
+    public void setIasTimerDelay(int iasTimerDelay) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("IasTimerDelay parameter can be updated only when SCCP stack is running");
+
+        // from 5 to 10 minutes
+        if (iasTimerDelay < 300000)
+            iasTimerDelay = 300000;
+        if (iasTimerDelay > 600000)
+            iasTimerDelay = 600000;
+        this.iasTimerDelay = iasTimerDelay;
+
+        this.store();
+    }
+
+    public int getIarTimerDelay() {
+        return this.iarTimerDelay;
+    }
+
+    public void setIarTimerDelay(int iarTimerDelay) throws Exception {
+        this.iarTimerDelay = iarTimerDelay;
+
+        if (!this.isStarted())
+            throw new Exception("IarTimerDelay parameter can be updated only when SCCP stack is running");
+
+        // from 11 to 21 minutes
+        if (iarTimerDelay < 660000)
+            iarTimerDelay = 660000;
+        if (iarTimerDelay > 1260000)
+            iarTimerDelay = 1260000;
+        this.iarTimerDelay = iarTimerDelay;
+
+        this.store();
+    }
+
+    public int getRelTimerDelay() {
+        return this.relTimerDelay;
+    }
+
+    public void setRelTimerDelay(int relTimerDelay) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("RelTimerDelay parameter can be updated only when SCCP stack is running");
+
+        // from 10 to 20 seconds
+        if (relTimerDelay < 10000)
+            relTimerDelay = 10000;
+        if (relTimerDelay > 20000)
+            relTimerDelay = 20000;
+        this.relTimerDelay = relTimerDelay;
+
+        this.store();
+    }
+
+    public int getRepeatRelTimerDelay() {
+        return this.repeatRelTimerDelay;
+    }
+
+    public void setRepeatRelTimerDelay(int repeatRelTimerDelay) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("RepeatRelTimerDelay parameter can be updated only when SCCP stack is running");
+
+        // from 10 to 20 seconds
+        if (repeatRelTimerDelay < 10000)
+            repeatRelTimerDelay = 10000;
+        if (repeatRelTimerDelay > 20000)
+            repeatRelTimerDelay = 20000;
+        this.repeatRelTimerDelay = repeatRelTimerDelay;
+
+        this.store();
+    }
+
+    public int getIntTimerDelay() {
+        return this.intTimerDelay;
+    }
+
+    public void setIntTimerDelay(int intTimerDelay) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("IntTimerDelay parameter can be updated only when SCCP stack is running");
+
+        // extending to 1 minute
+        if (intTimerDelay < 0)
+            intTimerDelay = 0;
+        if (intTimerDelay > 60000)
+            intTimerDelay = 60000;
+        this.intTimerDelay = intTimerDelay;
+
+        this.store();
+    }
+
+    public int getGuardTimerDelay() {
+        return this.guardTimerDelay;
+    }
+
+    public void setGuardTimerDelay(int guardTimerDelay) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("GuardTimerDelay parameter can be updated only when SCCP stack is running");
+
+        // from 23 to 25 minutes
+        if (guardTimerDelay < 1380000)
+            guardTimerDelay = 1380000;
+        if (guardTimerDelay > 1500000)
+            guardTimerDelay = 1500000;
+        this.guardTimerDelay = guardTimerDelay;
+
+        this.store();
+    }
+
+    public int getResetTimerDelay() {
+        return this.resetTimerDelay;
+    }
+
+    public void setResetTimerDelay(int resetTimerDelay) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("ResetTimerDelay parameter can be updated only when SCCP stack is running");
+
+        // from 10 to 20 seconds
+        if (resetTimerDelay < 10000)
+            resetTimerDelay = 10000;
+        if (resetTimerDelay > 20000)
+            resetTimerDelay = 20000;
+        this.resetTimerDelay = resetTimerDelay;
+
+        this.store();
+    }
+
     public int getReassemblyTimerDelay() {
         return this.reassemblyTimerDelay;
     }
@@ -532,6 +735,14 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         this.reassemblyTimerDelay = reassemblyTimerDelay;
 
         this.store();
+    }
+
+    public int getSendTimeout() {
+        return sendTimeout;
+    }
+
+    public void setSendTimeout(int sendTimeout) {
+        this.sendTimeout = sendTimeout;
     }
 
     public synchronized int newSegmentationLocalRef() {
@@ -604,7 +815,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         this.sccpManagement.start();
         logger.info("Starting MSU handler...");
 
-        this.timerExecutors = Executors.newScheduledThreadPool(1);
+        this.timerExecutors = Executors.newScheduledThreadPool(timerExecutorsThreadCount);
 
         // initiating of SCCP delivery executors
         // TODO: we do it for ITU standard, may be we may configure it for other standard's (different SLS count) maxSls and
@@ -703,8 +914,69 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         return sccpResource;
     }
 
+    public SccpConnectionImpl getConnection(LocalReference number) {
+        if (number == null) {
+            logger.error("Reference number can't be null");
+            throw new IllegalArgumentException("Reference number can't be null");
+        }
+        return connections.get(number.getValue());
+    }
+
+    public int getConnectionsNumber() {
+        return connections.size();
+    }
+
     protected enum State {
         IDLE, CONFIGURED, RUNNING;
+    }
+
+    protected SccpConnectionImpl newConnection(int localSsn, ProtocolClass protocol) throws MaxConnectionCountReached {
+        SccpConnectionImpl conn;
+        Integer refNumber;
+        synchronized (this) {
+            refNumber = newReferenceNumber();
+
+            if (protocol.getProtocolClass() == 2) {
+                conn = new SccpConnectionImpl(localSsn, new LocalReferenceImpl(refNumber), protocol, this, sccpRoutingControl);
+            } else if (protocol.getProtocolClass() == 3) {
+                conn = new SccpConnectionWithFlowControlImpl(localSsn, new LocalReferenceImpl(refNumber), protocol, this, sccpRoutingControl);
+            } else {
+                logger.error(String.format("Unsupported connection class %d", protocol.getProtocolClass()));
+                throw new IllegalArgumentException();
+            }
+
+            connections.put(refNumber, conn);
+        }
+        return conn;
+    }
+
+    protected void removeConnection(LocalReference ref) {
+        synchronized (this) {
+            SccpConnectionImpl conn = connections.get(ref.getValue());
+            conn.stopTimers();
+            conn.setState(SccpConnectionState.CLOSED);
+            connections.remove(ref.getValue());
+        }
+    }
+
+    protected int newReferenceNumber() throws MaxConnectionCountReached {
+        synchronized (this) {
+            if (referenceNumberCounter++ > referenceNumberCounterMax) {
+                referenceNumberCounter = 0;
+            }
+
+            // 0 and reference numbers values which are > 0
+            if (connections.size() == referenceNumberCounterMax + 1) {
+                logger.error(String.format("Can't open more connections than %d", referenceNumberCounterMax + 1));
+                throw new MaxConnectionCountReached(String.format("Can't open more connections than %d", referenceNumberCounterMax + 1));
+            }
+
+            while (connections.keySet().contains(referenceNumberCounter)) {
+                referenceNumberCounter++;
+            }
+            return referenceNumberCounter;
+        }
+
     }
 
     protected void send(SccpDataMessageImpl message) throws Exception {
@@ -716,6 +988,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
         if (message.getCalledPartyAddress() == null || message.getCallingPartyAddress() == null || message.getData() == null
                 || message.getData().length == 0) {
+            logger.error("Message to send must has filled CalledPartyAddress, CallingPartyAddress and data fields");
             throw new IOException("Message to send must has filled CalledPartyAddress, CallingPartyAddress and data fields");
         }
 
@@ -996,7 +1269,6 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
                                 mtp3Msg.getSi()));
                 return;
             }
-
             ByteArrayInputStream bais = new ByteArrayInputStream(mtp3Msg.getData());
             DataInputStream in = new DataInputStream(bais);
             int mt = in.readUnsignedByte();
@@ -1064,7 +1336,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
                                             .format("Reassembly function failure: when receiving a next segment message order is missing. SccpMessageSegment=%s",
                                                     msg));
                                 }
-                                this.sccpRoutingControl.sendSccpError(sgmMsgFst, ReturnCauseValue.CANNOT_REASEMBLE);
+                                this.sccpRoutingControl.sendSccpError(sgmMsgFst, ReturnCauseValue.CANNOT_REASEMBLE, null);
                                 return;
                             }
 
@@ -1107,15 +1379,18 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
                 }
 
                 sccpRoutingControl.routeMssgFromMtp(msgAddr);
+
+            } else if (msg instanceof SccpConnMessage) {
+                // non-addressed message processing (these are connected-oriented messages in the connected phase)
+                sccpRoutingControl.routeMssgFromMtpConn((SccpConnMessage) msg);
+
             } else {
-                // TODO: implement non-addresses message processing (these are
-                // connected-oriented messages in the connected phase)
                 logger.warn(String
-                        .format("Rx SCCP message which is not instance of SccpAddressedMessage or SccpSegmentableMessage. Will be dropped. Message=",
-                                msg));
+                        .format("Rx SCCP message which is not instance of SccpAddressedMessage or SccpSegmentableMessage" +
+                                " and doesn't implement SccpConnMessage. Will be dropped. Message=", msg));
             }
         } catch (Exception e) {
-            logger.error("IOException while decoding SCCP message: " + e.getMessage(), e);
+            logger.error("IOException while handling SCCP message: " + e.getMessage(), e);
         }
     }
 
@@ -1177,7 +1452,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             }
 
             try {
-                sccpRoutingControl.sendSccpError(msg, ReturnCauseValue.CANNOT_REASEMBLE);
+                sccpRoutingControl.sendSccpError(msg, ReturnCauseValue.CANNOT_REASEMBLE, null);
             } catch (Exception e) {
                 logger.warn("IOException when sending an error message", e);
             }
@@ -1199,7 +1474,17 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             writer.setIndentation(TAB_INDENT);
 
             writer.write(this.zMarginXudtMessage, Z_MARGIN_UDT_MSG, Integer.class);
+
+            writer.write(this.connEstTimerDelay, CONN_EST_TIMER_DELAY, Integer.class);
+            writer.write(this.iasTimerDelay, IAS_TIMER_DELAY, Integer.class);
+            writer.write(this.iarTimerDelay, IAR_TIMER_DELAY, Integer.class);
+            writer.write(this.relTimerDelay, REL_TIMER_DELAY, Integer.class);
+            writer.write(this.repeatRelTimerDelay, REPEAT_REL_TIMER_DELAY, Integer.class);
+            writer.write(this.intTimerDelay, INT_TIMER_DELAY, Integer.class);
+            writer.write(this.guardTimerDelay, GUARD_TIMER_DELAY, Integer.class);
+            writer.write(this.resetTimerDelay, RESET_TIMER_DELAY, Integer.class);
             writer.write(this.reassemblyTimerDelay, REASSEMBLY_TIMER_DELAY, Integer.class);
+
             writer.write(this.maxDataMessage, MAX_DATA_MSG, Integer.class);
             writer.write(this.removeSpc, REMOVE_SPC, Boolean.class);
             writer.write(this.previewMode, PREVIEW_MODE, Boolean.class);
@@ -1239,9 +1524,35 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             Integer vali = reader.read(Z_MARGIN_UDT_MSG, Integer.class);
             if (vali != null)
                 this.zMarginXudtMessage = vali;
+
+            vali = reader.read(CONN_EST_TIMER_DELAY, Integer.class);
+            if (vali != null)
+                this.connEstTimerDelay = vali;
+            vali = reader.read(IAS_TIMER_DELAY, Integer.class);
+            if (vali != null)
+                this.iasTimerDelay = vali;
+            vali = reader.read(IAR_TIMER_DELAY, Integer.class);
+            if (vali != null)
+                this.iarTimerDelay = vali;
+            vali = reader.read(REL_TIMER_DELAY, Integer.class);
+            if (vali != null)
+                this.relTimerDelay = vali;
+            vali = reader.read(REPEAT_REL_TIMER_DELAY, Integer.class);
+            if (vali != null)
+                this.repeatRelTimerDelay = vali;
+            vali = reader.read(INT_TIMER_DELAY, Integer.class);
+            if (vali != null)
+                this.intTimerDelay = vali;
+            vali = reader.read(GUARD_TIMER_DELAY, Integer.class);
+            if (vali != null)
+                this.guardTimerDelay = vali;
+            vali = reader.read(RESET_TIMER_DELAY, Integer.class);
+            if (vali != null)
+                this.resetTimerDelay = vali;
             vali = reader.read(REASSEMBLY_TIMER_DELAY, Integer.class);
             if (vali != null)
                 this.reassemblyTimerDelay = vali;
+
             vali = reader.read(MAX_DATA_MSG, Integer.class);
             if (vali != null)
                 this.maxDataMessage = vali;
@@ -1287,5 +1598,4 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             // "Error while re-creating Linksets from persisted file", ex);
         }
     }
-
 }

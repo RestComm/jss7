@@ -32,7 +32,6 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.ReceiveSequenceNumberImpl
 import org.mobicents.protocols.ss7.sccp.message.ParseException;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnAkMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.Credit;
-import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.ReceiveSequenceNumber;
 
@@ -40,27 +39,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class SccpConnAkMessageImpl extends SccpMessageImpl implements SccpConnAkMessage {
-    protected LocalReference destinationLocalReferenceNumber;
+public class SccpConnAkMessageImpl extends SccpConnReferencedMessageImpl implements SccpConnAkMessage {
+
     protected ReceiveSequenceNumber receiveSequenceNumber;
     protected Credit credit;
 
-    protected SccpConnAkMessageImpl(int sls, int localSsn) {
+    public SccpConnAkMessageImpl(int sls, int localSsn) {
         super(0, MESSAGE_TYPE_AK, sls, localSsn);
     }
 
     protected SccpConnAkMessageImpl(int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
         super(0, MESSAGE_TYPE_AK, incomingOpc, incomingDpc, incomingSls, networkId);
-    }
-
-    @Override
-    public LocalReference getDestinationLocalReferenceNumber() {
-        return destinationLocalReferenceNumber;
-    }
-
-    @Override
-    public void setDestinationLocalReferenceNumber(LocalReference number) {
-        this.destinationLocalReferenceNumber = number;
     }
 
     @Override
@@ -138,5 +127,20 @@ public class SccpConnAkMessageImpl extends SccpMessageImpl implements SccpConnAk
         } catch (IOException e) {
             throw new ParseException(e);
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("Sccp Msg [Type=AK");
+        sb.append(" networkId=").append(this.networkId).append(" sls=").append(this.sls).append(" incomingOpc=").append(this.incomingOpc)
+                .append(" incomingDpc=").append(this.incomingDpc).append(" outgoingDpc=").append(this.outgoingDpc)
+
+                .append(" destinationLocalReferenceNumber=").append(this.destinationLocalReferenceNumber)
+                .append(" pr=").append(this.receiveSequenceNumber)
+                .append(" credit=").append(this.credit);
+
+        sb.append("]");
+        return sb.toString();
     }
 }

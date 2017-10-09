@@ -36,7 +36,6 @@ import org.mobicents.protocols.ss7.sccp.message.ParseException;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnCcMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.Credit;
 import org.mobicents.protocols.ss7.sccp.parameter.Importance;
-import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.Parameter;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
@@ -47,41 +46,19 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class SccpConnCcMessageImpl extends SccpMessageImpl implements SccpConnCcMessage {
-    protected LocalReference destinationLocalReferenceNumber;
-    protected LocalReference sourceLocalReferenceNumber;
+public class SccpConnCcMessageImpl extends SccpConnReferencedMessageImpl implements SccpConnCcMessage {
     protected SccpAddress calledPartyAddress;
     protected ProtocolClass protocolClass;
     protected Credit credit;
     protected byte[] userData;
     protected Importance importance;
 
-    protected SccpConnCcMessageImpl(int sls, int localSsn) {
+    public SccpConnCcMessageImpl(int sls, int localSsn) {
         super(130, MESSAGE_TYPE_CC, sls, localSsn);
     }
 
     protected SccpConnCcMessageImpl(int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
         super(130, MESSAGE_TYPE_CC, incomingOpc, incomingDpc, incomingSls, networkId);
-    }
-
-    @Override
-    public LocalReference getDestinationLocalReferenceNumber() {
-        return destinationLocalReferenceNumber;
-    }
-
-    @Override
-    public void setDestinationLocalReferenceNumber(LocalReference destinationLocalReferenceNumber) {
-        this.destinationLocalReferenceNumber = destinationLocalReferenceNumber;
-    }
-
-    @Override
-    public LocalReference getSourceLocalReferenceNumber() {
-        return sourceLocalReferenceNumber;
-    }
-
-    @Override
-    public void setSourceLocalReferenceNumber(LocalReference sourceLocalReferenceNumber) {
-        this.sourceLocalReferenceNumber = sourceLocalReferenceNumber;
     }
 
     @Override

@@ -30,7 +30,6 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ResetCauseImpl;
 import org.mobicents.protocols.ss7.sccp.message.ParseException;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnRsrMessage;
-import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.ResetCause;
 
@@ -38,37 +37,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class SccpConnRsrMessageImpl extends SccpMessageImpl implements SccpConnRsrMessage {
-    protected LocalReference destinationLocalReferenceNumber;
-    protected LocalReference sourceLocalReferenceNumber;
+public class SccpConnRsrMessageImpl extends SccpConnReferencedMessageImpl implements SccpConnRsrMessage {
     protected ResetCause resetCause;
 
-    protected SccpConnRsrMessageImpl(int sls, int localSsn) {
+    public SccpConnRsrMessageImpl(int sls, int localSsn) {
         super(0, MESSAGE_TYPE_RSR, sls, localSsn);
     }
 
     protected SccpConnRsrMessageImpl(int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
         super(0, MESSAGE_TYPE_RSR, incomingOpc, incomingDpc, incomingSls, networkId);
-    }
-
-    @Override
-    public LocalReference getDestinationLocalReferenceNumber() {
-        return destinationLocalReferenceNumber;
-    }
-
-    @Override
-    public void setDestinationLocalReferenceNumber(LocalReference number) {
-        this.destinationLocalReferenceNumber = number;
-    }
-
-    @Override
-    public LocalReference getSourceLocalReferenceNumber() {
-        return sourceLocalReferenceNumber;
-    }
-
-    @Override
-    public void setSourceLocalReferenceNumber(LocalReference number) {
-        this.sourceLocalReferenceNumber = number;
     }
 
     @Override

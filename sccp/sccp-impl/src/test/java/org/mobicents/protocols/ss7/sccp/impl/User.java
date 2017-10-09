@@ -28,27 +28,40 @@ import java.util.List;
 
 import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
+import org.mobicents.protocols.ss7.sccp.SccpConnection;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SignallingPointStatus;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.RefusalCauseImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpAddressedMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.Credit;
+import org.mobicents.protocols.ss7.sccp.parameter.Importance;
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.parameter.RefusalCause;
+import org.mobicents.protocols.ss7.sccp.parameter.RefusalCauseValue;
+import org.mobicents.protocols.ss7.sccp.parameter.ResetCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * @author baranowb
  * @author abhayani
  */
-public class User implements SccpListener {
+public class User extends BaseSccpListener implements SccpListener {
     protected SccpProvider provider;
     protected SccpAddress address;
     protected SccpAddress dest;
     protected int ssn;
     // protected SccpMessage msg;
     protected List<SccpMessage> messages = new ArrayList<SccpMessage>();
+    protected List<byte[]> receivedData = new ArrayList<>();
+    protected int resetCount;
+    protected int refusedCount;
+    protected int errorCount;
+    protected boolean refuseConnections;
 
     public User(SccpProvider provider, SccpAddress address, SccpAddress dest, int ssn) {
         this.provider = provider;
@@ -173,26 +186,75 @@ public class User implements SccpListener {
     @Override
     public void onCoordResponse(int ssn, int multiplicityIndicator) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void onState(int dpc, int ssn, boolean inService, int multiplicityIndicator) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void onPcState(int dpc, SignallingPointStatus status, Integer restrictedImportanceLevel,
-            RemoteSccpStatus remoteSccpStatus) {
+                          RemoteSccpStatus remoteSccpStatus) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void onNetworkIdState(int networkId, NetworkIdState networkIdState) {
         // TODO Auto-generated method stub
-        
+
     }
 
+    @Override
+    public void onConnectIndication(SccpConnection conn, SccpAddress calledAddress, SccpAddress callingAddress, ProtocolClass clazz, Credit credit, byte[] data, Importance importance) throws Exception {
+        if (!refuseConnections) {
+            conn.confirm(null, credit, new byte[] {});
+        } else {
+            conn.refuse(new RefusalCauseImpl(RefusalCauseValue.END_USER_ORIGINATED), new byte[] {});
+            refusedCount++;
+        }
+    }
+
+    @Override
+    public void onResetIndication(SccpConnection conn, ResetCause reason) {
+        resetCount++;
+    }
+
+    @Override
+    public void onResetConfirm(SccpConnection conn) {
+        resetCount++;
+    }
+
+    @Override
+    public void onDisconnectIndication(SccpConnection conn, RefusalCause reason, byte[] data) {
+        refusedCount++;
+    }
+
+    public int getResetCount() {
+        return resetCount;
+    }
+
+    public int getRefusedCount() {
+        return refusedCount;
+    }
+
+    public int getErrorCount() {
+        return errorCount;
+    }
+
+    public void setRefuseConnections(boolean refuseConnections) {
+        this.refuseConnections = refuseConnections;
+    }
+
+    @Override
+    public void onData(SccpConnection conn, byte[] data) {
+        receivedData.add(data);
+    }
+
+    public List<byte[]> getReceivedData() {
+        return receivedData;
+    }
 }

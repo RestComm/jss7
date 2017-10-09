@@ -103,4 +103,9 @@ public class ReceiveSequenceNumberImpl extends AbstractParameter implements Rece
     public int hashCode() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

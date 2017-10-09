@@ -29,7 +29,9 @@ import javolution.util.FastMap;
 
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.ss7.congestion.ExecutorCongestionMonitor;
 
@@ -109,4 +111,7 @@ public interface SccpProvider extends Serializable {
      */
     ExecutorCongestionMonitor[] getExecutorCongestionMonitorList();
 
+    SccpConnection newConnection(int localSsn, ProtocolClass protocolClass) throws MaxConnectionCountReached;
+
+    FastMap<LocalReference, SccpConnection> getConnections();
 }
