@@ -43,6 +43,18 @@ public interface CounterDef extends Serializable {
     String getCounterName();
 
     /**
+     * GroupName is a name of group which counter belongs to
+     * @return group name
+     */
+    String getGroupName();
+
+    /**
+     * ObjectName is a name of an object that counter is elated to
+     * @return group name
+     */
+    String getObjectName();
+
+    /**
      * Description may be a long verbal description and may be updated
      * @return
      */

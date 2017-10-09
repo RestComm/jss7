@@ -42,6 +42,11 @@ public interface CounterDefSet extends Serializable {
     String getName();
 
     /**
+     * allows to add counters on a runtime
+     * @param val - counter to add
+     */
+    void addCounterDef(CounterDef val);
+    /**
      * Returns a list of CounterDef which are contained in CounterDefSet
      * @return
      */

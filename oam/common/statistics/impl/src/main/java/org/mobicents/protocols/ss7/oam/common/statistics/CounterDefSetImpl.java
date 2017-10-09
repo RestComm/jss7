@@ -41,6 +41,7 @@ public class CounterDefSetImpl implements CounterDefSet {
         this.name = name;
     }
 
+    @Override
     public void addCounterDef(CounterDef val) {
         counterDefs.add(val);
     }

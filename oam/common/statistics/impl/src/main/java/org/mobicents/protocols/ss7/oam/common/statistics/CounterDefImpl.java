@@ -34,6 +34,8 @@ public class CounterDefImpl implements CounterDef {
 
     public CounterType counterType;
     public String counterName;
+    public String groupName;
+    public String objectName;
     public String description;
 
     public CounterDefImpl(CounterType counterType, String counterName, String description) {
@@ -42,9 +44,25 @@ public class CounterDefImpl implements CounterDef {
         this.description = description;
     }
 
+    public CounterDefImpl(CounterType counterType, String groupName, String objectName, String description) {
+        this.counterType = counterType;
+        this.groupName = groupName;
+        this.objectName = objectName;
+        this.counterName = groupName + "-" + objectName;
+        this.description = description;
+    }
+
     @Override
     public String getCounterName() {
         return counterName;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public String getObjectName() {
+        return objectName;
     }
 
     @Override
