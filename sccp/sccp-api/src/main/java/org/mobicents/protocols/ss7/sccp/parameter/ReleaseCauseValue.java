@@ -84,4 +84,20 @@ public enum ReleaseCauseValue {
             return UNQUALIFIED;
         }
     }
+
+    public boolean isError() {
+        switch (this) {
+            case END_USER_FAILURE:
+            case REMOTE_PROCEDURE_ERROR:
+            case ACCESS_FAULURE:
+            case SUBSYSTEM_FAILURE:
+            case MTP_FAILURE:
+            case EXPIRATION_OF_RESET_TIMER:
+            case EXPIRATION_OF_RECEIVE_INACTIVITY_TIMER:
+            case SCCP_FAILURE:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

@@ -33,7 +33,6 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.SequencingSegmentingImpl;
 import org.mobicents.protocols.ss7.sccp.message.ParseException;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnItMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.Credit;
-import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SequencingSegmenting;

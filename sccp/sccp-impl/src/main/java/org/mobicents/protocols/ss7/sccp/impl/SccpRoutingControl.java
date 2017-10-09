@@ -56,11 +56,8 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRsrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpNoticeMessageImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.CreditImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.RefusalCauseImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ReleaseCauseImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnCrMessage;
@@ -79,7 +76,6 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import java.io.IOException;
 import java.util.Map;
 
-import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.CLOSED;
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.getDln;
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.getSln;
 
