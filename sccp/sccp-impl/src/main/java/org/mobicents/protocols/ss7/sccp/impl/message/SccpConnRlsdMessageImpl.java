@@ -33,7 +33,6 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.ReleaseCauseImpl;
 import org.mobicents.protocols.ss7.sccp.message.ParseException;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnRlsdMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.Importance;
-import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.Parameter;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCause;

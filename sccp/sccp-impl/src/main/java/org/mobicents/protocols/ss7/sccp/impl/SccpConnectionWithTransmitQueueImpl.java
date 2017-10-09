@@ -1,9 +1,6 @@
 package org.mobicents.protocols.ss7.sccp.impl;
 
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnAkMessageImpl;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt1MessageImpl;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt2MessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnSegmentableMessageImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;

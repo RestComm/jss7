@@ -3,8 +3,6 @@ package org.mobicents.protocols.ss7.sccp.impl;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.parameter.ResetCauseValue;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class FlowControlWindows {

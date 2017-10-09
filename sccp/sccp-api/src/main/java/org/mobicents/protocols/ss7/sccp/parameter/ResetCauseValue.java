@@ -85,4 +85,17 @@ public enum ResetCauseValue {
             return UNQUALIFIED;
         }
     }
+
+    public boolean isError() {
+        switch (this) {
+            case MESSAGE_OUT_OF_ORDER_INCORRECT_PS:
+            case MESSAGE_OUT_OF_ORDER_INCORRECT_PR:
+            case REMOTE_PROCEDURE_ERROR_MESSAGE_OUT_OF_WINDOW:
+            case REMOTE_PROCEDURE_ERROR_INCORRECT_PS_AFTER_REINITIALIZATION:
+            case REMOTE_PROCEDURE_ERROR_GENERAL:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

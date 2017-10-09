@@ -32,10 +32,10 @@ import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.ESTABLISHED;
 import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.ESTABLISHED_READ_OVERLOADED;
 import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.ESTABLISHED_SEND_WINDOW_EXHAUSTED;
 import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.NEW;
+import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.RSR_PROPAGATED_VIA_COUPLED;
 import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.RSR_RECEIVED;
 import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.RSR_RECEIVED_WILL_PROPAGATE;
 import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.RSR_SENT;
-import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.RSR_PROPAGATED_VIA_COUPLED;
 
 abstract class SccpConnectionBaseImpl {
 
@@ -195,7 +195,11 @@ abstract class SccpConnectionBaseImpl {
     }
 
     public void reset(ResetCause reason) throws Exception {
-        if (logger.isDebugEnabled()) {
+        if (reason.getValue().isError()) {
+            logger.warn(String.format("Resetting connection to DPC=%d, SSN=%d, DLR=%s due to %s", getRemoteDpc(), getRemoteSsn(),
+                    getRemoteReference(), reason));
+
+        } else if (logger.isDebugEnabled()) {
             logger.debug(String.format("Resetting connection to DPC=%d, SSN=%d, DLR=%s due to %s", getRemoteDpc(), getRemoteSsn(),
                     getRemoteReference(), reason));
         }
@@ -208,7 +212,10 @@ abstract class SccpConnectionBaseImpl {
     }
 
     public void disconnect(ReleaseCause reason, byte[] data) throws Exception {
-        if (logger.isDebugEnabled()) {
+        if (reason.getValue().isError()) {
+            logger.warn(String.format("Disconnecting connection to DPC=%d, SSN=%d, DLR=%s due to %s", getRemoteDpc(),
+                    getRemoteSsn(), getRemoteReference(), reason));
+        } else if (logger.isDebugEnabled()) {
             logger.debug(String.format("Disconnecting connection to DPC=%d, SSN=%d, DLR=%s due to %s", getRemoteDpc(),
                     getRemoteSsn(), getRemoteReference(), reason));
         }
