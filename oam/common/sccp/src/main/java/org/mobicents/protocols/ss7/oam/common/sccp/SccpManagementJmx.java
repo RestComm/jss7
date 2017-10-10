@@ -189,6 +189,96 @@ public class SccpManagementJmx implements SccpManagementJmxMBean {
     }
 
     @Override
+    public boolean isCanRelay() {
+        return wrappedSccpStack.isCanRelay();
+    }
+
+    @Override
+    public void setCanRelay(boolean canRelay) throws Exception {
+        wrappedSccpStack.setCanRelay(canRelay);
+    }
+
+    @Override
+    public int getConnEstTimerDelay() {
+        return wrappedSccpStack.getConnEstTimerDelay();
+    }
+
+    @Override
+    public void setConnEstTimerDelay(int connEstTimerDelay) throws Exception {
+        wrappedSccpStack.setConnEstTimerDelay(connEstTimerDelay);
+    }
+
+    @Override
+    public int getIasTimerDelay() {
+        return wrappedSccpStack.getIasTimerDelay();
+    }
+
+    @Override
+    public void setIasTimerDelay(int iasTimerDelay) throws Exception {
+        wrappedSccpStack.setIasTimerDelay(iasTimerDelay);
+    }
+
+    @Override
+    public int getIarTimerDelay() {
+        return wrappedSccpStack.getIarTimerDelay();
+    }
+
+    @Override
+    public void setIarTimerDelay(int iarTimerDelay) throws Exception {
+        wrappedSccpStack.setIarTimerDelay(iarTimerDelay);
+    }
+
+    @Override
+    public int getRelTimerDelay() {
+        return wrappedSccpStack.getRelTimerDelay();
+    }
+
+    @Override
+    public void setRelTimerDelay(int relTimerDelay) throws Exception {
+        wrappedSccpStack.setRelTimerDelay(relTimerDelay);
+    }
+
+    @Override
+    public int getRepeatRelTimerDelay() {
+        return wrappedSccpStack.getRepeatRelTimerDelay();
+    }
+
+    @Override
+    public void setRepeatRelTimerDelay(int repeatRelTimerDelay) throws Exception {
+        wrappedSccpStack.setRepeatRelTimerDelay(repeatRelTimerDelay);
+    }
+
+    @Override
+    public int getIntTimerDelay() {
+        return wrappedSccpStack.getIntTimerDelay();
+    }
+
+    @Override
+    public void setIntTimerDelay(int intTimerDelay) throws Exception {
+        wrappedSccpStack.setIntTimerDelay(intTimerDelay);
+    }
+
+    @Override
+    public int getGuardTimerDelay() {
+        return wrappedSccpStack.getGuardTimerDelay();
+    }
+
+    @Override
+    public void setGuardTimerDelay(int guardTimerDelay) throws Exception {
+        wrappedSccpStack.setGuardTimerDelay(guardTimerDelay);
+    }
+
+    @Override
+    public int getResetTimerDelay() {
+        return wrappedSccpStack.getResetTimerDelay();
+    }
+
+    @Override
+    public void setResetTimerDelay(int resetTimerDelay) throws Exception {
+        wrappedSccpStack.setResetTimerDelay(resetTimerDelay);
+    }
+
+    @Override
     public void setMtp3UserParts(Map<Integer, Mtp3UserPart> mtp3UserPartsTemp) {
         // TODO Auto-generated method stub
 

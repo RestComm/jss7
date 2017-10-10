@@ -6,7 +6,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 public abstract class SccpConnReferencedMessageImpl extends SccpMessageImpl implements SccpConnMessage {
     protected LocalReference destinationLocalReferenceNumber;
 
-    // for AK, CREF, DT1, DT2 messages it isn't sent over network, used in send message methods only
+    // for AK, CREF, DT1, DT2, ERR messages it isn't sent over network, used in send message methods only
     protected LocalReference sourceLocalReferenceNumber;
 
     protected SccpConnReferencedMessageImpl(int maxDataLen, int type, int sls, int localSsn) {

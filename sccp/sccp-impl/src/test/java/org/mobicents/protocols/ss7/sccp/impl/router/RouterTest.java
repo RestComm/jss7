@@ -808,6 +808,105 @@ public class RouterTest {
         }
 
         @Override
+        public boolean isCanRelay() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public void setCanRelay(boolean canRelay) throws Exception {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public int getConnEstTimerDelay() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setConnEstTimerDelay(int connEstTimerDelay) throws Exception {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public int getIasTimerDelay() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setIasTimerDelay(int iasTimerDelay) throws Exception {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public int getIarTimerDelay() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setIarTimerDelay(int iarTimerDelay) throws Exception {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public int getRelTimerDelay() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setRelTimerDelay(int relTimerDelay) throws Exception {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public int getRepeatRelTimerDelay() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setRepeatRelTimerDelay(int repeatRelTimerDelay) throws Exception {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public int getIntTimerDelay() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setIntTimerDelay(int intTimerDelay) throws Exception {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public int getGuardTimerDelay() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setGuardTimerDelay(int guardTimerDelay) throws Exception {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public int getResetTimerDelay() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setResetTimerDelay(int resetTimerDelay) throws Exception {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
         public void setMtp3UserParts(Map<Integer, Mtp3UserPart> mtp3UserPartsTemp) {
             // TODO Auto-generated method stub
             

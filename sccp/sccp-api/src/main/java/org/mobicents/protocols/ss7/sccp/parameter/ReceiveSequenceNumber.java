@@ -29,4 +29,11 @@ public interface ReceiveSequenceNumber {
      * @return the value of this parameter.
      */
     int getValue();
+
+    /**
+     * Gets the value of this parameter as SequenceNumber.
+     *
+     * @return the value of this parameter as SequenceNumber.
+     */
+    SequenceNumber getNumber();
 }

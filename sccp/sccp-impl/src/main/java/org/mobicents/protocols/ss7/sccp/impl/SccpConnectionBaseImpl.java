@@ -6,6 +6,7 @@ import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCcMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrefMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnErrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnItMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlsdMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRscMessageImpl;
@@ -14,6 +15,7 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnSegmentableMessageI
 import org.mobicents.protocols.ss7.sccp.message.SccpConnCrMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.Credit;
+import org.mobicents.protocols.ss7.sccp.parameter.ErrorCause;
 import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.RefusalCause;
@@ -29,7 +31,6 @@ import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.CONNECTION_IN
 import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.CR_RECEIVED;
 import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.DISCONNECT_INITIATED;
 import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.ESTABLISHED;
-import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.ESTABLISHED_READ_OVERLOADED;
 import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.ESTABLISHED_SEND_WINDOW_EXHAUSTED;
 import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.NEW;
 import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.RSR_PROPAGATED_VIA_COUPLED;
@@ -42,7 +43,6 @@ abstract class SccpConnectionBaseImpl {
     protected final Logger logger;
     protected SccpStackImpl stack;
     protected SccpRoutingControl sccpRoutingControl;
-    protected SccpListener listener;
     protected ReentrantLock connectionLock = new ReentrantLock();
     protected Integer remoteSsn;
     protected Integer remoteDpc;
@@ -64,7 +64,6 @@ abstract class SccpConnectionBaseImpl {
         this.localReference = localReference;
         this.state = NEW;
         this.logger = Logger.getLogger(SccpConnectionBaseImpl.class.getCanonicalName() + "-" + localReference + "-" + stack.name);
-        this.listener = stack.sccpProvider.getSccpListener(localSsn);
     }
 
     protected void receiveMessage(SccpConnMessage message) throws Exception {
@@ -75,12 +74,17 @@ abstract class SccpConnectionBaseImpl {
         if (message instanceof SccpConnCrMessageImpl) {
             SccpConnCrMessageImpl cr = (SccpConnCrMessageImpl) message;
             remoteReference = cr.getSourceLocalReferenceNumber();
-            remoteDpc = cr.getIncomingOpc();
+            if (cr.getCallingPartyAddress() != null && cr.getCallingPartyAddress().getSignalingPointCode() != 0) {
+                remoteDpc = cr.getCallingPartyAddress().getSignalingPointCode();
+            } else {
+                remoteDpc = cr.getIncomingOpc();
+            }
             setState(CR_RECEIVED);
 
         } else if (message instanceof SccpConnCcMessageImpl) {
             SccpConnCcMessageImpl cc = (SccpConnCcMessageImpl) message;
             remoteReference = cc.getSourceLocalReferenceNumber();
+            remoteDpc = cc.getIncomingOpc();
             setState(SccpConnectionState.ESTABLISHED);
 
         } else if (message instanceof SccpConnRscMessageImpl) {
@@ -100,6 +104,15 @@ abstract class SccpConnectionBaseImpl {
         sendMessage(rsc);
 
         setState(SccpConnectionState.ESTABLISHED);
+    }
+
+    protected void sendErr(ErrorCause cause) throws Exception {
+        SccpConnErrMessageImpl err = new SccpConnErrMessageImpl(sls, localSsn);
+        err.setDestinationLocalReferenceNumber(remoteReference);
+        err.setSourceLocalReferenceNumber(localReference);
+        err.setErrorCause(cause);
+
+        sendMessage(err);
     }
 
     protected void sendMessage(SccpConnMessage message) throws Exception {
@@ -133,17 +146,14 @@ abstract class SccpConnectionBaseImpl {
                     || this.state == ESTABLISHED && state == RSR_SENT
                     || this.state == ESTABLISHED && state == RSR_RECEIVED
                     || this.state == ESTABLISHED && state == ESTABLISHED_SEND_WINDOW_EXHAUSTED
-                    || this.state == ESTABLISHED && state == ESTABLISHED_READ_OVERLOADED
                     || this.state == ESTABLISHED && state == RSR_RECEIVED_WILL_PROPAGATE
                     || this.state == ESTABLISHED && state == DISCONNECT_INITIATED
+                    || this.state == DISCONNECT_INITIATED && state == DISCONNECT_INITIATED // repeated RLSD
                     || this.state == DISCONNECT_INITIATED && state == CLOSED
                     || this.state == ESTABLISHED_SEND_WINDOW_EXHAUSTED && state == ESTABLISHED
                     || this.state == ESTABLISHED_SEND_WINDOW_EXHAUSTED && state == ESTABLISHED_SEND_WINDOW_EXHAUSTED
                     || this.state == ESTABLISHED_SEND_WINDOW_EXHAUSTED && state == RSR_RECEIVED
                     || this.state == ESTABLISHED_SEND_WINDOW_EXHAUSTED && state == CLOSED
-                    || this.state == ESTABLISHED_READ_OVERLOADED && state == ESTABLISHED
-                    || this.state == ESTABLISHED_READ_OVERLOADED && state == RSR_RECEIVED
-                    || this.state == ESTABLISHED_READ_OVERLOADED && state == CLOSED
                     || this.state == RSR_SENT && state == ESTABLISHED
                     || this.state == RSR_SENT && state == CLOSED
                     || this.state == RSR_RECEIVED && state == ESTABLISHED
@@ -162,13 +172,17 @@ abstract class SccpConnectionBaseImpl {
         }
     }
 
-    public void establish(SccpConnCrMessage message) throws IOException {
+    protected void checkLocalListener() throws IOException {
         if (stack.sccpProvider.getSccpListener(getLocalSsn()) == null) {
 
             logger.error(String.format("Attempting to establish connection but the SSN %d is not available", getLocalSsn()));
             throw new IOException(String.format(
                     "Attempting to establish connection but the SSN %d is not available", getLocalSsn()));
         }
+    }
+
+    public void establish(SccpConnCrMessage message) throws IOException {
+        checkLocalListener();
         try {
             message.setSourceLocalReferenceNumber(getLocalReference());
 
@@ -209,6 +223,10 @@ abstract class SccpConnectionBaseImpl {
         rsr.setResetCause(reason);
         setState(RSR_SENT);
         sendMessage(rsr);
+    }
+
+    public void resetSection(ResetCause reason) throws Exception {
+        reset(reason);
     }
 
     public void disconnect(ReleaseCause reason, byte[] data) throws Exception {
@@ -282,11 +300,7 @@ abstract class SccpConnectionBaseImpl {
     }
 
     public SccpListener getListener() {
-        return listener;
-    }
-
-    public void setListener(SccpListener listener) {
-        this.listener = listener;
+        return stack.sccpProvider.getSccpListener(localSsn);
     }
 
     public int getSls() {
@@ -314,7 +328,11 @@ abstract class SccpConnectionBaseImpl {
     }
 
     public boolean isAvailable() {
-        return state == ESTABLISHED || state == ESTABLISHED_SEND_WINDOW_EXHAUSTED || state == ESTABLISHED_READ_OVERLOADED;
+        return state == ESTABLISHED || state == ESTABLISHED_SEND_WINDOW_EXHAUSTED;
+    }
+
+    protected boolean isCanSendData() {
+        return state == ESTABLISHED;
     }
 
     public Credit getSendCredit() {

@@ -1568,6 +1568,146 @@ sccp csp show &lt;id&gt;
 									</row>
 									<row>
 										<entry>
+											canrelay
+										</entry>
+										<entry>
+											Enable or disable ability to be relay node with coupling.
+										</entry>
+										<entry>
+											false - true
+										</entry>
+										<entry>
+											false
+										</entry>
+									</row>
+									<row>
+										<entry>
+											connesttimerdelay
+										</entry>
+										<entry>
+											SCCP connection establishing timeout (in milliseconds).
+										</entry>
+										<entry>
+											60000 - 120000
+										</entry>
+										<entry>
+											15000
+										</entry>
+									</row>
+									<row>
+										<entry>
+											iastimerdelay
+										</entry>
+										<entry>
+											SCCP connection IT send timeout (in milliseconds).
+										</entry>
+										<entry>
+											300000 - 600000
+										</entry>
+										<entry>
+											450000
+										</entry>
+									</row>
+									<row>
+										<entry>
+											iartimerdelay
+										</entry>
+										<entry>
+											SCCP connection message receive timeout (in milliseconds).
+										</entry>
+										<entry>
+											660000 - 1260000
+										</entry>
+										<entry>
+											960000
+										</entry>
+									</row>
+									<row>
+										<entry>
+											reltimerdelay
+										</entry>
+										<entry>
+											SCCP connection release complete message timeout (in milliseconds).
+										</entry>
+										<entry>
+											10000 - 20000
+										</entry>
+										<entry>
+											15000
+										</entry>
+									</row>
+									<row>
+										<entry>
+											repeatreltimerdelay
+										</entry>
+										<entry>
+											SCCP connection released message repeat timeout (in milliseconds).
+										</entry>
+										<entry>
+											10000 - 20000
+										</entry>
+										<entry>
+											15000
+										</entry>
+									</row>
+									<row>
+										<entry>
+											inttimerdelay
+										</entry>
+										<entry>
+											SCCP connection resources release timeout (in milliseconds).
+										</entry>
+										<entry>
+											0 - 60000
+										</entry>
+										<entry>
+											15000
+										</entry>
+									</row>
+									<row>
+										<entry>
+											guardtimerdelay
+										</entry>
+										<entry>
+											SCCP connection work resume after restart timeout (in milliseconds).
+										</entry>
+										<entry>
+											1380000 - 1500000
+										</entry>
+										<entry>
+											1440000
+										</entry>
+									</row>
+									<row>
+										<entry>
+											resettimerdelay
+										</entry>
+										<entry>
+											SCCP connection release after reset timeout (in milliseconds).
+										</entry>
+										<entry>
+											10000 - 20000
+										</entry>
+										<entry>
+											15000
+										</entry>
+									</row>
+									<row>
+										<entry>
+											timerexecutors_threadcount
+										</entry>
+										<entry>
+											Thread count in SCCP connections timers thread pool.
+										</entry>
+										<entry>
+											1 - 1000
+										</entry>
+										<entry>
+											10
+										</entry>
+									</row>
+									<row>
+										<entry>
 											maxDataMessage
 										</entry>														
 										<entry>
@@ -1640,7 +1780,7 @@ sccp csp show &lt;id&gt;
 										<entry>
 											1.5
 										</entry>														
-									</row>									
+									</row>
 								</tbody>
 							</tgroup>							
 						</table>

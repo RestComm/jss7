@@ -115,6 +115,6 @@ public class LocalReferenceImpl extends AbstractParameter implements LocalRefere
 
     @Override
     public String toString() {
-        return Integer.toString(value);
+        return new StringBuffer().append("LocalReference [").append("value=").append(value).append("]").toString();
     }
 }

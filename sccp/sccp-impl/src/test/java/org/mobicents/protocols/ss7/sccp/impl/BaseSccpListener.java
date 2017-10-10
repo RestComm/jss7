@@ -34,6 +34,7 @@ import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.Credit;
+import org.mobicents.protocols.ss7.sccp.parameter.ErrorCause;
 import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.RefusalCause;
@@ -96,6 +97,11 @@ public class BaseSccpListener implements SccpListener {
 
     @Override
     public void onDisconnectIndication(SccpConnection conn, RefusalCause reason, byte[] data) {
+
+    }
+
+    @Override
+    public void onDisconnectIndication(SccpConnection conn, ErrorCause errorCause) {
 
     }
 

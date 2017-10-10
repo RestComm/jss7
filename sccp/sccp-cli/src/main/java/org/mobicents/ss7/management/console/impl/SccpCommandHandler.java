@@ -95,6 +95,16 @@ public class SccpCommandHandler extends CommandHandlerWithHelp {
         Node sccpprotocolversion = set.addChild("sccpprotocolversion");
         set.addChild("cc_timer_a");
         set.addChild("cc_timer_d");
+        set.addChild("canrelay");
+        set.addChild("connesttimerdelay");
+        set.addChild("iastimerdelay");
+        set.addChild("iartimerdelay");
+        set.addChild("reltimerdelay");
+        set.addChild("repeatreltimerdelay");
+        set.addChild("inttimerdelay");
+        set.addChild("guardtimerdelay");
+        set.addChild("resettimerdelay");
+        set.addChild("timerexecutors_threadcount");
         Node cc_algo = set.addChild("cc_algo");
         set.addChild("cc_blockingoutgoungsccpmessages");
 
@@ -116,6 +126,16 @@ public class SccpCommandHandler extends CommandHandlerWithHelp {
         get.addChild("sccpprotocolversion");
         get.addChild("cc_timer_a");
         get.addChild("cc_timer_d");
+        get.addChild("canrelay");
+        get.addChild("connesttimerdelay");
+        get.addChild("iastimerdelay");
+        get.addChild("iartimerdelay");
+        get.addChild("reltimerdelay");
+        get.addChild("repeatreltimerdelay");
+        get.addChild("inttimerdelay");
+        get.addChild("guardtimerdelay");
+        get.addChild("resettimerdelay");
+        get.addChild("timerexecutors_threadcount");
         get.addChild("cc_algo");
         get.addChild("cc_blockingoutgoungsccpmessages");
 

@@ -166,17 +166,18 @@
 		
 		<para>
 			<classname>SccpStack</classname> exposes <classname>org.mobicents.protocols.ss7.sccp.SccpProvider</classname> 
-			that interacts directly with SccpStack. This interface defines the methods that will be used by SCCP User Part to send 
-			<classname>org.mobicents.protocols.ss7.sccp.message.SccpMessage</classname> and register 
-			<classname>org.mobicents.protocols.ss7.sccp.SccpListener</classname>'s to listen for incoming SCCP messages. 
+			that interacts directly with SccpStack. This interface defines the methods that will be used by SCCP User Part to send
+			connectionless <classname>org.mobicents.protocols.ss7.sccp.message.SccpMessage</classname>, create new connections and register
+			<classname>org.mobicents.protocols.ss7.sccp.SccpListener</classname>'s to listen for incoming SCCP messages and connection events.
 		</para>
 		
 		<para>
 			SCCP User Part registers SccpListener for specific local subsystem number.
-			For every incoming SccpMessage, if the called subsystem matches with this local subsystem, the corresponding SccpListner is called.
+			For every incoming SccpMessage or connection event, if the called subsystem matches with this local subsystem, the corresponding SccpListner is called.
 		</para>
 		
 		<para>
+			[class]`SccpProvider` exposes [class]`SccpConnection` which allows to perform common connection actions such as establishing, resetting, confirming/refusing and disconnecting SCCP connections.
 			SccpProvider also exposes <classname>org.mobicents.protocols.ss7.sccp.message.MessageFactory</classname> and
 			<classname>org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory</classname> to create new SccpMessage. For transfer data via
 			connectionless service <classname>org.mobicents.protocols.ss7.sccp.message.SccpDataMessage</classname> is used.
@@ -188,7 +189,7 @@
 
 	<section
 		id="sccp_complete_example">
-		<title>SCCP User Part Example</title>
+		<title>SCCP User Part Example #1 (connectionless protocol class)</title>
 		<para>
 			Below is SCCP User Part example listening for incoming SCCP message and sending back new message		
 		</para>		
@@ -273,10 +274,222 @@ public class Test implements SccpListener {
         }
 
         @Override
-        public void onPcState(int dpc, SignallingPointStatus status, int restrictedImportanceLevel,
+        public void onPcState(int dpc, SignallingPointStatus status, Integer restrictedImportanceLevel,
                         RemoteSccpStatus remoteSccpStatus) {
         }
 
+        @Override
+        public void onNetworkIdState(int networkId, NetworkIdState networkIdState) {
+        }
+
+        @Override
+        public void onConnectIndication(SccpConnection conn, SccpAddress calledAddress,
+                        SccpAddress callingAddress, ProtocolClass clazz, Credit credit, byte[] data,
+                        Importance importance) throws Exception {
+        }
+
+        @Override
+        public void onConnectConfirm(SccpConnection conn, byte[] data) {
+        }
+
+        @Override
+        public void onDisconnectIndication(SccpConnection conn, ReleaseCause reason, byte[] data) {
+        }
+
+        @Override
+        public void onDisconnectIndication(SccpConnection conn, RefusalCause reason, byte[] data) {
+        }
+
+        @Override
+        public void onDisconnectIndication(SccpConnection conn, ErrorCause errorCause) {
+        }
+
+        @Override
+        public void onResetIndication(SccpConnection conn, ResetCause reason) {
+        }
+
+        @Override
+        public void onResetConfirm(SccpConnection conn) {
+        }
+
+        @Override
+        public void onData(SccpConnection conn, byte[] data) {
+        }
+
+        @Override
+        public void onDisconnectConfirm(SccpConnection conn) {
+        }
+}
+		</programlisting>
+	</section>
+
+	<section
+		id="sccp_complete_example2">
+		<title>SCCP User Part Example #2 (connection-oriented protocol class)</title>
+		<para>
+            Below is SCCP User Part example listening for incoming connection-oriented SCCP data message and sending back
+            new data message via already established protocol class 2 connection
+		</para>
+		<programlisting language="Java" role="JAVA">
+package org.mobicents.protocols.ss7.sccp.impl;
+
+import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.sccp.NetworkIdState;
+import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
+import org.mobicents.protocols.ss7.sccp.SccpConnection;
+import org.mobicents.protocols.ss7.sccp.SccpListener;
+import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.SignallingPointStatus;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.ReleaseCauseImpl;
+import org.mobicents.protocols.ss7.sccp.message.SccpConnCrMessage;
+import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
+import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.Credit;
+import org.mobicents.protocols.ss7.sccp.parameter.ErrorCause;
+import org.mobicents.protocols.ss7.sccp.parameter.Importance;
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.parameter.RefusalCause;
+import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCause;
+import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCauseValue;
+import org.mobicents.protocols.ss7.sccp.parameter.ResetCause;
+import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.mobicents.protocols.ss7.scheduler.Clock;
+import org.mobicents.protocols.ss7.scheduler.DefaultClock;
+import org.mobicents.protocols.ss7.scheduler.Scheduler;
+
+public class Test2 implements SccpListener {
+        private SccpProvider sccpProvider;
+        private SccpConnection conn;
+        private int localSsn = 8;
+
+        private static SccpProvider getSccpProvider() {
+                Clock clock = new DefaultClock();
+                Scheduler scheduler = new Scheduler();
+                scheduler.setClock(clock);
+
+                Mtp3UserPartImpl mtp3UserPart1 = null;
+                SccpStackImpl sccpStack1 = new SccpStackImpl(scheduler, "testSccpStack");
+                sccpStack1.setMtp3UserPart(1, mtp3UserPart1);
+
+                scheduler.start();
+                sccpStack1.start();
+
+                return sccpStack1.getSccpProvider();
+        }
+
+        public void start() throws Exception {
+                this.sccpProvider = getSccpProvider();
+                this.sccpProvider.registerSccpListener(this.localSsn, this);
+        }
+
+        public void stop() {
+                this.sccpProvider.deregisterSccpListener(this.localSsn);
+        }
+
+        public void connect() throws Exception {
+                // assumed that local DPC is 1 and remote DPC is 2, will differ in real life scenario
+                SccpAddress localAddress =
+                this.sccpProvider.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN,
+                        null, 1, localSsn);
+                SccpAddress remoteAddress =
+                this.sccpProvider.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN,
+                        null, 2, localSsn);
+
+                SccpConnCrMessage crMsg = this.sccpProvider.getMessageFactory().createConnectMessageClass2(8, remoteAddress,
+                        localAddress, new byte[] {}, new ImportanceImpl((byte)1));
+                crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
+                crMsg.setProtocolClass(new ProtocolClassImpl(2));
+
+                conn = this.sccpProvider.newConnection(8, new ProtocolClassImpl(2));
+                conn.establish(crMsg);
+        }
+
+        public void disconnect() throws Exception {
+                conn.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), new byte[] {});
+        }
+
+        @Override
+        public void onConnectIndication(SccpConnection conn, SccpAddress calledAddress, SccpAddress callingAddress,
+                                        ProtocolClass clazz, Credit credit, byte[] data, Importance importance) throws Exception {
+                this.conn = conn;
+                conn.confirm(null, null, new byte[] {});
+        }
+
+        @Override
+        public void onData(SccpConnection conn, byte[] data) {
+                // decoding of content in byte[] data
+                // processing a request
+                byte[] answerData = new byte[10];
+                // put custom executing code here and fill answerData
+                try {
+                        conn.send(answerData);
+                } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                }
+        }
+
+        @Override
+        public void onMessage(SccpDataMessage message) {
+        }
+
+        @Override
+        public void onNotice(SccpNoticeMessage message) {
+        }
+
+        @Override
+        public void onCoordResponse(int ssn, int multiplicityIndicator) {
+
+        }
+
+        public void onCoordRequest(int dpc, int ssn, int multiplicityIndicator) {
+        }
+
+        public void onCoordResponse(int dpc, int ssn, int multiplicityIndicator) {
+        }
+
+        public void onState(int dpc, int ssn, boolean inService, int multiplicityIndicator) {
+        }
+
+        @Override
+        public void onPcState(int dpc, SignallingPointStatus status, Integer restrictedImportanceLevel,
+        RemoteSccpStatus remoteSccpStatus) {
+        }
+
+        @Override
+        public void onNetworkIdState(int networkId, NetworkIdState networkIdState) {
+        }
+
+        @Override
+        public void onConnectConfirm(SccpConnection conn, byte[] data) {
+        }
+
+        @Override
+        public void onDisconnectIndication(SccpConnection conn, ReleaseCause reason, byte[] data) {
+        }
+
+        @Override
+        public void onDisconnectIndication(SccpConnection conn, RefusalCause reason, byte[] data) {
+        }
+
+        @Override
+        public void onDisconnectIndication(SccpConnection conn, ErrorCause errorCause) {
+        }
+
+        @Override
+        public void onResetIndication(SccpConnection conn, ResetCause reason) {
+        }
+
+        @Override
+        public void onResetConfirm(SccpConnection conn) {
+        }
+
+        @Override
+        public void onDisconnectConfirm(SccpConnection conn) {
+        }
 }
 		</programlisting>
 	</section>

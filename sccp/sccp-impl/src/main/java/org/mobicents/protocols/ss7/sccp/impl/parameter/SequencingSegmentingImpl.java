@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.sccp.impl.parameter;
 import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.message.ParseException;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
+import org.mobicents.protocols.ss7.sccp.parameter.SequenceNumber;
 import org.mobicents.protocols.ss7.sccp.parameter.SequencingSegmenting;
 
 import java.io.IOException;
@@ -33,27 +34,37 @@ import java.io.OutputStream;
 
 public class SequencingSegmentingImpl extends AbstractParameter implements SequencingSegmenting {
 
-    private byte sendSequenceNumber;
-    private byte receiveSequenceNumber;
+    private SequenceNumber sendSequenceNumber = new SequenceNumberImpl(0);
+    private SequenceNumber receiveSequenceNumber = new SequenceNumberImpl(0);
     private boolean moreData;
 
     public SequencingSegmentingImpl() {
     }
 
-    public SequencingSegmentingImpl(int sendSequenceNumber, int receiveSequenceNumber, boolean moreData) {
-        this.sendSequenceNumber = (byte)sendSequenceNumber;
-        this.receiveSequenceNumber = (byte)receiveSequenceNumber;
+    public SequencingSegmentingImpl(SequenceNumber sendSequenceNumber, SequenceNumber receiveSequenceNumber, boolean moreData) {
+        this.sendSequenceNumber = sendSequenceNumber;
+        this.receiveSequenceNumber = receiveSequenceNumber;
         this.moreData = moreData;
     }
 
     @Override
-    public int getSendSequenceNumber() {
+    public SequenceNumber getSendSequenceNumber() {
         return sendSequenceNumber;
     }
 
     @Override
-    public int getReceiveSequenceNumber() {
+    public void setSendSequenceNumber(SequenceNumber sendSequenceNumber) {
+        this.sendSequenceNumber = sendSequenceNumber;
+    }
+
+    @Override
+    public SequenceNumber getReceiveSequenceNumber() {
         return receiveSequenceNumber;
+    }
+
+    @Override
+    public void setReceiveSequenceNumber(SequenceNumber receiveSequenceNumber) {
+        this.receiveSequenceNumber = receiveSequenceNumber;
     }
 
     @Override
@@ -62,14 +73,19 @@ public class SequencingSegmentingImpl extends AbstractParameter implements Seque
     }
 
     @Override
+    public void setMoreData(boolean moreData) {
+        this.moreData = moreData;
+    }
+
+    @Override
     public void decode(final InputStream in, final ParameterFactory factory, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
         try {
             if (in.read() != 2) {
                 throw new ParseException();
             }
-            this.sendSequenceNumber = (byte)(in.read() >> 1 & 0x7F);
+            this.sendSequenceNumber = new SequenceNumberImpl((byte)(in.read() >> 1 & 0x7F));
             int secondOctet = in.read();
-            this.receiveSequenceNumber = (byte)(secondOctet >> 1 & 0x7F);
+            this.receiveSequenceNumber = new SequenceNumberImpl((byte)(secondOctet >> 1 & 0x7F));
             this.moreData = (secondOctet & 0x01) == 1;
         } catch (IOException ioe) {
             throw new ParseException(ioe);
@@ -80,8 +96,8 @@ public class SequencingSegmentingImpl extends AbstractParameter implements Seque
     public void encode(final OutputStream os, final boolean removeSpc, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
         try {
             os.write(2);
-            os.write(this.sendSequenceNumber << 1 & 0xFE);
-            os.write(this.receiveSequenceNumber << 1 & 0xFE | ((moreData) ? 1 : 0));
+            os.write(this.sendSequenceNumber.getValue() << 1 & 0xFE);
+            os.write(this.receiveSequenceNumber.getValue() << 1 & 0xFE | ((moreData) ? 1 : 0));
         } catch (IOException ioe) {
             throw new ParseException(ioe);
         }
@@ -92,16 +108,16 @@ public class SequencingSegmentingImpl extends AbstractParameter implements Seque
         if (b.length < 2) {
             throw new ParseException();
         }
-        this.sendSequenceNumber = (byte)(b[0] >> 1 & 0x7F);
-        this.receiveSequenceNumber = (byte)(b[1] >> 1 & 0x7F);
+        this.sendSequenceNumber = new SequenceNumberImpl((byte)(b[0] >> 1 & 0x7F));
+        this.receiveSequenceNumber = new SequenceNumberImpl((byte)(b[1] >> 1 & 0x7F));
         this.moreData = (b[1] & 0x01) == 1;
     }
 
     @Override
     public byte[] encode(final boolean removeSpc, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
         return new byte[] {
-                (byte) (this.sendSequenceNumber << 1 & 0xFE),
-                (byte) (this.receiveSequenceNumber << 1 & 0xFE | ((moreData) ? 1 : 0))
+                (byte) (this.sendSequenceNumber.getValue() << 1 & 0xFE),
+                (byte) (this.receiveSequenceNumber.getValue() << 1 & 0xFE | ((moreData) ? 1 : 0))
         };
     }
 
@@ -120,14 +136,14 @@ public class SequencingSegmentingImpl extends AbstractParameter implements Seque
 
     @Override
     public int hashCode() {
-        int result = (int) sendSequenceNumber;
-        result = 31 * result + (int) receiveSequenceNumber;
+        int result = sendSequenceNumber.getValue();
+        result = 31 * result + receiveSequenceNumber.getValue();
         result = 31 * result + (moreData ? 1 : 0);
         return result;
     }
 
     public String toString() {
-        return new StringBuffer().append("ps=").append(sendSequenceNumber).append(",pr=").append(receiveSequenceNumber)
-                .append(",moreData=").append(moreData).toString();
+        return new StringBuffer().append("SequencingSegmenting [").append("ps=").append(sendSequenceNumber.getValue()).append(",pr=")
+                .append(receiveSequenceNumber.getValue()).append(",moreData=").append(moreData).append("]").toString();
     }
 }

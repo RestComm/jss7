@@ -26,37 +26,43 @@ import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.message.ParseException;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.ReceiveSequenceNumber;
+import org.mobicents.protocols.ss7.sccp.parameter.SequenceNumber;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 public class ReceiveSequenceNumberImpl extends AbstractParameter implements ReceiveSequenceNumber {
-    private byte value;
+    private SequenceNumber value = new SequenceNumberImpl(0);
 
     public ReceiveSequenceNumberImpl() {
     }
 
-    public ReceiveSequenceNumberImpl(byte value) {
+    public ReceiveSequenceNumberImpl(SequenceNumber value) {
         this.value = value;
     }
 
+    @Override
     public int getValue() {
+        return value.getValue();
+    }
+
+    public SequenceNumber getNumber() {
         return value;
     }
 
-    public void setValue(byte value) {
+    public void setNumber(SequenceNumber value) {
         this.value = value;
     }
 
     @Override
     public void decode(final InputStream in, final ParameterFactory factory, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
-        this.value = 0;
+        this.value = new SequenceNumberImpl(0);
         try {
             if (in.read() != 1) {
                 throw new ParseException();
             }
-            this.value = (byte)(in.read() >> 1 & 0x7F);
+            this.value = new SequenceNumberImpl((byte)(in.read() >> 1 & 0x7F));
         } catch (IOException ioe) {
             throw new ParseException(ioe);
         }
@@ -66,7 +72,7 @@ public class ReceiveSequenceNumberImpl extends AbstractParameter implements Rece
     public void encode(final OutputStream os, final boolean removeSpc, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
         try {
             os.write(1);
-            os.write(this.value << 1 & 0xFE);
+            os.write(this.value.getValue() << 1 & 0xFE);
         } catch (IOException ioe) {
             throw new ParseException(ioe);
         }
@@ -77,14 +83,14 @@ public class ReceiveSequenceNumberImpl extends AbstractParameter implements Rece
         if (b.length < 1) {
             throw new ParseException();
         }
-        this.value = (byte)(b[0] >> 1 & 0x7F);
+        this.value = new SequenceNumberImpl((byte)(b[0] >> 1 & 0x7F));
 
     }
 
     @Override
     public byte[] encode(final boolean removeSpc, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
         return new byte[] {
-                (byte) (this.value << 1 & 0xFE)
+                (byte) (this.value.getValue() << 1 & 0xFE)
         };
     }
 
@@ -101,11 +107,11 @@ public class ReceiveSequenceNumberImpl extends AbstractParameter implements Rece
 
     @Override
     public int hashCode() {
-        return value;
+        return value.getValue();
     }
 
     @Override
     public String toString() {
-        return String.valueOf(value);
+        return new StringBuffer().append("ReceiveSequenceNumber [").append("value=").append(value.getValue()).append("]").toString();
     }
 }

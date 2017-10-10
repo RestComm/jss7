@@ -1,11 +1,14 @@
 package org.mobicents.protocols.ss7.sccp.impl;
 
+import org.mobicents.protocols.ss7.sccp.SccpConnection;
 import org.mobicents.protocols.ss7.sccp.SccpConnectionState;
+import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCcMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnItMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRscMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.CreditImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ReleaseCauseImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.SequenceNumberImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SequencingSegmentingImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
@@ -15,6 +18,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCauseValue;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.CLOSED;
 import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.CONNECTION_INITIATED;
 import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.DISCONNECT_INITIATED;
 import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.RSR_SENT;
@@ -107,6 +111,9 @@ abstract class SccpConnectionWithTimers extends SccpConnectionWithTransmitQueueI
         public void run() {
             try {
                 connectionLock.lock();
+                if (getState() == CLOSED) {
+                    return;
+                }
 
                 disconnect(new ReleaseCauseImpl(ReleaseCauseValue.SCCP_FAILURE), new byte[]{});
 
@@ -127,6 +134,9 @@ abstract class SccpConnectionWithTimers extends SccpConnectionWithTransmitQueueI
         public void run() {
             try {
                 connectionLock.lock();
+                if (getState() == CLOSED) {
+                    return;
+                }
 
                 SccpConnItMessageImpl it = new SccpConnItMessageImpl(getSls(), getLocalSsn());
                 it.setProtocolClass(getProtocolClass());
@@ -135,7 +145,8 @@ abstract class SccpConnectionWithTimers extends SccpConnectionWithTransmitQueueI
 
                 // could be overwritten during preparing
                 it.setCredit(new CreditImpl(0));
-                it.setSequencingSegmenting(new SequencingSegmentingImpl(0, 0, lastMoreDataSent));
+                it.setSequencingSegmenting(new SequencingSegmentingImpl(new SequenceNumberImpl(0, false),
+                        new SequenceNumberImpl(0, false), lastMoreDataSent));
                 prepareMessageForSending(it);
                 sendMessage(it);
 
@@ -156,6 +167,9 @@ abstract class SccpConnectionWithTimers extends SccpConnectionWithTransmitQueueI
         public void run() {
             try {
                 connectionLock.lock();
+                if (getState() == CLOSED) {
+                    return;
+                }
 
                 disconnect(new ReleaseCauseImpl(ReleaseCauseValue.EXPIRATION_OF_RECEIVE_INACTIVITY_TIMER), new byte[] {});
 
@@ -173,9 +187,26 @@ abstract class SccpConnectionWithTimers extends SccpConnectionWithTransmitQueueI
         }
 
         @Override
+        public void startTimer() {
+            try {
+                connectionLock.lock();
+                if (this.isStarted()) {
+                    return; // ignore if already started
+                }
+                super.startTimer();
+
+            } finally {
+                connectionLock.unlock();
+            }
+        }
+
+        @Override
         public void run() {
             try {
                 connectionLock.lock();
+                if (getState() == CLOSED) {
+                    return;
+                }
 
                 disconnect(new ReleaseCauseImpl(ReleaseCauseValue.SCCP_FAILURE), new byte[]{});
                 intProcess.startTimer();
@@ -195,9 +226,26 @@ abstract class SccpConnectionWithTimers extends SccpConnectionWithTransmitQueueI
         }
 
         @Override
+        public void startTimer() {
+            try {
+                connectionLock.lock();
+                if (this.isStarted()) {
+                    return; // ignore if already started
+                }
+                super.startTimer();
+
+            } finally {
+                connectionLock.unlock();
+            }
+        }
+
+        @Override
         public void run() {
             try {
                 connectionLock.lock();
+                if (getState() == CLOSED) {
+                    return;
+                }
 
                 disconnect(new ReleaseCauseImpl(ReleaseCauseValue.SCCP_FAILURE), new byte[]{});
                 repeatRelProcess.startTimer();
@@ -216,11 +264,34 @@ abstract class SccpConnectionWithTimers extends SccpConnectionWithTransmitQueueI
         }
 
         @Override
+        public void startTimer() {
+            try {
+                connectionLock.lock();
+                if (this.isStarted()) {
+                    return; // ignore if already started
+                }
+                super.startTimer();
+
+            } finally {
+                connectionLock.unlock();
+            }
+        }
+
+        @Override
         public void run() {
             try {
                 connectionLock.lock();
+                if (getState() == CLOSED) {
+                    return;
+                }
 
-                // do smt...
+                repeatRelProcess.stopTimer();
+
+                SccpListener listener = getListener();
+                if (listener != null) {
+                    listener.onDisconnectIndication((SccpConnection) SccpConnectionWithTimers.this, new ReleaseCauseImpl(ReleaseCauseValue.SCCP_FAILURE), new byte[] {});
+                }
+                stack.removeConnection(getLocalReference());
 
             } finally {
                 connectionLock.unlock();
@@ -237,7 +308,9 @@ abstract class SccpConnectionWithTimers extends SccpConnectionWithTransmitQueueI
         public void run() {
             try {
                 connectionLock.lock();
-
+                if (getState() == CLOSED) {
+                    return;
+                }
                 // do smt...
 
             } finally {
@@ -255,6 +328,9 @@ abstract class SccpConnectionWithTimers extends SccpConnectionWithTransmitQueueI
         public void run() {
             try {
                 connectionLock.lock();
+                if (getState() == CLOSED) {
+                    return;
+                }
 
                 disconnect(new ReleaseCauseImpl(ReleaseCauseValue.SCCP_FAILURE), new byte[]{});
                 stack.removeConnection(getLocalReference());
@@ -276,7 +352,9 @@ abstract class SccpConnectionWithTimers extends SccpConnectionWithTransmitQueueI
         public void run() {
             try {
                 connectionLock.lock();
-
+                if (getState() == CLOSED) {
+                    return;
+                }
                 // do smt...
 
             } finally {
@@ -293,7 +371,7 @@ abstract class SccpConnectionWithTimers extends SccpConnectionWithTransmitQueueI
             try {
                 connectionLock.lock();
                 if (this.future != null) { // need to lock because otherwise this check won't ensure safety
-                    logger.error(new IllegalStateException());
+                    logger.error(new IllegalStateException(String.format("Already started %s timer", getClass())));
                 }
                 this.future = stack.timerExecutors.schedule(this, delay, TimeUnit.MILLISECONDS);
 
@@ -318,6 +396,10 @@ abstract class SccpConnectionWithTimers extends SccpConnectionWithTransmitQueueI
         public void resetTimer() {
             stopTimer();
             startTimer();
+        }
+
+        public boolean isStarted() {
+            return future != null;
         }
 
         @Override

@@ -78,6 +78,15 @@ public class SccpStackTest {
         this.sccpStackImpl.setSstTimerDuration_Min(5000);
         this.sccpStackImpl.setSstTimerDuration_Max(1200000);
         this.sccpStackImpl.setSstTimerDuration_IncreaseFactor(1.0);
+        this.sccpStackImpl.setCanRelay(true);
+        this.sccpStackImpl.setConnEstTimerDelay(60001);
+        this.sccpStackImpl.setIasTimerDelay(300001);
+        this.sccpStackImpl.setIarTimerDelay(660001);
+        this.sccpStackImpl.setRelTimerDelay(10001);
+        this.sccpStackImpl.setRepeatRelTimerDelay(10001);
+        this.sccpStackImpl.setIntTimerDelay(1);
+        this.sccpStackImpl.setGuardTimerDelay(1380001);
+        this.sccpStackImpl.setResetTimerDelay(10001);
 
         this.sccpStackImpl.stop();
 
@@ -90,6 +99,15 @@ public class SccpStackTest {
         assertEquals(this.sccpStackImpl.getSstTimerDuration_Min(), 5000);
         assertEquals(this.sccpStackImpl.getSstTimerDuration_Max(), 1200000);
         assertEquals(this.sccpStackImpl.getSstTimerDuration_IncreaseFactor(), 1.0);
+        assertEquals(this.sccpStackImpl.isCanRelay(), true);
+        assertEquals(this.sccpStackImpl.getConnEstTimerDelay(), 60001);
+        assertEquals(this.sccpStackImpl.getIasTimerDelay(), 300001);
+        assertEquals(this.sccpStackImpl.getIarTimerDelay(), 660001);
+        assertEquals(this.sccpStackImpl.getRelTimerDelay(), 10001);
+        assertEquals(this.sccpStackImpl.getRepeatRelTimerDelay(), 10001);
+        assertEquals(this.sccpStackImpl.getIntTimerDelay(), 1);
+        assertEquals(this.sccpStackImpl.getGuardTimerDelay(), 1380001);
+        assertEquals(this.sccpStackImpl.getResetTimerDelay(), 10001);
 
         this.sccpStackImpl.stop();
     }

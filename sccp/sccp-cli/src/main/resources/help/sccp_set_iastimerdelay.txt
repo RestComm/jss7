@@ -1,0 +1,27 @@
+Name
+	sccp set iastimerdelay
+
+SYNOPSIS
+	sccp set iastimerdelay <iastimerdelay>
+	stackname <stack-name>
+
+DESCRIPTION
+	Set T(ias) timer delay (after what period of time IT message will be sent
+	if no messages was sent). Range is 300000 to 600000. If passed value is less
+	than 300000, it sets to 300000 and if passed value is greater than 600000,
+	it sets to 600000
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<iastimerdelay>	-	values from 300000 to 600000 for timer delay.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp set iastimerdelay 300000

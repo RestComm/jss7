@@ -100,9 +100,9 @@ public class RefusalCauseImpl extends AbstractParameter implements RefusalCause 
 
     public String toString() {
         if (this.value != null)
-            return this.value.toString();
+            return new StringBuffer().append("RefusalCause [").append("value=").append(value).append("]").toString();
         else {
-            return ((Integer) this.digValue).toString();
+            return new StringBuffer().append("RefusalCause [").append("digValue=").append(digValue).append("]").toString();
         }
     }
 

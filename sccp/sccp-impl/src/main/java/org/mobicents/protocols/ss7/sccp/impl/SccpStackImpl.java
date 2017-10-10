@@ -59,6 +59,7 @@ import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.congestion.SccpCongestionControl;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpAddressedMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnErrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpSegmentableMessageImpl;
@@ -82,6 +83,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -123,6 +125,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
     private static final String MAX_DATA_MSG = "maxdatamessage";
     private static final String REMOVE_SPC = "removespc";
+    private static final String CAN_RELAY = "canrelay";
     private static final String RESERVED_FOR_NATIONAL_USE_VALUE_ADDRESS_INDICATOR = "reservedfornationalusevalue_addressindicator";
     private static final String SCCP_PROTOCOL_VERSION = "sccpProtocolVersion";
     private static final String PREVIEW_MODE = "previewMode";
@@ -133,6 +136,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     private static final String CONG_CONTROL_TIMER_D = "congControl_TIMER_D";
     private static final String CONG_CONTROL_ALGO = "congControl_Algo";
     private static final String CONG_CONTROL_BLOCKING_OUTGOUNG_SCCP_MESSAGES = "congControl_blockingOutgoungSccpMessages";
+    private static final String TIMER_EXECUTORS_THREAD_COUNT = "timerexecutors_threadcount";
 
     /**
      * Interval in milliseconds in which new coming for an affected PC MTP-STATUS messages will be logged
@@ -157,12 +161,12 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     protected int resetTimerDelay = 15000;
     protected int reassemblyTimerDelay = 15000;
 
-    protected int sendTimeout = 10000;
-
     // Max available Sccp message data for all messages
     protected int maxDataMessage = 2560;
     // remove PC from calledPartyAddress when sending to MTP3
     private boolean removeSpc = true;
+    // can relay when relay with coupling condition is met
+    private boolean canRelay = false;
     // min (starting) SST sending interval (millisec)
     protected int sstTimerDuration_Min = 10000;
     // max (after increasing) SST sending interval (millisec)
@@ -216,7 +220,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     protected SccpRoutingControl sccpRoutingControl;
     protected SccpCongestionControl sccpCongestionControl;
 
-    protected FastMap<Integer, SccpConnectionImpl> connections = new FastMap<Integer, SccpConnectionImpl>();
+    protected FastMap<Integer, SccpConnectionImpl> connections = new FastMap<Integer, SccpConnectionImpl>().shared();
 
     protected int referenceNumberCounterMax = 0xffffff;
 
@@ -343,6 +347,15 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         this.store();
     }
 
+    public void setCanRelay(boolean canRelay) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("CanRelay parameter can be updated only when SCCP stack is running");
+
+        this.canRelay = canRelay;
+
+        this.store();
+    }
+
     public void setSccpProtocolVersion(SccpProtocolVersion sccpProtocolVersion) throws Exception {
         if (!this.isStarted())
             throw new Exception("SccpProtocolVersion parameter can be updated only when SCCP stack is running");
@@ -382,8 +395,13 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         if (this.isStarted())
             throw new Exception("ConnectionTimersThreadCount parameter can be updated only when SCCP stack is NOT running");
 
-        if (timerExecutorsThreadCount > 0 && timerExecutorsThreadCount <= 100)
-            this.timerExecutorsThreadCount = timerExecutorsThreadCount;
+        if (timerExecutorsThreadCount < 1) {
+            timerExecutorsThreadCount = 1;
+        }
+        if (timerExecutorsThreadCount > 1000) {
+            timerExecutorsThreadCount = 1000;
+        }
+        this.timerExecutorsThreadCount = timerExecutorsThreadCount;
     }
 
     public void setSstTimerDuration_Min(int sstTimerDuration_Min) throws Exception {
@@ -515,6 +533,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
     public boolean isRemoveSpc() {
         return this.removeSpc;
+    }
+
+    public boolean isCanRelay() {
+        return this.canRelay;
     }
 
     public SccpProtocolVersion getSccpProtocolVersion() {
@@ -737,14 +759,6 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         this.store();
     }
 
-    public int getSendTimeout() {
-        return sendTimeout;
-    }
-
-    public void setSendTimeout(int sendTimeout) {
-        this.sendTimeout = sendTimeout;
-    }
-
     public synchronized int newSegmentationLocalRef() {
         return ++this.segmentationLocalRef;
     }
@@ -932,31 +946,27 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
     protected SccpConnectionImpl newConnection(int localSsn, ProtocolClass protocol) throws MaxConnectionCountReached {
         SccpConnectionImpl conn;
-        Integer refNumber;
-        synchronized (this) {
-            refNumber = newReferenceNumber();
+        Integer refNumber = newReferenceNumber();
 
-            if (protocol.getProtocolClass() == 2) {
-                conn = new SccpConnectionImpl(localSsn, new LocalReferenceImpl(refNumber), protocol, this, sccpRoutingControl);
-            } else if (protocol.getProtocolClass() == 3) {
-                conn = new SccpConnectionWithFlowControlImpl(localSsn, new LocalReferenceImpl(refNumber), protocol, this, sccpRoutingControl);
-            } else {
-                logger.error(String.format("Unsupported connection class %d", protocol.getProtocolClass()));
-                throw new IllegalArgumentException();
-            }
-
-            connections.put(refNumber, conn);
+        if (protocol.getProtocolClass() == 2) {
+            conn = new SccpConnectionImpl(localSsn, new LocalReferenceImpl(refNumber), protocol, this, sccpRoutingControl);
+        } else if (protocol.getProtocolClass() == 3) {
+            conn = new SccpConnectionWithFlowControlImpl(localSsn, new LocalReferenceImpl(refNumber), protocol, this, sccpRoutingControl);
+        } else {
+            logger.error(String.format("Unsupported connection class %d", protocol.getProtocolClass()));
+            throw new IllegalArgumentException();
         }
+
+        connections.put(refNumber, conn);
         return conn;
     }
 
     protected void removeConnection(LocalReference ref) {
-        synchronized (this) {
-            SccpConnectionImpl conn = connections.get(ref.getValue());
-            conn.stopTimers();
-            conn.setState(SccpConnectionState.CLOSED);
-            connections.remove(ref.getValue());
-        }
+        SccpConnectionImpl conn = connections.get(ref.getValue());
+        connections.remove(ref.getValue());
+
+        conn.stopTimers();
+        conn.setState(SccpConnectionState.CLOSED);
     }
 
     protected int newReferenceNumber() throws MaxConnectionCountReached {
@@ -1487,6 +1497,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
             writer.write(this.maxDataMessage, MAX_DATA_MSG, Integer.class);
             writer.write(this.removeSpc, REMOVE_SPC, Boolean.class);
+            writer.write(this.canRelay, CAN_RELAY, Boolean.class);
+            writer.write(this.timerExecutorsThreadCount, TIMER_EXECUTORS_THREAD_COUNT, Integer.class);
             writer.write(this.previewMode, PREVIEW_MODE, Boolean.class);
             if (this.sccpProtocolVersion != null)
                 writer.write(this.sccpProtocolVersion.toString(), SCCP_PROTOCOL_VERSION, String.class);
@@ -1560,6 +1572,15 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             Boolean volb = reader.read(REMOVE_SPC, Boolean.class);
             if (volb != null)
                 this.removeSpc = volb;
+
+            volb = reader.read(CAN_RELAY, Boolean.class);
+            if (volb != null)
+                this.canRelay = volb;
+
+            vali = reader.read(TIMER_EXECUTORS_THREAD_COUNT, Integer.class);
+            if (vali != null)
+                this.timerExecutorsThreadCount = vali;
+            
             volb = reader.read(PREVIEW_MODE, Boolean.class);
             if (volb != null)
                 this.previewMode = volb;

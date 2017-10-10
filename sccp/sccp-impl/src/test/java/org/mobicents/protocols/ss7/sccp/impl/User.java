@@ -39,10 +39,12 @@ import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.Credit;
+import org.mobicents.protocols.ss7.sccp.parameter.ErrorCause;
 import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.RefusalCause;
 import org.mobicents.protocols.ss7.sccp.parameter.RefusalCauseValue;
+import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCause;
 import org.mobicents.protocols.ss7.sccp.parameter.ResetCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
@@ -58,10 +60,9 @@ public class User extends BaseSccpListener implements SccpListener {
     // protected SccpMessage msg;
     protected List<SccpMessage> messages = new ArrayList<SccpMessage>();
     protected List<byte[]> receivedData = new ArrayList<>();
-    protected int resetCount;
-    protected int refusedCount;
-    protected int errorCount;
     protected boolean refuseConnections;
+    protected UserStats stats = new UserStats();
+    private UserOptions options = new UserOptions();
 
     public User(SccpProvider provider, SccpAddress address, SccpAddress dest, int ssn) {
         this.provider = provider;
@@ -211,38 +212,51 @@ public class User extends BaseSccpListener implements SccpListener {
     @Override
     public void onConnectIndication(SccpConnection conn, SccpAddress calledAddress, SccpAddress callingAddress, ProtocolClass clazz, Credit credit, byte[] data, Importance importance) throws Exception {
         if (!refuseConnections) {
-            conn.confirm(null, credit, new byte[] {});
+            conn.confirm(null, (options.confirmCredit != null) ? options.confirmCredit : credit, options.sendConfirmData);
         } else {
             conn.refuse(new RefusalCauseImpl(RefusalCauseValue.END_USER_ORIGINATED), new byte[] {});
-            refusedCount++;
+            stats.refusedCount++;
+        }
+    }
+
+    @Override
+    public void onConnectConfirm(SccpConnection conn, byte[] data) {
+        if (data != null && data.length > 0) {
+            this.receivedData.add(data);
         }
     }
 
     @Override
     public void onResetIndication(SccpConnection conn, ResetCause reason) {
-        resetCount++;
+        stats.resetCount++;
     }
 
     @Override
     public void onResetConfirm(SccpConnection conn) {
-        resetCount++;
+        stats.resetCount++;
     }
 
     @Override
     public void onDisconnectIndication(SccpConnection conn, RefusalCause reason, byte[] data) {
-        refusedCount++;
+        stats.refusedCount++;
+    }
+
+    @Override
+    public void onDisconnectIndication(SccpConnection conn, ReleaseCause reason, byte[] data) {
+        stats.releaseCause = reason;
+    }
+
+    @Override
+    public void onDisconnectIndication(SccpConnection conn, ErrorCause errorCause) {
+        stats.disconnectError = errorCause;
     }
 
     public int getResetCount() {
-        return resetCount;
+        return stats.resetCount;
     }
 
     public int getRefusedCount() {
-        return refusedCount;
-    }
-
-    public int getErrorCount() {
-        return errorCount;
+        return stats.refusedCount;
     }
 
     public void setRefuseConnections(boolean refuseConnections) {
@@ -256,5 +270,38 @@ public class User extends BaseSccpListener implements SccpListener {
 
     public List<byte[]> getReceivedData() {
         return receivedData;
+    }
+
+    public UserStats getStats() {
+        return stats;
+    }
+
+    public UserOptions getOptions() {
+        return options;
+    }
+
+    public static class UserStats {
+        protected int resetCount;
+        protected int refusedCount;
+        protected int errorCount;
+        private ReleaseCause releaseCause;
+        private ErrorCause disconnectError;
+
+        public ReleaseCause getReleaseCause() {
+            return releaseCause;
+        }
+
+        public ErrorCause getDisconnectError() {
+            return disconnectError;
+        }
+    }
+
+    public static class UserOptions {
+        private byte[] sendConfirmData = new byte[] {};
+        public Credit confirmCredit;
+
+        public void setSendConfirmData(byte[] data) {
+            this.sendConfirmData = data;
+        }
     }
 }

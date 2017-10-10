@@ -99,9 +99,9 @@ public class ResetCauseImpl extends AbstractParameter  implements ResetCause {
 
     public String toString() {
         if (this.value != null)
-            return this.value.toString();
+            return new StringBuffer().append("ResetCause [").append("value=").append(value).append("]").toString();
         else {
-            return ((Integer) this.digValue).toString();
+            return new StringBuffer().append("ResetCause [").append("digValue=").append(digValue).append("]").toString();
         }
     }
 

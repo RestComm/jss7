@@ -1,0 +1,19 @@
+Name
+	sccp get resettimerdelay
+
+SYNOPSIS
+	sccp get resettimerdelay stackname <stack-name>
+
+DESCRIPTION
+	Gets the value for resettimerdelay property.
+	
+PARAMETERS
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp get resettimerdelay

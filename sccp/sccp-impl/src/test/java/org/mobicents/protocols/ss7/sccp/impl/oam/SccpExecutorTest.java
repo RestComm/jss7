@@ -918,6 +918,42 @@ public class SccpExecutorTest {
         res = this.sccpExecutor.execute(rspCmd.split(" "));
         assertEquals(this.sccpStack.getSstTimerDuration_IncreaseFactor(), 2.55);
 
+        rspCmd = "sccp set canrelay true";
+        res = this.sccpExecutor.execute(rspCmd.split(" "));
+        assertEquals(this.sccpStack.isCanRelay(), true);
+
+        rspCmd = "sccp set connesttimerdelay 60001";
+        res = this.sccpExecutor.execute(rspCmd.split(" "));
+        assertEquals(this.sccpStack.getConnEstTimerDelay(), 60001);
+
+        rspCmd = "sccp set iastimerdelay 300001";
+        res = this.sccpExecutor.execute(rspCmd.split(" "));
+        assertEquals(this.sccpStack.getIasTimerDelay(), 300001);
+
+        rspCmd = "sccp set iartimerdelay 660001";
+        res = this.sccpExecutor.execute(rspCmd.split(" "));
+        assertEquals(this.sccpStack.getIarTimerDelay(), 660001);
+
+        rspCmd = "sccp set reltimerdelay 10001";
+        res = this.sccpExecutor.execute(rspCmd.split(" "));
+        assertEquals(this.sccpStack.getRelTimerDelay(), 10001);
+
+        rspCmd = "sccp set repeatreltimerdelay 10001";
+        res = this.sccpExecutor.execute(rspCmd.split(" "));
+        assertEquals(this.sccpStack.getRepeatRelTimerDelay(), 10001);
+
+        rspCmd = "sccp set inttimerdelay 1";
+        res = this.sccpExecutor.execute(rspCmd.split(" "));
+        assertEquals(this.sccpStack.getIntTimerDelay(), 1);
+
+        rspCmd = "sccp set guardtimerdelay 1380001";
+        res = this.sccpExecutor.execute(rspCmd.split(" "));
+        assertEquals(this.sccpStack.getGuardTimerDelay(), 1380001);
+
+        rspCmd = "sccp set resettimerdelay 10001";
+        res = this.sccpExecutor.execute(rspCmd.split(" "));
+        assertEquals(this.sccpStack.getResetTimerDelay(), 10001);
+
         rspCmd = "sccp get zMarginXudtMessage";
         res = this.sccpExecutor.execute(rspCmd.split(" "));
 

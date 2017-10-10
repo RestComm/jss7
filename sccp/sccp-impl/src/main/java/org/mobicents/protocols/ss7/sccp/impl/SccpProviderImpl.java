@@ -161,7 +161,7 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
                 connections.put(new LocalReferenceImpl(entry.getKey()), entry.getValue());
             }
         }
-        return connections;
+        return connections.shared();
     }
 
     public void send(SccpDataMessage message) throws IOException {

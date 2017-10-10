@@ -101,6 +101,6 @@ public class CreditImpl extends AbstractParameter implements Credit {
 
     @Override
     public String toString() {
-        return String.valueOf(value);
+        return new StringBuffer().append("Credit [").append("value=").append(value).append("]").toString();
     }
 }
