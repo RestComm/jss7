@@ -1,0 +1,19 @@
+Name
+	sccp get iastimerdelay
+
+SYNOPSIS
+	sccp get iastimerdelay stackname <stack-name>
+
+DESCRIPTION
+	Gets the value for iastimerdelay property.
+	
+PARAMETERS
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp get iastimerdelay

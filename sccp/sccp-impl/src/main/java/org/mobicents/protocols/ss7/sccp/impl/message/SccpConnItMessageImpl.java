@@ -35,6 +35,7 @@ import org.mobicents.protocols.ss7.sccp.message.SccpConnItMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.Credit;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.parameter.SequenceNumber;
 import org.mobicents.protocols.ss7.sccp.parameter.SequencingSegmenting;
 
 import java.io.ByteArrayOutputStream;
@@ -164,5 +165,26 @@ public class SccpConnItMessageImpl extends SccpConnReferencedMessageImpl impleme
         } catch (IOException e) {
             throw new ParseException(e);
         }
+    }
+
+    public boolean isMoreData() {
+        return sequencingSegmenting.isMoreData();
+    }
+
+    public void setMoreData(boolean moreData) {
+        if (sequencingSegmenting == null) {
+            // sendSequenceNumber and receiveSequenceNumber are later re-initialized in MessageSender
+            sequencingSegmenting = new SequencingSegmentingImpl();
+        }
+        sequencingSegmenting.setMoreData(moreData);
+    }
+
+    public void setSequencing(SequenceNumber sendSequenceNumber, SequenceNumber receiveSequenceNumber) {
+        if (sequencingSegmenting == null) {
+            // sendSequenceNumber and receiveSequenceNumber are later re-initialized in MessageSender
+            sequencingSegmenting = new SequencingSegmentingImpl();
+        }
+        sequencingSegmenting.setSendSequenceNumber(sendSequenceNumber);
+        sequencingSegmenting.setReceiveSequenceNumber(receiveSequenceNumber);
     }
 }

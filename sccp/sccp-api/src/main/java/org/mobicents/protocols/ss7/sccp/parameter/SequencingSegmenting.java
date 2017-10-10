@@ -23,7 +23,12 @@
 package org.mobicents.protocols.ss7.sccp.parameter;
 
 public interface SequencingSegmenting {
-    int getSendSequenceNumber();
-    int getReceiveSequenceNumber();
+    SequenceNumber getSendSequenceNumber();
+    void setSendSequenceNumber(SequenceNumber sendSequenceNumber);
+
+    SequenceNumber getReceiveSequenceNumber();
+    void setReceiveSequenceNumber(SequenceNumber receiveSequenceNumber);
+
     boolean isMoreData();
+    void setMoreData(boolean moreData);
 }

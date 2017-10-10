@@ -285,6 +285,9 @@ As name suggests `SccpStack` initiates the SCCP stack routines.
     <!-- ==================================================================== -->
     <bean name="SccpStack" class="org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl">
         <constructor>
+            <parameter>
+                <inject bean="SS7Scheduler" />
+            </parameter>
             <parameter>SccpStack</parameter>
         </constructor>
         <property name="persistDir">${jboss.server.data.dir}</property>

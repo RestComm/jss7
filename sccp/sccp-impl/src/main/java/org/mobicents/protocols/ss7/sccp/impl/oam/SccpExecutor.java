@@ -1979,6 +1979,69 @@ public class SccpExecutor implements ShellExecutor {
         } else if (parName.equals("cc_timer_d")) {
             int val = Integer.parseInt(options[3]);
             this.sccpStack.setCongControlTIMER_D(val);
+        } else if (parName.equals("canrelay")) {
+            boolean val = Boolean.parseBoolean(options[3]);
+            this.sccpStack.setCanRelay(val);
+        } else if (parName.equals("connesttimerdelay")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setConnEstTimerDelay(val);
+        } else if (parName.equals("iastimerdelay")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setIasTimerDelay(val);
+        } else if (parName.equals("iartimerdelay")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setIarTimerDelay(val);
+        } else if (parName.equals("reltimerdelay")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setRelTimerDelay(val);
+        } else if (parName.equals("repeatreltimerdelay")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setRepeatRelTimerDelay(val);
+        } else if (parName.equals("inttimerdelay")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setIntTimerDelay(val);
+        } else if (parName.equals("guardtimerdelay")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setGuardTimerDelay(val);
+        } else if (parName.equals("resettimerdelay")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setResetTimerDelay(val);
+        } else if (parName.equals("timerexecutors_threadcount")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setTimerExecutorsThreadCount(val);
+        } else if (parName.equals("canrelay")) {
+            boolean val = Boolean.parseBoolean(options[3]);
+            this.sccpStack.setCanRelay(val);
+        } else if (parName.equals("connesttimerdelay")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setConnEstTimerDelay(val);
+        } else if (parName.equals("iastimerdelay")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setIasTimerDelay(val);
+        } else if (parName.equals("iartimerdelay")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setIarTimerDelay(val);
+        } else if (parName.equals("reltimerdelay")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setRelTimerDelay(val);
+        } else if (parName.equals("repeatreltimerdelay")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setRepeatRelTimerDelay(val);
+        } else if (parName.equals("inttimerdelay")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setIntTimerDelay(val);
+        } else if (parName.equals("guardtimerdelay")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setGuardTimerDelay(val);
+        } else if (parName.equals("resettimerdelay")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setResetTimerDelay(val);
+        } else if (parName.equals("reassemblytimerdelay")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setReassemblyTimerDelay(val);
+        } else if (parName.equals("timerexecutors_threadcount")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setTimerExecutorsThreadCount(val);
         } else if (parName.equals("cc_algo")) {
             String vals = options[3];
             SccpCongestionControlAlgo algo = Enum.valueOf(SccpCongestionControlAlgo.class, vals);
@@ -2030,6 +2093,26 @@ public class SccpExecutor implements ShellExecutor {
                 sb.append(this.sccpStack.getCongControlTIMER_A());
             } else if (parName.equals("cc_timer_d")) {
                 sb.append(this.sccpStack.getCongControlTIMER_D());
+            } else if (parName.equals("canrelay")) {
+                sb.append(this.sccpStack.isCanRelay());
+            } else if (parName.equals("connesttimerdelay")) {
+                sb.append(this.sccpStack.getConnEstTimerDelay());
+            } else if (parName.equals("iastimerdelay")) {
+                sb.append(this.sccpStack.getIasTimerDelay());
+            } else if (parName.equals("iartimerdelay")) {
+                sb.append(this.sccpStack.getIarTimerDelay());
+            } else if (parName.equals("reltimerdelay")) {
+                sb.append(this.sccpStack.getRelTimerDelay());
+            } else if (parName.equals("repeatreltimerdelay")) {
+                sb.append(this.sccpStack.getRepeatRelTimerDelay());
+            } else if (parName.equals("inttimerdelay")) {
+                sb.append(this.sccpStack.getIntTimerDelay());
+            } else if (parName.equals("guardtimerdelay")) {
+                sb.append(this.sccpStack.getGuardTimerDelay());
+            } else if (parName.equals("resettimerdelay")) {
+                sb.append(this.sccpStack.getResetTimerDelay());
+            } else if (parName.equals("timerexecutors_threadcount")) {
+                sb.append(this.sccpStack.getTimerExecutorsThreadCount());
             } else if (parName.equals("cc_algo")) {
                 sb.append(this.sccpStack.getCongControl_Algo());
             } else if (parName.equals("cc_blockingoutgoungsccpmessages")) {

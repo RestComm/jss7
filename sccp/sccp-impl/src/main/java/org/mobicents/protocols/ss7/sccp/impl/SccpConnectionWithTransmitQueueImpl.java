@@ -88,7 +88,7 @@ abstract class SccpConnectionWithTransmitQueueImpl extends SccpConnectionBaseImp
 
         public long perform() {
             SccpConnMessage message;
-            while (!outgoing.isEmpty() && getState() == ESTABLISHED) {
+            while (!outgoing.isEmpty() && isCanSendData()) {
                 message = outgoing.poll();
 
                 try {
@@ -96,7 +96,7 @@ abstract class SccpConnectionWithTransmitQueueImpl extends SccpConnectionBaseImp
 
                 } catch (Exception e) {
                     // log here Exceptions from MTP3 level
-                    logger.error("IOException when sending the message to MTP3 level: " + e.getMessage(), e);
+                    logger.error("IOException when sending the message: " + e.getMessage(), e);
                     throw new RuntimeException(e);
                 }
 

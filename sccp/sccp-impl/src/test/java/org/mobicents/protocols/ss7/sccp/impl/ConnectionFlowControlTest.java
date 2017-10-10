@@ -5,6 +5,7 @@ import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.MaxConnectionCountReached;
 import org.mobicents.protocols.ss7.sccp.SccpConnection;
 import org.mobicents.protocols.ss7.sccp.SccpConnectionState;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt2MessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.CreditImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
@@ -23,9 +24,11 @@ import org.testng.annotations.*;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 public class ConnectionFlowControlTest extends SccpHarness {
@@ -35,6 +38,7 @@ public class ConnectionFlowControlTest extends SccpHarness {
     private static final byte[] DATA2 = {2, 2, 2, 2, 2, 2, 2, 2};
     private static final byte[] DATA3 = {3, 3, 3, 3, 3, 3, 3, 3};
     private static final byte[] DATA4 = {4, 4, 4, 4, 4, 4, 4, 4};
+    private static final byte[] DATA42 = {4, 4, 4, 4, 4, 4, 4, 5};
     private static final byte[] DATA5 = {5, 5, 5, 5, 5, 5, 5, 5};
     private static final byte[] DATA6 = {6, 6, 6, 6, 6, 6, 6, 6};
 
@@ -108,7 +112,7 @@ public class ConnectionFlowControlTest extends SccpHarness {
     }
 
     @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" })
-    public void testLowCredit() throws Exception {
+    public void testWaitingForWindow() throws Exception {
         ((SccpStackImplConnProxy)sccpStack1).setAkAutoSending(false);
         ((SccpStackImplConnProxy)sccpStack2).setAkAutoSending(false);
 
@@ -140,7 +144,7 @@ public class ConnectionFlowControlTest extends SccpHarness {
         assertEquals(sccpStack1.getConnectionsNumber(), 1);
 
         SccpConnectionWithFlowControlImplProxy conn2 = (SccpConnectionWithFlowControlImplProxy) sccpProvider2
-                .getConnections().values().iterator().next();//TODO2
+                .getConnections().values().iterator().next();
 
         Thread.sleep(100);
 
@@ -157,7 +161,9 @@ public class ConnectionFlowControlTest extends SccpHarness {
         assertEquals(u1.getReceivedData().get(0), DATA1);
         assertEquals(u1.getReceivedData().get(1), DATA2);
 
-        assertTrue(conn1.isShouldSendAk());
+        if (!conn1.isPreemptiveAck()) {
+            assertTrue(conn1.isShouldSendAk());
+        }
         assertTrue(conn2.getTransmitQueueSize() == 2);
 
         conn1.sendAk();
@@ -165,6 +171,69 @@ public class ConnectionFlowControlTest extends SccpHarness {
         Thread.sleep(100);
 
         assertEquals(u1.getReceivedData().size(), 4);
+        assertEquals(u1.getReceivedData().get(2), DATA3);
+        assertEquals(u1.getReceivedData().get(3), DATA4);
+
+        conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), new byte[] {});
+
+        Thread.sleep(100);
+
+        assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
+        assertEquals(conn2.getState(), SccpConnectionState.CLOSED);
+
+        assertEquals(sccpStack1.getConnectionsNumber(), 0);
+        assertEquals(sccpStack2.getConnectionsNumber(), 0);
+    }
+
+    @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" })
+    public void testLowCredit() throws Exception {
+        ((SccpStackImplConnProxy)sccpStack1).setAkAutoSending(true);
+        ((SccpStackImplConnProxy)sccpStack2).setAkAutoSending(true);
+
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+
+        User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+
+        u1.register();
+        u2.register();
+
+        Thread.sleep(100);
+
+        int credit = 2;
+
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
+        crMsg.setProtocolClass(new ProtocolClassImpl(3));
+        crMsg.setCredit(new CreditImpl(credit));
+
+        SccpConnectionWithFlowControlImplProxy conn1 = (SccpConnectionWithFlowControlImplProxy) sccpProvider1
+                .newConnection(8, new ProtocolClassImpl(3));
+        conn1.establish(crMsg);
+
+        Thread.sleep(100);
+
+        assertEquals(sccpStack2.getConnectionsNumber(), 1);
+        assertEquals(sccpStack1.getConnectionsNumber(), 1);
+
+        SccpConnectionWithFlowControlImplProxy conn2 = (SccpConnectionWithFlowControlImplProxy) sccpProvider2
+                .getConnections().values().iterator().next();
+
+        Thread.sleep(100);
+
+        conn1.send(DATA0);
+
+        conn2.send(DATA1);
+        conn2.send(DATA2);
+        conn2.send(DATA3);
+        conn2.send(DATA4);
+
+        Thread.sleep(100);
+
+        assertEquals(u1.getReceivedData().size(), 4);
+        assertEquals(u1.getReceivedData().get(0), DATA1);
+        assertEquals(u1.getReceivedData().get(1), DATA2);
         assertEquals(u1.getReceivedData().get(2), DATA3);
         assertEquals(u1.getReceivedData().get(3), DATA4);
 
@@ -192,7 +261,7 @@ public class ConnectionFlowControlTest extends SccpHarness {
 
         Thread.sleep(100);
 
-        int credit = 10;
+        int credit = 4;
 
         SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
         crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
@@ -218,14 +287,16 @@ public class ConnectionFlowControlTest extends SccpHarness {
         conn2.send(DATA2);
         conn2.send(DATA3);
         conn2.send(DATA4);
+        conn2.send(DATA42);
 
         Thread.sleep(300);
 
-        assertEquals(u1.getReceivedData().size(), 4);
+        assertEquals(u1.getReceivedData().size(), 5);
         assertEquals(u1.getReceivedData().get(0), DATA1);
         assertEquals(u1.getReceivedData().get(1), DATA2);
         assertEquals(u1.getReceivedData().get(2), DATA3);
         assertEquals(u1.getReceivedData().get(3), DATA4);
+        assertEquals(u1.getReceivedData().get(4), DATA42);
 
         assertTrue(!conn1.isShouldSendAk());
         assertEquals(conn2.getTransmitQueueSize(), 0);
@@ -242,17 +313,17 @@ public class ConnectionFlowControlTest extends SccpHarness {
 
         assertTrue(!conn1.isShouldSendAk());
         assertEquals(conn2.getTransmitQueueSize(), 2);
-        assertEquals(u1.getReceivedData().size(), 4);
+        assertEquals(u1.getReceivedData().size(), 5);
 
         conn1.setOverloaded(false);
         Thread.sleep(300);
 
         assertTrue(!conn1.isShouldSendAk());
         assertEquals(conn2.getTransmitQueueSize(), 0);
-        assertEquals(u1.getReceivedData().size(), 6);
+        assertEquals(u1.getReceivedData().size(), 7);
 
-        assertEquals(u1.getReceivedData().get(4), DATA5);
-        assertEquals(u1.getReceivedData().get(5), DATA6);
+        assertEquals(u1.getReceivedData().get(5), DATA5);
+        assertEquals(u1.getReceivedData().get(6), DATA6);
 
         conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), new byte[] {});
 
@@ -321,6 +392,105 @@ public class ConnectionFlowControlTest extends SccpHarness {
         assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
     }
 
+    @Test(groups = { "SccpMessage", "functional.connection" })
+    public void testBigCreditTwoDirections() throws Exception {
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+
+        User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+
+        u1.register();
+        u2.register();
+
+        Thread.sleep(100);
+
+        int credit = 127;
+
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
+        crMsg.setProtocolClass(new ProtocolClassImpl(3));
+        crMsg.setCredit(new CreditImpl(credit));
+
+        SccpConnection conn1 = sccpProvider1.newConnection(8, new ProtocolClassImpl(3));
+        conn1.establish(crMsg);
+
+        Thread.sleep(100);
+
+        assertEquals(sccpStack2.getConnectionsNumber(), 1);
+        assertEquals(sccpStack1.getConnectionsNumber(), 1);
+        SccpConnection conn2 = sccpProvider2.getConnections().values().iterator().next();
+
+        Thread.sleep(100);
+
+        ReentrantLock starter = new ReentrantLock();
+        starter.lock();
+        SenderThread sender1 = new SenderThread(starter, conn1, 1);
+        SenderThread sender2 = new SenderThread(starter, conn2, 2);
+        Thread senderThread1 = new Thread(sender1);
+        Thread senderThread2 = new Thread(sender2);
+        senderThread1.start();
+        senderThread2.start();
+
+        starter.unlock();
+
+        Thread.sleep(100);
+
+        while (!sender1.finished.get() && !sender2.finished.get()) {
+            Thread.sleep(100);
+        }
+
+        Thread.sleep(500);
+
+        conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), new byte[] {});
+
+        Thread.sleep(100);
+
+        assertEquals(sccpStack1.getConnectionsNumber(), 0);
+        assertEquals(sccpStack2.getConnectionsNumber(), 0);
+
+        assertEquals(conn2.getState(), SccpConnectionState.CLOSED);
+        assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
+
+        assertFalse(sender1.failed);
+        assertFalse(sender2.failed);
+    }
+
+    public static class SenderThread implements Runnable {
+        private ReentrantLock starter;
+        private SccpConnection conn;
+        private byte workerNumber;
+        private boolean failed;
+        private AtomicBoolean finished = new AtomicBoolean(false);
+
+        public SenderThread(ReentrantLock starter, SccpConnection conn, int workerNumber) {
+            this.starter = starter;
+            this.conn = conn;
+            this.workerNumber = (byte) workerNumber;
+        }
+
+        @Override
+        public void run() {
+            while (starter.isLocked()) {
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                    failed = true;
+                    return;
+                }
+            }
+            for (int i=0; i<=127*3; i++) {
+                try {
+                    conn.send(new byte[]{workerNumber, (byte)i, (byte)i, (byte)i, (byte)i});
+                } catch (Exception e) {
+                    failed = true;
+                    return;
+                }
+            }
+            finished.set(true);
+        }
+    }
+
     // instantiates connection using proxy class
     private class SccpStackImplConnProxy extends SccpStackImpl {
         private boolean akAutoSending = true;
@@ -331,18 +501,15 @@ public class ConnectionFlowControlTest extends SccpHarness {
 
         protected SccpConnectionImpl newConnection(int localSsn, ProtocolClass protocol) throws MaxConnectionCountReached {
             SccpConnectionImpl conn;
-            Integer refNumber;
-            synchronized (this) {
-                refNumber = newReferenceNumber();
+            Integer refNumber = newReferenceNumber();
 
-                if (protocol.getProtocolClass() != 3) {
-                    throw new IllegalArgumentException();
-                }
-                conn = new SccpConnectionWithFlowControlImplProxy(localSsn, new LocalReferenceImpl(refNumber), protocol,
-                        this, sccpRoutingControl, akAutoSending);
-
-                connections.put(refNumber, conn);
+            if (protocol.getProtocolClass() != 3) {
+                throw new IllegalArgumentException();
             }
+            conn = new SccpConnectionWithFlowControlImplProxy(localSsn, new LocalReferenceImpl(refNumber), protocol,
+                    this, sccpRoutingControl, akAutoSending);
+
+            connections.put(refNumber, conn);
             return conn;
         }
 
@@ -354,22 +521,29 @@ public class ConnectionFlowControlTest extends SccpHarness {
     // allows to block automatic AK message sending and instead updates status 'AK should be sent'
     private class SccpConnectionWithFlowControlImplProxy extends SccpConnectionWithFlowControlImpl {
 
+        private boolean akAutoSending;
+
         public SccpConnectionWithFlowControlImplProxy(int localSsn, LocalReference localReference, ProtocolClass protocol,
                                                       SccpStackImpl stack, SccpRoutingControl sccpRoutingControl,
                                                       boolean akAutoSending) {
             super(localSsn, localReference, protocol, stack, sccpRoutingControl);
-            this.windows = new FlowControlWindowsProxy(stack.name, connectionLock, akAutoSending);
+            this.akAutoSending = akAutoSending;
         }
 
+        protected SccpFlowControl newSccpFlowControl(Credit credit) {
+            return new SccpFlowControlProxy(stack.name, credit.getValue(), connectionLock, akAutoSending);
+        }
+
+        @Override
         protected void sendAk(Credit credit) throws Exception {
             super.sendAk(credit);
-            ((FlowControlWindowsProxy)this.windows).resetShouldSendAk();
+            ((SccpFlowControlProxy)this.flow).resetShouldSendAk();
         }
 
         public boolean isShouldSendAk() {
             try {
                 connectionLock.lock();
-                return ((FlowControlWindowsProxy)windows).isShouldSendAk();
+                return ((SccpFlowControlProxy)flow).isShouldSendAk();
             } finally {
                 connectionLock.unlock();
             }
@@ -378,48 +552,38 @@ public class ConnectionFlowControlTest extends SccpHarness {
         public void sendAk() throws Exception {
             super.sendAk();
         }
+
+        @Override
+        protected boolean isCanSendData() {
+            return getState() == SccpConnectionState.ESTABLISHED;
+        }
     }
 
     // allows to block automatic AK message sending
-    private class FlowControlWindowsProxy extends FlowControlWindows {
+    private class SccpFlowControlProxy extends SccpFlowControl {
         private boolean shouldSendAk;
         private boolean akAutoSending;
 
-        public FlowControlWindowsProxy(String name, ReentrantLock lock, boolean akAutoSending) {
-            super(name, lock);
+        public SccpFlowControlProxy(String name, int maximumWindowSize, ReentrantLock lock, boolean akAutoSending) {
+            super(name, maximumWindowSize);
             this.akAutoSending = akAutoSending;
         }
 
-        public SendSequenceNumberHandlingResult handleSequenceNumbers(Byte sendSequenceNumber, byte receiveSequenceNumber) {
-            try {
-                windowLock.lock();
+        @Override
+        public boolean isAkSendCriterion(SccpConnDt2MessageImpl msg) {
 
-                SendSequenceNumberHandlingResult result = super.handleSequenceNumbers(sendSequenceNumber, receiveSequenceNumber);
-                shouldSendAk = result.isAkNeeded();
-                return new SendSequenceNumberHandlingResult(result.isResetNeeded(), result.getResetCause(),
-                        akAutoSending && result.isAkNeeded());
+            boolean value = super.isAkSendCriterion(msg);
+            shouldSendAk = value;
 
-            } finally {
-                windowLock.unlock();
-            }
+            return akAutoSending && value;
         }
 
         public boolean isShouldSendAk() {
-            try {
-                windowLock.lock();
-                return shouldSendAk;
-            } finally {
-                windowLock.unlock();
-            }
+            return shouldSendAk;
         }
 
         public void resetShouldSendAk() {
-            try {
-                windowLock.lock();
-                this.shouldSendAk = false;
-            } finally {
-                windowLock.unlock();
-            }
+            this.shouldSendAk = false;
         }
     }
 }

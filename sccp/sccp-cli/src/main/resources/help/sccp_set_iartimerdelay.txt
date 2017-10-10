@@ -1,0 +1,26 @@
+Name
+	sccp set iartimerdelay
+
+SYNOPSIS
+	sccp set iartimerdelay <iartimerdelay>
+	stackname <stack-name>
+
+DESCRIPTION
+	Set T(iar) timer delay (for how long connection waits to receive a message).
+	Range is 660000 to 1260000. If passed value is less than 660000, it sets to
+	660000 and if passed value is greater than 1260000, it sets to 1260000
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<iartimerdelay>	-	values from 660000 to 1260000 for timer delay.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	sccp set iartimerdelay 660000

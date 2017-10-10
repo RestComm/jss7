@@ -49,13 +49,17 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrefMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt1MessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt2MessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnErrMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnItMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlcMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlsdMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRscMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRsrMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnSegmentableMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpNoticeMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.ErrorCauseImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.RefusalCauseImpl;
@@ -78,6 +82,9 @@ import java.util.Map;
 
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.getDln;
 import static org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil.getSln;
+import static org.mobicents.protocols.ss7.sccp.parameter.ErrorCauseValue.LRN_MISMATCH_INCONSISTENT_SOURCE_LRN;
+import static org.mobicents.protocols.ss7.sccp.parameter.ErrorCauseValue.SERVICE_CLASS_MISMATCH;
+import static org.mobicents.protocols.ss7.sccp.parameter.ReleaseCauseValue.SCCP_FAILURE;
 
 /**
  *
@@ -223,7 +230,7 @@ public class SccpRoutingControl {
         int ssn = conn.getLocalSsn();
 
         SccpListener listener = conn.getListener();
-        if (listener == null) {
+        if (listener == null && !conn.isCouplingEnabled() && !(msg instanceof SccpConnRlsdMessageImpl || msg instanceof SccpConnRlcMessageImpl)) {
             // SCCP user with received SSN is not available - Notify Management
             this.sccpManagement.recdMsgForProhibitedSsn(msg, ssn);
 
@@ -242,25 +249,34 @@ public class SccpRoutingControl {
                     logger.debug(String.format("Local deliver : SCCP CC Message=%s", msg.toString()));
                 }
                 conn.receiveMessage(msg);
-                listener.onConnectConfirm(conn, ((SccpConnCcMessageImpl) msg).getUserData());
+                if (listener != null) {
+                    listener.onConnectConfirm(conn, ((SccpConnCcMessageImpl) msg).getUserData());
+                }
 
             } else if (msg instanceof SccpConnRlsdMessageImpl) {
                 if (logger.isDebugEnabled()) {
                     logger.debug(String.format("Local deliver : SCCP RLSD Message=%s", msg.toString()));
                 }
-                if (!conn.isCouplingEnabled()) {
-                    SccpConnRlsdMessageImpl rlsd = (SccpConnRlsdMessageImpl) msg;
+                SccpConnRlsdMessageImpl rlsd = (SccpConnRlsdMessageImpl)msg;
 
-                    listener.onDisconnectIndication(conn, rlsd.getReleaseCause(), rlsd.getUserData());
+                if (rlsd.getSourceLocalReferenceNumber().getValue() == conn.getRemoteReference().getValue()) {
+                    if (!conn.isCouplingEnabled()) {
 
-                    SccpConnRlcMessageImpl rlc = new SccpConnRlcMessageImpl(conn.getSls(), conn.getLocalSsn());
-                    rlc.setSourceLocalReferenceNumber(conn.getLocalReference());
-                    rlc.setDestinationLocalReferenceNumber(conn.getRemoteReference());
-                    rlc.setOutgoingDpc(conn.getRemoteDpc());
-                    sendConn(rlc);
-                    sccpStackImpl.removeConnection(ref);
+                        if (listener != null) {
+                            listener.onDisconnectIndication(conn, rlsd.getReleaseCause(), rlsd.getUserData());
+                        }
+
+                        SccpConnRlcMessageImpl rlc = new SccpConnRlcMessageImpl(conn.getSls(), conn.getLocalSsn());
+                        rlc.setSourceLocalReferenceNumber(conn.getLocalReference());
+                        rlc.setDestinationLocalReferenceNumber(conn.getRemoteReference());
+                        rlc.setOutgoingDpc(conn.getRemoteDpc());
+                        sendConn(rlc);
+                        sccpStackImpl.removeConnection(ref);
+                    } else {
+                        conn.receiveMessage(msg);
+                    }
                 } else {
-                    conn.receiveMessage(msg);
+                    conn.sendErr(new ErrorCauseImpl(LRN_MISMATCH_INCONSISTENT_SOURCE_LRN));
                 }
 
             } else if (msg instanceof SccpConnRlcMessageImpl) {
@@ -270,7 +286,9 @@ public class SccpRoutingControl {
                 if (!conn.isCouplingEnabled()) {
                     sccpStackImpl.removeConnection(ref);
 
-                    listener.onDisconnectConfirm(conn);
+                    if (listener != null) {
+                        listener.onDisconnectConfirm(conn);
+                    }
                 } else {
                     conn.receiveMessage(msg);
                 }
@@ -280,9 +298,12 @@ public class SccpRoutingControl {
                     logger.debug(String.format("Local deliver : SCCP CREF Message=%s", msg.toString()));
                 }
                 SccpConnCrefMessageImpl cref = (SccpConnCrefMessageImpl)msg;
-                sccpStackImpl.removeConnection(ref);
-
-                listener.onDisconnectIndication(conn, cref.getRefusalCause(), cref.getUserData());
+                if (!conn.isCouplingEnabled()) {
+                    sccpStackImpl.removeConnection(ref);
+                    listener.onDisconnectIndication(conn, cref.getRefusalCause(), cref.getUserData());
+                } else {
+                    conn.receiveMessage(msg);
+                }
 
             } else if (msg instanceof SccpConnRsrMessageImpl) {
                 if (logger.isDebugEnabled()) {
@@ -315,6 +336,23 @@ public class SccpRoutingControl {
 
             } else if (msg instanceof SccpConnAkMessageImpl) {
                 conn.receiveMessage(msg);
+            } else if (msg instanceof SccpConnItMessageImpl) {
+                conn.receiveMessage(msg);
+            } else if (msg instanceof SccpConnErrMessageImpl) {
+                SccpConnErrMessageImpl err = (SccpConnErrMessageImpl) msg;
+                if (!conn.isCouplingEnabled()) {
+
+                    if (err.getErrorCause().getValue() != null && err.getErrorCause().getValue() == SERVICE_CLASS_MISMATCH) {
+                        listener.onDisconnectIndication(conn, err.getErrorCause());
+                        conn.disconnect(new ReleaseCauseImpl(SCCP_FAILURE), new byte[] {});
+                    } else {
+                        listener.onDisconnectIndication(conn, err.getErrorCause());
+                        sccpStackImpl.removeConnection(ref);
+                    }
+
+                } else {
+                    conn.receiveMessage(msg);
+                }
             }
 
         } catch (Exception e) {
@@ -473,7 +511,7 @@ public class SccpRoutingControl {
                 logger.warn(String.format("SccpMessage for sending=%s but no matching dpc=%d & sls=%d SAP found", message, dpc,
                         sls));
             }
-            return ReleaseCauseValue.SCCP_FAILURE;
+            return SCCP_FAILURE;
         }
 
         Mtp3UserPart mup = this.sccpStackImpl.getMtp3UserPart(sap.getMtp3Id());
@@ -482,7 +520,7 @@ public class SccpRoutingControl {
                 logger.warn(String.format("SccpMessage for sending=%s but no matching Mtp3UserPart found for Id=%d", message,
                         sap.getMtp3Id()));
             }
-            return ReleaseCauseValue.SCCP_FAILURE;
+            return SCCP_FAILURE;
         }
 
         LongMessageRuleType lmrt = LongMessageRuleType.LONG_MESSAGE_FORBBIDEN;
@@ -525,7 +563,7 @@ public class SccpRoutingControl {
             SccpConnCrMessageImpl cr = (SccpConnCrMessageImpl) connMessage;
             cr.setImportance(new ImportanceImpl((byte)3));
             return cr.getImportance().getValue();
-        } else if (connMessage instanceof SccpConnDt1MessageImpl || connMessage instanceof SccpConnDt2MessageImpl) {
+        } else if (connMessage instanceof SccpConnSegmentableMessageImpl) {
             return 5;
         } else {
             return 8;
@@ -814,7 +852,7 @@ public class SccpRoutingControl {
         SccpAddress address = rule.translate(calledPartyAddress, translationAddress);
 
         if (msg instanceof SccpConnCrMessageImpl && this.sccpStackImpl.router.spcIsLocal(msg.getIncomingDpc())
-                && !this.sccpStackImpl.router.spcIsLocal(address.getSignalingPointCode())) {
+                && !this.sccpStackImpl.router.spcIsLocal(address.getSignalingPointCode()) && sccpStackImpl.isCanRelay()) {
 
             SccpAddress here = null;
             int localSsn = address.getSubsystemNumber(); // could use any ssn here but we know only dest SSN so will use it
@@ -924,13 +962,6 @@ public class SccpRoutingControl {
         if (calledPartyAddress.getAddressIndicator().isPCPresent()) {
             // DPC present
 
-            // handling of CR messages after address translation
-            if (msg instanceof SccpConnCrMessageImpl && calledPartyAddress.isTranslated()) {
-                LocalReference ref = getSln((SccpConnMessage) msg);
-                SccpConnectionImpl conn = sccpStackImpl.getConnection(ref);
-                conn.remoteDpc = dpc;
-            }
-
             if (this.sccpStackImpl.router.spcIsLocal(dpc)) {
                 // This message is for local routing
 
@@ -971,7 +1002,13 @@ public class SccpRoutingControl {
                                 logger.debug(String.format("Local deliver : SCCP Notice Message=%s", msg.toString()));
                             }
                             listener.onNotice((SccpNoticeMessage) msg);
-                        } else {
+                        } else if (msg instanceof SccpConnCrMessageImpl) {
+                            // handling of CR messages after address translation
+                            SccpConnCrMessageImpl cr = (SccpConnCrMessageImpl) msg;
+                            LocalReference ref = (!msg.getIsMtpOriginated()) ? getSln(cr) : getDln(cr);
+                            SccpConnectionImpl conn = sccpStackImpl.getConnection(ref);
+                            conn.receiveMessage(cr);
+
                             // TODO: process connection-oriented messages
                         }
                     } catch (Exception e) {
@@ -1122,17 +1159,54 @@ public class SccpRoutingControl {
     }
 
     private void routeConn(SccpConnMessage msg) throws Exception {
+        // if it's message receiving than should get connection by DLN
+        // else (if it's transmission) than should use SLN
+        //                                                receiving     transmission
         LocalReference ref = (msg.getIsMtpOriginated()) ? getDln(msg) : getSln(msg);
 
         SccpConnectionImpl conn = sccpStackImpl.getConnection(ref);
+        if (conn == null) {
+            logger.error(String
+                    .format("Dropping message. Received SCCPMessage=%s for routing but can't find connection by local reference %s in this message",
+                            msg, ref));
+            return;
+        }
 
-        int dpc = conn.getRemoteDpc();
-        int ssn = conn.getLocalSsn();
+        Integer dpc = conn.getRemoteDpc();
+        if (dpc == null) {
+            logger.error(String
+                    .format("Dropping message. Received SCCPMessage=%s for routing but can't find remote DPC",
+                            msg, ref));
+            return;
+        }
 
-        if (this.sccpStackImpl.router.spcIsLocal(dpc)) {
+        Integer ssn;
+        if (msg.getIsMtpOriginated()) { // it's receiving
+            // can get SSN from connection
+            ssn = conn.getLocalSsn();
+
+        } else { // it's transmission
+            if (this.sccpStackImpl.router.spcIsLocal(dpc)) {
+                // both connections are available locally so could get SSN from receiving connection
+                LocalReference dln = getDln(msg);
+                SccpConnectionImpl dconn = sccpStackImpl.getConnection(dln);
+                if (dconn == null) {
+                    logger.error(String
+                            .format("Dropping message. Received SCCPMessage=%s for routing but can't find connection by local reference %s in this message",
+                                    msg, ref));
+                    return;
+                }
+                ssn = dconn.getLocalSsn();
+            } else {
+                // sending message via connection to remote node, ssn is unknown
+                ssn = null;
+            }
+        }
+
+        if (this.sccpStackImpl.router.spcIsLocal(dpc) && ssn != null) { // ssn is known, ssn != null will always be true
             // This message is for local routing
 
-            if (ssn > 0) {
+            if (ssn == null || ssn > 0) {
                 SccpListener listener = this.sccpProviderImpl.getSccpListener(ssn);
                 if (listener == null) {
                     if (logger.isEnabledFor(Level.WARN)) {
@@ -1150,24 +1224,32 @@ public class SccpRoutingControl {
 
                     } else if (msg instanceof SccpConnRlsdMessageImpl) {
                         SccpConnRlsdMessageImpl rlsd = (SccpConnRlsdMessageImpl)msg;
-                        listener.onDisconnectIndication(conn,rlsd.getReleaseCause(),rlsd.getUserData());
-                        sccpStackImpl.removeConnection(ref);
 
-                        SccpConnRlcMessageImpl rlc = new SccpConnRlcMessageImpl(conn.getSls(), conn.getLocalSsn());
-                        rlc.setSourceLocalReferenceNumber(conn.getLocalReference());
-                        rlc.setDestinationLocalReferenceNumber(conn.getRemoteReference());
-                        rlc.setOutgoingDpc(conn.getRemoteDpc());
-                        sendConn(rlc);
+                        if (rlsd.getSourceLocalReferenceNumber().getValue() == conn.getRemoteReference().getValue()) {
+                            listener.onDisconnectIndication(conn,rlsd.getReleaseCause(),rlsd.getUserData());
+                            sccpStackImpl.removeConnection(ref);
 
+                            SccpConnRlcMessageImpl rlc = new SccpConnRlcMessageImpl(conn.getSls(), conn.getLocalSsn());
+                            rlc.setSourceLocalReferenceNumber(conn.getLocalReference());
+                            rlc.setDestinationLocalReferenceNumber(conn.getRemoteReference());
+                            rlc.setOutgoingDpc(conn.getRemoteDpc());
+                            sendConn(rlc);
+
+                        } else {
+                            conn.sendErr(new ErrorCauseImpl(LRN_MISMATCH_INCONSISTENT_SOURCE_LRN));
+                        }
                     } else if (msg instanceof SccpConnRlcMessageImpl) {
                         sccpStackImpl.removeConnection(ref);
                         listener.onDisconnectConfirm(conn);
 
                     } else if (msg instanceof SccpConnCrefMessageImpl) {
                         SccpConnCrefMessageImpl cref = (SccpConnCrefMessageImpl)msg;
-                        sccpStackImpl.removeConnection(ref);
-
-                        listener.onDisconnectIndication(conn, cref.getRefusalCause(), cref.getUserData());
+                        if (!conn.isCouplingEnabled()) {
+                            sccpStackImpl.removeConnection(ref);
+                            listener.onDisconnectIndication(conn, cref.getRefusalCause(), cref.getUserData());
+                        } else {
+                            conn.receiveMessage(msg);
+                        }
 
                     } else if (msg instanceof SccpConnRsrMessageImpl) {
                         if (logger.isDebugEnabled()) {
@@ -1184,12 +1266,28 @@ public class SccpRoutingControl {
                         }
                         conn.receiveMessage(msg);
                         listener.onResetConfirm(conn);
-                    } else if (msg instanceof SccpConnDt1MessageImpl) {
-                        conn.receiveMessage(msg); //TODO2 group those cases together
-                    } else if (msg instanceof SccpConnDt2MessageImpl) {
+                    } else if (msg instanceof SccpConnDt1MessageImpl
+                            || msg instanceof SccpConnDt2MessageImpl
+                            || msg instanceof SccpConnAkMessageImpl
+                            || msg instanceof SccpConnAkMessageImpl) {
                         conn.receiveMessage(msg);
-                    } else if (msg instanceof SccpConnAkMessageImpl) {
+                    } else if (msg instanceof SccpConnItMessageImpl) {
                         conn.receiveMessage(msg);
+                    } else if (msg instanceof SccpConnErrMessageImpl) {
+                        SccpConnErrMessageImpl err = (SccpConnErrMessageImpl) msg;
+                        if (!conn.isCouplingEnabled()) {
+
+                            if (err.getErrorCause().getValue() != null && err.getErrorCause().getValue() == SERVICE_CLASS_MISMATCH) {
+                                listener.onDisconnectIndication(conn, err.getErrorCause());
+                                conn.disconnect(new ReleaseCauseImpl(SCCP_FAILURE), new byte[] {});
+                            } else {
+                                listener.onDisconnectIndication(conn, err.getErrorCause());
+                                sccpStackImpl.removeConnection(ref);
+                            }
+
+                        } else {
+                            conn.receiveMessage(msg);
+                        }
                     }
 
                 } catch (Exception e) {
@@ -1206,7 +1304,7 @@ public class SccpRoutingControl {
                 // similar to the one described in 3.8.3.3, item 1) b6.
 
                 logger.error(String.format("Received SCCPMessage=%s for routing, but neither SSN nor GT present", msg));
-                this.sendSccpErrorConn(msg, ReleaseCauseValue.SCCP_FAILURE);
+                this.sendSccpErrorConn(msg, SCCP_FAILURE);
             }
 
         } else {
@@ -1220,7 +1318,7 @@ public class SccpRoutingControl {
                             "Received SccpMessage=%s for routing but no Remote Signaling Pointcode = %d resource defined ",
                             msg, dpc));
                 }
-                this.sendSccpErrorConn(msg, ReleaseCauseValue.SCCP_FAILURE);
+                this.sendSccpErrorConn(msg, SCCP_FAILURE);
                 return;
             }
             if (remoteSpc.isRemoteSpcProhibited()) {
@@ -1233,32 +1331,34 @@ public class SccpRoutingControl {
                 return;
             }
 
-            if (ssn > 1) {
-                // if a non-zero SSN is present but not the GT (case 2a) of 2.2.2),
-                // then the called party address provided shall
-                // contain this SSN and the routing indicator shall be set
-                // to "Route on SSN"; See 2.2.2.1 point 2 of ITU-T Q.714
-                // If routing based on SSN, check remote SSN is available
-                RemoteSubSystem remoteSsn = this.sccpStackImpl.getSccpResource().getRemoteSsn(dpc, conn.getLocalSsn());
-                if (remoteSsn == null) {
-                    if (logger.isEnabledFor(Level.WARN)) {
-                        logger.warn(String.format(
-                                "Received SCCPMessage=%s for routing, but no Remote SubSystem = %d resource defined ",
-                                msg, conn.getLocalSsn()));
+            if (ssn == null || ssn != 0) {
+                if (ssn != null && ssn > 1) {
+                    // if a non-zero SSN is present but not the GT (case 2a) of 2.2.2),
+                    // then the called party address provided shall
+                    // contain this SSN and the routing indicator shall be set
+                    // to "Route on SSN"; See 2.2.2.1 point 2 of ITU-T Q.714
+                    // If routing based on SSN, check remote SSN is available
+                    RemoteSubSystem remoteSsn = this.sccpStackImpl.getSccpResource().getRemoteSsn(dpc, conn.getLocalSsn());
+                    if (remoteSsn == null) {
+                        if (logger.isEnabledFor(Level.WARN)) {
+                            logger.warn(String.format(
+                                    "Received SCCPMessage=%s for routing, but no Remote SubSystem = %d resource defined ",
+                                    msg, conn.getLocalSsn()));
+                        }
+                        // Routing failed return error
+                        this.sendSccpErrorConn(msg, SCCP_FAILURE);
+                        return;
                     }
-                    // Routing failed return error
-                    this.sendSccpErrorConn(msg, ReleaseCauseValue.SCCP_FAILURE);
-                    return;
-                }
 
-                if (remoteSsn.isRemoteSsnProhibited()) {
-                    if (logger.isEnabledFor(Level.WARN)) {
-                        logger.warn(String.format(
-                                "Routing of Sccp Message=%s failed as Remote SubSystem = %d is prohibited ", msg,
-                                conn.getLocalSsn()));
+                    if (remoteSsn.isRemoteSsnProhibited()) {
+                        if (logger.isEnabledFor(Level.WARN)) {
+                            logger.warn(String.format(
+                                    "Routing of Sccp Message=%s failed as Remote SubSystem = %d is prohibited ", msg,
+                                    conn.getLocalSsn()));
+                        }
+                        this.sendSccpErrorConn(msg, ReleaseCauseValue.SUBSYSTEM_FAILURE);
+                        return;
                     }
-                    this.sendSccpErrorConn(msg, ReleaseCauseValue.SUBSYSTEM_FAILURE);
-                    return;
                 }
 
                 // send to MTP
@@ -1269,7 +1369,7 @@ public class SccpRoutingControl {
             } else {
 
                 logger.error(String.format("Received SCCPMessage=%s for routing, but neither SSN nor GT present", msg));
-                this.sendSccpErrorConn(msg, ReleaseCauseValue.SCCP_FAILURE);
+                this.sendSccpErrorConn(msg, SCCP_FAILURE);
             }
         }
     }
@@ -1400,7 +1500,9 @@ public class SccpRoutingControl {
     }
 
     private void sendSccpErrorConn(SccpConnMessage msg, ReleaseCauseValue cause) throws Exception {
-
+        if (msg instanceof SccpConnRlsdMessageImpl) {
+            return;
+        }
         LocalReference ref = (!msg.getIsMtpOriginated()) ? getSln(msg) : getDln(msg);
 
         SccpConnectionImpl conn = sccpStackImpl.getConnection(ref);

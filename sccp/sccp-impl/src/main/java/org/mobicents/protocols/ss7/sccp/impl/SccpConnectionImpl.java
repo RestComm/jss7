@@ -1,6 +1,7 @@
 package org.mobicents.protocols.ss7.sccp.impl;
 
 import org.mobicents.protocols.ss7.sccp.SccpConnection;
+import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnItMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnSegmentableMessageImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnMessage;
@@ -34,7 +35,10 @@ public class SccpConnectionImpl extends SccpConnectionWithCouplingImpl implement
     }
 
     protected void callListenerOnData(byte[] data) {
-        listener.onData(this, data);
+        SccpListener listener = getListener();
+        if (listener != null) { // when listener is absent it's handled by SccpRoutingControl
+            listener.onData(this, data);
+        }
     }
 
     protected void prepareMessageForSending(SccpConnSegmentableMessageImpl message) {
@@ -43,5 +47,11 @@ public class SccpConnectionImpl extends SccpConnectionWithCouplingImpl implement
 
     protected void prepareMessageForSending(SccpConnItMessageImpl message) {
         // not needed for protocol class 2
+    }
+
+    public static class ConnectionNotAvailableException extends IllegalStateException {
+        public ConnectionNotAvailableException(String message) {
+            super(message);
+        }
     }
 }

@@ -152,6 +152,40 @@ public class ConnectionTest extends SccpHarness {
     }
 
     @Test(groups = { "SccpMessage", "functional.connection" })
+    public void testConnectionEstablishWithConfirmData() throws Exception {
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+
+        User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+
+        u1.register();
+        u2.register();
+        u2.getOptions().setSendConfirmData(new byte[] {1, 2, 3});
+
+        Thread.sleep(100);
+
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
+        crMsg.setProtocolClass(new ProtocolClassImpl(2));
+        crMsg.setCredit(new CreditImpl(100));
+
+        SccpConnection conn1 = sccpProvider1.newConnection(8, new ProtocolClassImpl(2));
+        conn1.establish(crMsg);
+
+        Thread.sleep(100);
+
+        assertEquals(sccpStack2.getConnectionsNumber(), 1);
+        assertEquals(sccpStack1.getConnectionsNumber(), 1);
+
+        assertEquals(sccpProvider2.getConnections().values().iterator().next().getState(), SccpConnectionState.ESTABLISHED);
+        assertEquals(sccpProvider1.getConnections().values().iterator().next().getState(), SccpConnectionState.ESTABLISHED);
+
+        assertEquals(u1.getReceivedData().size(), 1);
+        assertEquals(u1.getReceivedData().iterator().next(), new byte[] {1, 2, 3});
+    }
+
+    @Test(groups = { "SccpMessage", "functional.connection" })
     public void testConnectionRelease() throws Exception {
         a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
         a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
@@ -293,7 +327,7 @@ public class ConnectionTest extends SccpHarness {
         crMsg.setProtocolClass(protocolClass);
         crMsg.setCredit(new CreditImpl(100));
 
-        SccpConnection conn1 = sccpProvider1.newConnection(8, new ProtocolClassImpl(2));
+        SccpConnection conn1 = sccpProvider1.newConnection(8, protocolClass);
         conn1.establish(crMsg);
 
         Thread.sleep(100);
@@ -371,6 +405,113 @@ public class ConnectionTest extends SccpHarness {
         crMsg.setCredit(new CreditImpl(100));
 
         SccpConnection conn1 = sccpProvider1.newConnection(8, new ProtocolClassImpl(2));
+        conn1.establish(crMsg);
+
+        Thread.sleep(100);
+
+        assertEquals(sccpStack2.getConnectionsNumber(), 1);
+        assertEquals(sccpStack1.getConnectionsNumber(), 1);
+        SccpConnection conn2 = sccpProvider2.getConnections().values().iterator().next();
+
+        Thread.sleep(100);
+
+        conn1.send(new byte[]{1, 2, 3, 4, 5});
+
+        Thread.sleep(100);
+
+        assertEquals(u2.getReceivedData().size(), 1);
+        assertEquals(u2.getReceivedData().iterator().next(), new byte[] {1, 2, 3, 4, 5}); // check if an incoming message content is the same as was sent
+
+        Thread.sleep(100);
+
+        conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), new byte[] {});
+
+        Thread.sleep(200);
+
+        assertEquals(sccpStack1.getConnectionsNumber(), 0);
+        assertEquals(sccpStack2.getConnectionsNumber(), 0);
+
+        assertEquals(conn2.getState(), SccpConnectionState.CLOSED);
+        assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
+    }
+
+    @Test(groups = { "SccpMessage", "functional.connection" })
+    public void testSendDataWhenDlnAndSlnDifferClass2() throws Exception {
+        sccpStack1.referenceNumberCounter = 20;
+        sccpStack2.referenceNumberCounter = 50;
+
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+
+        User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+
+        u1.register();
+        u2.register();
+
+        Thread.sleep(100);
+
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
+        crMsg.setProtocolClass(new ProtocolClassImpl(2));
+        crMsg.setCredit(new CreditImpl(100));
+
+        SccpConnection conn1 = sccpProvider1.newConnection(8, new ProtocolClassImpl(2));
+        conn1.establish(crMsg);
+
+        Thread.sleep(100);
+
+        assertEquals(sccpStack2.getConnectionsNumber(), 1);
+        assertEquals(sccpStack1.getConnectionsNumber(), 1);
+        SccpConnection conn2 = sccpProvider2.getConnections().values().iterator().next();
+
+        Thread.sleep(100);
+
+        conn1.send(new byte[]{1, 2, 3, 4, 5});
+
+        Thread.sleep(100);
+
+        assertEquals(u2.getReceivedData().size(), 1);
+        assertEquals(u2.getReceivedData().iterator().next(), new byte[] {1, 2, 3, 4, 5}); // check if an incoming message content is the same as was sent
+
+        Thread.sleep(100);
+
+        conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), new byte[] {});
+
+        Thread.sleep(200);
+
+        assertEquals(sccpStack1.getConnectionsNumber(), 0);
+        assertEquals(sccpStack2.getConnectionsNumber(), 0);
+
+        assertEquals(conn2.getState(), SccpConnectionState.CLOSED);
+        assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
+    }
+
+    @Test(groups = { "SccpMessage", "functional.connection" })
+    public void testSendDataWhenSsnDifferClass2() throws Exception {
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 15);
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 16);
+
+        resource1.removeRemoteSsn(1);
+        resource1.addRemoteSsn(1, getStack2PC(), a2.getSubsystemNumber(), 0, false);
+
+        resource2.removeRemoteSsn(1);
+        resource2.addRemoteSsn(1, getStack1PC(), a1.getSubsystemNumber(), 0, false);
+
+        User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, a1.getSubsystemNumber());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, a2.getSubsystemNumber());
+
+        u1.register();
+        u2.register();
+
+        Thread.sleep(100);
+
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(a1.getSubsystemNumber(), a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
+        crMsg.setProtocolClass(new ProtocolClassImpl(2));
+        crMsg.setCredit(new CreditImpl(100));
+
+        SccpConnection conn1 = sccpProvider1.newConnection(a1.getSubsystemNumber(), new ProtocolClassImpl(2));
         conn1.establish(crMsg);
 
         Thread.sleep(100);
@@ -569,5 +710,49 @@ public class ConnectionTest extends SccpHarness {
 
         assertEquals(conn2.getState(), SccpConnectionState.CLOSED);
         assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
+    }
+
+    @Test(groups = { "SccpMessage", "functional.connection" })
+    public void testIncreaseCreditByUserProtocolClass3() throws Exception {
+        testChangeCreditByUserProtocolClass3(100, 127);
+    }
+
+    @Test(groups = { "SccpMessage", "functional.connection" })
+    public void testDecreaseCreditByUserProtocolClass3() throws Exception {
+        testChangeCreditByUserProtocolClass3(127, 100);
+    }
+
+    private void testChangeCreditByUserProtocolClass3(int initialCredit, int finalCredit) throws Exception {
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+
+        User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+
+        u1.register();
+        u2.register();
+
+        u2.getOptions().confirmCredit = new CreditImpl(finalCredit);
+
+        Thread.sleep(100);
+
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
+        crMsg.setProtocolClass(new ProtocolClassImpl(3));
+        crMsg.setCredit(new CreditImpl(initialCredit));
+
+        SccpConnection conn1 = sccpProvider1.newConnection(8, new ProtocolClassImpl(3));
+        conn1.establish(crMsg);
+
+        Thread.sleep(100);
+
+        assertEquals(sccpStack2.getConnectionsNumber(), 1);
+        assertEquals(sccpStack1.getConnectionsNumber(), 1);
+        SccpConnection conn2 = sccpProvider2.getConnections().values().iterator().next();
+
+        assertEquals(conn1.getReceiveCredit().getValue(), finalCredit);
+        assertEquals(conn1.getSendCredit().getValue(), finalCredit);
+        assertEquals(conn2.getReceiveCredit().getValue(), finalCredit);
+        assertEquals(conn2.getSendCredit().getValue(), finalCredit);
     }
 }

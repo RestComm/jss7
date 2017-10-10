@@ -223,6 +223,132 @@ public interface SccpStack {
     void setReassemblyTimerDelay(int reassemblyTimerDelay) throws Exception;
 
     /**
+     * Returns whether node can be a relay node with coupling.
+     *
+     * @return
+     */
+    boolean isCanRelay();
+
+    /**
+     * Sets whether node can be a relay node with coupling.
+     *
+     * @param canRelay
+     */
+    void setCanRelay(boolean canRelay) throws Exception;
+
+    /**
+     * Returns for how long connection waits for connection confirm message.
+     *
+     * @return
+     */
+    int getConnEstTimerDelay();
+
+    /**
+     * Sets for how long connection waits for connection confirm message.
+     *
+     * @param connEstTimerDelay
+     */
+    void setConnEstTimerDelay(int connEstTimerDelay) throws Exception;
+
+    /**
+     * Returns for how long connection waits before sending IT message when no messages are sent.
+     *
+     * @return
+     */
+    int getIasTimerDelay();
+
+    /**
+     * Sets for how long connection waits before sending IT message when no messages are sent.
+     *
+     * @param iasTimerDelay
+     */
+    void setIasTimerDelay(int iasTimerDelay) throws Exception;
+
+    /**
+     * Returns for how long connection waits to receive message.
+     *
+     * @return
+     */
+    int getIarTimerDelay();
+
+    /**
+     * Sets for how long connection waits to receive message
+     *
+     * @param iarTimerDelay
+     */
+    void setIarTimerDelay(int iarTimerDelay) throws Exception;
+
+    /**
+     * Returns for how long connection waits for release complete message i. e. T(rel) delay.
+     *
+     * @return
+     */
+    int getRelTimerDelay();
+
+    /**
+     * Sets for how long connection waits for release complete message i. e. T(rel) delay.
+     *
+     * @param relTimerDelay
+     */
+    void setRelTimerDelay(int relTimerDelay) throws Exception;
+
+    /**
+     * Returns for how long connection waits for release complete message after T(rel) expiration.
+     *
+     * @return
+     */
+    int getRepeatRelTimerDelay();
+
+    /**
+     * Sets for how long connection waits for release complete message after T(rel) expiration.
+     *
+     * @param repeatRelTimerDelay
+     */
+    void setRepeatRelTimerDelay(int repeatRelTimerDelay) throws Exception;
+
+    /**
+     * Returns for how long connection waits to release connection resources.
+     *
+     * @return
+     */
+    int getIntTimerDelay();
+
+    /**
+     * Sets for how long connection waits to release connection resources.
+     *
+     * @param intTimerDelay
+     */
+    void setIntTimerDelay(int intTimerDelay) throws Exception;
+
+    /**
+     * Returns for how long connection waits to resume work after restart.
+     *
+     * @return
+     */
+    int getGuardTimerDelay();
+
+    /**
+     * Sets for how long connection waits to resume work after restart.
+     *
+     * @param guardTimerDelay
+     */
+    void setGuardTimerDelay(int guardTimerDelay) throws Exception;
+
+    /**
+     * Returns for how long connection waits to release after sending reset request message.
+     *
+     * @return
+     */
+    int getResetTimerDelay();
+
+    /**
+     * Sets for how long connection waits to release after sending reset request message.
+     *
+     * @param resetTimerDelay
+     */
+    void setResetTimerDelay(int resetTimerDelay) throws Exception;
+
+    /**
      * Set the underlying MTP3 layer
      *
      * @param mtp3UserPartsTemp

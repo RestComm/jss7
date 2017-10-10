@@ -110,7 +110,8 @@ Once M3UA is configured depending on whether you are trying to build voice appli
 == Building SCCP
 
 Configuring the SCCP layer follows exactly same architecture of persisting configuration in xml file.
- 
+
+If only connectionless protocol classes will be used:
 [source]
 ----
     org.mobicents.protocols.ss7.sccp.SccpStack sccpStack = null;
@@ -119,9 +120,25 @@ Configuring the SCCP layer follows exactly same architecture of persisting confi
     sccpStack.setMtp3UserPart(1, this.clientM3UAMgmt);
 
     sccpStack.start();
-----		
+----
+For connection-oriented protocol classes support configure SCCP layer the following way:
+[source]
+----
+    org.mobicents.protocols.ss7.scheduler.Clock clock = new DefaultClock();
+    org.mobicents.protocols.ss7.scheduler.Scheduler scheduler = new Scheduler();
+    scheduler.setClock(clock);
 
-Before starting SCCP stack all it needs to know is underlying MTP3 layer.
+    org.mobicents.protocols.ss7.sccp.SccpStack sccpStack = null;
+    sccpStack = new SccpStackImpl(scheduler, "MapLoadClientSccpStack");
+    clientM3UAMgmt.setPersistDir("<your directory path>");
+    sccpStack.setMtp3UserPart(1, this.clientM3UAMgmt);
+
+    scheduler.start();
+    sccpStack.start();
+----
+
+Before starting SCCP stack all it needs to know is underlying MTP3 layer and scheduler.
+This scheduler is used for asynchronously sending outgoing messages.
 Above sections explained building SCTP and M3UA,  however if you are using Dialogic boards or dahdi based boards (Diguim/Sangoma), you need to build and configure respective MTP3 layers depending on hardware used and set those in SCCP Stack `sccpStack.setMtp3UserPart(1, this.clientM3UAMgmt)`.
  
 

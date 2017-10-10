@@ -33,11 +33,13 @@ import org.mobicents.protocols.ss7.sccp.message.ParseException;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnDt2Message;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCauseValue;
+import org.mobicents.protocols.ss7.sccp.parameter.SequenceNumber;
 import org.mobicents.protocols.ss7.sccp.parameter.SequencingSegmenting;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 public class SccpConnDt2MessageImpl extends SccpConnSegmentableMessageImpl implements SccpConnDt2Message {
     protected SequencingSegmenting sequencingSegmenting;
@@ -158,11 +160,18 @@ public class SccpConnDt2MessageImpl extends SccpConnSegmentableMessageImpl imple
     public void setMoreData(boolean moreData) {
         if (sequencingSegmenting == null) {
             // sendSequenceNumber and receiveSequenceNumber are later re-initialized in MessageSender
-            sequencingSegmenting = new SequencingSegmentingImpl(0,0, moreData);
-        } else {
-            sequencingSegmenting = new SequencingSegmentingImpl(sequencingSegmenting.getSendSequenceNumber(),
-                    sequencingSegmenting.getReceiveSequenceNumber(), moreData);
+            sequencingSegmenting = new SequencingSegmentingImpl();
         }
+        sequencingSegmenting.setMoreData(moreData);
+    }
+
+    public void setSequencing(SequenceNumber sendSequenceNumber, SequenceNumber receiveSequenceNumber) {
+        if (sequencingSegmenting == null) {
+            // sendSequenceNumber and receiveSequenceNumber are later re-initialized in MessageSender
+            sequencingSegmenting = new SequencingSegmentingImpl();
+        }
+        sequencingSegmenting.setSendSequenceNumber(sendSequenceNumber);
+        sequencingSegmenting.setReceiveSequenceNumber(receiveSequenceNumber);
     }
 
     @Override
@@ -174,7 +183,7 @@ public class SccpConnDt2MessageImpl extends SccpConnSegmentableMessageImpl imple
 
                 .append(" destinationLocalReferenceNumber=").append(this.destinationLocalReferenceNumber);
         if (this.sequencingSegmenting != null) {
-                sb.append(" sequencingSegmenting(").append(this.sequencingSegmenting).append(")");
+                sb.append(" sequencingSegmenting=").append(this.sequencingSegmenting);
         }
         sb.append(" DataLen=");
         if (this.userData != null) {
@@ -182,6 +191,7 @@ public class SccpConnDt2MessageImpl extends SccpConnSegmentableMessageImpl imple
         } else {
             sb.append("null");
         }
+        // sb.append(" Data=");sb.append(Arrays.toString(userData));
         sb.append("]");
         return sb.toString();
     }

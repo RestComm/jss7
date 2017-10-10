@@ -1,16 +1,13 @@
 package org.mobicents.protocols.ss7.sccp.impl;
 
 import org.mobicents.protocols.ss7.sccp.SccpConnection;
+import org.mobicents.protocols.ss7.sccp.SccpConnectionState;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnAkMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCcMessageImpl;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt2MessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnItMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnSegmentableMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.CreditImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.ReceiveSequenceNumberImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.ResetCauseImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.SequencingSegmentingImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnCrMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.Credit;
@@ -28,7 +25,7 @@ import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.NEW;
 
 public class SccpConnectionWithFlowControlImpl extends SccpConnectionImpl implements SccpConnection {
 
-    protected FlowControlWindows windows;
+    protected SccpFlowControl flow;
 
     private boolean overloaded;
 
@@ -38,12 +35,11 @@ public class SccpConnectionWithFlowControlImpl extends SccpConnectionImpl implem
             logger.error("Using connection class for non-supported protocol class 2");
             throw new IllegalArgumentException();
         }
-        this.windows = new FlowControlWindows(stack.name, connectionLock);
     }
 
     public void establish(SccpConnCrMessage message) throws IOException {
         super.establish(message);
-        windows.setReceiveCredit(message.getCredit().getValue());
+        this.flow = newSccpFlowControl(message.getCredit());
     }
 
     public void confirm(SccpAddress respondingAddress, Credit credit, byte[] data) throws Exception {
@@ -51,9 +47,13 @@ public class SccpConnectionWithFlowControlImpl extends SccpConnectionImpl implem
             logger.error(String.format("Trying to confirm connection in non-compatible state %s", getState()));
             throw new IllegalStateException(String.format("Trying to confirm connection in non-compatible state %s", getState()));
         }
-        windows.setReceiveCredit(credit.getValue());
+        this.flow = newSccpFlowControl(credit);
 
         super.confirm(respondingAddress, credit, data);
+    }
+
+    protected SccpFlowControl newSccpFlowControl(Credit credit) {
+        return new SccpFlowControl(stack.name, credit.getValue());
     }
 
     public void setOverloaded(boolean overloaded) throws Exception {
@@ -77,24 +77,29 @@ public class SccpConnectionWithFlowControlImpl extends SccpConnectionImpl implem
 
     protected void prepareMessageForSending(SccpConnSegmentableMessageImpl message) {
         if (message instanceof SccpConnDt2MessageImpl) {
-            SccpConnDt2MessageImpl dt = (SccpConnDt2MessageImpl) message;
-            boolean moreData = dt.getSequencingSegmenting().isMoreData();
-            byte sendSequenceNumber = windows.getSendSequenceNumber();
-            dt.setSequencingSegmenting(new SequencingSegmentingImpl(sendSequenceNumber, windows.getReceiveSequenceNumber(), moreData));
+            SccpConnDt2MessageImpl dt2 = (SccpConnDt2MessageImpl) message;
 
-            windows.incrementSendSequenceNumber();
-            if (windows.sendSequenceWindowExhausted()) {
+            flow.initializeMessageNumbering(dt2);
+            flow.checkOutputMessageNumbering(dt2);
+
+            if (!flow.isAuthorizedToTransmitAnotherMessage()) {
                 setState(ESTABLISHED_SEND_WINDOW_EXHAUSTED);
             }
+
         } else {
             throw new IllegalArgumentException();
         }
     }
 
-    protected void prepareMessageForSending(SccpConnItMessageImpl message) {
-        message.setCredit(getReceiveCredit());
-        message.setSequencingSegmenting(new SequencingSegmentingImpl(windows.getSendSequenceNumber(),
-                windows.getReceiveSequenceNumber(), lastMoreDataSent));
+    protected void prepareMessageForSending(SccpConnItMessageImpl it) {
+        it.setCredit(new CreditImpl(flow.getReceiveCredit()));
+
+        flow.initializeMessageNumbering(it);
+        flow.checkOutputMessageNumbering(it);
+
+        if (!flow.isAuthorizedToTransmitAnotherMessage()) {
+            setState(ESTABLISHED_SEND_WINDOW_EXHAUSTED);
+        }
     }
 
     protected void receiveMessage(SccpConnMessage message) throws Exception {
@@ -102,16 +107,10 @@ public class SccpConnectionWithFlowControlImpl extends SccpConnectionImpl implem
             connectionLock.lock();
             super.receiveMessage(message);
 
-            if (message instanceof SccpConnCrMessageImpl) {
-                SccpConnCrMessageImpl cr = (SccpConnCrMessageImpl) message;
-                if (cr.getCredit() != null) {
-                    windows.setSendCredit(cr.getCredit().getValue());
-                }
-
-            } else if (message instanceof SccpConnCcMessageImpl) {
+            if (message instanceof SccpConnCcMessageImpl) {
                 SccpConnCcMessageImpl cc = (SccpConnCcMessageImpl) message;
                 if (cc.getCredit() != null) {
-                    windows.setSendCredit(cc.getCredit().getValue());
+                    this.flow = newSccpFlowControl(cc.getCredit());
                 }
 
             } else if (message instanceof SccpConnAkMessageImpl) {
@@ -132,50 +131,47 @@ public class SccpConnectionWithFlowControlImpl extends SccpConnectionImpl implem
             return;
         }
 
-        FlowControlWindows.SendSequenceNumberHandlingResult result = windows.handleSequenceNumbers(
-                (byte)((SccpConnDt2MessageImpl)msg).getSequencingSegmenting().getSendSequenceNumber(),
-                (byte)((SccpConnDt2MessageImpl)msg).getSequencingSegmenting().getReceiveSequenceNumber());
-        if (result.isResetNeeded()) {
-            reset(new ResetCauseImpl(result.getResetCause()));
-            return;
-        }
-        if (result.isAkNeeded()) {
+        SccpConnDt2MessageImpl dt2 = (SccpConnDt2MessageImpl) msg;
+
+        boolean correctNumbering = flow.checkInputMessageNumbering(this, dt2.getSequencingSegmenting().getSendSequenceNumber(),
+                dt2.getSequencingSegmenting().getReceiveSequenceNumber());
+
+        if (flow.isAkSendCriterion(dt2)) {
             sendAk();
         }
-
-        super.receiveDataMessage(msg);
+        if (correctNumbering) {
+            super.receiveDataMessage(msg);
+        } else {
+            logger.error(String.format("Message %s was discarded due to incorrect sequence numbers", msg.toString()));
+        }
     }
 
     protected void sendAk() throws Exception {
-        sendAk(getSendCredit());
+        sendAk(new CreditImpl(flow.getMaximumWindowSize()));
     }
 
     protected void sendAk(Credit credit) throws Exception {
+        SccpConnAkMessageImpl msg = new SccpConnAkMessageImpl(0, 0);
+        msg.setDestinationLocalReferenceNumber(getRemoteReference());
+        msg.setSourceLocalReferenceNumber(getLocalReference());
+        msg.setCredit(credit);
 
-        SccpConnAkMessageImpl msgAk = new SccpConnAkMessageImpl(getSls(), getLocalSsn());
-        msgAk.setDestinationLocalReferenceNumber(getRemoteReference());
-        msgAk.setReceiveSequenceNumber(new ReceiveSequenceNumberImpl(windows.getReceiveSequenceNumber()));
-        msgAk.setCredit(credit);
+        flow.setReceiveCredit(credit.getValue());
+        flow.initializeMessageNumbering(msg);
 
-        msgAk.setSourceLocalReferenceNumber(getLocalReference());
-
-        sendMessage(msgAk);
-        windows.reloadReceiveSequenceNumber(); //TODO2
+        sendMessage(msg);
     }
 
     private void handleAkMessage(SccpConnAkMessageImpl msg) throws Exception {
 
-        FlowControlWindows.SendSequenceNumberHandlingResult result = windows.handleSequenceNumbers(null, (byte)msg.getReceiveSequenceNumber().getValue());
-        if (result.isResetNeeded()) {
-            reset(new ResetCauseImpl(result.getResetCause()));
+
+        flow.checkInputMessageNumbering(this, msg.getReceiveSequenceNumber().getNumber());
+        flow.setSendCredit(msg.getCredit().getValue());
+
+        if (flow.isAuthorizedToTransmitAnotherMessage()) {
+            setState(ESTABLISHED);
         } else {
-            windows.reloadSendSequenceNumber();
-            windows.setSendCredit(msg.getCredit().getValue());
-            if (!windows.sendSequenceWindowExhausted()) {
-                setState(ESTABLISHED);
-            } else {
-                setState(ESTABLISHED_SEND_WINDOW_EXHAUSTED);
-            }
+            setState(ESTABLISHED_SEND_WINDOW_EXHAUSTED);
         }
     }
 
@@ -184,14 +180,32 @@ public class SccpConnectionWithFlowControlImpl extends SccpConnectionImpl implem
             throw new IllegalStateException();
         }
         super.setConnectionLock(lock);
-        this.windows.windowLock = lock;
+    }
+
+    protected boolean isCanSendData() {
+        try {
+            connectionLock.lock();
+
+            SccpConnectionState oldState = getState();
+            if (oldState == ESTABLISHED_SEND_WINDOW_EXHAUSTED && flow.isAuthorizedToTransmitAnotherMessage()) {
+                setState(ESTABLISHED);
+            }
+            return getState() == ESTABLISHED;
+
+        } finally {
+            connectionLock.unlock();
+        }
     }
 
     public Credit getSendCredit() {
-        return new CreditImpl(windows.getSendCredit());
+        return new CreditImpl(flow.getSendCredit());
     }
 
     public Credit getReceiveCredit() {
-        return new CreditImpl(windows.getReceiveCredit());
+        return new CreditImpl(flow.getReceiveCredit());
+    }
+
+    protected boolean isPreemptiveAck() {
+        return flow.isPreemptiveAk();
     }
 }

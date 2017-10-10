@@ -1,5 +1,6 @@
 package org.mobicents.protocols.ss7.sccp.impl;
 
+import org.mobicents.protocols.ss7.sccp.impl.message.MessageUtil;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt1MessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt2MessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnSegmentableMessageImpl;
@@ -87,6 +88,9 @@ abstract class SccpConnectionWithSegmentingImpl extends SccpConnectionWithTimers
             logger.debug(String.format("Sending data message to DPC=%d, SSN=%d, DLR=%s", getRemoteDpc(),
                     getRemoteSsn(), getRemoteReference()));
         }
+        if (!isAvailable()) {
+            throw new SccpConnectionImpl.ConnectionNotAvailableException(String.format("Trying to send data when in non-compatible state %s", getState()));
+        }
 
         SccpConnSegmentableMessageImpl dataMessage;
 
@@ -102,6 +106,10 @@ abstract class SccpConnectionWithSegmentingImpl extends SccpConnectionWithTimers
         dataMessage.setMoreData(moreData);
         lastMoreDataSent = moreData;
 
+        if (MessageUtil.getDln(dataMessage) == null) {
+            logger.error(String.format("Message doesn't have DLN set: ", dataMessage));
+            throw new IllegalStateException();
+        }
         sendMessage(dataMessage);
     }
 }
