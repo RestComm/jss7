@@ -3,6 +3,7 @@ Name
 
 SYNOPSIS
 	sccp sap modify <id> <mtp3-id> <opc> <ni> stackname <stack-name> networkid <networkId>
+	localgtdigits <localGtDigits>
 
 DESCRIPTION
 	This command is used to modify a previously defined Service Access Point.
@@ -33,10 +34,15 @@ PARAMETERS
                     network this Service Access Point (SAP) belongs. If this parameter 
                     is skipped - networkId will be set to "0" by default.								
 
+    <localGtDigits> - Local GT digits. An incoming message will be brought to this
+                    sap if GT digits of callePartyAddress matches to this value.
+                    "null" value matches to any incoming message. If this parameter 
+                    is skipped - networkId will be set to "null" by default.
+
 
 EXAMPLES
-	sccp sap modify 1 2 102 2
-	
+	sccp sap modify 1 2 102 2 networkid 2 localgtdigits 999888777
+
 	The above command will modify the values of the Service Access Point identified 
 	by the number '1'. The new values for 'mtp3-id', 'opc' and 'ni' are 2, 102 and 2 
 	respectively.

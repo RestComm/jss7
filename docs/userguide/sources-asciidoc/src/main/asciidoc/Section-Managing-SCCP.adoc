@@ -473,6 +473,7 @@ Name
 
 SYNOPSIS
 	sccp sap create <id> <mtp3-id> <opc> <ni> stackname <stack-name> networkid <networkId>
+	localgtdigits <localGtDigits>
 
 DESCRIPTION
 	This command is used to define a new Service Access Point.
@@ -505,9 +506,14 @@ PARAMETERS
                     skipped - networkId will be set to "0" when SAP creation.
                     Refer <xref linkend="design_multitenancy"/>.
 
+    <localGtDigits> - Local GT digits. An incoming message will be brought to this
+                    sap if GT digits of callePartyAddress matches to this value.
+                    "null" value matches to any incoming message. If this parameter 
+                    is skipped - networkId will be set to "null" by default.
+
 
 EXAMPLES
-	sccp sap create 1 1 101 2
+	sccp sap create 1 1 101 2 networkid 2 localgtdigits 999888777
 
 	The above command will create a new Service Access Point identified by the 
 	number '1'. The values for 'mtp3-id', 'opc' and 'ni' are 1, 101 and 2 respectively.
@@ -541,6 +547,7 @@ Name
 
 SYNOPSIS
 	sccp sap modify <id> <mtp3-id> <opc> <ni> stackname <stack-name> networkid <networkId>
+	localgtdigits <localGtDigits>
 
 DESCRIPTION
 	This command is used to modify a previously defined Service Access Point.
@@ -571,6 +578,11 @@ PARAMETERS
                     belongs Service Access Point (SAP). If this parameter is
                     skipped - networkId will be set to "0" when SAP creation.
                     Refer <xref linkend="design_multitenancy"/>.
+
+    <localGtDigits> - Local GT digits. An incoming message will be brought to this
+                    sap if GT digits of callePartyAddress matches to this value.
+                    "null" value matches to any incoming message. If this parameter 
+                    is skipped - networkId will be set to "null" by default.
 
 
 EXAMPLES
