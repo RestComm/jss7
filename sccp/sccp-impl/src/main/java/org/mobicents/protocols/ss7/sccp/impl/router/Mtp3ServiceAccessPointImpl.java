@@ -45,24 +45,29 @@ public class Mtp3ServiceAccessPointImpl implements Mtp3ServiceAccessPoint, XMLSe
     private static final String OPC = "opc";
     private static final String NI = "ni";
     private static final String NETWORK_ID = "networkId";
+    private static final String LOCAL_GT_DIGITS = "localGtDigits";
+
+    private static final String STRING_EMPTY = null;
 
     private int mtp3Id;
     private int opc;
     private int ni;
     private String stackName;
     private int networkId;
+    private String localGtDigits;
 
     private Mtp3DestinationMap<Integer, Mtp3Destination> dpcList = new Mtp3DestinationMap<Integer, Mtp3Destination>();
 
     public Mtp3ServiceAccessPointImpl() {
     }
 
-    public Mtp3ServiceAccessPointImpl(int mtp3Id, int opc, int ni, String stackName, int networkId) {
+    public Mtp3ServiceAccessPointImpl(int mtp3Id, int opc, int ni, String stackName, int networkId, String localGtDigits) {
         this.mtp3Id = mtp3Id;
         this.opc = opc;
         this.ni = ni;
         this.stackName = stackName;
         this.networkId = networkId;
+        this.localGtDigits = localGtDigits;
     }
 
     /**
@@ -86,6 +91,15 @@ public class Mtp3ServiceAccessPointImpl implements Mtp3ServiceAccessPoint, XMLSe
 
     public int getNetworkId() {
         return networkId;
+    }
+
+    @Override
+    public String getLocalGtDigits() {
+        return localGtDigits;
+    }
+
+    public void setLocalGtDigits(String val) {
+        localGtDigits = val;
     }
 
     public Mtp3Destination getMtp3Destination(int destId) {
@@ -164,8 +178,9 @@ public class Mtp3ServiceAccessPointImpl implements Mtp3ServiceAccessPoint, XMLSe
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("mtp3Id=").append(this.mtp3Id).append(", opc=").append(this.opc).append(", ni=").append(this.ni).append(", networkId=")
-                .append(this.networkId).append(", dpcList=[");
+        sb.append("mtp3Id=").append(this.mtp3Id).append(", opc=").append(this.opc).append(", ni=").append(this.ni)
+                .append(", networkId=").append(this.networkId).append(", localGtDigits=").append(this.localGtDigits)
+                .append(", dpcList=[");
 
         boolean isFirst = true;
         for (FastMap.Entry<Integer, Mtp3Destination> e = this.dpcList.head(), end = this.dpcList.tail(); (e = e.getNext()) != end;) {
@@ -194,6 +209,8 @@ public class Mtp3ServiceAccessPointImpl implements Mtp3ServiceAccessPoint, XMLSe
             xml.setAttribute(OPC, sap.opc);
             xml.setAttribute(NI, sap.ni);
             xml.setAttribute(NETWORK_ID, sap.networkId);
+            if (sap.localGtDigits != null)
+                xml.setAttribute(LOCAL_GT_DIGITS, sap.localGtDigits);
 
             xml.add(sap.dpcList);
         }
@@ -203,6 +220,9 @@ public class Mtp3ServiceAccessPointImpl implements Mtp3ServiceAccessPoint, XMLSe
             sap.opc = xml.getAttribute(OPC).toInt();
             sap.ni = xml.getAttribute(NI).toInt();
             sap.networkId = xml.getAttribute(NETWORK_ID, 0);
+            String vals = xml.getAttribute(LOCAL_GT_DIGITS, STRING_EMPTY);
+            if (vals != null)
+                sap.localGtDigits = vals;
 
             sap.dpcList = xml.getNext();
         }

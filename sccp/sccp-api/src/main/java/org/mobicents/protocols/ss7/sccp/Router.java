@@ -42,9 +42,9 @@ public interface Router {
 
     SccpAddress getRoutingAddress(int id);
 
-    void addMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni, int networkId) throws Exception;
+    void addMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni, int networkId, String localGtDigits) throws Exception;
 
-    void modifyMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni, int networkId) throws Exception;
+    void modifyMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni, int networkId, String localGtDigits) throws Exception;
 
     void removeMtp3ServiceAccessPoint(int id) throws Exception;
 

@@ -1341,7 +1341,7 @@ public class SccpExecutor implements ShellExecutor {
         }
 
         if (command.equals("create")) {
-            // sccp sap create <id> <mtp3-id> <opc> <ni> stackname <stack-name>
+            // sccp sap create <id> <mtp3-id> <opc> <ni> stackname <stack-name> networkid <networkId> localgtdigits <localGtDigits>
             if (options.length < 7) {
                 return SccpOAMMessage.INVALID_COMMAND;
             }
@@ -1354,8 +1354,9 @@ public class SccpExecutor implements ShellExecutor {
 
             int count = 7;
             int networkId = 0;
+            String localGtDigits = "";
 
-            while (count < options.length) {
+            while (count < options.length - 1) {
                 String key = options[count++];
                 if (key == null) {
                     return SccpOAMMessage.INVALID_COMMAND;
@@ -1374,6 +1375,8 @@ public class SccpExecutor implements ShellExecutor {
                 } else if (key.equals("networkid")) {
                     String networkIdS = options[count++];
                     networkId = Integer.parseInt(networkIdS);
+                } else if (key.equals("localgtdigits")) {
+                    localGtDigits = options[count++];
                 } else {
                     return SccpOAMMessage.INVALID_COMMAND;
                 }
@@ -1382,11 +1385,11 @@ public class SccpExecutor implements ShellExecutor {
 
             this.setDefaultValue();
 
-            this.sccpStack.getRouter().addMtp3ServiceAccessPoint(sapId, mtp3Id, opc, ni, networkId);
+            this.sccpStack.getRouter().addMtp3ServiceAccessPoint(sapId, mtp3Id, opc, ni, networkId, localGtDigits);
 
             return String.format(SccpOAMMessage.SAP_SUCCESSFULLY_ADDED, this.sccpStack.getName());
         } else if (command.equals("modify")) {
-            // sccp sap modify <id> <mtp3-id> <opc> <ni> stackname <stack-named>
+            // sccp sap modify <id> <mtp3-id> <opc> <ni> stackname <stack-named> networkid <networkId> localgtdigits <localGtDigits>
             if (options.length < 7) {
                 return SccpOAMMessage.INVALID_COMMAND;
             }
@@ -1398,8 +1401,9 @@ public class SccpExecutor implements ShellExecutor {
 
             int count = 7;
             int networkId = 0;
+            String localGtDigits = "";
 
-            while (count < options.length) {
+            while (count < options.length - 1) {
                 String key = options[count++];
                 if (key == null) {
                     return SccpOAMMessage.INVALID_COMMAND;
@@ -1418,6 +1422,8 @@ public class SccpExecutor implements ShellExecutor {
                 } else if (key.equals("networkid")) {
                     String networkIdS = options[count++];
                     networkId = Integer.parseInt(networkIdS);
+                } else if (key.equals("localgtdigits")) {
+                    localGtDigits = options[count++];
                 } else {
                     return SccpOAMMessage.INVALID_COMMAND;
                 }
@@ -1426,7 +1432,7 @@ public class SccpExecutor implements ShellExecutor {
 
             this.setDefaultValue();
 
-            this.sccpStack.getRouter().modifyMtp3ServiceAccessPoint(sapId, mtp3Id, opc, ni, networkId);
+            this.sccpStack.getRouter().modifyMtp3ServiceAccessPoint(sapId, mtp3Id, opc, ni, networkId, localGtDigits);
 
             return String.format(SccpOAMMessage.SAP_SUCCESSFULLY_MODIFIED, this.sccpStack.getName());
         } else if (command.equals("delete")) {
