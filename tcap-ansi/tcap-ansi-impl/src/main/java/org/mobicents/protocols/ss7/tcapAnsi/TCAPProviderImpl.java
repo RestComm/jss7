@@ -52,7 +52,6 @@ import org.mobicents.protocols.ss7.tcapAnsi.api.MessageType;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCAPProvider;
 import org.mobicents.protocols.ss7.tcapAnsi.api.TCListener;
-import org.mobicents.protocols.ss7.tcapAnsi.api.asn.DialogPortion;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ParseException;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.ProtocolVersion;
 import org.mobicents.protocols.ss7.tcapAnsi.api.asn.comp.Component;
