@@ -80,8 +80,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.Router#addMtp3ServiceAccessPoint(int, int, int, int)
      */
     @Override
-    public void addMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni, int networkId) throws Exception {
-        this.wrappedRouter.addMtp3ServiceAccessPoint(id, mtp3Id, opc, ni, networkId);
+    public void addMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni, int networkId, String localGtDigits) throws Exception {
+        this.wrappedRouter.addMtp3ServiceAccessPoint(id, mtp3Id, opc, ni, networkId, localGtDigits);
     }
 
     /*
@@ -217,8 +217,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * @see org.mobicents.protocols.ss7.sccp.Router#modifyMtp3ServiceAccessPoint(int, int, int, int)
      */
     @Override
-    public void modifyMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni, int networkId) throws Exception {
-        this.wrappedRouter.modifyMtp3ServiceAccessPoint(id, mtp3Id, opc, ni, networkId);
+    public void modifyMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni, int networkId, String localGtDigits) throws Exception {
+        this.wrappedRouter.modifyMtp3ServiceAccessPoint(id, mtp3Id, opc, ni, networkId, localGtDigits);
     }
 
     /*

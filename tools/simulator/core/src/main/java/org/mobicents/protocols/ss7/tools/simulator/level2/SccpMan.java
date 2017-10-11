@@ -355,7 +355,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
         this.sccpStack.removeAllResourses();
 
         this.sccpStack.setSccpProtocolVersion(sccpProtocolVersion);
-        this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, 1, opc, ni, 0);
+        this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, 1, opc, ni, 0, null);
         this.sccpStack.getRouter().addMtp3Destination(1, 1, dpc, dpc, 0, 255, 255);
 
         this.sccpProvider = this.sccpStack.getSccpProvider();
