@@ -88,7 +88,7 @@ public abstract class SccpHarness {
         sccpStack1.setMtp3UserPart(1, mtp3UserPart1);
         sccpStack1.start();
         sccpStack1.removeAllResourses();
-        sccpStack1.getRouter().addMtp3ServiceAccessPoint(1, 1, getStack1PC(), 2, 0);
+        sccpStack1.getRouter().addMtp3ServiceAccessPoint(1, 1, getStack1PC(), 2, 0, null);
         sccpStack1.getRouter().addMtp3Destination(1, 1, getStack2PC(), getStack2PC(), 0, 255, 255);
 
         sccpProvider1 = sccpStack1.getSccpProvider();
@@ -109,7 +109,7 @@ public abstract class SccpHarness {
         sccpStack2.setMtp3UserPart(1, mtp3UserPart2);
         sccpStack2.start();
         sccpStack2.removeAllResourses();
-        sccpStack2.getRouter().addMtp3ServiceAccessPoint(1, 1, getStack2PC(), 2, 0);
+        sccpStack2.getRouter().addMtp3ServiceAccessPoint(1, 1, getStack2PC(), 2, 0, null);
         sccpStack2.getRouter().addMtp3Destination(1, 1, getStack1PC(), getStack1PC(), 0, 255, 255);
 
         sccpProvider2 = sccpStack2.getSccpProvider();

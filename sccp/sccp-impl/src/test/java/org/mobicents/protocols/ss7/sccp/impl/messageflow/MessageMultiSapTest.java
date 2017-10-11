@@ -90,7 +90,7 @@ public class MessageMultiSapTest extends SccpHarness {
     public void setUp() throws Exception {
         super.setUp();
 
-        sccpStack1.getRouter().addMtp3ServiceAccessPoint(2, 2, 11, 2, 0);
+        sccpStack1.getRouter().addMtp3ServiceAccessPoint(2, 2, 11, 2, 0, null);
         sccpStack1.getRouter().addMtp3Destination(2, 1, 12, 12, 0, 255, 255);
 
         resource1.addRemoteSpc(2, 12, 0, 0);

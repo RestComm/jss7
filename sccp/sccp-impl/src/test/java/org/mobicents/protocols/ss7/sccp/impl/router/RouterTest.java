@@ -149,9 +149,9 @@ public class RouterTest {
         assertEquals(lmr.getLongMessageRuleType(), LongMessageRuleType.XUDT_ENABLED);
         assertEquals(router.getLongMessageRules().size(), 1);
 
-        router.addMtp3ServiceAccessPoint(1, 1, 11, 2, 0);
+        router.addMtp3ServiceAccessPoint(1, 1, 11, 2, 0, null);
         assertEquals(router.getMtp3ServiceAccessPoints().size(), 1);
-        router.addMtp3ServiceAccessPoint(2, 2, 12, 2, 0);
+        router.addMtp3ServiceAccessPoint(2, 2, 12, 2, 0, null);
         assertEquals(router.getMtp3ServiceAccessPoints().size(), 2);
         router.removeMtp3ServiceAccessPoint(2);
         Mtp3ServiceAccessPoint sap = router.getMtp3ServiceAccessPoints().values().iterator().next();
@@ -238,7 +238,8 @@ public class RouterTest {
                 null, 6);
 
         router.addLongMessageRule(1, 1, 2, LongMessageRuleType.XUDT_ENABLED);
-        router.addMtp3ServiceAccessPoint(3, 1, 11, 2, 5);
+        router.addMtp3ServiceAccessPoint(3, 1, 11, 2, 5, null);
+        router.addMtp3ServiceAccessPoint(4, 1, 11, 2, 5, "87654321");
         router.addMtp3Destination(3, 1, 101, 110, 0, 255, 255);
         router.stop();
 
@@ -263,7 +264,12 @@ public class RouterTest {
         assertEquals(lmr.getFirstSpc(), 1);
         assertEquals(sap.getMtp3Destinations().size(), 1);
         assertEquals(sap.getNetworkId(), 5);
+        assertNull(sap.getLocalGtDigits());
         assertEquals(dst.getLastDpc(), 110);
+
+        sap = router1.getMtp3ServiceAccessPoint(4);
+        assertEquals(sap.getNetworkId(), 5);
+        assertEquals(sap.getLocalGtDigits(), "87654321");
 
         router1.stop();
     }

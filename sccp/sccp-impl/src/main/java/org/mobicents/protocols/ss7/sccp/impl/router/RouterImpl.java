@@ -58,7 +58,6 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.GlobalTitle0011Impl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.GlobalTitle0100Impl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.NoGlobalTitle;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
-
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
@@ -314,13 +313,28 @@ public class RouterImpl implements Router {
         return null;
     }
 
-    public Mtp3ServiceAccessPoint findMtp3ServiceAccessPointForIncMes(int localPC, int remotePC) {
+    public Mtp3ServiceAccessPoint findMtp3ServiceAccessPointForIncMes(int localPC, int remotePC, String localGtDigits) {
+        // a first step - sap's with LocalGtDigits
         for (FastMap.Entry<Integer, Mtp3ServiceAccessPoint> e = this.saps.head(), end = this.saps.tail(); (e = e.getNext()) != end;) {
             Mtp3ServiceAccessPoint sap = e.getValue();
-            if (sap.getOpc() == localPC && sap.matches(remotePC)) {
-                return sap;
+            if (sap.getLocalGtDigits() != null && sap.getLocalGtDigits().length() > 0) {
+                if (sap.getOpc() == localPC && sap.matches(remotePC)
+                        && (localGtDigits != null && localGtDigits.equals(sap.getLocalGtDigits()))) {
+                    return sap;
+                }
             }
         }
+
+        // a second step - sap's without LocalGtDigits
+        for (FastMap.Entry<Integer, Mtp3ServiceAccessPoint> e = this.saps.head(), end = this.saps.tail(); (e = e.getNext()) != end;) {
+            Mtp3ServiceAccessPoint sap = e.getValue();
+            if (sap.getLocalGtDigits() == null || sap.getLocalGtDigits().length() == 0) {
+                if (sap.getOpc() == localPC && sap.matches(remotePC)) {
+                    return sap;
+                }
+            }
+        }
+
         return null;
     }
 
@@ -712,7 +726,7 @@ public class RouterImpl implements Router {
         this.store();
     }
 
-    public void addMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni, int networkId) throws Exception {
+    public void addMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni, int networkId, String localGtDigits) throws Exception {
 
         if (this.getMtp3ServiceAccessPoint(id) != null) {
             throw new Exception(SccpOAMMessage.SAP_ALREADY_EXIST);
@@ -722,7 +736,11 @@ public class RouterImpl implements Router {
             throw new Exception(SccpOAMMessage.MUP_DOESNT_EXIST);
         }
 
-        Mtp3ServiceAccessPointImpl sap = new Mtp3ServiceAccessPointImpl(mtp3Id, opc, ni, this.name, networkId);
+        if (localGtDigits != null && (localGtDigits.equals("null") || localGtDigits.equals("")))
+            localGtDigits = null;
+
+
+        Mtp3ServiceAccessPointImpl sap = new Mtp3ServiceAccessPointImpl(mtp3Id, opc, ni, this.name, networkId, localGtDigits);
         synchronized (this) {
             Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint> newSap = new Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint>();
             newSap.putAll(this.saps);
@@ -732,7 +750,7 @@ public class RouterImpl implements Router {
         }
     }
 
-    public void modifyMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni, int networkId) throws Exception {
+    public void modifyMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni, int networkId, String localGtDigits) throws Exception {
         if (this.getMtp3ServiceAccessPoint(id) == null) {
             throw new Exception(String.format(SccpOAMMessage.SAP_DOESNT_EXIST, name));
         }
@@ -741,7 +759,10 @@ public class RouterImpl implements Router {
             throw new Exception(SccpOAMMessage.MUP_DOESNT_EXIST);
         }
 
-        Mtp3ServiceAccessPointImpl sap = new Mtp3ServiceAccessPointImpl(mtp3Id, opc, ni, this.name, networkId);
+        if (localGtDigits != null && (localGtDigits.equals("null") || localGtDigits.equals("")))
+            localGtDigits = null;
+
+        Mtp3ServiceAccessPointImpl sap = new Mtp3ServiceAccessPointImpl(mtp3Id, opc, ni, this.name, networkId, localGtDigits);
         synchronized (this) {
             Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint> newSap = new Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint>();
             newSap.putAll(this.saps);

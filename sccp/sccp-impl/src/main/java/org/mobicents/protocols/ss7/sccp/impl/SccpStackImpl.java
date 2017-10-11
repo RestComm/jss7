@@ -725,18 +725,6 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
                 return;
             }
 
-            int dpc = mtp3Msg.getDpc();
-            int opc = mtp3Msg.getOpc();
-            Mtp3ServiceAccessPoint sap = this.router.findMtp3ServiceAccessPointForIncMes(dpc, opc);
-            int networkId = 0;
-            if (sap == null) {
-                if (logger.isEnabledFor(Level.WARN)) {
-                    logger.warn(String.format("Incoming Mtp3 Message for local address for localPC=%d, remotePC=%d, sls=%d. But SAP is not found for localPC", dpc, opc, mtp3Msg.getSls()));
-                }
-            } else {
-                networkId = sap.getNetworkId();
-            }
-
             // process only SCCP messages
             if (mtp3Msg.getSi() != Mtp3._SI_SERVICE_SCCP) {
                 logger.warn(String
@@ -745,11 +733,37 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
                 return;
             }
 
+            // decoding of a message
             ByteArrayInputStream bais = new ByteArrayInputStream(mtp3Msg.getData());
             DataInputStream in = new DataInputStream(bais);
             int mt = in.readUnsignedByte();
             msg = ((MessageFactoryImpl) sccpProvider.getMessageFactory()).createMessage(mt, mtp3Msg.getOpc(), mtp3Msg.getDpc(), mtp3Msg.getSls(), in,
-                    this.sccpProtocolVersion, networkId);
+                    this.sccpProtocolVersion, 0);
+
+            // finding sap and networkId for a message
+            int dpc = mtp3Msg.getDpc();
+            int opc = mtp3Msg.getOpc();
+            String localGtDigits = null;
+            if (msg instanceof SccpAddressedMessageImpl) {
+                SccpAddressedMessageImpl msgAddr = (SccpAddressedMessageImpl) msg;
+                SccpAddress addr = msgAddr.getCalledPartyAddress();
+                if (addr != null) {
+                    GlobalTitle gt = addr.getGlobalTitle();
+                    if (gt != null) {
+                        localGtDigits = gt.getDigits();
+                    }
+                }
+            }
+            Mtp3ServiceAccessPoint sap = this.router.findMtp3ServiceAccessPointForIncMes(dpc, opc, localGtDigits);
+            int networkId = 0;
+            if (sap == null) {
+                if (logger.isEnabledFor(Level.WARN)) {
+                    logger.warn(String.format("Incoming Mtp3 Message for local address for localPC=%d, remotePC=%d, sls=%d. But SAP is not found for localPC", dpc, opc, mtp3Msg.getSls()));
+                }
+            } else {
+                networkId = sap.getNetworkId();
+            }
+            msg.setNetworkId(networkId);
 
             if (logger.isDebugEnabled()) {
                 logger.debug(String.format("Rx : SCCP message from MTP %s", msg));

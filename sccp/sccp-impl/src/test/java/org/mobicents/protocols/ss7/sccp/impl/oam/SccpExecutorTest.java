@@ -485,7 +485,7 @@ public class SccpExecutorTest {
         // test show
         rspCmd = "sccp sap show";
         res = this.sccpExecutor.execute(rspCmd.split(" "));
-        assertEquals(res, "key=5  mtp3Id=1, opc=11, ni=2, networkId=0, dpcList=[]\n");
+        assertEquals(res, "key=5  mtp3Id=1, opc=11, ni=2, networkId=0, localGtDigits=null, dpcList=[]\n");
 
         rspCmd = "sccp sap create 5 1 11 2";
         res = this.sccpExecutor.execute(rspCmd.split(" "));

@@ -68,7 +68,7 @@ public class GetMaxUserDataLengthTest {
 
         Mtp3UserPartImpl_2 mtp3UserPart = new Mtp3UserPartImpl_2();
         stack.setMtp3UserPart(1, mtp3UserPart);
-        stack.getRouter().addMtp3ServiceAccessPoint(1, 1, 1, 2, 0);
+        stack.getRouter().addMtp3ServiceAccessPoint(1, 1, 1, 2, 0, null);
 
         stack.getRouter().addMtp3Destination(1, 1, 2, 2, 0, 255, 255);
 
