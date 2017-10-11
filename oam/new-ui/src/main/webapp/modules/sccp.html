@@ -524,6 +524,7 @@
 						var sapOpc = $("#sapOpc"+name).val();
 						var sapNi = $("#sapNi"+name).val();
 						var sapNid = $("#sapNid"+name).val();
+						var sapLgt = $("#sapLgt"+name).val();
 						
 					    if($("#sapId"+name).val().length === 0) {
 					    	formInvalid = true;
@@ -564,9 +565,9 @@
 						} else {
 							$("#create-sap-error").hide();
 						}
-						
+
 						mbeanSearch="org.mobicents.ss7:layer=SCCP,type=Router,name="+name;
-						jolokia.execute(mbeanSearch,"addMtp3ServiceAccessPoint",sapId,sapMtp3Id,sapOpc,sapNi,sapNid,
+						jolokia.execute(mbeanSearch,"addMtp3ServiceAccessPoint",sapId,sapMtp3Id,sapOpc,sapNi,sapNid,sapLgt,
 								{
 									success: function(value) {
 										$('#entities-modal-sap').modal('hide');
@@ -1250,6 +1251,7 @@
 																	'					<th>OPC</th>'+
 																	'					<th>Network Indicator</th>'+
 																	'					<th>Network Id</th>'+
+																	'					<th>Local Gt Digits</th>'+
 																	'					<th>Action</th>'+
 																	'					</tr>'+
 																	'				</thead>'+
@@ -1302,6 +1304,13 @@
 																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="network-id for this connection.">'+
 																	'    								<span class="add-on">Network Id</span>'+
 																	'      								<input id="sapNid'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="Network Id" />'+
+																	'  								</span>'+
+																	'							</div>'+																	
+																	
+																	'							<div class="control-group">'+
+																	' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="Local GT digits. An incoming message will be brought to this sap if GT digits of callePartyAddress matches to this value. \"null\" value matches to any incoming message.">'+
+																	'    								<span class="add-on">Local GT digits</span>'+
+																	'      								<input id="sapLgt'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="Local GT digits" value="null" />'+
 																	'  								</span>'+
 																	'							</div>'+																	
 															
@@ -2067,6 +2076,7 @@
 																var mtp3Id = value.mtp3Id;
 																var ni = value.ni;
 																var nid = value.networkId;
+																var lgd = value.localGtDigits;
 																var opc = value.opc;
 																
 																$('#sap-list-table'+name).children('tbody').append('<tr class="component-row"><td style="vertical-align: middle; text-align: center;"><i style="color: #CC9522;" class="icon-signin"></i></td>'+
@@ -2075,6 +2085,7 @@
 																		'<td>' + opc + '</td>' + 
 																		'<td>' + ni + '</td>' + 
 																		'<td>' + nid + '</td>' + 
+																		'<td>' + lgd + '</td>' + 
 																		'<td style="font-size: 16px; vertical-align: middle; text-align: center; width: 100px;">' + 
 																			'<button class="btn btn-small btn-danger" data-toggle="tooltip" title="Remove SAP" data-placement="bottom" onclick="deleteSap(\'' + name +  '\',\'' + key +  '\')"><i class="icon-remove"> </i></button> ' +
 																		'</td></tr>' 
