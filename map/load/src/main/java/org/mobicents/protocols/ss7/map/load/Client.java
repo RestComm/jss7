@@ -203,7 +203,7 @@ public class Client extends TestHarness {
         this.sccpStack.getSccpResource().addRemoteSpc(0, SERVET_SPC, 0, 0);
         this.sccpStack.getSccpResource().addRemoteSsn(0, SERVET_SPC, SSN, 0, false);
 
-        this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, 1, CLIENT_SPC, NETWORK_INDICATOR, 0);
+        this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, 1, CLIENT_SPC, NETWORK_INDICATOR, 0, null);
         this.sccpStack.getRouter().addMtp3Destination(1, 1, SERVET_SPC, SERVET_SPC, 0, 255, 255);
 
         ParameterFactoryImpl fact = new ParameterFactoryImpl();
