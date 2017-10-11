@@ -152,3 +152,6 @@ docs/sources-*/src
 /DialogIdRangeTest_management.xml
 /DialogIdleEndTest1_management.xml
 /DialogIdleEndTest2_management.xml
+/Test_sccpresource2.xml
+/Test_sccprouter2.xml
+/RouterTest_sccprouter2.xml
