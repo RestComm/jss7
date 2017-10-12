@@ -108,7 +108,7 @@ public class NetworkIdAffectedPCTest {
         // isPcLocal()==true
         Mtp3UserPart mtp3UserPart = new M3UAManagementImpl("Test", "Test2");
         sccpStack.setMtp3UserPart(1, mtp3UserPart);
-        router.addMtp3ServiceAccessPoint(1, 1, 101, 0, 1);
+        router.addMtp3ServiceAccessPoint(1, 1, 101, 0, 1, null);
         map = router.getNetworkIdList(101);
         assertEquals(map.size(), 1);
         state = map.get(1);

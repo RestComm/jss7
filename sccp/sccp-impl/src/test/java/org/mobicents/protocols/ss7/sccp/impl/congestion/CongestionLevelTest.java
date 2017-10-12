@@ -278,7 +278,7 @@ public class CongestionLevelTest {
 
         Mtp3UserPartProxy mtp3UserPart = new Mtp3UserPartProxy();
         sccpStack.setMtp3UserPart(1, mtp3UserPart);
-        router.addMtp3ServiceAccessPoint(1, 1, 201, 0, 0);
+        router.addMtp3ServiceAccessPoint(1, 1, 201, 0, 0, null);
         router.addMtp3Destination(1, 1, affectedDpc, affectedDpc, 0, 0, 255);
 
         sccpStack.getSccpResource().addRemoteSpc(1, affectedDpc, 0, 0);
@@ -329,7 +329,7 @@ public class CongestionLevelTest {
 
         Mtp3UserPartProxy mtp3UserPart = new Mtp3UserPartProxy();
         sccpStack.setMtp3UserPart(1, mtp3UserPart);
-        router.addMtp3ServiceAccessPoint(1, 1, 201, 0, 0);
+        router.addMtp3ServiceAccessPoint(1, 1, 201, 0, 0, null);
         router.addMtp3Destination(1, 1, affectedDpc, affectedDpc, 0, 0, 255);
 
         sccpStack.getSccpResource().addRemoteSpc(1, affectedDpc, 0, 0);

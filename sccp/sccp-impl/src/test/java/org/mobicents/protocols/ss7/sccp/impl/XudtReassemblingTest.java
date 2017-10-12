@@ -50,7 +50,7 @@ public class XudtReassemblingTest {
 
         sccpStack.removeAllResourses();
         RouterImpl router = (RouterImpl) sccpStack.getRouter();
-        router.addMtp3ServiceAccessPoint(1, 1, 1002, 2, 0);
+        router.addMtp3ServiceAccessPoint(1, 1, 1002, 2, 0, null);
 
         Mtp3TransferPrimitiveFactory mtp3TransferPrimitiveFactory = new Mtp3TransferPrimitiveFactory(RoutingLabelFormat.ITU);
         Mtp3TransferPrimitive mtp3Msg = mtp3TransferPrimitiveFactory.createMtp3TransferPrimitive(3, 2, 0, 1001, 1002, 5, data1);
