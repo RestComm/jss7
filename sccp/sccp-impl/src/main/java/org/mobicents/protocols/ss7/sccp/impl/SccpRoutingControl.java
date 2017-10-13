@@ -1357,18 +1357,18 @@ public class SccpRoutingControl {
 
                 // send to MTP3
                 if (logger.isDebugEnabled()) {
-                    logger.debug(String.format("sendSccpError to a remote user: SCCP Message=%s", msg.toString()));
+                    logger.debug(String.format("sendSccpError to a remote user: SCCP Message=%s", ans.toString()));
                 }
-                if (msg instanceof SccpAddressedMessageImpl) {
-                    this.routeAddressed(msg);
+                if (ans instanceof SccpAddressedMessageImpl) {
+                    this.routeAddressed((SccpAddressedMessageImpl)ans);
                 } else {
-                    this.routeConn((SccpConnMessage)msg);
+                    this.routeConn((SccpConnMessage)ans);
                 }
             } else {
 
                 // deliver locally
                 if (logger.isDebugEnabled()) {
-                    logger.debug(String.format("sendSccpError to a local user: SCCP Message=%s", msg.toString()));
+                    logger.debug(String.format("sendSccpError to a local user: SCCP Message=%s", ans.toString()));
                 }
                 SccpListener listener = this.sccpProviderImpl.getSccpListener(msg.getOriginLocalSsn());
                 if (listener != null) {
