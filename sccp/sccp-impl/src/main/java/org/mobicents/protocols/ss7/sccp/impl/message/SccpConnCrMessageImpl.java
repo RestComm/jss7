@@ -48,21 +48,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class SccpConnCrMessageImpl extends SccpMessageImpl implements SccpConnCrMessage {
+public class SccpConnCrMessageImpl extends SccpAddressedMessageImpl implements SccpConnCrMessage {
     protected LocalReference sourceLocalReferenceNumber;
-    protected SccpAddress calledPartyAddress;
-    protected SccpAddress callingPartyAddress;
     protected ProtocolClass protocolClass;
     protected Credit credit;
     protected byte[] userData;
-    protected HopCounter hopCounter;
     protected Importance importance;
 
-    protected SccpConnCrMessageImpl(int sls, int localSsn) {
-        super(130, MESSAGE_TYPE_CR, sls, localSsn);
+    public SccpConnCrMessageImpl(int sls, int localSsn, SccpAddress calledParty, SccpAddress callingParty, HopCounter hopCounter) {
+        super(130, MESSAGE_TYPE_CR, sls, localSsn, calledParty, callingParty, hopCounter);
     }
 
-    protected SccpConnCrMessageImpl(int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
+    public SccpConnCrMessageImpl(int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
         super(130, MESSAGE_TYPE_CR, incomingOpc, incomingDpc, incomingSls, networkId);
     }
 
@@ -74,26 +71,6 @@ public class SccpConnCrMessageImpl extends SccpMessageImpl implements SccpConnCr
     @Override
     public void setSourceLocalReferenceNumber(LocalReference sourceLocalReferenceNumber) {
         this.sourceLocalReferenceNumber = sourceLocalReferenceNumber;
-    }
-
-    @Override
-    public SccpAddress getCalledPartyAddress() {
-        return calledPartyAddress;
-    }
-
-    @Override
-    public void setCalledPartyAddress(SccpAddress calledPartyAddress) {
-        this.calledPartyAddress = calledPartyAddress;
-    }
-
-    @Override
-    public SccpAddress getCallingPartyAddress() {
-        return callingPartyAddress;
-    }
-
-    @Override
-    public void setCallingPartyAddress(SccpAddress callingPartyAddress) {
-        this.callingPartyAddress = callingPartyAddress;
     }
 
     @Override
@@ -124,16 +101,6 @@ public class SccpConnCrMessageImpl extends SccpMessageImpl implements SccpConnCr
     @Override
     public void setUserData(byte[] userData) {
         this.userData = userData;
-    }
-
-    @Override
-    public HopCounter getHopCounter() {
-        return hopCounter;
-    }
-
-    @Override
-    public void setHopCounter(HopCounter hopCounter) {
-        this.hopCounter = hopCounter;
     }
 
     @Override
@@ -170,7 +137,7 @@ public class SccpConnCrMessageImpl extends SccpMessageImpl implements SccpConnCr
             buffer = new byte[len];
             in.read(buffer);
 
-            calledPartyAddress = createAddress(buffer, factory, sccpProtocolVersion);
+            calledParty = createAddress(buffer, factory, sccpProtocolVersion);
 
             in.reset();
 
@@ -217,14 +184,14 @@ public class SccpConnCrMessageImpl extends SccpMessageImpl implements SccpConnCr
             if (protocolClass == null) {
                 return new EncodingResultData(EncodingResult.ProtocolClassMissing, null, null, null);
             }
-            if (calledPartyAddress == null) {
+            if (calledParty == null) {
                 return new EncodingResultData(EncodingResult.CalledPartyAddressMissing, null, null, null);
             }
 
-            byte[] cdp = ((SccpAddressImpl) calledPartyAddress).encode(sccpStackImpl.isRemoveSpc(), sccpStackImpl.getSccpProtocolVersion());
+            byte[] cdp = ((SccpAddressImpl) calledParty).encode(sccpStackImpl.isRemoveSpc(), sccpStackImpl.getSccpProtocolVersion());
             byte[] cnp = new byte[0];
-            if (callingPartyAddress != null) {
-                cnp = ((SccpAddressImpl) callingPartyAddress).encode(sccpStackImpl.isRemoveSpc(), sccpStackImpl.getSccpProtocolVersion());
+            if (callingParty != null) {
+                cnp = ((SccpAddressImpl) callingParty).encode(sccpStackImpl.isRemoveSpc(), sccpStackImpl.getSccpProtocolVersion());
             }
 
             byte[] slr = ((LocalReferenceImpl) sourceLocalReferenceNumber).encode(sccpStackImpl.isRemoveSpc(), sccpStackImpl.getSccpProtocolVersion());
@@ -260,7 +227,7 @@ public class SccpConnCrMessageImpl extends SccpMessageImpl implements SccpConnCr
             out.write(len); //cdp pointer
 
             boolean optionalPresent = false;
-            if (credit != null || callingPartyAddress != null || userData != null || hopCounter != null || importance != null) {
+            if (credit != null || callingParty != null || userData != null || hopCounter != null || importance != null) {
                 len += cdp.length;
                 out.write(len); // optionals pointer
 
@@ -279,9 +246,9 @@ public class SccpConnCrMessageImpl extends SccpMessageImpl implements SccpConnCr
                 out.write(b.length);
                 out.write(b);
             }
-            if (callingPartyAddress != null) {
+            if (callingParty != null) {
                 out.write(SccpAddress.CGA_PARAMETER_CODE);
-                byte[] b = ((SccpAddressImpl)callingPartyAddress).encode(removeSPC, sccpProtocolVersion);
+                byte[] b = ((SccpAddressImpl)callingParty).encode(removeSPC, sccpProtocolVersion);
                 out.write(b.length);
                 out.write(b);
             }
@@ -324,13 +291,13 @@ public class SccpConnCrMessageImpl extends SccpMessageImpl implements SccpConnCr
             case SccpAddress.CGA_PARAMETER_CODE:
                 SccpAddressImpl address = new SccpAddressImpl();
                 address.decode(buffer, null, sccpProtocolVersion);
-                callingPartyAddress = address;
+                callingParty = address;
                 break;
 
             case SccpAddress.CDA_PARAMETER_CODE:
                 SccpAddressImpl address2 = new SccpAddressImpl();
                 address2.decode(buffer, null, sccpProtocolVersion);
-                calledPartyAddress = address2;
+                calledParty = address2;
                 break;
 
             case Parameter.DATA_PARAMETER_CODE:
@@ -357,5 +324,32 @@ public class SccpConnCrMessageImpl extends SccpMessageImpl implements SccpConnCr
         SccpAddressImpl addressImpl = new SccpAddressImpl();
         addressImpl.decode(buffer, factory, sccpProtocolVersion);
         return addressImpl;
+    }
+
+    public boolean reduceHopCounter() {
+        if (this.hopCounter != null) {
+            int val = this.hopCounter.getValue();
+            if (--val <= 0) {
+                val = 0;
+            }
+            ((HopCounterImpl)this.hopCounter).setValue(val);
+            if (val == 0)
+                return false;
+        }
+        return true;
+    }
+
+    public boolean getSccpCreatesSls() {
+        return false;
+    }
+
+    @Override
+    public boolean getReturnMessageOnError() {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public void clearReturnMessageOnError() {
+        throw new IllegalStateException();
     }
 }

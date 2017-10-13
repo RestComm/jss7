@@ -21,6 +21,9 @@
 
 package org.mobicents.protocols.ss7.sccp.impl.message;
 
+import org.mobicents.protocols.ss7.sccp.message.SccpConnMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
+
 /**
  * @author baranowb
  *
@@ -143,5 +146,27 @@ public class MessageUtil {
             res += 3;
 
         return res;
+    }
+
+    public static LocalReference getSln(SccpConnMessage msg) {
+        LocalReference sln;
+        if (msg instanceof SccpConnReferencedMessageImpl) {
+            sln = ((SccpConnReferencedMessageImpl)msg).getSourceLocalReferenceNumber();
+        } else if (msg instanceof SccpConnCrMessageImpl) {
+            sln = ((SccpConnCrMessageImpl) msg).getSourceLocalReferenceNumber();
+        } else {
+            throw new IllegalStateException("Not implemented");
+        }
+        return sln;
+    }
+
+    public static LocalReference getDln(SccpConnMessage msg) {
+        LocalReference dln;
+        if (msg instanceof SccpConnReferencedMessageImpl) {
+            dln = ((SccpConnReferencedMessageImpl)msg).getDestinationLocalReferenceNumber();
+        } else {
+            throw new IllegalStateException("Not implemented");
+        }
+        return dln;
     }
 }

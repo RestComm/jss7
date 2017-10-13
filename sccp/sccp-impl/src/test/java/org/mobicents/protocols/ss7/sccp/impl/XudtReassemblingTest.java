@@ -61,7 +61,7 @@ public class XudtReassemblingTest {
         sccpStack.onMtp3TransferMessage(mtp3Msg);
     }
 
-    private class SccpListenerProxy implements SccpListener {
+    private class SccpListenerProxy extends BaseSccpListener implements SccpListener {
 
         @Override
         public void onMessage(SccpDataMessage message) {

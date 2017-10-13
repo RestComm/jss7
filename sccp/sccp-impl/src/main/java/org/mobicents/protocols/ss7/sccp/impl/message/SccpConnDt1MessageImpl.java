@@ -31,7 +31,6 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SegmentingReassemblingImpl;
 import org.mobicents.protocols.ss7.sccp.message.ParseException;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnDt1Message;
-import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.ReturnCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.SegmentingReassembling;
@@ -40,27 +39,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class SccpConnDt1MessageImpl extends SccpMessageImpl implements SccpConnDt1Message {
-    protected LocalReference destinationLocalReferenceNumber;
+public class SccpConnDt1MessageImpl extends SccpConnSegmentableMessageImpl implements SccpConnDt1Message {
     protected SegmentingReassembling segmentingReassembling;
-    protected byte[] userData;
 
-    protected SccpConnDt1MessageImpl(int maxDataLen, int sls, int localSsn) {
+    public SccpConnDt1MessageImpl(int maxDataLen, int sls, int localSsn) {
         super(maxDataLen, MESSAGE_TYPE_DT1, sls, localSsn);
     }
 
     protected SccpConnDt1MessageImpl(int maxDataLen, int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
         super(maxDataLen, MESSAGE_TYPE_DT1, incomingOpc, incomingDpc, incomingSls, networkId);
-    }
-
-    @Override
-    public LocalReference getDestinationLocalReferenceNumber() {
-        return destinationLocalReferenceNumber;
-    }
-
-    @Override
-    public void setDestinationLocalReferenceNumber(LocalReference destinationLocalReferenceNumber) {
-        this.destinationLocalReferenceNumber = destinationLocalReferenceNumber;
     }
 
     @Override
@@ -71,16 +58,6 @@ public class SccpConnDt1MessageImpl extends SccpMessageImpl implements SccpConnD
     @Override
     public void setSegmentingReassembling(SegmentingReassembling segmentingReassembling) {
         this.segmentingReassembling = segmentingReassembling;
-    }
-
-    @Override
-    public byte[] getUserData() {
-        return userData;
-    }
-
-    @Override
-    public void setUserData(byte[] userData) {
-        this.userData = userData;
     }
 
     @Override
@@ -170,5 +147,15 @@ public class SccpConnDt1MessageImpl extends SccpMessageImpl implements SccpConnD
         } catch (IOException e) {
             throw new ParseException(e);
         }
+    }
+
+    @Override
+    public boolean isMoreData() {
+        return segmentingReassembling.isMoreData();
+    }
+
+    @Override
+    public void setMoreData(boolean moreData) {
+        segmentingReassembling = new SegmentingReassemblingImpl(moreData);
     }
 }

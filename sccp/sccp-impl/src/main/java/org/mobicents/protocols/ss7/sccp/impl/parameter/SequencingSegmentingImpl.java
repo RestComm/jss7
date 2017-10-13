@@ -58,7 +58,7 @@ public class SequencingSegmentingImpl extends AbstractParameter implements Seque
 
     @Override
     public boolean isMoreData() {
-        return false;
+        return moreData;
     }
 
     @Override
@@ -124,5 +124,10 @@ public class SequencingSegmentingImpl extends AbstractParameter implements Seque
         result = 31 * result + (int) receiveSequenceNumber;
         result = 31 * result + (moreData ? 1 : 0);
         return result;
+    }
+
+    public String toString() {
+        return new StringBuffer().append("ps=").append(sendSequenceNumber).append(",pr=").append(receiveSequenceNumber)
+                .append(",moreData=").append(moreData).toString();
     }
 }

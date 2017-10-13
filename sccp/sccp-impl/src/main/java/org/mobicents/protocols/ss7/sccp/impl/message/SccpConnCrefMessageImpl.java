@@ -45,14 +45,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class SccpConnCrefMessageImpl extends SccpMessageImpl implements SccpConnCrefMessage {
+public class SccpConnCrefMessageImpl extends SccpConnReferencedMessageImpl implements SccpConnCrefMessage {
     protected LocalReference destinationLocalReferenceNumber;
     protected SccpAddress calledPartyAddress;
     protected byte[] userData;
     protected RefusalCause refusalCause;
     protected Importance importance;
 
-    protected SccpConnCrefMessageImpl(int sls, int localSsn) {
+    public SccpConnCrefMessageImpl(int sls, int localSsn) {
         super(130, MESSAGE_TYPE_CREF, sls, localSsn);
     }
 
