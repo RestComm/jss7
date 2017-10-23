@@ -104,15 +104,13 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
     }
 
     public static double decodeLongitude(byte[] data, int begin) {
-        int i1 = ((data[begin] & 0xFF) << 16) + ((data[begin + 1] & 0xFF) << 8) + (data[begin + 2] & 0xFF);
+        int i1 = ((data[begin] & 0xFF) << 16) | ((data[begin + 1] & 0xFF) << 8) | (data[begin + 2] & 0xFF);
 
-        int sign = 1;
         if ((i1 & 0x800000) != 0) {
-            sign = -1;
-            i1 = i1 & 0x7FFFFF;
+            i1 = i1 | ((int) 0xFF000000);
         }
 
-        return i1 / koef24 * sign;
+        return i1 / koef24;
     }
 
     public static double decodeUncertainty(int data) {
@@ -142,17 +140,12 @@ public class GeographicalInformationImpl extends OctetStringBase implements Geog
     }
 
     public static void encodeLongitude(byte[] data, int begin, double val) {
-        boolean negativeSign = false;
-        if (val < 0) {
-            negativeSign = true;
-            val = -val;
-        }
-
         int res = (int) (koef24 * val);
 
         if (res > 0x7FFFFF)
             res = 0x7FFFFF;
-        if (negativeSign)
+
+        if (val < 0)
             res |= 0x800000;
 
         data[begin] = (byte) ((res & 0xFF0000) >> 16);

@@ -40,7 +40,7 @@ import org.testng.annotations.Test;
 public class AddGeographicalInformationTest {
 
     private byte[] getEncodedData_EllipsoidPointWithUncertaintyCircle() {
-        return new byte[] { 4, 8, 16, 92, 113, -57, -106, 11, 96, 7 };
+        return new byte[] { 4, 8, 16, 92, 113, -57, -106, 11, 97, 7 };
     }
 
     @Test(groups = { "functional.decode", "lsm" })
@@ -54,7 +54,7 @@ public class AddGeographicalInformationTest {
 
         assertEquals(impl.getTypeOfShape(), TypeOfShape.EllipsoidPointWithUncertaintyCircle);
         assertTrue(Math.abs(impl.getLatitude() - 65) < 0.01);
-        assertTrue(Math.abs(impl.getLongitude() - (-31)) < 0.01);
+        assertTrue(Math.abs(impl.getLongitude() - (-149)) < 0.01); // -31
         assertTrue(Math.abs(impl.getUncertainty() - 9.48) < 0.01);
     }
 
@@ -62,7 +62,7 @@ public class AddGeographicalInformationTest {
     public void testEncode() throws Exception {
 
         AddGeographicalInformationImpl impl = new AddGeographicalInformationImpl(
-                TypeOfShape.EllipsoidPointWithUncertaintyCircle, 65, -31, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                TypeOfShape.EllipsoidPointWithUncertaintyCircle, 65, -149, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         // TypeOfShape typeOfShape, double latitude, double longitude, double uncertainty, double uncertaintySemiMajorAxis,
         // double uncertaintySemiMinorAxis, double angleOfMajorAxis, int confidence, int altitude, double uncertaintyAltitude,
         // int innerRadius,

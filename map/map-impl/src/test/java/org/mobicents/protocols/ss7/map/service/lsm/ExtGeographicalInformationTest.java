@@ -40,7 +40,7 @@ import org.testng.annotations.Test;
 public class ExtGeographicalInformationTest {
 
     private byte[] getEncodedData_EllipsoidPointWithUncertaintyCircle() {
-        return new byte[] { 4, 8, 16, 92, 113, -57, -106, 11, 96, 7 };
+        return new byte[] { 4, 8, 16, 92, 113, -57, -106, 11, 97, 7 };
     }
 
     private byte[] getEncodedData_EllipsoidPointWithUncertaintyEllipse() {
@@ -56,7 +56,7 @@ public class ExtGeographicalInformationTest {
     }
 
     private byte[] getEncodedData_EllipsoidPoint() {
-        return new byte[] { 4, 7, 0, 0, 0, 0, -3, -35, -35 };
+        return new byte[] { 4, 7, 0, 0, 0, 0, -3, -35, -34 };
     }
 
     @Test(groups = { "functional.decode", "lsm" })
@@ -70,7 +70,7 @@ public class ExtGeographicalInformationTest {
 
         assertEquals(impl.getTypeOfShape(), TypeOfShape.EllipsoidPointWithUncertaintyCircle);
         assertTrue(Math.abs(impl.getLatitude() - 65) < 0.01);
-        assertTrue(Math.abs(impl.getLongitude() - (-31)) < 0.01);
+        assertTrue(Math.abs(impl.getLongitude() - (-149)) < 0.01);  // -31
         assertTrue(Math.abs(impl.getUncertainty() - 9.48) < 0.01);
 
         rawData = getEncodedData_EllipsoidPointWithUncertaintyEllipse();
@@ -126,14 +126,14 @@ public class ExtGeographicalInformationTest {
 
         assertEquals(impl.getTypeOfShape(), TypeOfShape.EllipsoidPoint);
         assertTrue(Math.abs(impl.getLatitude() - 0) < 0.01);
-        assertTrue(Math.abs(impl.getLongitude() - (-177)) < 0.01);
+        assertTrue(Math.abs(impl.getLongitude() - (-3)) < 0.01); // -177
     }
 
     @Test(groups = { "functional.encode", "lsm" })
     public void testEncode() throws Exception {
 
         ExtGeographicalInformationImpl impl = new ExtGeographicalInformationImpl(
-                TypeOfShape.EllipsoidPointWithUncertaintyCircle, 65, -31, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                TypeOfShape.EllipsoidPointWithUncertaintyCircle, 65, -149, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         // TypeOfShape typeOfShape, double latitude, double longitude, double uncertainty, double uncertaintySemiMajorAxis,
         // double uncertaintySemiMinorAxis, double angleOfMajorAxis, int confidence, int altitude, double uncertaintyAltitude,
         // int innerRadius,
@@ -167,7 +167,7 @@ public class ExtGeographicalInformationTest {
         rawData = getEncodedData_EllipsoidArc();
         assertTrue(Arrays.equals(rawData, encodedData));
 
-        impl = new ExtGeographicalInformationImpl(TypeOfShape.EllipsoidPoint, 0, -177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        impl = new ExtGeographicalInformationImpl(TypeOfShape.EllipsoidPoint, 0, -3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         asnOS = new AsnOutputStream();
         impl.encodeAll(asnOS);
         encodedData = asnOS.toByteArray();

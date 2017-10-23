@@ -5132,8 +5132,11 @@ TC-END + provideSubscriberInfoResponse
             public void onProvideSubscriberLocationResponse(ProvideSubscriberLocationResponse ind) {
                 super.onProvideSubscriberLocationResponse(ind);
 
-                Assert.assertTrue(Arrays.equals(ind.getLocationEstimate().getData(), new byte[] { 50 }));
+//                Assert.assertTrue(Arrays.equals(ind.getLocationEstimate().getData(), new byte[] { 50 }));
                 Assert.assertEquals((int) ind.getAgeOfLocationEstimate(), 6);
+
+                Assert.assertTrue(ind.getLocationEstimate().getLatitude() - (-31) < 0.001);
+                Assert.assertTrue(ind.getLocationEstimate().getLongitude() - (-53) < 0.001);
             }
 
         };
@@ -5149,10 +5152,8 @@ TC-END + provideSubscriberInfoResponse
                         LocationEstimateType.cancelDeferredLocation);
                 Assert.assertTrue(ind.getMlcNumber().getAddress().equals("11112222"));
 
-                ExtGeographicalInformation locationEstimate = this.mapParameterFactory
-                        .createExtGeographicalInformation(new byte[] { 50 });
-
                 try {
+                    ExtGeographicalInformation locationEstimate = this.mapParameterFactory.createExtGeographicalInformation_EllipsoidPoint(-31, -53);
                     d.addProvideSubscriberLocationResponse(ind.getInvokeId(), locationEstimate, null, null, 6, null, null,
                             false, null, false, null, null, false, null, null, null);
                 } catch (MAPException e) {
@@ -5213,6 +5214,8 @@ TC-END + provideSubscriberInfoResponse
 
         te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
         serverExpectedEvents.add(te);
+
+//        this.saveTrafficInFile();
 
         client.sendProvideSubscriberLocation();
         waitForEnd();

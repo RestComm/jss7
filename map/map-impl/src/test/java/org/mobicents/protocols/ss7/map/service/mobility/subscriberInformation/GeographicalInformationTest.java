@@ -49,18 +49,48 @@ public class GeographicalInformationTest {
     }
 
     private byte[] getEncodedData2() {
-        return new byte[] { 4, 8, 16, -28, 6, 95, -128, 91, 5, 20 };
+        return new byte[] { 4, 8, 16, -28, 6, 95, -128, 91, 6, 20 }; // 5
+    }
+
+    private byte[] getEncodedData01() {
+        return new byte[] { 4, 8, 16, (byte) 0xAC, 0x16, (byte) 0xC1, (byte) 0xA5, (byte) 0xB0, 0x5B, 0 };
+    }
+
+    private byte[] getEncodedData02() {
+        return new byte[] { 4, 8, 16, (byte) 0x2C, 0x16, (byte) 0xC1, (byte) 0x25, (byte) 0xB0, 0x5B, 0 };
     }
 
     @Test(groups = { "functional.decode", "subscriberInformation" })
     public void testDecode() throws Exception {
 
-        byte[] rawData = getEncodedData();
+        byte[] rawData = getEncodedData01();
 
         AsnInputStream asn = new AsnInputStream(rawData);
 
         int tag = asn.readTag();
         GeographicalInformationImpl impl = new GeographicalInformationImpl();
+        impl.decodeAll(asn);
+
+        assertEquals(impl.getTypeOfShape(), TypeOfShape.EllipsoidPointWithUncertaintyCircle);
+        assertTrue(Math.abs(impl.getLatitude() - (-31)) < 0.0001);
+        assertTrue(Math.abs(impl.getLongitude() - (-127.00001)) < 0.0001);
+        assertTrue(Math.abs(impl.getUncertainty() - 0) < 0.01);
+
+        rawData = getEncodedData02();
+        asn = new AsnInputStream(rawData);
+        tag = asn.readTag();
+        impl = new GeographicalInformationImpl();
+        impl.decodeAll(asn);
+
+        assertEquals(impl.getTypeOfShape(), TypeOfShape.EllipsoidPointWithUncertaintyCircle);
+        assertTrue(Math.abs(impl.getLatitude() - 31) < 0.0001);
+        assertTrue(Math.abs(impl.getLongitude() - 53) < 0.0001);
+        assertTrue(Math.abs(impl.getUncertainty() - 0) < 0.01);
+
+        rawData = getEncodedData();
+        asn = new AsnInputStream(rawData);
+        tag = asn.readTag();
+        impl = new GeographicalInformationImpl();
         impl.decodeAll(asn);
 
         assertEquals(impl.getTypeOfShape(), TypeOfShape.EllipsoidPointWithUncertaintyCircle);
@@ -76,7 +106,7 @@ public class GeographicalInformationTest {
 
         assertEquals(impl.getTypeOfShape(), TypeOfShape.EllipsoidPointWithUncertaintyCircle);
         assertTrue(Math.abs(impl.getLatitude() - (-70.33)) < 0.0001);
-        assertTrue(Math.abs(impl.getLongitude() - (-0.5)) < 0.0001);
+        assertTrue(Math.abs(impl.getLongitude() - (-179.5)) < 0.0001);
         assertTrue(Math.abs(impl.getUncertainty() - 57.27) < 0.01);
     }
 
@@ -84,14 +114,30 @@ public class GeographicalInformationTest {
     public void testEncode() throws Exception {
 
         GeographicalInformationImpl impl = new GeographicalInformationImpl(TypeOfShape.EllipsoidPointWithUncertaintyCircle,
-                21.5, 171, 0);
+                -31, -127.00001, 0);
         AsnOutputStream asnOS = new AsnOutputStream();
         impl.encodeAll(asnOS);
         byte[] encodedData = asnOS.toByteArray();
-        byte[] rawData = getEncodedData();
+        byte[] rawData = getEncodedData01();
+        assertEquals(rawData, encodedData);
+
+        impl = new GeographicalInformationImpl(TypeOfShape.EllipsoidPointWithUncertaintyCircle,
+                31, 53, 0);
+        asnOS = new AsnOutputStream();
+        impl.encodeAll(asnOS);
+        encodedData = asnOS.toByteArray();
+        rawData = getEncodedData02();
         assertTrue(Arrays.equals(rawData, encodedData));
 
-        impl = new GeographicalInformationImpl(TypeOfShape.EllipsoidPointWithUncertaintyCircle, -70.33, -0.5, 58);
+        impl = new GeographicalInformationImpl(TypeOfShape.EllipsoidPointWithUncertaintyCircle,
+                21.5, 171, 0);
+        asnOS = new AsnOutputStream();
+        impl.encodeAll(asnOS);
+        encodedData = asnOS.toByteArray();
+        rawData = getEncodedData();
+        assertTrue(Arrays.equals(rawData, encodedData));
+
+        impl = new GeographicalInformationImpl(TypeOfShape.EllipsoidPointWithUncertaintyCircle, -70.33, -179.5, 58);
         asnOS = new AsnOutputStream();
         impl.encodeAll(asnOS);
         encodedData = asnOS.toByteArray();
