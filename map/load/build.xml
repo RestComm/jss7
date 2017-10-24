@@ -121,6 +121,7 @@
 			<arg value="3" /> <!-- SI -->
 			<arg value="8" /> <!-- SSN -->
 			<arg value="100" /> <!-- RC -->
+			<arg value="-100" /> <!-- ramp up period, set to zero to enable single dialog injection -->
 		</java>
 	</target>
 	<!-- -->

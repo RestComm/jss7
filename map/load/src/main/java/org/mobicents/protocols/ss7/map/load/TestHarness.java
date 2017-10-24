@@ -71,6 +71,8 @@ public abstract class TestHarness implements MAPDialogListener, MAPServiceSupple
 
     protected static int ROUTING_CONTEXT = 100;
 
+    protected static int RAMP_UP_PERIOD = -100;
+
     protected final String SERVER_ASSOCIATION_NAME = "serverAsscoiation";
     protected final String CLIENT_ASSOCIATION_NAME = "clientAsscoiation";
 

@@ -110,7 +110,7 @@ public class Client extends TestHarness {
     private ManagementImpl sctpManagement;
 
     // a ramp-up period is required for performance testing.
-    int endCount = -100;
+    int endCount;
 
     AtomicInteger nbConcurrentDialogs = new AtomicInteger(0);
 
@@ -289,6 +289,10 @@ public class Client extends TestHarness {
             TestHarness.ROUTING_CONTEXT = Integer.parseInt(args[12]);
         }
 
+        if(args.length >= 14){
+            TestHarness.RAMP_UP_PERIOD = Integer.parseInt(args[13]);
+        }
+
         // logger.info("Number of calls to be completed = " + noOfCalls +
         // " Number of concurrent calls to be maintained = " +
         // noOfConcurrentCalls);
@@ -297,6 +301,7 @@ public class Client extends TestHarness {
         MAXCONCURRENTDIALOGS = noOfConcurrentCalls;
 
         final Client client = new Client();
+        client.endCount = TestHarness.RAMP_UP_PERIOD;
 
         try {
             client.initializeStack(ipChannelType);
