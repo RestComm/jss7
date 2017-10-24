@@ -163,6 +163,7 @@
 			<arg value="8" /> <!-- SSN -->
 			<arg value="100" /> <!-- RC -->
 			<arg value="16" /> <!-- deliveryTransferMessageThreadCount -->
+			<arg value="-100" /> <!-- ramp up period, set to zero to enable single dialog injection -->
 		</java>
 	</target>
 

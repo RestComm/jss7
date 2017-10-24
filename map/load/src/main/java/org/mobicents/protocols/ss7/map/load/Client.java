@@ -123,7 +123,7 @@ public class Client extends TestHarness {
     private NettySctpManagementImpl sctpManagement;
 
     // a ramp-up period is required for performance testing.
-    int endCount = -100;
+    int endCount;
 
     //AtomicInteger nbConcurrentDialogs = new AtomicInteger(0);
 
@@ -371,6 +371,10 @@ public class Client extends TestHarness {
             TestHarness.DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT = Integer.parseInt(args[13]);
         }
 
+        if(args.length >= 15){
+            TestHarness.RAMP_UP_PERIOD = Integer.parseInt(args[14]);
+        }
+
         System.out.println("DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT="+TestHarness.DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT);
 
         // logger.info("Number of calls to be completed = " + noOfCalls +
@@ -386,6 +390,7 @@ public class Client extends TestHarness {
         System.out.println("MAXCONCURRENTDIALOGS="+MAXCONCURRENTDIALOGS);
 
         final Client client = new Client();
+        client.endCount = TestHarness.RAMP_UP_PERIOD;
 
         try {
             client.initializeStack(ipChannelType);
