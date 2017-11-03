@@ -14,6 +14,7 @@ import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
 import org.mobicents.ss7.service.SS7ExtensionService;
+import org.mobicents.ss7.service.SS7ServiceInterface;
 
 import javax.management.MBeanServer;
 import java.util.List;
@@ -51,7 +52,7 @@ class SubsystemAdd extends AbstractBoottimeAddStepHandler {
     service.setModel(fullModel);
 
     ServiceName name = SS7ExtensionService.getServiceName();
-    ServiceController<SS7ExtensionService> controller = context.getServiceTarget()
+    ServiceController<SS7ServiceInterface> controller = context.getServiceTarget()
         .addService(name, service)
         .addDependency(PathManagerService.SERVICE_NAME, PathManager.class, service.getPathManagerInjector())
         .addDependency(MBeanServerService.SERVICE_NAME, MBeanServer.class, service.getMbeanServer())

@@ -19,5 +19,6 @@
         <module name="org.jboss.logging"/>
 
         <module name="org.mobicents.ss7.modules"/>
+        <module name="org.mobicents.ss7.commons"/>
     </dependencies>
 </module>
