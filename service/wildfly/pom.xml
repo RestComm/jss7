@@ -22,6 +22,7 @@
     <modules>
         <module>modules</module>
         <module>extension</module>
+        <module>restcomm-ss7-wildfly-commons</module>
     </modules>
 
 </project>

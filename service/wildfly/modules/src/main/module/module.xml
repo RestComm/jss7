@@ -2,12 +2,10 @@
 <module xmlns="urn:jboss:module:1.3" name="${module.name}">
 
     <resources>
-        <resource-root path="javolution-${javolution.version}.jar"/>
         <resource-root path="stream-${stream.version}.jar"/>
         <resource-root path="commons-email-1.3.2.jar"/>
 
         <resource-root path="congestion-${project.version}.jar"/>
-        <resource-root path="scheduler-${project.version}.jar"/>
         <resource-root path="statistics-api-${project.version}.jar"/>
         <resource-root path="statistics-impl-${project.version}.jar"/>
 
@@ -37,9 +35,6 @@
 
         <resource-root path="restcomm-ss7-${project.version}.jar"/>
 
-        <resource-root path="shell-server-api-${project.version}.jar"/>
-        <resource-root path="shell-server-impl-${project.version}.jar"/>
-        <resource-root path="shell-transport-${project.version}.jar"/>
         <resource-root path="linkset-${project.version}.jar"/>
 
         <resource-root path="jmx-${project.version}.jar"/>
@@ -75,7 +70,7 @@
         <module name="org.jboss.msc"/>
         <module name="org.jboss.jts"/>
         <module name="org.jboss.logging"/>
-
+		<module name="org.mobicents.ss7.commons"/>
         <!-- lic dep -->
     </dependencies>
 </module>

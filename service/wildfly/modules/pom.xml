@@ -20,6 +20,34 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.8.1</version>
+                <configuration>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <enableAssertions>true</enableAssertions>
+                    <argLine>-Xmx512m</argLine>
+                    <systemProperties>
+                        <property>
+                            <name>jboss.home</name>
+                            <value>${jboss.home}</value>
+                        </property>
+                    </systemProperties>
+                    <includes>
+                        <include>**/*TestCase.java</include>
+                    </includes>
+                    <forkMode>once</forkMode>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.2.1</version>
@@ -48,11 +76,6 @@
     <dependencies>
         <!-- 3rd PARTY -->
         <dependency>
-            <groupId>javolution</groupId>
-			<artifactId>javolution</artifactId>
-			<version>${javolution.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.mobicents.protocols.stream</groupId>
             <artifactId>stream</artifactId>
             <version>${stream.version}</version>
@@ -69,13 +92,6 @@
             <artifactId>congestion</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Scheduler -->
-        <dependency>
-            <groupId>org.mobicents.protocols.ss7.scheduler</groupId>
-            <artifactId>scheduler</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <!-- Clock -->
 
         <!-- Service -->
         <dependency>
@@ -84,12 +100,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Management Shell -->
-        <dependency>
-            <groupId>org.mobicents.protocols.ss7.management</groupId>
-            <artifactId>shell-transport</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 <!--
         <dependency>
             <groupId>org.mobicents.protocols.ss7.management</groupId>
@@ -97,16 +107,6 @@
             <version>${project.version}</version>
         </dependency>
 -->
-        <dependency>
-            <groupId>org.mobicents.protocols.ss7.management</groupId>
-            <artifactId>shell-server-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mobicents.protocols.ss7.management</groupId>
-            <artifactId>shell-server-impl</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <!-- Management linkset -->
         <dependency>

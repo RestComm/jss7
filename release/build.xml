@@ -231,7 +231,12 @@
                 <include name="**"/>
             </fileset>
         </copy>
-
+    	<copy todir="${restcomm.jss7.dist}/ss7-wildfly/restcomm-ss7-service/commons" failonerror="true">
+			<fileset dir="${jss7.dir}/service/wildfly/commons/target/module">
+				<include name="**"/>
+			</fileset>
+		</copy>
+    	
         <echo>Copy OAM ui</echo>
         <copy todir="${restcomm.jss7.dist}/oam/new-ui" failonerror="true">
             <fileset dir="${jss7.dir}/oam/new-ui/target/">

@@ -81,7 +81,7 @@ import org.mobicents.ss7.management.console.ShellServerWildFly;
 * @author sergey vetyutnev
 *
 */
-public class SS7ExtensionService implements Service<SS7ExtensionService> {
+public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7ServiceInterface> {
 
     // //
     public static final SS7ExtensionService INSTANCE = new SS7ExtensionService();
@@ -216,25 +216,27 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
         }
 
         createPayloadParts(dataDir);
+        System.out.println("SS7 shellExecutorExists():" + shellExecutorExists());
+        if(shellExecutorExists()) {
+            shellExecutorMBean = null;
+            try {
+                FastList<ShellExecutor> shellExecutors = new FastList<ShellExecutor>();
+                shellExecutors.add(beanSccpExecutor);
+                shellExecutors.add(beanM3uaShellExecutor);
+                shellExecutors.add(beanSctpShellExecutor);
+                shellExecutors.add(beanTcapExecutor);
 
-        shellExecutorMBean = null;
-        try {
-            FastList<ShellExecutor> shellExecutors = new FastList<ShellExecutor>();
-            shellExecutors.add(beanSccpExecutor);
-            shellExecutors.add(beanM3uaShellExecutor);
-            shellExecutors.add(beanSctpShellExecutor);
-            shellExecutors.add(beanTcapExecutor);
+                String address = getPropertyString("ShellExecutor", "address", "127.0.0.1");
+                int port = getPropertyInt("ShellExecutor", "port", 3435);
+                String securityDomain = getPropertyString("ShellExecutor", "securityDomain", "jmx-console");
 
-            String address = getPropertyString("ShellExecutor", "address", "127.0.0.1");
-            int port = getPropertyInt("ShellExecutor", "port", 3435);
-            String securityDomain = getPropertyString("ShellExecutor", "securityDomain", "jmx-console");
-
-            shellExecutorMBean = new ShellServerWildFly(schedulerMBean, shellExecutors);
-            shellExecutorMBean.setAddress(address);
-            shellExecutorMBean.setPort(port);
-            shellExecutorMBean.setSecurityDomain(securityDomain);
-        } catch (Exception e) {
-            throw new StartException("ShellExecutor MBean creating is failed: " + e.getMessage(), e);
+                shellExecutorMBean = new ShellServerWildFly(schedulerMBean, shellExecutors);
+                shellExecutorMBean.setAddress(address);
+                shellExecutorMBean.setPort(port);
+                shellExecutorMBean.setSecurityDomain(securityDomain);
+            } catch (Exception e) {
+                throw new StartException("ShellExecutor MBean creating is failed: " + e.getMessage(), e);
+            }
         }
 
         // Ss7Management
@@ -406,7 +408,9 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
 
         // Starting of general beans
         try {
-            shellExecutorMBean.start();
+            if(shellExecutorMBean != null) {
+                shellExecutorMBean.start();
+            }
             ss7ManagementMBean.start();
             restcommAlarmManagementMBean.start();
             restcommStatisticManagementMBean.start();
@@ -473,6 +477,11 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
                 throw new StartException("TcapManagementJmx_" + beanName + " MBean starting is failed: " + e.getMessage(), e);
             }
         }
+    }
+
+    private boolean shellExecutorExists() {
+        ModelNode shellExecutorNode = peek(fullModel, "mbean", "ShellExecutor");
+        return shellExecutorNode != null;
     }
 
     @Override
@@ -1275,4 +1284,28 @@ public class SS7ExtensionService implements Service<SS7ExtensionService> {
         }
     }
 
+    @Override
+    public ShellExecutor getBeanSctpShellExecutor() {
+        return beanSctpShellExecutor;
+    }
+
+    @Override
+    public ShellExecutor getBeanM3uaShellExecutor() {
+        return beanM3uaShellExecutor;
+    }
+
+    @Override
+    public ShellExecutor getBeanSccpExecutor() {
+        return beanSccpExecutor;
+    }
+
+    @Override
+    public ShellExecutor getBeanTcapExecutor() {
+        return beanTcapExecutor;
+    }
+
+    @Override
+    public Ss7Management getSs7Management() {
+        return ss7ManagementMBean;
+    }
 }

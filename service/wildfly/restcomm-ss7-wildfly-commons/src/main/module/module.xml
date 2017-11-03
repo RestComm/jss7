@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="urn:jboss:module:1.3" name="${module.name}">
+
+    <resources>
+        <resource-root path="javolution-${javolution.version}.jar"/>
+        <resource-root path="shell-server-api-${project.version}.jar"/>
+        <resource-root path="shell-server-impl-${project.version}.jar"/>
+        <resource-root path="shell-transport-${project.version}.jar"/>
+        <resource-root path="scheduler-${project.version}.jar"/>
+    </resources>
+
+    <dependencies>
+        <module name="sun.jdk"/>
+        <module name="javax.api"/>
+        <module name="javax.xml.bind.api"/>
+        <module name="org.apache.commons.logging"/>
+        <module name="org.apache.commons.pool"/>
+        <module name="org.apache.log4j"/>
+        <module name="org.apache.xerces"/>
+
+        <module name="org.jboss.staxmapper"/>
+        <module name="org.jboss.as.controller"/>
+        <module name="org.jboss.as.server"/>
+        <module name="org.jboss.as.naming"/>
+        <module name="org.jboss.as.transactions"/>
+        <module name="org.jboss.as.system-jmx"/>
+        <module name="org.jboss.as.security" export="true"/>
+        <module name="org.picketbox" export="true"/>
+        <module name="org.jboss.modules"/>
+        <module name="org.jboss.msc"/>
+        <module name="org.jboss.jts"/>
+        <module name="org.jboss.logging"/>
+    </dependencies>
+</module>

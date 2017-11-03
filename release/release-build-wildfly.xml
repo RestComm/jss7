@@ -61,7 +61,7 @@
 
 		<!-- adding of ss7 subsystem into standalone.xml -->
 		<xmltask source="${jboss.standalone.path}/configuration/standalone.xml" dest="${jboss.standalone.path}/configuration/standalone.xml">
-			<remove path="/:server/:profile/*[local-name()='subsystem'][*[local-name()='mbean'][@reflection]]"/>
+			<remove path="/:server/:profile/*[local-name()='subsystem'][*[local-name()='mbean'][namespace-uri()='urn:org.restcomm:ss7-wildfly:1.0'][@reflection]]"/>
 			<insert path="/:server/:profile/*[local-name()='subsystem'][last()]" position="after" file="template/wildfly-jss7-subsystem.txt"></insert>
 		</xmltask> 
 
@@ -125,7 +125,7 @@
 		</xmltask>
 
 		<xmltask source="${jboss.standalone.path}/configuration/standalone.xml" dest="${jboss.standalone.path}/configuration/standalone.xml">
-			<remove path="/:server/:profile/*[local-name()='subsystem'][*[local-name()='mbean'][@reflection]]"/>
+			<remove path="/:server/:profile/*[local-name()='subsystem'][*[local-name()='mbean'][namespace-uri()='urn:org.restcomm:ss7-wildfly:1.0'][@reflection]]"/>
 		</xmltask>
 
 		<delete dir="${restcomm-ss7.path}" />
@@ -161,5 +161,17 @@
 		<delete file="${jboss.standalone.path}/configuration/jmx-users.properties" />
 		-->
 	</target>
-
+	
+	<target name="deploy-commons">
+		<copy overwrite="true" todir="${restcomm-ss7.path}/commons">
+			<fileset dir="${basedir}/restcomm-ss7-service/commons">
+				<include name="*/**" />
+			</fileset>
+		</copy>
+	</target>
+		
+	<target name="undeploy-commons">
+		<delete dir="${restcomm-ss7.path}/commons" />
+	</target>
+	
 </project>
