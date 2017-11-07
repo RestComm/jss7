@@ -237,7 +237,7 @@
             </fileset>
         </copy>
     	<copy todir="${restcomm.jss7.dist}/ss7-wildfly/restcomm-ss7-service/commons" failonerror="true">
-			<fileset dir="${jss7.dir}/service/wildfly/commons/target/module">
+			<fileset dir="${jss7.dir}/service/wildfly/restcomm-ss7-wildfly-commons/target/module">
 				<include name="**"/>
 			</fileset>
 		</copy>
