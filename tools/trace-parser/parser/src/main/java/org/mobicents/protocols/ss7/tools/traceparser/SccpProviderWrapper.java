@@ -36,6 +36,7 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpMessage;
+import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.ss7.congestion.ExecutorCongestionMonitor;
@@ -116,6 +117,12 @@ public class SccpProviderWrapper implements SccpProvider {
     public ExecutorCongestionMonitor[] getExecutorCongestionMonitorList() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public void send(SccpNoticeMessage message) throws IOException {
+        // TODO Auto-generated method stub
+        
     }
 
 }

@@ -42,6 +42,7 @@ import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
+import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -592,6 +593,12 @@ public class PreviewModeFunctionalTest {
         public ExecutorCongestionMonitor[] getExecutorCongestionMonitorList() {
             // TODO Auto-generated method stub
             return null;
+        }
+
+        @Override
+        public void send(SccpNoticeMessage message) throws IOException {
+            // TODO Auto-generated method stub
+            
         }
     }
 
