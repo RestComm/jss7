@@ -30,6 +30,7 @@ import javolution.util.FastMap;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
+import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -80,6 +81,14 @@ public interface SccpProvider extends Serializable {
      * @throws IOException
      */
     void send(SccpDataMessage message) throws IOException;
+
+    /**
+     * Sends a unitdata service UDTS, XUDTS, LUDTS message (with error inside).
+     *
+     * @param message Message to be sent
+     * @throws IOException
+     */
+    void send(SccpNoticeMessage message) throws IOException;
 
     /**
      * Return the maximum length (in bytes) of the sccp message data

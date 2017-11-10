@@ -59,7 +59,7 @@ import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.congestion.SccpCongestionControl;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpAddressedMessageImpl;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataNoticeTemplateMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpSegmentableMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
@@ -979,7 +979,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
     }
 
-    protected void send(SccpDataMessageImpl message) throws Exception {
+    protected void send(SccpDataNoticeTemplateMessageImpl message) throws Exception {
 
         if (this.state != State.RUNNING) {
             logger.error("Trying to send SCCP message from SCCP user but SCCP stack is not RUNNING");
