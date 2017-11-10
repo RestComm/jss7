@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
+import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
@@ -433,6 +434,12 @@ public class DialogPreviewModeMngConcurrentTest {
         public FastMap<LocalReference, SccpConnection> getConnections() {
             // TODO Auto-generated method stub
             return null;
+        }
+
+        @Override
+        public void send(SccpNoticeMessage message) throws IOException {
+            // TODO Auto-generated method stub
+            
         }
     }
 
