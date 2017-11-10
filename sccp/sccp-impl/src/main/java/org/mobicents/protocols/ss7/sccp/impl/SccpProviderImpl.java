@@ -35,9 +35,11 @@ import org.mobicents.protocols.ss7.sccp.SccpManagementEventListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpNoticeMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
+import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
@@ -138,9 +140,20 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
         return ssnToListener;
     }
 
+    @Override
     public void send(SccpDataMessage message) throws IOException {
         try{
             SccpDataMessageImpl msg = ((SccpDataMessageImpl) message);
+            stack.send(msg);
+        }catch(Exception e){
+            throw new IOException(e);
+        }
+    }
+
+    @Override
+    public void send(SccpNoticeMessage message) throws IOException {
+        try{
+            SccpNoticeMessageImpl msg = ((SccpNoticeMessageImpl) message);
             stack.send(msg);
         }catch(Exception e){
             throw new IOException(e);
