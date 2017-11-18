@@ -13,8 +13,6 @@ import org.mobicents.protocols.ss7.scheduler.Task;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.ESTABLISHED;
-
 abstract class SccpConnectionWithTransmitQueueImpl extends SccpConnectionBaseImpl {
     private static final int SLEEP_DELAY = 15;
     private static final int OUTGOING_SIZE_LIMIT = 10000;

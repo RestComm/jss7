@@ -59,7 +59,6 @@ import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.congestion.SccpCongestionControl;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpAddressedMessageImpl;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnErrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpSegmentableMessageImpl;
@@ -83,7 +82,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -1580,7 +1578,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             vali = reader.read(TIMER_EXECUTORS_THREAD_COUNT, Integer.class);
             if (vali != null)
                 this.timerExecutorsThreadCount = vali;
-            
+
             volb = reader.read(PREVIEW_MODE, Boolean.class);
             if (volb != null)
                 this.previewMode = volb;
