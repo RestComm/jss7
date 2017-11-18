@@ -53,6 +53,7 @@ import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.Credit;
+import org.mobicents.protocols.ss7.sccp.parameter.ErrorCause;
 import org.mobicents.protocols.ss7.sccp.parameter.Importance;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
@@ -1366,6 +1367,11 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
     @Override
     public void onDisconnectIndication(SccpConnection conn, RefusalCause reason, byte[] data) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onDisconnectIndication(SccpConnection conn, ErrorCause errorCause) {
         // TODO Auto-generated method stub
     }
 

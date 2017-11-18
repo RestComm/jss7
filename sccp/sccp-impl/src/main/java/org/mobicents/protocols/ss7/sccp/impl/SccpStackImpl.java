@@ -1595,7 +1595,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             vali = reader.read(TIMER_EXECUTORS_THREAD_COUNT, Integer.class);
             if (vali != null)
                 this.timerExecutorsThreadCount = vali;
-            
+
             volb = reader.read(PREVIEW_MODE, Boolean.class);
             if (volb != null)
                 this.previewMode = volb;

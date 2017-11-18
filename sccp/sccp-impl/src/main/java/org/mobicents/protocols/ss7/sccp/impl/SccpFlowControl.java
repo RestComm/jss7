@@ -10,8 +10,6 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.SequenceNumberImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.ResetCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.SequenceNumber;
 
-import java.util.concurrent.locks.ReentrantLock;
-
 public class SccpFlowControl {
     private static final double EARLY_ACK_LEVEL_LARGE_WINDOW = 0.5;
     private static final double EARLY_ACK_LEVEL_SMALL_WINDOW = 0.1;
@@ -34,7 +32,7 @@ public class SccpFlowControl {
     private boolean preemptiveAk = false; // send AK before input window exhaustion
 
     public SccpFlowControl(String name, int maximumWindowSize) {
-        this.logger = Logger.getLogger(FlowControlWindows.class.getCanonicalName() + "-" + name);
+        this.logger = Logger.getLogger(SccpFlowControl.class.getCanonicalName() + "-" + name);
 
         if (maximumWindowSize > 127) {
             throw new IllegalArgumentException();
