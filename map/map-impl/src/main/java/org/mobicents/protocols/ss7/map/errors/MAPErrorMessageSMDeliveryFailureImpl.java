@@ -38,7 +38,9 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorCode;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSMDeliveryFailure;
 import org.mobicents.protocols.ss7.map.api.errors.SMEnumeratedDeliveryFailureCause;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsDeliverReportTpdu;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.SmsDeliverReportTpduImpl;
 
 /**
  *
@@ -276,6 +278,25 @@ public class MAPErrorMessageSMDeliveryFailureImpl extends MAPErrorMessageImpl im
             throw new MAPException("AsnException when encoding MAPErrorMessageSMDeliveryFailure: " + e.getMessage(), e);
         }
     }
+
+    public SmsDeliverReportTpdu getSmsDeliverReportTpdu() throws MAPException {
+        SmsDeliverReportTpdu drTpdu = null;
+        //try to parse drTpdu
+        if (this.signalInfo != null) {
+            try {
+                drTpdu = new SmsDeliverReportTpduImpl(this.signalInfo, null);
+            } catch (MAPException me) {
+                throw new MAPException("Error decoding TPDU" + me.getMessage(), me);
+
+            }
+        }
+        return drTpdu;
+    }
+
+    public void setsmsDeliverReportTpdu(SmsDeliverReportTpdu tpdu) throws MAPException {
+        this.signalInfo = tpdu.encodeData();
+    }
+
 
     @Override
     public String toString() {
