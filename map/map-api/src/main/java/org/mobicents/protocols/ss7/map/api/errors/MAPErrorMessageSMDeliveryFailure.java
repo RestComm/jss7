@@ -71,6 +71,6 @@ public interface MAPErrorMessageSMDeliveryFailure extends MAPErrorMessage {
 
     SmsDeliverReportTpdu getSmsDeliverReportTpdu() throws MAPException;
 
-    void setsmsDeliverReportTpdu(SmsDeliverReportTpdu tpdu) throws MAPException;
+    void setSmsDeliverReportTpdu(SmsDeliverReportTpdu tpdu) throws MAPException;
 
 }
