@@ -39,8 +39,10 @@ import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSMDeliveryFailu
 import org.mobicents.protocols.ss7.map.api.errors.SMEnumeratedDeliveryFailureCause;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsDeliverReportTpdu;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsTpdu;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsTpduType;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
-import org.mobicents.protocols.ss7.map.smstpdu.SmsDeliverReportTpduImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.SmsTpduImpl;
 
 /**
  *
@@ -280,20 +282,17 @@ public class MAPErrorMessageSMDeliveryFailureImpl extends MAPErrorMessageImpl im
     }
 
     public SmsDeliverReportTpdu getSmsDeliverReportTpdu() throws MAPException {
-        SmsDeliverReportTpdu drTpdu = null;
-        //try to parse drTpdu
         if (this.signalInfo != null) {
-            try {
-                drTpdu = new SmsDeliverReportTpduImpl(this.signalInfo, null);
-            } catch (MAPException me) {
-                throw new MAPException("Error decoding TPDU" + me.getMessage(), me);
-
+            SmsTpdu smsTpdu = SmsTpduImpl.createInstance(this.signalInfo, true, null);
+            if (smsTpdu.getSmsTpduType() == SmsTpduType.SMS_DELIVER_REPORT) {
+                SmsDeliverReportTpdu drTpdu = (SmsDeliverReportTpdu) smsTpdu;
+                return drTpdu;
             }
         }
-        return drTpdu;
+        return null;
     }
 
-    public void setsmsDeliverReportTpdu(SmsDeliverReportTpdu tpdu) throws MAPException {
+    public void setSmsDeliverReportTpdu(SmsDeliverReportTpdu tpdu) throws MAPException {
         this.signalInfo = tpdu.encodeData();
     }
 
@@ -331,6 +330,8 @@ public class MAPErrorMessageSMDeliveryFailureImpl extends MAPErrorMessageImpl im
      */
     protected static final XMLFormat<MAPErrorMessageSMDeliveryFailureImpl> MAP_ERROR_MESSAGE_SM_DEL_FAILURE_XML = new XMLFormat<MAPErrorMessageSMDeliveryFailureImpl>(
             MAPErrorMessageSMDeliveryFailureImpl.class) {
+
+        // TODO: we need to think of parsing of SignallingInfo into XML components (now we just write a byte array)
 
         @Override
         public void read(javolution.xml.XMLFormat.InputElement xml, MAPErrorMessageSMDeliveryFailureImpl errorMessage)
