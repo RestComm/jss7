@@ -75,13 +75,11 @@
 
     <dependencies>
         <!-- 3rd PARTY -->
-<!--
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
             <version>${netty.version}</version>
         </dependency>
--->
         <dependency>
             <groupId>org.mobicents.protocols.stream</groupId>
             <artifactId>stream</artifactId>

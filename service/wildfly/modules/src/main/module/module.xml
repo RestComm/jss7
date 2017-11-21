@@ -2,9 +2,7 @@
 <module xmlns="urn:jboss:module:1.3" name="${module.name}">
 
     <resources>
-<!--
         <resource-root path="netty-all-${netty.version}.jar"/>
--->
         <resource-root path="stream-${stream.version}.jar"/>
         <resource-root path="commons-email-1.3.2.jar"/>
 
