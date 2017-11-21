@@ -201,7 +201,7 @@ public class RouterImpl implements Router {
 
     private final TextBuilder persistFile = TextBuilder.newInstance();
 
-    private static final SccpRouterXMLBinding binding = new SccpRouterXMLBinding();
+    protected static final SccpRouterXMLBinding binding = new SccpRouterXMLBinding();
     private static final String TAB_INDENT = "\t";
     private static final String CLASS_ATTRIBUTE = "type";
 
@@ -1113,10 +1113,13 @@ public class RouterImpl implements Router {
         moveBackupToRoutingAddress(backupAddresses);
     }
 
-    private void loadVer3(String fn) throws XMLStreamException, FileNotFoundException {
+    protected void loadVer3(String fn) throws XMLStreamException, FileNotFoundException {
         XMLObjectReader reader = XMLObjectReader.newInstance(new FileInputStream(fn));
 
         reader.setBinding(binding);
+        loadVer3(reader);
+    }
+    protected void loadVer3(XMLObjectReader reader) throws XMLStreamException{
         rulesMap = reader.read(RULE, RuleMap.class);
         routingAddresses = reader.read(ROUTING_ADDRESS, SccpAddressMap.class);
 

@@ -54,12 +54,12 @@ public class SccpResourceImpl implements SccpResource {
     private static final Logger logger = Logger.getLogger(SccpResourceImpl.class);
 
     protected RemoteSubSystemMap<Integer, RemoteSubSystem> remoteSsns = new RemoteSubSystemMap<Integer, RemoteSubSystem>();
-    private RemoteSignalingPointCodeMap<Integer, RemoteSignalingPointCode> remoteSpcs = new RemoteSignalingPointCodeMap<Integer, RemoteSignalingPointCode>();
+    protected RemoteSignalingPointCodeMap<Integer, RemoteSignalingPointCode> remoteSpcs = new RemoteSignalingPointCodeMap<Integer, RemoteSignalingPointCode>();
     protected ConcernedSignalingPointCodeMap<Integer, ConcernedSignalingPointCode> concernedSpcs = new ConcernedSignalingPointCodeMap<Integer, ConcernedSignalingPointCode>();
 
     private final String name;
     private String persistDir = null;
-    private final boolean rspProhibitedByDefault;
+    protected final boolean rspProhibitedByDefault;
     private final PersistentStorage persistanceStorage = new PersistentStorage();
 
     public SccpResourceImpl(String name) {
@@ -338,7 +338,7 @@ public class SccpResourceImpl implements SccpResource {
         }
     }
 
-    private static class PersistentStorage {
+    protected static class PersistentStorage {
 
         private static final Logger logger = Logger.getLogger(SccpResourceImpl.class);
 
@@ -352,11 +352,11 @@ public class SccpResourceImpl implements SccpResource {
 
         private final TextBuilder persistFile = TextBuilder.newInstance();
 
-        private static final SccpResourceXMLBinding binding = new SccpResourceXMLBinding();
+        protected static final SccpResourceXMLBinding binding = new SccpResourceXMLBinding();
         private static final String TAB_INDENT = "\t";
         private static final String CLASS_ATTRIBUTE = "type";
 
-        private PersistentStorage() {
+        protected PersistentStorage() {
             binding.setClassAttribute(CLASS_ATTRIBUTE);
             binding.setAlias(RemoteSubSystemImpl.class, "remoteSubSystem");
         }
@@ -406,7 +406,7 @@ public class SccpResourceImpl implements SccpResource {
          *
          * @throws Exception
          */
-        private ResourcesSet load() {
+        protected ResourcesSet load() {
             ResourcesSet resources = null;
             try {
                 File f = new File(persistFile.toString());
@@ -504,10 +504,13 @@ public class SccpResourceImpl implements SccpResource {
             return new ResourcesSet(remoteSpcs, remoteSsns, concernedSpcs);
         }
 
-        private ResourcesSet loadVer3(String fn) throws XMLStreamException, FileNotFoundException {
+        protected ResourcesSet loadVer3(String fn) throws XMLStreamException, FileNotFoundException {
             XMLObjectReader reader = XMLObjectReader.newInstance(new FileInputStream(fn));
 
             reader.setBinding(binding);
+            return loadVer3(reader);
+        }
+        protected ResourcesSet loadVer3(XMLObjectReader reader) throws XMLStreamException{
             RemoteSubSystemMap<Integer, RemoteSubSystem> remoteSsns = reader.read(REMOTE_SSN, RemoteSubSystemMap.class);
             RemoteSignalingPointCodeMap<Integer, RemoteSignalingPointCode> remoteSpcs = reader.read(REMOTE_SPC, RemoteSignalingPointCodeMap.class);
             ConcernedSignalingPointCodeMap<Integer, ConcernedSignalingPointCode> concernedSpcs = reader.read(CONCERNED_SPC, ConcernedSignalingPointCodeMap.class);
@@ -517,9 +520,9 @@ public class SccpResourceImpl implements SccpResource {
         }
 
         static class ResourcesSet {
-            private final RemoteSignalingPointCodeMap<Integer, RemoteSignalingPointCode> remoteSpcs;
-            private final RemoteSubSystemMap<Integer, RemoteSubSystem> remoteSsns;
-            private final ConcernedSignalingPointCodeMap<Integer, ConcernedSignalingPointCode> concernedSpcs;
+            final RemoteSignalingPointCodeMap<Integer, RemoteSignalingPointCode> remoteSpcs;
+            final RemoteSubSystemMap<Integer, RemoteSubSystem> remoteSsns;
+            final ConcernedSignalingPointCodeMap<Integer, ConcernedSignalingPointCode> concernedSpcs;
 
             public ResourcesSet(RemoteSignalingPointCodeMap<Integer, RemoteSignalingPointCode> remoteSpcs,
                                 RemoteSubSystemMap<Integer, RemoteSubSystem> remoteSsns,

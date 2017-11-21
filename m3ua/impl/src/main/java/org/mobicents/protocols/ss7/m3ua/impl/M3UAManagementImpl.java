@@ -96,7 +96,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
     private static final String USER_DIR_KEY = "user.dir";
     private static final String PERSIST_FILE_NAME = "m3ua1.xml";
 
-    private static final M3UAXMLBinding binding = new M3UAXMLBinding();
+    protected static final M3UAXMLBinding binding = new M3UAXMLBinding();
     private static final String TAB_INDENT = "\t";
     private static final String CLASS_ATTRIBUTE = "type";
 
@@ -119,7 +119,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
     protected Management transportManagement = null;
     protected boolean sctpLibNettySupport = false;
 
-    private ScheduledExecutorService fsmTicker;
+    protected ScheduledExecutorService fsmTicker;
 
     protected int maxAsForRoute = 2;
 
@@ -1047,7 +1047,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
         }
     }
 
-    private void loadActualData(XMLObjectReader reader ) throws XMLStreamException, IOException{
+    protected void loadActualData(XMLObjectReader reader ) throws XMLStreamException, IOException{
         try {
             Integer vali = reader.read(MAX_SEQUENCE_NUMBER_PROP, Integer.class);
             vali = reader.read(MAX_AS_FOR_ROUTE_PROP, Integer.class);
@@ -1147,7 +1147,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
         reader.close();
     }
 
-    private void loadVer2(String fn) throws XMLStreamException, IOException{
+    protected void loadVer2(String fn) throws XMLStreamException, IOException{
         XMLObjectReader reader = XMLObjectReader.newInstance(new FileInputStream(fn));
         reader.setBinding(binding);
         this.loadActualData(reader);
