@@ -34,6 +34,8 @@ import java.util.Arrays;
 public class Message {
     protected byte[] data = null;
 
+    private int currPos = 0;
+
     protected Message() {
 
     }
@@ -68,9 +70,29 @@ public class Message {
      * @param txBuffer
      */
     protected void encode(ByteBuffer txBuffer) {
+        int bytesToWrite = 0;
+        if (hasMoreData()) {
+            bytesToWrite = txBuffer.remaining() - 4;
+            if (data.length - currPos < bytesToWrite) {
+                bytesToWrite = data.length - currPos;
+            } else {
+                // find \n latest before the bytesToWrite
+                // in case found set bytesToWriteToThisValue
+                byte delimeter = (byte) '\n';
+                for (int i = bytesToWrite - 1; i > 0; i--) {
+                    if (data[i] == delimeter) {
+                        bytesToWrite = i + 1;
+                        break;
+                    }
+                }
+            }
+        }
 
         txBuffer.position(4); // Length int
-        txBuffer.put(data);
+        if (bytesToWrite > 0) {
+            txBuffer.put(data, currPos, bytesToWrite);
+            currPos += bytesToWrite;
+        }
 
         int length = txBuffer.position();
 
@@ -79,6 +101,13 @@ public class Message {
         txBuffer.putInt(length);
 
         txBuffer.position(length);
+    }
+
+    public boolean hasMoreData() {
+        if ((data != null) && (currPos < data.length)) {
+            return true;
+        }
+        return false;
     }
 
     @Override

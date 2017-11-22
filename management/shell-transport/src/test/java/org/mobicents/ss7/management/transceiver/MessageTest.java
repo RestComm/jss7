@@ -58,4 +58,82 @@ public class MessageTest {
 
         assertEquals(msg.toString(), msg1.toString());
     }
+
+    // message over allocated byteBuf size
+    @Test
+    public void testLongMessage() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(120);
+
+        String segment = "Some message. ";
+        String content = "";
+        int messageSize = (int) ((double) buffer.capacity() * 1.5);
+        while (content.length() < messageSize) {
+            content += segment;
+        }
+        messageSize = content.length();
+        Message msg = messageFactory.createMessage(content);
+
+        int count = 0;
+        while (msg.hasMoreData()) {
+            // header
+            messageSize += 4;
+
+            buffer.clear();
+            buffer.rewind();
+
+            msg.encode(buffer);
+            buffer.flip();
+
+            if (messageSize >= buffer.capacity()) {
+                assertEquals(buffer.remaining(), buffer.capacity());
+            } else {
+                assertEquals(buffer.remaining(), messageSize);
+            }
+
+            messageSize -= buffer.capacity();
+            count++;
+        }
+
+        assertEquals(count, 2);
+    }
+
+    // message over allocated byteBuf size with \n in it
+    @Test
+    public void testLongMultilineMessage() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(120);
+
+        String segment = "Some message2.\n";
+        String content = "";
+        int messageSize = (int) ((double) buffer.capacity() * 1.5);
+        while (content.length() < messageSize) {
+            content += segment;
+        }
+        messageSize = content.length();
+        Message msg = messageFactory.createMessage(content);
+
+        int count = 0;
+        while (msg.hasMoreData()) {
+            // header
+            messageSize += 4;
+
+            buffer.clear();
+            buffer.rewind();
+
+            msg.encode(buffer);
+            buffer.flip();
+            
+            int bytesToWrite = (buffer.capacity() - 4)/segment.length() * segment.length() + 4;
+
+            if (messageSize >= buffer.capacity()) {
+                assertEquals(buffer.remaining(), bytesToWrite);
+            } else {
+                assertEquals(buffer.remaining(), messageSize);
+            }
+
+            messageSize -= bytesToWrite;
+            count++;
+        }
+
+        assertEquals(count, 2);
+    }
 }

@@ -332,8 +332,8 @@ public abstract class ShellServer extends Task implements ShellServerMBean {
                                     }
                                 }
 
-                                if (txMessage.length() > 0 && txMessage.compareTo("Bye") == 0) {
-                                    logger.info("Channel has somethign to write " + txMessage);
+                                if (txMessage.length() > 0) {
+                                    logger.info("Channel has something to write: " + txMessage);
                                     if (txMessage.compareTo("Bye") == 0) {
                                         ShellChannelExt channel = (ShellChannelExt) key.channel();
                                         channelsMap.remove(key);

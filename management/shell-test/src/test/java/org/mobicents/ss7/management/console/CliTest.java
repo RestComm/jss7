@@ -36,7 +36,7 @@ public class CliTest {
         private MessageFactory messageFactory = ChannelProvider.provider().createMessageFactory();
         private Semaphore semaphore;
         private Semaphore reverseSemaphore;
-        private Message response;
+        private List<Message> response;
         private Client client;
 
         public ClientThr(String str, Semaphore semaphore, Semaphore reverseSemaphore, Client client) {
@@ -47,7 +47,7 @@ public class CliTest {
         }
 
         public Message getResponse() {
-            return response;
+            return response.get(0);
         }
 
         @Override
@@ -91,7 +91,7 @@ public class CliTest {
         private MessageFactory messageFactory = ChannelProvider.provider().createMessageFactory();
         private Semaphore semaphore;
         private Semaphore reverseSemaphore;
-        private Message response;
+        private List<Message> response;
         private Client client;
 
         public ClientThrCloseChannel(String str, Semaphore semaphore, Semaphore reverseSemaphore, Client client) {
@@ -102,7 +102,7 @@ public class CliTest {
         }
 
         public Message getResponse() {
-            return response;
+            return response.get(0);
         }
 
         @Override
@@ -170,7 +170,7 @@ public class CliTest {
         assertTrue(client.isChannelConnected());
         assertTrue(client.isConnected());
         client.run(null);
-        Message response = null;
+        List<Message> response = null;
         Message msg;
         try {
             msg = messageFactory.createMessage("test nosleep");
@@ -220,7 +220,7 @@ public class CliTest {
         assertTrue(client.isChannelConnected());
         assertTrue(client.isConnected());
         client.run(null);
-        Message response = null;
+        List<Message> response = null;
         Message msg;
         try {
             msg = messageFactory.createMessage("test nosleep");
@@ -270,7 +270,7 @@ public class CliTest {
         assertTrue(client2.isConnected());
         client1.run(null);
         client2.run(null);
-        Message response = null;
+        List<Message> response = null;
         Message msg;
         try {
             msg = messageFactory.createMessage("test nosleep");
@@ -279,7 +279,7 @@ public class CliTest {
             e.printStackTrace();
         }
 
-        assertTrue(response.equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
+        assertTrue(response.get(0).equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
 
         try {
             msg = messageFactory.createMessage("disconnect");
@@ -296,7 +296,7 @@ public class CliTest {
             e.printStackTrace();
         }
 
-        assertTrue(response.equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
+        assertTrue(response.get(0).equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
 
         try {
             msg = messageFactory.createMessage("disconnect");
@@ -321,7 +321,7 @@ public class CliTest {
         assertTrue(client2.isConnected());
         client1.run(null);
         client2.run(null);
-        Message response = null;
+        List<Message> response = null;
         Message msg;
         try {
             msg = messageFactory.createMessage("test nosleep");
@@ -330,7 +330,7 @@ public class CliTest {
             e.printStackTrace();
         }
 
-        assertTrue(response.equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
+        assertTrue(response.get(0).equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
 
         client1.stop();
         assertFalse(client1.isConnected());
@@ -342,7 +342,7 @@ public class CliTest {
             e.printStackTrace();
         }
 
-        assertTrue(response.equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
+        assertTrue(response.get(0).equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
 
         client2.stop();
         assertFalse(client2.isConnected());
@@ -362,7 +362,7 @@ public class CliTest {
         assertTrue(client2.isConnected());
         client1.run(null);
         client2.run(null);
-        Message response = null;
+        List<Message> response = null;
         Message msg;
         try {
             msg = messageFactory.createMessage("test sleep20");
@@ -371,7 +371,7 @@ public class CliTest {
             e.printStackTrace();
         }
 
-        assertTrue(response.equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
+        assertTrue(response.get(0).equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
 
         try {
             msg = messageFactory.createMessage("disconnect");
@@ -388,7 +388,7 @@ public class CliTest {
             e.printStackTrace();
         }
 
-        assertTrue(response.equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
+        assertTrue(response.get(0).equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
 
         try {
             msg = messageFactory.createMessage("disconnect");
@@ -413,7 +413,7 @@ public class CliTest {
         assertTrue(client2.isConnected());
         client1.run(null);
         client2.run(null);
-        Message response = null;
+        List<Message> response = null;
         Message msg;
         try {
             msg = messageFactory.createMessage("test sleep20");
@@ -422,7 +422,7 @@ public class CliTest {
             e.printStackTrace();
         }
 
-        assertTrue(response.equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
+        assertTrue(response.get(0).equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
 
         client1.stop();
         assertFalse(client1.isConnected());
@@ -434,7 +434,7 @@ public class CliTest {
             e.printStackTrace();
         }
 
-        assertTrue(response.equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
+        assertTrue(response.get(0).equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
 
         client2.stop();
         assertFalse(client2.isConnected());
@@ -454,7 +454,7 @@ public class CliTest {
         assertTrue(client2.isConnected());
         client1.run(null);
         client2.run(null);
-        Message response = null;
+        List<Message> response = null;
         Message msg;
         try {
             msg = messageFactory.createMessage("test sleep40");
@@ -462,7 +462,7 @@ public class CliTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        assertTrue(response.equals(messageFactory.createMessage(TestShellExecutor.SLEEP_40)));
+        assertTrue(response.get(0).equals(messageFactory.createMessage(TestShellExecutor.SLEEP_40)));
 
         try {
             msg = messageFactory.createMessage("disconnect");
@@ -479,7 +479,7 @@ public class CliTest {
             e.printStackTrace();
         }
 
-        assertTrue(response.equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
+        assertTrue(response.get(0).equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
 
         try {
             msg = messageFactory.createMessage("disconnect");
@@ -504,7 +504,7 @@ public class CliTest {
         assertTrue(client2.isConnected());
         client1.run(null);
         client2.run(null);
-        Message response = null;
+        List<Message> response = null;
         Message msg;
         try {
             msg = messageFactory.createMessage("test sleep40");
@@ -512,7 +512,7 @@ public class CliTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        assertTrue(response.equals(messageFactory.createMessage(TestShellExecutor.SLEEP_40)));
+        assertTrue(response.get(0).equals(messageFactory.createMessage(TestShellExecutor.SLEEP_40)));
 
         client1.stop();
         assertFalse(client1.isConnected());
@@ -524,7 +524,7 @@ public class CliTest {
             e.printStackTrace();
         }
 
-        assertTrue(response.equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
+        assertTrue(response.get(0).equals(messageFactory.createMessage(TestShellExecutor.SLEEP_20)));
 
         client2.stop();
         assertFalse(client2.isConnected());

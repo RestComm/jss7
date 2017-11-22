@@ -134,12 +134,15 @@ public class ShellChannel extends ShellSelectableChannel {
     }
 
     public void sendImmediate(Message message) throws IOException {
-        txBuffer.clear();
-        txBuffer.rewind();
 
-        message.encode(txBuffer);
-        txBuffer.flip();
-        ((SocketChannel) channel).write(txBuffer);
+        while (message.hasMoreData()) {
+            txBuffer.clear();
+            txBuffer.rewind();
+
+            message.encode(txBuffer);
+            txBuffer.flip();
+            ((SocketChannel) channel).write(txBuffer);
+        }
     }
 
     /**
@@ -193,12 +196,14 @@ public class ShellChannel extends ShellSelectableChannel {
         } else if (!txQueue.isEmpty()) {
             Message msg = txQueue.poll();
 
-            txBuffer.clear();
-            txBuffer.rewind();
+            while (msg.hasMoreData()) {
+                txBuffer.clear();
+                txBuffer.rewind();
 
-            msg.encode(txBuffer);
-            txBuffer.flip();
-            ((SocketChannel) channel).write(txBuffer);
+                msg.encode(txBuffer);
+                txBuffer.flip();
+                ((SocketChannel) channel).write(txBuffer);
+            }
         }
     }
 

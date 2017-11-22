@@ -24,6 +24,7 @@ package org.mobicents.ss7.management.console;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Collection;
+import java.util.List;
 
 import org.mobicents.ss7.management.transceiver.ChannelProvider;
 import org.mobicents.ss7.management.transceiver.Message;
@@ -186,22 +187,27 @@ public class CommandContextImpl implements CommandContext {
                 this.prompt = this.prefix + "(" + host + ":" + port + ")" + Shell.CLI_POSTFIX;
             }
 
-            Message incomingFirstMessage = this.client.run(null);
-            String mesage = incomingFirstMessage.toString();
+            List<Message> incomingFirstMessage = this.client.run(null);
+            String msgContent = null;
+            if (incomingFirstMessage != null && incomingFirstMessage.size() > 0)
+                msgContent = incomingFirstMessage.get(0).toString();
 
-            this.printLine(mesage);
-            if (mesage.contains(CONNECTED_AUTHENTICATING_MESSAGE)) {
+            this.printLine(msgContent);
+            if (msgContent.contains(CONNECTED_AUTHENTICATING_MESSAGE)) {
                 username = this.console.readLine("Username:");
                 this.client.run(messageFactory.createMessage(username));
 
                 password = this.console.readLine("Password:", '*');
-                Message message = this.client.run(messageFactory.createMessage(password));
-                mesage = message.toString();
-                if (mesage.equals(CONNECTED_AUTHENTICATION_FAILED)) {
-                    this.printLine(message.toString());
+                List<Message> message = this.client.run(messageFactory.createMessage(password));
+                msgContent = null;
+                if (message != null && message.size() > 0)
+                    msgContent = message.get(0).toString();
+
+                if (msgContent.equals(CONNECTED_AUTHENTICATION_FAILED)) {
+                    this.printLine(msgContent.toString());
                     this.disconnectController();
                 }
-            } else if (mesage.contains(CLOSING_CONNECTION_MESSAGE)) {
+            } else if (msgContent.contains(CLOSING_CONNECTION_MESSAGE)) {
                 this.disconnectController();
             }
         } catch (Exception e) {
@@ -274,9 +280,11 @@ public class CommandContextImpl implements CommandContext {
     public void sendMessage(String text) {
         Message outgoing = messageFactory.createMessage(text);
         try {
-            Message incoming = this.client.run(outgoing);
+            List<Message> incoming = this.client.run(outgoing);
             if (incoming != null) {
-                this.printLine(incoming.toString());
+                for (Message curr : incoming) {
+                    this.printLine(curr.toString());
+                }
             } else {
                 this.printLine("No response from server");
             }

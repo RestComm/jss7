@@ -24,6 +24,8 @@ package org.mobicents.ss7.management.console;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.mobicents.ss7.management.transceiver.ChannelProvider;
 import org.mobicents.ss7.management.transceiver.Message;
@@ -76,16 +78,17 @@ public class Client {
         this.isConnected = true;
     }
 
-    public Message run(Message outgoing) throws IOException {
-
+    public List<Message> run(Message outgoing) throws IOException {
         if (!this.isConnected) {
-            return messageFactory.createMessage("Not yet connected");
+            List<Message> output = new ArrayList<Message>();
+            output.add(messageFactory.createMessage("Not yet connected"));
+            return output;
         }
 
         int count = 30;
         wrote = false;
 
-        // Wait for 300 secs to get message
+        // Wait for 30 secs to get message
         while (count > 0) {
             if (!channel.isConnected()) {
                 stop();
@@ -99,11 +102,20 @@ public class Client {
                 }
                 wrote = true;
             } else {
-                channel.doRead();
-                Message msg = (Message) channel.receive();
-                if (msg != null) {
-                    return msg;
-                }
+                List<Message> output = new ArrayList<Message>();
+                Message msg = null;
+                do {
+                    channel.doRead();
+                    msg = (Message) channel.receive();
+                    if (msg != null) {
+                        output.add(msg);
+                    }
+                } while (msg != null);
+
+                if (output.size() == 0)
+                    return null;
+
+                return output;
             }
 
             try {
