@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.mobicents.protocols.ss7</groupId>
         <artifactId>restcomm-ss7-wildfly</artifactId>
-        <version>7.4.0-SNAPSHOT</version>
+        <version>7.4.0-105</version>
     </parent>
 
     <artifactId>restcomm-ss7-wildfly-extension</artifactId>
