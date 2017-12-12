@@ -55,6 +55,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -71,6 +72,8 @@ public class SccpRoutingControl {
     private SccpManagement sccpManagement = null;
 
     private MessageFactoryImpl messageFactory;
+
+    private ConcurrentHashMap<Integer, Long> prohibitedSpcs = new ConcurrentHashMap<Integer, Long>();
 
     public SccpRoutingControl(SccpProviderImpl sccpProviderImpl, SccpStackImpl sccpStackImpl) {
         this.messageFactory = sccpStackImpl.messageFactory;
@@ -390,11 +393,17 @@ public class SccpRoutingControl {
         }
 
         if (remoteSpc.isRemoteSpcProhibited()) {
-            if (logger.isEnabledFor(Level.WARN)) {
-                logger.warn(String.format(
-                        "Received SccpMessage=%s for Translation but %s Remote Signaling Pointcode = %d is prohibited ", msg,
-                        destName, translationAddress.getSignalingPointCode()));
+            Long lastTimeLog = prohibitedSpcs.get(remoteSpc.getRemoteSpc());
+            if(lastTimeLog == null || System.currentTimeMillis() - lastTimeLog > sccpStackImpl.getPeriodOfLogging())
+            {
+                prohibitedSpcs.put(remoteSpc.getRemoteSpc(), System.currentTimeMillis());
+                if (logger.isEnabledFor(Level.WARN)) {
+                    logger.warn(String.format(
+                            "Received SccpMessage=%s for Translation but %s Remote Signaling Pointcode = %d is prohibited ", msg,
+                            destName, translationAddress.getSignalingPointCode()));
+                }
             }
+
             return TranslationAddressCheckingResult.destinationUnavailable_MtpFailure;
         }
 
