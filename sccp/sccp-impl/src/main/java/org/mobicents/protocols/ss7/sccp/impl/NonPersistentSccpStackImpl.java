@@ -10,11 +10,11 @@ import org.mobicents.protocols.ss7.sccp.impl.router.NonPersistentRouterImpl;
 
 public class NonPersistentSccpStackImpl extends SccpStackImpl {
 
-	public NonPersistentSccpStackImpl(String name) {
-		super(name);
-	}
-	
-	@Override
+    public NonPersistentSccpStackImpl(String name) {
+        super(name);
+    }
+
+    @Override
     public void start() throws IllegalStateException {
         logger.info("Starting ...");
 
@@ -56,15 +56,15 @@ public class NonPersistentSccpStackImpl extends SccpStackImpl {
 
         this.state = State.RUNNING;
     }
-	
-	@Override
+
+    @Override
     public void load() {
 
     }
 
     @Override
     public void store() {
-       
+
     }
 
 }
