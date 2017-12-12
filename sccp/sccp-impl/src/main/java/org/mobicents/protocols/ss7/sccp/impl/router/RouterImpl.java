@@ -953,7 +953,7 @@ public class RouterImpl implements Router {
      *
      * @throws Exception
      */
-    private void load() {
+    protected void load() {
 
         try {
             File f = new File(persistFile.toString());
