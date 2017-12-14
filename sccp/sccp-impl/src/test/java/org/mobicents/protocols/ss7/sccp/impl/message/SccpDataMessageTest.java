@@ -95,6 +95,10 @@ public class SccpDataMessageTest {
                 0x00, 0x00 };
     }
 
+    public byte[] getDataUdt2() {
+        return new byte[] { 9, (byte) 129, 0x03, 0x05, 0x09, 2, 66, 8, 4, 67, 1, 0, 6, 5, 11, 12, 13, 14, 15 };
+    }
+
     public byte[] getDataUdtSrc1() {
         return new byte[] { 0x03, 0x08, 0x02, 0x00, 0x00 };
     }
@@ -419,7 +423,7 @@ public class SccpDataMessageTest {
 
         res = msg.encode(stack,LongMessageRuleType.XUDT_ENABLED, 272, logger, false, SccpProtocolVersion.ITU);
         assertEquals(res.getEncodingResult(), EncodingResult.Success);
-        assertTrue(Arrays.equals(res.getSolidData(), getDataXudt2()));
+        assertTrue(Arrays.equals(res.getSolidData(), getDataUdt2()));
 
         // ---- XUDT without segm & importance
         calledAdd = stack.getSccpProvider().getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null,0, 8);
@@ -430,7 +434,7 @@ public class SccpDataMessageTest {
 
         res = msg.encode(stack,LongMessageRuleType.XUDT_ENABLED, 272, logger, false, SccpProtocolVersion.ITU);
         assertEquals(res.getEncodingResult(), EncodingResult.Success);
-        assertTrue(Arrays.equals(res.getSolidData(), getDataXudt3()));
+        assertTrue(Arrays.equals(res.getSolidData(), getDataUdt2()));
 
         // ---- LUDT all param
         calledAdd = stack.getSccpProvider().getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, 0, 8);
