@@ -167,4 +167,11 @@
 		<delete dir="${restcomm-ss7.path}/commons" />
 	</target>
 	
+	<target name="deploy-with-logging" depends="deploy">
+			<xmltask source="${jboss.standalone.path}/configuration/standalone.xml" dest="${jboss.standalone.path}/configuration/standalone.xml">
+				<remove path="/:server/:profile/*[local-name()='subsystem'][*[namespace-uri()='urn:jboss:domain:logging:3.0']]" />
+				<insert path="/:server/:profile/*[local-name()='subsystem'][last()]" position="after" file="template/ss7-logging-subsystem.txt" />
+			</xmltask>
+	</target>
+	
 </project>

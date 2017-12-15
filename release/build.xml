@@ -199,7 +199,9 @@
               failonerror="true"/>
     	<copy file="${jss7.dir}/release/xmltask.jar" tofile="${restcomm.jss7.dist}/ss7-wildfly/xmltask.jar"
               failonerror="true"/>
-
+    	<copy file="${jss7.dir}/release/ss7-logging-subsystem.txt" tofile="${restcomm.jss7.dist}/ss7-wildfly/template/ss7-logging-subsystem.txt"
+    	              failonerror="true"/>
+    		
         <!-- Copy templates for JBoss 5 -->
         <copy todir="${restcomm.jss7.dist}/ss7-jboss/template/META-INF-dialogic/" failonerror="true">
             <fileset dir="${jss7.dir}/service/jboss/src/main/config-dialogic">

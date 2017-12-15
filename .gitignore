@@ -165,3 +165,4 @@ docs/sources-*/src
 /DialogIdleEndTest2_management.xml
 /SccpResourceProhibitedTest_sccpresource2.xml
 /SccpResourceTest_sccpresource2.xml
+**/.checkstyle
