@@ -175,23 +175,34 @@ public class SccpConnDt2MessageImpl extends SccpConnSegmentableMessageImpl imple
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("Sccp Msg [Type=DT2");
-        sb.append(" networkId=").append(this.networkId).append(" sls=").append(this.sls).append(" incomingOpc=").append(this.incomingOpc)
-                .append(" incomingDpc=").append(this.incomingDpc).append(" outgoingDpc=").append(this.outgoingDpc)
+        StringBuilder sb = new StringBuilder();
 
-                .append(" destinationLocalReferenceNumber=").append(this.destinationLocalReferenceNumber);
-        if (this.sequencingSegmenting != null) {
-                sb.append(" sequencingSegmenting=").append(this.sequencingSegmenting);
-        }
+        sb.append("Sccp Msg [Type=DT2");
+        sb.append(" networkId=");
+        sb.append(this.networkId);
+        sb.append(" sls=");
+        sb.append(this.sls);
+        sb.append(" incomingOpc=");
+        sb.append(this.incomingOpc);
+        sb.append(" incomingDpc=");
+        sb.append(this.incomingDpc);
+        sb.append(" outgoingDpc=");
+        sb.append(this.outgoingDpc);
         sb.append(" DataLen=");
-        if (this.userData != null) {
+        if (this.userData != null)
             sb.append(this.userData.length);
-        } else {
-            sb.append("null");
-        }
-        // sb.append(" Data=");sb.append(Arrays.toString(userData));
+
+        sb.append(" destLR=");
+        if (this.destinationLocalReferenceNumber != null)
+            sb.append(this.destinationLocalReferenceNumber.getValue());
+        sb.append(" sequencingSegmenting=");
+        if (this.sequencingSegmenting != null)
+            sb.append(this.sequencingSegmenting);
+        sb.append(" isMtpOriginated=");
+        sb.append(this.isMtpOriginated);
+
         sb.append("]");
+
         return sb.toString();
     }
 }

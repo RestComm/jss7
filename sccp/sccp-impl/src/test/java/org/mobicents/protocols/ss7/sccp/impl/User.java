@@ -212,9 +212,9 @@ public class User extends BaseSccpListener implements SccpListener {
     @Override
     public void onConnectIndication(SccpConnection conn, SccpAddress calledAddress, SccpAddress callingAddress, ProtocolClass clazz, Credit credit, byte[] data, Importance importance) throws Exception {
         if (!refuseConnections) {
-            conn.confirm(null, (options.confirmCredit != null) ? options.confirmCredit : credit, options.sendConfirmData);
+            conn.confirm(calledAddress, (options.confirmCredit != null) ? options.confirmCredit : credit, options.sendConfirmData);
         } else {
-            conn.refuse(new RefusalCauseImpl(RefusalCauseValue.END_USER_ORIGINATED), new byte[] {});
+            conn.refuse(new RefusalCauseImpl(RefusalCauseValue.END_USER_ORIGINATED), new byte[] { 0x31, 0x32, 0x33, 0x34 });
             stats.refusedCount++;
         }
     }
@@ -297,7 +297,7 @@ public class User extends BaseSccpListener implements SccpListener {
     }
 
     public static class UserOptions {
-        private byte[] sendConfirmData = new byte[] {};
+        private byte[] sendConfirmData;
         public Credit confirmCredit;
 
         public void setSendConfirmData(byte[] data) {

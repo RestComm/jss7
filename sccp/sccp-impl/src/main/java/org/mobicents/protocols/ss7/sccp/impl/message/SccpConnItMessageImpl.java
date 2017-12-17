@@ -187,4 +187,44 @@ public class SccpConnItMessageImpl extends SccpConnReferencedMessageImpl impleme
         sequencingSegmenting.setSendSequenceNumber(sendSequenceNumber);
         sequencingSegmenting.setReceiveSequenceNumber(receiveSequenceNumber);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Sccp Msg [Type=IT");
+        sb.append(" networkId=");
+        sb.append(this.networkId);
+        sb.append(" sls=");
+        sb.append(this.sls);
+        sb.append(" incomingOpc=");
+        sb.append(this.incomingOpc);
+        sb.append(" incomingDpc=");
+        sb.append(this.incomingDpc);
+        sb.append(" outgoingDpc=");
+        sb.append(this.outgoingDpc);
+
+        sb.append(" sourceLR=");
+        if (this.sourceLocalReferenceNumber != null)
+            sb.append(this.sourceLocalReferenceNumber.getValue());
+        sb.append(" destLR=");
+        if (this.destinationLocalReferenceNumber != null)
+            sb.append(this.destinationLocalReferenceNumber.getValue());
+
+        sb.append(" protocolClass=");
+        if (this.protocolClass != null)
+            sb.append(this.protocolClass.getProtocolClass());
+        sb.append(" sequencingSegmenting=");
+        if (this.sequencingSegmenting != null)
+            sb.append(this.sequencingSegmenting);
+        sb.append(" credit=");
+        if (this.credit != null)
+            sb.append(this.credit.getValue());
+        sb.append(" isMtpOriginated=");
+        sb.append(this.isMtpOriginated);
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

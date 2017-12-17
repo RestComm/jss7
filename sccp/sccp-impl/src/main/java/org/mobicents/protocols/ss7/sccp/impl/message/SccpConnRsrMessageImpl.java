@@ -114,4 +114,37 @@ public class SccpConnRsrMessageImpl extends SccpConnReferencedMessageImpl implem
             throw new ParseException(e);
         }
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Sccp Msg [Type=Rsr");
+        sb.append(" networkId=");
+        sb.append(this.networkId);
+        sb.append(" sls=");
+        sb.append(this.sls);
+        sb.append(" incomingOpc=");
+        sb.append(this.incomingOpc);
+        sb.append(" incomingDpc=");
+        sb.append(this.incomingDpc);
+        sb.append(" outgoingDpc=");
+        sb.append(this.outgoingDpc);
+
+        sb.append(" sourceLR=");
+        if (this.sourceLocalReferenceNumber != null)
+            sb.append(this.sourceLocalReferenceNumber.getValue());
+        sb.append(" destLR=");
+        if (this.destinationLocalReferenceNumber != null)
+            sb.append(this.destinationLocalReferenceNumber.getValue());
+        sb.append(" resetCause=");
+        if (this.resetCause != null)
+            sb.append(this.resetCause.getValue());
+        sb.append(" isMtpOriginated=");
+        sb.append(this.isMtpOriginated);
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

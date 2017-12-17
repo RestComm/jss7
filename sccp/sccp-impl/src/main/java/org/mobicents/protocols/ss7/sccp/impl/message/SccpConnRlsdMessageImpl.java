@@ -233,4 +233,45 @@ public class SccpConnRlsdMessageImpl extends SccpConnReferencedMessageImpl imple
                 throw new ParseException("Unknown optional parameter code: " + code);
         }
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Sccp Msg [Type=Rlsd");
+        sb.append(" networkId=");
+        sb.append(this.networkId);
+        sb.append(" sls=");
+        sb.append(this.sls);
+        sb.append(" incomingOpc=");
+        sb.append(this.incomingOpc);
+        sb.append(" incomingDpc=");
+        sb.append(this.incomingDpc);
+        sb.append(" outgoingDpc=");
+        sb.append(this.outgoingDpc);
+        sb.append(" DataLen=");
+        if (this.userData != null)
+            sb.append(this.userData.length);
+
+        sb.append(" sourceLR=");
+        if (this.sourceLocalReferenceNumber != null)
+            sb.append(this.sourceLocalReferenceNumber.getValue());
+        sb.append(" destLR=");
+        if (this.destinationLocalReferenceNumber != null)
+            sb.append(this.destinationLocalReferenceNumber.getValue());
+
+        sb.append(" releaseCause=");
+        if (this.releaseCause != null)
+            sb.append(this.releaseCause.getValue());
+        sb.append(" importance=");
+        if (this.importance != null)
+            sb.append(this.importance.getValue());
+
+        sb.append(" isMtpOriginated=");
+        sb.append(this.isMtpOriginated);
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

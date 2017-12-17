@@ -208,4 +208,18 @@ public class SccpConnectionWithFlowControlImpl extends SccpConnectionImpl implem
     protected boolean isPreemptiveAck() {
         return flow.isPreemptiveAk();
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("ConnectionWithFlowControl[");
+
+        fillSccpConnectionFields(sb);
+        if (overloaded)
+            sb.append(", overloaded");
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

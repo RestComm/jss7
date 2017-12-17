@@ -34,7 +34,6 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
 import org.mobicents.protocols.ss7.sccp.message.ParseException;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnCrefMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.Importance;
-import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.Parameter;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.mobicents.protocols.ss7.sccp.parameter.RefusalCause;
@@ -46,7 +45,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class SccpConnCrefMessageImpl extends SccpConnReferencedMessageImpl implements SccpConnCrefMessage {
-    protected LocalReference destinationLocalReferenceNumber;
+//    protected LocalReference destinationLocalReferenceNumber;
     protected SccpAddress calledPartyAddress;
     protected byte[] userData;
     protected RefusalCause refusalCause;
@@ -60,15 +59,15 @@ public class SccpConnCrefMessageImpl extends SccpConnReferencedMessageImpl imple
         super(130, MESSAGE_TYPE_CREF, incomingOpc, incomingDpc, incomingSls, networkId);
     }
 
-    @Override
-    public LocalReference getDestinationLocalReferenceNumber() {
-        return destinationLocalReferenceNumber;
-    }
-
-    @Override
-    public void setDestinationLocalReferenceNumber(LocalReference destinationLocalReferenceNumber) {
-        this.destinationLocalReferenceNumber = destinationLocalReferenceNumber;
-    }
+//    @Override
+//    public LocalReference getDestinationLocalReferenceNumber() {
+//        return destinationLocalReferenceNumber;
+//    }
+//
+//    @Override
+//    public void setDestinationLocalReferenceNumber(LocalReference destinationLocalReferenceNumber) {
+//        this.destinationLocalReferenceNumber = destinationLocalReferenceNumber;
+//    }
 
     @Override
     public SccpAddress getCalledPartyAddress() {
@@ -148,7 +147,7 @@ public class SccpConnCrefMessageImpl extends SccpConnReferencedMessageImpl imple
                 len = in.read() & 0xff;
                 buffer = new byte[len];
                 in.read(buffer);
-                decodeOptional(paramCode, buffer, sccpProtocolVersion);
+                decodeOptional(paramCode, buffer, sccpProtocolVersion, factory);
             }
         } catch (IOException e) {
             throw new ParseException(e);
@@ -241,12 +240,12 @@ public class SccpConnCrefMessageImpl extends SccpConnReferencedMessageImpl imple
         }
     }
 
-    protected void decodeOptional(int code, byte[] buffer, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
+    protected void decodeOptional(int code, byte[] buffer, final SccpProtocolVersion sccpProtocolVersion, ParameterFactory factory) throws ParseException {
         switch (code) {
 
             case SccpAddress.CDA_PARAMETER_CODE:
                 SccpAddressImpl address2 = new SccpAddressImpl();
-                address2.decode(buffer, null, sccpProtocolVersion);
+                address2.decode(buffer, factory, sccpProtocolVersion);
                 calledPartyAddress = address2;
                 break;
 
@@ -256,12 +255,51 @@ public class SccpConnCrefMessageImpl extends SccpConnReferencedMessageImpl imple
 
             case Importance.PARAMETER_CODE:
                 ImportanceImpl imp = new ImportanceImpl();
-                imp.decode(buffer, null, sccpProtocolVersion);
+                imp.decode(buffer, factory, sccpProtocolVersion);
                 importance = imp;
                 break;
 
             default:
                 throw new ParseException("Unknown optional parameter code: " + code);
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Sccp Msg [Type=Cref");
+        sb.append(" networkId=");
+        sb.append(this.networkId);
+        sb.append(" sls=");
+        sb.append(this.sls);
+        sb.append(" incomingOpc=");
+        sb.append(this.incomingOpc);
+        sb.append(" incomingDpc=");
+        sb.append(this.incomingDpc);
+        sb.append(" outgoingDpc=");
+        sb.append(this.outgoingDpc);
+        sb.append(" CalledParty(");
+        sb.append(this.calledPartyAddress);
+        sb.append(")");
+        sb.append(" DataLen=");
+        if (this.userData != null)
+            sb.append(this.userData.length);
+
+        sb.append(" destLR=");
+        if (this.destinationLocalReferenceNumber != null)
+            sb.append(this.destinationLocalReferenceNumber.getValue());
+        sb.append(" refusalCause=");
+        if (this.refusalCause != null)
+            sb.append(this.refusalCause.getValue());
+        sb.append(" importance=");
+        if (this.importance != null)
+            sb.append(this.importance.getValue());
+        sb.append(" isMtpOriginated=");
+        sb.append(this.isMtpOriginated);
+
+        sb.append("]");
+
+        return sb.toString();
     }
 }

@@ -21,6 +21,10 @@ abstract class SccpConnectionWithSegmentingImpl extends SccpConnectionWithTimers
         super(sls, localSsn, localReference, protocol, stack, sccpRoutingControl);
     }
 
+    public boolean isAwaitSegments() {
+        return awaitSegments;
+    }
+
     protected void receiveMessage(SccpConnMessage message) throws Exception {
         super.receiveMessage(message);
 

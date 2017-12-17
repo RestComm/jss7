@@ -67,4 +67,15 @@ public class SequenceNumberImpl implements SequenceNumber {
     public int hashCode() {
         return (int) value;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("SequenceNumber [value=");
+        sb.append(this.value);
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

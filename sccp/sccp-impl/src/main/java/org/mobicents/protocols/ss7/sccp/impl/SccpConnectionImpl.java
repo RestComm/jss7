@@ -54,4 +54,50 @@ public class SccpConnectionImpl extends SccpConnectionWithCouplingImpl implement
             super(message);
         }
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("SccpConnection[");
+
+        fillSccpConnectionFields(sb);
+        sb.append("]");
+
+        return sb.toString();
+    }
+
+    protected void fillSccpConnectionFields(StringBuilder sb) {
+        LocalReference lr = getLocalReference();
+        LocalReference rr = getRemoteReference();
+        ProtocolClass pClass = getProtocolClass();
+
+        sb.append("localReference=");
+        if (lr != null)
+            sb.append(lr.getValue());
+        else
+            sb.append("null");
+        sb.append(", remoteReference=");
+        if (rr != null)
+            sb.append(rr.getValue());
+        else
+            sb.append("null");
+        sb.append(", localSsn=");
+        sb.append(getLocalSsn());
+        sb.append(", remoteSsn=");
+        sb.append(remoteSsn);
+        sb.append(", remoteDpc=");
+        sb.append(remoteDpc);
+        sb.append(", state=");
+        sb.append(getState());
+        sb.append(", protocolClass=");
+        if (pClass != null)
+            sb.append(getProtocolClass().getProtocolClass());
+        else
+            sb.append("null");
+        if (isAwaitSegments())
+            sb.append(", awaitSegments");
+        if (isCouplingEnabled())
+            sb.append(", couplingEnabled");
+    }
 }

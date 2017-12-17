@@ -158,4 +158,37 @@ public class SccpConnDt1MessageImpl extends SccpConnSegmentableMessageImpl imple
     public void setMoreData(boolean moreData) {
         segmentingReassembling = new SegmentingReassemblingImpl(moreData);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Sccp Msg [Type=DT1");
+        sb.append(" networkId=");
+        sb.append(this.networkId);
+        sb.append(" sls=");
+        sb.append(this.sls);
+        sb.append(" incomingOpc=");
+        sb.append(this.incomingOpc);
+        sb.append(" incomingDpc=");
+        sb.append(this.incomingDpc);
+        sb.append(" outgoingDpc=");
+        sb.append(this.outgoingDpc);
+        sb.append(" DataLen=");
+        if (this.userData != null)
+            sb.append(this.userData.length);
+
+        sb.append(" destLR=");
+        if (this.destinationLocalReferenceNumber != null)
+            sb.append(this.destinationLocalReferenceNumber.getValue());
+        sb.append(" moreData=");
+        if (this.segmentingReassembling != null)
+            sb.append(this.segmentingReassembling.isMoreData());
+        sb.append(" isMtpOriginated=");
+        sb.append(this.isMtpOriginated);
+
+        sb.append("]");
+
+        return sb.toString();
+    }
 }

@@ -23,9 +23,15 @@
 package org.mobicents.protocols.ss7.sccp.impl;
 
 import org.mobicents.protocols.ss7.Util;
+import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
+import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
+import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
+import org.mobicents.protocols.ss7.sccp.OriginationType;
+import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.SccpConnection;
 import org.mobicents.protocols.ss7.sccp.SccpConnectionState;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.BCDEvenEncodingScheme;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.CreditImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
@@ -33,6 +39,7 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ReleaseCauseImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ResetCauseImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnCrMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.ResetCauseValue;
@@ -45,8 +52,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.io.File;
 
 import static org.testng.Assert.assertEquals;
 
@@ -100,7 +105,26 @@ public class ConnectionTest extends SccpHarness {
 
     @BeforeMethod
     public void setUp() throws Exception {
+        ssn2 = 6;
         super.setUp();
+
+        GlobalTitle gtPattern = super.parameterFactory.createGlobalTitle("*", 0, NumberingPlan.ISDN_TELEPHONY, new BCDEvenEncodingScheme(), NatureOfAddress.INTERNATIONAL);
+        SccpAddress pattern = super.parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gtPattern, 0, 0);
+
+        GlobalTitle gtRa11 = super.parameterFactory.createGlobalTitle("1111", 0, NumberingPlan.ISDN_TELEPHONY, new BCDEvenEncodingScheme(), NatureOfAddress.INTERNATIONAL);
+        SccpAddress routingAddress11 = super.parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gtRa11, 2, 0);
+        SccpAddress routingAddress12 = super.parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gtRa11, 1, 0);
+        router1.addRoutingAddress(1, routingAddress11);
+        router1.addRoutingAddress(2, routingAddress12);
+        router1.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 1, -1, null, 0, null);
+        router1.addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.REMOTE, pattern, "K", 2, -1, null, 0, null);
+
+        SccpAddress routingAddress21 = super.parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gtRa11, 1, 0);
+        SccpAddress routingAddress22 = super.parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gtRa11, 2, 0);
+        router2.addRoutingAddress(1, routingAddress21);
+        router2.addRoutingAddress(2, routingAddress22);
+        router2.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 1, -1, null, 0, null);
+        router2.addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.REMOTE, pattern, "K", 2, -1, null, 0, null);
     }
 
     @AfterMethod
@@ -108,38 +132,97 @@ public class ConnectionTest extends SccpHarness {
         super.tearDown();
 
         // to avoid stack configuration propagation between test cases
-        deleteDir(sccpStack1.getPersistDir());
-        deleteDir(sccpStack2.getPersistDir());
+//        deleteDir(sccpStack1.getPersistDir());
+//        deleteDir(sccpStack2.getPersistDir());
     }
 
-    private void deleteDir(String pathname) {
-        File index = new File(pathname);
-        String[] files = index.list();
-        for(String file: files){
-            File current = new File(index.getPath(), file);
-            current.delete();
-        }
+//    private void deleteDir(String pathname) {
+//        File index = new File(pathname);
+//        String[] files = index.list();
+//        for(String file: files){
+//            File current = new File(index.getPath(), file);
+//            current.delete();
+//        }
+//    }
+
+    private void stackParameterInit() {
+        sccpStack1.referenceNumberCounter = 20;
+        sccpStack2.referenceNumberCounter = 50;
+
+        sccpStack1.iasTimerDelay = 7500 * 60;
+        sccpStack1.iarTimerDelay = 16000 * 60;
+        sccpStack2.iasTimerDelay = 7500 * 60;
+        sccpStack2.iarTimerDelay = 16000 * 60;
+
+        sccpStack1.sstTimerDuration_Min = 10000;
+        sccpStack2.sstTimerDuration_Min = 10000;
+
+        sccpStack1.relTimerDelay = 15000;
+        sccpStack1.repeatRelTimerDelay = 15000;
+        sccpStack1.intTimerDelay = 30000;
+
+        sccpStack2.relTimerDelay = 15000;
+        sccpStack2.repeatRelTimerDelay = 15000;
+        sccpStack2.intTimerDelay = 30000;
     }
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testConnectionEstablish() throws Exception {
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+        stackParameterInit();
+
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
 
         u1.register();
         u2.register();
 
         Thread.sleep(100);
 
-        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(getSSN(), a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
         crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
         crMsg.setProtocolClass(new ProtocolClassImpl(2));
         crMsg.setCredit(new CreditImpl(100));
 
-        SccpConnection conn1 = sccpProvider1.newConnection(8, new ProtocolClassImpl(2));
+        SccpConnection conn1 = sccpProvider1.newConnection(getSSN(), new ProtocolClassImpl(2));
+        conn1.establish(crMsg);
+
+        Thread.sleep(100);
+
+        assertEquals(sccpStack2.getConnectionsNumber(), 1);
+        assertEquals(sccpStack1.getConnectionsNumber(), 1);
+
+        assertEquals(sccpProvider2.getConnections().values().iterator().next().getState(), SccpConnectionState.ESTABLISHED);
+        assertEquals(sccpProvider1.getConnections().values().iterator().next().getState(), SccpConnectionState.ESTABLISHED);
+    }
+
+    @Test(groups = { "SccpMessage", "functional.connection" })
+    public void testConnectionEstablish_GT() throws Exception {
+        stackParameterInit();
+
+        GlobalTitle gt1 = sccpProvider1.getParameterFactory().createGlobalTitle("111111", 0, NumberingPlan.ISDN_TELEPHONY,
+                null, NatureOfAddress.INTERNATIONAL);
+        GlobalTitle gt2 = sccpProvider1.getParameterFactory().createGlobalTitle("222222", 0, NumberingPlan.ISDN_TELEPHONY,
+                null, NatureOfAddress.INTERNATIONAL);
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt1, 0, getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt2, 0, getSSN2());
+
+        User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
+
+        u1.register();
+        u2.register();
+
+        Thread.sleep(100);
+
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(getSSN(), a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        // crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
+        crMsg.setProtocolClass(new ProtocolClassImpl(2));
+        crMsg.setCredit(new CreditImpl(100));
+
+        SccpConnection conn1 = sccpProvider1.newConnection(getSSN(), new ProtocolClassImpl(2));
         conn1.establish(crMsg);
 
         Thread.sleep(100);
@@ -153,11 +236,13 @@ public class ConnectionTest extends SccpHarness {
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testConnectionEstablishWithConfirmData() throws Exception {
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+        stackParameterInit();
+
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
 
         u1.register();
         u2.register();
@@ -187,11 +272,13 @@ public class ConnectionTest extends SccpHarness {
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testConnectionRelease() throws Exception {
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+        stackParameterInit();
+
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
 
         u1.register();
         u2.register();
@@ -228,11 +315,13 @@ public class ConnectionTest extends SccpHarness {
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testConnectionReset() throws Exception {
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+        stackParameterInit();
+
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
 
         u1.register();
         u2.register();
@@ -266,11 +355,13 @@ public class ConnectionTest extends SccpHarness {
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testConnectionRefuse() throws Exception {
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+        stackParameterInit();
+
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
         u2.setRefuseConnections(true);
 
         u1.register();
@@ -299,11 +390,13 @@ public class ConnectionTest extends SccpHarness {
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testConnectionInactivityKeepAliveProtocolClass2() throws Exception {
+        stackParameterInit();
         testConnectionInactivityKeepAlive(new ProtocolClassImpl(2));
     }
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testConnectionInactivityKeepAliveProtocolClass3() throws Exception {
+        stackParameterInit();
         testConnectionInactivityKeepAlive(new ProtocolClassImpl(3));
     }
 
@@ -311,11 +404,11 @@ public class ConnectionTest extends SccpHarness {
         sccpStack1.iasTimerDelay = 300;
         sccpStack2.iarTimerDelay = 1200;
 
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
 
         u1.register();
         u2.register();
@@ -343,11 +436,13 @@ public class ConnectionTest extends SccpHarness {
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testConnectionInactivityReleaseProtocolClass2() throws Exception {
+        stackParameterInit();
         testConnectionInactivityRelease(new ProtocolClassImpl(2));
     }
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testConnectionInactivityReleaseProtocolClass3() throws Exception {
+        stackParameterInit();
         testConnectionInactivityRelease(new ProtocolClassImpl(3));
     }
 
@@ -355,11 +450,11 @@ public class ConnectionTest extends SccpHarness {
         sccpStack1.iasTimerDelay = 1200;
         sccpStack2.iarTimerDelay = 300;
 
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
 
         u1.register();
         u2.register();
@@ -388,11 +483,12 @@ public class ConnectionTest extends SccpHarness {
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testSendDataProtocolClass2() throws Exception {
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+        stackParameterInit();
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
 
         u1.register();
         u2.register();
@@ -437,14 +533,13 @@ public class ConnectionTest extends SccpHarness {
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testSendDataWhenDlnAndSlnDifferClass2() throws Exception {
-        sccpStack1.referenceNumberCounter = 20;
-        sccpStack2.referenceNumberCounter = 50;
+        stackParameterInit();
 
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
 
         u1.register();
         u2.register();
@@ -489,6 +584,8 @@ public class ConnectionTest extends SccpHarness {
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testSendDataWhenSsnDifferClass2() throws Exception {
+        stackParameterInit();
+
         a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 15);
         a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 16);
 
@@ -544,19 +641,21 @@ public class ConnectionTest extends SccpHarness {
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testSendDataProtocolClass3() throws Exception {
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+        this.saveTrafficInFile();
+        stackParameterInit();
+
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
 
         u1.register();
         u2.register();
 
         Thread.sleep(100);
 
-        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
-        crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] { 0x51, 0x53, 0x55, 0x57 }, new ImportanceImpl((byte)1));
         crMsg.setProtocolClass(new ProtocolClassImpl(3));
         crMsg.setCredit(new CreditImpl(100));
 
@@ -579,7 +678,7 @@ public class ConnectionTest extends SccpHarness {
 
         conn2.send(new byte[]{1, 2, 3, 4, 5, 6});
 
-        Thread.sleep(300);
+        Thread.sleep(1600);
 
         assertEquals(u1.getReceivedData().size(), 129);
         for (int i=0; i<=127; i++) {
@@ -592,7 +691,7 @@ public class ConnectionTest extends SccpHarness {
 
         Thread.sleep(200);
 
-        conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), new byte[] {});
+        conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), null);
 
         Thread.sleep(200);
 
@@ -606,11 +705,13 @@ public class ConnectionTest extends SccpHarness {
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testSendSegmentedDataProtocolClass2() throws Exception {
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+        stackParameterInit();
+
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
 
         u1.register();
         u2.register();
@@ -660,11 +761,13 @@ public class ConnectionTest extends SccpHarness {
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testSendSegmentedDataProtocolClass3() throws Exception {
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+        stackParameterInit();
+
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
 
         u1.register();
         u2.register();
@@ -714,20 +817,22 @@ public class ConnectionTest extends SccpHarness {
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testIncreaseCreditByUserProtocolClass3() throws Exception {
+        stackParameterInit();
         testChangeCreditByUserProtocolClass3(100, 127);
     }
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testDecreaseCreditByUserProtocolClass3() throws Exception {
+        stackParameterInit();
         testChangeCreditByUserProtocolClass3(127, 100);
     }
 
     private void testChangeCreditByUserProtocolClass3(int initialCredit, int finalCredit) throws Exception {
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
 
         u1.register();
         u2.register();

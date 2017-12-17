@@ -165,7 +165,7 @@ public class SccpConnCrMessageImpl extends SccpAddressedMessageImpl implements S
                 len = in.read() & 0xff;
                 buffer = new byte[len];
                 in.read(buffer);
-                decodeOptional(paramCode, buffer, sccpProtocolVersion);
+                decodeOptional(paramCode, buffer, sccpProtocolVersion, factory);
             }
         } catch (IOException e) {
             throw new ParseException(e);
@@ -280,23 +280,23 @@ public class SccpConnCrMessageImpl extends SccpAddressedMessageImpl implements S
         }
     }
 
-    protected void decodeOptional(int code, byte[] buffer, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
+    protected void decodeOptional(int code, byte[] buffer, final SccpProtocolVersion sccpProtocolVersion, ParameterFactory factory) throws ParseException {
         switch (code) {
             case Credit.PARAMETER_CODE:
                 CreditImpl cred = new CreditImpl();
-                cred.decode(buffer, null, sccpProtocolVersion);
+                cred.decode(buffer, factory, sccpProtocolVersion);
                 credit = cred;
                 break;
 
             case SccpAddress.CGA_PARAMETER_CODE:
                 SccpAddressImpl address = new SccpAddressImpl();
-                address.decode(buffer, null, sccpProtocolVersion);
+                address.decode(buffer, factory, sccpProtocolVersion);
                 callingParty = address;
                 break;
 
             case SccpAddress.CDA_PARAMETER_CODE:
                 SccpAddressImpl address2 = new SccpAddressImpl();
-                address2.decode(buffer, null, sccpProtocolVersion);
+                address2.decode(buffer, factory, sccpProtocolVersion);
                 calledParty = address2;
                 break;
 
@@ -351,5 +351,52 @@ public class SccpConnCrMessageImpl extends SccpAddressedMessageImpl implements S
     @Override
     public void clearReturnMessageOnError() {
         throw new IllegalStateException();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Sccp Msg [Type=CR");
+        sb.append(" networkId=");
+        sb.append(this.networkId);
+        sb.append(" sls=");
+        sb.append(this.sls);
+        sb.append(" incomingOpc=");
+        sb.append(this.incomingOpc);
+        sb.append(" incomingDpc=");
+        sb.append(this.incomingDpc);
+        sb.append(" outgoingDpc=");
+        sb.append(this.outgoingDpc);
+        sb.append(" CallingAddress(");
+        sb.append(this.callingParty);
+        sb.append(") CalledParty(");
+        sb.append(this.calledParty);
+        sb.append(")");
+        sb.append(" DataLen=");
+        if (this.userData != null)
+            sb.append(this.userData.length);
+
+        sb.append(" sourceLR=");
+        if (this.sourceLocalReferenceNumber != null)
+            sb.append(this.sourceLocalReferenceNumber.getValue());
+        sb.append(" protocolClass=");
+        if (this.protocolClass != null)
+            sb.append(this.protocolClass.getProtocolClass());
+        sb.append(" credit=");
+        if (this.credit != null)
+            sb.append(this.credit.getValue());
+        sb.append(" importance=");
+        if (this.importance != null)
+            sb.append(this.importance.getValue());
+        sb.append(" hopCounter=");
+        if (this.hopCounter != null)
+            sb.append(this.hopCounter.getValue());
+        sb.append(" isMtpOriginated=");
+        sb.append(this.isMtpOriginated);
+
+        sb.append("]");
+
+        return sb.toString();
     }
 }

@@ -1,13 +1,33 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.sccp.impl;
 
 import org.mobicents.protocols.ss7.Util;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.SccpConnection;
 import org.mobicents.protocols.ss7.sccp.SccpConnectionState;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt1MessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt2MessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlsdMessageImpl;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnSegmentableMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.CreditImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
@@ -25,17 +45,11 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import java.io.File;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
-import static org.mobicents.protocols.ss7.mtp.Mtp3StatusCause.UserPartUnavailability_Unknown;
 import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.CLOSED;
-import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.DISCONNECT_INITIATED;
 import static org.mobicents.protocols.ss7.sccp.parameter.ErrorCauseValue.LRN_MISMATCH_INCONSISTENT_SOURCE_LRN;
-import static org.mobicents.protocols.ss7.sccp.parameter.ReleaseCauseValue.MTP_FAILURE;
 import static org.mobicents.protocols.ss7.sccp.parameter.ReleaseCauseValue.SCCP_FAILURE;
 import static org.mobicents.protocols.ss7.sccp.parameter.ReleaseCauseValue.SUBSYSTEM_FAILURE;
 import static org.testng.Assert.assertEquals;
@@ -98,26 +112,49 @@ public class ConnectionErrorTest extends SccpHarness {
         super.tearDown();
 
         // to avoid stack configuration propagation between test cases
-        deleteDir(sccpStack1.getPersistDir());
-        deleteDir(sccpStack2.getPersistDir());
+//        deleteDir(sccpStack1.getPersistDir());
+//        deleteDir(sccpStack2.getPersistDir());
     }
 
-    private void deleteDir(String pathname) {
-        File index = new File(pathname);
-        String[] files = index.list();
-        for(String file: files){
-            File current = new File(index.getPath(), file);
-            current.delete();
-        }
+//    private void deleteDir(String pathname) {
+//        File index = new File(pathname);
+//        String[] files = index.list();
+//        for(String file: files){
+//            File current = new File(index.getPath(), file);
+//            current.delete();
+//        }
+//    }
+
+    private void stackParameterInit() {
+        sccpStack1.referenceNumberCounter = 20;
+        sccpStack2.referenceNumberCounter = 50;
+
+        sccpStack1.iasTimerDelay = 7500 * 60;
+        sccpStack1.iarTimerDelay = 16000 * 60;
+        sccpStack2.iasTimerDelay = 7500 * 60;
+        sccpStack2.iarTimerDelay = 16000 * 60;
+
+        sccpStack1.sstTimerDuration_Min = 10000;
+        sccpStack2.sstTimerDuration_Min = 10000;
+
+        sccpStack1.relTimerDelay = 15000;
+        sccpStack1.repeatRelTimerDelay = 15000;
+        sccpStack1.intTimerDelay = 30000;
+
+        sccpStack2.relTimerDelay = 15000;
+        sccpStack2.repeatRelTimerDelay = 15000;
+        sccpStack2.intTimerDelay = 30000;
     }
 
     @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" })
     public void testErrProtocolClass2() throws Exception {
+        stackParameterInit();
         testErr(new ProtocolClassImpl(2));
     }
 
     @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" })
     public void testErrProtocolClass3() throws Exception {
+        stackParameterInit();
         testErr(new ProtocolClassImpl(3));
     }
 
@@ -170,11 +207,13 @@ public class ConnectionErrorTest extends SccpHarness {
 
     @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" })
     public void testReleaseDueToErrorProtocolClass2() throws Exception {
+        stackParameterInit();
         testReleaseDueToError(new ProtocolClassImpl(2));
     }
 
     @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" })
     public void testReleaseDueToErrorProtocolClass3() throws Exception {
+        stackParameterInit();
         testReleaseDueToError(new ProtocolClassImpl(3));
     }
 
@@ -222,11 +261,13 @@ public class ConnectionErrorTest extends SccpHarness {
 
     @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" })
     public void testSendDataNoConnectionProtocolClass2() throws Exception {
+        stackParameterInit();
         testSendDataNoConnection(new ProtocolClassImpl(2));
     }
 
     @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" })
     public void testSendDataNoConnectionProtocolClass3() throws Exception {
+        stackParameterInit();
         testSendDataNoConnection(new ProtocolClassImpl(3));
     }
 
@@ -272,11 +313,13 @@ public class ConnectionErrorTest extends SccpHarness {
 
     @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" })
     public void testSendDataChannelIsDownProtocolClass2() throws Exception {
+        stackParameterInit();
         testSendDataNoConnection(new ProtocolClassImpl(2));
     }
 
     @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" })
     public void testSendDataChannelIsDownProtocolClass3() throws Exception {
+        stackParameterInit();
         testSendDataChannelIsDown(new ProtocolClassImpl(3));
     }
 
@@ -347,6 +390,7 @@ public class ConnectionErrorTest extends SccpHarness {
 
     @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" })
     public void testBadSequenceNumberProtocolClass3() throws Exception {
+        stackParameterInit();
         a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
         a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
 
@@ -395,6 +439,7 @@ public class ConnectionErrorTest extends SccpHarness {
 
     @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" })
     public void testBadSequenceConfirmationProtocolClass3() throws Exception {
+        stackParameterInit();
         a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
         a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
 

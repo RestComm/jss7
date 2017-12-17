@@ -98,7 +98,7 @@ public abstract class SccpHarness {
         resource1 = sccpStack1.getSccpResource();
 
         resource1.addRemoteSpc(1, getStack2PC(), 0, 0);
-        resource1.addRemoteSsn(1, getStack2PC(), getSSN(), 0, false);
+        resource1.addRemoteSsn(1, getStack2PC(), getSSN2(), 0, false);
         this.parameterFactory = this.sccpProvider1.getParameterFactory();
 
     }
@@ -151,6 +151,12 @@ public abstract class SccpHarness {
         return 8;
     }
 
+    protected int ssn2 = 8;
+
+    protected int getSSN2() {
+        return ssn2;
+    }
+
     public void setUp() throws Exception {
         this.setUpStack1();
         this.setUpStack2();
@@ -165,7 +171,7 @@ public abstract class SccpHarness {
      * After this method invoking all MTP traffic will be save into the file "MsgLog.txt" file format:
      * [message][message]...[message] [message] ::= { byte-length low byte, byte-length high byte, byte[] message }
      */
-    public void saveTrafficInFile() {
+    public synchronized void saveTrafficInFile() {
         ((Mtp3UserPartImpl) this.mtp3UserPart1).saveTrafficInFile = true;
         ((Mtp3UserPartImpl) this.mtp3UserPart2).saveTrafficInFile = true;
 

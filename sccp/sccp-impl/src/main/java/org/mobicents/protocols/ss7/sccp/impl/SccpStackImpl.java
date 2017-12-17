@@ -961,10 +961,12 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
     protected void removeConnection(LocalReference ref) {
         SccpConnectionImpl conn = connections.get(ref.getValue());
-        connections.remove(ref.getValue());
+        if (conn != null) {
+            connections.remove(ref.getValue());
 
-        conn.stopTimers();
-        conn.setState(SccpConnectionState.CLOSED);
+            conn.stopTimers();
+            conn.setState(SccpConnectionState.CLOSED);
+        }
     }
 
     protected int newReferenceNumber() throws MaxConnectionCountReached {
@@ -974,7 +976,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             }
 
             // 0 and reference numbers values which are > 0
-            if (connections.size() == referenceNumberCounterMax + 1) {
+            if (connections.size() >= referenceNumberCounterMax + 1) {
                 logger.error(String.format("Can't open more connections than %d", referenceNumberCounterMax + 1));
                 throw new MaxConnectionCountReached(String.format("Can't open more connections than %d", referenceNumberCounterMax + 1));
             }

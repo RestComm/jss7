@@ -155,7 +155,7 @@ public class SccpConnCcMessageImpl extends SccpConnReferencedMessageImpl impleme
                 len = in.read() & 0xff;
                 buffer = new byte[len];
                 in.read(buffer);
-                decodeOptional(paramCode, buffer, sccpProtocolVersion);
+                decodeOptional(paramCode, buffer, sccpProtocolVersion, factory);
             }
         } catch (IOException e) {
             throw new ParseException(e);
@@ -264,7 +264,7 @@ public class SccpConnCcMessageImpl extends SccpConnReferencedMessageImpl impleme
         }
     }
 
-    protected void decodeOptional(int code, byte[] buffer, final SccpProtocolVersion sccpProtocolVersion) throws ParseException {
+    protected void decodeOptional(int code, byte[] buffer, final SccpProtocolVersion sccpProtocolVersion, ParameterFactory factory) throws ParseException {
         switch (code) {
             case Credit.PARAMETER_CODE:
                 CreditImpl cred = new CreditImpl();
@@ -274,7 +274,7 @@ public class SccpConnCcMessageImpl extends SccpConnReferencedMessageImpl impleme
 
             case SccpAddress.CDA_PARAMETER_CODE:
                 SccpAddressImpl address2 = new SccpAddressImpl();
-                address2.decode(buffer, null, sccpProtocolVersion);
+                address2.decode(buffer, factory, sccpProtocolVersion);
                 calledPartyAddress = address2;
                 break;
 
@@ -284,12 +284,57 @@ public class SccpConnCcMessageImpl extends SccpConnReferencedMessageImpl impleme
 
             case Importance.PARAMETER_CODE:
                 ImportanceImpl imp = new ImportanceImpl();
-                imp.decode(buffer, null, sccpProtocolVersion);
+                imp.decode(buffer, factory, sccpProtocolVersion);
                 importance = imp;
                 break;
 
             default:
                 throw new ParseException("Unknown optional parameter code: " + code);
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Sccp Msg [Type=CC");
+        sb.append(" networkId=");
+        sb.append(this.networkId);
+        sb.append(" sls=");
+        sb.append(this.sls);
+        sb.append(" incomingOpc=");
+        sb.append(this.incomingOpc);
+        sb.append(" incomingDpc=");
+        sb.append(this.incomingDpc);
+        sb.append(" outgoingDpc=");
+        sb.append(this.outgoingDpc);
+        sb.append(" CalledParty(");
+        sb.append(this.calledPartyAddress);
+        sb.append(")");
+        sb.append(" DataLen=");
+        if (this.userData != null)
+            sb.append(this.userData.length);
+
+        sb.append(" sourceLR=");
+        if (this.sourceLocalReferenceNumber != null)
+            sb.append(this.sourceLocalReferenceNumber.getValue());
+        sb.append(" destLR=");
+        if (this.destinationLocalReferenceNumber != null)
+            sb.append(this.destinationLocalReferenceNumber.getValue());
+        sb.append(" protocolClass=");
+        if (this.protocolClass != null)
+            sb.append(this.protocolClass.getProtocolClass());
+        sb.append(" credit=");
+        if (this.credit != null)
+            sb.append(this.credit.getValue());
+        sb.append(" importance=");
+        if (this.importance != null)
+            sb.append(this.importance.getValue());
+        sb.append(" isMtpOriginated=");
+        sb.append(this.isMtpOriginated);
+
+        sb.append("]");
+
+        return sb.toString();
     }
 }

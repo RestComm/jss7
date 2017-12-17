@@ -1,3 +1,25 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.sccp.impl;
 
 import org.mobicents.protocols.ss7.Util;
@@ -12,7 +34,6 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnCrMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnMessage;
-import org.mobicents.protocols.ss7.sccp.parameter.Credit;
 import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -21,8 +42,6 @@ import org.mobicents.protocols.ss7.scheduler.DefaultClock;
 import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.testng.annotations.*;
 import org.testng.annotations.Test;
-
-import java.io.File;
 
 import static junit.framework.Assert.assertTrue;
 import static org.testng.Assert.assertEquals;
@@ -85,26 +104,38 @@ public class ConnectionTimersTest extends SccpHarness {
         super.tearDown();
 
         // to avoid stack configuration propagation between test cases
-        deleteDir(sccpStack1.getPersistDir());
-        deleteDir(sccpStack2.getPersistDir());
+//        deleteDir(sccpStack1.getPersistDir());
+//        deleteDir(sccpStack2.getPersistDir());
     }
 
-    private void deleteDir(String pathname) {
-        File index = new File(pathname);
-        String[] files = index.list();
-        for(String file: files){
-            File current = new File(index.getPath(), file);
-            current.delete();
-        }
+//    private void deleteDir(String pathname) {
+//        File index = new File(pathname);
+//        String[] files = index.list();
+//        for(String file: files){
+//            File current = new File(index.getPath(), file);
+//            current.delete();
+//        }
+//    }
+
+    private void stackParameterInit() {
+        sccpStack1.referenceNumberCounter = 20;
+        sccpStack2.referenceNumberCounter = 50;
+
+        sccpStack1.iasTimerDelay = 7500 * 60;
+        sccpStack1.iarTimerDelay = 16000 * 60;
+        sccpStack2.iasTimerDelay = 7500 * 60;
+        sccpStack2.iarTimerDelay = 16000 * 60;
     }
 
     @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" })
     public void testInactivityProtocolClass2() throws Exception {
+        stackParameterInit();
         testInactivity(new ProtocolClassImpl(2));
     }
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testInactivityProtocolClass3() throws Exception {
+        stackParameterInit();
         testInactivity(new ProtocolClassImpl(3));
     }
 

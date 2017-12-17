@@ -22,7 +22,6 @@
 
 package org.mobicents.protocols.ss7.sccp.impl;
 
-import org.mobicents.protocols.ss7.Util;
 import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
@@ -30,8 +29,6 @@ import org.mobicents.protocols.ss7.sccp.SccpResource;
 import org.mobicents.protocols.ss7.sccp.impl.Mtp3UserPartImpl;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
-
-import java.io.FileOutputStream;
 
 /**
  * @author amit bhayani
@@ -51,6 +48,13 @@ public abstract class SccpHarness3 extends SccpHarness {
     protected SccpResource resource3 = null;
 
     protected ParameterFactory parameterFactory;
+
+    protected int ssn3 = 8;
+
+    protected int getSSN3() {
+        return ssn3;
+    }
+
     /**
 	 *
 	 */
@@ -87,8 +91,9 @@ public abstract class SccpHarness3 extends SccpHarness {
 
         resource1.addRemoteSpc(1, getStack2PC(), 0, 0);
         resource1.addRemoteSpc(3, getStack3PC(), 0, 0);
-        resource1.addRemoteSsn(1, getStack2PC(), getSSN(), 0, false);
-        resource1.addRemoteSsn(2, getStack3PC(), getSSN(), 0, false);
+        resource1.addRemoteSsn(1, getStack2PC(), getSSN2(), 0, false);
+        resource1.addRemoteSsn(2, getStack3PC(), getSSN3(), 0, false);
+        resource1.addRemoteSsn(3, getStack2PC(), getSSN3(), 0, false);
         this.parameterFactory = this.sccpProvider1.getParameterFactory();
 
     }
@@ -113,7 +118,7 @@ public abstract class SccpHarness3 extends SccpHarness {
         resource2.addRemoteSpc(02, getStack1PC(), 0, 0);
         resource2.addRemoteSpc(3, getStack3PC(), 0, 0);
         resource2.addRemoteSsn(1, getStack1PC(), getSSN(), 0, false);
-        resource2.addRemoteSsn(2, getStack3PC(), getSSN(), 0, false);
+        resource2.addRemoteSsn(2, getStack3PC(), getSSN3(), 0, false);
 
     }
 
@@ -137,7 +142,8 @@ public abstract class SccpHarness3 extends SccpHarness {
         resource3.addRemoteSpc(02, getStack1PC(), 0, 0);
         resource3.addRemoteSpc(1, getStack2PC(), 0, 0);
         resource3.addRemoteSsn(1, getStack1PC(), getSSN(), 0, false);
-        resource3.addRemoteSsn(2, getStack2PC(), getSSN(), 0, false);
+        resource3.addRemoteSsn(2, getStack2PC(), getSSN2(), 0, false);
+        resource3.addRemoteSsn(3, getStack2PC(), getSSN(), 0, false);
 
     }
 
@@ -173,5 +179,10 @@ public abstract class SccpHarness3 extends SccpHarness {
         this.tearDownStack1();
         this.tearDownStack2();
         this.tearDownStack3();
+    }
+
+    public void saveTrafficInFile() {
+        ((Mtp3UserPartImpl) this.mtp3UserPart3).saveTrafficInFile = true;
+        super.saveTrafficInFile();
     }
 }

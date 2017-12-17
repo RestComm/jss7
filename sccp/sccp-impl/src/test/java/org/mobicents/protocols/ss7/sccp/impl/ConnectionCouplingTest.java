@@ -1,3 +1,25 @@
+/*
+ * TeleStax, Open Source Cloud Communications  Copyright 2012.
+ * and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
 package org.mobicents.protocols.ss7.sccp.impl;
 
 import org.mobicents.protocols.ss7.Util;
@@ -7,12 +29,8 @@ import org.mobicents.protocols.ss7.sccp.OriginationType;
 import org.mobicents.protocols.ss7.sccp.RuleType;
 import org.mobicents.protocols.ss7.sccp.SccpConnection;
 import org.mobicents.protocols.ss7.sccp.SccpConnectionState;
-import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
-import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness3;
 import org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.mobicents.protocols.ss7.sccp.impl.SccpStackImplProxy;
 import org.mobicents.protocols.ss7.sccp.impl.User;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.CreditImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
@@ -21,7 +39,6 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ReleaseCauseImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ResetCauseImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnCrMessage;
-import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle0010;
 import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.ResetCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
@@ -33,8 +50,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.io.File;
 
 import static org.testng.Assert.assertEquals;
 
@@ -99,6 +114,8 @@ public class ConnectionCouplingTest extends SccpHarness3 {
 
     @BeforeMethod
     public void setUp() throws Exception {
+        ssn2 = 99;
+        ssn3 = 6;
         super.setUp();
         sccpStack2.setCanRelay(true);
     }
@@ -108,27 +125,62 @@ public class ConnectionCouplingTest extends SccpHarness3 {
         super.tearDown();
 
         // to avoid stack configuration propagation between test cases
-        deleteDir(sccpStack1.getPersistDir());
-        deleteDir(sccpStack2.getPersistDir());
-        deleteDir(sccpStack3.getPersistDir());
+//        deleteDir(sccpStack1.getPersistDir());
+//        deleteDir(sccpStack2.getPersistDir());
+//        deleteDir(sccpStack3.getPersistDir());
     }
 
-    private void deleteDir(String pathname) {
-        File index = new File(pathname);
-        String[] files = index.list();
-        for(String file: files){
-            File current = new File(index.getPath(), file);
-            current.delete();
-        }
+//    private void deleteDir(String pathname) {
+//        File index = new File(pathname);
+//        String[] files = index.list();
+//        for(String file: files){
+//            File current = new File(index.getPath(), file);
+//            current.delete();
+//        }
+//    }
+
+    private void stackParameterInit() {
+        sccpStack1.referenceNumberCounter = 20;
+        sccpStack2.referenceNumberCounter = 50;
+        sccpStack3.referenceNumberCounter = 70;
+
+        sccpStack1.iasTimerDelay = 7500 * 60;
+        sccpStack1.iarTimerDelay = 16000 * 60;
+        sccpStack2.iasTimerDelay = 7500 * 60;
+        sccpStack2.iarTimerDelay = 16000 * 60;
+        sccpStack3.iasTimerDelay = 7500 * 60;
+        sccpStack3.iarTimerDelay = 16000 * 60;
+
+        sccpStack1.sstTimerDuration_Min = 10000;
+        sccpStack2.sstTimerDuration_Min = 10000;
+        sccpStack3.sstTimerDuration_Min = 10000;
+
+        sccpStack1.relTimerDelay = 15000;
+        sccpStack1.repeatRelTimerDelay = 15000;
+        sccpStack1.intTimerDelay = 30000;
+
+        sccpStack2.relTimerDelay = 15000;
+        sccpStack2.repeatRelTimerDelay = 15000;
+        sccpStack2.intTimerDelay = 30000;
+
+        sccpStack3.relTimerDelay = 15000;
+        sccpStack3.repeatRelTimerDelay = 15000;
+        sccpStack3.intTimerDelay = 30000;
+
+        sccpStack1.connEstTimerDelay = 15000;
+        sccpStack2.connEstTimerDelay = 15000;
+        sccpStack3.connEstTimerDelay = 15000;
     }
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testDataTransitProtocolClass2() throws Exception {
+        stackParameterInit();
         testMessageTransit(2);
     }
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testDataTransitProtocolClass3() throws Exception {
+        stackParameterInit();
         testMessageTransit(3);
     }
 
@@ -137,22 +189,22 @@ public class ConnectionCouplingTest extends SccpHarness3 {
         sccpStack2.connEstTimerDelay = 1000000000;
         sccpStack3.connEstTimerDelay = 1000000000;
 
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
-        a3 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack3PC(), 8);
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
+        a3 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack3PC(), getSSN3());
 
         SccpAddress a3gt = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
-                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack2PC(), 0);
+                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack2PC(), getSSN3());
 
         SccpAddress primaryAddress = sccpProvider1.getParameterFactory().createSccpAddress(
                 RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN,
-                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack3PC(), 8);
+                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack3PC(), 0);
         SccpAddress pattern = sccpProvider1.getParameterFactory().createSccpAddress(
                 RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
                 sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), 0, 0);
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, null, getSSN());
-        User u3 = new User(sccpStack3.getSccpProvider(), a3, null, getSSN());
+        User u3 = new User(sccpStack3.getSccpProvider(), a3, null, getSSN3());
 
         sccpStack2.getRouter().addRoutingAddress(1, primaryAddress);
         sccpStack2.getRouter().addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K",
@@ -163,7 +215,8 @@ public class ConnectionCouplingTest extends SccpHarness3 {
 
         Thread.sleep(100);
 
-        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a3gt, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(getSSN(), a3gt, a1,
+                new byte[] { 0x01, 0x02, (byte) 0xFF }, new ImportanceImpl((byte) 1));
         crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
         crMsg.setProtocolClass(new ProtocolClassImpl(protocolClass));
         crMsg.setCredit(new CreditImpl(100));
@@ -193,7 +246,7 @@ public class ConnectionCouplingTest extends SccpHarness3 {
 
         Thread.sleep(200);
 
-        conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), new byte[] {});
+        conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), null); // new byte[] { (byte) 0x91, (byte) 0x92, (byte) 0x93 }
 
         Thread.sleep(200);
 
@@ -211,11 +264,13 @@ public class ConnectionCouplingTest extends SccpHarness3 {
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testDataTransitDisabledProtocolClass2() throws Exception {
+        stackParameterInit();
         testMessageTransitDisabled(2);
     }
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testDataTransitDisabledProtocolClass3() throws Exception {
+        stackParameterInit();
         testMessageTransitDisabled(3);
     }
 
@@ -226,22 +281,22 @@ public class ConnectionCouplingTest extends SccpHarness3 {
         sccpStack2.connEstTimerDelay = 1000000000;
         sccpStack3.connEstTimerDelay = 1000000000;
 
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
-        a3 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack3PC(), 8);
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
+        a3 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack3PC(), getSSN3());
 
         SccpAddress a3gt = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
-                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack2PC(), 0);
+                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack2PC(), getSSN3());
 
         SccpAddress primaryAddress = sccpProvider1.getParameterFactory().createSccpAddress(
                 RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN,
-                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack3PC(), 8);
+                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack3PC(), 0);
         SccpAddress pattern = sccpProvider1.getParameterFactory().createSccpAddress(
                 RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
                 sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), 0, 0);
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, null, getSSN());
-        User u3 = new User(sccpStack3.getSccpProvider(), a3, null, getSSN());
+        User u3 = new User(sccpStack3.getSccpProvider(), a3, null, getSSN3());
 
         sccpStack2.getRouter().addRoutingAddress(1, primaryAddress);
         sccpStack2.getRouter().addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K",
@@ -252,7 +307,7 @@ public class ConnectionCouplingTest extends SccpHarness3 {
 
         Thread.sleep(100);
 
-        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a3gt, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(getSSN(), a3gt, a1, null, new ImportanceImpl((byte)1));
         crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
         crMsg.setProtocolClass(new ProtocolClassImpl(protocolClass));
         crMsg.setCredit(new CreditImpl(100));
@@ -274,11 +329,13 @@ public class ConnectionCouplingTest extends SccpHarness3 {
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testRefuseProtocolClass2() throws Exception {
+        stackParameterInit();
         testRefuseConnection(2);
     }
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testRefuseProtocolClass3() throws Exception {
+        stackParameterInit();
         testRefuseConnection(3);
     }
 
@@ -287,22 +344,22 @@ public class ConnectionCouplingTest extends SccpHarness3 {
         sccpStack2.connEstTimerDelay = 1000000000;
         sccpStack3.connEstTimerDelay = 1000000000;
 
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
-        a3 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack3PC(), 8);
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
+        a3 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack3PC(), getSSN3());
 
         SccpAddress a3gt = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
-                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack2PC(), 0);
+                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack2PC(), getSSN3());
 
         SccpAddress primaryAddress = sccpProvider1.getParameterFactory().createSccpAddress(
                 RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN,
-                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack3PC(), 8);
+                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack3PC(), 0);
         SccpAddress pattern = sccpProvider1.getParameterFactory().createSccpAddress(
                 RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
                 sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), 0, 0);
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, null, getSSN());
-        User u3 = new User(sccpStack3.getSccpProvider(), a3, null, getSSN());
+        User u3 = new User(sccpStack3.getSccpProvider(), a3, null, getSSN3());
 
         u3.setRefuseConnections(true);
 
@@ -315,7 +372,7 @@ public class ConnectionCouplingTest extends SccpHarness3 {
 
         Thread.sleep(100);
 
-        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a3gt, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(getSSN(), a3gt, a1, new byte[] { 0x11, 0x12, 0x13, 0x14, 0x15 }, new ImportanceImpl((byte)1));
         crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
         crMsg.setProtocolClass(new ProtocolClassImpl(protocolClass));
         if (protocolClass == 3) {
@@ -339,26 +396,27 @@ public class ConnectionCouplingTest extends SccpHarness3 {
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testTransitReset() throws Exception {
+        stackParameterInit();
         sccpStack1.connEstTimerDelay = 1000000000;
         sccpStack2.connEstTimerDelay = 1000000000;
         sccpStack3.connEstTimerDelay = 1000000000;
 
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
-        a3 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack3PC(), 8);
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
+        a3 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack3PC(), getSSN3());
 
         SccpAddress a3gt = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
-                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack2PC(), 0);
+                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack2PC(), getSSN3());
 
         SccpAddress primaryAddress = sccpProvider1.getParameterFactory().createSccpAddress(
                 RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN,
-                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack3PC(), 8);
+                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack3PC(), 0);
         SccpAddress pattern = sccpProvider1.getParameterFactory().createSccpAddress(
                 RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
                 sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), 0, 0);
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, null, getSSN());
-        User u3 = new User(sccpStack3.getSccpProvider(), a3, null, getSSN());
+        User u3 = new User(sccpStack3.getSccpProvider(), a3, null, getSSN3());
 
         sccpStack2.getRouter().addRoutingAddress(1, primaryAddress);
         sccpStack2.getRouter().addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K",
@@ -369,7 +427,7 @@ public class ConnectionCouplingTest extends SccpHarness3 {
 
         Thread.sleep(100);
 
-        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a3gt, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(getSSN(), a3gt, a1, null, new ImportanceImpl((byte)1));
         crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
         crMsg.setProtocolClass(new ProtocolClassImpl(3));
         crMsg.setCredit(new CreditImpl(100));
@@ -414,11 +472,13 @@ public class ConnectionCouplingTest extends SccpHarness3 {
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testSegmentedDataTransitProtocolClass2() throws Exception {
+        stackParameterInit();
         testSegmentedMessages(2);
     }
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testSegmentedDataTransitProtocolClass3() throws Exception {
+        stackParameterInit();
         testSegmentedMessages(3);
     }
 
@@ -427,22 +487,22 @@ public class ConnectionCouplingTest extends SccpHarness3 {
         sccpStack2.connEstTimerDelay = 1000000000;
         sccpStack3.connEstTimerDelay = 1000000000;
 
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
-        a3 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack3PC(), 8);
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
+        a3 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack3PC(), getSSN3());
 
         SccpAddress a3gt = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
-                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack2PC(), 0);
+                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack2PC(), getSSN3());
 
         SccpAddress primaryAddress = sccpProvider1.getParameterFactory().createSccpAddress(
                 RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN,
-                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack3PC(), 8);
+                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack3PC(), 0);
         SccpAddress pattern = sccpProvider1.getParameterFactory().createSccpAddress(
                 RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
                 sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), 0, 0);
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, null, getSSN());
-        User u3 = new User(sccpStack3.getSccpProvider(), a3, null, getSSN());
+        User u3 = new User(sccpStack3.getSccpProvider(), a3, null, getSSN3());
 
         sccpStack2.getRouter().addRoutingAddress(1, primaryAddress);
         sccpStack2.getRouter().addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K",
@@ -453,7 +513,8 @@ public class ConnectionCouplingTest extends SccpHarness3 {
 
         Thread.sleep(100);
 
-        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a3gt, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(getSSN(), a3gt, a1,
+                new byte[] { 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29 }, new ImportanceImpl((byte) 1));
         crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
         crMsg.setProtocolClass(new ProtocolClassImpl(protocolClass));
         crMsg.setCredit(new CreditImpl(100));
@@ -488,7 +549,7 @@ public class ConnectionCouplingTest extends SccpHarness3 {
 
         Thread.sleep(200);
 
-        conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), new byte[] {});
+        conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), null);
 
         Thread.sleep(200);
 
