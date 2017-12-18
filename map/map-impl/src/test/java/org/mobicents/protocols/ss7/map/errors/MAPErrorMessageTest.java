@@ -74,11 +74,21 @@ import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberManagement
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSCode;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SSStatus;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.SupplementaryCodeValue;
+import org.mobicents.protocols.ss7.map.api.smstpdu.DataCodingScheme;
+import org.mobicents.protocols.ss7.map.api.smstpdu.FailureCause;
+import org.mobicents.protocols.ss7.map.api.smstpdu.ProtocolIdentifier;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsDeliverReportTpdu;
+import org.mobicents.protocols.ss7.map.api.smstpdu.UserData;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.BasicServiceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.subscriberManagement.TeleserviceCodeImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.SSCodeImpl;
 import org.mobicents.protocols.ss7.map.service.supplementary.SSStatusImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.DataCodingSchemeImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.FailureCauseImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.ProtocolIdentifierImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.SmsDeliverReportTpduImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.UserDataImpl;
 import org.mobicents.protocols.ss7.tcap.asn.ParameterImpl;
 import org.mobicents.protocols.ss7.tcap.asn.comp.Parameter;
 import org.testng.annotations.Test;
@@ -122,8 +132,11 @@ public class MAPErrorMessageTest {
 
     private Parameter getDataSmDeliveryFailureFull() {
         Parameter par = new ParameterImpl();
-        par.setData(new byte[] { 10, 1, 4, 4, 5, 1, 3, 5, 7, 9, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15,
-                48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 });
+//        par.setData(new byte[] { 10, 1, 4, 4, 5, 1, 3, 5, 7, 9, 48, 39, -96, 32, 48, 10, 6, 3, 42, 3, 4, 11, 12, 13, 14, 15,
+//                48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 });
+        par.setData(new byte[] { 10, 1, 4, 4, 14, 0, -43, 7, 127, -10, 8, 1, 2, 0, 0, 0, 9, 9, 9, 48, 39, -96, 32, 48, 10, 6,
+                3, 42, 3, 4, 11, 12, 13, 14, 15, 48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3,
+                31, 32, 33 });
         par.setPrimitive(false);
         par.setTagClass(Tag.CLASS_UNIVERSAL);
         par.setTag(Tag.SEQUENCE);
@@ -315,6 +328,8 @@ public class MAPErrorMessageTest {
         return par;
     }
 
+    private byte[] uData = { 1, 2, 0, 0, 0, 9, 9, 9 };
+
     @Test(groups = { "functional.decode", "dialog.message" })
     public void testDecode() throws Exception {
 
@@ -329,6 +344,7 @@ public class MAPErrorMessageTest {
         assertEquals(emSMDeliveryFailure.getSMEnumeratedDeliveryFailureCause(),
                 SMEnumeratedDeliveryFailureCause.invalidSMEAddress);
         assertNull(emSMDeliveryFailure.getSignalInfo());
+        assertNull(emSMDeliveryFailure.getSmsDeliverReportTpdu());
         assertNull(emSMDeliveryFailure.getExtensionContainer());
         assertEquals(emSMDeliveryFailure.getMapProtocolVersion(), 3);
 
@@ -341,7 +357,12 @@ public class MAPErrorMessageTest {
         assertEquals(emSMDeliveryFailure.getSMEnumeratedDeliveryFailureCause(), SMEnumeratedDeliveryFailureCause.scCongestion);
         assertNotNull(emSMDeliveryFailure.getSignalInfo());
         assertNotNull(emSMDeliveryFailure.getExtensionContainer());
-        assertTrue(Arrays.equals(emSMDeliveryFailure.getSignalInfo(), new byte[] { 1, 3, 5, 7, 9 }));
+        SmsDeliverReportTpdu tpdu = emSMDeliveryFailure.getSmsDeliverReportTpdu();
+        assertEquals(tpdu.getFailureCause().getCode(), 0xd5);
+        assertEquals(tpdu.getParameterIndicator().getCode(), 7);
+        assertEquals(tpdu.getProtocolIdentifier().getCode(), 127);
+        assertEquals(tpdu.getDataCodingScheme().getCode(), 246);
+        assertEquals(tpdu.getUserData().getEncodedData(), uData);
         assertTrue(MAPExtensionContainerTest.CheckTestExtensionContainer(emSMDeliveryFailure.getExtensionContainer()));
         assertEquals(emSMDeliveryFailure.getMapProtocolVersion(), 3);
 
@@ -583,9 +604,15 @@ public class MAPErrorMessageTest {
         p.setData(aos.toByteArray());
         assertParameter(getDataSmDeliveryFailure(), p);
 
-        em = (MAPErrorMessageImpl) fact.createMAPErrorMessageSMDeliveryFailure(3,
-                SMEnumeratedDeliveryFailureCause.scCongestion, new byte[] { 1, 3, 5, 7, 9 },
-                MAPExtensionContainerTest.GetTestExtensionContainer());
+        MAPErrorMessageSMDeliveryFailure smDeliveryFailure = fact.createMAPErrorMessageSMDeliveryFailure(3,
+                SMEnumeratedDeliveryFailureCause.scCongestion, null, MAPExtensionContainerTest.GetTestExtensionContainer());
+        FailureCause failureCause = new FailureCauseImpl(213);
+        ProtocolIdentifier protocolIdentifier = new ProtocolIdentifierImpl(127);
+        DataCodingScheme dataCodingScheme = new DataCodingSchemeImpl(246);
+        UserData userData = new UserDataImpl(uData, dataCodingScheme, uData.length, false, null);
+        SmsDeliverReportTpdu tpdu = new SmsDeliverReportTpduImpl(failureCause, protocolIdentifier, userData);
+        smDeliveryFailure.setSmsDeliverReportTpdu(tpdu);
+        em = (MAPErrorMessageImpl) smDeliveryFailure;
         aos = new AsnOutputStream();
         em.encodeData(aos);
         p = new ParameterImpl();
@@ -1118,6 +1145,36 @@ public class MAPErrorMessageTest {
         assertEquals(copy11.getErrorCode(), em11.getErrorCode());
         assertEquals(copy11.getSMEnumeratedDeliveryFailureCause(), em11.getSMEnumeratedDeliveryFailureCause());
         assertEquals(copy11.getMapProtocolVersion(), em11.getMapProtocolVersion());
+
+        MAPErrorMessageSMDeliveryFailure smDeliveryFailure = fact.createMAPErrorMessageSMDeliveryFailure(3,
+                SMEnumeratedDeliveryFailureCause.scCongestion, null, MAPExtensionContainerTest.GetTestExtensionContainer());
+        FailureCause failureCause = new FailureCauseImpl(213);
+        ProtocolIdentifier protocolIdentifier = new ProtocolIdentifierImpl(127);
+        DataCodingScheme dataCodingScheme = new DataCodingSchemeImpl(246);
+        UserData userData = new UserDataImpl(uData, dataCodingScheme, uData.length, false, null);
+        SmsDeliverReportTpdu tpdu = new SmsDeliverReportTpduImpl(failureCause, protocolIdentifier, userData);
+        smDeliveryFailure.setSmsDeliverReportTpdu(tpdu);
+        em11 = (MAPErrorMessageSMDeliveryFailureImpl) smDeliveryFailure;
+        baos = new ByteArrayOutputStream();
+        writer = XMLObjectWriter.newInstance(baos);
+        writer.setIndentation("\t"); // Optional (use tabulation for
+                                     // indentation).
+        writer.write(em11, "mapErrorMessageSMDeliveryFailure", MAPErrorMessageSMDeliveryFailureImpl.class);
+        writer.close();
+
+        rawData = baos.toByteArray();
+        serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        bais = new ByteArrayInputStream(rawData);
+        reader = XMLObjectReader.newInstance(bais);
+
+        copy11 = reader.read("mapErrorMessageSMDeliveryFailure", MAPErrorMessageSMDeliveryFailureImpl.class);
+        assertEquals(copy11.getErrorCode(), em11.getErrorCode());
+        assertEquals(copy11.getSMEnumeratedDeliveryFailureCause(), em11.getSMEnumeratedDeliveryFailureCause());
+        assertEquals(copy11.getMapProtocolVersion(), em11.getMapProtocolVersion());
+        assertEquals(copy11.getSignalInfo(), em11.getSignalInfo());
 
         // MAPErrorMessageSsErrorStatus
         MAPErrorMessageSsErrorStatusImpl em12 = (MAPErrorMessageSsErrorStatusImpl) fact.createMAPErrorMessageSsErrorStatus(

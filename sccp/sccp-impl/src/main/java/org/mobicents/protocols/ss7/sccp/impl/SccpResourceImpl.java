@@ -90,7 +90,7 @@ public class SccpResourceImpl implements SccpResource {
         this.store();
     }
 
-    private void load() {
+    protected void load() {
         PersistentStorage.ResourcesSet resources = this.persistanceStorage.load();
         if (resources == null) {
             return;
@@ -103,7 +103,7 @@ public class SccpResourceImpl implements SccpResource {
         this.concernedSpcs = resources.concernedSpcs;
     }
 
-    private synchronized void store() {
+    protected synchronized void store() {
         this.persistanceStorage.store(remoteSpcs, remoteSsns, concernedSpcs);
     }
 

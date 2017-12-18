@@ -87,6 +87,8 @@ public class AddressIndicator implements XMLSerializable {
             pcPresent = (v & 0x01) == 0x01;
             ssnPresent = (v & 0x02) == 0x02;
             globalTitleIndicator = GlobalTitleIndicator.valueOf((v >> 2) & 0x0f);
+            if (globalTitleIndicator == null) // making of NO_GLOBAL_TITLE_INCLUDED for an unknown value
+                globalTitleIndicator = GlobalTitleIndicator.NO_GLOBAL_TITLE_INCLUDED;
         }
 
         routingIndicator = ((v >> 6) & 0x01) == 0x01 ? RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN

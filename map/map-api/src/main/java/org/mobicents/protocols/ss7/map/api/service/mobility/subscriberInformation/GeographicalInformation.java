@@ -37,6 +37,14 @@ GeographicalInformation ::= OCTET STRING (SIZE (8))
 -- Degrees of Latitude 3 octets
 -- Degrees of Longitude 3 octets
 -- Uncertainty code 1 octet
+
+The latitude is coded with 24 bits: 1 bit of sign and a number between 0 and 223-1 coded in binary on 23 bits.
+The relation between the coded number N and the range of (absolute) latitudes X it encodes is the following (X in degrees):
+except for N=223-1, for which the range is extended to include N+1.
+
+The longitude, expressed in the range -180, +180, is coded as a number between -223 and 223-1, coded in 2's complement binary on 24 bits.
+The relation between the coded number N and the range of longitude X it encodes is the following (X in degrees):
+
 </code>
  *
  * @author sergey vetyutnev

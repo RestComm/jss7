@@ -316,14 +316,21 @@ public abstract class SccpDataNoticeTemplateMessageImpl extends SccpSegmentableM
             if (this instanceof SccpDataMessageImpl)
                 isServiceMessage = false;
 
-            if (longMessageRuleType == LongMessageRuleType.LONG_MESSAGE_FORBBIDEN) {
+            int fieldsLen = calculateUdtFieldsLengthWithoutData(cdp.length, cnp.length);
+            int availLen = maxMtp3UserDataLength - fieldsLen;
+            if (availLen > 254)
+                availLen = 254;
+            if (sccpProtocolVersion == SccpProtocolVersion.ANSI && availLen > 252)
+                availLen = 252;
+
+            Boolean useShortMessage=false;
+            if (longMessageRuleType == LongMessageRuleType.LONG_MESSAGE_FORBBIDEN)
+                useShortMessage=true;
+            else if(longMessageRuleType == LongMessageRuleType.XUDT_ENABLED && bf.length <= availLen)
+                useShortMessage=true;
+
+            if (useShortMessage) {
                 // use UDT / UDTS
-                int fieldsLen = calculateUdtFieldsLengthWithoutData(cdp.length, cnp.length);
-                int availLen = maxMtp3UserDataLength - fieldsLen;
-                if (availLen > 254)
-                    availLen = 254;
-                if (sccpProtocolVersion == SccpProtocolVersion.ANSI && availLen > 252)
-                    availLen = 252;
                 if (bf.length > availLen) { // message is too long to encode UDT
                     if (logger.isEnabledFor(Level.WARN)) {
                         logger.warn(String.format(
@@ -546,7 +553,7 @@ public abstract class SccpDataNoticeTemplateMessageImpl extends SccpSegmentableM
                 }
                 int fieldsLenL = calculateLudtFieldsLengthWithoutData(cdp.length, cnp.length,
                         this.segmentation != null, this.importance != null);
-                int availLen = maxMtp3UserDataLength - fieldsLenL;
+                availLen = maxMtp3UserDataLength - fieldsLenL;
                 if (bf.length > availLen) { // message is too long to encode LUDT
                     if (logger.isEnabledFor(Level.WARN)) {
                         logger.warn(String.format(

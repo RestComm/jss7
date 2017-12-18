@@ -1,0 +1,28 @@
+<assembly>
+
+    <id>commons</id>
+
+    <formats>
+        <format>dir</format>
+    </formats>
+
+    <baseDirectory>main</baseDirectory>
+
+    <fileSets>
+        <fileSet>
+            <directory>src/main/module</directory>
+            <outputDirectory>/</outputDirectory>
+            <filtered>true</filtered>
+        </fileSet>
+    </fileSets>
+
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>/</outputDirectory>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <useProjectArtifact>false</useProjectArtifact>
+            <scope>compile</scope>
+        </dependencySet>
+    </dependencySets>
+
+</assembly>

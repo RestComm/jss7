@@ -122,6 +122,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     private static final String REASSEMBLY_TIMER_DELAY = "reassemblytimerdelay";
 
     private static final String MAX_DATA_MSG = "maxdatamessage";
+    private static final String PERIOD_OF_LOG = "periodoflogging";
     private static final String REMOVE_SPC = "removespc";
     private static final String CAN_RELAY = "canrelay";
     private static final String RESERVED_FOR_NATIONAL_USE_VALUE_ADDRESS_INDICATOR = "reservedfornationalusevalue_addressindicator";
@@ -161,6 +162,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
     // Max available Sccp message data for all messages
     protected int maxDataMessage = 2560;
+    // period logging warning in msec
+    private int periodOfLogging = 60000;
     // remove PC from calledPartyAddress when sending to MTP3
     private boolean removeSpc = true;
     // can relay when relay with coupling condition is met
@@ -735,6 +738,19 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         if (resetTimerDelay > 20000)
             resetTimerDelay = 20000;
         this.resetTimerDelay = resetTimerDelay;
+
+        this.store();
+    }
+
+    public int getPeriodOfLogging() {
+        return periodOfLogging;
+    }
+
+    public void setPeriodOfLogging(int periodOfLogging) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("periodOfLogging parameter can be updated only when SCCP stack is running");
+
+        this.periodOfLogging = periodOfLogging;
 
         this.store();
     }
@@ -1513,6 +1529,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             writer.write(this.reassemblyTimerDelay, REASSEMBLY_TIMER_DELAY, Integer.class);
 
             writer.write(this.maxDataMessage, MAX_DATA_MSG, Integer.class);
+            writer.write(this.periodOfLogging, PERIOD_OF_LOG, Integer.class);
             writer.write(this.removeSpc, REMOVE_SPC, Boolean.class);
             writer.write(this.canRelay, CAN_RELAY, Boolean.class);
             writer.write(this.timerExecutorsThreadCount, TIMER_EXECUTORS_THREAD_COUNT, Integer.class);
@@ -1585,6 +1602,9 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             vali = reader.read(MAX_DATA_MSG, Integer.class);
             if (vali != null)
                 this.maxDataMessage = vali;
+            vali = reader.read(PERIOD_OF_LOG, Integer.class);
+            if (vali != null)
+                this.periodOfLogging = vali;
 
             Boolean volb = reader.read(REMOVE_SPC, Boolean.class);
             if (volb != null)

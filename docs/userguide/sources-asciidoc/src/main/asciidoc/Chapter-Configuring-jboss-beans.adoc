@@ -7,26 +7,26 @@
 Configuration is done through an XML descriptor file named [path]_jboss-beans.xml_ located at [path]_$JBOSS_HOME/server/profile_name/deploy/{this-folder}-ss7-service/META-INF_, where  `profile_name` is the name of the server profile. Default [path]_jboss-beans.xml_ contains only m3ua usage. Templates for usage of Dialogic boards or m3ua and Dialogic boards together can be found in the release binaries in folders: [path]_ss7/template/META-INF-dialogic_ and [path]_ss7/template/META-INF-m3ua-dialogic_
 
 
-{this-platform} SS7 Layer 4 (`SCCP, ISUP`) leverages either of the following `MTP`  layers to exchange signaling messages with remote signaling points:  
+{this-platform} SS7 Layer 4 (`SCCP, ISUP`) leverages either of the following `MTP`  layers to exchange signaling messages with remote signaling points:
 
 * `M3UA`
 * `dahdi`
-* `dialogic`                
+* `dialogic`
 
 [[_configuring_rem_sgw]]
 === Configuring M3UA
 
 You must configure `M3UAManagement` if the underlying SS7 service will leverage `M3UA`.
-For more details on configuring [class]`M3UAManagement`, please refer to <<_managing_m3ua>>. 
+For more details on configuring [class]`M3UAManagement`, please refer to <<_managing_m3ua>>.
 
-Scroll down to the section for M3UA Layer in the [path]_jboss-beans.xml_ file and define the properties to suit your requirements. 
+Scroll down to the section for M3UA Layer in the [path]_jboss-beans.xml_ file and define the properties to suit your requirements.
 [source,xml]
 ----
 
         <!-- ==================================================================== -->
         <!-- SCTP Properties                                                      -->
         <!-- Used by M3UA layer                                                   -->
-        <!-- ==================================================================== -->   
+        <!-- ==================================================================== -->
         <bean name="SCTPManagement" class="org.mobicents.protocols.sctp.netty.NettySctpManagementImpl">
                 <constructor>
                         <parameter>SCTPManagement</parameter>
@@ -83,14 +83,14 @@ Scroll down to the section for M3UA Layer in the [path]_jboss-beans.xml_ file an
                 </map>
             </property>
         </bean>
-----        
+----
 
 .[class]`org.mobicents.protocols.sctp.netty.NettySctpManagementImpl`
 This SCTP Management Bean takes a [class]`String` as a constructor argument.
 The name is prepended to the name of the XML file created by the SCTP stack for persisting the state of SCTP resources.
 This XML file is stored in the path specified by the property `persistDir`.
 For example, in the above case, when {this-platform}  SS7 Service is started, a file named [path]_SCTPManagement_sctp.xml_ will be created at [path]_$JBOSS_HOME/server/profile_name/data_ directory.
-The other properties of the Stack are defined below: 
+You can disable of using persistent configuration via using `org.mobicents.protocols.sctp.netty.NonPersistentNettySctpManagementImpl` class. The other properties of the Stack are defined below:
 
 .[class]`org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl`
 This M3UA Management Bean takes a [class]`String` as a first constructor argument.
@@ -99,14 +99,15 @@ The second constructor argument of M3UA Management Bean is also a [class]`String
 
 This XML file is stored in the path specified by the property `persistDir`.
 For example, in the above case, when {this-platform}  SS7 Service is started, a file named [path]_Mtp3UserPart_m3ua1.xml_ will be created at [path]_$JBOSS_HOME/server/profile_name/data_ directory.
-The other properties of the Stack are defined below: 
+You can disable of using persistent configuration via using `org.mobicents.protocols.ss7.m3ua.impl.NonPersistentM3UAManagementImpl` class.
+The other properties of the Stack are defined below:
 
 persistDir::
   As explained above
 
 routingLabelFormat::
   The routing label format supported by this network.
-  See <<_configuring_routing_label_format>> for further details.              
+  See <<_configuring_routing_label_format>> for further details.
 
 transportManagement::
   SCTPManagement mbean should be provided here.
@@ -119,7 +120,7 @@ other parameters::
 
 `Dahdi` based MTP layer will only be used if you have installed `dahdi` based SS7 hardware (Sangoma or Diguim) cards.
  `DahdiLinksetFactory` is responsible for creating new instances of `DahdiLinkset` when instructed by  the `LinksetManager`.
- 
+
 
 [NOTE]
 ====
@@ -127,7 +128,7 @@ The corresponding native libraries for `dahdi` (`libmobicents-dahdi-linux` libra
 
 See JSS7 Installation Guide for more details.
 
-Libraries are compiled only for linux OS for 32-bit JAVA for now. 
+Libraries are compiled only for linux OS for 32-bit JAVA for now.
 ====
 
 [source,xml]
@@ -139,7 +140,7 @@ Libraries are compiled only for linux OS for 32-bit JAVA for now.
 `LinksetFactoryFactory` is just a call-back class listening for new factories deployed.
 It maintains a Map of available 'factory name' vs 'factory'. You should never touch this bean.
 
-`LinksetManager` is responsible for managing `Linkset` and `Link`. 
+`LinksetManager` is responsible for managing `Linkset` and `Link`.
 
 [source,xml]
 ----
@@ -189,7 +190,7 @@ Always use the Shell Client to connect to the Stack and execute appropriate comm
 `Dialogic` based MTP layer will only be used if you have installed Dialogic cards.
  `DialogicMtp3UserPart` communicates with Dialogic hardware.
 It is assumed here that MTP3 and MTP2 is leveraged from the Dialogic Stack either on-board or on-host.
- 
+
 
 [NOTE]
 ====
@@ -215,24 +216,24 @@ See JSS7 Installation Guide for more details.
             <property name="destinationModuleId">34</property>
             <property name="routingLabelFormat">
                     <inject bean="RoutingLabelFormat" />
-            </property>             
+            </property>
     </bean>
 ----
 This Dialogic Bean takes a [class]`String` as a first constructor argument. This is a productName parameter.
 
-The other properties of the Stack are defined below: 
+The other properties of the Stack are defined below:
 
 sourceModuleId::
   `sourceModuleId` is the id of source module and should match with the value configured in the file [path]_system.txt_ used by `dialogic` drivers.
-  In the above example, 61 is assigned for mobicents process. 
+  In the above example, 61 is assigned for mobicents process.
 
 destinationModuleId::
   `destinationModuleId` is the id of destination module.
-  In the above example, 34 is the id of Dialogic MTP3 module. 
+  In the above example, 34 is the id of Dialogic MTP3 module.
 
 routingLabelFormat::
   The routing label format supported by this network.
-  See <<_configuring_routing_label_format>> for further details.              
+  See <<_configuring_routing_label_format>> for further details.
 
 [[_configuring_routing_label_format]]
 === Configuring MTP3 routing label
@@ -240,9 +241,9 @@ routingLabelFormat::
 MTP Level 3 routes messages based on the routing label in the signaling information field (SIF) of message signal units.
 The routing label is comprised of the destination point code (DPC), originating point code (OPC), and signaling link selection (SLS) field.
 Overtime different standards  cameup with different routing label format.
-For example An ANSI routing label uses 7 octets; an ITU-T routing label uses 4 octets. 
+For example An ANSI routing label uses 7 octets; an ITU-T routing label uses 4 octets.
 
-{this-platform} {this-application} is flexible to configure the routing label as shown below. 
+{this-platform} {this-application} is flexible to configure the routing label as shown below.
 
 [source,xml]
 ----
@@ -259,7 +260,7 @@ For example An ANSI routing label uses 7 octets; an ITU-T routing label uses 4 o
         </bean>
 ----
 
-Following table shows various routing formats supported 
+Following table shows various routing formats supported
 
 .Routing Format
 [cols="1,1,1", frame="all", options="header"]
@@ -276,7 +277,7 @@ Following table shows various routing formats supported
 === Configuring SCCP
 
 As name suggests `SccpStack` initiates the SCCP stack routines.
- 
+
 
 [source,xml]
 ----
@@ -312,25 +313,25 @@ As name suggests `SccpStack` initiates the SCCP stack routines.
 						<inject bean="SccpStack" />
 					</value>
 				</entry>
-			</map>		
+			</map>
 		</property>
     </bean>
 ----
 
 [class]`org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl` takes [class]`String` as constructor argument.
 The name is prepend to `xml` file created by SCCP stack for persisting state of SCCP resources.
-The `xml` is stored in path specified by `persistDir` property above. 
+The `xml` is stored in path specified by `persistDir` property above.
 
-For example in above case, when {this-platform} SS7 Service is started 3 file's [path]_SccpStack_management2.xml_, [path]_SccpStack_sccpresource2.xml_  and [path]_SccpStack_sccprouter2.xml_ will be created at [path]_$JBOSS_HOME/server/profile_name/data_ directory 
-
-Stack has following properties:  
+For example in above case, when {this-platform} SS7 Service is started 3 file's [path]_SccpStack_management2.xml_, [path]_SccpStack_sccpresource2.xml_  and [path]_SccpStack_sccprouter2.xml_ will be created at [path]_$JBOSS_HOME/server/profile_name/data_ directory
+You can disable of using persistent configuration via using `org.mobicents.protocols.ss7.sccp.impl.NonPersistentSccpStackImpl` class.
+Stack has following properties:
 
 persistDir::
   As explained above
 
 mtp3UserParts::
   specifies SS7 Level 3 to be used as transport medium(be it SS7 card or M3UA). {this-platform} {this-application} SCCP allows configuring multiple MTP3 layers for  same SCCP stack.
-  This allows to have multiple local point-code and connecting to various networks while SCCP layer remains same                         
+  This allows to have multiple local point-code and connecting to various networks while SCCP layer remains same
 
 `SccpExecutor` accepts `sccp` commands and executes necessary operations
 
@@ -338,14 +339,14 @@ mtp3UserParts::
 
 `TcapStack` initiates the TCAP stack routines.
 Respective TCAP stack beans are instantiated for each `MAP`, `CAP`                                Service.
-If you are using either one, feel free to delete the other. 
+If you are using either one, feel free to delete the other.
 
 [source,xml]
 ----
-         
+
     <!-- ==================================================================== -->
     <!-- TCAP Service -->
-    <!-- ==================================================================== -->   
+    <!-- ==================================================================== -->
     <bean name="TcapStackMap" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
         <constructor>
 			<parameter>TcapStackMap</parameter>
@@ -369,7 +370,7 @@ If you are using either one, feel free to delete the other.
 		<property name="persistDir">${jboss.server.data.dir}</property>
 		<property name="previewMode">false</property>
     </bean>
-    
+
     <bean name="TcapStack" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
         <constructor>
             <parameter>TcapStack</parameter>
@@ -381,7 +382,7 @@ If you are using either one, feel free to delete the other.
 		<property name="persistDir">${jboss.server.data.dir}</property>
 		<property name="previewMode">false</property>
     </bean>
-        
+
 	<bean name="TcapExecutor" class="org.mobicents.protocols.ss7.tcap.oam.TCAPExecutor">
 		<property name="tcapStacks">
 			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
@@ -402,19 +403,19 @@ If you are using either one, feel free to delete the other.
 					<value>
 						<inject bean="TcapStack" />
 					</value>
-				</entry>								
+				</entry>
 			</map>
 		</property>
 	</bean>
 ----
 [class]`org.mobicents.protocols.ss7.tcap.TCAPStackImpl` takes [class]`String` as a first constructor argument.
 The name is prepend to `xml` file created by TCAP stack for persisting state of TCAP resources.
-The `xml` is stored in path specified by `persistDir` property above. 
+The `xml` is stored in path specified by `persistDir` property above.
 
 For example in above case, when {this-platform} SS7 Service is started 3 file's [path]_TcapStack_management.xml_, [path]_TcapStack_managementMap.xml_  and [path]_TcapStack_managementCap.xml_ will be created at [path]_$JBOSS_HOME/server/profile_name/data_ directory. Then [class]`org.mobicents.protocols.ss7.tcap.TCAPStackImpl` takes [class]`SccpStack` as second constructor argument.
-TCAP uses passed SCCP stack. Constructor also takes the sub system number (SSN) which is registered with passed SCCP stack (this is the third parameter). 
-
-TCAP Stack has following configurable properties:  
+TCAP uses passed SCCP stack. Constructor also takes the sub system number (SSN) which is registered with passed SCCP stack (this is the third parameter).
+You can disable of using persistent configuration via using `org.mobicents.protocols.ss7.tcap.NonPersistentTCAPStackImpl` class.
+TCAP Stack has following configurable properties:
 
 persistDir::
   As explained above
@@ -422,7 +423,7 @@ persistDir::
 previewMode: public void setPreviewMode(boolean val);::
 PreviewMode is needed for special processing mode.
 By default TCAP is not set in PreviewMode.
-When PreviewMode set in TCAP level: 
+When PreviewMode set in TCAP level:
 
 * Stack only listens for incoming messages and does not send anything.
   The methods `send()`, `close()`, `sendComponent()` and other such methods do nothing.
@@ -437,7 +438,7 @@ When PreviewMode set in TCAP level:
 === Configuring ShellExecutor
 
 `ShellExecutor` is responsible for listening incoming commands.
-Received commands are executed on local resources to  perform actions like creation and management of `TCAP`, `SCCP`, `SCTP` and  `M3UA` stack. 
+Received commands are executed on local resources to  perform actions like creation and management of `TCAP`, `SCCP`, `SCTP` and  `M3UA` stack.
 
 [source,xml]
 ----
@@ -470,22 +471,22 @@ Received commands are executed on local resources to  perform actions like creat
 By default ShellExecutor listens at `jboss.bind.address` and port `3435`. (This is used when you use CLI access after running of ss7-cli command). You may set the `address` property to any valid IP address that your host is assigned.
 The shell commands are exchanged over TCP/IP.
 
-NOTE: To understand JBoss bind options look at  http://docs.jboss.org/jbossas/docs/Installation_And_Getting_Started_Guide/5/html_single/index.html[Installation_And_Getting_Started_Guide] 
+NOTE: To understand JBoss bind options look at  http://docs.jboss.org/jbossas/docs/Installation_And_Getting_Started_Guide/5/html_single/index.html[Installation_And_Getting_Started_Guide]
 
 `SCTPShellExecutor` and `M3UAShellExecutor` is declared only if MTP layer `M3UA` is used.
 If `dialogic` MTP layer is used these beans are not decalred and should be removed from [class]`FastList` too.
-For `dahdi` need to declare `LinksetExecutor` bean and add in [class]`FastList` above. 
+For `dahdi` need to declare `LinksetExecutor` bean and add in [class]`FastList` above.
 
 === Configuring MAP
 
 `MapStack` initiates the MAP stack routines.
- 
+
 
 [source,xml]
 ----
     <!-- ==================================================================== -->
     <!-- MAP Service -->
-    <!-- ==================================================================== -->   
+    <!-- ==================================================================== -->
     <bean name="MapStack" class="org.mobicents.protocols.ss7.map.MAPStackImpl">
         <constructor>
             <parameter>MapStack</parameter>
@@ -499,14 +500,14 @@ For `dahdi` need to declare `LinksetExecutor` bean and add in [class]`FastList` 
 The name is prepend to `xml` file created by MAP stack for persisting state of MAP resources.
 The `xml` is stored in path specified by `persistDir` property above. As for now MAP stack does not store any XML files.
 The second constructor argument is [class]`TcapStack`. MAP uses passed TCAP stack.
- 
 
-Feel free to delete declaration of this bean if your service is not consuming MAP messages. 
+
+Feel free to delete declaration of this bean if your service is not consuming MAP messages.
 
 === Configuring CAP
 
 `CapStack` initiates the CAP stack routines.
- 
+
 
 [source,xml]
 ----
@@ -533,7 +534,7 @@ Feel free to delete declaration of this bean if your service is not consuming CA
 === Configuring ISUP
 
 `IsupStack` initiates the ISUP stack routines.
- 
+
 
 [source,xml]
 ----
@@ -562,21 +563,21 @@ Feel free to delete declaration of this bean if your service is not consuming CA
 
 [class]`org.mobicents.protocols.ss7.isup.impl.ISUPStackImpl` takes [class]`SS7Scheduler`, local signaling pointcode and network indicator as constructor argument.
 
-Stack has following properties:  
+Stack has following properties:
 
 mtp3UserPart::
-  specifies SS7 Level 3 to be used as transport medium (be it SS7 card or M3UA). 
+  specifies SS7 Level 3 to be used as transport medium (be it SS7 card or M3UA).
 
 circuitManager::
-  CIC management bean                         
+  CIC management bean
 
-Feel free to delete declaration of this bean if your service is not consuming ISUP messages. 
+Feel free to delete declaration of this bean if your service is not consuming ISUP messages.
 
 
 === Configuring SS7Service
 
 SS7Service acts as core engine binding all the components together.
- 
+
 
 [source,xml]
 ----
@@ -621,13 +622,13 @@ SS7Service acts as core engine binding all the components together.
     </bean>
 ----
 
-TCAPSS7Service binds TcapStack to JNDI `java:/restcomm/ss7/tcap`. 
+TCAPSS7Service binds TcapStack to JNDI `java:/restcomm/ss7/tcap`.
 
-MAPSS7Service binds MapStack to JNDI `java:/restcomm/ss7/map`. 
+MAPSS7Service binds MapStack to JNDI `java:/restcomm/ss7/map`.
 
-CAPSS7Service binds CapStack to JNDI `java:/restcomm/ss7/cap`. 
+CAPSS7Service binds CapStack to JNDI `java:/restcomm/ss7/cap`.
 
-ISUPSS7Service binds IsupStack to JNDI `java:/restcomm/ss7/isup`. 
+ISUPSS7Service binds IsupStack to JNDI `java:/restcomm/ss7/isup`.
 
 The JNDI name can be configured to any valid JNDI name specific to your application.
 
@@ -715,7 +716,7 @@ jSS7 Managemenet Service provides some extra functionality for stack management 
 			</parameter>
 		</constructor>
 	</bean>
-	
+
 	<bean name="RestcommTcapMapManagement"
 		class="org.mobicents.protocols.ss7.oam.common.tcap.TcapManagementJmx">
 		<constructor>
@@ -727,7 +728,7 @@ jSS7 Managemenet Service provides some extra functionality for stack management 
 			</parameter>
 		</constructor>
 	</bean>
-	
+
 	<bean name="RestcommTcapCapManagement"
 		class="org.mobicents.protocols.ss7.oam.common.tcap.TcapManagementJmx">
 		<constructor>
@@ -759,7 +760,7 @@ jSS7 Managemenet Service provides some extra functionality for stack management 
 [[_configuring_sgw]]
 == Configuring {this-platform}  Signaling Gateway
 
-Configuration is done through an XML descriptor named [path]_sgw-beans.xml_ and is  located at [path]_{this-folder}-ss7-sgw/deploy_ 
+Configuration is done through an XML descriptor named [path]_sgw-beans.xml_ and is  located at [path]_{this-folder}-ss7-sgw/deploy_
 
 [NOTE]
 ====
@@ -824,9 +825,9 @@ SGW will expose the SS7 signals received from legacy network to IP network over 
 === Configuring LinksetFactory
 
 Concrete implementation of `LinksetFactory` is responsible to create  new instances of corresponding `Linkset` when instructed by `LinksetManager`.
-{this-platform}  Signaling Gateway defines two linkset factories : 
+{this-platform}  Signaling Gateway defines two linkset factories :
 
-* `DahdiLinksetFactory` 
+* `DahdiLinksetFactory`
 +
 [source,xml]
 ----
@@ -853,7 +854,7 @@ Concrete implementation of `LinksetFactory` is responsible to create  new instan
 Its highly unlikely that you would require both the factories on same gateway.
 If you have `dahdi` based  SS7 card installed, keep `DahdiLinksetFactory` and remove other.
 If you have `dialogic` based  SS7 card installed, keep `DialogicLinksetFactory` and remove other.
- 
+
 
 `LinksetFactoryFactory` is just a call-back class listening for new factories deployed  and maintains Map of available factory name vs factory.
 You should never touch this bean.
@@ -861,7 +862,7 @@ You should never touch this bean.
 [[_sgw_configuring_linksetmanager]]
 === Configuring LinksetManager
 
-`LinksetManager` is responsible for managing `Linkset` and `Link`. 
+`LinksetManager` is responsible for managing `Linkset` and `Link`.
 
 [source,xml]
 ----
@@ -901,7 +902,7 @@ Always use Shell Client to connect to  {this-platform}  Signaling Gateway and ex
 === Configuring ShellExecutor
 
 `ShellExecutor` is responsible for listening to incoming command.
-Received commands are executed on local resources to  perform actions like creation and management of `Linkset`,  management of `M3UA` stack. 
+Received commands are executed on local resources to  perform actions like creation and management of `Linkset`,  management of `M3UA` stack.
 
 [source,xml]
 ----
@@ -935,7 +936,7 @@ The shell commands are exchanged over TCP/IP.
 === Configuring SignalingGateway
 
 `SignalingGateway` acts as core engine binding all the components together.
- 
+
 
 [source,xml]
 ----

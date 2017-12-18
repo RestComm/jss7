@@ -22,7 +22,10 @@
 
 package org.mobicents.protocols.ss7.map.api.errors;
 
+import org.mobicents.protocols.ss7.map.api.MAPException;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsDeliverReportTpdu;
+
 
 /**
  *
@@ -65,4 +68,9 @@ public interface MAPErrorMessageSMDeliveryFailure extends MAPErrorMessage {
     void setExtensionContainer(MAPExtensionContainer extensionContainer);
 
     void setMapProtocolVersion(long mapProtocolVersion);
+
+    SmsDeliverReportTpdu getSmsDeliverReportTpdu() throws MAPException;
+
+    void setSmsDeliverReportTpdu(SmsDeliverReportTpdu tpdu) throws MAPException;
+
 }

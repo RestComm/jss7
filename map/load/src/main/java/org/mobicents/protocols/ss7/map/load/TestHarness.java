@@ -73,6 +73,8 @@ public abstract class TestHarness implements MAPDialogListener, MAPServiceSupple
 
     protected static int DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT = Runtime.getRuntime().availableProcessors() * 2;
 
+    protected static int RAMP_UP_PERIOD = -100;
+
     protected final String SERVER_ASSOCIATION_NAME = "serverAsscoiation";
     protected final String CLIENT_ASSOCIATION_NAME = "clientAsscoiation";
 

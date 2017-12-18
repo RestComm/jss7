@@ -138,7 +138,6 @@ public class SccpProviderWrapper implements SccpProvider {
     @Override
     public void send(SccpNoticeMessage message) throws IOException {
         // TODO Auto-generated method stub
-        
     }
 
 }
