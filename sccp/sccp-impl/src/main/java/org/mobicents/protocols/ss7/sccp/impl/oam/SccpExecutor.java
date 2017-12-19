@@ -1953,6 +1953,9 @@ public class SccpExecutor implements ShellExecutor {
         } else if (parName.equals("maxdatamessage")) {
             int val = Integer.parseInt(options[3]);
             this.sccpStack.setMaxDataMessage(val);
+        } else if (parName.equals("periodoflogging")) {
+            int val = Integer.parseInt(options[3]);
+            this.sccpStack.setPeriodOfLogging(val);
         } else if (parName.equals("removespc")) {
             boolean val = Boolean.parseBoolean(options[3]);
             this.sccpStack.setRemoveSpc(val);
@@ -2013,6 +2016,8 @@ public class SccpExecutor implements ShellExecutor {
                 sb.append(this.sccpStack.getReassemblyTimerDelay());
             } else if (parName.equals("maxdatamessage")) {
                 sb.append(this.sccpStack.getMaxDataMessage());
+            } else if (parName.equals("periodoflogging")) {
+                sb.append(this.sccpStack.getPeriodOfLogging());
             } else if (parName.equals("removespc")) {
                 sb.append(this.sccpStack.isRemoveSpc());
             } else if (parName.equals("previewmode")) {
@@ -2064,6 +2069,10 @@ public class SccpExecutor implements ShellExecutor {
 
                 sb.append("maxDataMessage = ");
                 sb.append(managementImplTmp.getMaxDataMessage());
+                sb.append("\n");
+                
+                sb.append("periodOfLogging = ");
+                sb.append(managementImplTmp.getPeriodOfLogging());
                 sb.append("\n");
 
                 sb.append("removeSpc = ");

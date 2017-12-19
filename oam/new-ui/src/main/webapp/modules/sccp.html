@@ -951,6 +951,7 @@
 															var sstTimerDurationMax = response.value.SstTimerDuration_Max;
 															var sstTimerDurationIncreaseFactor = response.value.SstTimerDuration_IncreaseFactor;
 															var maxDataMessage = response.value.MaxDataMessage;
+															var periodOfLogging = response.value.PeriodOfLogging;
 															var reassemblyTimerDelay = response.value.ReassemblyTimerDelay;
 															var previewMode = response.value.PreviewMode;
 															var reservedForNationalUseValueAddressIndicator = response.value.SccpProtocolVersion;
@@ -1106,6 +1107,23 @@
 																		'<span id="' +name + 'maxDataMessage-text">' + maxDataMessage + '</span>'+
 																	'</td>'+
 																	'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"maxDataMessage"+']\').toggle(); $(\'input[id^='+name+"maxDataMessage"+']\').focus();"></i>' +
+																	'</td>'+
+																    '</tr>'+
+																    
+																    '<tr data-toggle="tooltip" title="PeriodOfLogging. Time in ms. Default value is 10000">'+
+																	'<td style="vertical-align: middle; text-align: center;">&nbsp;<i style="color: #CC9522;" class="icon-resize-small"></i></td>'+
+																	'<td style="font-size: 0.9em;">PeriodOfLogging</td>'+
+																	'<td style="font-size: 0.9em; padding: 0;">'+
+																		'<div id="div-' + name +'periodOfLogging-input" class="control-group">'+
+																		'<span id="' + name +'periodOfLogging-input" style="display: none;">'+
+																			'<input type="text" class="input-small" value="' + periodOfLogging + '" /> ' +
+																			'<i class="icon-ok" style="cursor: pointer;" onclick="onSipServrConfigOk(\'' + name+ '\', \'PeriodOfLogging\', \'' + name+"periodOfLogging" + '\')"></i> ' +
+																			'<i class="icon-remove" style="cursor: pointer;" onclick="$(\'[id^='+name+"periodOfLogging"+']\').toggle(); $(\'input[id^='+name+"periodOfLogging"+']\').focus();"></i>' + 
+																		'</span>'+
+																		'</div>' +
+																		'<span id="' +name + 'periodOfLogging-text">' + periodOfLogging + '</span>'+
+																	'</td>'+
+																	'<td><i class="icon-pencil" data-toggle="tooltip" title="Edit" style="cursor: pointer;" onclick="$(\'[id^='+name+"periodOfLogging"+']\').toggle(); $(\'input[id^='+name+"periodOfLogging"+']\').focus();"></i>' +
 																	'</td>'+
 																    '</tr>'+
 																    

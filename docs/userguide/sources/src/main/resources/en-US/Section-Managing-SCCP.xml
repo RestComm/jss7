@@ -7,23 +7,23 @@
 		<title>SCCP Management</title>
 
 		<para>
-			SCCP provides connectionless and connection-oriented network services. This includes address(GTT) translation and routing, flow control, segmentation and reassembly. 
-			A global title is an address (e.g., a dialed 800 number, calling card number, or mobile subscriber identification number) which is translated by SCCP into a destination 
-			point code and subsystem number. A subsystem number uniquely identifies an application at the destination signaling point. <acronym>SCCP</acronym> is used as the 
+			SCCP provides connectionless and connection-oriented network services. This includes address(GTT) translation and routing, flow control, segmentation and reassembly.
+			A global title is an address (e.g., a dialed 800 number, calling card number, or mobile subscriber identification number) which is translated by SCCP into a destination
+			point code and subsystem number. A subsystem number uniquely identifies an application at the destination signaling point. <acronym>SCCP</acronym> is used as the
 			transport layer for <acronym>TCAP</acronym>-based services.
 		</para>
 		<para>
-			The first step in configuring SCCP is defining service access points (sap). This step is mandatory. Each SCCP stack can use one or more Mtp3UserPart 
-			(Refer <xref linkend="configuring_SCCP"/> about Mtp3UserPart settings). A sap is a logical definition of the Mtp3UserPart [corresponding local SPC, 
-			network indicator (NI) and a set of destinations (remote SPC list)]. 
+			The first step in configuring SCCP is defining service access points (sap). This step is mandatory. Each SCCP stack can use one or more Mtp3UserPart
+			(Refer <xref linkend="configuring_SCCP"/> about Mtp3UserPart settings). A sap is a logical definition of the Mtp3UserPart [corresponding local SPC,
+			network indicator (NI) and a set of destinations (remote SPC list)].
 		</para>
 		<para>
-			The second step is the definition of a list of available remote signaling pointcodes (SPC - rsp) and 
+			The second step is the definition of a list of available remote signaling pointcodes (SPC - rsp) and
 			a list of available remote Sub-Systems (SNN - rss). This step is also mandatory. If routing only by GlobalTitle is used then it is not required to configure remote Sub-Systems.
 		</para>
 		<para>
-			Since <acronym>SCCP</acronym> acts as a message router, it is required to configure routing information. Rules (rule), primary and backup (address) (if backup addresses are available) 
-			addresses should be configured. If XUDT and LUDT messages are available in the SS7 network, you should configure a set of long message rules (lmr) that will allow long messages. 
+			Since <acronym>SCCP</acronym> acts as a message router, it is required to configure routing information. Rules (rule), primary and backup (address) (if backup addresses are available)
+			addresses should be configured. If XUDT and LUDT messages are available in the SS7 network, you should configure a set of long message rules (lmr) that will allow long messages.
 			This step is not mandatory. If no long message rules are configured only UDT messages will be used.
 		</para>
 		<para>
@@ -33,23 +33,23 @@
 	<section id="managing_sccp_using_CLI">
 		<title>Using CLI</title>
 		<para>
-        	You can manage all SCCP related configurations through the Command Line Interface by using the <literal>sccp</literal> command with appropriate parameters. You can create, modify, delete 
-        	and view SCCP Service Access Points (sap) and Destinations (dest), Remote Signaling Point Codes (rsp), Remote Sub Systems (rss), Concerned Signaling Point Codes (csp), 
+        	You can manage all SCCP related configurations through the Command Line Interface by using the <literal>sccp</literal> command with appropriate parameters. You can create, modify, delete
+        	and view SCCP Service Access Points (sap) and Destinations (dest), Remote Signaling Point Codes (rsp), Remote Sub Systems (rss), Concerned Signaling Point Codes (csp),
         	Routing information (rules, primary and backup addresses) and Long Message Rules (lmr). You can also set and get values for general parameters using this command.
        	</para>
 	</section>
 	<section id="managing_sccp_using_GUI">
 		<title>Using GUI</title>
 		<para>
-			The GUI will allow you to manage your SCCP configurations efficiently using a user-friendly interface. Open a Web Browser and navigate to http://localhost:8080/jss7-management-console/. 
-			Click on the 'SCCP' link in the left panel. The main panel will display the names of all configured SCCP Management units. To configure or view the settings of a particular SCCP Management 
-			Unit you must click on the name of that unit. The GUI will look similar to the figure below and is divided into tabs. 
+			The GUI will allow you to manage your SCCP configurations efficiently using a user-friendly interface. Open a Web Browser and navigate to http://localhost:8080/jss7-management-console/.
+			Click on the 'SCCP' link in the left panel. The main panel will display the names of all configured SCCP Management units. To configure or view the settings of a particular SCCP Management
+			Unit you must click on the name of that unit. The GUI will look similar to the figure below and is divided into tabs.
 		</para>
-	
+
 		<para>
-			The first tab will display the properties of the SCCP Management unit. These details displayed here are fetched from the XML descriptor file <filename>jboss-beans.xml</filename>, which is 
-			located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name. 
-			These properties can be modified here in the GUI. To modify them you must click on pencil, make changes and save. The GUI will then display the modified values. 
+			The first tab will display the properties of the SCCP Management unit. These details displayed here are fetched from the XML descriptor file <filename>jboss-beans.xml</filename>, which is
+			located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
+			These properties can be modified here in the GUI. To modify them you must click on pencil, make changes and save. The GUI will then display the modified values.
 		</para>
 		<figure>
   			<title>GUI - SCCP Management</title>
@@ -59,31 +59,31 @@
     			</imageobject>
   			</mediaobject>
 		</figure>
-		<para>		
-			The other seven tabs will allow you to manage all SCCP configurations within this SCCP Management unit. 
+		<para>
+			The other seven tabs will allow you to manage all SCCP configurations within this SCCP Management unit.
 		</para>
 	</section>
-	
-	
+
+
 	<section id="sccp_properties">
 		<title>SCCP stack properties</title>
 
 
     <section id="sccp_property_sccpprotocolversion">
         <title>SCCP protocol version</title>
-        
+
             <section id="sccp_property_sccpprotocolversion_CLI">
             <title>Using CLI</title>
                 <para>
-                    We can specify which protocol specification will use SCCP stack (ITU-T or ANSI).   
+                    We can specify which protocol specification will use SCCP stack (ITU-T or ANSI).
                 </para>
                 <para>
-                    You can set the 'sccpprotocolversion' by issuing the command <command>sccp set sccpprotocolversion</command> with appropriate parameters as described below. 
+                    You can set the 'sccpprotocolversion' by issuing the command <command>sccp set sccpprotocolversion</command> with appropriate parameters as described below.
                     You can verify this by issuing the command <command>sccp get sccpprotocolversion</command> which will display the value set for this property.
                 </para>
                 <screen><![CDATA[
 Name
-    sccp set sccpprotocolversion 
+    sccp set sccpprotocolversion
 
 SYNOPSIS
     sccp set sccpprotocolversion <ITU | ANSI> stackname <stack-name>
@@ -91,14 +91,14 @@ SYNOPSIS
 DESCRIPTION
     Sets the value for sccpprotocolversion property ITU or ANSI.
     Default value is ITU.
-    
+
 PARAMETERS
 
     Optional Parameters
 
-    <stack-name>    -   Name of the stack on which this command is executed. 
+    <stack-name>    -   Name of the stack on which this command is executed.
                     If not passed, the first stack configured in ShellExecutor
-                    will be used.   
+                    will be used.
 
 EXAMPLES
     sccp set sccpprotocolversion ITU
@@ -108,21 +108,21 @@ EXAMPLES
         <section id="sccp_property_sccpprotocolversion_min_GUI">
             <title>Using GUI</title>
                 <para>On SCCP management page, click on pencil against the 'ReservedForNationalUseValue of AddressIndicator' property and text box becomes editable. Change value and save.</para>
-        </section>          
-    </section>      
-		
+        </section>
+    </section>
+
 	<section id="sccp_property_maxdatamessage">
 		<title>Maximum Data Message</title>
-		
+
 			<section id="sccp_property_maxdatamessage_CLI">
 			<title>Using CLI</title>
 				<para>
-					You can set the 'maxdatamessage' by issuing the command <command>sccp set maxdatamessage</command> with appropriate parameters as described below. 
+					You can set the 'maxdatamessage' by issuing the command <command>sccp set maxdatamessage</command> with appropriate parameters as described below.
 					You can verify this by issuing the command <command>sccp get maxdatamessage</command> which will display the value set for this property.
 				</para>
 				<screen><![CDATA[
 Name
-	sccp set maxdatamessage 
+	sccp set maxdatamessage
 
 SYNOPSIS
 	sccp set maxdatamessage <maxdatamessage> stackname <stack-name>
@@ -131,18 +131,18 @@ DESCRIPTION
 	Sets Max available SCCP message data for all message types. Range is 2560 to 3952.
     If passed value is less than 2560, it sets to 2560 and if passed value is greater
     than 3952, it sets to 3952.
-	
+
 PARAMETERS
 
 	Standard Parameters
 
 	<maxdatamessage>	-	Maximum data message size.
-	
+
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	
+					will be used.
 
 EXAMPLES
 	sccp set maxdatamessage 30000
@@ -151,40 +151,82 @@ EXAMPLES
 		<section id="sccp_property_maxdatamessage_GUI">
 			<title>Using GUI</title>
 				<para>On SCCP management page, click on pencil against the 'PreviewMode' property and text box becomes editable. Change value and save. </para>
-		</section>			
+		</section>
 	</section>
-	
+
+	<section id="sccp_property_periodoflogging">
+		<title>Period of logging</title>
+
+			<section id="sccp_property_periodoflogging_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can set the 'periodoflogging' by issuing the command <command>sccp set periodoflogging</command> with appropriate parameters as described below.
+					You can verify this by issuing the command <command>sccp get periodoflogging</command> which will display the value set for this property.
+				</para>
+				<screen><![CDATA[
+Name
+	sccp set periodoflogging
+
+SYNOPSIS
+	sccp set periodoflogging <periodoflogging> stackname <stack-name>
+
+DESCRIPTION
+	Sets period of logging warning messages.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<periodoflogging>	-	Period im ms.
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed.
+					If not passed, the first stack configured in ShellExecutor
+					will be used.
+
+EXAMPLES
+	sccp set periodoflogging 10000
+			]]></screen>
+		</section>
+		<section id="sccp_property_periodoflogging_GUI">
+			<title>Using GUI</title>
+				<para>On SCCP management page, click on pencil against the 'PeriodOfLogging' property and text box becomes editable. Change value and save. </para>
+		</section>
+	</section>
+
+
 	<section id="sccp_property_previewmode">
 		<title>Preview Mode</title>
-		
+
 			<section id="sccp_property_previewmode_CLI">
 			<title>Using CLI</title>
 				<para>
-					You can set the 'previewmode' by issuing the command <command>sccp set previewmode</command> with appropriate parameters as described below. 
+					You can set the 'previewmode' by issuing the command <command>sccp set previewmode</command> with appropriate parameters as described below.
 					You can verify this by issuing the command <command>sccp get previewmode</command> which will display the value set for this property.
 				</para>
 				<screen><![CDATA[
 Name
-	sccp set previewmode 
+	sccp set previewmode
 
 SYNOPSIS
 	sccp set previewmode <true | false> stackname <stack-name>
 
 DESCRIPTION
-	If set to true, stack only listens for incoming messages and does not 
+	If set to true, stack only listens for incoming messages and does not
 	send anything out of stack. Messages are silently dropped.
-	
+
 PARAMETERS
 
 	Standard Parameters
 
 	<previewmode>	-	Set preview mode to true or false.
-	
+
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	
+					will be used.
 
 EXAMPLES
 	sccp set previewmode false
@@ -193,21 +235,21 @@ EXAMPLES
 		<section id="sccp_property_previewmode_GUI">
 			<title>Using GUI</title>
 				<para>On SCCP management page, click on pencil against the 'PreviewMode' property and text box becomes editable. Change value and save. </para>
-		</section>			
-	</section>	
-	
+		</section>
+	</section>
+
 	<section id="sccp_property_reassemblytimerdelay">
 		<title>Reassembly Timer Delay</title>
-		
+
 			<section id="sccp_property_reassemblytimerdelay_CLI">
 			<title>Using CLI</title>
 				<para>
-					You can set the 'reassemblytimerdelay' by issuing the command <command>sccp set reassemblytimerdelay</command> with appropriate parameters as described below. 
+					You can set the 'reassemblytimerdelay' by issuing the command <command>sccp set reassemblytimerdelay</command> with appropriate parameters as described below.
 					You can verify this by issuing the command <command>sccp get reassemblytimerdelay</command> which will display the value set for this property.
 				</para>
 				<screen><![CDATA[
 Name
-	sccp set reassemblytimerdelay 
+	sccp set reassemblytimerdelay
 
 SYNOPSIS
 	sccp set reassemblytimerdelay <reassemblytimerdelay> stackname <stack-name>
@@ -216,18 +258,18 @@ DESCRIPTION
 	Sets SCCP segmented message reassembling timeout (in milliseconds).
     Range is 10000 to 20000. If passed value is less than 10000, it sets to 10000 and
     if passed value is greater than 20000, it sets to 20000
-	
+
 PARAMETERS
 
 	Standard Parameters
 
 	<reassemblytimerdelay>	-	Re-assembly time delay in milliseconds
-	
+
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	
+					will be used.
 
 EXAMPLES
 	sccp set reassemblytimerdelay 20000
@@ -236,29 +278,29 @@ EXAMPLES
 		<section id="sccp_property_reassemblytimerdelay_GUI">
 			<title>Using GUI</title>
 				<para>On SCCP management page, click on pencil against the 'ReassemblyTimerDelay' property and text box becomes editable. Change value and save. </para>
-		</section>			
+		</section>
 	</section>
-	
+
 	<section id="sccp_property_removespc">
 		<title>Remove Signaling Point Code</title>
-		
+
 			<section id="sccp_property_removespc_CLI">
 			<title>Using CLI</title>
 				<para>
-					You can set the 'removespc' by issuing the command <command>sccp set removespc</command> with appropriate parameters as described below. 
+					You can set the 'removespc' by issuing the command <command>sccp set removespc</command> with appropriate parameters as described below.
 					You can verify this by issuing the command <command>sccp get removespc</command> which will display the value set for this property.
 				</para>
 				<screen><![CDATA[
 Name
-	sccp set removespc 
+	sccp set removespc
 
 SYNOPSIS
 	sccp set removespc <false | true> stackname <stack-name>
 
 DESCRIPTION
-	If set, the signaling point code from SCCP called/calling address will 
+	If set, the signaling point code from SCCP called/calling address will
 	be removed if corresponding routing is based on GT
-	
+
 PARAMETERS
 
 	Standard Parameters
@@ -267,9 +309,9 @@ PARAMETERS
 
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	
+					will be used.
 
 EXAMPLES
 	sccp set removespc true
@@ -278,7 +320,7 @@ EXAMPLES
 		<section id="sccp_property_removespc_GUI">
 			<title>Using GUI</title>
 				<para>On SCCP management page, click on pencil against the 'RemoveSpc' property and text box becomes editable. Change value and save. </para>
-		</section>			
+		</section>
 	</section>
 
 	<section id="sccp_property_ssttimerduration_increasefactor">
@@ -287,21 +329,21 @@ EXAMPLES
 			<section id="sccp_property_ssttimerduration_increasefactor_CLI">
 			<title>Using CLI</title>
 				<para>
-					You can set the 'ssttimerduration_increasefactor' by issuing the command <command>sccp set ssttimerduration_increasefactor</command> with appropriate parameters as described below. 
+					You can set the 'ssttimerduration_increasefactor' by issuing the command <command>sccp set ssttimerduration_increasefactor</command> with appropriate parameters as described below.
 					You can verify this by issuing the command <command>sccp get ssttimerduration_increasefactor</command> which will display the value set for this property.
 				</para>
 				<screen><![CDATA[
 Name
-	sccp set ssttimerduration_increasefactor 
+	sccp set ssttimerduration_increasefactor
 
 SYNOPSIS
-	sccp set ssttimerduration_increasefactor <ssttimerduration_increasefactor> 
+	sccp set ssttimerduration_increasefactor <ssttimerduration_increasefactor>
 	stackname <stack-name>
 
 DESCRIPTION
-	Set multiplicator of SST sending interval (next interval will be greater then 
-	the current by sstTimerDuration_IncreaseFactor). Range is 1 to 4. If passed 
-	value is less than 1, it sets to 1 and if passed value is greater than 4, 
+	Set multiplicator of SST sending interval (next interval will be greater then
+	the current by sstTimerDuration_IncreaseFactor). Range is 1 to 4. If passed
+	value is less than 1, it sets to 1 and if passed value is greater than 4,
 	it sets to 4
 
 PARAMETERS
@@ -313,9 +355,9 @@ PARAMETERS
 
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	
+					will be used.
 
 EXAMPLES
 	sccp set ssttimerduration_increasefactor 1
@@ -324,30 +366,30 @@ EXAMPLES
 		<section id="sccp_property_ssttimerduration_increasefactor_GUI">
 			<title>Using GUI</title>
 				<para>On SCCP management page, click on pencil against the 'SstTimerDuration_IncreaseFactor' property and text box becomes editable. Change value and save. </para>
-		</section>			
+		</section>
 	</section>
 
 	<section id="sccp_property_ssttimerduration_max">
 		<title>SST Timer Duration Max</title>
-		
+
 	<section id="sccp_property_ssttimerduration_max_CLI">
 			<title>Using CLI</title>
 				<para>
-					You can set the 'ssttimerduration_max' by issuing the command <command>sccp set ssttimerduration_max</command> with appropriate parameters as described below. 
+					You can set the 'ssttimerduration_max' by issuing the command <command>sccp set ssttimerduration_max</command> with appropriate parameters as described below.
 					You can verify this by issuing the command <command>sccp get ssttimerduration_max</command> which will display the value set for this property.
 				</para>
 				<screen><![CDATA[
 Name
-	sccp set ssttimerduration_max 
+	sccp set ssttimerduration_max
 
 SYNOPSIS
 	sccp set ssttimerduration_max <ssttimerduration_max> stackname <stack-name>
 
 DESCRIPTION
-	Sets Max (after increasing) SST sending interval (in 600000 - 1200000 milliseconds). 
-	Value can be from 600000 to 1200000. If value passed is less than 600000, it sets to 
+	Sets Max (after increasing) SST sending interval (in 600000 - 1200000 milliseconds).
+	Value can be from 600000 to 1200000. If value passed is less than 600000, it sets to
 	600000 and if value passed is greater than 1200000, it sets to 1200000
-	
+
 PARAMETERS
 
 	Standard Parameters
@@ -356,9 +398,9 @@ PARAMETERS
 
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	
+					will be used.
 
 EXAMPLES
 	sccp set ssttimerduration_max 600000
@@ -367,30 +409,30 @@ EXAMPLES
 		<section id="sccp_property_ssttimerduration_max_GUI">
 			<title>Using GUI</title>
 				<para>On SCCP management page, click on pencil against the 'SstTimerDuration_Max' property and text box becomes editable. Change value and save. </para>
-		</section>			
+		</section>
 	</section>
 
 	<section id="sccp_property_ssttimerduration_min">
 		<title>SST Timer Duration Min</title>
-		
+
 			<section id="sccp_property_ssttimerduration_min_CLI">
 			<title>Using CLI</title>
 				<para>
-					You can set the 'ssttimerduration_min' by issuing the command <command>sccp set ssttimerduration_min</command> with appropriate parameters as described below. 
+					You can set the 'ssttimerduration_min' by issuing the command <command>sccp set ssttimerduration_min</command> with appropriate parameters as described below.
 					You can verify this by issuing the command <command>sccp get ssttimerduration_min</command> which will display the value set for this property.
 				</para>
 				<screen><![CDATA[
 Name
-	sccp set ssttimerduration_min 
+	sccp set ssttimerduration_min
 
 SYNOPSIS
 	sccp set ssttimerduration_min <ssttimerduration_min> stackname <stack-name>
 
 DESCRIPTION
-	Set's min (starting) SST sending interval (in milliseconds). Value can be 
-	from 5000 to 10000.If value passed is less than 5000, it sets to 5000 and 
+	Set's min (starting) SST sending interval (in milliseconds). Value can be
+	from 5000 to 10000.If value passed is less than 5000, it sets to 5000 and
 	if value passed is greater than 10000, its set to 10000
-	
+
 PARAMETERS
 
 	Standard Parameters
@@ -399,9 +441,9 @@ PARAMETERS
 
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	
+					will be used.
 
 EXAMPLES
 	sccp set ssttimerduration_min 10000
@@ -410,21 +452,21 @@ EXAMPLES
 		<section id="sccp_property_ssttimerduration_min_GUI">
 			<title>Using GUI</title>
 				<para>On SCCP management page, click on pencil against the 'SstTimerDuration_Max' property and text box becomes editable. Change value and save. </para>
-		</section>			
-	</section>	
-	
+		</section>
+	</section>
+
 	<section id="sccp_property_zmarginxudtmessage">
 		<title>ZMargin XUDT Message</title>
-		
+
 			<section id="sccp_property_zmarginxudtmessage_CLI">
 			<title>Using CLI</title>
 				<para>
-					You can set the 'zmarginxudtmessage' by issuing the command <command>sccp set zmarginxudtmessage</command> with appropriate parameters as described below. 
+					You can set the 'zmarginxudtmessage' by issuing the command <command>sccp set zmarginxudtmessage</command> with appropriate parameters as described below.
 					You can verify this by issuing the command <command>sccp get zmarginxudtmessage</command> which will display the value set for this property.
 				</para>
 				<screen><![CDATA[
 Name
-	sccp set ssttimerduration_min 
+	sccp set ssttimerduration_min
 
 SYNOPSIS
 	sccp set zmarginxudtmessage <zmarginxudtmessage> stackname <stack-name>
@@ -434,7 +476,7 @@ DESCRIPTION
     segmentation is processed. Otherwise no segmentation.
     Range is 160 to 255. If passed value is less than 160, it sets to 160 and
     if passed value is greater than 255, it sets to 255.
-	
+
 PARAMETERS
 
 	Standard Parameters
@@ -443,9 +485,9 @@ PARAMETERS
 
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	
+					will be used.
 
 EXAMPLES
 	sccp set zmarginxudtmessage 255
@@ -454,21 +496,21 @@ EXAMPLES
 		<section id="sccp_property_zmarginxudtmessage_min_GUI">
 			<title>Using GUI</title>
 				<para>On SCCP management page, click on pencil against the 'ZMarginXudtMessage' property and text box becomes editable. Change value and save. </para>
-		</section>			
-	</section>		
+		</section>
+	</section>
 
 	<section id="sccp_property_cc_timer_a">
 		<title>Timer A value for the congestion control</title>
-		
+
 			<section id="sccp_property_cc_timer_a_CLI">
 			<title>Using CLI</title>
 				<para>
-					You can set the 'cc_timer_a' by issuing the command <command>sccp set cc_timer_a</command> with appropriate parameters as described below. 
+					You can set the 'cc_timer_a' by issuing the command <command>sccp set cc_timer_a</command> with appropriate parameters as described below.
 					You can verify this by issuing the command <command>sccp get cc_timer_a</command> which will display the value set for this property.
 				</para>
 				<screen><![CDATA[
 Name
-	sccp get cc_timer_a 
+	sccp get cc_timer_a
 
 SYNOPSIS
 	sccp get cc_timer_a stackname <stack-name>
@@ -485,9 +527,9 @@ PARAMETERS
 
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	
+					will be used.
 
 EXAMPLES
 	sccp set cc_timer_a 400
@@ -496,21 +538,21 @@ EXAMPLES
 		<section id="sccp_property_cc_timer_a_GUI">
 			<title>Using GUI</title>
 				<para>On SCCP management page, click on pencil against the 'Congestion control: Timer A' property and text box becomes editable. Change value and save.</para>
-		</section>			
-	</section>		
+		</section>
+	</section>
 
 	<section id="sccp_property_cc_timer_d">
 		<title>Timer D value for the congestion control</title>
-		
+
 			<section id="sccp_property_cc_timer_d_CLI">
 			<title>Using CLI</title>
 				<para>
-					You can set the 'cc_timer_d' by issuing the command <command>sccp set cc_timer_d</command> with appropriate parameters as described below. 
+					You can set the 'cc_timer_d' by issuing the command <command>sccp set cc_timer_d</command> with appropriate parameters as described below.
 					You can verify this by issuing the command <command>sccp get cc_timer_d</command> which will display the value set for this property.
 				</para>
 				<screen><![CDATA[
 Name
-	sccp get cc_timer_d 
+	sccp get cc_timer_d
 
 SYNOPSIS
 	sccp get cc_timer_d stackname <stack-name>
@@ -528,9 +570,9 @@ PARAMETERS
 
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	
+					will be used.
 
 EXAMPLES
 	sccp set cc_timer_d 2000
@@ -539,8 +581,8 @@ EXAMPLES
 		<section id="sccp_property_cc_timer_d_min_GUI">
 			<title>Using GUI</title>
 				<para>On SCCP management page, click on pencil against the 'Congestion control: Timer A' property and text box becomes editable. Change value and save.</para>
-		</section>			
-	</section>		
+		</section>
+	</section>
 
 	<section id="sccp_property_cc_algo">
 		<title>Algorithm of the congestion control at SCCP level</title>
@@ -548,12 +590,12 @@ EXAMPLES
 			<section id="sccp_property_cc_algo_CLI">
 			<title>Using CLI</title>
 				<para>
-					You can set the 'cc_algo' by issuing the command <command>sccp set cc_algo</command> with appropriate parameters as described below. 
+					You can set the 'cc_algo' by issuing the command <command>sccp set cc_algo</command> with appropriate parameters as described below.
 					You can verify this by issuing the command <command>sccp get cc_algo</command> which will display the value set for this property.
 				</para>
 				<screen><![CDATA[
 Name
-	sccp set cc_algo 
+	sccp set cc_algo
 
 SYNOPSIS
 	sccp set cc_algo <international | levelDepended> stackname <stack-name>
@@ -579,7 +621,7 @@ PARAMETERS
 
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
 					will be used.
 
@@ -590,8 +632,8 @@ EXAMPLES
 		<section id="sccp_property_cc_algo_GUI">
 			<title>Using GUI</title>
 				<para>On SCCP management page, click on pencil against the 'Congestion control: algorithm' property and text box becomes editable. Change value and save.</para>
-		</section>			
-	</section>		
+		</section>
+	</section>
 
 	<section id="sccp_property_cc_blockingoutgoungsccpmessages">
 		<title>Blocking of outgoing messages in case of the congestion</title>
@@ -599,12 +641,12 @@ EXAMPLES
 			<section id="sccp_property_blockingoutgoungsccpmessages_CLI">
 			<title>Using CLI</title>
 				<para>
-					You can set the 'cc_blockingoutgoungsccpmessages' by issuing the command <command>sccp set cc_blockingoutgoungsccpmessages</command> with appropriate parameters as described below. 
+					You can set the 'cc_blockingoutgoungsccpmessages' by issuing the command <command>sccp set cc_blockingoutgoungsccpmessages</command> with appropriate parameters as described below.
 					You can verify this by issuing the command <command>sccp get cc_blockingoutgoungsccpmessages</command> which will display the value set for this property.
 				</para>
 				<screen><![CDATA[
 Name
-	sccp set cc_blockingoutgoungsccpmessages 
+	sccp set cc_blockingoutgoungsccpmessages
 
 SYNOPSIS
 	sccp set cc_blockingoutgoungsccpmessages <false | true> stackname <stack-name>
@@ -625,7 +667,7 @@ PARAMETERS
 
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
 					will be used.
 
@@ -636,12 +678,12 @@ EXAMPLES
 		<section id="sccp_property_blockingoutgoungsccpmessages_GUI">
 			<title>Using GUI</title>
 				<para>On SCCP management page, click on pencil against the 'Congestion control: blocking of outgoing messages' property and text box becomes editable. Change value and save.</para>
-		</section>			
-	</section>		
+		</section>
+	</section>
 
-</section>		
-	
-	
+</section>
+
+
 	<section id="managing_sccp_sap_show">
 		<title>View all Service Access Points (SAP)</title>
 		<section id="managing_sccp_sap_show_cli">
@@ -656,21 +698,21 @@ SYNOPSIS
 	sccp sap show <id> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to view the details of all Service Access Points. If an <id> 
+	This command is used to view the details of all Service Access Points. If an <id>
 	is specified, the command will only display the details of the SAP identified by
-	the value of the 'id' specified. 
+	the value of the 'id' specified.
 
 PARAMETERS
 
 	Optional Parameters
 
-	<id>			-	The id of the SAP whose details are to be displayed. If 
-					this parameter is not specified, the details of all 
-					defined SAPs will be displayed.  
-				
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<id>			-	The id of the SAP whose details are to be displayed. If
+					this parameter is not specified, the details of all
+					defined SAPs will be displayed.
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	  
+					will be used.
 ]]></screen>
 		</section>
 		<section id="managing_sccp_sap_show_GUI">
@@ -699,22 +741,22 @@ PARAMETERS
 
 	Standard Parameters
 
-	<id>			-	The newly defined SAP will be identified using this 'id'. 
+	<id>			-	The newly defined SAP will be identified using this 'id'.
 					This must be a unique number.
 
 	<mtp3-id>		-	Mtp3UserPart index - used as an index of 'mtp3UserPart'
-					property of the SccpStack Bean. For each Mtp3UserPart, 
+					property of the SccpStack Bean. For each Mtp3UserPart,
 					a sap must be configured.
 
-	<opc>			-	MTP Point code of the local signaling point. Takes an 
+	<opc>			-	MTP Point code of the local signaling point. Takes an
 					Integer Value.
 
-	<ni>			-	Network indicator that forms part of the 
+	<ni>			-	Network indicator that forms part of the
 					Service Information Octet (SIO).
-				
+
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
 					will be used.
 
@@ -727,7 +769,7 @@ PARAMETERS
 EXAMPLES
 	sccp sap create 1 1 101 2
 
-	The above command will create a new Service Access Point identified by the 
+	The above command will create a new Service Access Point identified by the
 	number '1'. The values for 'mtp3-id', 'opc' and 'ni' are 1, 101 and 2 respectively.
 ]]></screen>
 		</section>
@@ -766,7 +808,7 @@ PARAMETERS
 
 	<id>			-	The id of the SAP whose values are being modified.
 
-	<mtp3-id>		-	Mtp3UserPart index - used as an index of 'mtp3UserPart' 
+	<mtp3-id>		-	Mtp3UserPart index - used as an index of 'mtp3UserPart'
 					property of the SccpStack Bean. For each Mtp3UserPart, a
 					sap must be configured.
 
@@ -775,12 +817,12 @@ PARAMETERS
 
 	<ni>			-	Network indicator that forms part of the Service
 					Information Octet (SIO).
-				
+
 	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.				
+					will be used.
 
     <networkId>     - A digital parameter that means to which virtual SS7 network
                     belongs Service Access Point (SAP). If this parameter is
@@ -790,9 +832,9 @@ PARAMETERS
 
 EXAMPLES
 	sccp sap modify 1 2 102 2
-	
-	The above command will modify the values of the Service Access Point identified 
-	by the number '1'. The new values for 'mtp3-id', 'opc' and 'ni' are 2, 102 and 2 
+
+	The above command will modify the values of the Service Access Point identified
+	by the number '1'. The new values for 'mtp3-id', 'opc' and 'ni' are 2, 102 and 2
 	respectively.
 ]]></screen>
 		</section><!--
@@ -820,17 +862,17 @@ PARAMETERS
 
 	Standard Parameters
 
-	<id>			-	The id of the SAP that is being deleted. 
-	
+	<id>			-	The id of the SAP that is being deleted.
+
 	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	 
+					will be used.
 
 EXAMPLES
 	sccp sap delete 1
-	
+
 	The above command will delete the SAP identified by the number '1'.
 ]]></screen>
 		</section>
@@ -840,7 +882,7 @@ EXAMPLES
 				<title>Delete a SAP using GUI</title>
 				<step><para>Navigate to the 'SAP' tab in the SCCP Management Unit window and locate the row corresponding to the SAP you wish to delete.</para></step>
 				<step><para>The last column for 'Delete' action will display a 'x' button in red and will be enabled.</para></step>
-				<step><para>Click on the red 'x' button to delete the corresponding SAP.  
+				<step><para>Click on the red 'x' button to delete the corresponding SAP.
 				</para></step>
 			</procedure>
 		</section>
@@ -850,7 +892,7 @@ EXAMPLES
 		<title>View all Destinations specified for a SAP</title>
 		<section id="managing_sccp_dest_show_cli">
 		<title>Using CLI</title>
-<para>You can view the details of all Destinations specified for a 
+<para>You can view the details of all Destinations specified for a
 	Service Access Point by issuing the command <command>sccp dest show</command> as described below:
 		</para>
 <screen><![CDATA[
@@ -861,33 +903,33 @@ SYNOPSIS
 	sccp dest show <sap-id> <id> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to view the details of all Destinations specified for a 
-	Service Access Point. If an <id> is specified in the command, it will only display 
-	the details of the Destination identified by the value of the 'id' specified. 
+	This command is used to view the details of all Destinations specified for a
+	Service Access Point. If an <id> is specified in the command, it will only display
+	the details of the Destination identified by the value of the 'id' specified.
 
 PARAMETERS
 
 	Standard Parameters
 
-	<sap-id>	-	The id of the SAP whose Destination details are to be 
-				displayed. 
+	<sap-id>	-	The id of the SAP whose Destination details are to be
+				displayed.
 
 
 	Optional Parameters
 
-	<id>			-	The id of the Destination whose details are to be 
-					displayed. If this parameter is not specified, the details 
-					of all Destinations defined within the SAP 'sap-id' will 
+	<id>			-	The id of the Destination whose details are to be
+					displayed. If this parameter is not specified, the details
+					of all Destinations defined within the SAP 'sap-id' will
 					be displayed.
-				
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.   
+					will be used.
 ]]></screen>
 		</section>
 		<section id="managing_sccp_dest_show_GUI">
 		<title>Using GUI</title>
-<para>Navigate to the specific SCCP Management unit and switch to the 'SAP' tab. Here you can view a list of all the Service Access Points created. Every correctly configured Service Access Point will be displayed in a row with their defined values. To view the Destination details of a specific SAP, click on the row corresponding to the SAP. The row will expand below to display the details of all configured Destinations. 
+<para>Navigate to the specific SCCP Management unit and switch to the 'SAP' tab. Here you can view a list of all the Service Access Points created. Every correctly configured Service Access Point will be displayed in a row with their defined values. To view the Destination details of a specific SAP, click on the row corresponding to the SAP. The row will expand below to display the details of all configured Destinations.
 </para>
 		</section>
 	</section>
@@ -902,61 +944,61 @@ Name
 	sccp dest create
 
 SYNOPSIS
-	sccp dest create <sap-id> <id> <first-dpc> <last-dpc> <first-sls> <last-sls> 
+	sccp dest create <sap-id> <id> <first-dpc> <last-dpc> <first-sls> <last-sls>
 	<sls-mask> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to define a new Destination for a Service Access Point. 
-	For every SAP in the system, you should configure one or more Destinations. 
+	This command is used to define a new Destination for a Service Access Point.
+	For every SAP in the system, you should configure one or more Destinations.
 
 PARAMETERS
 
 	Standard Parameters
-                                              
-	<sap-id>	-	The identifier of the SAP for which this new Destination 
-				is being defined. You must ensure that the SAP has been 
+
+	<sap-id>	-	The identifier of the SAP for which this new Destination
+				is being defined. You must ensure that the SAP has been
 				created prior to issuing this command.
 
-	<id>		-	An identifier for this newly created Destination. 
+	<id>		-	An identifier for this newly created Destination.
 				The number must be unique within each SAP.
 
 	<first-dpc>	-	The first value of the remote signaling point codes range.
 
-	<last-dpc>	-	The last value of the remote signaling point codes range. 
-				If the Destination specifies only a single Signaling 
-				Point Code, this value must be equal to the value 
+	<last-dpc>	-	The last value of the remote signaling point codes range.
+				If the Destination specifies only a single Signaling
+				Point Code, this value must be equal to the value
 				specified for 'first-dpc'.
 
-	<first-sls>	-	The first value of the SLS range. 
+	<first-sls>	-	The first value of the SLS range.
 				SLS value range is from 0 to 255.
 
-	<last-sls>	-	The last value of the SLS range. 
+	<last-sls>	-	The last value of the SLS range.
 
-	<sls-mask>	-	The mask value. SLS of a message will be exposed by 
+	<sls-mask>	-	The mask value. SLS of a message will be exposed by
 				performing a bitwise AND operation with this mask prior to
 				comparing it with first-sls and last-sls values.
-				
+
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.				
+					will be used.
 
 
 EXAMPLES
 	sccp dest create 1 1 201 201 0 7 7
-	
-	The above command will create a new Destination (identified by number '1') for 
-	a Service Access Point identified by the number '1'. The values for 'first-dpc', 
-	'last-dpc', 'first-sls', 'last-sls' and 'sls-mask' are 201, 201, 0, 7 and 7 
+
+	The above command will create a new Destination (identified by number '1') for
+	a Service Access Point identified by the number '1'. The values for 'first-dpc',
+	'last-dpc', 'first-sls', 'last-sls' and 'sls-mask' are 201, 201, 0, 7 and 7
 	respectively.
 
 	sccp dest create 2 1 300 399 0 255 255
 
-	The above command will create a new Destination (identified by number '2') for 
-	a Service Access Point identified by the number '1'. The values for 'first-dpc', 
-	'last-dpc', 'first-sls', 'last-sls' and 'sls-mask' are 300, 399, 0, 255 and 255 
-	respectively. This Destination will cover all possible SLS values. 
+	The above command will create a new Destination (identified by number '2') for
+	a Service Access Point identified by the number '1'. The values for 'first-dpc',
+	'last-dpc', 'first-sls', 'last-sls' and 'sls-mask' are 300, 399, 0, 255 and 255
+	respectively. This Destination will cover all possible SLS values.
 	Therefore the value for first-sls =0, last-sls=255 and sls-mask=255
 ]]></screen>
 		</section>
@@ -986,7 +1028,7 @@ Name
 	sccp dest modify
 
 SYNOPSIS
-	sccp dest modify <sap-id> <id> <first-dpc> <last-dpc> <first-sls> <last-sls> 
+	sccp dest modify <sap-id> <id> <first-dpc> <last-dpc> <first-sls> <last-sls>
 	<sls-mask> stackname <stack-name>
 
 
@@ -997,39 +1039,39 @@ DESCRIPTION
 PARAMETERS
 
 	Standard Parameters
-                                              
-	<sap-id>	-	The identifier of the SAP whose Destination is being 
-				modified. 
+
+	<sap-id>	-	The identifier of the SAP whose Destination is being
+				modified.
 
 	<id>		-	The identifier of the Destination that is being modified.
 
 	<first-dpc>	-	The first value of the remote signaling point codes range.
 
-	<last-dpc>	-	The last value of the remote signaling point codes range. 
-				If the Destination specifies only a single Signaling 
-				Point Code, this value must be equal to the value 
+	<last-dpc>	-	The last value of the remote signaling point codes range.
+				If the Destination specifies only a single Signaling
+				Point Code, this value must be equal to the value
 				specified for 'first-dpc'.
 
-	<first-sls>	-	The first value of the SLS range. 
+	<first-sls>	-	The first value of the SLS range.
 				SLS value range is from 0 to 255.
 
-	<last-sls>	-	The last value of the SLS range. 
+	<last-sls>	-	The last value of the SLS range.
 
-	<sls-mask>	-	The mask value. SLS of a message will be exposed by 
+	<sls-mask>	-	The mask value. SLS of a message will be exposed by
 				performing a bitwise AND operation with this mask prior to
 				comparing it with first-sls and last-sls values.
-				
+
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.				
+					will be used.
 
 EXAMPLES
-	sccp dest modify 1 1 201 299 0 255 255 
+	sccp dest modify 1 1 201 299 0 255 255
 
 	The above command will modify the values of the Destination identified by the
-	number '1' within the Service Access Point identified by the number '1'. 
+	number '1' within the Service Access Point identified by the number '1'.
 	The new values for 'first-dpc', 'last-dpc', 'first-sls', 'last-sls' and 'sls-mask'
 	are 201, 299, 0, 255 and 255 respectively.
 ]]></screen>
@@ -1049,24 +1091,24 @@ SYNOPSIS
 	sccp dest delete <sap-id> <id> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to remove a previously defined Destination from a 
+	This command is used to remove a previously defined Destination from a
 	Service Access Point.
 
 PARAMETERS
 
 	Standard Parameters
-                                             
-	<sap-id>	-	The identifier of the SAP whose Destination is being 
-				deleted. 
+
+	<sap-id>	-	The identifier of the SAP whose Destination is being
+				deleted.
 
 	<id>		-	The identifier of the Destination that is being
 				deleted.
-				
+
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.				
+					will be used.
 
 EXAMPLES
 	sccp dest delete 1 1
@@ -1084,7 +1126,7 @@ EXAMPLES
 				<step><para>In the row corresponding to the identified Destination, click on the red 'x' button in the actions column to delete that Destination.</para></step>
 			</procedure>
 		</section>
-	</section> 
+	</section>
 
 
 <section id="managing_sccp_addr_show">
@@ -1101,26 +1143,26 @@ SYNOPSIS
 	sccp address show <id> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to view the details of all configured addresses. 
-	If an <id> is specified in the command, it will only display the details of the 
-	Address identified by the value of the 'id' specified. 
+	This command is used to view the details of all configured addresses.
+	If an <id> is specified in the command, it will only display the details of the
+	Address identified by the value of the 'id' specified.
 
 PARAMETERS
 
 	Optional Parameters
 
-	<id>			-	The id of the Address whose details are to be displayed. 
+	<id>			-	The id of the Address whose details are to be displayed.
 					If this parameter is not specified, the details of all
-					configured Addresses will be displayed.  
-				
-	<stack-name>	-	Name of the stack on which this command is executed. 
+					configured Addresses will be displayed.
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.   
+					will be used.
 ]]></screen>
 		</section>
 		<section id="managing_sccp_addr_show_GUI">
 		<title>Using GUI</title>
-<para>Navigate to the specific SCCP Management unit and switch to the 'Address' tab. Here you can view a list of all the configured Addresses. Every correctly configured Address will be displayed in a row along with the defined values. 
+<para>Navigate to the specific SCCP Management unit and switch to the 'Address' tab. Here you can view a list of all the configured Addresses. Every correctly configured Address will be displayed in a row along with the defined values.
 </para>
 		</section>
 	</section>
@@ -1135,64 +1177,64 @@ Name
 	sccp address create
 
 SYNOPSIS
-	sccp address create <id> <address-indicator> <point-code> <subsystem-number> 
+	sccp address create <id> <address-indicator> <point-code> <subsystem-number>
 	<translation-type> <numbering-plan> <nature-of-address-indicator> <digits>
 	stackname <stack-name>
 
 DESCRIPTION
-	This command is used to create a new primary address or backup address of 
+	This command is used to create a new primary address or backup address of
 	translation. You can create a new newCallingParty address as well
 	using this command. The global title address information of this command is combined with
-	the global title being translated by examining the mask provided in the 
-	'sccp rule create' command. 
+	the global title being translated by examining the mask provided in the
+	'sccp rule create' command.
 
 PARAMETERS
 
 	Standard Parameters
-                                              
+
 	<id>			-	A unique number to identify this address.
 
-	<address-indicator>	-	The address indicator is the first field in a SCCP 
+	<address-indicator>	-	The address indicator is the first field in a SCCP
 					Party Address (called/calling) and is one octet in
 					length. Its function is to indicate which
-					information elements are present so that the 
-					address can be interpreted. In other words, it 
-					indicates the type of addressing information that 
-					is to be found in the address field. The 
-					addressing information from the original global 
+					information elements are present so that the
+					address can be interpreted. In other words, it
+					indicates the type of addressing information that
+					is to be found in the address field. The
+					addressing information from the original global
 					title is then compared with the passed address
-					information to match the rule. 
+					information to match the rule.
 
 					SCCP ADDRESS INDICATOR
 					--------------------------------
 					| 8 | 7 | 6 | 5 | 4 |3 | 2 | 1 |
 					--------------------------------
 
-					Bit '1'     : PC Indicator              
+					Bit '1'     : PC Indicator
 						      (1 = included)
 
-					Bit '2'     : SSN Indicator             
+					Bit '2'     : SSN Indicator
 						      (1 = included)
 
-					Bit '3 - 6' : GT Indicator		
+					Bit '3 - 6' : GT Indicator
 						      (0000 = GT not included)
-						      (0001 = GT includes 
+						      (0001 = GT includes
 							      Nature of Address)
 						      (0010 = GT includes
 							      Translation Type)
-						      (0011 = GT includes 
-							      Translation Type, 
-							      Numbering Plan and 
+						      (0011 = GT includes
+							      Translation Type,
+							      Numbering Plan and
 							      Encoding Scheme)
-						      (0100 = GT includes 
-							      Translation Type, 
-							      Numbering Plan and 
+						      (0100 = GT includes
+							      Translation Type,
+							      Numbering Plan and
 							      Encoding Scheme and
 							      Nature of Address)
 
-					Bit '7'     : Routing Indicator 	
-						      (0 = Route on GT, 
-						      1 = Route on PC + SSN)	
+					Bit '7'     : Routing Indicator
+						      (0 = Route on GT,
+						      1 = Route on PC + SSN)
 
 					Bit '8'     : Reserved for National use.
 
@@ -1225,9 +1267,9 @@ PARAMETERS
 	<translation-type>	-	This is ignored if GT Indicator is 0000 or 0001.
 
 					TRANSLATION TYPE VALUES
-	
+
 					Value		Description
-					----------------------------------	
+					----------------------------------
 					0		Unknown
 
 					1  - 63		International Service
@@ -1241,7 +1283,7 @@ PARAMETERS
 					Value of this parameter will be placed into
 					CalledPartyAddress. This parameter is mandatory if GT
 					Indicator suppose this parameter is included into GT.
-					Most used value: 0 - translation-type - Unknown 
+					Most used value: 0 - translation-type - Unknown
 
 	<numbering-plan>	-	The Number Plan (NP) field specifies the numbering
 					plan which the address information follows. This
@@ -1250,46 +1292,46 @@ PARAMETERS
                     Value of this parameter will be placed into
                     CalledPartyAddress. This parameter is mandatory if GT
                     Indicator suppose this parameter is included into GT.
-                    Most used value: 1 - numbering-plan - ISDN/telephony 
+                    Most used value: 1 - numbering-plan - ISDN/telephony
 
-	<nature-of-address>	-	The Nature of Address Indicator (NAI) field 
-					defines the address range for a specific numbering 
+	<nature-of-address>	-	The Nature of Address Indicator (NAI) field
+					defines the address range for a specific numbering
 					plan. This is only used if GT Indicator is 0100.
 
                     Value of this parameter will be placed into
                     CalledPartyAddress. This parameter is mandatory if GT
                     Indicator suppose this parameter is included into GT.
-                    Most used value: 4 - nature-of-address - International 
+                    Most used value: 4 - nature-of-address - International
 
-	<digits>		-	The global title address information to translate 
-					to. Specified as string of digits divided into 
-					subsections using separator '/' depending on if 
-					the mask contains separator or not. 
-					The digits string can contain:  
+	<digits>		-	The global title address information to translate
+					to. Specified as string of digits divided into
+					subsections using separator '/' depending on if
+					the mask contains separator or not.
+					The digits string can contain:
 
 					DIGIT PATTERN
-					
+
 					Value		Description
-					----------------------------------	
+					----------------------------------
 					-		padding - ignored
 
-					/		separator used to split the digit 
-							pattern into sections. 
-							Each section is processed 
-							differently as specified by the 
-							mask parameter in the 
+					/		separator used to split the digit
+							pattern into sections.
+							Each section is processed
+							differently as specified by the
+							mask parameter in the
 							'sccp rule create' command.
 
                     We need this parameter if at least one section of Rule
                     mask contains "R" (replace) value. Else set this field
                     to "0". If this field is needed it should contain the
-                    same subsections as the rule mask has.							
+                    same subsections as the rule mask has.
 
 	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.							
+					will be used.
 
 EXAMPLES
 	sccp address create 1 71 2 8 0 0 3 123456789
@@ -1331,51 +1373,51 @@ DESCRIPTION
 
 PARAMETERS
 
-	Standard Parameters                     
-                                              
+	Standard Parameters
+
 	<id>			-	Identifier of the address to be modified.
 
-	<address-indicator>	-	The address indicator is the first field in a SCCP 
+	<address-indicator>	-	The address indicator is the first field in a SCCP
 					Party Address (called/calling) and is one octet in
 					length. Its function is to indicate which
-					information elements are present so that the 
-					address can be interpreted. In other words, it 
-					indicates the type of addressing information that 
-					is to be found in the address field. The 
-					addressing information from the original global 
+					information elements are present so that the
+					address can be interpreted. In other words, it
+					indicates the type of addressing information that
+					is to be found in the address field. The
+					addressing information from the original global
 					title is then compared with the passed address
-					information to match the rule. 
+					information to match the rule.
 
 					SCCP ADDRESS INDICATOR
 					--------------------------------
 					| 8 | 7 | 6 | 5 | 4 |3 | 2 | 1 |
 					--------------------------------
 
-					Bit '1'     : PC Indicator              
+					Bit '1'     : PC Indicator
 						      (1 = included)
 
-					Bit '2'     : SSN Indicator             
+					Bit '2'     : SSN Indicator
 						      (1 = included)
 
-					Bit '3 - 6' : GT Indicator		
+					Bit '3 - 6' : GT Indicator
 						      (0000 = GT not included)
-						      (0001 = GT includes 
+						      (0001 = GT includes
 							      Nature of Address)
 						      (0010 = GT includes
 							      Translation Type)
-						      (0011 = GT includes 
-							      Translation Type, 
-							      Numbering Plan and 
+						      (0011 = GT includes
+							      Translation Type,
+							      Numbering Plan and
 							      Encoding Scheme)
-						      (0100 = GT includes 
-							      Translation Type, 
-							      Numbering Plan and 
+						      (0100 = GT includes
+							      Translation Type,
+							      Numbering Plan and
 							      Encoding Scheme and
 							      Nature of Address)
 
-					Bit '7'     : Routing Indicator 	
-						      (0 = Route on GT, 
-						      1 = Route on PC + SSN)	
+					Bit '7'     : Routing Indicator
+						      (0 = Route on GT,
+						      1 = Route on PC + SSN)
 
 					Bit '8'     : Reserved for National use.
 
@@ -1408,9 +1450,9 @@ PARAMETERS
 	<translation-type>	-	This is ignored if GT Indicator is 0000 or 0001.
 
 					TRANSLATION TYPE VALUES
-	
+
 					Value		Description
-					----------------------------------	
+					----------------------------------
 					0		Unknown
 
 					1  - 63		International Service
@@ -1424,7 +1466,7 @@ PARAMETERS
                     Value of this parameter will be placed into
                     CalledPartyAddress. This parameter is mandatory if GT
                     Indicator suppose this parameter is included into GT.
-                    Most used value: 0 - translation-type - Unknown 
+                    Most used value: 0 - translation-type - Unknown
 
     <numbering-plan>    -   The Number Plan (NP) field specifies the numbering
                     plan which the address information follows. This
@@ -1433,44 +1475,44 @@ PARAMETERS
                     Value of this parameter will be placed into
                     CalledPartyAddress. This parameter is mandatory if GT
                     Indicator suppose this parameter is included into GT.
-                    Most used value: 1 - numbering-plan - ISDN/telephony 
+                    Most used value: 1 - numbering-plan - ISDN/telephony
 
-    <nature-of-address> -   The Nature of Address Indicator (NAI) field 
-                    defines the address range for a specific numbering 
+    <nature-of-address> -   The Nature of Address Indicator (NAI) field
+                    defines the address range for a specific numbering
                     plan. This is only used if GT Indicator is 0100.
 
                     Value of this parameter will be placed into
                     CalledPartyAddress. This parameter is mandatory if GT
                     Indicator suppose this parameter is included into GT.
-                    Most used value: 4 - nature-of-address - International 
+                    Most used value: 4 - nature-of-address - International
 
-	<digits>		-	The global title address information to translate 
-					to. Specified as string of digits divided into 
-					subsections using separator '/' depending on if 
-					the mask contains separator or not. 
-					The digits string can contain:  
+	<digits>		-	The global title address information to translate
+					to. Specified as string of digits divided into
+					subsections using separator '/' depending on if
+					the mask contains separator or not.
+					The digits string can contain:
 
 					DIGIT PATTERN
-					
+
 					Value		Description
-					----------------------------------	
+					----------------------------------
 					-		padding - ignored
 
-					/		separator used to split the digit 
-							pattern into sections. 
-							Each section is processed 
-							differently as specified by the 
-							mask parameter in the 
+					/		separator used to split the digit
+							pattern into sections.
+							Each section is processed
+							differently as specified by the
+							mask parameter in the
 							'sccp rule create' command.
 
                     We need this parameter if at least one section of Rule
                     mask contains "R" (replace) value. Else set this field
                     to "0". If this field is needed it should contain the
-                    same subsections as the rule mask has.                          
+                    same subsections as the rule mask has.
 
 	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
 					will be used.
 ]]></screen>
@@ -1495,17 +1537,17 @@ DESCRIPTION
 PARAMETERS
 
 	Standard Parameters
-                                             
+
 	<id>		-	The identifier of the address that is being deleted.
-	
+
 	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	
+					will be used.
 
 EXAMPLES
-	sccp address delete 1 
+	sccp address delete 1
 
 	The above command will delete the address identified by the number '1'.
 ]]></screen>
@@ -1534,26 +1576,26 @@ SYNOPSIS
 	sccp rule show <id> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to view the details of all Rules configured. If an <id> is 
-	specified in the command, it will only display the details of the Rule identified 
-	by the value of the 'id' specified. 
+	This command is used to view the details of all Rules configured. If an <id> is
+	specified in the command, it will only display the details of the Rule identified
+	by the value of the 'id' specified.
 
 PARAMETERS
 
 	Optional Parameters
 
-	<id>		-	The id of the Rule whose details are to be displayed. 
-				If this parameter is not specified, the details of all 
-				configured Rules will be displayed.  
-				
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<id>		-	The id of the Rule whose details are to be displayed.
+				If this parameter is not specified, the details of all
+				configured Rules will be displayed.
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 			If not passed, the first stack configured in ShellExecutor
-			will be used. 
+			will be used.
 ]]></screen>
 		</section>
 		<section id="managing_sccp_rule_show_GUI">
 		<title>Using GUI</title>
-<para>Navigate to the specific SCCP Management unit and switch to the 'Rules' tab. Here you can view a list of all the configured Rules. Every correctly configured Rule will be displayed in a row along with the defined values. 
+<para>Navigate to the specific SCCP Management unit and switch to the 'Rules' tab. Here you can view a list of all the configured Rules. Every correctly configured Rule will be displayed in a row along with the defined values.
 </para>
 		</section>
 	</section>
@@ -1589,92 +1631,92 @@ Name
 	sccp rule create
 
 SYNOPSIS
-	sccp rule create <id> <mask> <address-indicator> <point-code> <subsystem-number> 
-	<translation-type> <numbering-plan> <nature-of-address-indicator> <digits> 
-	<ruleType> <primary-address-id> backup-addressid <backup-address-id> 
-	loadsharing-algo <loadsharing-algorithm> newcgparty-addressid 
+	sccp rule create <id> <mask> <address-indicator> <point-code> <subsystem-number>
+	<translation-type> <numbering-plan> <nature-of-address-indicator> <digits>
+	<ruleType> <primary-address-id> backup-addressid <backup-address-id>
+	loadsharing-algo <loadsharing-algorithm> newcgparty-addressid
 	<new-callingPartyAddress-id> origination-type <originationType>
 	stackname <stack-name> networkid <networkId>
 
 DESCRIPTION
-	This command is used to create a new SCCP Routing Rule. You must ensure that 
+	This command is used to create a new SCCP Routing Rule. You must ensure that
 	primary and backup addresses are configured properly prior to executing this
 	command.
 
 PARAMETERS
 
 	Standard Parameters
-                                              
+
 	<id>			-	A unique number to identify this Rule.
 
-	<mask>			-	A mask defines which part of the originally dialed 
+	<mask>			-	A mask defines which part of the originally dialed
 					digits remains in the translated digits and which
-					part is replaced by the digits from primary or 
-					backup address. A mask is divided into sections by 
+					part is replaced by the digits from primary or
+					backup address. A mask is divided into sections by
 					separator '/'. The number of sections in a mask
-					should be equal to the sections in digits passed 
-					in this command and the sections in primary or 
+					should be equal to the sections in digits passed
+					in this command and the sections in primary or
 					backup address. This paramter is mandatory.
 
 					MASK DEFINITIONS
 
 					Mnemonic	Function
-					----------------------------------	
+					----------------------------------
 					- 		Ignore
 
-					/		Separator used to split the mask 
+					/		Separator used to split the mask
 							into sections.
 
-					K		Retain the original dialed digits 
-							of this section in the translated 
+					K		Retain the original dialed digits
+							of this section in the translated
 							digits.
 
-					R		Replace the original dialed digits 
-							of this section with the same 
-							section from primary or backup 
+					R		Replace the original dialed digits
+							of this section with the same
+							section from primary or backup
 							address in the translated digits.
 
-	<address-indicator>	-	The address indicator is the first field in a SCCP 
+	<address-indicator>	-	The address indicator is the first field in a SCCP
 					Party Address (called/calling) and is one octet in
 					length. Its function is to indicate which
-					information elements are present so that the 
-					address can be interpreted. In other words, it 
-					indicates the type of addressing information that 
-					is to be found in the address field. The 
-					addressing information from the original global 
+					information elements are present so that the
+					address can be interpreted. In other words, it
+					indicates the type of addressing information that
+					is to be found in the address field. The
+					addressing information from the original global
 					title is then compared with the passed address
-					information to match the rule. 
+					information to match the rule.
 
 					SCCP ADDRESS INDICATOR
 					--------------------------------
 					| 8 | 7 | 6 | 5 | 4 |3 | 2 | 1 |
 					--------------------------------
 
-					Bit '1'     : PC Indicator              
+					Bit '1'     : PC Indicator
 						      (1 = included)
 
-					Bit '2'     : SSN Indicator             
+					Bit '2'     : SSN Indicator
 						      (1 = included)
 
-					Bit '3 - 6' : GT Indicator		
+					Bit '3 - 6' : GT Indicator
 						      (0000 = GT not included)
-						      (0001 = GT includes 
+						      (0001 = GT includes
 							      Nature of Address)
 						      (0010 = GT includes
 							      Translation Type)
-						      (0011 = GT includes 
-							      Translation Type, 
-							      Numbering Plan and 
+						      (0011 = GT includes
+							      Translation Type,
+							      Numbering Plan and
 							      Encoding Scheme)
-						      (0100 = GT includes 
-							      Translation Type, 
-							      Numbering Plan and 
+						      (0100 = GT includes
+							      Translation Type,
+							      Numbering Plan and
 							      Encoding Scheme and
 							      Nature of Address)
 
-					Bit '7'     : Routing Indicator 	
-						      (0 = Route on GT, 
-						      1 = Route on PC + SSN)	
+					Bit '7'     : Routing Indicator
+						      (0 = Route on GT,
+						      1 = Route on PC + SSN)
 
 					Bit '8'     : Reserved for National use.
 
@@ -1689,12 +1731,12 @@ PARAMETERS
                     value for CLI and GUI must have values that we use for
                     ITU-T mode.
 
-	<point-code>		-	MTP Signaling Point Code. This is ignored if 
+	<point-code>		-	MTP Signaling Point Code. This is ignored if
 					Bit '0' of address-indicator is not set.
 					This parameter is not used in currentimplemetation and
 					can be set to "0".
 
-	<subsystem-number>	-	This is ignored if Bit '1' of address-indicator is 
+	<subsystem-number>	-	This is ignored if Bit '1' of address-indicator is
 					not set.
                     This parameter is not used in currentimplemetation and
                     can be set to "0".
@@ -1702,9 +1744,9 @@ PARAMETERS
 	<translation-type>	-	This is ignored if GT Indicator is 0000 or 0001.
 
 					TRANSLATION TYPE VALUES
-	
+
 					Value		Description
-					----------------------------------	
+					----------------------------------
 					0		Unknown
 
 					1  - 63		International Service
@@ -1722,16 +1764,16 @@ PARAMETERS
 					parameter (see GT Indicator description in
 					<address-indicator> parameter).
 					Most used values:
-					0 - translation-type - Unknown 
+					0 - translation-type - Unknown
 
 	<numbering-plan>	-	The Number Plan (NP) field specifies the numbering
 					plan which the address information follows. This
 					is ignored if GT Indicator is 0000, 0001 or 0010.
 
 					NUMBER PLAN VALUES
-	
+
 					Value		Description
-					----------------------------------	
+					----------------------------------
 					0		Unknown
 
 					1		ISDN/Telephony Number Plan
@@ -1755,8 +1797,8 @@ PARAMETERS
 							(Recommendations E.214)
 
 					8 to 13		Spare
-					
-					14		Private Network or 
+
+					14		Private Network or
 							Network-Specific Numbering Plan
 
 					15		Reserved
@@ -1768,16 +1810,16 @@ PARAMETERS
                     parameter (see GT Indicator description in
                     <address-indicator> parameter).
                     Most used values:
-                    1 - numbering-plan - ISDN/telephony 
+                    1 - numbering-plan - ISDN/telephony
 
-	<nature-of-address>	-	The Nature of Address Indicator (NAI) field 
-					defines the address range for a specific numbering 
+	<nature-of-address>	-	The Nature of Address Indicator (NAI) field
+					defines the address range for a specific numbering
 					plan. This is only used if GT Indicator is 0100.
 
 					NAI VALUES
-	
+
 					Value		Description
-					----------------------------------	
+					----------------------------------
 					0		Unknown
 
 					1		Subscriber Number
@@ -1797,30 +1839,30 @@ PARAMETERS
                     parameter (see GT Indicator description in
                     <address-indicator> parameter).
                     Most used values:
-                    4 - nature-of-address - International 
+                    4 - nature-of-address - International
 
-	<digits>		-	Specifies the string of digits divided into 
-					subsections using separator '/' depending on if 
-					the mask contains separator or not. The dialed 
-					digits should match with theses digits as per the 
-					rule specified below: 
+	<digits>		-	Specifies the string of digits divided into
+					subsections using separator '/' depending on if
+					the mask contains separator or not. The dialed
+					digits should match with theses digits as per the
+					rule specified below:
 
 					DIGIT PATTERN
-					
+
 					Value		Description
-					----------------------------------	
+					----------------------------------
 					-		padding - ignored
 
-					*		wildcard - matches any number of 
+					*		wildcard - matches any number of
 							digits
 
-					?		wildcard - matches exactly one 
+					?		wildcard - matches exactly one
 							digit
 
-					/		separator used to split the digit 
-							pattern into sections. 
-							Each section can be processed 
-							differently as specified 
+					/		separator used to split the digit
+							pattern into sections.
+							Each section can be processed
+							differently as specified
 							by the mask parameter.
 
 					This parameter is mandatory. It should contain the same
@@ -1829,35 +1871,35 @@ PARAMETERS
 	<ruleType>		-	Takes one of the following values defined below.
 
 					RULE TYPE VALUES
-					
+
 					Value		Description
-					----------------------------------	
-					solitary	Only one (primary) address is used 
+					----------------------------------
+					solitary	Only one (primary) address is used
 							for routing.
 							(<backup-address-id> may be missed
 							in this case).
 
-					dominant	Both primary and backup 
-							addresses are used and mandatory. 
-							If both the addresses are 
-							available, the primary address is 
+					dominant	Both primary and backup
+							addresses are used and mandatory.
+							If both the addresses are
+							available, the primary address is
 							used for routing.
 
-					loadshared	Both primary and backup 
-							addresses are used and mandatory. 
-							If both the addresses are 
-							available, either primary or 
-							backup address is used for 
-							routing. 
+					loadshared	Both primary and backup
+							addresses are used and mandatory.
+							If both the addresses are
+							available, either primary or
+							backup address is used for
+							routing.
 							The <loadsharing-algorithm> should
 							be configured in this case.
-			
+
 					broadcast	Both primary and backup addresses
 							are used and are mandatory. All
 							messages are routed to both
 							addresses.
 
-	<primary-address-id>	-	Identifies the SCCP Address used as the primary 
+	<primary-address-id>	-	Identifies the SCCP Address used as the primary
 					translation.
 
 	Optional Parameters
@@ -1866,63 +1908,63 @@ PARAMETERS
 					translation in case the pointcode specified by the
 					primary address is not available. Backup address
 					is used if <ruleType> is not "solitary".
-									
-	<loadsharing-algorithm>	-	This parameter is mandatory if <ruleType> is 
-					"loadshared". The Loadsharing algorithm is 
+
+	<loadsharing-algorithm>	-	This parameter is mandatory if <ruleType> is
+					"loadshared". The Loadsharing algorithm is
 					configured here. Possible values of the parameter
 					are:
 
 					LOAD SHARING ALGORITHM VALUES
-					
+
 					Value		Description
-					----------------------------------	
-					bit4 		if( (SLS & 0x10) == 0 ) 
+					----------------------------------
+					bit4 		if( (SLS & 0x10) == 0 )
 							<route to primary> else
 							<route to backup>
 
-							This algorithm is the best if all 
+							This algorithm is the best if all
 							traffic is local (mobicents stack)
 							originated
 
-					bit3		if( (SLS & 0x08) == 0 ) 
-							<route to primary> else 
+					bit3		if( (SLS & 0x08) == 0 )
+							<route to primary> else
 							<route to backup>
-							This algorithm can be used if not 
-							all traffic is local 
-							(mobicents stack) originated. 
+							This algorithm can be used if not
+							all traffic is local
+							(mobicents stack) originated.
 							But only 8 links are acceptable in
 							both linksets.
 
-					bit2		if( (SLS & 0x04) == 0 ) 
-							<route to primary> else 
+					bit2		if( (SLS & 0x04) == 0 )
+							<route to primary> else
 							<route to backup>
-							This algorithm can be used if not 
-							all traffic is local 
-							(mobicents stack) originated. 
+							This algorithm can be used if not
+							all traffic is local
+							(mobicents stack) originated.
 							But only 8 links are acceptable in
 							both linksets.
 
-					bit1		if( (SLS & 0x02) == 0 ) 
-							<route to primary> else 
+					bit1		if( (SLS & 0x02) == 0 )
+							<route to primary> else
 							<route to backup>
-							This algorithm can be used if not 
-							all traffic is local 
-							(mobicents stack) originated. 
+							This algorithm can be used if not
+							all traffic is local
+							(mobicents stack) originated.
 							But only 8 links are acceptable in
 							both linksets.
 
-					bit0		if( (SLS & 0x01) == 0 ) 
-							<route to primary> else 
+					bit0		if( (SLS & 0x01) == 0 )
+							<route to primary> else
 							<route to backup>
-							This algorithm can be used if not 
-							all traffic is local 
-							(mobicents stack) originated. 
+							This algorithm can be used if not
+							all traffic is local
+							(mobicents stack) originated.
 							But only 8 links are acceptable in
 							both linksets.
 
 
 	<new-callingPartyAddress-id>
-				-	This address will replace the 
+				-	This address will replace the
 					callingPartyAddresses of messages that fit a Rule.
 
 	<originationType>	-	Takes one of the following values defined below.
@@ -1930,28 +1972,28 @@ PARAMETERS
 					all messages regardless of their origination.
 
 					ORIGINATION TYPE VALUES
-					
+
 					Value			Description
-					-------------------------------------	
-					localOriginated		If this parameter is 
-								"localOriginated", then a 
-								rule applies only for 
-								messages originating from 
-								local SCCP users 
-								(for example a local 
+					-------------------------------------
+					localOriginated		If this parameter is
+								"localOriginated", then a
+								rule applies only for
+								messages originating from
+								local SCCP users
+								(for example a local
 								TCAP stack).
 
-					remoteOriginated	If this parameter is 
-								"remoteOriginated", then a 
-								rule applies only for 
-								messages originating from 
+					remoteOriginated	If this parameter is
+								"remoteOriginated", then a
+								rule applies only for
+								messages originating from
 								SS7 network and not for
 								messages originating from
-								local SCCP users. 
-								
-	<stack-name>	-	Name of the stack on which this command is executed. 
+								local SCCP users.
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.								
+					will be used.
 
     <networkId>     - A digital parameter that means to which virtual SS7 network
                     belongs a Rule. If this parameter is skipped - networkId will
@@ -1991,10 +2033,10 @@ Name
 	sccp rule modify
 
 SYNOPSIS
-	sccp rule modify <id> <mask> <address-indicator> <point-code> <subsystem-number> 
-	<translation-type> <numbering-plan> <nature-of-address-indicator> <digits> 
-	<ruleType> <primary-address-id> backup-addressid <backup-address-id> 
-	loadsharing-algo <loadsharing-algorithm> newcgparty-addressid 
+	sccp rule modify <id> <mask> <address-indicator> <point-code> <subsystem-number>
+	<translation-type> <numbering-plan> <nature-of-address-indicator> <digits>
+	<ruleType> <primary-address-id> backup-addressid <backup-address-id>
+	loadsharing-algo <loadsharing-algorithm> newcgparty-addressid
 	<new-callingPartyAddress-id> origination-type <originationType>
 	stackname <stack-name> networkid <networkId>
 
@@ -2004,77 +2046,77 @@ DESCRIPTION
 PARAMETERS
 
 	Standard Parameters
-                                              
+
 	<id>			-	A unique number to identify this Rule.
 
-	<mask>			-	A mask defines which part of the originally dialed 
+	<mask>			-	A mask defines which part of the originally dialed
 					digits remains in the translated digits and which
-					part is replaced by the digits from primary or 
-					backup address. A mask is divided into sections by 
+					part is replaced by the digits from primary or
+					backup address. A mask is divided into sections by
 					separator '/'. The number of sections in a mask
-					should be equal to the sections in digits passed 
-					in this command and the sections in primary or 
+					should be equal to the sections in digits passed
+					in this command and the sections in primary or
 					backup address. This paramter is mandatory.
 
 					MASK DEFINITIONS
 
 					Mnemonic	Function
-					----------------------------------	
+					----------------------------------
 					- 		Ignore
 
-					/		Separator used to split the mask 
+					/		Separator used to split the mask
 							into sections.
 
-					K		Retain the original dialed digits 
-							of this section in the translated 
+					K		Retain the original dialed digits
+							of this section in the translated
 							digits.
 
-					R		Replace the original dialed digits 
-							of this section with the same 
-							section from primary or backup 
+					R		Replace the original dialed digits
+							of this section with the same
+							section from primary or backup
 							address in the translated digits.
 
-	<address-indicator>	-	The address indicator is the first field in a SCCP 
+	<address-indicator>	-	The address indicator is the first field in a SCCP
 					Party Address (called/calling) and is one octet in
 					length. Its function is to indicate which
-					information elements are present so that the 
-					address can be interpreted. In other words, it 
-					indicates the type of addressing information that 
-					is to be found in the address field. The 
-					addressing information from the original global 
+					information elements are present so that the
+					address can be interpreted. In other words, it
+					indicates the type of addressing information that
+					is to be found in the address field. The
+					addressing information from the original global
 					title is then compared with the passed address
-					information to match the rule. 
+					information to match the rule.
 
 					SCCP ADDRESS INDICATOR
 					--------------------------------
 					| 8 | 7 | 6 | 5 | 4 |3 | 2 | 1 |
 					--------------------------------
 
-					Bit '1'     : PC Indicator              
+					Bit '1'     : PC Indicator
 						      (1 = included)
 
-					Bit '2'     : SSN Indicator             
+					Bit '2'     : SSN Indicator
 						      (1 = included)
 
-					Bit '3 - 6' : GT Indicator		
+					Bit '3 - 6' : GT Indicator
 						      (0000 = GT not included)
-						      (0001 = GT includes 
+						      (0001 = GT includes
 							      Nature of Address)
 						      (0010 = GT includes
 							      Translation Type)
-						      (0011 = GT includes 
-							      Translation Type, 
-							      Numbering Plan and 
+						      (0011 = GT includes
+							      Translation Type,
+							      Numbering Plan and
 							      Encoding Scheme)
-						      (0100 = GT includes 
-							      Translation Type, 
-							      Numbering Plan and 
+						      (0100 = GT includes
+							      Translation Type,
+							      Numbering Plan and
 							      Encoding Scheme and
 							      Nature of Address)
 
-					Bit '7'     : Routing Indicator 	
-						      (0 = Route on GT, 
-						      1 = Route on PC + SSN)	
+					Bit '7'     : Routing Indicator
+						      (0 = Route on GT,
+						      1 = Route on PC + SSN)
 
 					Bit '8'     : Reserved for National use.
 
@@ -2089,12 +2131,12 @@ PARAMETERS
                     value for CLI and GUI must have values that we use for
                     ITU-T mode.
 
-	<point-code>		-	MTP Signaling Point Code. This is ignored if 
+	<point-code>		-	MTP Signaling Point Code. This is ignored if
 					Bit '0' of address-indicator is not set.
                     This parameter is not used in currentimplemetation and
                     can be set to "0".
 
-	<subsystem-number>	-	This is ignored if Bit '1' of address-indicator is 
+	<subsystem-number>	-	This is ignored if Bit '1' of address-indicator is
 					not set.
                     This parameter is not used in currentimplemetation and
                     can be set to "0".
@@ -2102,9 +2144,9 @@ PARAMETERS
 	<translation-type>	-	This is ignored if GT Indicator is 0000 or 0001.
 
 					TRANSLATION TYPE VALUES
-	
+
 					Value		Description
-					----------------------------------	
+					----------------------------------
 					0		Unknown
 
 					1  - 63		International Service
@@ -2122,16 +2164,16 @@ PARAMETERS
                     parameter (see GT Indicator description in
                     <address-indicator> parameter).
                     Most used values:
-                    0 - translation-type - Unknown 
+                    0 - translation-type - Unknown
 
 	<numbering-plan>	-	The Number Plan (NP) field specifies the numbering
 					plan which the address information follows. This
 					is ignored if GT Indicator is 0000, 0001 or 0010.
 
 					NUMBER PLAN VALUES
-	
+
 					Value		Description
-					----------------------------------	
+					----------------------------------
 					0		Unknown
 
 					1		ISDN/Telephony Number Plan
@@ -2155,8 +2197,8 @@ PARAMETERS
 							(Recommendations E.214)
 
 					8 to 13		Spare
-					
-					14		Private Network or 
+
+					14		Private Network or
 							Network-Specific Numbering Plan
 
 					15		Reserved
@@ -2168,16 +2210,16 @@ PARAMETERS
                     parameter (see GT Indicator description in
                     <address-indicator> parameter).
                     Most used values:
-                    1 - numbering-plan - ISDN/telephony 
+                    1 - numbering-plan - ISDN/telephony
 
-	<nature-of-address>	-	The Nature of Address Indicator (NAI) field 
-					defines the address range for a specific numbering 
+	<nature-of-address>	-	The Nature of Address Indicator (NAI) field
+					defines the address range for a specific numbering
 					plan. This is only used if GT Indicator is 0100.
 
 					NAI VALUES
-	
+
 					Value		Description
-					----------------------------------	
+					----------------------------------
 					0		Unknown
 
 					1		Subscriber Number
@@ -2197,30 +2239,30 @@ PARAMETERS
                     parameter (see GT Indicator description in
                     <address-indicator> parameter).
                     Most used values:
-                    4 - nature-of-address - International 
+                    4 - nature-of-address - International
 
-	<digits>		-	Specifies the string of digits divided into 
-					subsections using separator '/' depending on if 
-					the mask contains separator or not. The dialed 
-					digits should match with theses digits as per the 
-					rule specified below: 
+	<digits>		-	Specifies the string of digits divided into
+					subsections using separator '/' depending on if
+					the mask contains separator or not. The dialed
+					digits should match with theses digits as per the
+					rule specified below:
 
 					DIGIT PATTERN
-					
+
 					Value		Description
-					----------------------------------	
+					----------------------------------
 					-		padding - ignored
 
-					*		wildcard - matches any number of 
+					*		wildcard - matches any number of
 							digits
 
-					?		wildcard - matches exactly one 
+					?		wildcard - matches exactly one
 							digit
 
-					/		separator used to split the digit 
-							pattern into sections. 
-							Each section can be processed 
-							differently as specified 
+					/		separator used to split the digit
+							pattern into sections.
+							Each section can be processed
+							differently as specified
 							by the mask parameter.
 
                     This parameter is mandatory. It should contain the same
@@ -2229,35 +2271,35 @@ PARAMETERS
 	<ruleType>		-	Takes one of the following values defined below.
 
 					RULE TYPE VALUES
-					
+
 					Value		Description
-					----------------------------------	
-					solitary	Only one (primary) address is used 
+					----------------------------------
+					solitary	Only one (primary) address is used
 							for routing.
 							(<backup-address-id> may be missed
 							in this case).
 
-					dominant	Both primary and backup 
-							addresses are used and mandatory. 
-							If both the addresses are 
-							available, the primary address is 
+					dominant	Both primary and backup
+							addresses are used and mandatory.
+							If both the addresses are
+							available, the primary address is
 							used for routing.
 
-					loadshared	Both primary and backup 
-							addresses are used and mandatory. 
-							If both the addresses are 
-							available, either primary or 
-							backup address is used for 
-							routing. 
+					loadshared	Both primary and backup
+							addresses are used and mandatory.
+							If both the addresses are
+							available, either primary or
+							backup address is used for
+							routing.
 							The <loadsharing-algorithm> should
 							be configured in this case.
-			
+
 					broadcast	Both primary and backup addresses
 							are used and are mandatory. All
 							messages are routed to both
 							addresses.
 
-	<primary-address-id>	-	Identifies the SCCP Address used as the primary 
+	<primary-address-id>	-	Identifies the SCCP Address used as the primary
 					translation.
 
 	Optional Parameters
@@ -2266,35 +2308,35 @@ PARAMETERS
 					translation in case the pointcode specified by the
 					primary address is not available. Backup address
 					is used if <ruleType> is not "solitary".
-									
-	<loadsharing-algorithm>	-	This parameter is mandatory if <ruleType> is 
-					"loadshared". The Loadsharing algorithm is 
+
+	<loadsharing-algorithm>	-	This parameter is mandatory if <ruleType> is
+					"loadshared". The Loadsharing algorithm is
 					configured here. Possible values of the parameter
 					are:
 
 					LOAD SHARING ALGORITHM VALUES
-					
+
 					Value		Description
-					----------------------------------	
-					bit4 		if( (SLS & 0x10) == 0 ) 
+					----------------------------------
+					bit4 		if( (SLS & 0x10) == 0 )
 							<route to primary> else
 							<route to backup>
 
-							This algorithm is the best if all 
+							This algorithm is the best if all
 							traffic is local (mobicents stack)
 							originated
 
-					bit3		if( (SLS & 0x08) == 0 ) 
-							<route to primary> else 
+					bit3		if( (SLS & 0x08) == 0 )
+							<route to primary> else
 							<route to backup>
-							This algorithm can be used if not 
-							all traffic is local 
-							(mobicents stack) originated. 
+							This algorithm can be used if not
+							all traffic is local
+							(mobicents stack) originated.
 							But only 8 links are acceptable in
 							both linksets.
 
 	<new-callingPartyAddress-id>
-				-	This address will replace the 
+				-	This address will replace the
 					callingPartyAddresses of messages that fit a Rule.
 
 	<originationType>	-	Takes one of the following values defined below.
@@ -2302,26 +2344,26 @@ PARAMETERS
 					all messages regardless of their origination.
 
 					ORIGINATION TYPE VALUES
-					
+
 					Value			Description
-					-------------------------------------	
-					localOriginated		If this parameter is 
-								"localOriginated", then a 
-								rule applies only for 
-								messages originating from 
-								local SCCP users 
-								(for example a local 
+					-------------------------------------
+					localOriginated		If this parameter is
+								"localOriginated", then a
+								rule applies only for
+								messages originating from
+								local SCCP users
+								(for example a local
 								TCAP stack).
 
-					remoteOriginated	If this parameter is 
-								"remoteOriginated", then a 
-								rule applies only for 
-								messages originating from 
+					remoteOriginated	If this parameter is
+								"remoteOriginated", then a
+								rule applies only for
+								messages originating from
 								SS7 network and not for
 								messages originating from
-								local SCCP users. 
+								local SCCP users.
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
 					will be used.
 
@@ -2351,17 +2393,17 @@ DESCRIPTION
 PARAMETERS
 
 	Standard Parameters
-                                             
+
 	<id>			-	The identifier of the Rule that is being deleted.
-	
+
 	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	
+					will be used.
 
 EXAMPLES
-	sccp rule delete 1 
+	sccp rule delete 1
 
 	The above command will delete the Rule identified by the number '1'.
 ]]></screen>
@@ -2393,26 +2435,26 @@ SYNOPSIS
 DESCRIPTION
 	This command is used to view the details of all configured Remote Signaling Points.
 
-	If an <id> is specified in the command, it will only display the details of the 
-	Remote Signaling Point identified by the value of the 'id' specified. 
+	If an <id> is specified in the command, it will only display the details of the
+	Remote Signaling Point identified by the value of the 'id' specified.
 
 PARAMETERS
 
 	Optional Parameters
 
-	<id>		-	The id of the Remote Signaling Point whose details are 
-				to be displayed. If this parameter is not specified, the 
-				details of all configured Remote Signaling Points will be 
-				displayed.  
-				
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<id>		-	The id of the Remote Signaling Point whose details are
+				to be displayed. If this parameter is not specified, the
+				details of all configured Remote Signaling Points will be
+				displayed.
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.   
+					will be used.
 ]]></screen>
 		</section>
 		<section id="managing_sccp_rsp_show_GUI">
 		<title>Using GUI</title>
-<para>Navigate to the specific SCCP Management unit and switch to the 'RSP' tab. Here you can view a list of all the configured Remote Signaling Pointcodes. Every correctly configured RSP will be displayed in a row along with the defined values. 
+<para>Navigate to the specific SCCP Management unit and switch to the 'RSP' tab. Here you can view a list of all the configured Remote Signaling Pointcodes. Every correctly configured RSP will be displayed in a row along with the defined values.
 </para>
 		</section>
 	</section>
@@ -2437,26 +2479,26 @@ DESCRIPTION
 PARAMETERS
 
 	Standard Parameters
-                                              
-	<id>			-	A unique number to identify this 
+
+	<id>			-	A unique number to identify this
 					Remote Signaling Point.
 
 	<remote-spc>		-	The Remote Signaling Point
 
-	<rspc-flag>		-	32 bit value. Not used for now. 
+	<rspc-flag>		-	32 bit value. Not used for now.
 					Reserved for future
 
-	<mask>			-	32 bit value. Not used for now. 
+	<mask>			-	32 bit value. Not used for now.
 					Reserved for future
-					
+
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
 					will be used.
-					
+
 EXAMPLES
-	sccp rsp create 1 6477 0 0					
+	sccp rsp create 1 6477 0 0
 ]]></screen>
 		</section>
 		<section id="managing_sccp_rsp_create_gui">
@@ -2487,14 +2529,14 @@ SYNOPSIS
 	sccp rsp modify <id> <remote-spc> <rspc-flag> <mask> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to modify the values of a Remote Signaling Point previously 
+	This command is used to modify the values of a Remote Signaling Point previously
 	defined.
 
 PARAMETERS
 
-	Standard Parameters                     
-                                              
-	<id>			-	Identifier of the Remote Signaling Point to be 
+	Standard Parameters
+
+	<id>			-	Identifier of the Remote Signaling Point to be
 					modified.
 
 	<remote-spc>		-	The Remote Signaling Point
@@ -2504,10 +2546,10 @@ PARAMETERS
 
 	<mask>			-	32 bit value. Not used for now.
 					Reserved for future
-					
+
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
 					will be used.
 ]]></screen>
@@ -2532,20 +2574,20 @@ DESCRIPTION
 PARAMETERS
 
 	Standard Parameters
-                                             
+
 	<id>		-	The identifier of the Remote Signaling Point that is being
 				deleted.
-				
+
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.				
+					will be used.
 
 EXAMPLES
-	sccp rsp delete 1 
+	sccp rsp delete 1
 
-	The above command will delete the Remote Signaling Point identified by the 
+	The above command will delete the Remote Signaling Point identified by the
 	number '1'.
 ]]></screen>
 		</section>
@@ -2574,26 +2616,26 @@ SYNOPSIS
 	sccp rss show <id> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to view the details of all configured Remote Sub-Systems. 
-	If an <id> is specified in the command, it will only display the details of the 
-	Remote Sub-System identified by the value of the 'id' specified. 
+	This command is used to view the details of all configured Remote Sub-Systems.
+	If an <id> is specified in the command, it will only display the details of the
+	Remote Sub-System identified by the value of the 'id' specified.
 
 PARAMETERS
 
 	Optional Parameters
 
-	<id>		-	The id of the Remote Sub-System whose details are to be 
-				displayed. If this parameter is not specified, the details 
-				of all configured Remote Sub-Systems will be displayed.  
-				
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<id>		-	The id of the Remote Sub-System whose details are to be
+				displayed. If this parameter is not specified, the details
+				of all configured Remote Sub-Systems will be displayed.
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	
+					will be used.
 ]]></screen>
 		</section>
 		<section id="managing_sccp_rss_show_GUI">
 		<title>Using GUI</title>
-<para>Navigate to the specific SCCP Management unit and switch to the 'RSS' tab. Here you can view a list of all the configured Remote Sub-Systems. Every correctly configured RSS will be displayed in a row along with the defined values. 
+<para>Navigate to the specific SCCP Management unit and switch to the 'RSS' tab. Here you can view a list of all the configured Remote Sub-Systems. Every correctly configured RSS will be displayed in a row along with the defined values.
 </para>
 		</section>
 	</section>
@@ -2608,43 +2650,43 @@ Name
 	sccp rss create
 
 SYNOPSIS
-	sccp rss create <id> <remote-spc> <remote-ssn> <rss-flag> 
+	sccp rss create <id> <remote-spc> <remote-ssn> <rss-flag>
 	<mark-prohibited-when-spc-resuming> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to define a new Remote Sub-System. Each Remote Sub-System 
-	that SCCP can communicate with must be configured using this command. You must 
-	ensure that the Remote Signaling Point is configured prior to issuing this 
+	This command is used to define a new Remote Sub-System. Each Remote Sub-System
+	that SCCP can communicate with must be configured using this command. You must
+	ensure that the Remote Signaling Point is configured prior to issuing this
 	command.
 
 PARAMETERS
 
 	Standard Parameters
-                                              
-	<id>			-	A unique number to identify this Remote 
+
+	<id>			-	A unique number to identify this Remote
 					Sub-System.
 
-	<remote-spc>		-	The Remote Signaling Point where this Remote 
+	<remote-spc>		-	The Remote Signaling Point where this Remote
 					Sub-System is being deployed.
 
 	<remote-ssn>		-	The Remote Sub-System number.
 
-	<rss-flag>		-	32 bit value. Not used for now. 
+	<rss-flag>		-	32 bit value. Not used for now.
 					Reserved for future.
 
 	Optional Parameters
 
 	<mark-prohibited-when-spc-resuming>
-				-	Possible value: prohibitedWhenSpcResuming. 
+				-	Possible value: prohibitedWhenSpcResuming.
 					When this parameter is specified, the configured
-					subsystem is marked as prohibited when its 
-					corresponding signaling point code has been 
+					subsystem is marked as prohibited when its
+					corresponding signaling point code has been
 					resumed.
-					
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.					
-	
+					will be used.
+
 EXAMPLES
 	sccp rss create 1 6477 8 0 prohibitedWhenSpcResuming
 ]]></screen>
@@ -2674,47 +2716,47 @@ Name
 	sccp rss modify
 
 SYNOPSIS
-	sccp rss modify <id> <remote-spc> <remote-ssn> <rss-flag> 
+	sccp rss modify <id> <remote-spc> <remote-ssn> <rss-flag>
 	<mark-prohibited-when-spc-resuming> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to modify the values of a Remote Sub-System previously 
+	This command is used to modify the values of a Remote Sub-System previously
 	defined.
 
 PARAMETERS
 
 	Standard Parameters
-                                              
-	<id>			-	Identifier of the Remote Sub-System to be 
+
+	<id>			-	Identifier of the Remote Sub-System to be
 					modified.
 
-	<remote-spc>		-	The Remote Signaling Point where this Remote 
+	<remote-spc>		-	The Remote Signaling Point where this Remote
 					Sub-System is deployed.
 
 	<remote-ssn>		-	The Remote Sub-System number.
 
-	<rss-flag>		-	32 bit value. Not used for now. 
+	<rss-flag>		-	32 bit value. Not used for now.
 					Reserved for future.
 
 	Optional Parameters
 
 	<mark-prohibited-when-spc-resuming>
-				-	Possible value: prohibitedWhenSpcResuming. 
-					When this parameter is specified, the configured 
-					subsystem is marked as prohibited when its 
-					corresponding signaling point code has been 
+				-	Possible value: prohibitedWhenSpcResuming.
+					When this parameter is specified, the configured
+					subsystem is marked as prohibited when its
+					corresponding signaling point code has been
 					resumed.
-					
+
 	Optional Parameters
 
 	<mark-prohibited-when-spc-resuming>
-				-	Possible value: prohibitedWhenSpcResuming. 
+				-	Possible value: prohibitedWhenSpcResuming.
 					When this parameter is specified, the configured
-					subsystem is marked as prohibited when its 
-					corresponding signaling point code has been 
+					subsystem is marked as prohibited when its
+					corresponding signaling point code has been
 					resumed.
-					
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
 					will be used.
 ]]></screen>
@@ -2739,18 +2781,18 @@ DESCRIPTION
 PARAMETERS
 
 	Standard Parameters
-                                             
-	<id>		-	The identifier of the Remote Sub-System that is being 
+
+	<id>		-	The identifier of the Remote Sub-System that is being
 				deleted.
-				
+
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.				
+					will be used.
 
 EXAMPLES
-	sccp rss delete 1 
+	sccp rss delete 1
 
 	The above command will delete the Remote Sub-System identified by the number '1'.
 ]]></screen>
@@ -2779,27 +2821,27 @@ SYNOPSIS
 	sccp lmr show <id> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to view the details of all configured Long Message Rules. 
-	If an <id> is specified in the command, it will only display the details of the 
-	Long Message Rule identified by the value of the 'id' specified. 
+	This command is used to view the details of all configured Long Message Rules.
+	If an <id> is specified in the command, it will only display the details of the
+	Long Message Rule identified by the value of the 'id' specified.
 
 PARAMETERS
 
 	Optional Parameters
 
-	<id>			-	The id of the Long Message Rule whose details are to be 
+	<id>			-	The id of the Long Message Rule whose details are to be
 					displayed. If this parameter is not specified, the details
-					of all configured Long Message Rules will be displayed.  
-				
-	<stack-name>	-	Name of the stack on which this command is executed. 
+					of all configured Long Message Rules will be displayed.
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used. 
- 
+					will be used.
+
 ]]></screen>
 		</section>
 		<section id="managing_sccp_lmr_show_GUI">
 		<title>Using GUI</title>
-<para>Navigate to the specific SCCP Management unit and switch to the 'LMR' tab. Here you can view a list of all the configured Long Message Rules. Every correctly configured LMR will be displayed in a row along with the defined values. 
+<para>Navigate to the specific SCCP Management unit and switch to the 'LMR' tab. Here you can view a list of all the configured Long Message Rules. Every correctly configured LMR will be displayed in a row along with the defined values.
 </para>
 		</section>
 	</section>
@@ -2814,41 +2856,41 @@ Name
 	sccp lmr create
 
 SYNOPSIS
-	sccp lmr create <id> <first-spc> <last-spc> <long-message-rule-type> 
+	sccp lmr create <id> <first-spc> <last-spc> <long-message-rule-type>
 	stackname <stack-name>
 
 DESCRIPTION
 	This command is used to define a new Long Message Rule. Long message rules specify
-	which message types (UDT/XUDT/LUDT) will be used for outgoing message encoding 
+	which message types (UDT/XUDT/LUDT) will be used for outgoing message encoding
 	depends on dpc. If long message rules are not configured only UDT messages
 	will be used.
 
 PARAMETERS
 
 	Standard Parameters
-                                              
-	<id>			-	A unique number to identify this 
+
+	<id>			-	A unique number to identify this
 					Long Message Rule.
 
-	<first-spc>		-	The first value of the remote signaling 
+	<first-spc>		-	The first value of the remote signaling
 					point code range, for which this Long message Rule
 					will apply.
 
 	<last-spc>		-	The last value of the remote signaling point code
-					range. If Long message rule specifies a single 
+					range. If Long message rule specifies a single
 					signaling point code, this value must be equal to
 					first-spc.
 
 	<long-message-rule-type>-	Message types used for the remote signaling
 					point codes range.
 					Possible values : udt, xudt and ludt.
-					
+
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.					
-	
+					will be used.
+
 EXAMPLES
 	sccp lmr create 1 201 201 xudt
 
@@ -2885,32 +2927,32 @@ SYNOPSIS
 	stackname <stack-name>
 
 DESCRIPTION
-	This command is used to modify the values of a Long Message Rule previously 
+	This command is used to modify the values of a Long Message Rule previously
 	defined.
 
 PARAMETERS
 
 	Standard Parameters
-                                              
-	<id>			-	Identifier of the Long Message Rule to be 
+
+	<id>			-	Identifier of the Long Message Rule to be
 					modified.
 
 	<first-spc>		-	The first value of the remote signaling
 					point code range, for which this Long message Rule
 					will apply.
 
-	<last-spc>		-	The last value of the remote signaling point code 
-					range. If Long message rule specifies a single 
-					signaling point code, this value must be equal to 
+	<last-spc>		-	The last value of the remote signaling point code
+					range. If Long message rule specifies a single
+					signaling point code, this value must be equal to
 					first-spc.
 
-	<long-message-rule-type>-	Message types used for the remote signaling point 
+	<long-message-rule-type>-	Message types used for the remote signaling point
 					codes range.
 					Possible values : udt, xudt and ludt.
-					
+
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
 					will be used.
 ]]></screen>
@@ -2935,18 +2977,18 @@ DESCRIPTION
 PARAMETERS
 
 	Standard Parameters
-                                             
+
 	<id>		-	The identifier of the Long Message Rule that is being
 				deleted.
-				
+
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.				
+					will be used.
 
 EXAMPLES
-	sccp lmr delete 1 
+	sccp lmr delete 1
 
 	The above command will delete the Long Message Rule identified by the number '1'.
 ]]></screen>
@@ -2974,28 +3016,28 @@ SYNOPSIS
 	sccp csp show <id> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to view the details of all configured Concerned Signaling 
-	Point Codes. If an <id> is specified in the command, it will only display the 
-	details of the Concerned Signaling Point Code identified by the value of the 'id' 
-	specified. 
+	This command is used to view the details of all configured Concerned Signaling
+	Point Codes. If an <id> is specified in the command, it will only display the
+	details of the Concerned Signaling Point Code identified by the value of the 'id'
+	specified.
 
 PARAMETERS
 
 	Optional Parameters
 
 	<id>			-	The id of the Concerned Signaling Point Code whose details
-					are to be displayed. If this parameter is not specified, 
-					the details of all configured Concerned Signaling Point 
-					Codes will be displayed.  
+					are to be displayed. If this parameter is not specified,
+					the details of all configured Concerned Signaling Point
+					Codes will be displayed.
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	 
+					will be used.
 ]]></screen>
 		</section>
 		<section id="managing_sccp_csp_show_GUI">
 		<title>Using GUI</title>
-<para>Navigate to the specific SCCP Management unit and switch to the 'CSP' tab. Here you can view a list of all the configured Concerned Signaling Point Code. Every correctly configured CSP will be displayed in a row along with the defined values. 
+<para>Navigate to the specific SCCP Management unit and switch to the 'CSP' tab. Here you can view a list of all the configured Concerned Signaling Point Code. Every correctly configured CSP will be displayed in a row along with the defined values.
 </para>
 		</section>
 	</section>
@@ -3013,27 +3055,27 @@ SYNOPSIS
 	sccp csp create <id> <spc> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to define a new Concerned Signaling Point Code. Concerned 
-	signaling point codes define a DPC list that will be notified when local SSN is 
+	This command is used to define a new Concerned Signaling Point Code. Concerned
+	signaling point codes define a DPC list that will be notified when local SSN is
 	registered (SSA messages) or unregistered (SSP messages).
 
 PARAMETERS
 
 	Standard Parameters
-                                              
+
 	<id>			-	A unique number to identify this
 					Concerned Signaling Point Code.
-	
-	<spc>			-	The Remote Signaling Point Code, 
-					which will be notified.
-					
-	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
-					If not passed, the first stack configured in ShellExecutor
-					will be used.					
 
-	
+	<spc>			-	The Remote Signaling Point Code,
+					which will be notified.
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed.
+					If not passed, the first stack configured in ShellExecutor
+					will be used.
+
+
 EXAMPLES
 	sccp csp create 1 201
 
@@ -3069,22 +3111,22 @@ SYNOPSIS
 	sccp csp modify <id> <spc> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to modify the values of a Concerned Signaling Point Code 
+	This command is used to modify the values of a Concerned Signaling Point Code
 	previously defined.
 
 PARAMETERS
 
 	Standard Parameters
-                                              
+
 	<id>			-	Identifier of the Concerned Signaling Point Code
 					to be modified.
 
-	<spc>			-	The Remote Signaling Point Code, which will be 
+	<spc>			-	The Remote Signaling Point Code, which will be
 					notified.
-				
+
 	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
 					will be used.
 ]]></screen>
@@ -3109,20 +3151,20 @@ DESCRIPTION
 PARAMETERS
 
 	Standard Parameters
-                                             
-	<id>		-	The identifier of the Concerned Signaling Point Code 
+
+	<id>		-	The identifier of the Concerned Signaling Point Code
 				that is being deleted.
-				
+
 	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.				
+					will be used.
 
 EXAMPLES
-	sccp csp delete 1 
+	sccp csp delete 1
 
-	The above command will delete the Concerned Signaling Point Code identified by the 
+	The above command will delete the Concerned Signaling Point Code identified by the
 	number '1'.
 ]]></screen>
 		</section>

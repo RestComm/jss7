@@ -885,6 +885,18 @@ public class RouterTest {
             return false;
         }
 
+		@Override
+		public int getPeriodOfLogging() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public void setPeriodOfLogging(int periodOfLogging) throws Exception {
+			// TODO Auto-generated method stub
+			
+		}
+
     }
 
     private class Mtp3UserPartImpl implements Mtp3UserPart {
