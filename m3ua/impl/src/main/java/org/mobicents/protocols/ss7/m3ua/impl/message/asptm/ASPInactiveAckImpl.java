@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.message.asptm;
 
-import java.nio.ByteBuffer;
+import io.netty.buffer.ByteBuf;
 
 import org.mobicents.protocols.ss7.m3ua.impl.message.M3UAMessageImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterImpl;
@@ -45,13 +45,13 @@ public class ASPInactiveAckImpl extends M3UAMessageImpl implements ASPInactiveAc
     }
 
     @Override
-    protected void encodeParams(ByteBuffer buffer) {
+    protected void encodeParams(ByteBuf buf) {
 
         if (parameters.containsKey(Parameter.Routing_Context)) {
-            ((ParameterImpl) parameters.get(Parameter.Routing_Context)).write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.Routing_Context)).write(buf);
         }
         if (parameters.containsKey(Parameter.INFO_String)) {
-            ((ParameterImpl) parameters.get(Parameter.INFO_String)).write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.INFO_String)).write(buf);
         }
     }
 

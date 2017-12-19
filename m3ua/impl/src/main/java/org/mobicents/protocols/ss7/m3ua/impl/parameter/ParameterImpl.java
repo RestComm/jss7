@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.parameter;
 
-import java.nio.ByteBuffer;
+import io.netty.buffer.ByteBuf;
 
 import org.mobicents.protocols.ss7.m3ua.parameter.Parameter;
 
@@ -59,22 +59,22 @@ public abstract class ParameterImpl implements Parameter {
     // out.write(value);
     // }
 
-    public void write(ByteBuffer buffer) {
+    public void write(ByteBuf buf) {
         // obtain encoded value
         byte[] value = getValue();
 
         // encode tag
-        buffer.put((byte) (tag >> 8));
-        buffer.put((byte) (tag));
+        buf.writeByte((byte) (tag >> 8));
+        buf.writeByte((byte) (tag));
 
         // encode length including value, tag and length field itself
         length = (short) (value.length + 4);
 
-        buffer.put((byte) (length >> 8));
-        buffer.put((byte) (length));
+        buf.writeByte((byte) (length >> 8));
+        buf.writeByte((byte) (length));
 
         // encode value
-        buffer.put(value);
+        buf.writeBytes(value);
 
         /*
          * The total length of a parameter (including Tag, Parameter Length, and Value fields) MUST be a multiple of 4 octets.
@@ -85,7 +85,7 @@ public abstract class ParameterImpl implements Parameter {
         int remainder = (4 - length % 4);
         if (remainder < 4) {
             while (remainder > 0) {
-                buffer.put((byte) 0x00);
+                buf.writeByte((byte) 0x00);
                 remainder--;
             }
         }

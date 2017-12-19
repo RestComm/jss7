@@ -24,8 +24,6 @@ package org.mobicents.protocols.ss7.m3ua.impl.message;
 
 import io.netty.buffer.ByteBuf;
 
-import java.nio.ByteBuffer;
-
 import javolution.text.TextBuilder;
 import javolution.util.FastMap;
 
@@ -60,7 +58,7 @@ public abstract class M3UAMessageImpl implements M3UAMessage {
         this.messageType = messageType;
     }
 
-    protected abstract void encodeParams(ByteBuffer buffer);
+    protected abstract void encodeParams(ByteBuf buffer);
 
     public void encode(ByteBuf byteBuf) {
         byteBuf.writeByte(1);
@@ -68,15 +66,16 @@ public abstract class M3UAMessageImpl implements M3UAMessage {
         byteBuf.writeByte(messageClass);
         byteBuf.writeByte(messageType);
 
-        ByteBuffer buffer = ByteBuffer.allocate(4096);
-        encodeParams(buffer);
-        int length = buffer.position();
-        byte[] data = new byte[length];
-        buffer.flip();
-        buffer.get(data);
+        byteBuf.markWriterIndex();
+        byteBuf.writeInt(8);
+        int currIndex=byteBuf.writerIndex();
 
-        byteBuf.writeInt(length + 8);
-        byteBuf.writeBytes(data);
+        encodeParams(byteBuf);
+
+        int newIndex=byteBuf.writerIndex();
+        byteBuf.resetWriterIndex();
+        byteBuf.writeInt(newIndex-currIndex + 8);
+        byteBuf.writerIndex(newIndex);
     }
 
     protected void decode(ByteBuf data) {

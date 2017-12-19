@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.message.aspsm;
 
-import java.nio.ByteBuffer;
+import io.netty.buffer.ByteBuf;
 
 import org.mobicents.protocols.ss7.m3ua.impl.message.M3UAMessageImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterImpl;
@@ -65,13 +65,13 @@ public class ASPUpAckImpl extends M3UAMessageImpl implements ASPUpAck {
     }
 
     @Override
-    protected void encodeParams(ByteBuffer buffer) {
+    protected void encodeParams(ByteBuf buf) {
         if (parameters.containsKey(Parameter.ASP_Identifier)) {
-            ((ParameterImpl) parameters.get(Parameter.ASP_Identifier)).write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.ASP_Identifier)).write(buf);
         }
 
         if (parameters.containsKey(Parameter.INFO_String)) {
-            ((ParameterImpl) parameters.get(Parameter.INFO_String)).write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.INFO_String)).write(buf);
         }
     }
 

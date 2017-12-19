@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.message.aspsm;
 
-import java.nio.ByteBuffer;
+import io.netty.buffer.ByteBuf;
 
 import org.mobicents.protocols.ss7.m3ua.impl.message.M3UAMessageImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterImpl;
@@ -44,9 +44,9 @@ public class HeartbeatAckImpl extends M3UAMessageImpl implements HeartbeatAck {
     }
 
     @Override
-    protected void encodeParams(ByteBuffer buffer) {
+    protected void encodeParams(ByteBuf buf) {
         if (parameters.containsKey(Parameter.Heartbeat_Data)) {
-            ((ParameterImpl) parameters.get(Parameter.Heartbeat_Data)).write(buffer);
+            ((ParameterImpl) parameters.get(Parameter.Heartbeat_Data)).write(buf);
         }
     }
 

@@ -22,7 +22,7 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.message.rkm;
 
-import java.nio.ByteBuffer;
+import io.netty.buffer.ByteBuf;
 
 import org.mobicents.protocols.ss7.m3ua.impl.message.M3UAMessageImpl;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterImpl;
@@ -44,8 +44,8 @@ public class RegistrationResponseImpl extends M3UAMessageImpl implements Registr
     }
 
     @Override
-    protected void encodeParams(ByteBuffer buffer) {
-        ((ParameterImpl) parameters.get(Parameter.Registration_Result)).write(buffer);
+    protected void encodeParams(ByteBuf buf) {
+        ((ParameterImpl) parameters.get(Parameter.Registration_Result)).write(buf);
     }
 
     public RegistrationResult getRegistrationResult() {
