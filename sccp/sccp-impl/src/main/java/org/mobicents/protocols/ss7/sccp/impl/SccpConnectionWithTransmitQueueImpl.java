@@ -85,9 +85,14 @@ abstract class SccpConnectionWithTransmitQueueImpl extends SccpConnectionBaseImp
         }
 
         public long perform() {
+            logger.debug("Starting sender task");
+
             SccpConnMessage message;
             while (!outgoing.isEmpty() && isCanSendData()) {
                 message = outgoing.poll();
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Polling another message from queue: " + message.toString());
+                }
 
                 try {
                     SccpConnectionWithTransmitQueueImpl.super.sendMessage(message);
@@ -100,6 +105,7 @@ abstract class SccpConnectionWithTransmitQueueImpl extends SccpConnectionBaseImp
 
             }
             if (!outgoing.isEmpty()) {
+                logger.debug("Queue not empty, retrying");
                 try {
                     Thread.sleep(SLEEP_DELAY);
                 } catch (InterruptedException e) {
@@ -107,6 +113,8 @@ abstract class SccpConnectionWithTransmitQueueImpl extends SccpConnectionBaseImp
                     throw new RuntimeException(e);
                 }
                 submit();
+            } else {
+                logger.debug("Queue is empty, finishing execution");
             }
 
             return 0;

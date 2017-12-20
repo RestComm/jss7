@@ -98,6 +98,7 @@ public class SccpFlowControl {
     }
 
     public boolean isAkSendCriterion(SccpConnDt2MessageImpl msg) {
+        //logger.warn("***** - " + inputWindow.getUpperEdge() + " - " + msg);
         if (!preemptiveAk) {
             return inputWindow.getW() == 0 || msg.getSequencingSegmenting().getSendSequenceNumber().equals(inputWindow.getUpperEdge());
         } else {

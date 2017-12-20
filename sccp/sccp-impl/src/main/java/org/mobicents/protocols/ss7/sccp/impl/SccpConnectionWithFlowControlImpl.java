@@ -144,6 +144,12 @@ public class SccpConnectionWithFlowControlImpl extends SccpConnectionImpl implem
         } else {
             logger.error(String.format("Message %s was discarded due to incorrect sequence numbers", msg.toString()));
         }
+
+        if (flow.isAuthorizedToTransmitAnotherMessage()) {
+            setState(ESTABLISHED);
+        } else {
+            setState(ESTABLISHED_SEND_WINDOW_EXHAUSTED);
+        }
     }
 
     protected void sendAk() throws Exception {
