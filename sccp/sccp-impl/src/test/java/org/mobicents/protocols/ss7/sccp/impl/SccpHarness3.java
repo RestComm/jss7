@@ -41,7 +41,7 @@ public abstract class SccpHarness3 extends SccpHarness {
     protected SccpStackImpl sccpStack3;
     protected SccpProvider sccpProvider3;
 
-    protected Mtp3UserPartImpl mtp3UserPart3 = new Mtp3UserPartImpl();
+    protected Mtp3UserPartImpl mtp3UserPart3 = new Mtp3UserPartImpl(this);
 
     protected Router router3 = null;
 
@@ -182,7 +182,7 @@ public abstract class SccpHarness3 extends SccpHarness {
     }
 
     public void saveTrafficInFile() {
-        ((Mtp3UserPartImpl) this.mtp3UserPart3).saveTrafficInFile = true;
+//        ((Mtp3UserPartImpl) this.mtp3UserPart3).saveTrafficInFile = true;
         super.saveTrafficInFile();
     }
 }

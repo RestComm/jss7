@@ -43,7 +43,6 @@ import org.mobicents.protocols.ss7.scheduler.Clock;
 import org.mobicents.protocols.ss7.scheduler.DefaultClock;
 import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.testng.annotations.*;
-import org.testng.annotations.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
@@ -144,6 +143,8 @@ public class ConnectionFlowControlTest extends SccpHarness {
 
     @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" })
     public void testWaitingForWindow() throws Exception {
+//        this.saveTrafficInFile();
+//        this.saveLogFile("aaaa.log");
         stackParameterInit();
 
         ((SccpStackImplConnProxy)sccpStack1).setAkAutoSending(false);
@@ -162,8 +163,7 @@ public class ConnectionFlowControlTest extends SccpHarness {
 
         int credit = 2;
 
-        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
-        crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, null, new ImportanceImpl((byte)1));
         crMsg.setProtocolClass(new ProtocolClassImpl(3));
         crMsg.setCredit(new CreditImpl(credit));
 
@@ -207,7 +207,7 @@ public class ConnectionFlowControlTest extends SccpHarness {
         assertEquals(u1.getReceivedData().get(2), DATA3);
         assertEquals(u1.getReceivedData().get(3), DATA4);
 
-        conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), new byte[] {});
+        conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), new byte[] { 2, 3, 3, 4, 4, 5, 5 });
 
         Thread.sleep(100);
 
@@ -448,7 +448,7 @@ public class ConnectionFlowControlTest extends SccpHarness {
 
         int credit = 127;
 
-        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] { 9, 8, 7, 6, 5 }, new ImportanceImpl((byte)1));
         crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
         crMsg.setProtocolClass(new ProtocolClassImpl(3));
         crMsg.setCredit(new CreditImpl(credit));
@@ -477,16 +477,30 @@ public class ConnectionFlowControlTest extends SccpHarness {
 
         Thread.sleep(100);
 
-        while (!sender1.finished.get() && !sender2.finished.get()) {
+        while (!sender1.finished.get() || !sender2.finished.get()) {
             Thread.sleep(100);
         }
 
-        Thread.sleep(500);
+        Thread.sleep(200);
 
-        conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), new byte[] {});
+//        while (u1.receivedData.size() != 382) {
+//            int iii1 = 01;
+//            iii1++;
+//            Thread.sleep(200);
+//        }
+//        while (u2.receivedData.size() != 382) {
+//            int iii1 = 01;
+//            iii1++;
+//            Thread.sleep(200);
+//        }
+
+        assertEquals(u1.receivedData.size(), 382);
+        assertEquals(u2.receivedData.size(), 382);
+
+        conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), null);
 
         Thread.sleep(100);
-
+        
         assertEquals(sccpStack1.getConnectionsNumber(), 0);
         assertEquals(sccpStack2.getConnectionsNumber(), 0);
 

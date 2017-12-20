@@ -189,7 +189,7 @@ public class ConnectionTest extends SccpHarness {
         SccpConnection conn1 = sccpProvider1.newConnection(getSSN(), new ProtocolClassImpl(2));
         conn1.establish(crMsg);
 
-        Thread.sleep(100);
+        Thread.sleep(200);
 
         assertEquals(sccpStack2.getConnectionsNumber(), 1);
         assertEquals(sccpStack1.getConnectionsNumber(), 1);

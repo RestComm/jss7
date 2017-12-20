@@ -101,6 +101,10 @@ public class GetMaxUserDataLengthTest {
 
     private class Mtp3UserPartImpl_2 extends Mtp3UserPartImpl {
 
+        public Mtp3UserPartImpl_2() {
+            super(null);
+        }
+
         private int mtpMsgLen = 268;
 
         public void setMtpMsgLen(int mtpMsgLen) {

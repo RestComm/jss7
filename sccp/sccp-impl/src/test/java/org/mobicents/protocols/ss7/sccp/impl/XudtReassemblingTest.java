@@ -46,7 +46,7 @@ public class XudtReassemblingTest {
 
         SccpListenerProxy listenerProxy = new SccpListenerProxy();
         sccpStack.getSccpProvider().registerSccpListener(8, listenerProxy);
-        sccpStack.setMtp3UserPart(1, new Mtp3UserPartImpl());
+        sccpStack.setMtp3UserPart(1, new Mtp3UserPartImpl(null));
 
         sccpStack.removeAllResourses();
         RouterImpl router = (RouterImpl) sccpStack.getRouter();

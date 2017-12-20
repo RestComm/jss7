@@ -50,7 +50,7 @@ import static org.testng.Assert.assertEquals;
 public class LoadSharingTest extends SccpHarness {
 
     private SccpAddress a1, a2;
-    protected Mtp3UserPartImpl mtp3UserPart11 = new Mtp3UserPartImpl();
+    protected Mtp3UserPartImpl mtp3UserPart11 = new Mtp3UserPartImpl(null);
 
     public LoadSharingTest() {
     }
