@@ -154,6 +154,7 @@ abstract class SccpConnectionBaseImpl {
                     || this.state == ESTABLISHED_SEND_WINDOW_EXHAUSTED && state == ESTABLISHED_SEND_WINDOW_EXHAUSTED
                     || this.state == ESTABLISHED_SEND_WINDOW_EXHAUSTED && state == RSR_RECEIVED
                     || this.state == ESTABLISHED_SEND_WINDOW_EXHAUSTED && state == CLOSED
+                    || this.state == ESTABLISHED_SEND_WINDOW_EXHAUSTED && state == DISCONNECT_INITIATED
                     || this.state == RSR_SENT && state == ESTABLISHED
                     || this.state == RSR_SENT && state == CLOSED
                     || this.state == RSR_RECEIVED && state == ESTABLISHED
