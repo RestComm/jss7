@@ -159,6 +159,8 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 
     public void start() throws Exception {
         // lic dep 2
+
+        startNoLce();
     }
 
     protected void startNoLce() throws Exception{
