@@ -2070,7 +2070,7 @@ public class SccpExecutor implements ShellExecutor {
                 sb.append("maxDataMessage = ");
                 sb.append(managementImplTmp.getMaxDataMessage());
                 sb.append("\n");
-                
+
                 sb.append("periodOfLogging = ");
                 sb.append(managementImplTmp.getPeriodOfLogging());
                 sb.append("\n");

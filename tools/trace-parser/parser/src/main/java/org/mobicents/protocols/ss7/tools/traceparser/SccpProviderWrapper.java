@@ -126,10 +126,10 @@ public class SccpProviderWrapper implements SccpProvider {
 
     }
 
-	@Override
-	public SccpStack getSccpStack() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public SccpStack getSccpStack() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

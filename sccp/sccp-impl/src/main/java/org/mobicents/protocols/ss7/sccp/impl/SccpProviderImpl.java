@@ -196,8 +196,8 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
         return ress;
     }
 
-	@Override
-	public SccpStack getSccpStack() {
-		return this.stack;
-	}
+    @Override
+    public SccpStack getSccpStack() {
+        return this.stack;
+    }
 }

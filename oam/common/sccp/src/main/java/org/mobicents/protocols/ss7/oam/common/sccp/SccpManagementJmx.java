@@ -72,11 +72,11 @@ public class SccpManagementJmx implements SccpManagementJmxMBean {
     public int getMaxDataMessage() {
         return this.wrappedSccpStack.getMaxDataMessage();
     }
-    
-	@Override
-	public int getPeriodOfLogging() {
-		return this.wrappedSccpStack.getPeriodOfLogging();
-	}
+
+    @Override
+    public int getPeriodOfLogging() {
+        return this.wrappedSccpStack.getPeriodOfLogging();
+    }
 
     @Override
     public Mtp3UserPart getMtp3UserPart(int id) {
@@ -188,10 +188,10 @@ public class SccpManagementJmx implements SccpManagementJmxMBean {
         this.wrappedSccpStack.setMaxDataMessage(maxDataMessage);
     }
 
-	@Override
-	public void setPeriodOfLogging(int periodOfLogging) throws Exception {
-		this.wrappedSccpStack.setPeriodOfLogging(periodOfLogging);
-	}
+    @Override
+    public void setPeriodOfLogging(int periodOfLogging) throws Exception {
+        this.wrappedSccpStack.setPeriodOfLogging(periodOfLogging);
+    }
 
     @Override
     public void setReassemblyTimerDelay(int reassemblyTimerDelay) throws Exception {

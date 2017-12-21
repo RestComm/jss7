@@ -859,8 +859,8 @@ public class TCAPStackImpl implements TCAPStack {
         this.tcapCounterEventsListener = tcapCounterEventsListener;
     }
 
-	@Override
-	public SccpStack getSccpStack() {
-		return this.sccpProvider.getSccpStack();
-	}
+    @Override
+    public SccpStack getSccpStack() {
+        return this.sccpProvider.getSccpStack();
+    }
 }

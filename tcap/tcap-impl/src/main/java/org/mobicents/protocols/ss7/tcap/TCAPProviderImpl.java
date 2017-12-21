@@ -58,7 +58,6 @@ import org.mobicents.protocols.ss7.tcap.api.DialogPrimitiveFactory;
 import org.mobicents.protocols.ss7.tcap.api.MessageType;
 import org.mobicents.protocols.ss7.tcap.api.TCAPException;
 import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
-import org.mobicents.protocols.ss7.tcap.api.TCAPStack;
 import org.mobicents.protocols.ss7.tcap.api.TCListener;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
 import org.mobicents.protocols.ss7.tcap.api.tc.dialog.TRPseudoState;

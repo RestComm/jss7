@@ -391,7 +391,7 @@ public interface TCAPStack {
      * @return
      */
     String getSlsRange();
-    
+
     /**
      * Returns the SCCP stack
      *

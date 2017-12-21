@@ -730,9 +730,9 @@ public class TcapManagementJmx implements TcapManagementJmxMBean, CounterMediato
         return this.wrappedTCAPStack.getSubSystemNumberList();
     }
 
-	@Override
-	public SccpStack getSccpStack() {
-		return this.wrappedTCAPStack.getSccpStack();
-	}
+    @Override
+    public SccpStack getSccpStack() {
+        return this.wrappedTCAPStack.getSccpStack();
+    }
 
 }

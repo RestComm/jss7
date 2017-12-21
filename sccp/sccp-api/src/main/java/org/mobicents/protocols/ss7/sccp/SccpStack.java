@@ -205,14 +205,14 @@ public interface SccpStack {
      * @param maxDataMessage
      */
     void setMaxDataMessage(int maxDataMessage) throws Exception;
-    
+
     /**
-     * Returns period of logging warning messages 
+     * Returns period of logging warning messages
      *
      * @return
      */
     int getPeriodOfLogging();
-    
+
     /**
      * Sets period of logging warning messages
      *
