@@ -84,7 +84,7 @@ public class TCAPStackImpl implements TCAPStack {
     private static final String CONG_CONTROL_BACK_TO_NORMAL_MEMORY_THRESHOLD_3 = "congControl_BackToNormalMemoryThreshold_3";
 
 
-    private static final XMLBinding binding = new XMLBinding();
+    protected static final XMLBinding binding = new XMLBinding();
 
     // default value of idle timeout and after TC_END remove of task.
     public static final long _DIALOG_TIMEOUT = 60000;
@@ -766,7 +766,14 @@ public class TCAPStackImpl implements TCAPStack {
             reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));
 
             reader.setBinding(binding);
+            load(reader);
+        } catch (XMLStreamException ex) {
+            // this.logger.info(
+            // "Error while re-creating Linksets from persisted file", ex);
+        }
+    }
 
+     protected void load(XMLObjectReader reader) throws XMLStreamException{
             Long vall = reader.read(DIALOG_IDLE_TIMEOUT, Long.class);
             if (vall != null)
                 this.dialogTimeout = vall;
@@ -840,10 +847,6 @@ public class TCAPStackImpl implements TCAPStack {
                 this.statisticsEnabled = volb;
 
             reader.close();
-        } catch (XMLStreamException ex) {
-            // this.logger.info(
-            // "Error while re-creating Linksets from persisted file", ex);
-        }
     }
 
     @Override

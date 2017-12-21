@@ -124,7 +124,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     private static final int STATUS_MSG_LOGGING_INTERVAL_MILLISEC_CONG = 10000;
     private static final int STATUS_MSG_LOGGING_INTERVAL_MILLISEC_UNAVAIL = 100;
 
-    private static final XMLBinding binding = new XMLBinding();
+    protected static final XMLBinding binding = new XMLBinding();
 
     // If the XUDT message data length greater this value, segmentation is
     // needed
@@ -206,7 +206,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     protected final TextBuilder persistFile = TextBuilder.newInstance();
 
     protected String persistDir = null;
-    private boolean rspProhibitedByDefault;
+    protected boolean rspProhibitedByDefault;
 
     private volatile int segmentationLocalRef = 0;
     private volatile int slsCounter = 0;
@@ -1268,8 +1268,16 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));
 
             reader.setBinding(binding);
+            load(reader);
+        } catch (XMLStreamException ex) {
+            // this.logger.info(
+            // "Error while re-creating Linksets from persisted file", ex);
+        }
+    }
 
-            Integer vali = reader.read(Z_MARGIN_UDT_MSG, Integer.class);
+    protected void load(XMLObjectReader reader) throws XMLStreamException {
+
+       Integer vali = reader.read(Z_MARGIN_UDT_MSG, Integer.class);
             if (vali != null)
                 this.zMarginXudtMessage = vali;
             vali = reader.read(REASSEMBLY_TIMER_DELAY, Integer.class);
@@ -1318,10 +1326,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
                 this.sstTimerDuration_IncreaseFactor = vald;
 
             reader.close();
-        } catch (XMLStreamException ex) {
-            // this.logger.info(
-            // "Error while re-creating Linksets from persisted file", ex);
-        }
+
     }
 
 }
