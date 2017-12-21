@@ -360,13 +360,19 @@ public class RuleImpl implements Rule, Serializable {
             return false; // Called GT didn't match. No point in going forward to match calling
         }
 
-        if ( patternCallingAddress == null || callingAddress == null) {
+        if ( patternCallingAddress == null || callingAddress == null ) {
             // callingAddress or pattern is null then we consider it a match
             return true;
         }
         // SSN matching for calling address just as for called address
         if ( !isSsnMatch( callingAddress, patternCallingAddress ) ) {
             return false;
+        }
+
+        if ( patternCallingAddress.getGlobalTitle() == null ||
+                callingAddress.getGlobalTitle() == null ) {
+            // callingAddress or pattern have no GT then no point in matching them
+            return true;
         }
 
         // finally match on calling GT
