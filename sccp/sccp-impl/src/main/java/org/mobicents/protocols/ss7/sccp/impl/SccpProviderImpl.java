@@ -36,6 +36,7 @@ import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpManagementEventListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpNoticeMessageImpl;
@@ -194,4 +195,9 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
         res.toArray(ress);
         return ress;
     }
+
+	@Override
+	public SccpStack getSccpStack() {
+		return this.stack;
+	}
 }

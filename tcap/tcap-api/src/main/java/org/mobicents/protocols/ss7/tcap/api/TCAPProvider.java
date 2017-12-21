@@ -145,5 +145,11 @@ public interface TCAPProvider extends Serializable {
      * @return
      */
     DraftParsedMessage parseMessageDraft(byte[] data);
+    
+    /**
+     * @return TCAP Stack
+     */
+    
+    TCAPStack getStack();
 
 }

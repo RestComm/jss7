@@ -117,5 +117,11 @@ public interface SccpProvider extends Serializable {
      *         processes incoming messages at mtp3 levels
      */
     ExecutorCongestionMonitor[] getExecutorCongestionMonitorList();
+    
+    /**
+     * @return SCCP stack
+     */
+    SccpStack getSccpStack();
+    
 
 }

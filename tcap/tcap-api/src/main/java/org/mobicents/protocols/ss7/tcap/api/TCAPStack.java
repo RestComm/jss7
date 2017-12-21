@@ -24,6 +24,8 @@ package org.mobicents.protocols.ss7.tcap.api;
 
 import java.util.List;
 
+import org.mobicents.protocols.ss7.sccp.SccpStack;
+
 /**
  * @author baranowb
  */
@@ -389,5 +391,12 @@ public interface TCAPStack {
      * @return
      */
     String getSlsRange();
+    
+    /**
+     * Returns the SCCP stack
+     *
+     * @return
+     */
+    SccpStack getSccpStack();
 
 }
