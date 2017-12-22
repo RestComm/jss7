@@ -303,6 +303,8 @@ public class TCAPStatTest extends SccpHarness {
 
         check2.DialogReleaseCount += 1;
         check2.DialogTimeoutCount += 1;
+        check2.TcPAbortSentCount += 1;
+        check2.TcPAbortReceivedCount += 1;
         check2.AllDialogsDuration = 100000;
         check1.check(this.tcapStack1.getCounterProvider());
         check2.check(this.tcapStack2.getCounterProvider());
