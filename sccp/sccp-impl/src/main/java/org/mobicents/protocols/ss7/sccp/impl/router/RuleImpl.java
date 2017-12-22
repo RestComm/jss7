@@ -369,6 +369,12 @@ public class RuleImpl implements Rule, Serializable {
             return false;
         }
 
+        if (patternCallingAddress.getGlobalTitle() == null)
+            return false;
+
+        if(callingAddress.getGlobalTitle() == null)
+            return true;
+
         // finally match on calling GT
         return matchGt( callingAddress, patternCallingAddress );
     }
