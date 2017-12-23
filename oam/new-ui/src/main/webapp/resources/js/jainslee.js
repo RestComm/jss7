@@ -74,8 +74,8 @@ jQuery.fn.random = function() {
 };
 
 function setMenu(element, module) {
-	$('.advertisement').hide();
-	$('.advertisement').random().show();
+//	$('.advertisement').hide();
+//	$('.advertisement').random().show();
 	$('#loader-modal').modal();
 	$('#content').load('modules/' + module + '.html', function() {
 		$('.nav-list').children('.active').removeClass('active');
