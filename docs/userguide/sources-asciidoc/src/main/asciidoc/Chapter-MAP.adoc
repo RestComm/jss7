@@ -1,15 +1,15 @@
 = MAP
 
 Mobile application part (MAP) is the protocol that is used to allow the  network nodes within the Network Switching Subsystem (NSS) to communicate with each other in order to provide services such as roaming capability, text messaging (SMS), Unstructured Supplementary Service Data (USSD) and subscriber authentication.
- 
+
 
 MAP provides an application layer on which to build the services that support a  network.
-This application layer provides a standardized set of services.  uses the services of the GSM network, specifically the Signaling Connection Control Part (SCCP) and the Transaction Capabilities Application Part (TCAP). 
+This application layer provides a standardized set of services.  uses the services of the GSM network, specifically the Signaling Connection Control Part (SCCP) and the Transaction Capabilities Application Part (TCAP).
 
-IMPORTANT: For better understanding of this chapter you must be familiar with the specifications defined in `GSM 09.02`.
+IMPORTANT: For better understanding of this chapter you must be familiar with the specifications defined in `GSM 09.02`. JSS7 stack supports MAP versions 1, 2, 3, 4 with java interfaces for a version 3GPP TS 29.002 V10.3.0 (2011-06)
 
 MAP has full implementation for USSD, SMS and LMS (Location Management Service) services  and partial implementation for Mobility Services (updateLocation, sendAuthenticationInfo,  anyTimeInterrogation, checkIMEI operations). You can find the list of implemented MAP messages here: https://github.com/RestComm/jss7/blob/master/map/MAPMessagesImplemented.ods[MAPMessagesImplemented.ods].
-The document uses color coding to represent the status of the implementation: 
+The document uses color coding to represent the status of the implementation:
 
 Green::
   Fully Implemented
@@ -18,46 +18,46 @@ Red::
   Interface available (but not yet implemented)
 
 Yellow::
-  Implementation in progress	
+  Implementation in progress
 
 NOTE: {this-platform} {this-application} Any contribution to implement other messages are welcome.
-We will provide you with all the help that you may require initially. 
+We will provide you with all the help that you may require initially.
 
 [[_map_usage]]
-== {this-application}  MAP 
+== {this-application}  MAP
 
 The methods required to represent the MAP Protocol Stack are defined in the interface [class]`org.mobicents.protocols.ss7.map.api.MAPStack` which exposes [class]`org.mobicents.protocols.ss7.map.api.MAPProvider`			that interacts directly with the [class]`MAPStack`.
-This interface defines the methods that will be used by any registered MAP-User application. 
+This interface defines the methods that will be used by any registered MAP-User application.
 
 A MAP-User application must implement interfaces to listen for MAP messages and also implement interfaces for dialogue and component handling primitives.
 One such interface is [class]`org.mobicents.protocols.ss7.map.api.MAPDialogListener` which must be implemented for listening associated with dialog events.
-Others are one or more interfaces for listening associated with component events based on  [class]`org.mobicents.protocols.ss7.map.api.MAPServiceListener` interface. 
+Others are one or more interfaces for listening associated with component events based on  [class]`org.mobicents.protocols.ss7.map.api.MAPServiceListener` interface.
 
 Below is a list of MAP Service Listener classes.
 A MAP-User interested in listening for messages specific to a particular MAP Service must implement the corresponding MAPServiceListener.
 
 LMS operations::
-  [class]`org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener`					 
+  [class]`org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener`
 
 Mobility operations::
-  [class]`org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobilityListener`				
+  [class]`org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobilityListener`
 
 OAM operations::
-  [class]`org.mobicents.protocols.ss7.map.api.service.oam.MAPServiceOamListener`				
+  [class]`org.mobicents.protocols.ss7.map.api.service.oam.MAPServiceOamListener`
 
 PDP context activation operations::
-  [class]`org.mobicents.protocols.ss7.map.api.service.pdpContextActivation.MAPServicePdpContextActivationListener`				
+  [class]`org.mobicents.protocols.ss7.map.api.service.pdpContextActivation.MAPServicePdpContextActivationListener`
 
 SMS operations::
-  [class]`org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener`				
+  [class]`org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener`
 
 Supplementary operations::
-  [class]`org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener`								
+  [class]`org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener`
 
-A MAP-User interested in all the services must implement all the above Service Listener classes. 
+A MAP-User interested in all the services must implement all the above Service Listener classes.
 
 The [class]`org.mobicents.protocols.ss7.map.MAPStackImpl` class  is a concrete implementation of [class]`MAPStack`.
-The MAP-User application gets a reference to [class]`MAPProvider` by doing a JNDI lookup as explained in <<_design_overview_ss7_service>>. 
+The MAP-User application gets a reference to [class]`MAPProvider` by doing a JNDI lookup as explained in <<_design_overview_ss7_service>>.
 
 [source,java]
 ----
@@ -67,37 +67,37 @@ this.mapProvider = ((MAPProvider) ctx.lookup(providerJndiName));
 ----
 
 To listen for incoming MAP Dialog and MAP Primitive messages, the MAP-User application should register the concrete implementation of [class]`MAPDialogListener` with [class]`MAPProvider`.
- 
+
 
 To  listen  for  incoming  MAP  Service  messages, the MAP-User application should register the concrete implementation of [class]`MAPServiceListener` with the corresponding [class]`MAPServiceBase `.
-The following [class]`MAPServiceBase` services are exposed by the [class]`MAPProvider`: 
+The following [class]`MAPServiceBase` services are exposed by the [class]`MAPProvider`:
 
 Call handling service::
-  [class]`org.mobicents.protocols.ss7.map.api.service.callhandling.MAPServiceCallHandling`					 
+  [class]`org.mobicents.protocols.ss7.map.api.service.callhandling.MAPServiceCallHandling`
 
 LSM service::
-  [class]`org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm`					 
+  [class]`org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm`
 
 Mobility service::
-  [class]`org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobility`					 
+  [class]`org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobility`
 
 OAM service::
-  [class]`org.mobicents.protocols.ss7.map.api.service.oam.MAPServiceOam`					 
+  [class]`org.mobicents.protocols.ss7.map.api.service.oam.MAPServiceOam`
 
 PDP context activation service::
-  [class]`org.mobicents.protocols.ss7.map.api.service.pdpContextActivation.MAPServicePdpContextActivation`					 
+  [class]`org.mobicents.protocols.ss7.map.api.service.pdpContextActivation.MAPServicePdpContextActivation`
 
 SMS service::
-  [class]`org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms`					 
+  [class]`org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms`
 
 Supplementary service::
-  [class]`org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary`					 			 
+  [class]`org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary`
 
 [source,java]
 ----
 
 public class UssdClientExample implements MAPDialogListener, MAPServiceSupplementaryListener {
-        ....       
+        ....
         mapProvider.addMAPDialogListener(this);
         mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
         ....
@@ -115,11 +115,11 @@ Prior to using any MAP specific service, the corresponding service should be act
         ....
 ----
 
-The MAP-User Application leverages: 
+The MAP-User Application leverages:
 
 * [class]`MAPParameterFactory` to create instances of  [class]`USSDString`, [class]`ISDNAddressString`					and many other primitives that are used by MAP services.
 * [class]`MAPSmsTpduParameterFactory` to create instances of  SMS TPDU primitives used for sending SMS messages like [class]`SmsDeliverTpdu` or [class]`SmsSubmitTpdu`.
-* [class]`MAPErrorMessageFactory` to create instances of  MAP error messages like [class]`MAPErrorMessageSystemFailure`.		
+* [class]`MAPErrorMessageFactory` to create instances of  MAP error messages like [class]`MAPErrorMessageSystemFailure`.
 
 [source,java]
 ----
@@ -135,9 +135,9 @@ The MAP-User Application leverages:
 [[_map_send_request]]
 == {this-application}  Sending a MAP request (processUnstructuredSS-Request as an example)
 
-For sending a MAP request, you must do the following at the client side: 
+For sending a MAP request, you must do the following at the client side:
 
-- Create a new MAP Dialog 
+- Create a new MAP Dialog
 
 [source,java]
 ----
@@ -151,12 +151,12 @@ ISDNAddressString destReference = client.getMAPProvider().getMAPParameterFactory
 	createISDNAddressString(AddressNature.international_number, NumberingPlan.land_mobile, "204208300008002");
 
 currentMapDialog = mapProvider.getMAPServiceSupplementary().
-	createNewDialog(MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext, 
+	createNewDialog(MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
 	MAPApplicationContextVersion.version2), origAddress,
 	destReference, remoteAddress, destReference);
 ----
 
-- Add an Invoke component (processUnstructuredSS-Request message) 
+- Add an Invoke component (processUnstructuredSS-Request message)
 
 [source,java]
 ----
@@ -173,7 +173,7 @@ createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, 
 currentMapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString, alertingPattern, msisdn);
 ----
 
-- Send a TC-Begin message to the server peer 
+- Send a TC-Begin message to the server peer
 
 [source,java]
 ----
@@ -181,22 +181,22 @@ currentMapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdStrin
 currentMapDialog.send();
 ----
 
-- Wait for a response from the server 
+- Wait for a response from the server
 
-At the server side, when the TC-Begin message is received, the following sequence of events occur: 
+At the server side, when the TC-Begin message is received, the following sequence of events occur:
 
 [source,java]
 ----
 
-void MAPDialogListener. onDialogRequest(MAPDialog mapDialog, AddressString destReference, 
+void MAPDialogListener. onDialogRequest(MAPDialog mapDialog, AddressString destReference,
 	AddressString origReference, MAPExtensionContainer extensionContainer);
 ----
 
 This is the request for MAP Dialog processing.
-A MAP-User can reject the Dialog by invoking the `mapDialog.refuse()` method. 
+A MAP-User can reject the Dialog by invoking the `mapDialog.refuse()` method.
 
 This is followed by the events (one or more) corresponding to the incoming primitives.
-In this case it is: 
+In this case it is:
 
 [source,java]
 ----
@@ -205,7 +205,7 @@ void MAPServiceSupplementaryListener.onProcessUnstructuredSSRequest(ProcessUnstr
 ----
 
 When processing component-dependant messages, you can add response components.
-In this case it is processUnstructuredSS-Response as an example: 
+In this case it is processUnstructuredSS-Response as an example:
 
 [source,java]
 ----
@@ -226,9 +226,9 @@ In this case it is processUnstructuredSS-Response as an example:
 		}
 ----
 
-If preparing the response takes more time, you should return the control and prepare the answer asynchronously in a separate thread. 
+If preparing the response takes more time, you should return the control and prepare the answer asynchronously in a separate thread.
 
-If error or reject primitives are included in a TCAP message, the following events occur: 
+If error or reject primitives are included in a TCAP message, the following events occur:
 
 [source,java]
 ----
@@ -239,27 +239,27 @@ public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem proble
 ----
 
 After all incoming components have been processed, the event `onDialogDelimiter(MAPDialog mapDialog);` or in the case of TC-END, `onDialogClose(MAPDialog mapDialog)` is invoked.
-If all response components have been prepared you can tell the stack to send the response: 
+If all response components have been prepared you can tell the stack to send the response:
 
 * [class]`mapDialog.close(false);` - to send TC-END
 * [class]`mapDialog.send();` - to send TC-CONTINUE
-* [class]`mapDialog.close(true);` - sends TC-END without any components (prearrangedEnd)			
+* [class]`mapDialog.close(true);` - sends TC-END without any components (prearrangedEnd)
 
 Instead of `send()` and `close(boolean prearrangedEnd`) methods you can invoke  `sendDelayed()` or `closeDelayed(boolean prearrangedEnd)` methods.
 These methods are similar to `send()` and `close()` methods, but when these methods are invoked from MAP Service message handlers (component handler methods called by stack while parsing incoming components), real sending and dialog closing will occur only when all incoming component events and  `onDialogDelimiter() ` or  `onDialogClose()` is processed.
-If all response components have been prepared you should return the control and  send a response when all components are ready. 
+If all response components have been prepared you should return the control and  send a response when all components are ready.
 
-In case of an error, you can terminate a MAP dialog in any method by invoking 
+In case of an error, you can terminate a MAP dialog in any method by invoking
 
-* [class]`mapDialog.abort(mapUserAbortChoice);` - sends TC-U-ABORT primitive		
+* [class]`mapDialog.abort(mapUserAbortChoice);` - sends TC-U-ABORT primitive
 
-If there are no local actions or there is no response from a peer for a long time, a timeout occurs and the following methods are invoked: 
+If there are no local actions or there is no response from a peer for a long time, a timeout occurs and the following methods are invoked:
 
 * [class]`MAPDialogListener.onDialogTimeout(MAPDialog mapDialog);`
-* [class]`MAPServiceListener.onInvokeTimeout(MAPDialog mapDialog, Long invokeId);`		
+* [class]`MAPServiceListener.onInvokeTimeout(MAPDialog mapDialog, Long invokeId);`
 
 In the [class]`onDialogTimeout()` method you can invoke [class]`mapDialog.keepAlive();` to prevent a Dialog from closing.
-For preventing an Invoke timeout you should invoke [class]`resetInvokeTimer(Long invokeId);`  before [class]`onInvokeTimeout()` occurs. 
+For preventing an Invoke timeout you should invoke [class]`resetInvokeTimer(Long invokeId);`  before [class]`onInvokeTimeout()` occurs.
 
 [[_map_usage_example]]
 == {this-application}  MAP Usage
@@ -310,9 +310,9 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 /**
  * A simple example show-casing how to use MAP stack. Demonstrates how new MAP
  * Dialog is craeted and Invoke is sent to peer.
- * 
+ *
  * @author Amit Bhayani
- * 
+ *
  */
 public class UssdClientExample implements MAPDialogListener, MAPServiceSupplementaryListener {
 
@@ -507,9 +507,9 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
 /**
  * A simple example show-casing how to use MAP stack. Demonstrates how to listen
  * to incoming Dialog from peer and process the MAP messages and send response.
- * 
+ *
  * @author Amit Bhayani
- * 
+ *
  */
 public class UssdServerExample implements MAPDialogListener, MAPServiceSupplementaryListener {
 

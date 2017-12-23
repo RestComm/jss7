@@ -1,14 +1,14 @@
 = CAP
 
 The  (Customized Applications for Mobile network Enhanced Logic) Application Part (CAP) protocol is used by network operators to provide their subscribers  with operator specific services even when roaming outside the HPLMN.  provides services such as prepaid roaming services, fraud control, special numbers  and closed user groups (e.g., office extension numbers that work everywhere). CAP has been defined in four versions (phases), each of which has an accompanying specification that builds upon the previous phase.
-This application layer provides a standardized set of services.  uses the services of the `SS7`		network, specifically the Signaling Connection Control Part (SCCP)  and the Transaction Capabilities Application Part (TCAP) 
+This application layer provides a standardized set of services.  uses the services of the `SS7`		network, specifically the Signaling Connection Control Part (SCCP)  and the Transaction Capabilities Application Part (TCAP)
 
-IMPORTANT: For better understanding of this chapter you must be familiar with the specifications defined in `3GPP TS 22.078` (service aspects) and `3GPP TS 23.078` (technical realization).
+IMPORTANT: For better understanding of this chapter you must be familiar with the specifications defined in `3GPP TS 22.078` (service aspects) and `3GPP TS 23.078` (technical realization). JSS7 stack supports CAP versions 1, 2, 3, 4 with java interfaces for a version V11.0.0 (2011-09).
 
 {this-platform} {this-application} CAP has full implementation for Phase 1 and Phase 2.
 The list of implemented operations can be found at https://github.com/RestComm/jss7/blob/master/cap/CAPMessagesImplemented.ods[CAPMessagesImplemented.ods].
 You can find the list of implemented operations here: https://github.com/RestComm/jss7/blob/master/cap/CAPMessagesImplemented.ods[CAPMessagesImplemented.ods].
-The document uses color coding to represent the status of the implementation: 
+The document uses color coding to represent the status of the implementation:
 
 Green::
   Fully Implemented
@@ -20,32 +20,32 @@ Yellow::
   Implementation in progress
 
 Blue::
-   Implemeted only for CAP V2 and not available for CAP V3 and V4		
+   Implemeted only for CAP V2 and not available for CAP V3 and V4
 
 NOTE: {this-platform} {this-application} Any contribution to implement other messages are welcome.
-We will provide you with all the help that you may require initially. 
+We will provide you with all the help that you may require initially.
 
 
 [[_cap_usage]]
-== {this-application}  CAP 
+== {this-application}  CAP
 
 The [class]`org.mobicents.protocols.ss7.cap.api.CAPStack`			interface defines the methods required to represent CAP Protocol Stack.
 CAPStack exposes [class]`org.mobicents.protocols.ss7.cap.api.CAPProvider`			that interacts directly with CAPStack.
 This interface defines the methods that will be used by any registered CAP-User application.
 CAP-User application must implement interfaces to listen for CAP messages and for dialogue and component handling primitives.
-One interface is [class]`org.mobicents.protocols.ss7.cap.api.CAPDialogListener`  (listening associated with dialog events). Others are one or more interfaces for listening to messages associated with component events based on  [class]`org.mobicents.protocols.ss7.cap.api.CAPServiceListener` interface. 
+One interface is [class]`org.mobicents.protocols.ss7.cap.api.CAPDialogListener`  (listening associated with dialog events). Others are one or more interfaces for listening to messages associated with component events based on  [class]`org.mobicents.protocols.ss7.cap.api.CAPServiceListener` interface.
 
-Each CAP-User interested in listening to messages specific to a CAP Service must implement the specific [class]`CAPServiceListener`. 
+Each CAP-User interested in listening to messages specific to a CAP Service must implement the specific [class]`CAPServiceListener`.
 
 * CAP-User interested only in circuit switched call operations implements [class]`org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.
-  CAPServiceCircuitSwitchedCallListener`					
-* CAP-User interested only in GPRS operations implements [class]`org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprsListener`					
-* CAP-User interested only in SMS operations implements [class]`org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSmsListener`								
+  CAPServiceCircuitSwitchedCallListener`
+* CAP-User interested only in GPRS operations implements [class]`org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprsListener`
+* CAP-User interested only in SMS operations implements [class]`org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSmsListener`
 
-CAP-User interested in all the services must implement all the service listener classes. 
+CAP-User interested in all the services must implement all the service listener classes.
 
 The [class]`org.mobicents.protocols.ss7.cap.CAPStackImpl`  is a concrete implementation of [class]`CAPStack.`			The CAP-User application gets access to [class]`CAPProvider` by doing a JNDI look-up as explained in <<_design_overview_ss7_service>>.
- 
+
 
 [source,java]
 ----
@@ -56,18 +56,18 @@ this.capProvider = ((CAPProvider) ctx.lookup(providerJndiName));
 
 The CAP-User application should register the concrete implementation of [class]`CAPDialogListener`  with [class]`CAPProvider` to listen for incoming CAP Dialog and CAP Primitive messages.
 The CAP-User application should register the concrete implementation of [class]`CAPServiceListener`  with  corresponding [class]`CAPServiceBase ` to  listen  for  incoming  CAP  Service  messages.
-Following CAPServiceBase are exposed by [class]`CAPProvider`. 
+Following CAPServiceBase are exposed by [class]`CAPProvider`.
 
 * For circuit switched call service [class]`org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.
   CAPServiceCircuitSwitchedCall`
 * For GPRS service [class]`org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprs`
-* For SMS service [class]`org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSms`		
+* For SMS service [class]`org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSms`
 
 [source,java]
 ----
 
 public class CAPExample implements CAPDialogListener, CAPServiceCircuitSwitchedCallListener {
-	    ....       
+	    ....
         capProvider.addCAPDialogListener(this);
 		capProvider.getCAPServiceCircuitSwitchedCall().addCAPServiceListener(this);
         ....
@@ -85,13 +85,13 @@ Before any CAP specific service can be used, the corresponding service should be
         ....
 ----
 
-The CAP-User Application leverages: 
+The CAP-User Application leverages:
 
 * [class]`MAPParameterFactory` to create instances of  [class]`IMSI`, [class]`ISDNAddressString`					and many other MAP primitives that are used by CAP services.
 * [class]`CAPParameterFactory` to create instances of  CAP primitives that are used by CAP services.
 * [class]`ISUPParameterFactory` to create instances of  ISUP primitives that are used by CAP services.
 * [class]`INAPPParameterFactory` to create instances of  INAP primitives that are used by CAP services.
-* [class]`CAPErrorMessageFactory` to create instances of  CAP error messages like [class]`CAPErrorMessageSystemFailure`.		
+* [class]`CAPErrorMessageFactory` to create instances of  CAP error messages like [class]`CAPErrorMessageSystemFailure`.
 
 [source,java]
 ----
@@ -101,16 +101,16 @@ The CAP-User Application leverages:
         ISDNAddressString msisdn = mapParamFact.createISDNAddressString(
                 AddressNature.international_number, NumberingPlan.ISDN,
                 "31628838002");
-		BCSMEvent ev = capParamFact.createBCSMEvent(EventTypeBCSM.routeSelectFailure, 
+		BCSMEvent ev = capParamFact.createBCSMEvent(EventTypeBCSM.routeSelectFailure,
 				MonitorMode.notifyAndContinue, null, null, false);
 ----
 
 [[_cap_send_request]]
 == {this-application}  Sending a CAP request (InitialDPRequest as an example)
 
-For sending a CAP request you must do the following at the SSF side: 
+For sending a CAP request you must do the following at the SSF side:
 
-- Create a new CAP Dialog 
+- Create a new CAP Dialog
 
 [source,java]
 ----
@@ -118,12 +118,12 @@ For sending a CAP request you must do the following at the SSF side:
 // First create Dialog
 SccpAddress origAddress = createLocalAddress();
 SccpAddress destAddress = createRemoteAddress();
-CAPApplicationContext acn = CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF; 
+CAPApplicationContext acn = CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF;
 currentCapDialog = capProvider.getCAPServiceCircuitSwitchedCall().
 	createNewDialog(acn, origAddress, remoteAddress);
 ----
 
-- Add an Invoke component (InitialDPRequest message) 
+- Add an Invoke component (InitialDPRequest message)
 
 [source,java]
 ----
@@ -161,19 +161,19 @@ LocationNumberCap locationNumberCap = client.getCAPProvider().getCAPParameterFac
 	createLocationNumberCap(locationNumber);
 
 ISDNAddressString vlrNumber = client.getCAPProvider().getMAPParameterFactory()
-		.createISDNAddressString(AddressNature.international_number, 
+		.createISDNAddressString(AddressNature.international_number,
 		NumberingPlan.ISDN, "552000002");
 LocationInformation locationInformation = client.getCAPProvider().getMAPParameterFactory()
-		.createLocationInformation(10, null, vlrNumber, null, 
+		.createLocationInformation(10, null, vlrNumber, null,
 		null, null, null, vlrNumber, null, false, false, null, null);
 
-currentCapDialog.addInitialDPRequest(serviceKey, calledPartyNumber, callingPartyNumber, 
+currentCapDialog.addInitialDPRequest(serviceKey, calledPartyNumber, callingPartyNumber,
 		null, null, null, locationNumber, null, null, null, null, null,
-		eventTypeBCSM, null, null, null, null, null, null, null, false, 
+		eventTypeBCSM, null, null, null, null, null, null, null, false,
 		null, null, locationInformation, null, null, null, null, null, false, null);
 ----
 
-- Send a TC-Begin message to the server peer 
+- Send a TC-Begin message to the server peer
 
 [source,java]
 ----
@@ -182,22 +182,22 @@ currentCapDialog.addInitialDPRequest(serviceKey, calledPartyNumber, callingParty
 currentCapDialog.send();
 ----
 
-- Wait for a response and other instructions from the SCF 
+- Wait for a response and other instructions from the SCF
 
-At the SCF side when the TC-Begin message is received, the following sequence of events occur: 
+At the SCF side when the TC-Begin message is received, the following sequence of events occur:
 
 [source,java]
 ----
 
-void CAPDialogListener.onDialogRequest(CAPDialog capDialog, 
+void CAPDialogListener.onDialogRequest(CAPDialog capDialog,
 	CAPGprsReferenceNumber capGprsReferenceNumber);
 ----
 
 This is the request for CAP Dialog processing.
-A CAP-User can reject the Dialog by invoking `capDialog.abort(CAPUserAbortReason abortReason)` method. 
+A CAP-User can reject the Dialog by invoking `capDialog.abort(CAPUserAbortReason abortReason)` method.
 
 Then the incoming primitives corresponding events (one or more) occur.
-In this case it is 
+In this case it is
 
 [source,java]
 ----
@@ -206,7 +206,7 @@ void CAPServiceCircuitSwitchedCallListener.onInitialDPRequest(InitialDPRequest i
 ----
 
 When processing component-dependant messages you can add response components or add other Invoke requests.
-In this case it is RequestReportBCSMEventRequest as an example: 
+In this case it is RequestReportBCSMEventRequest as an example:
 
 [source,java]
 ----
@@ -216,13 +216,13 @@ BCSMEvent ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
 	EventTypeBCSM.routeSelectFailure, MonitorMode.notifyAndContinue,
 	null, null, false);
 bcsmEventList.add(ev);
-ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oCalledPartyBusy, 
+ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oCalledPartyBusy,
 	MonitorMode.interrupted, null, null, false);
 bcsmEventList.add(ev);
-ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oNoAnswer, 
+ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oNoAnswer,
 	MonitorMode.interrupted, null, null, false);
 bcsmEventList.add(ev);
-ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oAnswer, 
+ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oAnswer,
 	MonitorMode.notifyAndContinue, null, null, false);
 bcsmEventList.add(ev);
 LegID legId = this.capProvider.getINAPParameterFactory().createLegID(true, LegType.leg1);
@@ -230,10 +230,10 @@ ev = this.capProvider.getCAPParameterFactory()
 		.createBCSMEvent(EventTypeBCSM.oDisconnect, MonitorMode.notifyAndContinue, legId, null, false);
 bcsmEventList.add(ev);
 legId = this.capProvider.getINAPParameterFactory().createLegID(true, LegType.leg2);
-ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oDisconnect, 
+ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oDisconnect,
 	MonitorMode.interrupted, legId, null, false);
 bcsmEventList.add(ev);
-ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oAbandon, 
+ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(EventTypeBCSM.oAbandon,
 	MonitorMode.notifyAndContinue, null, null, false);
 bcsmEventList.add(ev);
 currentCapDialog.addRequestReportBCSMEventRequest(bcsmEventList, null);
@@ -241,40 +241,40 @@ currentCapDialog.addRequestReportBCSMEventRequest(bcsmEventList, null);
 currentCapDialog.send();
 ----
 
-If preparing the response takes time, you should return the control and prepare the answer in a separate thread. 
+If preparing the response takes time, you should return the control and prepare the answer in a separate thread.
 
-If error or reject primitives are included into a TCAP message the following events occur: 
+If error or reject primitives are included into a TCAP message the following events occur:
 
 [source,java]
 ----
 
 public void onErrorComponent(CAPDialog capDialog, Long invokeId, CAPErrorMessage capErrorMessage);
-public void onProviderErrorComponent(CAPDialog capDialog, Long invokeId, 
+public void onProviderErrorComponent(CAPDialog capDialog, Long invokeId,
 	CAPComponentErrorReason providerError);
 public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem);
 ----
 
-After all incoming components have been processed, the event `onDialogDelimiter(CAPDialog capDialog);`  event is invoked (or `onDialogClose(CAPDialog capDialog)` in TC-END case).  If all response components have been prepared you can tell the Stack to send response: 
+After all incoming components have been processed, the event `onDialogDelimiter(CAPDialog capDialog);`  event is invoked (or `onDialogClose(CAPDialog capDialog)` in TC-END case).  If all response components have been prepared you can tell the Stack to send response:
 
 * [class]`capDialog.close(false);` - to send TC-END
 * [class]`capDialog.send();` - to send TC-CONTINUE
-* [class]`capDialog.close(true);` - sends TC-END without any components (prearrangedEnd)			
+* [class]`capDialog.close(true);` - sends TC-END without any components (prearrangedEnd)
 
 Instead of the methods `send()` and `close(boolean prearrangedEnd)`, you can invoke  `sendDelayed()` or `closeDelayed(boolean prearrangedEnd)`.
 These methods are the same as  `send()` and `close(boolean prearrangedEnd)` methods, but when invoking them from events of parsing incoming components real sending and dialog closing will occur only when all incoming component events and onDialogDelimiter() or onDialogClose() would be processed.
-If all response components have been prepared you should return the control and  send a response when all components are ready. 
+If all response components have been prepared you should return the control and  send a response when all components are ready.
 
-In case of an error, you can terminate a CAP dialog in any method by invoking: 
+In case of an error, you can terminate a CAP dialog in any method by invoking:
 
-* [class]`capDialog.abort(CAPUserAbortReason abortReason);` - sends TC-U-ABORT primitive		
+* [class]`capDialog.abort(CAPUserAbortReason abortReason);` - sends TC-U-ABORT primitive
 
-If there are no local actions or no response from a remote size for a long time, timeouts occur and the following methods are invoked: 
+If there are no local actions or no response from a remote size for a long time, timeouts occur and the following methods are invoked:
 
 * [class]`CAPDialogListener.onDialogTimeout(CAPDialog capDialog);`
-* [class]`CAPServiceListener.onInvokeTimeout(CAPDialog capDialog, Long invokeId);`		
+* [class]`CAPServiceListener.onInvokeTimeout(CAPDialog capDialog, Long invokeId);`
 
 In the [class]`onDialogTimeout()` method you can invoke [class]`capDialog.keepAlive();` to prevent a Dialog from closing.
-For preventing an Invoke timeout you should invoke [class]`resetInvokeTimer(Long invokeId);`  (before [class]`onInvokeTimeout()` occurs). 
+For preventing an Invoke timeout you should invoke [class]`resetInvokeTimer(Long invokeId);`  (before [class]`onInvokeTimeout()` occurs).
 
 [[_cap_usage_example]]
 == {this-application}  CAP Usage
@@ -360,16 +360,16 @@ public class Example {
 			.createLocationNumberCap(locationNumber);
 
 		ISDNAddressString vlrNumber = client.getCAPProvider().getMAPParameterFactory()
-				.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, 
+				.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN,
 						"552000002");
 		LocationInformation locationInformation = client.getCAPProvider().getMAPParameterFactory()
-				.createLocationInformation(10, null, vlrNumber, null, null, null, null, 
+				.createLocationInformation(10, null, vlrNumber, null, null, null, null,
 						vlrNumber, null, false, false, null, null);
 
-		client.sendInitialDP(origAddress, destAddress, serviceKey, calledPartyNumberCap, 
+		client.sendInitialDP(origAddress, destAddress, serviceKey, calledPartyNumberCap,
 				callingPartyNumberCap, locationNumberCap, EventTypeBCSM.collectedInfo,
 				locationInformation);
-		
+
 		// sending oAnswer in 5 sec
 		Thread.sleep(5000);
 		OAnswerSpecificInfo oAnswerSpecificInfo = client.getCAPProvider().getCAPParameterFactory()
@@ -379,7 +379,7 @@ public class Example {
 		MiscCallInfo miscCallInfo = client.getCAPProvider().getINAPParameterFactory()
 			.createMiscCallInfo(MiscCallInfoMessageType.notification, null);
 		client.sendEventReportBCSM_OAnswer(oAnswerSpecificInfo, legID, miscCallInfo);
-		
+
 		// sending oDisconnect in 20 sec
 		Thread.sleep(20000);
 		CauseIndicators causeIndicators = client.getCAPProvider().getISUPParameterFactory()
@@ -395,7 +395,7 @@ public class Example {
 		miscCallInfo = client.getCAPProvider().getINAPParameterFactory()
 			.createMiscCallInfo(MiscCallInfoMessageType.notification, null);
 		client.sendEventReportBCSM_ODisconnect(oDisconnectSpecificInfo, legID, miscCallInfo);
-		
+
 		// wait for answer
 		Thread.sleep(600000);
 
@@ -406,7 +406,7 @@ public class Example {
 		CallScfExample server = new CallScfExample();
 
 		server.start();
-		
+
 		// wait for a request
 		Thread.sleep(600000);
 
@@ -494,7 +494,7 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 		} finally {
 			ctx.close();
 		}
-		
+
 		paramFact = capProvider.getCAPParameterFactory();
 
 		capProvider.addCAPDialogListener(this);
@@ -516,50 +516,50 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 		 capProvider.getCAPServiceCircuitSwitchedCall().deactivate();
 	}
 
-	public void sendInitialDP(SccpAddress origAddress, SccpAddress remoteAddress, 
+	public void sendInitialDP(SccpAddress origAddress, SccpAddress remoteAddress,
 			int serviceKey, CalledPartyNumberCap calledPartyNumber,
-			CallingPartyNumberCap callingPartyNumber, LocationNumberCap locationNumber, 
+			CallingPartyNumberCap callingPartyNumber, LocationNumberCap locationNumber,
 			EventTypeBCSM eventTypeBCSM, LocationInformation locationInformation)
 			throws CAPException {
 		// First create Dialog
-		CAPApplicationContext acn = CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF; 
+		CAPApplicationContext acn = CAPApplicationContext.CapV2_gsmSSF_to_gsmSCF;
 		currentCapDialog = capProvider.getCAPServiceCircuitSwitchedCall().createNewDialog(
 				acn, origAddress, remoteAddress);
 
-		currentCapDialog.addInitialDPRequest(serviceKey, calledPartyNumber, 
-				callingPartyNumber, null, null, null, locationNumber, null, null, 
+		currentCapDialog.addInitialDPRequest(serviceKey, calledPartyNumber,
+				callingPartyNumber, null, null, null, locationNumber, null, null,
 				null, null, null,
-				eventTypeBCSM, null, null, null, null, null, null, null, false, 
+				eventTypeBCSM, null, null, null, null, null, null, null, false,
 				null, null, locationInformation, null, null, null, null, null, false, null);
 		// This will initiate the TC-BEGIN with INVOKE component
 		currentCapDialog.send();
 
 		this.cc.step = Step.initialDPSent;
 		this.cc.calledPartyNumber = calledPartyNumber;
-		this.cc.callingPartyNumber = callingPartyNumber;		
-	
+		this.cc.callingPartyNumber = callingPartyNumber;
+
 	}
 
-	public void sendEventReportBCSM_OAnswer(OAnswerSpecificInfo oAnswerSpecificInfo, 
+	public void sendEventReportBCSM_OAnswer(OAnswerSpecificInfo oAnswerSpecificInfo,
 			ReceivingSideID legID, MiscCallInfo miscCallInfo) throws CAPException {
 		if (currentCapDialog != null && this.cc != null) {
-			EventSpecificInformationBCSM eventSpecificInformationBCSM = 
+			EventSpecificInformationBCSM eventSpecificInformationBCSM =
 				this.capProvider.getCAPParameterFactory().createEventSpecificInformationBCSM(
 						oAnswerSpecificInfo);
-			currentCapDialog.addEventReportBCSMRequest(EventTypeBCSM.oAnswer, 
+			currentCapDialog.addEventReportBCSMRequest(EventTypeBCSM.oAnswer,
 					eventSpecificInformationBCSM, legID, miscCallInfo, null);
 			currentCapDialog.send();
 			this.cc.step = Step.answered;
 		}
 	}
 
-	public void sendEventReportBCSM_ODisconnect(ODisconnectSpecificInfo oDisconnectSpecificInfo, 
+	public void sendEventReportBCSM_ODisconnect(ODisconnectSpecificInfo oDisconnectSpecificInfo,
 			ReceivingSideID legID, MiscCallInfo miscCallInfo) throws CAPException {
 		if (currentCapDialog != null && this.cc != null) {
-			EventSpecificInformationBCSM eventSpecificInformationBCSM = 
+			EventSpecificInformationBCSM eventSpecificInformationBCSM =
 				this.capProvider.getCAPParameterFactory().createEventSpecificInformationBCSM(
 						oDisconnectSpecificInfo);
-			currentCapDialog.addEventReportBCSMRequest(EventTypeBCSM.oDisconnect, 
+			currentCapDialog.addEventReportBCSMRequest(EventTypeBCSM.oDisconnect,
 					eventSpecificInformationBCSM, legID, miscCallInfo, null);
 			currentCapDialog.send();
 			this.cc.step = Step.disconnected;
@@ -586,7 +586,7 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	@Override
 	public void onActivityTestResponse(ActivityTestResponse ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -631,171 +631,171 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	@Override
 	public void onErrorComponent(CAPDialog capDialog, Long invokeId, CAPErrorMessage capErrorMessage) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem, 
+	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem,
 			boolean isLocalOriginated) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onInvokeTimeout(CAPDialog capDialog, Long invokeId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onCAPMessage(CAPMessage capMessage) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onInitialDPRequest(InitialDPRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onApplyChargingRequest(ApplyChargingRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onEventReportBCSMRequest(EventReportBCSMRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onApplyChargingReportRequest(ApplyChargingReportRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onReleaseCallRequest(ReleaseCallRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onCallInformationRequestRequest(CallInformationRequestRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onCallInformationReportRequest(CallInformationReportRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onAssistRequestInstructionsRequest(AssistRequestInstructionsRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onEstablishTemporaryConnectionRequest(EstablishTemporaryConnectionRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onDisconnectForwardConnectionRequest(DisconnectForwardConnectionRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onConnectToResourceRequest(ConnectToResourceRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onResetTimerRequest(ResetTimerRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onFurnishChargingInformationRequest(FurnishChargingInformationRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onSendChargingInformationRequest(SendChargingInformationRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onSpecializedResourceReportRequest(SpecializedResourceReportRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onPlayAnnouncementRequest(PlayAnnouncementRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onPromptAndCollectUserInformationRequest(PromptAndCollectUserInformationRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onPromptAndCollectUserInformationResponse(PromptAndCollectUserInformationResponse ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onCancelRequest(CancelRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onDialogRequest(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onDialogAccept(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, 
+	public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason,
 			CAPUserAbortReason userReason) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onDialogProviderAbort(CAPDialog capDialog, PAbortCauseType abortCause) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onDialogClose(CAPDialog capDialog) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -807,8 +807,8 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	@Override
 	public void onDialogNotice(CAPDialog capDialog, CAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
 		// TODO Auto-generated method stub
-		
-	}	
+
+	}
 
 	private enum Step {
 		initialDPSent,
@@ -816,7 +816,7 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 		answered,
 		disconnected;
 	}
-	
+
 	private class CallContent {
 		public Step step;
 		public Long activityTestInvokeId;
@@ -965,39 +965,39 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 							null, null, false);
 					bcsmEventList.add(ev);
 					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
-							EventTypeBCSM.oCalledPartyBusy, MonitorMode.interrupted, null, 
+							EventTypeBCSM.oCalledPartyBusy, MonitorMode.interrupted, null,
 							null, false);
 					bcsmEventList.add(ev);
 					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
 							EventTypeBCSM.oNoAnswer, MonitorMode.interrupted, null, null, false);
 					bcsmEventList.add(ev);
 					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
-							EventTypeBCSM.oAnswer, MonitorMode.notifyAndContinue, null, 
+							EventTypeBCSM.oAnswer, MonitorMode.notifyAndContinue, null,
 							null, false);
 					bcsmEventList.add(ev);
 					LegID legId = this.capProvider.getINAPParameterFactory().createLegID(
 							true, LegType.leg1);
 					ev = this.capProvider.getCAPParameterFactory()
-							.createBCSMEvent(EventTypeBCSM.oDisconnect, 
+							.createBCSMEvent(EventTypeBCSM.oDisconnect,
 									MonitorMode.notifyAndContinue, legId, null, false);
 					bcsmEventList.add(ev);
-					legId = this.capProvider.getINAPParameterFactory().createLegID(true, 
+					legId = this.capProvider.getINAPParameterFactory().createLegID(true,
 							LegType.leg2);
 					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
-							EventTypeBCSM.oDisconnect, MonitorMode.interrupted, legId, 
+							EventTypeBCSM.oDisconnect, MonitorMode.interrupted, legId,
 							null, false);
 					bcsmEventList.add(ev);
 					ev = this.capProvider.getCAPParameterFactory().createBCSMEvent(
-							EventTypeBCSM.oAbandon, MonitorMode.notifyAndContinue, null, 
+							EventTypeBCSM.oAbandon, MonitorMode.notifyAndContinue, null,
 							null, false);
 					bcsmEventList.add(ev);
 					currentCapDialog.addRequestReportBCSMEventRequest(bcsmEventList, null);
 
 					// calculating here a new called party number if it is needed
-					String newNumber = "22123124"; 
+					String newNumber = "22123124";
 					if (newNumber != null) {
 						// sending Connect to force routing the call to a new  number
-						ArrayList<CalledPartyNumberCap> calledPartyNumber = 
+						ArrayList<CalledPartyNumberCap> calledPartyNumber =
 							new ArrayList<CalledPartyNumberCap>();
 						CalledPartyNumber cpn = this.capProvider.getISUPParameterFactory()
 							.createCalledPartyNumber();
@@ -1012,8 +1012,8 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 						DestinationRoutingAddress destinationRoutingAddress = this.capProvider
 							.getCAPParameterFactory().createDestinationRoutingAddress(
 								calledPartyNumber);
-						currentCapDialog.addConnectRequest(destinationRoutingAddress, null, 
-								null, null, null, null, null, null, null, null, null, 
+						currentCapDialog.addConnectRequest(destinationRoutingAddress, null,
+								null, null, null, null, null, null, null, null, null,
 								null, null,
 								false, false, false, null, false);
 					} else {
@@ -1038,7 +1038,7 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 
 	@Override
 	public void onDialogTimeout(CAPDialog capDialog) {
-		if (currentCapDialog != null && this.cc != null && this.cc.step != Step.disconnected 
+		if (currentCapDialog != null && this.cc != null && this.cc.step != Step.disconnected
 				&& this.cc.activityTestInvokeId == null) {
 			// check the SSF if the call is still alive
 			currentCapDialog.keepAlive();
@@ -1074,180 +1074,180 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	}
 
 	@Override
-	public void onErrorComponent(CAPDialog capDialog, Long invokeId, 
+	public void onErrorComponent(CAPDialog capDialog, Long invokeId,
 			CAPErrorMessage capErrorMessage) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem, 
+	public void onRejectComponent(CAPDialog capDialog, Long invokeId, Problem problem,
 			boolean isLocalOriginated) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onCAPMessage(CAPMessage capMessage) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onRequestReportBCSMEventRequest(RequestReportBCSMEventRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onApplyChargingRequest(ApplyChargingRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onContinueRequest(ContinueRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onApplyChargingReportRequest(ApplyChargingReportRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onReleaseCallRequest(ReleaseCallRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onConnectRequest(ConnectRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onCallInformationRequestRequest(CallInformationRequestRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onCallInformationReportRequest(CallInformationReportRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onActivityTestRequest(ActivityTestRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onAssistRequestInstructionsRequest(AssistRequestInstructionsRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onEstablishTemporaryConnectionRequest(EstablishTemporaryConnectionRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onDisconnectForwardConnectionRequest(DisconnectForwardConnectionRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onConnectToResourceRequest(ConnectToResourceRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onResetTimerRequest(ResetTimerRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onFurnishChargingInformationRequest(FurnishChargingInformationRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onSendChargingInformationRequest(SendChargingInformationRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onSpecializedResourceReportRequest(SpecializedResourceReportRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onPlayAnnouncementRequest(PlayAnnouncementRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onPromptAndCollectUserInformationRequest(PromptAndCollectUserInformationRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onPromptAndCollectUserInformationResponse(PromptAndCollectUserInformationResponse ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onCancelRequest(CancelRequest ind) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onDialogRequest(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onDialogAccept(CAPDialog capDialog, CAPGprsReferenceNumber capGprsReferenceNumber) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason, 
+	public void onDialogUserAbort(CAPDialog capDialog, CAPGeneralAbortReason generalReason,
 			CAPUserAbortReason userReason) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onDialogProviderAbort(CAPDialog capDialog, PAbortCauseType abortCause) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onDialogClose(CAPDialog capDialog) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -1257,10 +1257,10 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	}
 
 	@Override
-	public void onDialogNotice(CAPDialog capDialog, 
+	public void onDialogNotice(CAPDialog capDialog,
 			CAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	private enum Step {
