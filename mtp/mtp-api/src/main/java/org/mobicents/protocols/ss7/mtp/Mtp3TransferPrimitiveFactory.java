@@ -79,6 +79,16 @@ public class Mtp3TransferPrimitiveFactory {
                 data = new byte[msg.length - 8];
                 System.arraycopy(msg, 8, data, 0, data.length);
                 break;
+            case ANSI_Sls5Bit:
+                dpc = ((msg[3] & 0xff) << 16) | ((msg[2] & 0xff) << 8) | (msg[1] & 0xff);
+                opc = ((msg[6] & 0xff) << 16) | ((msg[5] & 0xff) << 8) | (msg[4] & 0xff);
+                sls = (msg[7] & 0x1f);
+
+                // msu data
+                data = new byte[msg.length - 8];
+                System.arraycopy(msg, 8, data, 0, data.length);
+                break;
+
 
             default:
                 // TODO : We don't support rest justyet
