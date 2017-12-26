@@ -39,7 +39,7 @@ public class SequenceNumberImpl implements SequenceNumber {
     }
 
     @Override
-    public SequenceNumber increment() {
+    public SequenceNumber nextNumber() {
         SequenceNumber newValue;
         if (nextValueIsZero) {
             newValue = new SequenceNumberImpl(0);

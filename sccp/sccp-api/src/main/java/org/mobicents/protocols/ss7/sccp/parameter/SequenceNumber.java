@@ -5,5 +5,5 @@ public interface SequenceNumber {
     int MAX_VALUE = 127;
 
     int getValue();
-    SequenceNumber increment();
+    SequenceNumber nextNumber();
 }

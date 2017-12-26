@@ -73,7 +73,7 @@ public class SccpFlowControl {
     }
 
     protected SequenceNumber getNextSequenceNumber() {
-        return sendSequenceNumber.increment();
+        return sendSequenceNumber.nextNumber();
     }
 
     public void checkOutputMessageNumbering(SccpConnDt2MessageImpl msg) {
@@ -120,7 +120,7 @@ public class SccpFlowControl {
                 return false;
 
             } else if (sendSequenceNumber.equals(sendSequenceNumberExpectedAtInput) && inputWindow.contains(sendSequenceNumber)) {
-                sendSequenceNumberExpectedAtInput = sendSequenceNumberExpectedAtInput.increment();
+                sendSequenceNumberExpectedAtInput = sendSequenceNumberExpectedAtInput.nextNumber();
 
             } else {
                 if (!inputWindow.contains(sendSequenceNumber)) {
@@ -134,7 +134,7 @@ public class SccpFlowControl {
             }
         }
 
-        if (rangeContains(lastReceiveSequenceNumberReceived, this.sendSequenceNumber.increment(), receiveSequenceNumber)) {
+        if (rangeContains(lastReceiveSequenceNumberReceived, this.sendSequenceNumber.nextNumber(), receiveSequenceNumber)) {
             outputWindow.setLowerEdge(receiveSequenceNumber);
         } else {
             conn.resetSection(new ResetCauseImpl(ResetCauseValue.MESSAGE_OUT_OF_ORDER_INCORRECT_PS));
