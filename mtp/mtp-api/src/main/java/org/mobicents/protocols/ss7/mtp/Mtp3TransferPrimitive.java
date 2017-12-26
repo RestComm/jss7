@@ -142,7 +142,7 @@ public class Mtp3TransferPrimitive {
                 res[5] = (byte) (this.opc >> 8);
                 res[6] = (byte) (this.opc >> 16);
 
-                res[7] = (byte) (this.sls & 0x0F);
+                res[7] = (byte) (this.sls & 0x1F);
 
                 // msu data
                 System.arraycopy(this.data, 0, res, 8, this.data.length);
