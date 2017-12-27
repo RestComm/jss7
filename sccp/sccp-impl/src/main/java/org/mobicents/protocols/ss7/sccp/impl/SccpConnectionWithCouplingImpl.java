@@ -91,7 +91,6 @@ public abstract class SccpConnectionWithCouplingImpl extends SccpConnectionWithS
     }
 
     protected void receiveDataMessage(SccpConnSegmentableMessageImpl msg) throws Exception {
-        super.receiveDataMessage(msg);
         if (couplingEnabled) {
             if (msg instanceof SccpConnDt1MessageImpl) {
                 SccpConnDt1MessageImpl copy = new SccpConnDt1MessageImpl(255, nextConn.getSls(), nextConn.getLocalSsn());
@@ -113,6 +112,8 @@ public abstract class SccpConnectionWithCouplingImpl extends SccpConnectionWithS
 
                 nextConn.sendMessage(copy);
             }
+        } else {
+            super.receiveDataMessage(msg);
         }
     }
 

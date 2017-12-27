@@ -42,7 +42,6 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.scheduler.Clock;
 import org.mobicents.protocols.ss7.scheduler.DefaultClock;
 import org.mobicents.protocols.ss7.scheduler.Scheduler;
-import org.testng.ITestContext;
 import org.testng.annotations.*;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -70,6 +69,14 @@ public class ConnectionFlowControlTest extends SccpHarness {
 
     public ConnectionFlowControlTest() {
         clock = new DefaultClock();
+    }
+
+    @DataProvider(name="ConnectionTestDataProvider")
+    public static Object[][] createData() {
+        return new Object[][] {
+                new Object[] {false},
+                new Object[] {true}
+        };
     }
 
     @BeforeClass
@@ -110,8 +117,18 @@ public class ConnectionFlowControlTest extends SccpHarness {
     }
 
     @BeforeMethod
-    public void setUp() throws Exception {
+    public void setUp(Object[] testArgs) throws Exception {
+        boolean onlyOneStack = (Boolean)testArgs[0];
+        this.onlyOneStack = onlyOneStack;
+
         super.setUp();
+
+        if (onlyOneStack) {
+            sccpStack2 = sccpStack1;
+            sccpProvider2 = sccpProvider1;
+            sccpStack2Name = sccpStack1Name;
+            ssn2 = 7;
+        }
     }
 
     @AfterMethod
@@ -142,8 +159,8 @@ public class ConnectionFlowControlTest extends SccpHarness {
         sccpStack2.iarTimerDelay = 16000 * 60;
     }
 
-    @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" })
-    public void testWaitingForWindow() throws Exception {
+    @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testWaitingForWindow(boolean onlyOneStack) throws Exception {
 //        this.saveTrafficInFile();
 //        this.saveLogFile("aaaa.log");
         stackParameterInit();
@@ -151,11 +168,11 @@ public class ConnectionFlowControlTest extends SccpHarness {
         ((SccpStackImplConnProxy)sccpStack1).setAkAutoSending(false);
         ((SccpStackImplConnProxy)sccpStack2).setAkAutoSending(false);
 
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
 
         u1.register();
         u2.register();
@@ -164,21 +181,19 @@ public class ConnectionFlowControlTest extends SccpHarness {
 
         int credit = 2;
 
-        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, null, new ImportanceImpl((byte)1));
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(getSSN(), a2, a1, null, new ImportanceImpl((byte)1));
         crMsg.setProtocolClass(new ProtocolClassImpl(3));
         crMsg.setCredit(new CreditImpl(credit));
 
         SccpConnectionWithFlowControlImplProxy conn1 = (SccpConnectionWithFlowControlImplProxy) sccpProvider1
-                .newConnection(8, new ProtocolClassImpl(3));
+                .newConnection(getSSN(), new ProtocolClassImpl(3));
         conn1.establish(crMsg);
 
         Thread.sleep(100);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
+        assertBothConnectionsExist();
 
-        SccpConnectionWithFlowControlImplProxy conn2 = (SccpConnectionWithFlowControlImplProxy) sccpProvider2
-                .getConnections().values().iterator().next();
+        SccpConnectionWithFlowControlImplProxy conn2 = (SccpConnectionWithFlowControlImplProxy) getConn2();
 
         Thread.sleep(100);
 
@@ -220,18 +235,18 @@ public class ConnectionFlowControlTest extends SccpHarness {
         assertEquals(sccpStack2.getConnectionsNumber(), 0);
     }
 
-    @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" })
-    public void testLowCredit() throws Exception {
+    @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testLowCredit(boolean onlyOneStack) throws Exception {
         stackParameterInit();
 
         ((SccpStackImplConnProxy)sccpStack1).setAkAutoSending(true);
         ((SccpStackImplConnProxy)sccpStack2).setAkAutoSending(true);
 
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
 
         u1.register();
         u2.register();
@@ -240,22 +255,20 @@ public class ConnectionFlowControlTest extends SccpHarness {
 
         int credit = 2;
 
-        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(getSSN(), a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
         crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
         crMsg.setProtocolClass(new ProtocolClassImpl(3));
         crMsg.setCredit(new CreditImpl(credit));
 
         SccpConnectionWithFlowControlImplProxy conn1 = (SccpConnectionWithFlowControlImplProxy) sccpProvider1
-                .newConnection(8, new ProtocolClassImpl(3));
+                .newConnection(getSSN(), new ProtocolClassImpl(3));
         conn1.establish(crMsg);
 
         Thread.sleep(100);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
+        assertBothConnectionsExist();
 
-        SccpConnectionWithFlowControlImplProxy conn2 = (SccpConnectionWithFlowControlImplProxy) sccpProvider2
-                .getConnections().values().iterator().next();
+        SccpConnectionWithFlowControlImplProxy conn2 = (SccpConnectionWithFlowControlImplProxy) getConn2();
 
         Thread.sleep(100);
 
@@ -268,6 +281,7 @@ public class ConnectionFlowControlTest extends SccpHarness {
 
         Thread.sleep(100);
 
+        assertEquals(u2.getReceivedData().size(), 1);
         assertEquals(u1.getReceivedData().size(), 4);
         assertEquals(u1.getReceivedData().get(0), DATA1);
         assertEquals(u1.getReceivedData().get(1), DATA2);
@@ -285,15 +299,15 @@ public class ConnectionFlowControlTest extends SccpHarness {
         assertEquals(sccpStack2.getConnectionsNumber(), 0);
     }
 
-    @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" })
-    public void testOverloading() throws Exception {
+    @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testOverloading(boolean onlyOneStack) throws Exception {
         stackParameterInit();
 
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
 
         u1.register();
         u2.register();
@@ -302,22 +316,20 @@ public class ConnectionFlowControlTest extends SccpHarness {
 
         int credit = 4;
 
-        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(getSSN(), a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
         crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
         crMsg.setProtocolClass(new ProtocolClassImpl(3));
         crMsg.setCredit(new CreditImpl(credit));
 
         SccpConnectionWithFlowControlImplProxy conn1 = (SccpConnectionWithFlowControlImplProxy) sccpProvider1
-                .newConnection(8, new ProtocolClassImpl(3));
+                .newConnection(getSSN(), new ProtocolClassImpl(3));
         conn1.establish(crMsg);
 
         Thread.sleep(100);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
+        assertBothConnectionsExist();
 
-        SccpConnectionWithFlowControlImplProxy conn2 = (SccpConnectionWithFlowControlImplProxy) sccpProvider2
-                .getConnections().values().iterator().next();
+        SccpConnectionWithFlowControlImplProxy conn2 = (SccpConnectionWithFlowControlImplProxy) getConn2();
 
         Thread.sleep(100);
 
@@ -375,15 +387,15 @@ public class ConnectionFlowControlTest extends SccpHarness {
         assertEquals(sccpStack2.getConnectionsNumber(), 0);
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testBigCredit() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testBigCredit(boolean onlyOneStack) throws Exception {
         stackParameterInit();
 
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
 
         u1.register();
         u2.register();
@@ -392,19 +404,18 @@ public class ConnectionFlowControlTest extends SccpHarness {
 
         int credit = 127;
 
-        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(getSSN(), a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
         crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
         crMsg.setProtocolClass(new ProtocolClassImpl(3));
         crMsg.setCredit(new CreditImpl(credit));
 
-        SccpConnection conn1 = sccpProvider1.newConnection(8, new ProtocolClassImpl(3));
+        SccpConnection conn1 = sccpProvider1.newConnection(getSSN(), new ProtocolClassImpl(3));
         conn1.establish(crMsg);
 
         Thread.sleep(100);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
-        SccpConnection conn2 = sccpProvider2.getConnections().values().iterator().next();
+        assertBothConnectionsExist();
+        SccpConnection conn2 = getConn2();
 
         Thread.sleep(100);
 
@@ -412,7 +423,7 @@ public class ConnectionFlowControlTest extends SccpHarness {
             conn2.send(new byte[]{2, (byte)i, (byte)i, (byte)i, (byte)i});
         }
 
-        Thread.sleep(500);
+        Thread.sleep(1000);
 
         assertEquals(u1.getReceivedData().size(), 127*3 + 1);
 
@@ -433,15 +444,15 @@ public class ConnectionFlowControlTest extends SccpHarness {
         assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testBigCreditTwoDirections() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testBigCreditTwoDirections(boolean onlyOneStack) throws Exception {
         stackParameterInit();
 
-        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 8);
-        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), 8);
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
-        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
 
         u1.register();
         u2.register();
@@ -450,19 +461,18 @@ public class ConnectionFlowControlTest extends SccpHarness {
 
         int credit = 127;
 
-        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] { 9, 8, 7, 6, 5 }, new ImportanceImpl((byte)1));
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(getSSN(), a2, a1, new byte[] { 9, 8, 7, 6, 5 }, new ImportanceImpl((byte)1));
         crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
         crMsg.setProtocolClass(new ProtocolClassImpl(3));
         crMsg.setCredit(new CreditImpl(credit));
 
-        SccpConnection conn1 = sccpProvider1.newConnection(8, new ProtocolClassImpl(3));
+        SccpConnection conn1 = sccpProvider1.newConnection(getSSN(), new ProtocolClassImpl(3));
         conn1.establish(crMsg);
 
         Thread.sleep(100);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
-        SccpConnection conn2 = sccpProvider2.getConnections().values().iterator().next();
+        assertBothConnectionsExist();
+        SccpConnection conn2 = getConn2();
 
         Thread.sleep(100);
 
@@ -483,7 +493,7 @@ public class ConnectionFlowControlTest extends SccpHarness {
             Thread.sleep(100);
         }
 
-        Thread.sleep(200);
+        Thread.sleep(1000);
 
 //        while (u1.receivedData.size() != 382) {
 //            int iii1 = 01;

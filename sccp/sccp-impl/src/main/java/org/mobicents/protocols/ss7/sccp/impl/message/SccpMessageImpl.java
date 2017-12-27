@@ -41,6 +41,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
 public abstract class SccpMessageImpl implements SccpMessage {
 
     protected boolean isMtpOriginated;
+    protected boolean isIncoming;
     protected int type;
     protected int localOriginSsn = -1;
     protected final int maxDataLen;
@@ -65,6 +66,7 @@ public abstract class SccpMessageImpl implements SccpMessage {
 
     protected SccpMessageImpl(int maxDataLen, int type, int incomingOpc, int incomingDpc, int incomingSls, int networkId) {
         this.isMtpOriginated = true;
+        this.isIncoming = true;
         this.type = type;
         this.incomingOpc = incomingOpc;
         this.incomingDpc = incomingDpc;
@@ -111,6 +113,14 @@ public abstract class SccpMessageImpl implements SccpMessage {
 
     public boolean getIsMtpOriginated() {
         return isMtpOriginated;
+    }
+
+    public boolean getIsIncoming() {
+        return isIncoming;
+    }
+
+    public void setIsIncoming(boolean incoming) {
+        isIncoming = incoming;
     }
 
     public int getOriginLocalSsn() {
