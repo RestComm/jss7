@@ -57,6 +57,14 @@ public class ConnectionTimersTest extends SccpHarness {
         clock = new DefaultClock();
     }
 
+    @DataProvider(name="ConnectionTestDataProvider")
+    public static Object[][] createData() {
+        return new Object[][] {
+                new Object[] {false},
+                new Object[] {true}
+        };
+    }
+
     @BeforeClass
     public void setUpClass() throws Exception {
         this.sccpStack1Name = "ConnectionTimersTestStack1";
@@ -77,6 +85,9 @@ public class ConnectionTimersTest extends SccpHarness {
     }
 
     protected void createStack2() {
+        if (onlyOneStack) {
+            return;
+        }
         scheduler2 = new Scheduler();
         scheduler2.setClock(clock);
         scheduler2.start();
@@ -95,8 +106,17 @@ public class ConnectionTimersTest extends SccpHarness {
     }
 
     @BeforeMethod
-    public void setUp() throws Exception {
+    public void setUp(Object[] testArgs) throws Exception {
+        boolean onlyOneStack = (Boolean)testArgs[0];
+        this.onlyOneStack = onlyOneStack;
+
         super.setUp();
+
+        if (onlyOneStack) {
+            sccpStack2 = sccpStack1;
+            sccpProvider2 = sccpProvider1;
+            sccpStack2Name = sccpStack1Name;
+        }
     }
 
     @AfterMethod
@@ -127,14 +147,14 @@ public class ConnectionTimersTest extends SccpHarness {
         sccpStack2.iarTimerDelay = 16000 * 60;
     }
 
-    @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" })
-    public void testInactivityProtocolClass2() throws Exception {
+    @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testInactivityProtocolClass2(boolean onlyOneStack) throws Exception {
         stackParameterInit();
         testInactivity(new ProtocolClassImpl(2));
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testInactivityProtocolClass3() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testInactivityProtocolClass3(boolean onlyOneStack) throws Exception {
         stackParameterInit();
         testInactivity(new ProtocolClassImpl(3));
     }
@@ -159,14 +179,13 @@ public class ConnectionTimersTest extends SccpHarness {
         crMsg.setProtocolClass(protocolClass);
         crMsg.setCredit(new CreditImpl(100));
 
-        SccpConnection conn1 = sccpProvider1.newConnection(8, new ProtocolClassImpl(2));
+        SccpConnection conn1 = sccpProvider1.newConnection(8, protocolClass);
         conn1.establish(crMsg);
 
         Thread.sleep(500);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
-        SccpConnection conn2 = sccpProvider2.getConnections().values().iterator().next();
+        assertBothConnectionsExist();
+        SccpConnection conn2 = getConn2();
 
         Thread.sleep(400);
 

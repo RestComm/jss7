@@ -49,6 +49,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -63,6 +64,14 @@ public class ConnectionCouplingTest extends SccpHarness3 {
 
     public ConnectionCouplingTest() {
         clock = new DefaultClock();
+    }
+
+    @DataProvider(name="ConnectionTestDataProvider")
+    public static Object[][] createData() {
+        return new Object[][] {
+                new Object[] {false},
+                new Object[] {true}
+        };
     }
 
     @BeforeClass
@@ -86,6 +95,9 @@ public class ConnectionCouplingTest extends SccpHarness3 {
     }
 
     protected void createStack2() {
+        if (onlyOneStack) {
+            return;
+        }
         scheduler2 = new Scheduler();
         scheduler2.setClock(clock);
         scheduler2.start();
@@ -95,6 +107,9 @@ public class ConnectionCouplingTest extends SccpHarness3 {
     }
 
     protected void createStack3() {
+        if (onlyOneStack) {
+            return;
+        }
         scheduler3 = new Scheduler();
         scheduler3.setClock(clock);
         scheduler3.start();
@@ -260,7 +275,6 @@ public class ConnectionCouplingTest extends SccpHarness3 {
         assertEquals(conn21.getState(), SccpConnectionState.CLOSED);
         assertEquals(conn22.getState(), SccpConnectionState.CLOSED);
     }
-
 
     @Test(groups = { "SccpMessage", "functional.connection" })
     public void testDataTransitDisabledProtocolClass2() throws Exception {
@@ -550,6 +564,99 @@ public class ConnectionCouplingTest extends SccpHarness3 {
         Thread.sleep(200);
 
         conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), null);
+
+        Thread.sleep(200);
+
+        assertEquals(sccpStack1.getConnectionsNumber(), 0);
+        assertEquals(sccpStack2.getConnectionsNumber(), 0);
+        assertEquals(sccpStack3.getConnectionsNumber(), 0);
+
+        assertEquals(conn3.getState(), SccpConnectionState.CLOSED);
+        assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
+
+        assertEquals(conn21.getState(), SccpConnectionState.CLOSED);
+        assertEquals(conn22.getState(), SccpConnectionState.CLOSED);
+    }
+
+
+    @Test(groups = { "SccpMessage", "functional.connection" })
+    public void testTransitNodeGetsNoDataProtocolClass2() throws Exception {
+        stackParameterInit();
+        testTransitNodeGetsNoData(2);
+    }
+
+    @Test(groups = { "SccpMessage", "functional.connection" })
+    public void testTransitNodeGetsNoDataProtocolClass3() throws Exception {
+        stackParameterInit();
+        testTransitNodeGetsNoData(3);
+    }
+
+    private void testTransitNodeGetsNoData(int protocolClass) throws Exception {
+        sccpStack1.connEstTimerDelay = 1000000000;
+        sccpStack2.connEstTimerDelay = 1000000000;
+        sccpStack3.connEstTimerDelay = 1000000000;
+
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
+        a3 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack3PC(), getSSN3());
+
+        SccpAddress a3gt = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
+                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack2PC(), getSSN3());
+
+        SccpAddress primaryAddress = sccpProvider1.getParameterFactory().createSccpAddress(
+                RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN,
+                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), getStack3PC(), 0);
+        SccpAddress pattern = sccpProvider1.getParameterFactory().createSccpAddress(
+                RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
+                sccpProvider1.getParameterFactory().createGlobalTitle("111111", 1), 0, 0);
+
+        User u1 = new User(sccpStack1.getSccpProvider(), a1, null, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, null, getSSN3());
+        User u3 = new User(sccpStack3.getSccpProvider(), a3, null, getSSN3());
+
+        sccpStack2.getRouter().addRoutingAddress(1, primaryAddress);
+        sccpStack2.getRouter().addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern, "K",
+                1, -1, null, 0, null);
+
+        u1.register();
+        u2.register();
+        u3.register();
+
+        Thread.sleep(100);
+
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(getSSN(), a3gt, a1,
+                new byte[] { 0x01, 0x02, (byte) 0xFF }, new ImportanceImpl((byte) 1));
+        crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
+        crMsg.setProtocolClass(new ProtocolClassImpl(protocolClass));
+        crMsg.setCredit(new CreditImpl(100));
+
+        SccpConnection conn1 = sccpProvider1.newConnection(8, new ProtocolClassImpl(protocolClass));
+        conn1.establish(crMsg);
+
+        Thread.sleep(100);
+
+        assertEquals(sccpStack3.getConnectionsNumber(), 1);
+        assertEquals(sccpStack2.getConnectionsNumber(), 2);
+        assertEquals(sccpStack1.getConnectionsNumber(), 1);
+        SccpConnection conn3 = sccpProvider3.getConnections().values().iterator().next();
+
+        SccpConnection conn21 = (SccpConnection) sccpProvider2.getConnections().values().toArray()[0];
+        SccpConnection conn22 = (SccpConnection) sccpProvider2.getConnections().values().toArray()[1];
+
+        Thread.sleep(100);
+
+        conn1.send(new byte[]{1, 2, 3, 4, 5, 6, 7, 8});
+        conn3.send(new byte[]{1, 2, 3, 4, 5, 6});
+
+        Thread.sleep(300);
+
+        assertEquals(u1.getReceivedData().size(), 1);
+        assertEquals(u2.getReceivedData().size(), 0);
+        assertEquals(u3.getReceivedData().size(), 1);
+
+        Thread.sleep(200);
+
+        conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), null); // new byte[] { (byte) 0x91, (byte) 0x92, (byte) 0x93 }
 
         Thread.sleep(200);
 

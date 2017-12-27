@@ -134,7 +134,7 @@ abstract class SccpConnectionWithTimers extends SccpConnectionWithTransmitQueueI
         public void run() {
             try {
                 connectionLock.lock();
-                if (getState() == CLOSED) {
+                if (getState() == CLOSED || getState() == CONNECTION_INITIATED) {
                     return;
                 }
 

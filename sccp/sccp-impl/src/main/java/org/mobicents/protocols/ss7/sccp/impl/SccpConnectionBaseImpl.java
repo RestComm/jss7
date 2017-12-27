@@ -84,7 +84,9 @@ abstract class SccpConnectionBaseImpl {
         } else if (message instanceof SccpConnCcMessageImpl) {
             SccpConnCcMessageImpl cc = (SccpConnCcMessageImpl) message;
             remoteReference = cc.getSourceLocalReferenceNumber();
-            remoteDpc = cc.getIncomingOpc();
+            if (cc.getIncomingDpc() != -1) {
+                remoteDpc = cc.getIncomingOpc();
+            }
             setState(SccpConnectionState.ESTABLISHED);
 
         } else if (message instanceof SccpConnRscMessageImpl) {
@@ -244,8 +246,14 @@ abstract class SccpConnectionBaseImpl {
         rlsd.setReleaseCause(reason);
         rlsd.setSourceLocalReferenceNumber(getLocalReference());
         rlsd.setUserData(data);
-        sendMessage(rlsd);
-        setState(DISCONNECT_INITIATED);
+        SccpConnectionState prevState = state;
+        try {
+            setState(DISCONNECT_INITIATED);
+            sendMessage(rlsd);
+        } catch (Exception e) {
+            state = prevState;
+            throw e;
+        }
     }
 
     public void refuse(RefusalCause reason, byte[] data) throws Exception {

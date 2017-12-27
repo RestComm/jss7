@@ -70,6 +70,8 @@ public interface SccpMessage {
 
     boolean getIsMtpOriginated();
 
+    boolean getIsIncoming();
+
     int getOriginLocalSsn();
 
     int getSls();

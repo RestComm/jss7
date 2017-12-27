@@ -38,8 +38,8 @@ public class SccpConnectionWithFlowControlImpl extends SccpConnectionImpl implem
     }
 
     public void establish(SccpConnCrMessage message) throws IOException {
-        super.establish(message);
         this.flow = newSccpFlowControl(message.getCredit());
+        super.establish(message);
     }
 
     public void confirm(SccpAddress respondingAddress, Credit credit, byte[] data) throws Exception {

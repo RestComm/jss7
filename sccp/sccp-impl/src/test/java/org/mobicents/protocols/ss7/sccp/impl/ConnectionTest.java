@@ -51,6 +51,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -64,6 +65,14 @@ public class ConnectionTest extends SccpHarness {
 
     public ConnectionTest() {
         clock = new DefaultClock();
+    }
+
+    @DataProvider(name="ConnectionTestDataProvider")
+    public static Object[][] createData() {
+        return new Object[][] {
+                new Object[] {false},
+                new Object[] {true}
+        };
     }
 
     @BeforeClass
@@ -86,6 +95,9 @@ public class ConnectionTest extends SccpHarness {
     }
 
     protected void createStack2() {
+        if (onlyOneStack) {
+            return;
+        }
         scheduler2 = new Scheduler();
         scheduler2.setClock(clock);
         scheduler2.start();
@@ -104,7 +116,10 @@ public class ConnectionTest extends SccpHarness {
     }
 
     @BeforeMethod
-    public void setUp() throws Exception {
+    public void setUp(Object[] testArgs) throws Exception {
+        boolean onlyOneStack = (Boolean)testArgs[0];
+        this.onlyOneStack = onlyOneStack;
+
         ssn2 = 6;
         super.setUp();
 
@@ -112,15 +127,22 @@ public class ConnectionTest extends SccpHarness {
         SccpAddress pattern = super.parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gtPattern, 0, 0);
 
         GlobalTitle gtRa11 = super.parameterFactory.createGlobalTitle("1111", 0, NumberingPlan.ISDN_TELEPHONY, new BCDEvenEncodingScheme(), NatureOfAddress.INTERNATIONAL);
-        SccpAddress routingAddress11 = super.parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gtRa11, 2, 0);
-        SccpAddress routingAddress12 = super.parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gtRa11, 1, 0);
+        SccpAddress routingAddress11 = super.parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gtRa11, getStack2PC(), 0);
+        SccpAddress routingAddress12 = super.parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gtRa11, getStack1PC(), 0);
         router1.addRoutingAddress(1, routingAddress11);
         router1.addRoutingAddress(2, routingAddress12);
         router1.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 1, -1, null, 0, null);
         router1.addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.REMOTE, pattern, "K", 2, -1, null, 0, null);
 
-        SccpAddress routingAddress21 = super.parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gtRa11, 1, 0);
-        SccpAddress routingAddress22 = super.parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gtRa11, 2, 0);
+        if (onlyOneStack) {
+            sccpStack2 = sccpStack1;
+            sccpProvider2 = sccpProvider1;
+            sccpStack2Name = sccpStack1Name;
+
+            return;
+        }
+        SccpAddress routingAddress21 = super.parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gtRa11, getStack1PC(), 0);
+        SccpAddress routingAddress22 = super.parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gtRa11, getStack2PC(), 0);
         router2.addRoutingAddress(1, routingAddress21);
         router2.addRoutingAddress(2, routingAddress22);
         router2.addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 1, -1, null, 0, null);
@@ -147,27 +169,32 @@ public class ConnectionTest extends SccpHarness {
 
     private void stackParameterInit() {
         sccpStack1.referenceNumberCounter = 20;
-        sccpStack2.referenceNumberCounter = 50;
 
         sccpStack1.iasTimerDelay = 7500 * 60;
         sccpStack1.iarTimerDelay = 16000 * 60;
-        sccpStack2.iasTimerDelay = 7500 * 60;
-        sccpStack2.iarTimerDelay = 16000 * 60;
 
         sccpStack1.sstTimerDuration_Min = 10000;
-        sccpStack2.sstTimerDuration_Min = 10000;
 
         sccpStack1.relTimerDelay = 15000;
         sccpStack1.repeatRelTimerDelay = 15000;
         sccpStack1.intTimerDelay = 30000;
 
-        sccpStack2.relTimerDelay = 15000;
-        sccpStack2.repeatRelTimerDelay = 15000;
-        sccpStack2.intTimerDelay = 30000;
+        if (!onlyOneStack) {
+            sccpStack2.referenceNumberCounter = 50;
+
+            sccpStack2.iasTimerDelay = 7500 * 60;
+            sccpStack2.iarTimerDelay = 16000 * 60;
+
+            sccpStack2.sstTimerDuration_Min = 10000;
+
+            sccpStack2.relTimerDelay = 15000;
+            sccpStack2.repeatRelTimerDelay = 15000;
+            sccpStack2.intTimerDelay = 30000;
+        }
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testConnectionEstablish() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testConnectionEstablish(boolean onlyOneStack) throws Exception {
         stackParameterInit();
 
         a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
@@ -191,15 +218,14 @@ public class ConnectionTest extends SccpHarness {
 
         Thread.sleep(200);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
+        assertBothConnectionsExist();
 
-        assertEquals(sccpProvider2.getConnections().values().iterator().next().getState(), SccpConnectionState.ESTABLISHED);
+        assertEquals(getConn2().getState(), SccpConnectionState.ESTABLISHED);
         assertEquals(sccpProvider1.getConnections().values().iterator().next().getState(), SccpConnectionState.ESTABLISHED);
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testConnectionEstablish_GT() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testConnectionEstablish_GT(boolean onlyOneStack) throws Exception {
         stackParameterInit();
 
         GlobalTitle gt1 = sccpProvider1.getParameterFactory().createGlobalTitle("111111", 0, NumberingPlan.ISDN_TELEPHONY,
@@ -227,15 +253,14 @@ public class ConnectionTest extends SccpHarness {
 
         Thread.sleep(100);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
+        assertBothConnectionsExist();
 
-        assertEquals(sccpProvider2.getConnections().values().iterator().next().getState(), SccpConnectionState.ESTABLISHED);
+        assertEquals(getConn2().getState(), SccpConnectionState.ESTABLISHED);
         assertEquals(sccpProvider1.getConnections().values().iterator().next().getState(), SccpConnectionState.ESTABLISHED);
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testConnectionEstablishWithConfirmData() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testConnectionEstablishWithConfirmData(boolean onlyOneStack) throws Exception {
         stackParameterInit();
 
         a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
@@ -260,18 +285,17 @@ public class ConnectionTest extends SccpHarness {
 
         Thread.sleep(100);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
+        assertBothConnectionsExist();
 
-        assertEquals(sccpProvider2.getConnections().values().iterator().next().getState(), SccpConnectionState.ESTABLISHED);
+        assertEquals(getConn2().getState(), SccpConnectionState.ESTABLISHED);
         assertEquals(sccpProvider1.getConnections().values().iterator().next().getState(), SccpConnectionState.ESTABLISHED);
 
         assertEquals(u1.getReceivedData().size(), 1);
         assertEquals(u1.getReceivedData().iterator().next(), new byte[] {1, 2, 3});
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testConnectionRelease() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testConnectionRelease(boolean onlyOneStack) throws Exception {
         stackParameterInit();
 
         a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
@@ -296,9 +320,8 @@ public class ConnectionTest extends SccpHarness {
 
         Thread.sleep(100);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
-        SccpConnection conn2 = sccpProvider2.getConnections().values().iterator().next();
+        assertBothConnectionsExist();
+        SccpConnection conn2 = getConn2();
 
         Thread.sleep(100);
 
@@ -313,8 +336,8 @@ public class ConnectionTest extends SccpHarness {
         assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testConnectionReset() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testConnectionReset(boolean onlyOneStack) throws Exception {
         stackParameterInit();
 
         a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
@@ -338,10 +361,9 @@ public class ConnectionTest extends SccpHarness {
 
         Thread.sleep(100);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
+        assertBothConnectionsExist();
 
-        assertEquals(sccpProvider2.getConnections().values().iterator().next().getState(), SccpConnectionState.ESTABLISHED);
+        assertEquals(getConn2().getState(), SccpConnectionState.ESTABLISHED);
         assertEquals(sccpProvider1.getConnections().values().iterator().next().getState(), SccpConnectionState.ESTABLISHED);
 
         conn1.reset(new ResetCauseImpl(ResetCauseValue.UNQUALIFIED));
@@ -349,12 +371,12 @@ public class ConnectionTest extends SccpHarness {
 
         assertEquals(u1.getResetCount(), 1);
         assertEquals(u2.getResetCount(), 1);
-        assertEquals(sccpProvider2.getConnections().values().iterator().next().getState(), SccpConnectionState.ESTABLISHED);
+        assertEquals(getConn2().getState(), SccpConnectionState.ESTABLISHED);
         assertEquals(sccpProvider1.getConnections().values().iterator().next().getState(), SccpConnectionState.ESTABLISHED);
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testConnectionRefuse() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testConnectionRefuse(boolean onlyOneStack) throws Exception {
         stackParameterInit();
 
         a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
@@ -388,14 +410,14 @@ public class ConnectionTest extends SccpHarness {
         assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testConnectionInactivityKeepAliveProtocolClass2() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testConnectionInactivityKeepAliveProtocolClass2(boolean onlyOneStack) throws Exception {
         stackParameterInit();
         testConnectionInactivityKeepAlive(new ProtocolClassImpl(2));
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testConnectionInactivityKeepAliveProtocolClass3() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testConnectionInactivityKeepAliveProtocolClass3(boolean onlyOneStack) throws Exception {
         stackParameterInit();
         testConnectionInactivityKeepAlive(new ProtocolClassImpl(3));
     }
@@ -425,23 +447,22 @@ public class ConnectionTest extends SccpHarness {
 
         Thread.sleep(100);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
+        assertBothConnectionsExist();
 
         Thread.sleep(300);
 
-        assertEquals(sccpProvider2.getConnections().values().iterator().next().getState(), SccpConnectionState.ESTABLISHED);
+        assertEquals(getConn2().getState(), SccpConnectionState.ESTABLISHED);
         assertEquals(sccpProvider1.getConnections().values().iterator().next().getState(), SccpConnectionState.ESTABLISHED);
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testConnectionInactivityReleaseProtocolClass2() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testConnectionInactivityReleaseProtocolClass2(boolean onlyOneStack) throws Exception {
         stackParameterInit();
         testConnectionInactivityRelease(new ProtocolClassImpl(2));
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testConnectionInactivityReleaseProtocolClass3() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testConnectionInactivityReleaseProtocolClass3(boolean onlyOneStack) throws Exception {
         stackParameterInit();
         testConnectionInactivityRelease(new ProtocolClassImpl(3));
     }
@@ -471,9 +492,8 @@ public class ConnectionTest extends SccpHarness {
 
         Thread.sleep(100);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
-        SccpConnection conn2 = sccpProvider2.getConnections().values().iterator().next();
+        assertBothConnectionsExist();
+        SccpConnection conn2 = getConn2();
 
         Thread.sleep(300);
 
@@ -481,8 +501,8 @@ public class ConnectionTest extends SccpHarness {
         assertEquals(conn2.getState(), SccpConnectionState.CLOSED);
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testSendDataProtocolClass2() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testSendDataProtocolClass2(boolean onlyOneStack) throws Exception {
         stackParameterInit();
         a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
         a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
@@ -505,9 +525,8 @@ public class ConnectionTest extends SccpHarness {
 
         Thread.sleep(100);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
-        SccpConnection conn2 = sccpProvider2.getConnections().values().iterator().next();
+        assertBothConnectionsExist();
+        SccpConnection conn2 = getConn2();
 
         Thread.sleep(100);
 
@@ -531,8 +550,8 @@ public class ConnectionTest extends SccpHarness {
         assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testSendDataWhenDlnAndSlnDifferClass2() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testSendDataWhenDlnAndSlnDifferClass2(boolean onlyOneStack) throws Exception {
         stackParameterInit();
 
         a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
@@ -556,9 +575,8 @@ public class ConnectionTest extends SccpHarness {
 
         Thread.sleep(100);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
-        SccpConnection conn2 = sccpProvider2.getConnections().values().iterator().next();
+        assertBothConnectionsExist();
+        SccpConnection conn2 = getConn2();
 
         Thread.sleep(100);
 
@@ -582,8 +600,8 @@ public class ConnectionTest extends SccpHarness {
         assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testSendDataWhenSsnDifferClass2() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testSendDataWhenSsnDifferClass2(boolean onlyOneStack) throws Exception {
         stackParameterInit();
 
         a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), 15);
@@ -592,8 +610,10 @@ public class ConnectionTest extends SccpHarness {
         resource1.removeRemoteSsn(1);
         resource1.addRemoteSsn(1, getStack2PC(), a2.getSubsystemNumber(), 0, false);
 
-        resource2.removeRemoteSsn(1);
-        resource2.addRemoteSsn(1, getStack1PC(), a1.getSubsystemNumber(), 0, false);
+        if (!onlyOneStack) {
+            resource2.removeRemoteSsn(1);
+            resource2.addRemoteSsn(1, getStack1PC(), a1.getSubsystemNumber(), 0, false);
+        }
 
         User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, a1.getSubsystemNumber());
         User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, a2.getSubsystemNumber());
@@ -613,9 +633,8 @@ public class ConnectionTest extends SccpHarness {
 
         Thread.sleep(100);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
-        SccpConnection conn2 = sccpProvider2.getConnections().values().iterator().next();
+        assertBothConnectionsExist();
+        SccpConnection conn2 = getConn2();
 
         Thread.sleep(100);
 
@@ -639,8 +658,8 @@ public class ConnectionTest extends SccpHarness {
         assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testSendDataProtocolClass3() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testSendDataProtocolClass3(boolean onlyOneStack) throws Exception {
         this.saveTrafficInFile();
         stackParameterInit();
 
@@ -664,9 +683,8 @@ public class ConnectionTest extends SccpHarness {
 
         Thread.sleep(100);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
-        SccpConnection conn2 = sccpProvider2.getConnections().values().iterator().next();
+        assertBothConnectionsExist();
+        SccpConnection conn2 = getConn2();
 
         Thread.sleep(100);
 
@@ -703,8 +721,8 @@ public class ConnectionTest extends SccpHarness {
     }
 
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testSendSegmentedDataProtocolClass2() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testSendSegmentedDataProtocolClass2(boolean onlyOneStack) throws Exception {
         stackParameterInit();
 
         a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
@@ -728,9 +746,8 @@ public class ConnectionTest extends SccpHarness {
 
         Thread.sleep(100);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
-        SccpConnection conn2 = sccpProvider2.getConnections().values().iterator().next();
+        assertBothConnectionsExist();
+        SccpConnection conn2 = getConn2();
 
         Thread.sleep(100);
 
@@ -759,8 +776,8 @@ public class ConnectionTest extends SccpHarness {
         assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testSendSegmentedDataProtocolClass3() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testSendSegmentedDataProtocolClass3(boolean onlyOneStack) throws Exception {
         stackParameterInit();
 
         a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
@@ -784,9 +801,8 @@ public class ConnectionTest extends SccpHarness {
 
         Thread.sleep(100);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
-        SccpConnection conn2 = sccpProvider2.getConnections().values().iterator().next();
+        assertBothConnectionsExist();
+        SccpConnection conn2 = getConn2();
 
         Thread.sleep(100);
 
@@ -815,14 +831,14 @@ public class ConnectionTest extends SccpHarness {
         assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testIncreaseCreditByUserProtocolClass3() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testIncreaseCreditByUserProtocolClass3(boolean onlyOneStack) throws Exception {
         stackParameterInit();
         testChangeCreditByUserProtocolClass3(100, 127);
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" })
-    public void testDecreaseCreditByUserProtocolClass3() throws Exception {
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testDecreaseCreditByUserProtocolClass3(boolean onlyOneStack) throws Exception {
         stackParameterInit();
         testChangeCreditByUserProtocolClass3(127, 100);
     }
@@ -851,9 +867,8 @@ public class ConnectionTest extends SccpHarness {
 
         Thread.sleep(100);
 
-        assertEquals(sccpStack2.getConnectionsNumber(), 1);
-        assertEquals(sccpStack1.getConnectionsNumber(), 1);
-        SccpConnection conn2 = sccpProvider2.getConnections().values().iterator().next();
+        assertBothConnectionsExist();
+        SccpConnection conn2 = getConn2();
 
         assertEquals(conn1.getReceiveCredit().getValue(), finalCredit);
         assertEquals(conn1.getSendCredit().getValue(), finalCredit);

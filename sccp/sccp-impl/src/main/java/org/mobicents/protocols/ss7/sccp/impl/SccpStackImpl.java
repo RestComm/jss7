@@ -927,7 +927,6 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         // {
         // stateLock.unlock();
         // }
-
     }
 
     public boolean isStarted() {

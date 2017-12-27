@@ -33,16 +33,22 @@ import org.apache.log4j.PatternLayout;
 import org.mobicents.protocols.ss7.Util;
 import org.mobicents.protocols.ss7.mtp.Mtp3TransferPrimitive;
 import org.mobicents.protocols.ss7.sccp.Router;
+import org.mobicents.protocols.ss7.sccp.SccpConnection;
 import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpResource;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
 import org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author amit bhayani
  *
  */
 public abstract class SccpHarness {
+
+    protected boolean onlyOneStack;
 
     protected String sccpStack1Name = null;
     protected String sccpStack2Name = null;
@@ -63,6 +69,7 @@ public abstract class SccpHarness {
     protected SccpResource resource2 = null;
 
     protected ParameterFactory parameterFactory;
+
     /**
 	 *
 	 */
@@ -73,7 +80,6 @@ public abstract class SccpHarness {
 
     protected void createStack1() {
         sccpStack1 = createStack(sccpStack1Name);
-
     }
 
     protected void createStack2() {
@@ -148,6 +154,10 @@ public abstract class SccpHarness {
     }
 
     protected int getStack2PC() {
+        if (onlyOneStack) {
+            return getStack1PC();
+        }
+
         if (sccpStack1.getSccpProtocolVersion() == SccpProtocolVersion.ANSI)
             return 8000002;
         else
@@ -166,12 +176,16 @@ public abstract class SccpHarness {
 
     public void setUp() throws Exception {
         this.setUpStack1();
-        this.setUpStack2();
+        if (!onlyOneStack) {
+            this.setUpStack2();
+        }
     }
 
     public void tearDown() {
         this.tearDownStack1();
-        this.tearDownStack2();
+        if (!onlyOneStack) {
+            this.tearDownStack2();
+        }
     }
 
     protected int tsnNum = (new Random()).nextInt(100000);
@@ -445,6 +459,23 @@ public abstract class SccpHarness {
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }
+    }
+
+    public void assertBothConnectionsExist() {
+        if (sccpStack1 != sccpStack2) {
+            assertEquals(sccpStack1.getConnectionsNumber(), 1);
+            assertEquals(sccpStack2.getConnectionsNumber(), 1);
+        } else {
+            assertEquals(sccpStack1.getConnectionsNumber(), 2);
+        }
+    }
+
+    public SccpConnection getConn2() {
+        if (sccpStack1 != sccpStack2) {
+            return sccpProvider2.getConnections().values().iterator().next();
+        } else {
+            return sccpProvider2.getConnections().get(new LocalReferenceImpl(sccpStack2.referenceNumberCounter));
         }
     }
 }
