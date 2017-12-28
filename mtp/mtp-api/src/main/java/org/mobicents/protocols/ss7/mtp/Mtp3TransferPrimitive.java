@@ -126,6 +126,29 @@ public class Mtp3TransferPrimitive {
                 System.arraycopy(this.data, 0, res, 8, this.data.length);
 
                 break;
+
+            case ANSI_Sls5Bit:
+                res = new byte[this.data.length + 8];
+
+                // sio
+                ssi = (this.ni & 0x03) << 2 | (this.mp & 0x03);
+                res[0] = (byte) (((ssi & 0x0F) << 4) | (this.si & 0x0F));
+
+                res[1] = (byte) this.dpc;
+                res[2] = (byte) (this.dpc >> 8);
+                res[3] = (byte) (this.dpc >> 16);
+
+                res[4] = (byte) this.opc;
+                res[5] = (byte) (this.opc >> 8);
+                res[6] = (byte) (this.opc >> 16);
+
+                res[7] = (byte) (this.sls & 0x1F);
+
+                // msu data
+                System.arraycopy(this.data, 0, res, 8, this.data.length);
+
+                break;
+
             default:
                 // We don't support rest
                 break;
