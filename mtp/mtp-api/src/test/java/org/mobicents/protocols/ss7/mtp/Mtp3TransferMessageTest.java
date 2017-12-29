@@ -39,8 +39,11 @@ public class Mtp3TransferMessageTest {
         return new byte[] { (byte) 0x83, (byte) 232, 3, (byte) 244, (byte) 161, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
     }
 
-    private byte[] getAnsiMsg() {
-        return new byte[] { (byte) 0x83, (byte) 232, 3, 0,  (byte) 208, 7, 0, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    private byte[] getAnsiMsg(boolean is8Bit) {
+        if(is8Bit)
+            return new byte[] { (byte) 0x83, (byte) 232, 3, 0,  (byte) 208, 7, 0, 33, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+        else
+            return new byte[] { (byte) 0x83, (byte) 232, 3, 0,  (byte) 208, 7, 0, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
     }
 
     private byte[] getData() {
@@ -73,14 +76,14 @@ public class Mtp3TransferMessageTest {
     @Test(groups = { "Mtp3TransferMessageTest", "decodeAnsiSls8Bit" })
     public void testAnsiSls8BitDecode() throws Exception {
         Mtp3TransferPrimitiveFactory factory = new Mtp3TransferPrimitiveFactory(RoutingLabelFormat.ANSI_Sls8Bit);
-        Mtp3TransferPrimitive msg = factory.createMtp3TransferPrimitive(getAnsiMsg());
+        Mtp3TransferPrimitive msg = factory.createMtp3TransferPrimitive(getAnsiMsg(true));
 
         assertEquals(msg.getSi(), 3);
         assertEquals(msg.getNi(), 2);
         assertEquals(msg.getMp(), 0);
         assertEquals(msg.getDpc(), 1000);
         assertEquals(msg.getOpc(), 2000);
-        assertEquals(msg.getSls(), 10);
+        assertEquals(msg.getSls(), 33);
         assertTrue(Arrays.equals(msg.getData(), this.getData()));
 
     }
@@ -88,7 +91,7 @@ public class Mtp3TransferMessageTest {
     @Test(groups = { "Mtp3TransferMessageTest", "decodeAnsiSls5Bit" })
     public void testAnsiSls5BitDecode() throws Exception {
         Mtp3TransferPrimitiveFactory factory = new Mtp3TransferPrimitiveFactory(RoutingLabelFormat.ANSI_Sls5Bit);
-        Mtp3TransferPrimitive msg = factory.createMtp3TransferPrimitive(getAnsiMsg());
+        Mtp3TransferPrimitive msg = factory.createMtp3TransferPrimitive(getAnsiMsg(false));
 
         assertEquals(msg.getSi(), 3);
         assertEquals(msg.getNi(), 2);
@@ -113,11 +116,11 @@ public class Mtp3TransferMessageTest {
     @Test(groups = { "Mtp3TransferMessageTest", "encodeAnsiSls8Bit" })
     public void testAnsiSls8BitEncode() throws Exception {
         Mtp3TransferPrimitiveFactory factory = new Mtp3TransferPrimitiveFactory(RoutingLabelFormat.ANSI_Sls8Bit);
-        Mtp3TransferPrimitive msg = factory.createMtp3TransferPrimitive(3, 2, 0, 2000, 1000, 10, this.getData());
+        Mtp3TransferPrimitive msg = factory.createMtp3TransferPrimitive(3, 2, 0, 2000, 1000, 33, this.getData());
 
         byte[] res = msg.encodeMtp3();
 
-        assertTrue(Arrays.equals(res, this.getAnsiMsg()));
+        assertTrue(Arrays.equals(res, this.getAnsiMsg(true)));
     }
   
     @Test(groups = { "Mtp3TransferMessageTest", "encodeAnsiSls5Bit" })
@@ -127,7 +130,7 @@ public class Mtp3TransferMessageTest {
 
         byte[] res = msg.encodeMtp3();
 
-        assertTrue(Arrays.equals(res, this.getAnsiMsg()));
+        assertTrue(Arrays.equals(res, this.getAnsiMsg(false)));
   }
 
 }
