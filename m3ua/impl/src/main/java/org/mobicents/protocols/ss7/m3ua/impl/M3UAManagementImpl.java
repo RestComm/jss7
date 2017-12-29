@@ -1166,7 +1166,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
         AsImpl asImpl = this.routeManagement.getAsForRoute(data.getDpc(), data.getOpc(), data.getSI(), data.getSLS());
         if (asImpl == null) {
             logger.error(String.format("Tx : No AS found for routing message %s", payload));
-            return;
+            throw new IOException(String.format("Tx : No AS found for routing message %s", payload));
         }
         payload.setNetworkAppearance(asImpl.getNetworkAppearance());
         payload.setRoutingContext(asImpl.getRoutingContext());
