@@ -28,16 +28,23 @@ import org.mobicents.protocols.ss7.sccp.SccpConnection;
 import org.mobicents.protocols.ss7.sccp.SccpConnectionState;
 import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt2MessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnItMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlcMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlsdMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRscMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRsrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.CreditImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ReleaseCauseImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.ResetCauseImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SequenceNumberImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.SequencingSegmentingImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnCrMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCauseValue;
+import org.mobicents.protocols.ss7.sccp.parameter.ResetCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.scheduler.Clock;
 import org.mobicents.protocols.ss7.scheduler.DefaultClock;
@@ -49,8 +56,10 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.CLOSED;
+import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.ESTABLISHED;
 import static org.mobicents.protocols.ss7.sccp.parameter.ErrorCauseValue.LRN_MISMATCH_INCONSISTENT_SOURCE_LRN;
 import static org.mobicents.protocols.ss7.sccp.parameter.ReleaseCauseValue.SCCP_FAILURE;
 import static org.mobicents.protocols.ss7.sccp.parameter.ReleaseCauseValue.SUBSYSTEM_FAILURE;
@@ -198,18 +207,18 @@ public class ConnectionErrorTest extends SccpHarness {
     }
 
     @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
-    public void testErrProtocolClass2(boolean onlyOneStack) throws Exception {
+    public void testRlsdErrProtocolClass2(boolean onlyOneStack) throws Exception {
         stackParameterInit();
-        testErr(new ProtocolClassImpl(2));
+        testRlsdErr(new ProtocolClassImpl(2));
     }
 
     @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
-    public void testErrProtocolClass3(boolean onlyOneStack) throws Exception {
+    public void testRlsdErrProtocolClass3(boolean onlyOneStack) throws Exception {
         stackParameterInit();
-        testErr(new ProtocolClassImpl(3));
+        testRlsdErr(new ProtocolClassImpl(3));
     }
 
-    public void testErr(ProtocolClass protocolClass) throws Exception {
+    public void testRlsdErr(ProtocolClass protocolClass) throws Exception {
         a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
         a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
 
@@ -260,6 +269,252 @@ public class ConnectionErrorTest extends SccpHarness {
     }
 
     @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testRsrErrProtocolClass2(boolean onlyOneStack) throws Exception {
+        stackParameterInit();
+        testRsrErr(new ProtocolClassImpl(2));
+    }
+
+    @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testRsrErrProtocolClass3(boolean onlyOneStack) throws Exception {
+        stackParameterInit();
+        testRsrErr(new ProtocolClassImpl(3));
+    }
+
+    public void testRsrErr(ProtocolClass protocolClass) throws Exception {
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
+
+        User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
+
+        u1.register();
+        u2.register();
+
+        Thread.sleep(100);
+
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(getSSN(), a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
+        crMsg.setProtocolClass(protocolClass);
+        crMsg.setCredit(new CreditImpl(100));
+
+        SccpConnection conn1 = sccpProvider1.newConnection(getSSN(), protocolClass);
+        conn1.establish(crMsg);
+
+        Thread.sleep(100);
+
+        assertBothConnectionsExist();
+        SccpConnection conn2 = getConn2();
+
+        Thread.sleep(100);
+
+        SccpConnRsrMessageImpl rsr = new SccpConnRsrMessageImpl(conn1.getSls(), conn1.getLocalSsn());
+        rsr.setSourceLocalReferenceNumber(new LocalReferenceImpl(100));
+        rsr.setDestinationLocalReferenceNumber(conn1.getRemoteReference());
+        rsr.setResetCause(new ResetCauseImpl(ResetCauseValue.END_USER_ORIGINATED));
+        rsr.setOutgoingDpc(getStack2PC());
+
+        sccpStack1.sccpRoutingControl.sendConn(rsr);
+
+        Thread.sleep(200);
+
+        if (!onlyOneStack) {
+            assertEquals(sccpStack1.getConnectionsNumber(), 0);
+            assertEquals(sccpStack2.getConnectionsNumber(), 1);
+        } else {
+            assertEquals(sccpStack1.getConnectionsNumber(), 1);
+        }
+
+        assertEquals(conn1.getState(), CLOSED);
+        assertEquals(conn2.getState(), SccpConnectionState.ESTABLISHED); // will be closed later due to no messages received timeout
+        assertEquals(u1.getStats().getDisconnectError().getValue(), LRN_MISMATCH_INCONSISTENT_SOURCE_LRN);
+    }
+
+    @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testRscErrProtocolClass2(boolean onlyOneStack) throws Exception {
+        stackParameterInit();
+        testRscErr(new ProtocolClassImpl(2));
+    }
+
+    @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testRscErrProtocolClass3(boolean onlyOneStack) throws Exception {
+        stackParameterInit();
+        testRscErr(new ProtocolClassImpl(3));
+    }
+
+    public void testRscErr(ProtocolClass protocolClass) throws Exception {
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
+
+        User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
+
+        u1.register();
+        u2.register();
+
+        Thread.sleep(100);
+
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(getSSN(), a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
+        crMsg.setProtocolClass(protocolClass);
+        crMsg.setCredit(new CreditImpl(100));
+
+        SccpConnection conn1 = sccpProvider1.newConnection(getSSN(), protocolClass);
+        conn1.establish(crMsg);
+
+        Thread.sleep(100);
+
+        assertBothConnectionsExist();
+        SccpConnection conn2 = getConn2();
+
+        Thread.sleep(100);
+
+        SccpConnRscMessageImpl rsc = new SccpConnRscMessageImpl(conn1.getSls(), conn1.getLocalSsn());
+        rsc.setSourceLocalReferenceNumber(new LocalReferenceImpl(100));
+        rsc.setDestinationLocalReferenceNumber(conn1.getRemoteReference());
+        rsc.setOutgoingDpc(getStack2PC());
+
+        sccpStack1.sccpRoutingControl.sendConn(rsc);
+
+        Thread.sleep(200);
+
+        if (!onlyOneStack) {
+            assertEquals(sccpStack1.getConnectionsNumber(), 0);
+            assertEquals(sccpStack2.getConnectionsNumber(), 1);
+        } else {
+            assertEquals(sccpStack1.getConnectionsNumber(), 1);
+        }
+
+        assertEquals(conn1.getState(), CLOSED);
+        assertEquals(conn2.getState(), SccpConnectionState.ESTABLISHED); // will be closed later due to no messages received timeout
+        assertEquals(u1.getStats().getDisconnectError().getValue(), LRN_MISMATCH_INCONSISTENT_SOURCE_LRN);
+    }
+
+    @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testItErrProtocolClass2(boolean onlyOneStack) throws Exception {
+        stackParameterInit();
+        testItErr(new ProtocolClassImpl(2));
+    }
+
+    @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testItErrProtocolClass3(boolean onlyOneStack) throws Exception {
+        stackParameterInit();
+        testItErr(new ProtocolClassImpl(3));
+    }
+
+    public void testItErr(ProtocolClass protocolClass) throws Exception {
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
+
+        User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
+
+        u1.register();
+        u2.register();
+
+        Thread.sleep(100);
+
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(getSSN(), a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
+        crMsg.setProtocolClass(protocolClass);
+        crMsg.setCredit(new CreditImpl(100));
+
+        SccpConnection conn1 = sccpProvider1.newConnection(getSSN(), protocolClass);
+        conn1.establish(crMsg);
+
+        Thread.sleep(100);
+
+        assertBothConnectionsExist();
+        SccpConnection conn2 = getConn2();
+
+        Thread.sleep(100);
+
+        SccpConnItMessageImpl it = new SccpConnItMessageImpl(conn1.getSls(), conn1.getLocalSsn());
+        it.setProtocolClass(protocolClass);
+        it.setSourceLocalReferenceNumber(new LocalReferenceImpl(100));
+        it.setDestinationLocalReferenceNumber(conn1.getRemoteReference());
+        it.setOutgoingDpc(getStack2PC());
+        it.setCredit(new CreditImpl(0));
+        it.setSequencingSegmenting(new SequencingSegmentingImpl(new SequenceNumberImpl(0, false),
+                new SequenceNumberImpl(0, false), false));
+
+        sccpStack1.sccpRoutingControl.sendConn(it);
+
+        Thread.sleep(200);
+
+        if (!onlyOneStack) {
+            assertEquals(sccpStack1.getConnectionsNumber(), 0);
+            assertEquals(sccpStack2.getConnectionsNumber(), 1);
+        } else {
+            assertEquals(sccpStack1.getConnectionsNumber(), 1);
+        }
+
+        assertEquals(conn1.getState(), CLOSED);
+        assertEquals(conn2.getState(), SccpConnectionState.ESTABLISHED); // will be closed later due to no messages received timeout
+        assertEquals(u1.getStats().getDisconnectError().getValue(), LRN_MISMATCH_INCONSISTENT_SOURCE_LRN);
+    }
+
+    @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testRlcErrProtocolClass2(boolean onlyOneStack) throws Exception {
+        stackParameterInit();
+        testRlcErr(new ProtocolClassImpl(2));
+    }
+
+    @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testRlcErrProtocolClass3(boolean onlyOneStack) throws Exception {
+        stackParameterInit();
+        testRlcErr(new ProtocolClassImpl(3));
+    }
+
+    public void testRlcErr(ProtocolClass protocolClass) throws Exception {
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
+
+        User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
+
+        u1.register();
+        u2.register();
+
+        Thread.sleep(100);
+
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(getSSN(), a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
+        crMsg.setProtocolClass(protocolClass);
+        crMsg.setCredit(new CreditImpl(100));
+
+        SccpConnection conn1 = sccpProvider1.newConnection(getSSN(), protocolClass);
+        conn1.establish(crMsg);
+
+        Thread.sleep(100);
+
+        assertBothConnectionsExist();
+        SccpConnection conn2 = getConn2();
+
+        Thread.sleep(100);
+
+        SccpConnRlcMessageImpl rlc = new SccpConnRlcMessageImpl(conn1.getSls(), conn1.getLocalSsn());
+        rlc.setSourceLocalReferenceNumber(new LocalReferenceImpl(100));
+        rlc.setDestinationLocalReferenceNumber(conn1.getRemoteReference());
+        rlc.setOutgoingDpc(getStack2PC());
+
+        sccpStack1.sccpRoutingControl.sendConn(rlc);
+
+        Thread.sleep(200);
+
+        // RLC message was discarded
+        if (!onlyOneStack) {
+            assertEquals(sccpStack1.getConnectionsNumber(), 1);
+            assertEquals(sccpStack2.getConnectionsNumber(), 1);
+        } else {
+            assertEquals(sccpStack1.getConnectionsNumber(), 2);
+        }
+
+        assertEquals(conn1.getState(), ESTABLISHED);
+        assertEquals(conn2.getState(), ESTABLISHED);
+        assertNull(u1.getStats().getDisconnectError());
+    }
+
+    @org.testng.annotations.Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
     public void testReleaseDueToErrorProtocolClass2(boolean onlyOneStack) throws Exception {
         stackParameterInit();
         testReleaseDueToError(new ProtocolClassImpl(2));
@@ -304,11 +559,15 @@ public class ConnectionErrorTest extends SccpHarness {
 
         Thread.sleep(200);
 
-        assertEquals(sccpStack1.getConnectionsNumber(), 0);
-        assertEquals(sccpStack2.getConnectionsNumber(), 0);
+        if (!onlyOneStack) {
+            assertEquals(sccpStack1.getConnectionsNumber(), 0);
+        } else {
+            assertEquals(sccpStack1.getConnectionsNumber(), 1); // conn2
+        }
+//        assertEquals(sccpStack2.getConnectionsNumber(), 0);
 
         assertEquals(conn1.getState(), CLOSED);
-        assertEquals(conn2.getState(), CLOSED); // will be closed later due to no messages received timeout
+//        assertEquals(conn2.getState(), CLOSED); // will be closed later due to no messages received timeout
         assertEquals(u1.getStats().getReleaseCause().getValue(), SUBSYSTEM_FAILURE);
     }
 

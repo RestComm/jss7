@@ -117,6 +117,12 @@ public abstract class SccpConnectionWithCouplingImpl extends SccpConnectionWithS
         }
     }
 
+    protected void confirmRelease() throws Exception {
+        if (!couplingEnabled) {
+            super.confirmRelease();
+        }
+    }
+
     protected void confirmReset() throws Exception {
         if (!couplingEnabled) {
             super.confirmReset();

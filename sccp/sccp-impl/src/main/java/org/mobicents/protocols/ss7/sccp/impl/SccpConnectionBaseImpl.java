@@ -8,6 +8,7 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrefMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnErrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnItMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlcMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlsdMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRscMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRsrMessageImpl;
@@ -94,7 +95,17 @@ abstract class SccpConnectionBaseImpl {
 
         } else if (message instanceof SccpConnRsrMessageImpl) {
             confirmReset();
+        } else if (message instanceof SccpConnRlsdMessageImpl) {
+            confirmRelease();
         }
+    }
+
+    protected void confirmRelease() throws Exception {
+        SccpConnRlcMessageImpl rlc = new SccpConnRlcMessageImpl(sls, localSsn);
+        rlc.setSourceLocalReferenceNumber(localReference);
+        rlc.setDestinationLocalReferenceNumber(remoteReference);
+        rlc.setOutgoingDpc(remoteDpc);
+        sendMessage(rlc);
     }
 
     protected void confirmReset() throws Exception {

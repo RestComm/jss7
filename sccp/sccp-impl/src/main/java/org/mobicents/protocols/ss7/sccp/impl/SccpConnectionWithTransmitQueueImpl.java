@@ -85,7 +85,7 @@ abstract class SccpConnectionWithTransmitQueueImpl extends SccpConnectionBaseImp
         }
 
         public long perform() {
-            logger.debug("Starting sender task");
+            // logger.debug("Starting sender task");
 
             SccpConnMessage message;
             while (!outgoing.isEmpty() && isCanSendData()) {
@@ -114,7 +114,7 @@ abstract class SccpConnectionWithTransmitQueueImpl extends SccpConnectionBaseImp
                 }
                 submit();
             } else {
-                logger.debug("Queue is empty, finishing execution");
+                // logger.debug("Queue is empty, finishing execution");
             }
 
             return 0;

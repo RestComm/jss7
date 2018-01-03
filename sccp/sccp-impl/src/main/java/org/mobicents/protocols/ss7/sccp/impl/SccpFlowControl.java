@@ -38,15 +38,8 @@ public class SccpFlowControl {
             throw new IllegalArgumentException();
         }
         this.maximumWindowSize = maximumWindowSize;
-        inputWindow = new SccpFlowControlWindow(new SequenceNumberImpl(0), maximumWindowSize);
-        outputWindow = new SccpFlowControlWindow(new SequenceNumberImpl(0), maximumWindowSize);
 
         reinitialize(); // init send sequence number
-
-        sendSequenceNumberExpectedAtInput = new SequenceNumberImpl(0);
-        inputWindow.setLowerEdge(sendSequenceNumberExpectedAtInput);
-
-        lastReceiveSequenceNumberReceived = new SequenceNumberImpl(0);
     }
 
     // IT, DT2, AK
@@ -149,6 +142,14 @@ public class SccpFlowControl {
 
     // after connection establishing and on connection reset
     public void reinitialize() {
+        inputWindow = new SccpFlowControlWindow(new SequenceNumberImpl(0), maximumWindowSize);
+        outputWindow = new SccpFlowControlWindow(new SequenceNumberImpl(0), maximumWindowSize);
+
+        sendSequenceNumberExpectedAtInput = new SequenceNumberImpl(0);
+        // inputWindow.setLowerEdge(sendSequenceNumberExpectedAtInput);
+
+        lastReceiveSequenceNumberReceived = new SequenceNumberImpl(0);
+
         sendSequenceNumber = new SequenceNumberImpl(0, false, true);
         expectingFirstMessageInputAfterInit = true;
     }
