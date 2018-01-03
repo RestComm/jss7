@@ -32,7 +32,6 @@ abstract class SccpConnectionWithTimers extends SccpConnectionWithTransmitQueueI
     private IntProcess intProcess;
     private GuardProcess guardProcess;
     private ResetProcess resetProcess;
-    private ReassemblyProcess reassemblyProcess;
 
     public SccpConnectionWithTimers(int sls, int localSsn, LocalReference localReference, ProtocolClass protocol, SccpStackImpl stack, SccpRoutingControl sccpRoutingControl) {
         super(sls, localSsn, localReference, protocol, stack, sccpRoutingControl);
@@ -44,7 +43,6 @@ abstract class SccpConnectionWithTimers extends SccpConnectionWithTransmitQueueI
         intProcess = new IntProcess();
         guardProcess = new GuardProcess();
         resetProcess = new ResetProcess();
-        reassemblyProcess = new ReassemblyProcess();
     }
 
     protected void stopTimers() {
@@ -56,7 +54,6 @@ abstract class SccpConnectionWithTimers extends SccpConnectionWithTransmitQueueI
         intProcess.stopTimer();
         guardProcess.stopTimer();
         resetProcess.stopTimer();
-        reassemblyProcess.stopTimer();
     }
 
     protected void receiveMessage(SccpConnMessage message) throws Exception {
@@ -337,26 +334,6 @@ abstract class SccpConnectionWithTimers extends SccpConnectionWithTransmitQueueI
 
             } catch (Exception e) {
                 logger.error(e);
-            } finally {
-                connectionLock.unlock();
-            }
-        }
-    }
-
-    protected class ReassemblyProcess extends BaseProcess implements Runnable {
-        {
-            delay = stack.getReassemblyTimerDelay();
-        }
-
-        @Override
-        public void run() {
-            try {
-                connectionLock.lock();
-                if (getState() == CLOSED) {
-                    return;
-                }
-                // do smt...
-
             } finally {
                 connectionLock.unlock();
             }

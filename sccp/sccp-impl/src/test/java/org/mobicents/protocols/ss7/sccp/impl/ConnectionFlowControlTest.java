@@ -22,6 +22,7 @@
 
 package org.mobicents.protocols.ss7.sccp.impl;
 
+import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.Util;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.MaxConnectionCountReached;
@@ -33,20 +34,25 @@ import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ReleaseCauseImpl;
+import org.mobicents.protocols.ss7.sccp.impl.parameter.ResetCauseImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnCrMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.Credit;
 import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCauseValue;
+import org.mobicents.protocols.ss7.sccp.parameter.ResetCauseValue;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.scheduler.Clock;
 import org.mobicents.protocols.ss7.scheduler.DefaultClock;
 import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.testng.annotations.*;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static org.mobicents.protocols.ss7.sccp.SccpConnectionState.CLOSED;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
@@ -228,8 +234,8 @@ public class ConnectionFlowControlTest extends SccpHarness {
 
         Thread.sleep(200);
 
-        assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
-        assertEquals(conn2.getState(), SccpConnectionState.CLOSED);
+        assertEquals(conn1.getState(), CLOSED);
+        assertEquals(conn2.getState(), CLOSED);
 
         assertEquals(sccpStack1.getConnectionsNumber(), 0);
         assertEquals(sccpStack2.getConnectionsNumber(), 0);
@@ -292,8 +298,8 @@ public class ConnectionFlowControlTest extends SccpHarness {
 
         Thread.sleep(100);
 
-        assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
-        assertEquals(conn2.getState(), SccpConnectionState.CLOSED);
+        assertEquals(conn1.getState(), CLOSED);
+        assertEquals(conn2.getState(), CLOSED);
 
         assertEquals(sccpStack1.getConnectionsNumber(), 0);
         assertEquals(sccpStack2.getConnectionsNumber(), 0);
@@ -380,8 +386,8 @@ public class ConnectionFlowControlTest extends SccpHarness {
 
         Thread.sleep(100);
 
-        assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
-        assertEquals(conn2.getState(), SccpConnectionState.CLOSED);
+        assertEquals(conn1.getState(), CLOSED);
+        assertEquals(conn2.getState(), CLOSED);
 
         assertEquals(sccpStack1.getConnectionsNumber(), 0);
         assertEquals(sccpStack2.getConnectionsNumber(), 0);
@@ -440,13 +446,17 @@ public class ConnectionFlowControlTest extends SccpHarness {
         assertEquals(sccpStack1.getConnectionsNumber(), 0);
         assertEquals(sccpStack2.getConnectionsNumber(), 0);
 
-        assertEquals(conn2.getState(), SccpConnectionState.CLOSED);
-        assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
+        assertEquals(conn2.getState(), CLOSED);
+        assertEquals(conn1.getState(), CLOSED);
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider", invocationCount = 500, timeOut = 1800000)
     public void testBigCreditTwoDirections(boolean onlyOneStack) throws Exception {
+        System.gc(); // explicit gc (useful when @Test(invocationCount) is high
+        Thread.sleep(3000);
+
         stackParameterInit();
+        // saveLogFile("testBigCreditTwoDirections-log-" + iteration++ + ".txt");
 
         a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
         a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
@@ -469,7 +479,9 @@ public class ConnectionFlowControlTest extends SccpHarness {
         SccpConnection conn1 = sccpProvider1.newConnection(getSSN(), new ProtocolClassImpl(3));
         conn1.establish(crMsg);
 
-        Thread.sleep(100);
+        while (!isBothConnectionsExist()) {
+            Thread.sleep(500);
+        }
 
         assertBothConnectionsExist();
         SccpConnection conn2 = getConn2();
@@ -506,34 +518,52 @@ public class ConnectionFlowControlTest extends SccpHarness {
 //            Thread.sleep(200);
 //        }
 
+
+        // timeOut option will timeout test if it took too long
+        while (u1.receivedData.size() < 382 || u2.receivedData.size() < 382) {
+            Thread.sleep(500);
+        }
+
         assertEquals(u1.receivedData.size(), 382);
         assertEquals(u2.receivedData.size(), 382);
 
         conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), null);
 
-        Thread.sleep(100);
-        
+        while (sccpStack1.getConnectionsNumber() > 0 || sccpStack2.getConnectionsNumber() > 0) {
+            Thread.sleep(500);
+        }
+
         assertEquals(sccpStack1.getConnectionsNumber(), 0);
         assertEquals(sccpStack2.getConnectionsNumber(), 0);
 
-        assertEquals(conn2.getState(), SccpConnectionState.CLOSED);
-        assertEquals(conn1.getState(), SccpConnectionState.CLOSED);
+        while (conn1.getState() != CLOSED || conn2.getState() != CLOSED) {
+            Thread.sleep(500);
+        }
+
+        assertEquals(conn2.getState(), CLOSED);
+        assertEquals(conn1.getState(), CLOSED);
 
         assertFalse(sender1.failed);
         assertFalse(sender2.failed);
     }
 
     public static class SenderThread implements Runnable {
+        private final Logger logger;
         private ReentrantLock starter;
         private SccpConnection conn;
         private byte workerNumber;
         private boolean failed;
+        private Exception failedException;
         private AtomicBoolean finished = new AtomicBoolean(false);
 
         public SenderThread(ReentrantLock starter, SccpConnection conn, int workerNumber) {
             this.starter = starter;
             this.conn = conn;
             this.workerNumber = (byte) workerNumber;
+            this.logger = Logger.getLogger(SenderThread.class.getCanonicalName()
+                    + "-" + conn.getLocalReference()
+                    + "-" + workerNumber
+                    + "-" + ((SccpConnectionBaseImpl)conn).stack.name);
         }
 
         @Override
@@ -543,6 +573,7 @@ public class ConnectionFlowControlTest extends SccpHarness {
                     Thread.sleep(5);
                 } catch (InterruptedException e) {
                     failed = true;
+                    failedException = e;
                     return;
                 }
             }
@@ -551,11 +582,102 @@ public class ConnectionFlowControlTest extends SccpHarness {
                     conn.send(new byte[]{workerNumber, (byte)i, (byte)i, (byte)i, (byte)i});
                 } catch (Exception e) {
                     failed = true;
+                    failedException = e;
                     return;
                 }
             }
             finished.set(true);
         }
+    }
+
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testSendDataAfterReset(boolean onlyOneStack) throws Exception {
+        stackParameterInit();
+        this.saveLogFile("~/conn-log.txt");
+
+        a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
+        a2 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack2PC(), getSSN2());
+
+        User u1 = new User(sccpStack1.getSccpProvider(), a1, a2, getSSN());
+        User u2 = new User(sccpStack2.getSccpProvider(), a2, a1, getSSN2());
+
+        u1.register();
+        u2.register();
+
+        Thread.sleep(100);
+
+        SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
+        crMsg.setProtocolClass(new ProtocolClassImpl(3));
+        crMsg.setCredit(new CreditImpl(100));
+
+        SccpConnection conn1 = sccpProvider1.newConnection(8, new ProtocolClassImpl(3));
+        conn1.establish(crMsg);
+
+        Thread.sleep(100);
+
+        assertBothConnectionsExist();
+        SccpConnection conn2 = getConn2();
+
+        Thread.sleep(100);
+
+        for (int i=0; i<=127*2; i++) {
+            byte val = (byte)(i % 128);
+            conn1.send(new byte[]{1, val, val, val, val});
+        }
+
+        for (int i=0; i<=127*2; i++) {
+            byte val = (byte)(i % 128);
+            conn2.send(new byte[]{2, val, val, val, val});
+        }
+
+        Thread.sleep(1600);
+
+        conn1.reset(new ResetCauseImpl(ResetCauseValue.END_USER_ORIGINATED));
+        Thread.sleep(300);
+
+        for (int i=0; i<=127*2; i++) {
+            byte val = (byte)(i % 128);
+            conn1.send(new byte[]{1, val, val, val, val});
+        }
+
+        for (int i=0; i<=127*2; i++) {
+            byte val = (byte)(i % 128);
+            conn2.send(new byte[]{2, val, val, val, val});
+        }
+
+        Thread.sleep(1600);
+
+        assertEquals(u1.getReceivedData().size(), 127*4 + 2);
+        for (int i=0; i<=127*2; i++) {
+            byte val = (byte)(i % 128);
+            assertEquals(u1.getReceivedData().get(i), new byte[] {2, val, val, val, val});
+        }
+        for (int i=0; i<=127*2; i++) {
+            byte val = (byte)(i % 128);
+            assertEquals(u1.getReceivedData().get(127*2+1+i), new byte[] {2, val, val, val, val});
+        }
+
+        assertEquals(u2.getReceivedData().size(), 127*4 + 2);
+        for (int i=0; i<=127*2; i++) {
+            byte val = (byte)(i % 128);
+            assertEquals(u2.getReceivedData().get(i), new byte[] {1, val, val, val, val});
+        }
+        for (int i=0; i<=127*2; i++) {
+            byte val = (byte)(i % 128);
+            assertEquals(u2.getReceivedData().get(127*2+1+i), new byte[] {1, val, val, val, val});
+        }
+
+        Thread.sleep(200);
+
+        conn1.disconnect(new ReleaseCauseImpl(ReleaseCauseValue.UNQUALIFIED), null);
+
+        Thread.sleep(200);
+
+        assertEquals(sccpStack1.getConnectionsNumber(), 0);
+        assertEquals(sccpStack2.getConnectionsNumber(), 0);
+
+        assertEquals(conn2.getState(), CLOSED);
+        assertEquals(conn1.getState(), CLOSED);
     }
 
     // instantiates connection using proxy class
@@ -618,11 +740,6 @@ public class ConnectionFlowControlTest extends SccpHarness {
 
         public void sendAk() throws Exception {
             super.sendAk();
-        }
-
-        @Override
-        protected boolean isCanSendData() {
-            return getState() == SccpConnectionState.ESTABLISHED;
         }
     }
 

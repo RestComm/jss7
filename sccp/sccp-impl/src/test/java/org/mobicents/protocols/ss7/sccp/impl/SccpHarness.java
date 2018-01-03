@@ -471,6 +471,14 @@ public abstract class SccpHarness {
         }
     }
 
+    public boolean isBothConnectionsExist() {
+        if (sccpStack1 != sccpStack2) {
+            return sccpStack1.getConnectionsNumber() == 1 && sccpStack2.getConnectionsNumber() == 1;
+        } else {
+            return sccpStack1.getConnectionsNumber() == 2;
+        }
+    }
+
     public SccpConnection getConn2() {
         if (sccpStack1 != sccpStack2) {
             return sccpProvider2.getConnections().values().iterator().next();

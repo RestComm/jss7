@@ -24,6 +24,7 @@ package org.mobicents.protocols.ss7.sccp.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.mobicents.protocols.ss7.sccp.NetworkIdState;
@@ -59,7 +60,7 @@ public class User extends BaseSccpListener implements SccpListener {
     protected int ssn;
     // protected SccpMessage msg;
     protected List<SccpMessage> messages = new ArrayList<SccpMessage>();
-    protected List<byte[]> receivedData = new ArrayList<>();
+    protected List<byte[]> receivedData = Collections.synchronizedList(new ArrayList<byte[]>());
     protected boolean refuseConnections;
     protected UserStats stats = new UserStats();
     private UserOptions options = new UserOptions();

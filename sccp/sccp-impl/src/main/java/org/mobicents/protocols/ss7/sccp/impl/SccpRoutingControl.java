@@ -52,6 +52,7 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt1MessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt2MessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnErrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnItMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnReferencedMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlcMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRlsdMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRscMessageImpl;
@@ -1396,35 +1397,32 @@ public class SccpRoutingControl {
                 }
 
             } else if (msg instanceof SccpConnRlsdMessageImpl) {
+                if (!checkSourceLocalReferenceNumber(msg, conn)) {
+                    conn.sendErr(new ErrorCauseImpl(LRN_MISMATCH_INCONSISTENT_SOURCE_LRN));
+                    return;
+                }
                 SccpConnRlsdMessageImpl rlsd = (SccpConnRlsdMessageImpl)msg;
 
-                if (rlsd.getSourceLocalReferenceNumber().getValue() == conn.getRemoteReference().getValue()) {
-                    if (!conn.isCouplingEnabled()) {
+                if (!conn.isCouplingEnabled()) {
 
-                        if (listener != null) {
-                            listener.onDisconnectIndication(conn, rlsd.getReleaseCause(), rlsd.getUserData());
-                        }
-
-                        SccpConnRlcMessageImpl rlc = new SccpConnRlcMessageImpl(conn.getSls(), conn.getLocalSsn());
-                        rlc.setSourceLocalReferenceNumber(conn.getLocalReference());
-                        rlc.setDestinationLocalReferenceNumber(conn.getRemoteReference());
-                        rlc.setOutgoingDpc(conn.getRemoteDpc());
-
-                        if (this.sccpStackImpl.router.spcIsLocal(conn.getRemoteDpc())) {
-                            routeMssgFromMtpConn(rlc);
-                        } else {
-                            sendConn(rlc);
-                        }
-
-                        sccpStackImpl.removeConnection(conn.getLocalReference());
-                    } else {
-                        conn.receiveMessage(msg);
+                    if (listener != null) {
+                        listener.onDisconnectIndication(conn, rlsd.getReleaseCause(), rlsd.getUserData());
                     }
+                    conn.receiveMessage(msg);
+
+                    sccpStackImpl.removeConnection(conn.getLocalReference());
                 } else {
-                    conn.sendErr(new ErrorCauseImpl(LRN_MISMATCH_INCONSISTENT_SOURCE_LRN));
+                    conn.receiveMessage(msg);
                 }
 
             } else if (msg instanceof SccpConnRlcMessageImpl) {
+                if (!checkSourceLocalReferenceNumber(msg, conn)) {
+                    logger.error(String
+                            .format("Dropping message. Received SCCPMessage=%s but source LRN doesn't match remote LRN stored for connection",
+                                    msg));
+                    return;
+                }
+
                 if (!conn.isCouplingEnabled()) {
                     sccpStackImpl.removeConnection(conn.getLocalReference());
 
@@ -1445,6 +1443,10 @@ public class SccpRoutingControl {
                 }
 
             } else if (msg instanceof SccpConnRsrMessageImpl) {
+                if (!checkSourceLocalReferenceNumber(msg, conn)) {
+                    conn.sendErr(new ErrorCauseImpl(LRN_MISMATCH_INCONSISTENT_SOURCE_LRN));
+                    return;
+                }
                 if (!conn.isCouplingEnabled()) {
                     SccpConnRsrMessageImpl rsr = (SccpConnRsrMessageImpl) msg;
                     conn.receiveMessage(rsr);
@@ -1454,6 +1456,10 @@ public class SccpRoutingControl {
                 }
 
             } else if (msg instanceof SccpConnRscMessageImpl) {
+                if (!checkSourceLocalReferenceNumber(msg, conn)) {
+                    conn.sendErr(new ErrorCauseImpl(LRN_MISMATCH_INCONSISTENT_SOURCE_LRN));
+                    return;
+                }
                 if (!conn.isCouplingEnabled()) {
                     conn.receiveMessage(msg);
                     listener.onResetConfirm(conn);
@@ -1470,6 +1476,10 @@ public class SccpRoutingControl {
             } else if (msg instanceof SccpConnAkMessageImpl) {
                 conn.receiveMessage(msg);
             } else if (msg instanceof SccpConnItMessageImpl) {
+                if (!checkSourceLocalReferenceNumber(msg, conn)) {
+                    conn.sendErr(new ErrorCauseImpl(LRN_MISMATCH_INCONSISTENT_SOURCE_LRN));
+                    return;
+                }
                 conn.receiveMessage(msg);
             } else if (msg instanceof SccpConnErrMessageImpl) {
                 SccpConnErrMessageImpl err = (SccpConnErrMessageImpl) msg;
@@ -1495,6 +1505,10 @@ public class SccpRoutingControl {
                         msg.getOriginLocalSsn(), msg), e);
             }
         }
+    }
+
+    private boolean checkSourceLocalReferenceNumber(SccpConnMessage msg, SccpConnection conn) {
+        return ((SccpConnReferencedMessageImpl)msg).getSourceLocalReferenceNumber().getValue() == conn.getRemoteReference().getValue();
     }
 
     private class SccpTransferDeliveryHandler implements Runnable {

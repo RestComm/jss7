@@ -6,6 +6,8 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnAkMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCcMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt2MessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnItMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRscMessageImpl;
+import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRsrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnSegmentableMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.CreditImpl;
 import org.mobicents.protocols.ss7.sccp.message.SccpConnCrMessage;
@@ -13,6 +15,7 @@ import org.mobicents.protocols.ss7.sccp.message.SccpConnMessage;
 import org.mobicents.protocols.ss7.sccp.parameter.Credit;
 import org.mobicents.protocols.ss7.sccp.parameter.LocalReference;
 import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.parameter.ResetCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 import java.io.IOException;
@@ -115,6 +118,8 @@ public class SccpConnectionWithFlowControlImpl extends SccpConnectionImpl implem
 
             } else if (message instanceof SccpConnAkMessageImpl) {
                 handleAkMessage((SccpConnAkMessageImpl) message);
+            } else if (message instanceof SccpConnRsrMessageImpl) {
+                flow.reinitialize();
             }
         } finally {
             connectionLock.unlock();
@@ -179,6 +184,11 @@ public class SccpConnectionWithFlowControlImpl extends SccpConnectionImpl implem
         } else {
             setState(ESTABLISHED_SEND_WINDOW_EXHAUSTED);
         }
+    }
+
+    public void reset(ResetCause reason) throws Exception {
+        super.reset(reason);
+        flow.reinitialize();
     }
 
     protected void setConnectionLock(ReentrantLock lock) {
