@@ -216,7 +216,6 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
         }
 
         createPayloadParts(dataDir);
-        System.out.println("SS7 shellExecutorExists():" + shellExecutorExists());
         if(shellExecutorExists()) {
             shellExecutorMBean = null;
             try {
