@@ -236,7 +236,7 @@ public class SccpManagement {
         }
     }
 
-    private void sendManagementMessage(int dpc, int messageTypeCode, int affectedSsn, int subsystemMultiplicityIndicator) {
+    private void sendManagementMessage(int dpc, int messageTypeCode, int affectedSsn, int subsystemMultiplicityIndicator, Integer congestionLevel) {
         Mtp3ServiceAccessPoint sap = this.sccpStackImpl.router.findMtp3ServiceAccessPoint(dpc, 0);
         if (sap == null) {
             logger.warn(String.format("Failed sendManagementMessage : Mtp3ServiceAccessPoint has not found for dpc=%d", dpc));
@@ -252,7 +252,11 @@ public class SccpManagement {
         SccpAddress calledAdd = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, dpc, 1);
         SccpAddress callingAdd = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, affectedPc, 1);
 
-        byte[] data = createManagementMessageBody(messageTypeCode, affectedPc, affectedSsn, subsystemMultiplicityIndicator);
+        byte[] data = null;
+        if(messageTypeCode == SSC)
+            data = createManagementMessageBody(messageTypeCode, affectedPc, affectedSsn, subsystemMultiplicityIndicator, congestionLevel);
+        else
+            data = createManagementMessageBody(messageTypeCode, affectedPc, affectedSsn, subsystemMultiplicityIndicator);
         SccpDataMessageImpl msg = (SccpDataMessageImpl) sccpProviderImpl.getMessageFactory().createDataMessageClass0(calledAdd,
                 callingAdd, data, -1, false, null, null);
 
@@ -310,7 +314,7 @@ public class SccpManagement {
     }
 
     private void sendSSA(SccpMessage msg, int affectedSsn) {
-        this.sendManagementMessage(((SccpMessageImpl) msg).getIncomingOpc(), SSA, affectedSsn, 0);
+        this.sendManagementMessage(((SccpMessageImpl) msg).getIncomingOpc(), SSA, affectedSsn, 0 , null);
     }
 
     protected void broadcastChangedSsnState(int affectedSsn, boolean inService) {
@@ -328,9 +332,9 @@ public class SccpManagement {
             if (concernedPointCode == ALL_POINT_CODE || concernedPointCode == dpc) {
                 // Send SSA/SSP to only passed concerned point code
                 if (inService)
-                    this.sendManagementMessage(dpc, SSA, affectedSsn, 0);
+                    this.sendManagementMessage(dpc, SSA, affectedSsn, 0, null);
                 else
-                    this.sendManagementMessage(dpc, SSP, affectedSsn, 0);
+                    this.sendManagementMessage(dpc, SSP, affectedSsn, 0, null);
             }
         }
     }
@@ -351,7 +355,14 @@ public class SccpManagement {
 
         // Send SSP (when message is mtp3-originated)
         if (msg.getIsMtpOriginated()) {
-            this.sendManagementMessage(dpc, SSP, ssn, 0);
+            this.sendManagementMessage(dpc, SSP, ssn, 0, null);
+        }
+    }
+
+    protected void receivedForCongestionUser(SccpMessage msg, int ssn, Integer congestionLevel) {
+        int dpc = msg.getIncomingOpc();
+        if (msg.getIsMtpOriginated()) {
+            this.sendManagementMessage(dpc, SSC, ssn, 0, congestionLevel);
         }
     }
 
@@ -869,7 +880,7 @@ public class SccpManagement {
                     this.startTest();
                 }
 
-                sendManagementMessage(affectedPc, SST, ssn, 0);
+                sendManagementMessage(affectedPc, SST, ssn, 0, null);
 
             }// while
 

@@ -25,6 +25,7 @@ package org.mobicents.protocols.ss7.sccp.impl;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javolution.util.FastList;
 import javolution.util.FastMap;
@@ -64,6 +65,9 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
 
     private MessageFactoryImpl messageFactory;
     private ParameterFactoryImpl parameterFactory;
+
+    //<ssn - congestion level>
+    private ConcurrentHashMap<Integer, Integer> congestionMap = new ConcurrentHashMap<Integer, Integer>();
 
     SccpProviderImpl(SccpStackImpl stack) {
         this.stack = stack;
@@ -200,4 +204,14 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
     public SccpStack getSccpStack() {
         return this.stack;
     }
+
+    public ConcurrentHashMap<Integer, Integer> getCongestionMap() {
+        return this.congestionMap;
+    }
+
+    @Override
+    public void updateCongestionMap(Integer ssn, Integer congestionLevel) {
+        congestionMap.put(ssn, congestionLevel);
+    }
+
 }

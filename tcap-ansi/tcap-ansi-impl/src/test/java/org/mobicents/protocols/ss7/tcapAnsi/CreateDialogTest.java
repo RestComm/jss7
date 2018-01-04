@@ -193,6 +193,12 @@ public class CreateDialogTest {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		@Override
+		public void updateCongestionMap(Integer ssn, Integer congestionLevel) {
+			// TODO Auto-generated method stub
+
+		}
     }
 
 }
