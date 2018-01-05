@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>tools</artifactId>
 		<groupId>org.mobicents.protocols.ss7</groupId>
-		<version>8.0.0-SNAPSHOT</version>
+		<version>8.0.0-119</version>
 	</parent>
 
   <artifactId>alarm-listener-parent</artifactId>
