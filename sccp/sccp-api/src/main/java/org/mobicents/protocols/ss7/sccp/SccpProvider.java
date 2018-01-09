@@ -123,11 +123,11 @@ public interface SccpProvider extends Serializable {
      */
     SccpStack getSccpStack();
     /**
-     * update congestion map
+     * Update Signaling Point congestion status
      * @return
      */
 
-    void updateCongestionMap(Integer ssn, Integer congestionLevel);
+    void updateSPCongestion(Integer ssn, Integer congestionLevel);
 
 
 }

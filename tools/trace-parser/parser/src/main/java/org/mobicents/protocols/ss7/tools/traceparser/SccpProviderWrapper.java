@@ -133,7 +133,7 @@ public class SccpProviderWrapper implements SccpProvider {
     }
 
     @Override
-    public void updateCongestionMap(Integer ssn, Integer congestionLevel) {
+    public void updateSPCongestion(Integer ssn, Integer congestionLevel) {
         // TODO Auto-generated method stub
 
     }

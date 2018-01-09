@@ -124,7 +124,7 @@ public class SccpRoutingControl {
         //if the local SCCP or node is in an overload condition, SCRC
         // shall inform SCMG
         int subsystemNumber = msg.getCalledPartyAddress().getSubsystemNumber();
-        Integer congestionLevel = this.sccpProviderImpl.getCongestionMap().get(subsystemNumber);
+        Integer congestionLevel = this.sccpProviderImpl.getCongestionSsn().get(subsystemNumber);
         if(congestionLevel != null && congestionLevel > 0) {
             if(subsystemNumber != 1)
                 if(msg instanceof SccpDataMessage) {
