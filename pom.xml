@@ -555,7 +555,7 @@
 		<repository>
 			<id>datanucleus</id>
 			<name>DataNucleus Releases</name>
-			<url>http://www.datanucleus.org/downloads/</url>
+			<url>http://www.datanucleus.org/downloads/maven2</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
