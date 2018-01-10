@@ -376,7 +376,16 @@ public class ConnectionTest extends SccpHarness {
     }
 
     @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
-    public void testConnectionRefuse(boolean onlyOneStack) throws Exception {
+    public void testConnectionRefuseProtocolClass2(boolean onlyOneStack) throws Exception {
+        testConnectionRefuse(onlyOneStack, new ProtocolClassImpl(2));
+    }
+
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
+    public void testConnectionRefuseProtocolClass3(boolean onlyOneStack) throws Exception {
+        testConnectionRefuse(onlyOneStack, new ProtocolClassImpl(3));
+    }
+
+    public void testConnectionRefuse(boolean onlyOneStack, ProtocolClass protocolClass) throws Exception {
         stackParameterInit();
 
         a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());
@@ -393,10 +402,10 @@ public class ConnectionTest extends SccpHarness {
 
         SccpConnCrMessage crMsg = sccpProvider1.getMessageFactory().createConnectMessageClass2(8, a2, a1, new byte[] {}, new ImportanceImpl((byte)1));
         crMsg.setSourceLocalReferenceNumber(new LocalReferenceImpl(1));
-        crMsg.setProtocolClass(new ProtocolClassImpl(2));
+        crMsg.setProtocolClass(protocolClass);
         crMsg.setCredit(new CreditImpl(100));
 
-        SccpConnection conn1 = sccpProvider1.newConnection(8, new ProtocolClassImpl(2));
+        SccpConnection conn1 = sccpProvider1.newConnection(8, protocolClass);
         conn1.establish(crMsg);
 
         Thread.sleep(100);
