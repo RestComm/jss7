@@ -450,7 +450,7 @@ public class ConnectionFlowControlTest extends SccpHarness {
         assertEquals(conn1.getState(), CLOSED);
     }
 
-    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider", invocationCount = 500, timeOut = 1800000)
+    @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider", timeOut = 1800000)
     public void testBigCreditTwoDirections(boolean onlyOneStack) throws Exception {
         System.gc(); // explicit gc (useful when @Test(invocationCount) is high
         Thread.sleep(3000);
