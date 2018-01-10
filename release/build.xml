@@ -97,7 +97,7 @@
         </copy>
 
         <echo>Copy SS7 - SWG</echo>
-        <copy todir="${restcomm.jss7.dist}/ss7-jboss/restcomm-ss7-sgw" failonerror="true">
+        <copy todir="${restcomm.jss7.dist}/ss7/restcomm-ss7-sgw" failonerror="true">
             <fileset dir="${jss7.dir}/sgw/boot/target/restcomm-sgw">
                 <include name="**"/>
             </fileset>
