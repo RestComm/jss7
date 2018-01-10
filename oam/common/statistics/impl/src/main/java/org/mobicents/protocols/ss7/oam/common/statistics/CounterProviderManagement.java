@@ -305,6 +305,26 @@ public class CounterProviderManagement implements CounterProviderManagementMBean
     }
 
     @Override
+    public String[] getCampaignsList(String counterSetName) {
+        System.out.println("getCampaignsList by counterSetName=" + counterSetName);
+        synchronized (this) {
+            ArrayList<String> campaigns = new ArrayList<String>();
+            int i1 = 0;
+            for (String s : lstCounterCampaign.keySet()) {
+                System.out.println("campaign's counterSetName is " + lstCounterCampaign.get(s).getCounterSetName());
+                if (lstCounterCampaign.get(s).getCounterSetName().equals(counterSetName)) {
+                    campaigns.add(s);
+                    System.out.println("added capaign for key " + s + " with counterSetName " + lstCounterCampaign.get(s).getCounterSetName());
+                }
+            }
+            String[] res = new String[campaigns.size()];
+            res = campaigns.toArray(res);
+            System.out.println("res is " + res);
+            return res;
+        }
+    }
+
+    @Override
     public CounterCampaign getCampaign(String campaignName) {
         synchronized (this) {
             return lstCounterCampaign.get(campaignName);

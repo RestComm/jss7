@@ -28,12 +28,16 @@ import org.mobicents.protocols.ss7.oam.common.statistics.api.CounterDef;
 import org.mobicents.protocols.ss7.oam.common.statistics.api.CounterDefSet;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class CounterDefSetImpl implements CounterDefSet {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
     private String name;
     private ArrayList<CounterDef> counterDefs = new ArrayList<CounterDef>();
 
@@ -44,6 +48,16 @@ public class CounterDefSetImpl implements CounterDefSet {
     @Override
     public void addCounterDef(CounterDef val) {
         counterDefs.add(val);
+    }
+
+    @Override
+    public void delCounterDef(String counterName) {
+        for (CounterDef counterDef : counterDefs) {
+            if (counterDef.getCounterName().equals(counterName)) {
+                counterDefs.remove(counterDef);
+                break;
+            }
+        }
     }
 
     @Override
