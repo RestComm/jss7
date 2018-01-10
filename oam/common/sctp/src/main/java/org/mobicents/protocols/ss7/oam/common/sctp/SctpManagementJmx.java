@@ -491,7 +491,7 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
 
     @Override
     public void onAssociationStarted(Association ass) {
-        if (!ass.isConnected()) {
+        if (!ass.isUp()) {
             AlarmMessage alm = this.generateAssociationAlarm(ass, false, false, "onAssociationStarted");
             this.alc.onAlarm(alm);
         }
@@ -499,7 +499,7 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
 
     @Override
     public void onAssociationStopped(Association ass) {
-        if (!ass.isConnected()) {
+        if (!ass.isUp()) {
             AlarmMessage alm = this.generateAssociationAlarm(ass, true, false, "onAssociationStopped");
             this.alc.onAlarm(alm);
         }

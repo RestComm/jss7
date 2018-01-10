@@ -409,89 +409,99 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     public void onAsCreated(As as) {
         this.addAsToManagement(as);
 
-        // if (wrappedM3UAManagement.isStarted()) {
-        if (!(as.getState().getName().equals(State.STATE_ACTIVE))) {
-            AlarmMessage alm = this.generateAsAlarm(as, false);
-            this.alc.onAlarm(alm);
+        if (wrappedM3UAManagement.isStarted()) {
+            if (!as.isUp()) {
+                AlarmMessage alm = this.generateAsAlarm(as, false);
+                this.alc.onAlarm(alm);
+            }
         }
-        // }
     }
 
     @Override
     public void onAsDestroyed(As as) {
         this.removeAsFromManagement(as);
 
-        // if (wrappedM3UAManagement.isStarted()) {
-        if (!(as.getState().getName().equals(State.STATE_ACTIVE))) {
-            AlarmMessage alm = this.generateAsAlarm(as, true);
-            this.alc.onAlarm(alm);
+        if (wrappedM3UAManagement.isStarted()) {
+            if (!as.isUp()) {
+                AlarmMessage alm = this.generateAsAlarm(as, true);
+                this.alc.onAlarm(alm);
+            }
         }
-        // }
     }
 
     @Override
     public void onAsDown(As as, State oldState) {
-        // if (wrappedM3UAManagement.isStarted()) {
-        AlarmMessage alm = this.generateAsAlarm(as, false);
-        this.alc.onAlarm(alm);
-        // }
+        if (wrappedM3UAManagement.isStarted()) {
+            if(oldState.equals(State.STATE_ACTIVE)) {
+                AlarmMessage alm = this.generateAsAlarm(as, false);
+                this.alc.onAlarm(alm);
+            }
+        }
     }
 
     @Override
     public void onAsInactive(As as, State oldState) {
-        // if (wrappedM3UAManagement.isStarted()) {
-        AlarmMessage alm = this.generateAsAlarm(as, false);
-        this.alc.onAlarm(alm);
-        // }
+        if (wrappedM3UAManagement.isStarted()) {
+            if(oldState.equals(State.STATE_ACTIVE)) {
+                AlarmMessage alm = this.generateAsAlarm(as, false);
+                this.alc.onAlarm(alm);
+            }
+        }
     }
 
     @Override
     public void onAsActive(As as, State oldState) {
-        // if (wrappedM3UAManagement.isStarted()) {
-        AlarmMessage alm = this.generateAsAlarm(as, true);
-        this.alc.onAlarm(alm);
-        // }
+        if (wrappedM3UAManagement.isStarted()) {
+            AlarmMessage alm = this.generateAsAlarm(as, true);
+            this.alc.onAlarm(alm);
+        }
     }
 
     @Override
     public void onAsPending(As as, State oldState) {
-        // if (wrappedM3UAManagement.isStarted()) {
-        AlarmMessage alm = this.generateAsAlarm(as, false);
-        this.alc.onAlarm(alm);
-        // }
+        if (wrappedM3UAManagement.isStarted()) {
+            if(oldState.equals(State.STATE_ACTIVE)) {
+                AlarmMessage alm = this.generateAsAlarm(as, false);
+                this.alc.onAlarm(alm);
+            }
+        }
     }
 
     @Override
     public void onAspInactive(Asp asp, State oldState) {
-        // if (wrappedM3UAManagement.isStarted()) {
-        // AspFactory aspFact = asp.getAspFactory();
-        // if (aspFact.getStatus()) {
-        AlarmMessage alm = this.generateAspAlarm(asp, false);
-        this.alc.onAlarm(alm);
-        // }
-        // }
+        if (wrappedM3UAManagement.isStarted()) {
+           AspFactory aspFact = asp.getAspFactory();
+           if (aspFact.getStatus()) {
+             if(oldState.equals(State.STATE_ACTIVE)) {
+                 AlarmMessage alm = this.generateAspAlarm(asp, false);
+                 this.alc.onAlarm(alm);
+              }
+           }
+        }
     }
 
     @Override
     public void onAspActive(Asp asp, State oldState) {
-        // if (wrappedM3UAManagement.isStarted()) {
-        // AspFactory aspFact = asp.getAspFactory();
-        // if (aspFact.getStatus()) {
-        AlarmMessage alm = this.generateAspAlarm(asp, true);
-        this.alc.onAlarm(alm);
-        // }
-        // }
+        if (wrappedM3UAManagement.isStarted()) {
+            AspFactory aspFact = asp.getAspFactory();
+            if (aspFact.getStatus()) {
+                AlarmMessage alm = this.generateAspAlarm(asp, true);
+                this.alc.onAlarm(alm);
+            }
+        }
     }
 
     @Override
     public void onAspDown(Asp asp, State oldState) {
-        // if (wrappedM3UAManagement.isStarted()) {
-        // AspFactory aspFact = asp.getAspFactory();
-        // if (aspFact.getStatus()) {
-        AlarmMessage alm = this.generateAspAlarm(asp, false);
-        this.alc.onAlarm(alm);
-        // }
-        // }
+        if (wrappedM3UAManagement.isStarted()) {
+            AspFactory aspFact = asp.getAspFactory();
+            if (aspFact.getStatus()) {
+                if(oldState.equals(State.STATE_ACTIVE)) {
+                    AlarmMessage alm = this.generateAspAlarm(asp, false);
+                    this.alc.onAlarm(alm);
+                }
+            }
+        }
     }
 
     // @Override
@@ -528,28 +538,28 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
 
     @Override
     public void onAspFactoryStarted(AspFactory aspFact) {
-        // if (wrappedM3UAManagement.isStarted()) {
-        List<Asp> lstAsp = aspFact.getAspList();
-        for (Asp asp : lstAsp) {
-            if (!asp.getState().getName().equals(State.STATE_ACTIVE)) {
+        if (wrappedM3UAManagement.isStarted()) {
+          List<Asp> lstAsp = aspFact.getAspList();
+          for (Asp asp : lstAsp) {
+            if (!asp.isUp()) {
                 AlarmMessage alm = this.generateAspAlarm(asp, false);
                 this.alc.onAlarm(alm);
             }
+          }
         }
-        // }
     }
 
     @Override
     public void onAspFactoryStopped(AspFactory aspFact) {
-        // if (wrappedM3UAManagement.isStarted()) {
-        List<Asp> lstAsp = aspFact.getAspList();
-        for (Asp asp : lstAsp) {
-            if (!asp.getState().getName().equals(State.STATE_ACTIVE)) {
-                AlarmMessage alm = this.generateAspAlarm(asp, true);
-                this.alc.onAlarm(alm);
+        if (wrappedM3UAManagement.isStarted()) {
+            List<Asp> lstAsp = aspFact.getAspList();
+            for (Asp asp : lstAsp) {
+                if (!asp.isUp()) {
+                    AlarmMessage alm = this.generateAspAlarm(asp, true);
+                    this.alc.onAlarm(alm);
+                }
             }
         }
-        // }
     }
 
     @Override
@@ -711,8 +721,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     public CurrentAlarmList getCurrentAlarmList() {
         CurrentAlarmListImpl all = new CurrentAlarmListImpl();
 
-        // if (wrappedM3UAManagement.isStarted()) {
-        if (true) {
+        if (wrappedM3UAManagement.isStarted()) {
             all = this.checkAllAlarms(false);
         } else {
             AlarmMessage alm = generateStoppedAlarm(false);
@@ -786,7 +795,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
             if (aspFact.getStatus()) {
                 List<Asp> lstAsp = aspFact.getAspList();
                 for (Asp asp : lstAsp) {
-                    if (!asp.getState().getName().equals(State.STATE_ACTIVE)) {
+                    if (!asp.isUp()) {
                         AlarmMessage alm = this.generateAspAlarm(asp, isCleared);
                         all.addAlarm(alm);
                     }
@@ -795,7 +804,7 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
         }
         List<As> lstAs = this.wrappedM3UAManagement.getAppServers();
         for (As as : lstAs) {
-            if (!as.getState().getName().equals(State.STATE_ACTIVE)) {
+            if (!as.isUp()) {
                 AlarmMessage alm = this.generateAsAlarm(as, isCleared);
                 all.addAlarm(alm);
             }
