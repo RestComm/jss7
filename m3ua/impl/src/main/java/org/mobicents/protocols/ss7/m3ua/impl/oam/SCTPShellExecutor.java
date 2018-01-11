@@ -249,7 +249,7 @@ public class SCTPShellExecutor implements ShellExecutor {
                     return String.format(SCTPOAMMessages.ADD_SERVER_SUCCESS, serverName, this.sctpManagement.getName());
 
                 } else if (command.equals("modify")) {
-                    // command : sctp server modify <sever-name> <stack-name> host <host-ip> port <host-port> sockettype <socket-type> anonymconnect <is-accept-anonymous-connections> 
+                    // command : sctp server modify <sever-name> <stack-name> host <host-ip> port <host-port> sockettype <socket-type> anonymconnect <is-accept-anonymous-connections>
                     //concurrentconnect <max-concurrent-connections-count> extraaddresses <extra-host-addresses>
                     String serverName = args[3];
                     if (serverName == null) {
@@ -557,9 +557,9 @@ public class SCTPShellExecutor implements ShellExecutor {
                     if (type == null) {
                         return M3UAOAMMessages.INVALID_COMMAND;
                     } else if (type.equals("CLIENT")) {
-                        String hostAddress = null; 
+                        String hostAddress = null;
                         Integer hostPort = null;
-                        String peerAddress = null; 
+                        String peerAddress = null;
                         Integer peerPort = null;
                         IpChannelType ipChannelType = null;
                         String[] extraHostAddresses = null;
@@ -593,7 +593,7 @@ public class SCTPShellExecutor implements ShellExecutor {
 
                         String peerAddress = null;
                         Integer peerPort = null;
-                        String serverName = null; 
+                        String serverName = null;
                         IpChannelType ipChannelType = null;
                         int i = 6;
                         if (args.length > 6) {

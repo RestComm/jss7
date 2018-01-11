@@ -761,5 +761,27 @@ public class M3UAManagementTest {
             
         }
 
+        @Override
+        public void modifyServer(String serverName, String hostAddress, Integer port, IpChannelType ipChannelType,
+                Boolean acceptAnonymousConnections, Integer maxConcurrentConnectionsCount, String[] extraHostAddresses)
+                throws Exception {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void modifyServerAssociation(String assocName, String peerAddress, Integer peerPort, String serverName,
+                IpChannelType ipChannelType) throws Exception {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void modifyAssociation(String hostAddress, Integer hostPort, String peerAddress, Integer peerPort,
+                String assocName, IpChannelType ipChannelType, String[] extraHostAddresses) throws Exception {
+            // TODO Auto-generated method stub
+            
+        }
+
     }
 }
