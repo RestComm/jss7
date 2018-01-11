@@ -37,6 +37,7 @@ public class SctpCommandHandler extends CommandHandlerWithHelp {
         Node parent = commandTree.getTopNode();
         Node server = parent.addChild("server");
         server.addChild("create");
+        server.addChild("modify");
         server.addChild("destroy");
         server.addChild("start");
         server.addChild("stop");
@@ -44,6 +45,7 @@ public class SctpCommandHandler extends CommandHandlerWithHelp {
 
         Node association = parent.addChild("association");
         association.addChild("create");
+        association.addChild("modify");
         association.addChild("destroy");
         association.addChild("show");
 

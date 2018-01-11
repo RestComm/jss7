@@ -1,0 +1,88 @@
+Name
+	sctp association modify
+
+SYNOPSIS
+	sctp association modify <assoc-name> <stack-name> <CLIENT | SERVER> servername <server-name> 
+	peerhost <peer-ip> peerport <peer-port> host <host-ip> port <host-port> sockettype <socket-type>
+	extraaddresses <extra-host-addresses>
+
+DESCRIPTION
+	This command is used to modify a existed SCTP (Client side or Server side) 
+	association. 
+
+PARAMETERS
+
+	Standard Parameters
+
+	<assoc-name>	-	Name of the existed Association which will be modified.
+					
+	<stack-name>	-	Name of the stack on which this command is executed. 					
+					
+
+	<CLIENT | SERVER>	-	Specify if this association is client side or 
+					server side.
+					
+	Optional Parameters
+
+	<peer-ip>		-	In a client side association, the server IP 
+					address to which the client is connecting to.
+
+					In a server side association, the client IP 
+					address from which connections will be accepted.
+	
+	<peer-port>		-	In a client side association, the server Port 
+					to which the client is connecting to.
+
+					In a server side association, the client port from 
+					which connections will be accepted.
+
+	<host-ip>		-	In a client side association, the local IP address
+					to which the socket will bind to. 
+			
+	<host-port>		-	In a client side association, the local port to
+					which the socket will bind to. This is 
+					required only for a client side Association.
+					
+					For a server side association, even if you specify
+					these values it will be ignored.
+
+	<server-name>	-	In a server-side association, the server-name. 
+
+					In a client-side association, this is not required 
+					and you should not pass this parameter.
+
+	<socket-type>	-	socket-type "TCP"/"SCTP". If it is a
+					SERVER SCTP Association, the socket-type must 
+					match with the one specified while creating the
+					Server.
+					
+	<extra-host-addresses> - For SCTP multi-home support, you can pass multiple
+					IP addresses as comma separated values. The 
+					Association will bind to the primary IP address 
+					and when it becomes unavailable, it will 
+					automatically fall back to secondary address. 
+					If the socket-type is TCP, these comma separated 
+					values will be ignored and the Assocation will 
+					always bind to the primary IP address (host). This is 
+					required only for a client side Association. 
+					
+					For a server side association, even if you specify
+					these values it will be ignored.
+		
+						
+
+EXAMPLES
+	sctp association modify Assoc1 sctpManagement1 CLIENT port 2476
+	
+	The above command will modify a CLIENT SCTP Association identified as Assoc1
+	which belongs to SCTP management with name sctpManagement1. 
+	
+	If an Association is connected stack will drop the connection firstly. 
+	Then the Association will reconnect itself.
+	 
+SEE ALSO
+	sctp, sctp server create, sctp server destroy, sctp server start, 
+	sctp server stop, sctp server show, sctp association destroy, 
+	sctp association show
+
+
