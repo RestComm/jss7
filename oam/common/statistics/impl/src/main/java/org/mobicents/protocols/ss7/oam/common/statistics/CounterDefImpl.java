@@ -32,6 +32,8 @@ import org.mobicents.protocols.ss7.oam.common.statistics.api.CounterType;
 */
 public class CounterDefImpl implements CounterDef {
 
+    public static final String OBJECT_NAME_SEPARATOR = "-";
+
     public CounterType counterType;
     public String counterName;
     public String groupName;
@@ -48,7 +50,7 @@ public class CounterDefImpl implements CounterDef {
         this.counterType = counterType;
         this.groupName = groupName;
         this.objectName = objectName;
-        this.counterName = groupName + "-" + objectName;
+        this.counterName = groupName + OBJECT_NAME_SEPARATOR + objectName;
         this.description = description;
     }
 
