@@ -736,4 +736,36 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
             }
         }
     }
+
+    @Override
+    public void modifyServer(String serverName, String hostAddress, Integer port, IpChannelType ipChannelType,
+            Boolean acceptAnonymousConnections, Integer maxConcurrentConnectionsCount, String[] extraHostAddresses)
+            throws Exception {
+        this.wrappedSctpManagement.modifyServer(serverName, hostAddress, port, ipChannelType, acceptAnonymousConnections, maxConcurrentConnectionsCount, extraHostAddresses);
+    }
+
+    @Override
+    public void modifyServerAssociation(String assocName, String peerAddress, Integer peerPort, String serverName,
+            IpChannelType ipChannelType) throws Exception {
+        this.wrappedSctpManagement.modifyServerAssociation(assocName, peerAddress, peerPort, serverName, ipChannelType);
+
+    }
+
+    @Override
+    public void modifyAssociation(String hostAddress, Integer hostPort, String peerAddress, Integer peerPort, String assocName,
+            IpChannelType ipChannelType, String[] extraHostAddresses) throws Exception {
+        this.wrappedSctpManagement.modifyAssociation(hostAddress, hostPort, peerAddress, peerPort, assocName, ipChannelType, extraHostAddresses);
+
+    }
+
+    @Override
+    public void onServerModified(Server removeServer) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onAssociationModified(Association association) {
+        // TODO Auto-generated method stub
+    }
 }

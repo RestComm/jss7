@@ -3,9 +3,9 @@ Name
 	Manage M3UA - SCTP
 
 SYNOPSIS
-	sctp server [create | destroy | start | stop | show]  [parameters]
+	sctp server [create | modify | destroy | start | stop | show]  [parameters]
 
-	sctp association [create | destroy | show]  [parameters]
+	sctp association [create | modify | destroy | show]  [parameters]
          
 	parameters 
 		Command Line parameters.
@@ -17,7 +17,7 @@ DESCRIPTION
 	sctp association command.
 
 SEE ALSO
-	sctp server create, sctp server destroy, sctp server start, sctp server stop, 
-	sctp server show, sctp association create, sctp association destroy,
+	sctp server create, sctp server modify, sctp server destroy, sctp server start, sctp server stop, 
+	sctp server show, sctp association create, sctp association modify, sctp association destroy,
 	sctp association show
 
