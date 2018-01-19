@@ -96,6 +96,31 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
     }
 
     @Override
+    public Association modifySctpAssociation(String hostAddress, String hostPort, String peerAddress, String peerPort,
+            String assocName, String ipChannelType, String extraHostAddresses) throws Exception {
+        String currHostAddress = null;
+        if(hostAddress!=null && !hostAddress.isEmpty())
+            currHostAddress = hostAddress;
+        Integer currHostPort = null;
+        if(hostPort!=null && !hostPort.isEmpty())
+            currHostPort = Integer.valueOf(hostPort);
+        String currPeerAddress = null;
+        if(peerAddress!=null && !peerAddress.isEmpty())
+            currPeerAddress = peerAddress;
+        Integer currPeerPort = null;
+        if(peerPort!=null && !peerPort.isEmpty())
+            currPeerPort = Integer.valueOf(peerPort);
+        IpChannelType currIpChannelType = null;
+        if(ipChannelType!=null && !ipChannelType.isEmpty())
+            currIpChannelType = IpChannelType.valueOf(ipChannelType.toUpperCase());
+        String[] currExtraHostAddresses = null;
+        if(extraHostAddresses != null && !extraHostAddresses.isEmpty())
+            currExtraHostAddresses = extraHostAddresses.split(",");
+        this.wrappedSctpManagement.modifyAssociation(currHostAddress, currHostPort, currPeerAddress, currPeerPort, assocName, currIpChannelType, currExtraHostAddresses);
+        return null;
+    }
+
+    @Override
     public void addManagementEventListener(ManagementEventListener listener) {
         // throw new OperationNotSupportedException();
         // TODO ?
@@ -142,6 +167,34 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
     }
 
     @Override
+    public Server modifySctpServer(String serverName, String hostAddress, String port, String ipChannelType,
+            String acceptAnonymousConnections, String maxConcurrentConnectionsCount, String extraHostAddresses) throws Exception {
+
+        String currHostAddress = null;
+        if(hostAddress!=null && !hostAddress.isEmpty())
+            currHostAddress = hostAddress;
+        Integer currPort = null;
+        if(port!=null && !port.isEmpty())
+            currPort = Integer.valueOf(port);
+        IpChannelType currIpChannelType = null;
+        if(ipChannelType!=null && !ipChannelType.isEmpty())
+            currIpChannelType = IpChannelType.valueOf(ipChannelType.toUpperCase());
+        Boolean currAcceptAnonymousConnections = null;
+        if(acceptAnonymousConnections!=null && !acceptAnonymousConnections.isEmpty())
+            currAcceptAnonymousConnections = Boolean.valueOf(acceptAnonymousConnections);
+        Integer currMaxConcurrentConnectionsCount = null;
+        if(maxConcurrentConnectionsCount!=null && !maxConcurrentConnectionsCount.isEmpty())
+            currMaxConcurrentConnectionsCount = Integer.valueOf(maxConcurrentConnectionsCount);
+        String[] currExtraHostAddresses = null;
+        if(extraHostAddresses != null && !extraHostAddresses.isEmpty())
+            currExtraHostAddresses = extraHostAddresses.split(",");
+
+        this.wrappedSctpManagement.modifyServer(serverName, currHostAddress, currPort, currIpChannelType, currAcceptAnonymousConnections,
+                currMaxConcurrentConnectionsCount, currExtraHostAddresses);
+        return null;
+    }
+
+    @Override
     public Association addServerAssociation(String peerAddress, int peerPort, String serverName, String assocName)
             throws Exception {
         this.wrappedSctpManagement.addServerAssociation(peerAddress, peerPort, serverName, assocName);
@@ -158,6 +211,25 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
     public Association addSctpServerAssociation(String peerAddress, int peerPort, String serverName, String assocName,
             String ipChannelType) throws Exception {
         this.wrappedSctpManagement.addServerAssociation(peerAddress, peerPort, serverName, assocName, IpChannelType.valueOf(ipChannelType.toUpperCase()));
+        return null;
+    }
+
+    @Override
+    public Association modifySctpServerAssociation(String peerAddress, String peerPort, String serverName, String assocName,
+            String ipChannelType) throws Exception {
+        String currPeerAddress = null;
+        if(peerAddress!=null && !peerAddress.isEmpty())
+            currPeerAddress = peerAddress;
+        Integer currPeerPort = null;
+        if(peerPort!=null && !peerPort.isEmpty())
+            currPeerPort = Integer.valueOf(peerPort);
+        String currServerName = null;
+        if(serverName!=null && !serverName.isEmpty())
+            currServerName = serverName;
+        IpChannelType currIpChannelType = null;
+        if(ipChannelType!=null && !ipChannelType.isEmpty())
+            currIpChannelType = IpChannelType.valueOf(ipChannelType.toUpperCase());
+        this.wrappedSctpManagement.modifyServerAssociation(assocName, currPeerAddress, currPeerPort, currServerName, currIpChannelType);
         return null;
     }
 
@@ -768,4 +840,5 @@ public class SctpManagementJmx implements SctpManagementJmxMBean, ManagementEven
     public void onAssociationModified(Association association) {
         // TODO Auto-generated method stub
     }
+
 }

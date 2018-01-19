@@ -224,6 +224,76 @@
 								});	
 					}
 					
+					function modifyServer(name){
+						var formInvalid = false;
+								
+						var sctpName = $("#sctpNamem"+name).val();
+						var sctpHostAddress = $("#sctpHostAddressm"+name).val();
+						var sctpHostPort = $("#sctpHostPortm"+name).val();
+						var sctpIPType = $("#sctpIPTypem"+name).val();
+						var acceptAnonymous = $("#acceptAnonymousm"+name).val();
+						var sctpMaxConcurrentConn = $("#sctpMaxConcurrentConnm"+name).val();
+						var sctpExtraHostAddress = $("#sctpExtraHostAddressm"+name).val();
+						
+					    if($("#sctpNamem"+name).val().length === 0) {
+					    	formInvalid = true;
+						    $("#sctpNamem"+name).parent().parent().addClass("error");
+						    $("#sctpNamem"+name).siblings(".help-inline").show();
+						} else {
+							$("#sctpNamem"+name).parent().parent().removeClass("error");
+						    $("#sctpNamem"+name).siblings(".help-inline").hide();
+						}
+					    
+						if(formInvalid) {
+							$("#create-sctpServers-error"+name).show();
+							logToConsole("ERROR", "sctpNamem field is not correctly filled out, please double check!");
+							return false;
+						} else {
+							$("#create-sctpServers-error"+name).hide();
+						}
+						
+						mbeanSearch="org.mobicents.ss7:layer=SCTP,type=Management,name="+name;
+						jolokia.execute(mbeanSearch,"modifySctpServer",sctpName, sctpHostAddress, sctpHostPort, sctpIPType,
+								acceptAnonymous, sctpMaxConcurrentConn, sctpExtraHostAddress,
+								{
+									success: function(value) {
+										$('#entities-modal-sctpServers-modify'+name).modal('hide');
+										refreshSctpList();
+										logToConsole('INFO', 'Successfully modified Server '+ sctpName +' for ' + name );
+									},
+									error: function(value){
+										errorUID = ("st" + new Date().getTime()).hashCode();
+										createStackTrace(errorUID, value.stacktrace);
+										logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+									}
+								});	
+					}
+					
+					function showEditServersDialog(name,sctpServerName,sctpServerHost,sctpServerPort,sctpServerIpChannelType,sctpServerAnonymConnections,sctpServerConcurrentConnections,sctpServerExtraHostAddresses){
+						$("#sctpNamem"+name).val(sctpServerName);
+						$("#sctpHostAddressm"+name).val(sctpServerHost);
+						$("#sctpHostPortm"+name).val(sctpServerPort);
+						$("#sctpIPTypem"+name).val(sctpServerIpChannelType);
+						$("#acceptAnonymousm"+name).val(sctpServerAnonymConnections);
+						$("#sctpMaxConcurrentConnm"+name).val(sctpServerConcurrentConnections);
+						$("#sctpExtraHostAddressm"+name).val(sctpServerExtraHostAddresses);
+						$("#entities-modal-sctpServers-modify"+name).modal("toggle");
+					}
+					
+					function showEditAssociationsDialog(name,assocName,assocPeerAddress,assocPeerPort,assocIpChannelType,assocType,assocServerName,assocHostAddress,assocHostPort,assocExtraHostAddresses){
+						$("#sctpAssocNamem"+name).val(assocName);
+						$("#sctpAssocPeerAddressm"+name).val(assocPeerAddress);
+						$("#sctpAssocPeerPortm"+name).val(assocPeerPort);
+						$("#sctpAssocIPTypem"+name).val(assocIpChannelType);
+						$("#sctpAssocIsServerm"+name).val(assocType);
+						$("#sctpAssocServerNamem"+name).val(assocServerName);
+						$("#sctpAssocHostAddrm"+name).val(assocHostAddress);
+						$("#sctpAssocHostPortm"+name).val(assocHostPort);
+						$("#sctpAssocExtraHostAddressm"+name).val(assocExtraHostAddresses);
+						$("#entities-modal-sctpAssociations-modify"+name).modal("toggle");
+					}
+
+					
 					function addAssoc(name){
 						var formInvalid = false;
 								
@@ -363,6 +433,85 @@
 
 					}
 					
+					function modifyAssoc(name){
+						var formInvalid = false;
+								
+						var sctpAssocName = $("#sctpAssocNamem"+name).val();
+						var sctpAssocPeerAddress = $("#sctpAssocPeerAddressm"+name).val();
+						var sctpAssocPeerPort = $("#sctpAssocPeerPortm"+name).val();
+						var sctpAssocIPType = $("#sctpAssocIPTypem"+name).val();
+							
+						var sctpAssocIsServer = $("#sctpAssocIsServerm"+name).prop('checked');
+
+						var sctpAssocServerName = $("#sctpAssocServerNamem"+name).val();
+						
+						var sctpAssocHostAddr = $("#sctpAssocHostAddrm"+name).val();
+						var sctpAssocHostPort = $("#sctpAssocHostPortm"+name).val();
+						var sctpAssocExtraHostAddress = $("#sctpAssocExtraHostAddressm"+name).val();
+						
+					    if($("#sctpAssocNamem"+name).val().length === 0) {
+					    	formInvalid = true;
+						    $("#sctpAssocNamem"+name).parent().parent().addClass("error");
+						    $("#sctpAssocNamem"+name).siblings(".help-inline").show();
+						} else {
+							 $("#sctpAssocNamem"+name).parent().parent().removeClass("error");
+							 $("#sctpAssocNamem"+name).siblings(".help-inline").hide();
+						}
+					    
+						if (sctpAssocIsServer) {
+							
+						    if($("#sctpAssocServerNamem"+name).val().length === 0) {
+						    	formInvalid = true;
+							    $("#sctpAssocServerNamem"+name).parent().parent().addClass("error");
+							    $("#sctpAssocServerNamem"+name).siblings(".help-inline").show();
+							}
+						}
+						
+						if(formInvalid) {
+							$("#create-sctpAssociations-error"+name).show();
+							logToConsole("ERROR", "sctpAssocName field are not correctly filled out in modify form, please double check!");
+							return false;
+						} else {
+							$("#create-sctpAssociations-error"+name).hide();
+						}
+						
+						mbeanSearch="org.mobicents.ss7:layer=SCTP,type=Management,name="+name;
+						
+						if (sctpAssocIsServer) {
+							jolokia.execute(mbeanSearch,"modifySctpServerAssociation",sctpAssocPeerAddress, sctpAssocPeerPort, sctpAssocServerName,
+									sctpAssocName, sctpAssocIPType,
+									{
+										success: function(value) {
+											$('#entities-modal-sctpAssociations-modify'+name).modal('hide');
+											refreshSctpList();
+											logToConsole('INFO', 'Successfully modified Server Association '+ sctpAssocName +' for ' + name );
+										},
+										error: function(value){
+											errorUID = ("st" + new Date().getTime()).hashCode();
+											createStackTrace(errorUID, value.stacktrace);
+											logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+										}
+									});	
+						}else{
+							jolokia.execute(mbeanSearch,"modifySctpAssociation",sctpAssocHostAddr, sctpAssocHostPort, sctpAssocPeerAddress, sctpAssocPeerPort,
+									sctpAssocName, sctpAssocIPType, sctpAssocExtraHostAddress,
+									{
+										success: function(value) {
+											$('#entities-modal-sctpAssociations-modify'+name).modal('hide');
+											refreshSctpList();
+											logToConsole('INFO', 'Successfully modified Client Association '+ sctpAssocName +' for ' + name );
+										},
+										error: function(value){
+											errorUID = ("st" + new Date().getTime()).hashCode();
+											createStackTrace(errorUID, value.stacktrace);
+											logToConsole("ERROR", value.error + ". (<a href=\"#" + errorUID + "-modal\" data-toggle=\"modal\">Full Stack Trace</a>)");
+										}
+									});	
+						}
+						
+
+					}
+
 					function refreshSctpList(){
 						mbeanSearch="org.mobicents.ss7:layer=SCTP,type=Management,name=*";
 						var mbean;
@@ -671,8 +820,78 @@
 															'					<a href="#" onclick="$(\'#entities-modal-sctpServers'+name+'\').modal(\'hide\'); return false;" class="btn">Close</a>'+
 														    '				</div>'+
 															'			</div>'+
-															'		</div>'+
+															'			<div id="entities-modal-sctpServers-modify'+name+'" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">'+
+															'				<div class="modal-header">'+
+															'					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
+															'					<h3><i class="icon-map-marker" style="color: #CC9522;"></i> Modify Server</h3>'+
+															'				</div>'+
+															'				<div id="entities-modal-body" class="modal-body">'+
+															'					<div class="alert alert-error" id="modify-sctpServers-error'+name+'" style="display:none;">'+
+															'					  <button type="button" class="close">&times;</button>'+
+															'					  Some Fields are not correctly filled out, please double check the settings below !'+
+															'					</div>'+
+															'					<p>'+  
 															
+															'						<span>'+
+															
+															'							<div class="control-group">'+
+															'  								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="name of the new Server created. This must be unique and takes any String value">'+
+															'    								<span class="add-on">Name</span>'+
+															'      								<input id="sctpNamem'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="Name" value="'+name+'"/>'+
+															'  								</span>'+
+															'							</div>'+
+															
+															'							<div class="control-group">'+
+															' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="host IP address to which the SCTP Server socket will bind to">'+
+															'    								<span class="add-on">Host Address</span>'+
+															'      								<input id="sctpHostAddressm'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="Host Address" />'+
+															'  								</span>'+
+															'							</div>'+
+															
+															'							<div class="control-group">'+
+															' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="host port to which the underlying SCTP Server socket will bind to">'+
+															'    								<span class="add-on">Host port</span>'+
+															'      								<input id="sctpHostPortm'+name+'" type="text" placeholder="Host Port"  class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" />'+
+															'  								</span>'+
+															'							</div>'+
+															
+															'							<div class="control-group">'+
+															' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="IP channel type TCP or SCTP">'+
+															'    								<span class="add-on">Socket Type</span>'+
+															'      								<input id="sctpIPTypem'+name+'" type="text" placeholder="TCP/SCTP"  class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" />'+
+															'  								</span>'+
+															'							</div>'+
+															
+															'							<div class="control-group">'+
+															' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="if this socket accepts socket creation request from anonymous ip:port">'+
+															'									<span class="add-on">Accept Anonymous </span>'+
+															'									<input id="acceptAnonymousm'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="true/false" />'+
+															'  								</span>'+
+															'							</div>'+
+															
+															'							<div class="control-group">'+
+															' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="maximum concurrent connection this socket will accept">'+
+															'    								<span class="add-on">Max concurrent connections</span>'+
+															'									<input id="sctpMaxConcurrentConnm'+name+'" type="text" placeholder="0" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;"></input>'+
+															'  								</span>'+
+															'							</div>'+
+															
+															'							<div class="control-group">'+
+															' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="For SCTP multi-home support, you can pass multiple IP addresses as comma separated values. The Server socket will bind to the primary IP address and when it becomes unavailable, it will automatically fall back to secondary address. If the socket-type is TCP, these comma separated values will be ignored and the Server socket will always bind to the primary IP address (Host Address)">'+
+															'    								<span class="add-on">Extra Host Address</span>'+															
+															'									<input id="sctpExtraHostAddressm'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="Extra Host Address"></input></br>'+
+															'  								</span>'+
+															'							</div>'+															
+											
+															'                           <button id="add-rsp-btn'+name+'" onclick="modifyServer(\'' + name + '\');" class="btn btn btn-primary" >Modify</button> '+
+															'						</span>'+					
+															'					</p>'+
+															'				</div>'+					
+															'				<div class="modal-footer">'+
+															'					<a href="#" onclick="$(\'#entities-modal-sctpServers-modify'+name+'\').modal(\'hide\'); return false;" class="btn">Close</a>'+
+														    '				</div>'+
+															'			</div>'+
+															'		</div>'+
 															'		<div class="tab-pane" id="sctpAssociations'+name+'">'+
 															'			<table id="no-sctpAssociations-list-table'+name+'" class="table" style="display: none;">'+
 															'				<tr>'+
@@ -689,6 +908,7 @@
 															'					<th style="width: 30px;">&nbsp;</th>'+
 															'					<th>Name</th>'+
 															'					<th>State</th>'+
+															'					<th>Actions</th>'+
 															'					<th>Delete</th>'+
 															'					</tr>'+
 															'				</thead>'+
@@ -784,9 +1004,81 @@
 															'					<a href="#" onclick="$(\'#entities-modal-sctpAssociations'+name+'\').modal(\'hide\'); return false;" class="btn">Close</a>'+
 														    '				</div>'+
 															'			</div>'+
+															'			<div id="entities-modal-sctpAssociations-modify'+name+'" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">'+
+															'				<div class="modal-header">'+
+															'					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'+
+															'					<h3><i class="icon-cog" style="color: #CC9522;"></i> Modify Association</h3>'+
+															'				</div>'+
+															'				<div id="entities-modal-body" class="modal-body">'+
+															'					<div class="alert alert-error" id="create-sctpAssociations-error'+name+'" style="display:none;">'+
+															'					  <button type="button" class="close">&times;</button>'+
+															'					  Some Fields are not correctly filled out, please double check the settings below !'+
+															'					</div>'+
+															'					<p>'+  
+															'						<span>'+
+															'							<div class="control-group">'+
+															'  								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="name of the new Association created. This must be unique and takes any String value">'+
+															'    								<span class="add-on">Name</span>'+
+															'      								<input id="sctpAssocNamem'+name+'" type="text" class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" placeholder="Name" />'+
+															'  								</span>'+															
+															'							</div>'+
+															'							<div class="control-group">'+
+															'  								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="in a client side association, the server IP address to which the client is connecting to. In a server side association, the client IP address from which connections will be accepted">'+
+															'    								<span class="add-on">Peer Address</span>'+
+															'      								<input id="sctpAssocPeerAddressm'+name+'" type="text" placeholder="Peer Address"  class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" />'+
+															'  								</span>'+																
+															'							</div>'+
+															'							<div class="control-group">'+
+															'  								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="in a client side association, the server Port to which the client is connecting to. In a server side association, the client port from which connections will be accepted">'+
+															'    								<span class="add-on">Peer Port</span>'+
+															'      								<input id="sctpAssocPeerPortm'+name+'" type="text" placeholder="Peer Port"  class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" />'+
+															'  								</span>'+
+															'							</div>'+
+															'							<div class="control-group">'+
+															'  								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="IP channel type, can be TCP or SCTP">'+
+															'    								<span class="add-on">Socket Type</span>'+
+															'      								<input id="sctpAssocIPTypem'+name+'" type="text" placeholder="TCP/SCTP"  class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" />'+
+															'  								</span>'+
+															'							</div>'+
+															'							<div class="control-group">'+
+															' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="if this association is client side or server side. If it is client side, it will initiate the connection to peer. If it is server side, it will wait for peer to initiate the connection. The connection request will be accepted from Peer Address: Peer Port">'+
+															'									<span class="add-on">Is Server Association </span>'+
+															'      								<input id="sctpAssocIsServerm'+name+'" type="text" placeholder="SERVER/CLIENT"  class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" />'+
+															'  								</span>'+
+															'							</div>'+
+															'							<div class="control-group" >'+
+															'   							<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="in a server-side association, the server-name must be passed to associate with the Server identified by that name. You must ensure that the Server identified by server-name has already been created">'+
+															'       							<span class="add-on">SCTP Server Name</span>'+
+															'      								<input id="sctpAssocServerNamem'+name+'" type="text" placeholder="Server Name"  class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" />'+
+															'   							</span>'+	
+															'							</div>'+
+															'							<div class="control-group">'+
+															' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="in a client side association, the local IP address to which the socket will bind to. For a server side association, even if you specify these values it will be ignored.">'+
+															'									<span class="add-on">Host Address </span>'+
+															'									<input id="sctpAssocHostAddrm'+name+'" type="text" placeholder="Host Address"  class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" />'+
+															'  								</span>'+															
+															'							</div>'+
+															'							<div class="control-group">'+
+															' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="in a client side association, the local port to which the socket will bind to. This is required only for a client side Association. For a server side association, even if you specify these values it will be ignored.">'+
+															'									<span class="add-on">Host Port </span>'+
+															'									<input id="sctpAssocHostPortm'+name+'" type="text" placeholder="Host Port"  class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" />'+
+															'  								</span>'+	
+															'							</div>'+
+															'							<div class="control-group">'+
+															' 								<span class="input-prepend" data-toggle="tooltip" data-placement="bottom" title="For SCTP multi-home support, you can pass multiple IP addresses as comma separated values. The Association will bind to the primary IP address and when it becomes unavailable, it will automatically fall back to secondary address. If the socket-type is TCP, these comma separated values will be ignored and the Assocation will always bind to the primary IP address (the first value in the comma separated list). This is required only for a client side Association. For a server side association, even if you specify these values it will be ignored.">'+
+															'									<span class="add-on">Extra Host Address </span>'+
+															'									<input id="sctpAssocExtraHostAddressm'+name+'" type="text" placeholder="Extra Host Address"  class="input-mini" style="width: 120px; margin-right: 12px; text-align: center;" />'+
+															'  								</span>'+	
+															'							</div>'+
+															'							<button id="add-rsp-btn'+name+'" onclick="modifyAssoc(\'' + name + '\');" class="btn btn btn-primary" >Modify</button> '+
+															'						</span>'+					
+															'					</p>'+
+															'				</div>'+					
+															'				<div class="modal-footer">'+
+															'					<a href="#" onclick="$(\'#entities-modal-sctpAssociations-modify'+name+'\').modal(\'hide\'); return false;" class="btn">Close</a>'+
+														    '				</div>'+
+															'			</div>'+
 															'		</div>'+
-															
-															
 															'	</div>	'+
 															'</span>');
 													
@@ -797,6 +1089,14 @@
 													jQuery.each(sctpServers, function() {
 														var sctpServerTmp = this;
 														var sctpServerName = sctpServerTmp.name;
+														
+														var sctpServerHost = sctpServerTmp.hostAddress;
+														var sctpServerPort = sctpServerTmp.hostport;
+														var sctpServerIpChannelType = sctpServerTmp.ipChannelType;
+														var sctpServerAnonymConnections = sctpServerTmp.acceptAnonymousConnections;
+														var sctpServerConcurrentConnections = sctpServerTmp.maxConcurrentConnectionsCount;
+														var sctpServerExtraHostAddresses = sctpServerTmp.extraHostAddresses;
+														
 														var sctpServerStarted = sctpServerTmp.started;
 														noOfSctpServers = noOfSctpServers + 1 ;   
 														
@@ -805,8 +1105,9 @@
 														$('#sctpServers-list-table'+name).children('tbody').append('<tr class="sctpServers-row'+name+'">'+
 																'<td style="vertical-align: middle; text-align: center;"><i style="color: ' + (sctpServerStarted ? '#229522' : '#CC9522') + ';" class="icon-map-marker"></i></td>'+
 																'<td><a href="#" onclick="showInternalPageDetails(\''+name+'-server-'+sctpServerName+'\',\''+sctpServerName+'\')">' + sctpServerName + '</a></td>' + 
-																'<td>' + (sctpServerStarted ? 'STARTED' : 'STOPPED') + '</td>' + 
-																'<td style="font-size: 16px; vertical-align: middle; text-align: center; width: 100px;">' + 
+																'<td>' + (sctpServerStarted ? 'STARTED' : 'STOPPED') + '</td>' +
+																'<td style="font-size: 16px; verical-align: middle; text-align: center; width: 150px;">' +
+																'<a onclick="'+ (sctpServerStarted ? '' : 'showEditServersDialog(\''+name+'\',\'' + sctpServerName +  '\',\'' + sctpServerHost +  '\',\'' + sctpServerPort +  '\',\'' + sctpServerIpChannelType +  '\',\'' + sctpServerAnonymConnections +  '\',\'' + sctpServerConcurrentConnections +  '\',\'' + sctpServerExtraHostAddresses +  '\')')+'" role="button" class="btn btn-info btn-small">Modify</a>' +
 																'<button class="btn btn-small btn-' + (sctpServerStarted ? 'success' : 'warning') + '" data-toggle="tooltip" title="Start/stop Server" data-placement="bottom" onclick="changeServerState(\'' + name +  '\',\'' + sctpServerName +  '\',\'' + sctpServerStarted +  '\')">' + (sctpServerStarted ? 'Stop' : 'Start') + '</i></button> ' +
 															    '</td>' +
 																'<td style="font-size: 16px; vertical-align: middle; text-align: center; width: 100px;">' + 
@@ -1009,11 +1310,23 @@
 														var assocName = sctpAssociationsTmp.name;
 														var assocState = sctpAssociationsTmp.started;
 														
+														var assocPeerAddress = sctpAssociationsTmp.peerAddress;
+														var assocPeerPort = sctpAssociationsTmp.peerPort;
+														var assocIpChannelType = sctpAssociationsTmp.ipChannelType;
+														var assocType = sctpAssociationsTmp.associationType;
+														var assocServerName = sctpAssociationsTmp.serverName;
+														var assocHostAddress = sctpAssociationsTmp.hostAddress;
+														var assocHostPort = sctpAssociationsTmp.hostPort;
+														var assocExtraHostAddresses = sctpAssociationsTmp.extraHostAddresses;
+														
 														noOfAssociatoin = noOfAssociatoin + 1;
 														
 														$('#sctpAssociations-list-table'+name).children('tbody').append('<tr class="sctpAssociations-row'+name+'"><td style="vertical-align: middle; text-align: center;"><i style="color: #CC9522;" class="icon-map-marker"></i></td>'+
 																'<td><a href="#" onclick="showInternalPageDetails(\''+name+'-assoc-'+assocName+'\',\''+assocName+'\')">' + assocName + '</a></td>' + 
 																'<td>' + (assocState ? 'STARTED' : 'STOPPED') + '</td>' + 
+																'<td style="font-size: 16px; verical-align: middle; text-align: center; width: 150px;">' +
+																'<a onclick="showEditAssociationsDialog(\''+name+'\',\'' + assocName +  '\',\'' + assocPeerAddress +  '\',\'' + assocPeerPort +  '\',\'' + assocIpChannelType +  '\',\'' + assocType +  '\',\'' + assocServerName +  '\',\'' + assocHostAddress +  '\',\'' + assocHostPort +  '\',\'' + assocExtraHostAddresses +  '\')" role="button" class="btn btn-info btn-small">Modify</a>' +
+															    '</td>' +
 																'<td style="font-size: 16px; vertical-align: middle; text-align: center; width: 100px;">' + 
 																'<button class="btn btn-small btn-danger"'+ (assocState ? 'disabled' : '') +' data-toggle="tooltip" title="Remove Association" data-placement="bottom" onclick="removeAssociation(\'' + name +  '\',\'' + assocName +  '\')"><i class="icon-remove"> </i></button> ' +
 															    '</td></tr>' 
