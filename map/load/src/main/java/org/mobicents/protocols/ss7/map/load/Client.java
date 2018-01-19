@@ -125,12 +125,14 @@ public class Client extends TestHarness {
     // a ramp-up period is required for performance testing.
     int endCount;
 
-    //AtomicInteger nbConcurrentDialogs = new AtomicInteger(0);
+    // AtomicInteger nbConcurrentDialogs = new AtomicInteger(0);
 
     volatile long start = 0L;
     volatile long prev = 0L;
 
     private RateLimiter rateLimiterObj = null;
+
+    private CsvWriter csvWriter;
 
     protected void initializeStack(IpChannelType ipChannelType) throws Exception {
 
@@ -153,11 +155,17 @@ public class Client extends TestHarness {
         // FInally start ASP
         // Set 5: Finally start ASP
         this.clientM3UAMgmt.startAsp("ASP1");
+
+        this.csvWriter = new CsvWriter("map");
+        this.csvWriter.addCounter(CREATED_DIALOGS);
+        this.csvWriter.addCounter(SUCCESSFUL_DIALOGS);
+        this.csvWriter.addCounter(ERROR_DIALOGS);
+        this.csvWriter.start(TEST_START_DELAY, PRINT_WRITER_PERIOD);
     }
 
     private void initSCTP(IpChannelType ipChannelType) throws Exception {
         this.sctpManagement = new NettySctpManagementImpl("Client");
-//        this.sctpManagement.setSingleThread(false);
+        // this.sctpManagement.setSingleThread(false);
         this.sctpManagement.start();
         this.sctpManagement.setConnectDelay(10000);
         this.sctpManagement.removeAllResourses();
@@ -175,7 +183,7 @@ public class Client extends TestHarness {
         this.clientM3UAMgmt.removeAllResourses();
 
         // m3ua as create rc <rc> <ras-name>
-        RoutingContext rc = factory.createRoutingContext(new long[] { 101L  });
+        RoutingContext rc = factory.createRoutingContext(new long[] { 101L });
         TrafficModeType trafficModeType = factory.createTrafficModeType(TrafficModeType.Loadshare);
         NetworkAppearance na = factory.createNetworkAppearance(102L);
         this.clientM3UAMgmt.createAs("AS1", Functionality.IPSP, ExchangeType.SE, IPSPType.CLIENT, rc, trafficModeType, 1, na);
@@ -195,7 +203,7 @@ public class Client extends TestHarness {
         this.sccpStack = new SccpStackImpl("MapLoadClientSccpStack");
         this.sccpStack.setMtp3UserPart(1, this.clientM3UAMgmt);
 
-//        this.sccpStack.setCongControl_Algo(SccpCongestionControlAlgo.levelDepended);
+        // this.sccpStack.setCongControl_Algo(SccpCongestionControlAlgo.levelDepended);
 
         this.sccpStack.start();
         this.sccpStack.removeAllResourses();
@@ -208,10 +216,10 @@ public class Client extends TestHarness {
 
         ParameterFactoryImpl fact = new ParameterFactoryImpl();
         EncodingScheme ec = new BCDEvenEncodingScheme();
-        GlobalTitle gt1 = fact.createGlobalTitle("-", 0, org.mobicents.protocols.ss7.indicator.NumberingPlan.ISDN_TELEPHONY,
-                ec, NatureOfAddress.INTERNATIONAL);
-        GlobalTitle gt2 = fact.createGlobalTitle("-", 0, org.mobicents.protocols.ss7.indicator.NumberingPlan.ISDN_TELEPHONY,
-                ec, NatureOfAddress.INTERNATIONAL);
+        GlobalTitle gt1 = fact.createGlobalTitle("-", 0, org.mobicents.protocols.ss7.indicator.NumberingPlan.ISDN_TELEPHONY, ec,
+                NatureOfAddress.INTERNATIONAL);
+        GlobalTitle gt2 = fact.createGlobalTitle("-", 0, org.mobicents.protocols.ss7.indicator.NumberingPlan.ISDN_TELEPHONY, ec,
+                NatureOfAddress.INTERNATIONAL);
         SccpAddress localAddress = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt1, CLIENT_SPC, 0);
         this.sccpStack.getRouter().addRoutingAddress(1, localAddress);
         SccpAddress remoteAddress = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt2, SERVET_SPC, 0);
@@ -222,8 +230,8 @@ public class Client extends TestHarness {
         SccpAddress pattern = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt, 0, 0);
         this.sccpStack.getRouter().addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.REMOTE, pattern,
                 "K", 1, -1, null, 0, null);
-        this.sccpStack.getRouter().addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern,
-                "K", 2, -1, null, 0, null);
+        this.sccpStack.getRouter().addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K",
+                2, -1, null, 0, null);
     }
 
     private void initTCAP() throws Exception {
@@ -251,8 +259,8 @@ public class Client extends TestHarness {
     private void initiateUSSD() throws MAPException {
         NetworkIdState networkIdState = this.mapStack.getMAPProvider().getNetworkIdState(0);
         int executorCongestionLevel = this.mapStack.getMAPProvider().getExecutorCongestionLevel();
-        if (!(networkIdState == null || networkIdState.isAvailavle() && networkIdState.getCongLevel() <= 0
-                && executorCongestionLevel <= 0)) {
+        if (!(networkIdState == null
+                || networkIdState.isAvailavle() && networkIdState.getCongLevel() <= 0 && executorCongestionLevel <= 0)) {
             // congestion or unavailable
             logger.warn("**** Outgoing congestion control: MAP load test client: networkIdState=" + networkIdState
                     + ", executorCongestionLevel=" + executorCongestionLevel);
@@ -268,11 +276,16 @@ public class Client extends TestHarness {
         // System.out.println("initiateUSSD");
 
         // First create Dialog
-        AddressString origRef = this.mapProvider.getMAPParameterFactory().createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "12345");
-        AddressString destRef = this.mapProvider.getMAPParameterFactory().createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "67890");
-        MAPDialogSupplementary mapDialog = this.mapProvider.getMAPServiceSupplementary().createNewDialog(
-                MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext, MAPApplicationContextVersion.version2),
-                SCCP_CLIENT_ADDRESS, origRef, SCCP_SERVER_ADDRESS, destRef);
+        AddressString origRef = this.mapProvider.getMAPParameterFactory()
+                .createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "12345");
+        AddressString destRef = this.mapProvider.getMAPParameterFactory()
+                .createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "67890");
+
+        SccpAddress clientSccpAddress = createSccpAddress(ROUTING_INDICATOR, CLIENT_SPC, SSN, SCCP_CLIENT_ADDRESS);
+        SccpAddress serverSccpAddress = createSccpAddress(ROUTING_INDICATOR, SERVET_SPC, SSN, SCCP_SERVER_ADDRESS);
+        MAPDialogSupplementary mapDialog = this.mapProvider.getMAPServiceSupplementary().createNewDialog(MAPApplicationContext
+                .getInstance(MAPApplicationContextName.networkUnstructuredSsContext, MAPApplicationContextVersion.version2),
+                clientSccpAddress, origRef, serverSccpAddress, destRef);
 
         CBSDataCodingScheme ussdDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
 
@@ -282,15 +295,35 @@ public class Client extends TestHarness {
         // impl of Charset
         USSDString ussdString = this.mapProvider.getMAPParameterFactory().createUSSDString("*125*+31628839999#", null, null);
 
-        ISDNAddressString msisdn = this.mapProvider.getMAPParameterFactory().createISDNAddressString(
-                AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
+        ISDNAddressString msisdn = this.mapProvider.getMAPParameterFactory()
+                .createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
 
         mapDialog.addProcessUnstructuredSSRequest(ussdDataCodingScheme, ussdString, null, msisdn);
 
-        //nbConcurrentDialogs.incrementAndGet();
+        // nbConcurrentDialogs.incrementAndGet();
 
         // This will initiate the TC-BEGIN with INVOKE component
         mapDialog.send();
+
+        this.csvWriter.incrementCounter(CREATED_DIALOGS);
+    }
+
+    private SccpAddress createSccpAddress(RoutingIndicator ri, int dpc, int ssn, String address) {
+        ParameterFactoryImpl fact = new ParameterFactoryImpl();
+        GlobalTitle gt = fact.createGlobalTitle(address, 0, org.mobicents.protocols.ss7.indicator.NumberingPlan.ISDN_TELEPHONY,
+                BCDEvenEncodingScheme.INSTANCE, NatureOfAddress.INTERNATIONAL);
+        if (ssn < 0) {
+            ssn = SSN;
+        }
+        return fact.createSccpAddress(ri, gt, dpc, ssn);
+    }
+
+    public void terminate() {
+        try {
+            this.csvWriter.stop(TEST_END_DELAY);
+        } catch (InterruptedException e) {
+            logger.error("an error occured while stopping csvWriter", e);
+        }
     }
 
     public static void main(String[] args) {
@@ -305,77 +338,97 @@ public class Client extends TestHarness {
             ipChannelType = IpChannelType.SCTP;
         }
 
-        System.out.println("IpChannelType="+ipChannelType);
+        System.out.println("IpChannelType=" + ipChannelType);
 
         if (args.length >= 4) {
             TestHarness.CLIENT_IP = args[3];
         }
 
-        System.out.println("CLIENT_IP="+TestHarness.CLIENT_IP);
+        System.out.println("CLIENT_IP=" + TestHarness.CLIENT_IP);
 
         if (args.length >= 5) {
             TestHarness.CLIENT_PORT = Integer.parseInt(args[4]);
         }
 
-        System.out.println("CLIENT_PORT="+TestHarness.CLIENT_PORT);
+        System.out.println("CLIENT_PORT=" + TestHarness.CLIENT_PORT);
 
         if (args.length >= 6) {
             TestHarness.SERVER_IP = args[5];
         }
 
-        System.out.println("SERVER_IP="+TestHarness.SERVER_IP);
+        System.out.println("SERVER_IP=" + TestHarness.SERVER_IP);
 
         if (args.length >= 7) {
             TestHarness.SERVER_PORT = Integer.parseInt(args[6]);
         }
 
-        System.out.println("SERVER_PORT="+TestHarness.SERVER_PORT);
+        System.out.println("SERVER_PORT=" + TestHarness.SERVER_PORT);
 
         if (args.length >= 8) {
             TestHarness.CLIENT_SPC = Integer.parseInt(args[7]);
         }
 
-        System.out.println("CLIENT_SPC="+TestHarness.CLIENT_SPC);
+        System.out.println("CLIENT_SPC=" + TestHarness.CLIENT_SPC);
 
         if (args.length >= 9) {
             TestHarness.SERVET_SPC = Integer.parseInt(args[8]);
         }
 
-        System.out.println("SERVET_SPC="+TestHarness.SERVET_SPC);
+        System.out.println("SERVET_SPC=" + TestHarness.SERVET_SPC);
 
         if (args.length >= 10) {
             TestHarness.NETWORK_INDICATOR = Integer.parseInt(args[9]);
         }
 
-        System.out.println("NETWORK_INDICATOR="+TestHarness.NETWORK_INDICATOR);
+        System.out.println("NETWORK_INDICATOR=" + TestHarness.NETWORK_INDICATOR);
 
         if (args.length >= 11) {
             TestHarness.SERVICE_INIDCATOR = Integer.parseInt(args[10]);
         }
 
-        System.out.println("SERVICE_INIDCATOR="+TestHarness.SERVICE_INIDCATOR);
+        System.out.println("SERVICE_INIDCATOR=" + TestHarness.SERVICE_INIDCATOR);
 
         if (args.length >= 12) {
             TestHarness.SSN = Integer.parseInt(args[11]);
         }
 
-        System.out.println("SSN="+TestHarness.SSN);
+        System.out.println("SSN=" + TestHarness.SSN);
 
         if (args.length >= 13) {
             TestHarness.ROUTING_CONTEXT = Integer.parseInt(args[12]);
         }
 
-        System.out.println("ROUTING_CONTEXT="+TestHarness.ROUTING_CONTEXT);
+        System.out.println("ROUTING_CONTEXT=" + TestHarness.ROUTING_CONTEXT);
 
-        if(args.length >= 14){
+        if (args.length >= 14) {
             TestHarness.DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT = Integer.parseInt(args[13]);
         }
 
-        if(args.length >= 15){
+        System.out.println("DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT=" + TestHarness.DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT);
+
+        if (args.length >= 15) {
             TestHarness.RAMP_UP_PERIOD = Integer.parseInt(args[14]);
         }
 
-        System.out.println("DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT="+TestHarness.DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT);
+        System.out.println("RAMP_UP_PERIOD=" + TestHarness.RAMP_UP_PERIOD);
+
+        if (args.length >= 16) {
+            TestHarness.SCCP_CLIENT_ADDRESS = args[15];
+        }
+
+        System.out.println("SCCP_CLIENT_ADDRESS=" + TestHarness.SCCP_CLIENT_ADDRESS);
+
+        if (args.length >= 17) {
+            TestHarness.SCCP_SERVER_ADDRESS = args[16];
+        }
+
+        System.out.println("SCCP_SERVER_ADDRESS=" + TestHarness.SCCP_SERVER_ADDRESS);
+
+        if (args.length >= 18) {
+            TestHarness.ROUTING_INDICATOR = RoutingIndicator.valueOf(Integer.parseInt(args[17]));
+        }
+
+        System.out.println("ROUTING_INDICATOR=" + TestHarness.ROUTING_INDICATOR);
 
         // logger.info("Number of calls to be completed = " + noOfCalls +
         // " Number of concurrent calls to be maintained = " +
@@ -383,11 +436,11 @@ public class Client extends TestHarness {
 
         NDIALOGS = noOfCalls;
 
-        System.out.println("NDIALOGS="+NDIALOGS);
+        System.out.println("NDIALOGS=" + NDIALOGS);
 
         MAXCONCURRENTDIALOGS = noOfConcurrentCalls;
 
-        System.out.println("MAXCONCURRENTDIALOGS="+MAXCONCURRENTDIALOGS);
+        System.out.println("MAXCONCURRENTDIALOGS=" + MAXCONCURRENTDIALOGS);
 
         final Client client = new Client();
         client.endCount = TestHarness.RAMP_UP_PERIOD;
@@ -395,32 +448,34 @@ public class Client extends TestHarness {
         try {
             client.initializeStack(ipChannelType);
 
-            Thread.sleep(20000);
+            Thread.sleep(TestHarness.TEST_START_DELAY);
 
             while (client.endCount < NDIALOGS) {
-                //while (client.nbConcurrentDialogs.intValue() >= MAXCONCURRENTDIALOGS) {
+                // while (client.nbConcurrentDialogs.intValue() >= MAXCONCURRENTDIALOGS) {
 
-                    // logger.warn("Number of concurrent MAP dialog's = " +
-                    // client.nbConcurrentDialogs.intValue()
-                    // + " Waiting for max dialog count to go down!");
+                // logger.warn("Number of concurrent MAP dialog's = " +
+                // client.nbConcurrentDialogs.intValue()
+                // + " Waiting for max dialog count to go down!");
 
-                    //synchronized (client) {
-                      //  try {
-                        //    client.wait();
-                        //} catch (Exception ex) {
-                        //}
-                    //}
-                //}// end of while (client.nbConcurrentDialogs.intValue() >=
-                 // MAXCONCURRENTDIALOGS)
+                // synchronized (client) {
+                // try {
+                // client.wait();
+                // } catch (Exception ex) {
+                // }
+                // }
+                // }// end of while (client.nbConcurrentDialogs.intValue() >=
+                // MAXCONCURRENTDIALOGS)
 
                 if (client.endCount < 0) {
                     client.start = System.currentTimeMillis();
                     client.prev = client.start;
-                    //logger.warn("StartTime = " + client.start);
+                    // logger.warn("StartTime = " + client.start);
                 }
 
                 client.initiateUSSD();
             }
+
+            client.terminate();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -475,8 +530,8 @@ public class Client extends TestHarness {
     public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
         // This error condition. Client should never receive the
         // ProcessUnstructuredSSRequestIndication
-        logger.error(String.format("onProcessUnstructuredSSRequestIndication for Dialog=%d and invokeId=%d", procUnstrReqInd
-                .getMAPDialog().getLocalDialogId(), procUnstrReqInd.getInvokeId()));
+        logger.error(String.format("onProcessUnstructuredSSRequestIndication for Dialog=%d and invokeId=%d",
+                procUnstrReqInd.getMAPDialog().getLocalDialogId(), procUnstrReqInd.getInvokeId()));
     }
 
     /*
@@ -514,14 +569,15 @@ public class Client extends TestHarness {
 
             USSDString ussdString = this.mapProvider.getMAPParameterFactory().createUSSDString("1", null, null);
 
-            AddressString msisdn = this.mapProvider.getMAPParameterFactory().createAddressString(
-                    AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
+            AddressString msisdn = this.mapProvider.getMAPParameterFactory()
+                    .createAddressString(AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
 
             mapDialog.addUnstructuredSSResponse(unstrReqInd.getInvokeId(), ussdDataCodingScheme, ussdString);
             mapDialog.send();
 
         } catch (MAPException e) {
-            logger.error(String.format("Error while sending UnstructuredSSResponse for Dialog=%d", mapDialog.getLocalDialogId()));
+            logger.error(
+                    String.format("Error while sending UnstructuredSSResponse for Dialog=%d", mapDialog.getLocalDialogId()));
         }
     }
 
@@ -536,8 +592,8 @@ public class Client extends TestHarness {
     public void onUnstructuredSSResponse(UnstructuredSSResponse unstrResInd) {
         // This error condition. Client should never receive the
         // UnstructuredSSResponseIndication
-        logger.error(String.format("onUnstructuredSSResponseIndication for Dialog=%d and invokeId=%d", unstrResInd
-                .getMAPDialog().getLocalDialogId(), unstrResInd.getInvokeId()));
+        logger.error(String.format("onUnstructuredSSResponseIndication for Dialog=%d and invokeId=%d",
+                unstrResInd.getMAPDialog().getLocalDialogId(), unstrResInd.getInvokeId()));
     }
 
     /*
@@ -551,15 +607,15 @@ public class Client extends TestHarness {
     public void onUnstructuredSSNotifyRequest(UnstructuredSSNotifyRequest unstrNotifyInd) {
         // This error condition. Client should never receive the
         // UnstructuredSSNotifyRequestIndication
-        logger.error(String.format("onUnstructuredSSNotifyRequestIndication for Dialog=%d and invokeId=%d", unstrNotifyInd
-                .getMAPDialog().getLocalDialogId(), unstrNotifyInd.getInvokeId()));
+        logger.error(String.format("onUnstructuredSSNotifyRequestIndication for Dialog=%d and invokeId=%d",
+                unstrNotifyInd.getMAPDialog().getLocalDialogId(), unstrNotifyInd.getInvokeId()));
     }
 
     public void onUnstructuredSSNotifyResponseIndication(UnstructuredSSNotifyResponse unstrNotifyInd) {
         // This error condition. Client should never receive the
         // UnstructuredSSNotifyRequestIndication
-        logger.error(String.format("onUnstructuredSSNotifyResponseIndication for Dialog=%d and invokeId=%d", unstrNotifyInd
-                .getMAPDialog().getLocalDialogId(), unstrNotifyInd.getInvokeId()));
+        logger.error(String.format("onUnstructuredSSNotifyResponseIndication for Dialog=%d and invokeId=%d",
+                unstrNotifyInd.getMAPDialog().getLocalDialogId(), unstrNotifyInd.getInvokeId()));
     }
 
     /*
@@ -638,6 +694,7 @@ public class Client extends TestHarness {
         logger.error(String.format(
                 "onDialogReject for DialogId=%d MAPRefuseReason=%s ApplicationContextName=%s MAPExtensionContainer=%s",
                 mapDialog.getLocalDialogId(), refuseReason, alternativeApplicationContext, extensionContainer));
+        this.csvWriter.incrementCounter(ERROR_DIALOGS);
     }
 
     /*
@@ -648,9 +705,11 @@ public class Client extends TestHarness {
      * org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer)
      */
     @Override
-    public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason, MAPExtensionContainer extensionContainer) {
+    public void onDialogUserAbort(MAPDialog mapDialog, MAPUserAbortChoice userReason,
+            MAPExtensionContainer extensionContainer) {
         logger.error(String.format("onDialogUserAbort for DialogId=%d MAPUserAbortChoice=%s MAPExtensionContainer=%s",
                 mapDialog.getLocalDialogId(), userReason, extensionContainer));
+        this.csvWriter.incrementCounter(ERROR_DIALOGS);
     }
 
     /*
@@ -667,6 +726,7 @@ public class Client extends TestHarness {
         logger.error(String.format(
                 "onDialogProviderAbort for DialogId=%d MAPAbortProviderReason=%s MAPAbortSource=%s MAPExtensionContainer=%s",
                 mapDialog.getLocalDialogId(), abortProviderReason, abortSource, extensionContainer));
+        this.csvWriter.incrementCounter(ERROR_DIALOGS);
     }
 
     /*
@@ -692,6 +752,7 @@ public class Client extends TestHarness {
     public void onDialogNotice(MAPDialog mapDialog, MAPNoticeProblemDiagnostic noticeProblemDiagnostic) {
         logger.error(String.format("onDialogNotice for DialogId=%d MAPNoticeProblemDiagnostic=%s ",
                 mapDialog.getLocalDialogId(), noticeProblemDiagnostic));
+        this.csvWriter.incrementCounter(ERROR_DIALOGS);
     }
 
     /*
@@ -705,7 +766,7 @@ public class Client extends TestHarness {
         if (logger.isDebugEnabled()) {
             logger.debug(String.format("onDialogResease for DialogId=%d", mapDialog.getLocalDialogId()));
         }
-
+        this.csvWriter.incrementCounter(SUCCESSFUL_DIALOGS);
         this.endCount++;
 
         if (this.endCount < NDIALOGS) {
@@ -737,6 +798,7 @@ public class Client extends TestHarness {
     @Override
     public void onDialogTimeout(MAPDialog mapDialog) {
         logger.error(String.format("onDialogTimeout for DialogId=%d", mapDialog.getLocalDialogId()));
+        this.csvWriter.incrementCounter(ERROR_DIALOGS);
     }
 
     @Override
@@ -834,5 +896,4 @@ public class Client extends TestHarness {
         // TODO Auto-generated method stub
 
     }
-
 }
