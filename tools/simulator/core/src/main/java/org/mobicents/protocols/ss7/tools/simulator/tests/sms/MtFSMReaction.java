@@ -37,11 +37,12 @@ public class MtFSMReaction extends EnumeratedBase {
 
     public static final int VAL_RETURN_SUCCESS = 1;
     public static final int VAL_ERROR_MEMORY_CAPACITY_EXCEEDED = 2;
-    public static final int VAL_ERROR_EQUIPMENT_PROTOCOL_ERROR = 7;
     public static final int VAL_ERROR_UNKNOWN_SERVICE_CENTRE = 3;
     public static final int VAL_ERROR_SYSTEM_FAILURE = 4;
     public static final int VAL_ERROR_ABSENT_SUBSCRIBER = 5;
     public static final int VAL_ERROR_SUBSCRIBER_BUSY_FOR_MT_SMS = 6;
+    public static final int VAL_ERROR_EQUIPMENT_PROTOCOL_ERROR = 7;
+    public static final int VAL_ERROR_EQUIPMENT_PROTOCOL_ERROR_WITH_TPDU = 8;
 
     private static Hashtable<String, Integer> stringMap = new Hashtable<String, Integer>();
     private static Hashtable<Integer, String> intMap = new Hashtable<Integer, String>();
@@ -50,6 +51,7 @@ public class MtFSMReaction extends EnumeratedBase {
         intMap.put(VAL_RETURN_SUCCESS, "Return success");
         intMap.put(VAL_ERROR_MEMORY_CAPACITY_EXCEEDED, "SMDeliveryFailure: Return memory capacity exceeded");
         intMap.put(VAL_ERROR_EQUIPMENT_PROTOCOL_ERROR, "SMDeliveryFailure: Equipment protocol error");
+        intMap.put(VAL_ERROR_EQUIPMENT_PROTOCOL_ERROR_WITH_TPDU, "SMDeliveryFailure: Equipment protocol error with sms_delivery_report tpdu");
         intMap.put(VAL_ERROR_UNKNOWN_SERVICE_CENTRE, "SMDeliveryFailure: Unknown service centre");
         intMap.put(VAL_ERROR_SYSTEM_FAILURE, "Return error system failure");
         intMap.put(VAL_ERROR_ABSENT_SUBSCRIBER, "Return error absent subscriber");
@@ -58,6 +60,7 @@ public class MtFSMReaction extends EnumeratedBase {
         stringMap.put("Return success", VAL_RETURN_SUCCESS);
         stringMap.put("SMDeliveryFailure: Return memory capacity exceeded", VAL_ERROR_MEMORY_CAPACITY_EXCEEDED);
         stringMap.put("SMDeliveryFailure: Equipment protocol error", VAL_ERROR_EQUIPMENT_PROTOCOL_ERROR);
+        stringMap.put("SMDeliveryFailure: Equipment protocol error with sms_delivery_report tpdu", VAL_ERROR_EQUIPMENT_PROTOCOL_ERROR_WITH_TPDU);
         stringMap.put("SMDeliveryFailure: Unknown service centre", VAL_ERROR_UNKNOWN_SERVICE_CENTRE);
         stringMap.put("Return error system failure", VAL_ERROR_SYSTEM_FAILURE);
         stringMap.put("Return error absent subscriber", VAL_ERROR_ABSENT_SUBSCRIBER);
