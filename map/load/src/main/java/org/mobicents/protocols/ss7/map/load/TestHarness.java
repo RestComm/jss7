@@ -44,9 +44,9 @@ public abstract class TestHarness implements MAPDialogListener, MAPServiceSupple
 
     private static final Logger logger = Logger.getLogger("map.test");
 
-    protected static final String CREATED_DIALOGS = "CreatedDialogs";
-    protected static final String SUCCESSFUL_DIALOGS = "SuccessfulDialogs";
-    protected static final String ERROR_DIALOGS = "ErrorDialogs";
+    protected static final String CREATED_DIALOGS = "CreatedScenario";
+    protected static final String SUCCESSFUL_DIALOGS = "CompletedScenario";
+    protected static final String ERROR_DIALOGS = "FailedScenario";
     
     protected static final String LOG_FILE_NAME = "log.file.name";
     protected static String logFileName = "maplog.txt";
