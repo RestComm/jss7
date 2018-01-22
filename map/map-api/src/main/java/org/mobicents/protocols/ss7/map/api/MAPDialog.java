@@ -140,26 +140,26 @@ public interface MAPDialog extends Serializable {
     void setNetworkId(int networkId);
 
     /**
-     * Option responsible for presence of the protocol version in 
+     * Option responsible for presence of the protocol version in
      * this dialogue portion.
-     * 
-     * @return boolean true if protocol version must be omitted, 
-     * false when it should be included and null if not defined at the 
+     *
+     * @return boolean true if protocol version must be omitted,
+     * false when it should be included and null if not defined at the
      * dialog level and global option should be used.
      */
-    public Boolean isDoNotSendProtcolVersion();
-    
+    Boolean isDoNotSendProtcolVersion();
+
     /**
-     * Modifies option responsible for presence of the protocol version in 
+     * Modifies option responsible for presence of the protocol version in
      * this dialogue portion.
-     * 
+     *
      * @param doNotSendProtocolVersion
-     * boolean true if protocol version must be omitted, 
-     * false when it should be included and null if not defined at the 
+     * boolean true if protocol version must be omitted,
+     * false when it should be included and null if not defined at the
      * dialog level and global option should be used.
      */
-    public void setDoNotSendProtocolVersion(Boolean doNotSendProtocolVersion);
-    
+    void setDoNotSendProtocolVersion(Boolean doNotSendProtocolVersion);
+
     /**
      * Remove MAPDialog without sending any messages and invoking events
      */

@@ -114,12 +114,12 @@ public abstract class MAPDialogImpl implements MAPDialog {
     public Boolean isDoNotSendProtcolVersion() {
         return tcapDialog.isDoNotSendProtcolVersion();
     }
-    
+
     @Override
     public void setDoNotSendProtocolVersion(Boolean doNotSendProtocolVersion) {
         tcapDialog.setDoNotSendProtocolVersion(doNotSendProtocolVersion);
     }
-    
+
     /**
      *
      * @return - local sccp address.

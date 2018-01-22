@@ -174,7 +174,7 @@ public class DialogImpl implements Dialog {
     private int networkId;
 
     private Boolean doNotSendProtocolVersion = null;
-    
+
     private static int getIndexFromInvokeId(Long l) {
         int tmp = l.intValue();
         return tmp + _INVOKE_TABLE_SHIFT;
@@ -275,24 +275,24 @@ public class DialogImpl implements Dialog {
     public Boolean isDoNotSendProtcolVersion() {
         return doNotSendProtocolVersion;
     }
-    
+
     @Override
     public void setDoNotSendProtocolVersion(Boolean doNotSendProtocolVersion) {
         this.doNotSendProtocolVersion = doNotSendProtocolVersion;
     }
-    
+
     /**
-     * Compute convergent option value as combination from dialog level value 
+     * Compute convergent option value as combination from dialog level value
      * and global value specified at stack level.
-     * 
-     * @return 
+     *
+     * @return
      */
     private boolean doNotSendProtocolVersion() {
-        return doNotSendProtocolVersion != null ? 
+        return doNotSendProtocolVersion != null ?
                 doNotSendProtocolVersion  :
                 provider.getStack().getDoNotSendProtocolVersion();
     }
-    
+
     public void release() {
         if (!this.previewMode) {
             for (int i = 0; i < this.operationsSent.length; i++) {
