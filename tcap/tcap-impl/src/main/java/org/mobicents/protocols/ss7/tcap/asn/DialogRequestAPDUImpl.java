@@ -40,7 +40,7 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
 
     private ApplicationContextName acn;
     private UserInformation ui;
-    private ProtocolVersion protocolVersion = new ProtocolVersionImpl();
+    private ProtocolVersion protocolVersion = null;
     private boolean doNotSendProtocolVersion = false;
     private boolean malformedUserInformation = false;
 
@@ -204,8 +204,10 @@ public class DialogRequestAPDUImpl implements DialogRequestAPDU {
             aos.writeTag(Tag.CLASS_APPLICATION, false, _TAG_REQUEST);
             int pos = aos.StartContentDefiniteLength();
 
-            if (!doNotSendProtocolVersion)
+            if (!doNotSendProtocolVersion) {
+                this.protocolVersion = new ProtocolVersionImpl();
                 this.protocolVersion.encode(aos);
+            }
             this.acn.encode(aos);
 
             if (ui != null)
