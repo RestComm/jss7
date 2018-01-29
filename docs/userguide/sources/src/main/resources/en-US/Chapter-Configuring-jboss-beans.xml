@@ -11,37 +11,37 @@
                 <title>
                         Configuring &THIS.PLATFORM; SS7 Service
                 </title>
-                <para>Configuration is done through an XML descriptor file named <filename>jboss-beans.xml</filename> located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where 
+                <para>Configuration is done through an XML descriptor file named <filename>jboss-beans.xml</filename> located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where
                 <literal>profile_name</literal> is the name of the server profile.</para>
-                
-                <para>&THIS.PLATFORM; SS7 Layer 4 (<literal>SCCP, ISUP</literal>) leverages either of the following <literal>MTP</literal> 
+
+                <para>&THIS.PLATFORM; SS7 Layer 4 (<literal>SCCP, ISUP</literal>) leverages either of the following <literal>MTP</literal>
                 layers to exchange signaling messages with remote signaling points:
-                
+
                 <itemizedlist>
                         <listitem>
                                 <para><literal>M3UA</literal></para>
                         </listitem>
                         <listitem>
                                 <para><literal>dahdi</literal></para>
-                        </listitem>                     
+                        </listitem>
                         <listitem>
                                 <para><literal>dialogic</literal></para>
-                        </listitem>                     
+                        </listitem>
                 </itemizedlist>
                 </para>
                 <section id="configuring_Rem_SGW">
                         <title>Configuring M3UA</title>
-                        <para> 
+                        <para>
                     You must configure <literal>M3UAManagement</literal> if the underlying SS7 service will leverage <literal>M3UA</literal>. For more details on configuring <classname>M3UAManagement</classname>, please refer to <xref linkend="managing_m3ua" />.
             </para>
-          
+
                 <para>
                         Scroll down to the section for M3UA Layer in the <filename>jboss-beans.xml</filename> file and define the properties to suit your requirements.
                                 <programlisting language="XML" role="XML"><![CDATA[
         <!-- ==================================================================== -->
         <!-- SCTP Properties                                                      -->
         <!-- Used by M3UA layer                                                   -->
-        <!-- ==================================================================== -->   
+        <!-- ==================================================================== -->
         <bean name="SCTPManagement" class="org.mobicents.protocols.sctp.ManagementImpl">
                 <constructor>
                         <parameter>SCTPManagement</parameter>
@@ -72,7 +72,7 @@
                 </constructor>
                 <property name="persistDir">${jboss.server.data.dir}</property>
                 <property name="transportManagement"><inject bean="SCTPManagement" /></property>
-                <property name="routingLabelFormat"><inject bean="RoutingLabelFormat" /></property>     
+                <property name="routingLabelFormat"><inject bean="RoutingLabelFormat" /></property>
         </bean>
 
         <bean name="M3UAShellExecutor"
@@ -81,16 +81,16 @@
                         <inject bean="Mtp3UserPart" />
                 </property>
         </bean>]]>
-                        </programlisting>       
+                        </programlisting>
                 </para>
 
   <formalpara>
                 <title><classname>org.mobicents.protocols.sctp.ManagementImpl</classname></title>
                 <para>This SCTP Management Bean takes a <classname>String</classname> as a constructor argument. The name is prepended to the name of the XML file created by the SCTP stack for persisting the state of SCTP resources. This XML file is stored in the path specified by the property <literal>persistDir</literal>. For example, in the above case, when &THIS.PLATFORM; SS7 Service is started, a file named <filename>SCTPManagement_sctp.xml</filename> will be created at <filename>$JBOSS_HOME/server/profile_name/data</filename> directory. The other properties of the Stack are defined below:
-              </para>  
-  </formalpara>           
+              </para>
+  </formalpara>
   <formalpara>
-        <title><classname>org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl</classname></title>  
+        <title><classname>org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl</classname></title>
            <para>
 
 This M3UA Management Bean takes a <classname>String</classname> as a constructor argument. The name is prepended to the name of the XML file created by the M3UA stack for persisting the state of M3UA resources. This XML file is stored in the path specified by the property <literal>persistDir</literal>. For example, in the above case, when &THIS.PLATFORM; SS7 Service is started, a file named <filename>Mtp3UserPart_m3ua.xml</filename> will be created at <filename>$JBOSS_HOME/server/profile_name/data</filename> directory. The other properties of the Stack are defined below:
@@ -110,22 +110,22 @@ This M3UA Management Bean takes a <classname>String</classname> as a constructor
 <section id="configuring_LinksetFactory">
                         <title>Configuring dahdi</title>
                         <para>
-                        	<literal>Dahdi</literal> based MTP layer will only be used if you have installed <literal>dahdi</literal> based SS7 hardware (Sangoma or Diguim) cards. 
-                        	<literal>DahdiLinksetFactory</literal> is responsible for creating new instances of <literal>DahdiLinkset</literal> when instructed by 
-                        	the <literal>LinksetManager</literal>. 
+                        	<literal>Dahdi</literal> based MTP layer will only be used if you have installed <literal>dahdi</literal> based SS7 hardware (Sangoma or Diguim) cards.
+                        	<literal>DahdiLinksetFactory</literal> is responsible for creating new instances of <literal>DahdiLinkset</literal> when instructed by
+                        	the <literal>LinksetManager</literal>.
                         </para>
-                        
+
 					<note>
 		                <para>
-		                	The corresponding native libraries for <literal>dahdi</literal> from folder 
-		                	<literal>mobicents-jss7-&lt;version&gt;/ss7/native/32</literal> or <literal>mobicents-jss7-&lt;version&gt;/ss7/native/64</literal> should be copied to 
-		                	 copied to <literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x86</literal> if OS is 32 bit or <literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x64</literal> if OS is 64 bit. 
+		                	The corresponding native libraries for <literal>dahdi</literal> from folder
+		                	<literal>mobicents-jss7-&lt;version&gt;/ss7/native/32</literal> or <literal>mobicents-jss7-&lt;version&gt;/ss7/native/64</literal> should be copied to
+		                	 copied to <literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x86</literal> if OS is 32 bit or <literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x64</literal> if OS is 64 bit.
 		                </para>
 		                <para>
 		                	libraries are compiled only for linux OS for now.
 		                </para>
-		                <para>	
-		                	<literal>mobicents-jss7-&lt;version&gt;/ss7/native/32</literal> and <literal>mobicents-jss7-&lt;version&gt;/ss7/native/64</literal> folders carries 
+		                <para>
+		                	<literal>mobicents-jss7-&lt;version&gt;/ss7/native/32</literal> and <literal>mobicents-jss7-&lt;version&gt;/ss7/native/64</literal> folders carries
 		                	libraries compiled for 32 bit and 64 bit linux OS.
 		                </para>
 		                <para>
@@ -141,23 +141,23 @@ This M3UA Management Bean takes a <classname>String</classname> as a constructor
 	                                        <listitem>
 	                                                <para>Native library for Dialogic</para>
 	                                        </listitem>
-	                                </varlistentry>                                 
-	                        </variablelist>	                	
+	                                </varlistentry>
+	                        </variablelist>
 		                </para>
-                	</note>                        
-                        
-                        
+                	</note>
+
+
                                         <programlisting language="XML" role="XML"><![CDATA[
         <bean name="DahdiLinksetFactory"
                 class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
         </bean>]]>
-                        </programlisting>                                       
-                                                        
-                        
+                        </programlisting>
+
+
                         <para> <literal>LinksetFactoryFactory</literal> is just a call-back class listening for new factories deployed. It maintains a Map of available 'factory name' vs 'factory'. You should never touch this bean.</para>
-                        
-                
-                        <para> 
+
+
+                        <para>
                                 <literal>LinksetManager</literal> is responsible for managing <literal>Linkset</literal> and <literal>Link</literal>.
                         </para>
                         <programlisting language="XML" role="XML"><![CDATA[<!-- ================================================ -->
@@ -186,38 +186,38 @@ This M3UA Management Bean takes a <classname>String</classname> as a constructor
                 </property>
                 <property name="persistDir">${jboss.server.data.dir}</property>
         </bean>
-        
+
                 <bean name="LinksetExecutor" class="org.mobicents.ss7.linkset.oam.LinksetExecutor">
                         <property name="linksetManager">
                                 <inject bean="LinksetManager" />
                         </property>
-                </bean>]]></programlisting>             
+                </bean>]]></programlisting>
                         <para>When LinksetManagerImpl is started it looks for the file  <filename>linksetmanager.xml</filename> containing serialized information about underlying linksets and links. The directory path is configurable by changing the value of the property <literal>persistDir</literal>.</para>
-                        <warning><para><filename>linksetmanager.xml</filename> should never be edited by you manually. Always use the Shell Client to connect to the Stack and execute appropriate commands.</para></warning>   
+                        <warning><para><filename>linksetmanager.xml</filename> should never be edited by you manually. Always use the Shell Client to connect to the Stack and execute appropriate commands.</para></warning>
                         <para><literal>LinksetExecutor</literal> accepts the <literal>linkset</literal> commands and executes necessary operations.</para>
 
                 </section>
-                
+
                 <section id="configuring_dialogic">
                         <title>Configuring dialogic</title>
                         <para>
-                        	<literal>Dialogic</literal> based MTP layer will only be used if you have installed Dialogic cards. 
+                        	<literal>Dialogic</literal> based MTP layer will only be used if you have installed Dialogic cards.
                         	<literal>DialogicMtp3UserPart</literal> communicates with Dialogic hardware. It is assumed here that MTP3 and MTP2 is leveraged from
-                        	the Dialogic Stack either on-board or on-host. 
+                        	the Dialogic Stack either on-board or on-host.
                         </para>
-                        
+
 					<note>
 		                <para>
-		                	The corresponding native libraries for <literal>dialogic</literal> from folder 
-		                	<literal>mobicents-jss7-&lt;version&gt;/ss7/native/32</literal> or <literal>mobicents-jss7-&lt;version&gt;/ss7/native/64</literal> should be copied 
-		                	to <literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x86</literal> if OS is 32 bit or copied to 
-		                	<literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x64</literal> if OS is 64 bit. 
+		                	The corresponding native libraries for <literal>dialogic</literal> from folder
+		                	<literal>mobicents-jss7-&lt;version&gt;/ss7/native/32</literal> or <literal>mobicents-jss7-&lt;version&gt;/ss7/native/64</literal> should be copied
+		                	to <literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x86</literal> if OS is 32 bit or copied to
+		                	<literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x64</literal> if OS is 64 bit.
 		                </para>
 		                <para>
 		                	libraries are compiled only for linux OS for now.
-		                </para>		                
-		                <para>	
-		                	<literal>mobicents-jss7-&lt;version&gt;/ss7/native/32</literal> and <literal>mobicents-jss7-&lt;version&gt;/ss7/native/64</literal> folders carries 
+		                </para>
+		                <para>
+		                	<literal>mobicents-jss7-&lt;version&gt;/ss7/native/32</literal> and <literal>mobicents-jss7-&lt;version&gt;/ss7/native/64</literal> folders carries
 		                	libraries compiled for 32 bit and 64 bit linux OS.
 		                </para>
 		                <para>
@@ -227,17 +227,17 @@ This M3UA Management Bean takes a <classname>String</classname> as a constructor
 	                                        <listitem>
 	                                                <para>Native library for Dialogic</para>
 	                                        </listitem>
-	                                </varlistentry>                                 
+	                                </varlistentry>
 	                                <varlistentry>
 	                                        <term>libmobicents-dahdi-linux</term>
 	                                        <listitem>
 	                                                <para>Native library for <literal>dahdi</literal> based cards - Diguim and Sangoma</para>
 	                                        </listitem>
 	                                </varlistentry>
-	                        </variablelist>	                	
+	                        </variablelist>
 		                </para>
-                	</note>                        
-                        
+                	</note>
+
 
                                         <programlisting language="XML" role="XML"><![CDATA[
         <!-- ==================================================================== -->
@@ -249,9 +249,9 @@ This M3UA Management Bean takes a <classname>String</classname> as a constructor
                 <property name="destinationModuleId">34</property>
                 <property name="routingLabelFormat">
                         <inject bean="RoutingLabelFormat" />
-                </property>             
+                </property>
         </bean>]]>
-                        </programlisting>                                       
+                        </programlisting>
                          <para>
 The other properties of the Stack are defined below:
                 <variablelist>
@@ -262,7 +262,7 @@ The other properties of the Stack are defined below:
                                                 <literal>sourceModuleId</literal> is the id of source module and should match with the value configured in the file <filename>system.txt</filename> used by <literal>dialogic</literal> drivers. In the above example, 61 is assigned for mobicents process.
                                         </para>
                                 </listitem>
-                        </varlistentry>    
+                        </varlistentry>
                         <varlistentry>
                                 <term>destinationModuleId</term>
                                 <listitem>
@@ -270,7 +270,7 @@ The other properties of the Stack are defined below:
                                                 <literal>destinationModuleId</literal> is the id of destination module. In the above example, 34 is the id of Dialogic MTP3 module.
                                         </para>
                                 </listitem>
-                        </varlistentry>                                         
+                        </varlistentry>
                         <varlistentry>
                                 <term>routingLabelFormat</term>
                                 <listitem>
@@ -282,13 +282,13 @@ The other properties of the Stack are defined below:
                 </variablelist>
              </para>
                 </section>
-                
+
         <section id="configuring_routing_label_format">
                 <title>Configuring MTP3 routing label</title>
                 <para>
                         MTP Level 3 routes messages based on the routing label in the signaling information field (SIF) of
                                 message signal units. The routing label is comprised of the destination point code (DPC),
-                                originating point code (OPC), and signaling link selection (SLS) field. Overtime different standards 
+                                originating point code (OPC), and signaling link selection (SLS) field. Overtime different standards
                                 cameup with different routing label format. For example An ANSI routing label uses 7 octets; an ITU-T routing label uses 4 octets.
                 </para>
                 <para>
@@ -305,10 +305,10 @@ The other properties of the Stack are defined below:
                         <parameter>ITU</parameter>
                 </constructor>
         </bean>]]>
-                        </programlisting>       
+                        </programlisting>
                         <para>
                                 Following table shows various routing formats supported
-                        </para> 
+                        </para>
                                 <table frame="all" pgwide="1">
                                         <title>Routing Format</title>
                                         <tgroup colsep="1" cols="3">
@@ -338,19 +338,32 @@ The other properties of the Stack are defined below:
                                                                 <entry>24-bits</entry>
                                                                 <entry>5-bits</entry>
                                                         </row>
-                                                </tbody>                                                
+                                                </tbody>
                                         </tgroup>
-                                </table>                                                        
-        </section>      
-                
+                                </table>
+        </section>
+
                 <section id="configuring_SCCP">
                         <title>Configuring SCCP</title>
-                        <para> 
-                                As name suggests <literal>SccpStack</literal> initiates the SCCP stack routines. 
+                        <para>
+                                As name suggests <literal>SccpStack</literal> initiates the SCCP stack routines.
                         </para>
                         <programlisting language="XML" role="XML"><![CDATA[     <!-- ==================================================================== -->
         <!-- SCCP Service -->
         <!-- ==================================================================== -->
+
+        <!--<bean name="RuleComparator" class="org.mobicents.protocols.ss7.sccp.impl.router.RuleByIdComparator"/>-->
+        <bean name="RuleComparator" class="org.mobicents.protocols.ss7.sccp.impl.router.RuleComparator"/>
+        <bean name="RuleComparatorFactory" class="org.mobicents.protocols.ss7.sccp.impl.router.RuleComparatorFactory">
+            <constructor factoryClass="org.mobicents.protocols.ss7.sccp.impl.router.RuleComparatorFactory"
+        				   factoryMethod="getInstance">
+            <parameter>RuleComparatorFactory</parameter>
+            </constructor>
+            <property name="ruleComparator">
+        	      <inject bean="RuleComparator"/>
+            </property>
+        </bean>
+
         <bean name="SccpStack" class="org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl">
                 <constructor>
                         <parameter>SccpStack</parameter>
@@ -373,29 +386,29 @@ The other properties of the Stack are defined below:
                 <property name="sccpStack">
                         <inject bean="SccpStack" />
                 </property>
-        </bean>]]></programlisting>     
+        </bean>]]></programlisting>
                         <para>
                                 <classname>org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl</classname> takes <classname>String</classname> as constructor
-                                argument. The name is prepend to <literal>xml</literal> file created by SCCP stack for persisting state of SCCP resources. 
+                                argument. The name is prepend to <literal>xml</literal> file created by SCCP stack for persisting state of SCCP resources.
                                 The <literal>xml</literal> is stored in path specified by <literal>persistDir</literal> property above.
                         </para>
                         <para>
-                                For example in above case, when &THIS.PLATFORM; SS7 Service is started two file's <filename>SccpStack_sccpresource.xml</filename> 
+                                For example in above case, when &THIS.PLATFORM; SS7 Service is started two file's <filename>SccpStack_sccpresource.xml</filename>
                                 and <filename>SccpStack_sccprouter.xml</filename> will be created at <filename>$JBOSS_HOME/server/profile_name/data</filename> directory
-                        </para>                         
-                        <para>                          
-                                Stack has following properties: 
+                        </para>
+                        <para>
+                                Stack has following properties:
                                 <variablelist>
                                         <varlistentry>
                                                 <term>persistDir</term>
                                                 <listitem>
                                                         <para>As explained above</para>
                                                 </listitem>
-                                        </varlistentry>                                 
+                                        </varlistentry>
                                         <varlistentry>
                                                 <term>mtp3UserParts</term>
                                                 <listitem>
-                                                        <para>specifies SS7 Level 3 to be used as transport medium(  be it SS7 card or M3UA). &THIS.PLATFORM; &THIS.APPLICATION; SCCP allows configuring multiple MTP3 layers for 
+                                                        <para>specifies SS7 Level 3 to be used as transport medium(  be it SS7 card or M3UA). &THIS.PLATFORM; &THIS.APPLICATION; SCCP allows configuring multiple MTP3 layers for
                                                         same SCCP stack. This allows to have multiple local point-code and connecting to various networks while SCCP layer remains same </para>
                                                 </listitem>
                                         </varlistentry>
@@ -403,18 +416,19 @@ The other properties of the Stack are defined below:
                         </para>
 
                         <para> <literal>SccpExecutor</literal> accepts <literal>sccp</literal> commands and executes necessary operations</para>
-                </section>                      
+                        <para> For sorting SCCP rules by ID we need to set  <literal>RuleComparator</literal> to <literal>org.mobicents.protocols.ss7.sccp.impl.router.RuleByIdComparator</literal>. By default it sorts by calledDigits and callingDigits patterns.</para>
+                </section>
 
                 <section id="configuring_TCAP">
                         <title>Configuring TCAP</title>
-                        <para> 
+                        <para>
                                 <literal>TcapStack</literal> initiates the TCAP stack routines. Respective TCAP stack beans are instantiated for each <literal>MAP</literal>, <literal>CAP</literal>
                                 Service. If you are using either one, feel free to delete the other.
                         </para>
-                        <programlisting language="XML" role="XML"><![CDATA[             
+                        <programlisting language="XML" role="XML"><![CDATA[
         <!-- ==================================================================== -->
         <!-- TCAP Service -->
-        <!-- ==================================================================== -->   
+        <!-- ==================================================================== -->
         <bean name="TcapStackMap" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
                 <constructor>
                         <parameter>
@@ -438,7 +452,7 @@ The other properties of the Stack are defined below:
                 <property name="invokeTimeout">30000</property>
                 <property name="maxDialogs">25000</property>
         </bean>
-        
+
         <bean name="TcapStack" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
                 <constructor>
                         <parameter>
@@ -450,7 +464,7 @@ The other properties of the Stack are defined below:
                 <property name="invokeTimeout">30000</property>
                 <property name="maxDialogs">25000</property>
         </bean>
-        
+
 		<bean name="TcapExecutor" class="org.mobicents.protocols.ss7.tcap.oam.TCAPExecutor">
 			<property name="tcapStacks">
 				<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
@@ -471,31 +485,31 @@ The other properties of the Stack are defined below:
 						<value>
 							<inject bean="TcapStack" />
 						</value>
-					</entry>								
+					</entry>
 				</map>
 			</property>
-		</bean>]]></programlisting>   
+		</bean>]]></programlisting>
                         <para>
                                 <classname>org.mobicents.protocols.ss7.tcap.TCAPStackImpl</classname> takes <classname>SccpStack</classname> as constructor
                                 argument. TCAP uses passed SCCP stack. Constructor also takes the sub system number (SSN) which is registered with passed SCCP stack.
-                        </para> 
-          
-                        <para>                          
-                                TCAP Stack has following configurable properties: 
+                        </para>
+
+                        <para>
+                                TCAP Stack has following configurable properties:
                                 <variablelist>
                                         <varlistentry>
                                                 <term>dialogIdleTimeout: public void setDialogIdleTimeout(long l);</term>
                                                 <listitem>
                                                         <para>This property specifies how long a dialog can be idle (i.e. not receive/send any messages) before a timeout occurs. The value is specified in milliseconds. When a timeout occurs the method <literal>TCListener.onDialogTimeout()</literal> will be invoked. If a TCAP-User does not invoke <literal>Dialog.keepAlive()</literal> inside the method <literal>TCListener.onDialogTimeout()</literal>, the TCAP Dialog will be released.</para>
                                                 </listitem>
-                                        </varlistentry>                                 
+                                        </varlistentry>
                                         <varlistentry>
                                                 <term>invokeTimeout: public void setInvokeTimeout(long l);</term>
                                                 <listitem>
-                                                        <para>This property specifies, by default, how long Invoke will wait for a response from a peer before a timeout occurs. The value is specified in milliseconds. If a TCAP-User does not specify a custom Invoke timeout when sending a new Invoke, this default value will be used for outgoing Invoke timeout. When this timeout occurs <literal>TCListener.onInvokeTimeout()</literal> will be invoked. 
+                                                        <para>This property specifies, by default, how long Invoke will wait for a response from a peer before a timeout occurs. The value is specified in milliseconds. If a TCAP-User does not specify a custom Invoke timeout when sending a new Invoke, this default value will be used for outgoing Invoke timeout. When this timeout occurs <literal>TCListener.onInvokeTimeout()</literal> will be invoked.
                                                         </para>
                                                 </listitem>
-                                        </varlistentry> 
+                                        </varlistentry>
                                         <varlistentry>
                                                 <term>maxDialogs: public void setMaxDialogs(int v); </term>
                                                 <listitem>
@@ -504,7 +518,7 @@ This property specifes the maximum number of concurrent dialogs allowed to be al
                                                         </para>
                                                 </listitem>
                                         </varlistentry>
-                                                                
+
 
                                         <varlistentry>
                                                 <term>dialogIdRangeStart: public void setDialogIdRangeStart(long val);</term>
@@ -513,7 +527,7 @@ This property specifes the maximum number of concurrent dialogs allowed to be al
 TCAP stack can be configured to use a range of local DialogId values. You may install a set of TCAP Stack instances with different DialogId ranges. These ranges can be used for loadsharing of SS7 traffic between the TCAP instances.
 All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart</literal>. This value of <literal>dialogIdRangeStart</literal> cannt be greater than <literal>dialogIdRangeEnd</literal>. In addition, the value of <literal>dialogIdRangeEnd - dialogIdRangeStart</literal> must always be less than the value of <literal>maxDialogs</literal>. </para>
                                                 </listitem>
-                                        </varlistentry>   
+                                        </varlistentry>
                                         <varlistentry>
                                                 <term>dialogIdRangeEnd: public void setDialogIdRangeStart(long val);</term>
                                                 <listitem>
@@ -522,7 +536,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                                                                 dialog will again start from the value of<literal>dialogIdRangeStart</literal>.
                                                         </para>
                                                 </listitem>
-                                       </varlistentry>   
+                                       </varlistentry>
                                         <varlistentry>
                                                 <term>previewMode: public void setPreviewMode(boolean val);</term>
                                                 <listitem>
@@ -547,18 +561,18 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
 </itemizedlist>
                                                         </para>
                                                 </listitem>
-                                       </varlistentry>                       
+                                       </varlistentry>
                                 </variablelist>
                         </para>
-						
+
 						<para> <literal>TcapExecutor</literal> accepts <literal>tcap</literal> commands and executes necessary operations</para>
 
-                </section>  
+                </section>
                     <section id="configuring_ShellExecutor">
                         <title>Configuring ShellExecutor</title>
-                        <para> 
-                                <literal>ShellExecutor</literal> is responsible for listening incoming commands. Received commands are executed on local resources to 
-                                perform actions like creation and management of <literal>TCAP</literal>, <literal>SCCP</literal>, <literal>SCTP</literal> and 
+                        <para>
+                                <literal>ShellExecutor</literal> is responsible for listening incoming commands. Received commands are executed on local resources to
+                                perform actions like creation and management of <literal>TCAP</literal>, <literal>SCCP</literal>, <literal>SCTP</literal> and
                                	<literal>M3UA</literal> stack.
                         </para>
                         <programlisting language="XML" role="XML"><![CDATA[     <!-- ==================================================================== -->
@@ -585,48 +599,48 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
 		<property name="address">${jboss.bind.address}</property>
 		<property name="port">3435</property>
 		<property name="securityDomain">java:/jaas/jmx-console</property>
-	</bean>]]></programlisting>             
-                        <para>By default ShellExecutor listens at <literal>jboss.bind.address</literal> and port <literal>3435</literal>. 
-                        You may set the <literal>address</literal> property to any valid IP address that your host is assigned. 
+	</bean>]]></programlisting>
+                        <para>By default ShellExecutor listens at <literal>jboss.bind.address</literal> and port <literal>3435</literal>.
+                        You may set the <literal>address</literal> property to any valid IP address that your host is assigned.
                         The shell commands are exchanged over TCP/IP.</para>
-                        <note><para>To understand JBoss bind options look at 
+                        <note><para>To understand JBoss bind options look at
                         <ulink url="http://docs.jboss.org/jbossas/docs/Installation_And_Getting_Started_Guide/5/html_single/index.html">Installation_And_Getting_Started_Guide</ulink> </para> </note>
-                        
+
                         <para>
                                 <literal>SCTPShellExecutor</literal> and <literal>M3UAShellExecutor</literal> is declared only if MTP layer <literal>M3UA</literal> is used. If <literal>dialogic</literal>
                                 MTP layer is used these beans are not decalred and should be removed from <classname>FastList</classname> too. For <literal>dahdi</literal> need to declare <literal>LinksetExecutor</literal>
                                 bean and add in <classname>FastList</classname> above.
                         </para>
-                                
-                </section>                   
+
+                </section>
                 <section id="configuring_MAP">
                         <title>Configuring MAP</title>
-                        <para> 
-                                <literal>MapStack</literal> initiates the MAP stack routines. 
+                        <para>
+                                <literal>MapStack</literal> initiates the MAP stack routines.
                         </para>
                         <programlisting language="XML" role="XML"><![CDATA[<!-- ==================================================================== -->
         <!-- MAP Service -->
-        <!-- ==================================================================== -->   
+        <!-- ==================================================================== -->
         <bean name="MapStack" class="org.mobicents.protocols.ss7.map.MAPStackImpl">
                 <constructor>
                         <parameter>
                                 <inject bean="TcapStackMap" property="provider" />
                         </parameter>
                 </constructor>
-        </bean>]]></programlisting>     
+        </bean>]]></programlisting>
                          <para>
                                 <classname>org.mobicents.protocols.ss7.map.MAPStackImpl</classname> takes <classname>TcapStack</classname> as constructor
-                                argument. MAP uses passed TCAP stack. 
-                        </para> 
+                                argument. MAP uses passed TCAP stack.
+                        </para>
                          <para>
                                 Feel free to delete declaration of this bean if your service is consuming only CAP messages.
-                        </para>                       
-                </section> 
+                        </para>
+                </section>
 
                 <section id="configuring_CAP">
                         <title>Configuring CAP</title>
-                        <para> 
-                                <literal>CapStack</literal> initiates the CAP stack routines. 
+                        <para>
+                                <literal>CapStack</literal> initiates the CAP stack routines.
                         </para>
                         <programlisting language="XML" role="XML"><![CDATA[     <!-- ==================================================================== -->
         <!-- CAP Service -->
@@ -637,20 +651,20 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                                 <inject bean="TcapStackCap" property="provider" />
                         </parameter>
                 </constructor>
-        </bean>]]></programlisting>     
+        </bean>]]></programlisting>
                          <para>
                                 <classname>org.mobicents.protocols.ss7.cap.CAPStackImpl</classname> takes <classname>TcapStack</classname> as constructor
-                                argument. CAP uses passed TCAP stack. 
-                        </para> 
+                                argument. CAP uses passed TCAP stack.
+                        </para>
                         <para>
                                 Feel free to delete declaration of this bean if your service is consuming only MAP messages.
                         </para>
-                </section> 
+                </section>
 
                  <section id="configuring_ISUP">
                         <title>Configuring ISUP</title>
-                        <para> 
-                                <literal>IsupStack</literal> initiates the ISUP stack routines. 
+                        <para>
+                                <literal>IsupStack</literal> initiates the ISUP stack routines.
                         </para>
                         <programlisting language="XML" role="XML"><![CDATA[     <!-- ==================================================================== -->
         <!-- ISUP Service -->
@@ -673,22 +687,22 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                 <property name="circuitManager">
                         <inject bean="CircuitManager" />
                 </property>
-        </bean>]]></programlisting>     
+        </bean>]]></programlisting>
                          <para>
                                 <classname>org.mobicents.protocols.ss7.isup.impl.ISUPStackImpl</classname> takes <classname>SS7Scheduler</classname>, local signaling pointcode and network indicator
-                                 as constructor argument. MAP uses passed TCAP stack. 
-                        </para> 
-                        
-                                  
-                        <para>                          
-                                Stack has following properties: 
+                                 as constructor argument. MAP uses passed TCAP stack.
+                        </para>
+
+
+                        <para>
+                                Stack has following properties:
                                 <variablelist>
                                         <varlistentry>
                                                 <term>mtp3UserPart</term>
                                                 <listitem>
                                                         <para>specifies SS7 Level 3 to be used as transport medium( be it SS7 card or M3UA). </para>
                                                 </listitem>
-                                        </varlistentry>                                 
+                                        </varlistentry>
                                         <varlistentry>
                                                 <term>circuitManager</term>
                                                 <listitem>
@@ -696,19 +710,19 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                                                                CIC management bean
                                                         </para>
                                                 </listitem>
-                                        </varlistentry>                                 
+                                        </varlistentry>
                                 </variablelist>
                         </para>
-                        
+
                          <para>
                                 Feel free to delete declaration of this bean if your service is not consuming ISUP messages.
-                        </para>                       
-                </section> 
-                                   
+                        </para>
+                </section>
+
               <section id="configuring_SS7Service">
                         <title>Configuring SS7Service</title>
-                        <para> 
-                                SS7Service acts as core engine binding all the components together. 
+                        <para>
+                                SS7Service acts as core engine binding all the components together.
                         </para>
                         <programlisting language="XML" role="XML"><![CDATA[<!-- ==================================================================== -->
         <!-- Mobicents SS7 Service -->
@@ -748,30 +762,30 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                 <property name="stack">
                         <inject bean="IsupStack" property="isupProvider" />
                 </property>
-        </bean>]]></programlisting> 
-                                                <para> TCAPSS7Service binds TcapStack to JNDI <literal>java:/mobicents/ss7/tcap</literal>. </para>            
+        </bean>]]></programlisting>
+                                                <para> TCAPSS7Service binds TcapStack to JNDI <literal>java:/mobicents/ss7/tcap</literal>. </para>
                         <para> MAPSS7Service binds MapStack to JNDI <literal>java:/mobicents/ss7/map</literal>. </para>
                         <para> CAPSS7Service binds CapStack to JNDI <literal>java:/mobicents/ss7/cap</literal>. </para>
                           <para> ISUPSS7Service binds IsupStack to JNDI <literal>java:/mobicents/ss7/isup</literal>. </para>
                         <para>The JNDI name can be configured to any valid JNDI name specific to your application.</para>
                         <para>Feel free to delete service that your application is not using.</para>
-                </section>              
-        </section>      
+                </section>
+        </section>
 <section id="configuring_sgw">
                 <title>
                         Configuring &THIS.PLATFORM; Signaling Gateway
                 </title>
-                <para>Configuration is done through an XML descriptor named <filename>sgw-beans.xml</filename> and is 
+                <para>Configuration is done through an XML descriptor named <filename>sgw-beans.xml</filename> and is
                 located at <filename>mobicents-ss7-sgw/deploy</filename> </para>
-                
+
                 <note>
 	                <para>
-	                	Before &THIS.PLATFORM; Signaling Gateway is configured the corresponding native libraries for <literal>dahdi</literal> or <literal>dialogic</literal> from folder 
-	                	<literal>mobicents-ss7-sgw/native/32</literal> or <literal>mobicents-ss7-sgw/native/64</literal> should be copied to <literal>mobicents-ss7-sgw/native</literal>. 
+	                	Before &THIS.PLATFORM; Signaling Gateway is configured the corresponding native libraries for <literal>dahdi</literal> or <literal>dialogic</literal> from folder
+	                	<literal>mobicents-ss7-sgw/native/32</literal> or <literal>mobicents-ss7-sgw/native/64</literal> should be copied to <literal>mobicents-ss7-sgw/native</literal>.
 	                </para>
-	                <para>	
-	                	<literal>32</literal> and <literal>64</literal> folders carries libraries compiled for 32 bit and 64 bit. Depending on which JDK (32 or 64 bit) is used to start 
-	                	Signaling Gateway, corresponding library should be coppied.  
+	                <para>
+	                	<literal>32</literal> and <literal>64</literal> folders carries libraries compiled for 32 bit and 64 bit. Depending on which JDK (32 or 64 bit) is used to start
+	                	Signaling Gateway, corresponding library should be coppied.
 	                </para>
 	                <para>
                         <variablelist>
@@ -780,22 +794,22 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                                         <listitem>
                                                 <para>Native library for Dialogic</para>
                                         </listitem>
-                                </varlistentry>                                 
+                                </varlistentry>
                                 <varlistentry>
                                         <term>libmobicents-dahdi-linux</term>
                                         <listitem>
                                                 <para>Native library for <literal>dahdi</literal> based cards - Diguim and Sangoma</para>
                                         </listitem>
                                 </varlistentry>
-                        </variablelist>	                	
+                        </variablelist>
 	                </para>
                 </note>
                 <section id="configuring_SGWP">
                         <title>Configuring M3AU (Signaling Gateway)</title>
-                        <para> 
+                        <para>
                                 SGW will expose the SS7 signals received from legacy network to IP network over M3AU
                         </para>
-                        
+
                                         <programlisting language="XML" role="XML"><![CDATA[
         <bean name="SCTPManagement" class="org.mobicents.protocols.sctp.ManagementImpl">
                 <constructor>
@@ -810,7 +824,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                         <inject bean="SCTPManagement" />
                 </property>
         </bean>
-        
+
         <bean name="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagement">
                 <constructor>
                         <parameter>Mtp3UserPart</parameter>
@@ -827,15 +841,15 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                         <inject bean="Mtp3UserPart" />
                 </property>
         </bean>]]>
-                        </programlisting>       
+                        </programlisting>
                 </section>
-                                        
+
                 <section id="sgw_configuring_LinksetFactory">
                         <title>Configuring LinksetFactory</title>
-                        <para> Concrete implementation of <literal>LinksetFactory</literal> is responsible to create 
-                        new instances of corresponding <literal>Linkset</literal> when instructed by <literal>LinksetManager</literal>. 
+                        <para> Concrete implementation of <literal>LinksetFactory</literal> is responsible to create
+                        new instances of corresponding <literal>Linkset</literal> when instructed by <literal>LinksetManager</literal>.
                         &THIS.PLATFORM; Signaling Gateway defines two linkset factories : </para>
-                        
+
                         <itemizedlist>
                                 <listitem>
                                         <para><literal>DahdiLinksetFactory</literal> </para>
@@ -843,7 +857,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
         <bean name="DahdiLinksetFactory"
                 class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
         </bean>]]>
-                        </programlisting>                                       
+                        </programlisting>
                                 </listitem>
                                 <listitem>
                                         <para><literal>DialogicLinksetFactory</literal></para>
@@ -853,17 +867,17 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
         </bean>]]>
                         </programlisting>
                                 </listitem>
-                        </itemizedlist>                                 
-                        <para>Its highly unlikely that you would require both the factories on same gateway. If you have <literal>dahdi</literal> based 
-                        SS7 card installed, keep <literal>DahdiLinksetFactory</literal> and remove other. If you have <literal>dialogic</literal> based 
-                        SS7 card installed, keep <literal>DialogicLinksetFactory</literal> and remove other. 
+                        </itemizedlist>
+                        <para>Its highly unlikely that you would require both the factories on same gateway. If you have <literal>dahdi</literal> based
+                        SS7 card installed, keep <literal>DahdiLinksetFactory</literal> and remove other. If you have <literal>dialogic</literal> based
+                        SS7 card installed, keep <literal>DialogicLinksetFactory</literal> and remove other.
                         </para>
-                        <para> <literal>LinksetFactoryFactory</literal> is just a call-back class listening for new factories deployed 
+                        <para> <literal>LinksetFactoryFactory</literal> is just a call-back class listening for new factories deployed
                         and maintains Map of available factory name vs factory. You should never touch this bean.</para>
-                </section>      
+                </section>
                 <section id="sgw_configuring_LinksetManager">
                         <title>Configuring LinksetManager</title>
-                        <para> 
+                        <para>
                                 <literal>LinksetManager</literal> is responsible for managing <literal>Linkset</literal> and <literal>Link</literal>.
                         </para>
                         <programlisting language="XML" role="XML"><![CDATA[<!-- ================================================ -->
@@ -882,25 +896,25 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                 </property>
                 <property name="persistDir">${sgw.home.dir}/ss7</property>
         </bean>
-        
+
         <bean name="LinksetExecutor"
                 class="org.mobicents.ss7.linkset.oam.LinksetExecutor">
                 <property name="linksetManager">
                         <inject bean="LinksetManager" />
                 </property>
-        </bean>]]></programlisting>             
-                        <para>LinksetManagerImpl when started looks for file  <filename>linksetmanager.xml</filename> containing serialized information about 
+        </bean>]]></programlisting>
+                        <para>LinksetManagerImpl when started looks for file  <filename>linksetmanager.xml</filename> containing serialized information about
                         underlying linksets and links. The directory path is configurable by changing value of <literal>persistDir</literal> property.</para>
-                        <warning><para><filename>linksetmanager.xml</filename> should never be edited by hand. Always use Shell Client to connect to 
-                        &THIS.PLATFORM; Signaling Gateway and execute commands.</para></warning>        
+                        <warning><para><filename>linksetmanager.xml</filename> should never be edited by hand. Always use Shell Client to connect to
+                        &THIS.PLATFORM; Signaling Gateway and execute commands.</para></warning>
                         <para><literal>LinksetExecutor</literal> accepts the <literal>linkset</literal> commands and executes necessary operations.</para>
-                </section>      
-                
+                </section>
+
                 <section id="sgw_configuring_ShellExecutor">
                         <title>Configuring ShellExecutor</title>
-                        <para> 
-                                <literal>ShellExecutor</literal> is responsible for listening to incoming command. Received commands are executed on local resources to 
-                                perform actions like creation and management of <literal>Linkset</literal>, 
+                        <para>
+                                <literal>ShellExecutor</literal> is responsible for listening to incoming command. Received commands are executed on local resources to
+                                perform actions like creation and management of <literal>Linkset</literal>,
                                 management of <literal>M3UA</literal> stack.
                         </para>
                         <programlisting language="XML" role="XML"><![CDATA[<!-- ================================================ -->
@@ -922,16 +936,16 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
 
                 <property name="address">${sgw.bind.address}</property>
                 <property name="port">3435</property>
-        </bean>]]></programlisting>             
-                        <para>By default ShellExecutor listens at <literal>sgw.bind.address</literal> and port <literal>3436</literal>. 
-                        You may set the <literal>address</literal> property to any valid IP address that your host is assigned. 
+        </bean>]]></programlisting>
+                        <para>By default ShellExecutor listens at <literal>sgw.bind.address</literal> and port <literal>3436</literal>.
+                        You may set the <literal>address</literal> property to any valid IP address that your host is assigned.
                         The shell commands are exchanged over TCP/IP.</para>
-                </section>      
-                
+                </section>
+
                 <section id="sgw_configuring_SGW">
                         <title>Configuring SignalingGateway</title>
-                        <para> 
-                                <literal>SignalingGateway</literal> acts as core engine binding all the components together. 
+                        <para>
+                                <literal>SignalingGateway</literal> acts as core engine binding all the components together.
                         </para>
                         <programlisting language="XML" role="XML"><![CDATA[        <!-- ================================================ -->
     <!-- mobicents Signaling Gateway                                      -->
@@ -947,9 +961,9 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                         <inject bean="NodalInterworkingFunction" />
                 </property>
 
-        </bean>]]></programlisting>             
-                        <para>The <literal>NodalInterworkingFunction</literal> sits between the SS7 netwrok and IP network and routes messages 
+        </bean>]]></programlisting>
+                        <para>The <literal>NodalInterworkingFunction</literal> sits between the SS7 netwrok and IP network and routes messages
                         to/from both the MTP3 and the M3UA layer, based on the SS7 DPC or DPC/SI address information</para>
-                </section>                      
+                </section>
         </section>
 </chapter>

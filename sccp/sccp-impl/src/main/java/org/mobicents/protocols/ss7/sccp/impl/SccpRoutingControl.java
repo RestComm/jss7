@@ -72,6 +72,7 @@ public class SccpRoutingControl {
     private SccpManagement sccpManagement = null;
 
     private MessageFactoryImpl messageFactory;
+    private ConcurrentHashMap<Integer, Integer> opcSscCounters = new ConcurrentHashMap<Integer, Integer>();
 
     private ConcurrentHashMap<Integer, Long> prohibitedSpcs = new ConcurrentHashMap<Integer, Long>();
 
@@ -125,11 +126,26 @@ public class SccpRoutingControl {
         // shall inform SCMG
         int subsystemNumber = msg.getCalledPartyAddress().getSubsystemNumber();
         Integer congestionLevel = this.sccpProviderImpl.getCongestionSsn().get(subsystemNumber);
-        if(congestionLevel != null && congestionLevel > 0) {
-            if(subsystemNumber != 1)
-                if(msg instanceof SccpDataMessage) {
-                    this.sccpManagement.receivedForCongestionUser(msg, subsystemNumber, congestionLevel);
-                }
+        if(congestionLevel != null) {
+            int inOpc = msg.getIncomingOpc();
+            if(congestionLevel > 0) {
+                if(subsystemNumber != 1)
+                    if(msg instanceof SccpDataMessage) {
+                        Integer counter = opcSscCounters.get(inOpc);
+                        if(counter == null) {
+                            counter = 0;
+                            opcSscCounters.put(inOpc, counter);
+                        }
+                        else {
+                            opcSscCounters.put(inOpc, ++counter);
+                        }
+                        if((counter % 8) == 0)
+                            this.sccpManagement.receivedForCongestionUser(msg, subsystemNumber, congestionLevel);
+                    }
+            }
+            else if (congestionLevel == 0) {
+                opcSscCounters.put(inOpc, 0);
+            }
         }
 
         SccpAddress calledPartyAddress = msg.getCalledPartyAddress();

@@ -143,6 +143,18 @@
 	<!-- ==================================================================== -->
 	<!-- SCCP Service -->
 	<!-- ==================================================================== -->
+	<!--<bean name="RuleComparator" class="org.mobicents.protocols.ss7.sccp.impl.router.RuleByIdComparator"/>-->
+	<bean name="RuleComparator" class="org.mobicents.protocols.ss7.sccp.impl.router.RuleComparator"/>
+	<bean name="RuleComparatorFactory" class="org.mobicents.protocols.ss7.sccp.impl.router.RuleComparatorFactory">
+		<constructor factoryClass="org.mobicents.protocols.ss7.sccp.impl.router.RuleComparatorFactory"
+					 factoryMethod="getInstance">
+			<parameter>RuleComparatorFactory</parameter>
+		</constructor>
+		<property name="ruleComparator">
+			<inject bean="RuleComparator"/>
+		</property>
+	</bean>
+	
 	<bean name="SccpStack" class="org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl">
 		<constructor>
 			<parameter>SccpStack</parameter>
