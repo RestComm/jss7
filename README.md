@@ -26,7 +26,7 @@ RestComm jSS7 is licensed under dual license policy. The default license is the 
 
 ## Downloads
 
-Download binary from [here](https://github.com/RestComm/jss7/releases) or Continuous Delivery builds from [CloudBees](https://mobicents.ci.cloudbees.com/job/Mobicents-jSS7/)
+Download binary from [the Restcomm site Downloads section](https://www.restcomm.com/downloads/).
 
 ## Maven Repository
 
@@ -51,4 +51,4 @@ Read [the instructions](https://github.com/RestComm/jss7/wiki/Build-jSS7-from-So
 
 ## All Open Source RestComm Projects
 
-Open Source http://telestax.com/open-source-2/
+Open Source https://www.restcomm.com/open-source/
