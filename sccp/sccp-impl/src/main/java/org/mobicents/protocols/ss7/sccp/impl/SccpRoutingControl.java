@@ -23,6 +23,7 @@
 package org.mobicents.protocols.ss7.sccp.impl;
 
 import javolution.util.FastMap;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
@@ -56,6 +57,7 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
@@ -72,7 +74,7 @@ public class SccpRoutingControl {
     private SccpManagement sccpManagement = null;
 
     private MessageFactoryImpl messageFactory;
-    private ConcurrentHashMap<Integer, Integer> opcSscCounters = new ConcurrentHashMap<Integer, Integer>();
+    private ConcurrentHashMap<Integer, AtomicInteger> opcSscCounters = new ConcurrentHashMap<Integer, AtomicInteger>();
 
     private ConcurrentHashMap<Integer, Long> prohibitedSpcs = new ConcurrentHashMap<Integer, Long>();
 
@@ -131,20 +133,18 @@ public class SccpRoutingControl {
             if(congestionLevel > 0) {
                 if(subsystemNumber != 1)
                     if(msg instanceof SccpDataMessage) {
-                        Integer counter = opcSscCounters.get(inOpc);
-                        if(counter == null) {
-                            counter = 0;
-                            opcSscCounters.put(inOpc, counter);
-                        }
-                        else {
-                            opcSscCounters.put(inOpc, ++counter);
-                        }
-                        if((counter % 8) == 0)
+                        AtomicInteger aCounter = opcSscCounters.get(inOpc);
+                        if(aCounter == null) {
+                            opcSscCounters.put(inOpc, new AtomicInteger(1));
+                        } else if((aCounter.incrementAndGet() % 8) == 0) {
                             this.sccpManagement.receivedForCongestionUser(msg, subsystemNumber, congestionLevel);
+                            aCounter.compareAndSet(Integer.MAX_VALUE, 0);
+                        }
                     }
-            }
-            else if (congestionLevel == 0) {
-                opcSscCounters.put(inOpc, 0);
+            } else if (congestionLevel == 0) {
+                AtomicInteger aCounter = opcSscCounters.get(inOpc);
+                if(aCounter!=null)
+                    aCounter.set(0);
             }
         }
 
