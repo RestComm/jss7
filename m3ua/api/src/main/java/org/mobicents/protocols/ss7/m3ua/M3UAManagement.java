@@ -100,6 +100,8 @@ public interface M3UAManagement {
      */
     void setHeartbeatTime(int timeBetweenHeartbeat) throws Exception;
 
+    M3UACounterProvider getCounterProvider();
+
     boolean isUseLsbForLinksetSelection();
 
     void setUseLsbForLinksetSelection(boolean useLsbForLinksetSelection) throws Exception;
@@ -326,4 +328,18 @@ public interface M3UAManagement {
      * @return
      */
     Map<String, RouteAs> getRoute();
+
+    /**
+     * Set to true to enable statistics.
+     *
+     * @param val
+     */
+    void setStatisticsEnabled(boolean val) throws Exception;
+
+    /**
+     * Returns true if this stack is gathering statistics
+     *
+     * @return
+     */
+    boolean getStatisticsEnabled();
 }

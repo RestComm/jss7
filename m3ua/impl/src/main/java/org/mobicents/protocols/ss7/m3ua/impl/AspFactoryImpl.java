@@ -336,10 +336,18 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
             case MessageClass.MANAGEMENT:
                 switch (message.getMessageType()) {
                     case MessageType.ERROR:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled())
+                            m3UAManagementImpl.getCounterProviderImpl().updateErrorPerAssRx(association.getName());
+
                         this.managementMessageHandler
                                 .handleError((org.mobicents.protocols.ss7.m3ua.message.mgmt.Error) message);
                         break;
                     case MessageType.NOTIFY:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled())
+                            m3UAManagementImpl.getCounterProviderImpl().updateNotifyPerAssRx(association.getName());
+
                         Notify notify = (Notify) message;
                         this.managementMessageHandler.handleNotify(notify);
                         break;
@@ -353,6 +361,10 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
             case MessageClass.TRANSFER_MESSAGES:
                 switch (message.getMessageType()) {
                     case MessageType.PAYLOAD:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled())
+                            m3UAManagementImpl.getCounterProviderImpl().updatePacketsPerAssRx(association.getName());
+
                         PayloadData payload = (PayloadData) message;
                         this.transferMessageHandler.handlePayload(payload);
                         break;
@@ -366,26 +378,50 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
             case MessageClass.SIGNALING_NETWORK_MANAGEMENT:
                 switch (message.getMessageType()) {
                     case MessageType.DESTINATION_UNAVAILABLE:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled())
+                            m3UAManagementImpl.getCounterProviderImpl().updateDunaPerAssRx(association.getName());
+
                         DestinationUnavailable duna = (DestinationUnavailable) message;
                         this.signalingNetworkManagementHandler.handleDestinationUnavailable(duna);
                         break;
                     case MessageType.DESTINATION_AVAILABLE:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled())
+                            m3UAManagementImpl.getCounterProviderImpl().updateDavaPerAssRx(association.getName());
+
                         DestinationAvailable dava = (DestinationAvailable) message;
                         this.signalingNetworkManagementHandler.handleDestinationAvailable(dava);
                         break;
                     case MessageType.DESTINATION_STATE_AUDIT:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled())
+                            m3UAManagementImpl.getCounterProviderImpl().updateDaudPerAssRx(association.getName());
+
                         DestinationStateAudit daud = (DestinationStateAudit) message;
                         this.signalingNetworkManagementHandler.handleDestinationStateAudit(daud);
                         break;
                     case MessageType.SIGNALING_CONGESTION:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled())
+                            m3UAManagementImpl.getCounterProviderImpl().updateSconPerAssRx(association.getName());
+
                         SignallingCongestion scon = (SignallingCongestion) message;
                         this.signalingNetworkManagementHandler.handleSignallingCongestion(scon);
                         break;
                     case MessageType.DESTINATION_USER_PART_UNAVAILABLE:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled())
+                            m3UAManagementImpl.getCounterProviderImpl().updateDupuPerAssRx(association.getName());
+
                         DestinationUPUnavailable dupu = (DestinationUPUnavailable) message;
                         this.signalingNetworkManagementHandler.handleDestinationUPUnavailable(dupu);
                         break;
                     case MessageType.DESTINATION_RESTRICTED:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled())
+                            m3UAManagementImpl.getCounterProviderImpl().updateDrstPerAssRx(association.getName());
+
                         DestinationRestricted drst = (DestinationRestricted) message;
                         this.signalingNetworkManagementHandler.handleDestinationRestricted(drst);
                         break;
@@ -399,26 +435,50 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
             case MessageClass.ASP_STATE_MAINTENANCE:
                 switch (message.getMessageType()) {
                     case MessageType.ASP_UP:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled()) {
+                            m3UAManagementImpl.getCounterProviderImpl().updateAspUpPerAssRx(association.getName());
+                        }
+
                         ASPUp aspUp = (ASPUp) message;
                         this.aspStateMaintenanceHandler.handleAspUp(aspUp);
                         break;
                     case MessageType.ASP_UP_ACK:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled())
+                            m3UAManagementImpl.getCounterProviderImpl().updateAspUpAckPerAssRx(association.getName());
+
                         ASPUpAck aspUpAck = (ASPUpAck) message;
                         this.aspStateMaintenanceHandler.handleAspUpAck(aspUpAck);
                         break;
                     case MessageType.ASP_DOWN:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled())
+                            m3UAManagementImpl.getCounterProviderImpl().updateAspDownPerAssRx(association.getName());
+
                         ASPDown aspDown = (ASPDown) message;
                         this.aspStateMaintenanceHandler.handleAspDown(aspDown);
                         break;
                     case MessageType.ASP_DOWN_ACK:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled())
+                            m3UAManagementImpl.getCounterProviderImpl().updateAspDownAckPerAssRx(association.getName());
+
                         ASPDownAck aspDownAck = (ASPDownAck) message;
                         this.aspStateMaintenanceHandler.handleAspDownAck(aspDownAck);
                         break;
                     case MessageType.HEARTBEAT:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled())
+                            m3UAManagementImpl.getCounterProviderImpl().updateBeatPerAssRx(association.getName());
+
                         Heartbeat hrtBeat = (Heartbeat) message;
                         this.aspStateMaintenanceHandler.handleHeartbeat(hrtBeat);
                         break;
                     case MessageType.HEARTBEAT_ACK:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled())
+                            m3UAManagementImpl.getCounterProviderImpl().updateBeatAckPerAssRx(association.getName());
                         // Nothing to do
                         break;
                     default:
@@ -432,18 +492,34 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
             case MessageClass.ASP_TRAFFIC_MAINTENANCE:
                 switch (message.getMessageType()) {
                     case MessageType.ASP_ACTIVE:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled())
+                            m3UAManagementImpl.getCounterProviderImpl().updateAspActivePerAssRx(association.getName());
+
                         ASPActive aspActive = (ASPActive) message;
                         this.aspTrafficMaintenanceHandler.handleAspActive(aspActive);
                         break;
                     case MessageType.ASP_ACTIVE_ACK:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled())
+                            m3UAManagementImpl.getCounterProviderImpl().updateAspActiveAckPerAssRx(association.getName());
+
                         ASPActiveAck aspAciveAck = (ASPActiveAck) message;
                         this.aspTrafficMaintenanceHandler.handleAspActiveAck(aspAciveAck);
                         break;
                     case MessageType.ASP_INACTIVE:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled())
+                            m3UAManagementImpl.getCounterProviderImpl().updateAspInactivePerAssRx(association.getName());
+
                         ASPInactive aspInactive = (ASPInactive) message;
                         this.aspTrafficMaintenanceHandler.handleAspInactive(aspInactive);
                         break;
                     case MessageType.ASP_INACTIVE_ACK:
+
+                        if(m3UAManagementImpl.getStatisticsEnabled())
+                            m3UAManagementImpl.getCounterProviderImpl().updateAspInactiveAckPerAssRx(association.getName());
+
                         ASPInactiveAck aspInaciveAck = (ASPInactiveAck) message;
                         this.aspTrafficMaintenanceHandler.handleAspInactiveAck(aspInaciveAck);
                         break;
@@ -476,6 +552,10 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
             ((M3UAMessageImpl) message).encode(byteBuf);
 
             org.mobicents.protocols.api.PayloadData payloadData = null;
+
+            if(m3UAManagementImpl.getStatisticsEnabled()) {
+                updateTxStatistic(message);
+            }
 
             if (this.m3UAManagementImpl.isSctpLibNettySupport()) {
                 switch (message.getMessageClass()) {
@@ -888,6 +968,88 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
             }
 
             sb.append(M3UAOAMMessages.NEW_LINE);
+        }
+    }
+
+    private void updateTxStatistic(M3UAMessage message) {
+        switch (message.getMessageClass()) {
+            case MessageClass.MANAGEMENT:
+                switch (message.getMessageType()) {
+                    case MessageType.ERROR:
+                         m3UAManagementImpl.getCounterProviderImpl().updateErrorPerAssTx(association.getName());
+                        break;
+                    case MessageType.NOTIFY:
+                         m3UAManagementImpl.getCounterProviderImpl().updateNotifyPerAssTx(association.getName());
+                        break;
+                }
+                break;
+            case MessageClass.TRANSFER_MESSAGES:
+                switch (message.getMessageType()) {
+                    case MessageType.PAYLOAD:
+                         m3UAManagementImpl.getCounterProviderImpl().updatePacketsPerAssTx(association.getName());
+                        break;
+                }
+                break;
+            case MessageClass.SIGNALING_NETWORK_MANAGEMENT:
+                switch (message.getMessageType()) {
+                    case MessageType.DESTINATION_UNAVAILABLE:
+                         m3UAManagementImpl.getCounterProviderImpl().updateDunaPerAssTx(association.getName());
+                        break;
+                    case MessageType.DESTINATION_AVAILABLE:
+                         m3UAManagementImpl.getCounterProviderImpl().updateDavaPerAssTx(association.getName());
+                        break;
+                    case MessageType.DESTINATION_STATE_AUDIT:
+                         m3UAManagementImpl.getCounterProviderImpl().updateDaudPerAssTx(association.getName());
+                        break;
+                    case MessageType.SIGNALING_CONGESTION:
+                         m3UAManagementImpl.getCounterProviderImpl().updateSconPerAssTx(association.getName());
+                        break;
+                    case MessageType.DESTINATION_USER_PART_UNAVAILABLE:
+                         m3UAManagementImpl.getCounterProviderImpl().updateDupuPerAssTx(association.getName());
+                        break;
+                    case MessageType.DESTINATION_RESTRICTED:
+                         m3UAManagementImpl.getCounterProviderImpl().updateDrstPerAssTx(association.getName());
+                        break;
+                }
+                break;
+            case MessageClass.ASP_STATE_MAINTENANCE:
+                switch (message.getMessageType()) {
+                    case MessageType.ASP_UP:
+                         m3UAManagementImpl.getCounterProviderImpl().updateAspUpPerAssTx(association.getName());
+                        break;
+                    case MessageType.ASP_UP_ACK:
+                         m3UAManagementImpl.getCounterProviderImpl().updateAspUpAckPerAssTx(association.getName());
+                        break;
+                    case MessageType.ASP_DOWN:
+                         m3UAManagementImpl.getCounterProviderImpl().updateAspDownPerAssTx(association.getName());
+                        break;
+                    case MessageType.ASP_DOWN_ACK:
+                         m3UAManagementImpl.getCounterProviderImpl().updateAspDownAckPerAssTx(association.getName());
+                        break;
+                    case MessageType.HEARTBEAT:
+                         m3UAManagementImpl.getCounterProviderImpl().updateBeatPerAssTx(association.getName());
+                        break;
+                    case MessageType.HEARTBEAT_ACK:
+                         m3UAManagementImpl.getCounterProviderImpl().updateBeatAckPerAssTx(association.getName());
+                        break;
+                }
+                break;
+            case MessageClass.ASP_TRAFFIC_MAINTENANCE:
+                switch (message.getMessageType()) {
+                    case MessageType.ASP_ACTIVE:
+                         m3UAManagementImpl.getCounterProviderImpl().updateAspActivePerAssTx(association.getName());
+                        break;
+                    case MessageType.ASP_ACTIVE_ACK:
+                         m3UAManagementImpl.getCounterProviderImpl().updateAspActiveAckPerAssTx(association.getName());
+                        break;
+                    case MessageType.ASP_INACTIVE:
+                         m3UAManagementImpl.getCounterProviderImpl().updateAspInactivePerAssTx(association.getName());
+                        break;
+                    case MessageType.ASP_INACTIVE_ACK:
+                         m3UAManagementImpl.getCounterProviderImpl().updateAspInactiveAckPerAssTx(association.getName());
+                        break;
+                }
+                break;
         }
     }
 

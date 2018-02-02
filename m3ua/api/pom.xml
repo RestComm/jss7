@@ -40,6 +40,10 @@
 			<artifactId>netty-all</artifactId>
 			<version>${netty.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+			<artifactId>statistics-api</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
