@@ -51,6 +51,7 @@ public class SccpManStandardMBean extends StandardMBean {
                                 + "True: ROUTING_BASED_ON_GLOBAL_TITLE is used (CalledPartyAddresses digits must be supplied by upper layers)",
                         true, true, true),
                 new MBeanAttributeInfo("RemoteSpc", int.class.getName(), "Remote Signal point code", true, true, false),
+                new MBeanAttributeInfo("RemoteSpc2", int.class.getName(), "Remote Signal point code 2", true, true, false),
                 new MBeanAttributeInfo("LocalSpc", int.class.getName(), "Local Signal point code", true, true, false),
                 new MBeanAttributeInfo("Ni", int.class.getName(), "Network indicator", true, true, false),
                 new MBeanAttributeInfo("RemoteSsn", int.class.getName(), "Remote SSN number", true, true, false),

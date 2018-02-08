@@ -39,6 +39,7 @@ public class SccpConfigurationData {
 
     protected static final String REMOTE_ON_GT_MODE = "routeOnGtMode";
     protected static final String REMOTE_SPC = "remoteSpc";
+    protected static final String REMOTE_SPC2 = "remoteSpc2";
     protected static final String LOCAL_SPC = "localSpc";
     protected static final String NI = "ni";
     protected static final String REMOTE_SSN = "remoteSsn";
@@ -53,6 +54,7 @@ public class SccpConfigurationData {
 
     private boolean routeOnGtMode;
     private int remoteSpc = 0;
+    private int remoteSpc2 = 0;
     private int localSpc = 0;
     private int localSsn;
     private int localSsn2;
@@ -79,6 +81,14 @@ public class SccpConfigurationData {
 
     public void setRemoteSpc(int remoteSpc) {
         this.remoteSpc = remoteSpc;
+    }
+
+    public int getRemoteSpc2() {
+        return remoteSpc2;
+    }
+
+    public void setRemoteSpc2(int remoteSpc2) {
+        this.remoteSpc2 = remoteSpc2;
     }
 
     public int getLocalSpc() {
@@ -175,6 +185,7 @@ public class SccpConfigurationData {
         public void write(SccpConfigurationData sccp, OutputElement xml) throws XMLStreamException {
             xml.setAttribute(REMOTE_ON_GT_MODE, sccp.isRouteOnGtMode());
             xml.setAttribute(REMOTE_SPC, sccp.getRemoteSpc());
+            xml.setAttribute(REMOTE_SPC2, sccp.getRemoteSpc2());
             xml.setAttribute(LOCAL_SPC, sccp.getLocalSpc());
             xml.setAttribute(NI, sccp.getNi());
             xml.setAttribute(REMOTE_SSN, sccp.getRemoteSsn());
@@ -192,11 +203,14 @@ public class SccpConfigurationData {
         public void read(InputElement xml, SccpConfigurationData sccp) throws XMLStreamException {
             sccp.setRouteOnGtMode(xml.getAttribute(REMOTE_ON_GT_MODE).toBoolean());
             sccp.setRemoteSpc(xml.getAttribute(REMOTE_SPC).toInt());
+            CharArray ca = xml.getAttribute(REMOTE_SPC2);
+            if (ca != null)
+                sccp.setRemoteSpc2(ca.toInt());
             sccp.setLocalSpc(xml.getAttribute(LOCAL_SPC).toInt());
             sccp.setNi(xml.getAttribute(NI).toInt());
             sccp.setRemoteSsn(xml.getAttribute(REMOTE_SSN).toInt());
             sccp.setLocalSsn(xml.getAttribute(LOCAL_SSN).toInt());
-            CharArray ca = xml.getAttribute(LOCAL_SSN2);
+            ca = xml.getAttribute(LOCAL_SSN2);
             if (ca != null)
                 sccp.setLocalSsn2(ca.toInt());
             sccp.setTranslationType(xml.getAttribute(TRANSLATION_TYTE).toInt());

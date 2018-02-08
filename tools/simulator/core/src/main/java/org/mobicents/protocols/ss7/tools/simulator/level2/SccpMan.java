@@ -109,6 +109,17 @@ public class SccpMan implements SccpManMBean, Stoppable {
     }
 
     @Override
+    public int getRemoteSpc2() {
+        return this.testerHost.getConfigurationData().getSccpConfigurationData().getRemoteSpc2();
+    }
+
+    @Override
+    public void setRemoteSpc2(int val) {
+        this.testerHost.getConfigurationData().getSccpConfigurationData().setRemoteSpc2(val);
+        this.testerHost.markStore();
+    }
+
+    @Override
     public int getLocalSpc() {
         return this.testerHost.getConfigurationData().getSccpConfigurationData().getLocalSpc();
     }
@@ -295,11 +306,14 @@ public class SccpMan implements SccpManMBean, Stoppable {
         try {
             this.isRspcUp = true;
             this.isRssUp = true;
-            this.initSccp(this.mtp3UserPart, this.testerHost.getConfigurationData().getSccpConfigurationData().getRemoteSsn(), this.testerHost
-                    .getConfigurationData().getSccpConfigurationData().getLocalSsn(), this.testerHost.getConfigurationData().getSccpConfigurationData()
-                    .getRemoteSpc(), this.testerHost.getConfigurationData().getSccpConfigurationData().getLocalSpc(), this.testerHost.getConfigurationData()
-                    .getSccpConfigurationData().getNi(), this.testerHost.getConfigurationData().getSccpConfigurationData().getCallingPartyAddressDigits(),
-                    this.testerHost.getPersistDir(), this.testerHost.getConfigurationData().getSccpConfigurationData().getSccpProtocolVersion());
+            this.initSccp(this.mtp3UserPart, this.testerHost.getConfigurationData().getSccpConfigurationData().getRemoteSsn(),
+                    this.testerHost.getConfigurationData().getSccpConfigurationData().getLocalSsn(), this.testerHost
+                            .getConfigurationData().getSccpConfigurationData().getRemoteSpc(), this.testerHost
+                            .getConfigurationData().getSccpConfigurationData().getRemoteSpc2(), this.testerHost
+                            .getConfigurationData().getSccpConfigurationData().getLocalSpc(), this.testerHost
+                            .getConfigurationData().getSccpConfigurationData().getNi(), this.testerHost.getConfigurationData()
+                            .getSccpConfigurationData().getCallingPartyAddressDigits(), this.testerHost.getPersistDir(),
+                    this.testerHost.getConfigurationData().getSccpConfigurationData().getSccpProtocolVersion());
             this.testerHost.sendNotif(SOURCE_NAME, "SCCP has been started", "", Level.INFO);
             return true;
         } catch (Throwable e) {
@@ -344,8 +358,8 @@ public class SccpMan implements SccpManMBean, Stoppable {
         }
     }
 
-    private void initSccp(Mtp3UserPart mtp3UserPart, int remoteSsn, int localSsn, int dpc, int opc, int ni, String callingPartyAddressDigits, String persistDir, SccpProtocolVersion sccpProtocolVersion)
-            throws Exception {
+    private void initSccp(Mtp3UserPart mtp3UserPart, int remoteSsn, int localSsn, int dpc, int dpc2, int opc, int ni,
+            String callingPartyAddressDigits, String persistDir, SccpProtocolVersion sccpProtocolVersion) throws Exception {
 
         this.sccpStack = new SccpStackImpl("TestingSccp");
         this.sccpStack.setPersistDir(persistDir);
@@ -357,6 +371,8 @@ public class SccpMan implements SccpManMBean, Stoppable {
         this.sccpStack.setSccpProtocolVersion(sccpProtocolVersion);
         this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, 1, opc, ni, 0, null);
         this.sccpStack.getRouter().addMtp3Destination(1, 1, dpc, dpc, 0, 255, 255);
+        if (dpc2 > 0)
+            this.sccpStack.getRouter().addMtp3Destination(1, 2, dpc2, dpc2, 0, 255, 255);
 
         this.sccpProvider = this.sccpStack.getSccpProvider();
         this.parameterFactory = this.sccpProvider.getParameterFactory();
@@ -366,6 +382,10 @@ public class SccpMan implements SccpManMBean, Stoppable {
 
         this.resource.addRemoteSpc(1, dpc, 0, 0);
         this.resource.addRemoteSsn(1, dpc, remoteSsn, 0, false);
+        if (dpc2 > 0) {
+            this.resource.addRemoteSpc(2, dpc2, 0, 0);
+            this.resource.addRemoteSsn(2, dpc2, remoteSsn, 0, false);
+        }
 
         if (this.testerHost.getConfigurationData().getSccpConfigurationData().isRouteOnGtMode()) {
             this.router = this.sccpStack.getRouter();
@@ -377,12 +397,24 @@ public class SccpMan implements SccpManMBean, Stoppable {
             SccpAddress pattern = parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, this.createGlobalTitle("*"), 0,
                     0);
             String mask = "K";
-            ((RouterImpl) this.router).addRule(1, RuleType.SOLITARY, null, OriginationType.LOCAL, pattern, mask, 1,
-                    -1, null, 0, null);
+
+            if (dpc2 > 0) {
+                this.router.addRoutingAddress(
+                        11,
+                        parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
+                                this.createGlobalTitle(""), dpc2, 0));
+                ((RouterImpl) this.router).addRule(1, RuleType.LOADSHARED, null, OriginationType.LOCAL, pattern, mask, 1,
+                        11, null, 0, null);
+            } else {
+                ((RouterImpl) this.router).addRule(1, RuleType.SOLITARY, null, OriginationType.LOCAL, pattern, mask, 1,
+                        -1, null, 0, null);
+            }
+
             pattern = parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, this.createGlobalTitle("*"), 0, 0);
             mask = "K";
             ((RouterImpl) this.router).addRule(2, RuleType.SOLITARY, null, OriginationType.REMOTE, pattern, mask, 2,
                     -1, null, 0, null);
+
         }
     }
 

@@ -62,6 +62,7 @@ public class SccpForm extends JDialog {
 
     private static final long serialVersionUID = 7571177143420596631L;
     private JTextField tbRemoteSpc;
+    private JTextField tbRemoteSpc2;
     private JTextField tbLocalSpc;
     private JTextField tbNi;
     private JTextField tbRemoteSsn;
@@ -96,7 +97,7 @@ public class SccpForm extends JDialog {
 
         tbRemoteSpc = new JTextField();
         tbRemoteSpc.setColumns(10);
-        tbRemoteSpc.setBounds(154, 11, 129, 20);
+        tbRemoteSpc.setBounds(154, 11, 58, 20);
         panel.add(tbRemoteSpc);
 
         tbLocalSpc = new JTextField();
@@ -273,6 +274,11 @@ public class SccpForm extends JDialog {
         tbLocalSsn2.setColumns(10);
         tbLocalSsn2.setBounds(521, 70, 53, 20);
         panel.add(tbLocalSsn2);
+
+        tbRemoteSpc2 = new JTextField();
+        tbRemoteSpc2.setColumns(10);
+        tbRemoteSpc2.setBounds(222, 11, 58, 20);
+        panel.add(tbRemoteSpc2);
     }
 
     public void setData(SccpManMBean sccp) {
@@ -300,6 +306,8 @@ public class SccpForm extends JDialog {
         M3uaForm.setEnumeratedBaseComboBox(cbSccpProtocolVersion, this.sccp.getSccpProtocolVersion());
 
         tbRemoteSpc.setText(((Integer) this.sccp.getRemoteSpc()).toString());
+        if (this.sccp.getRemoteSpc2() > 0)
+            tbRemoteSpc2.setText(((Integer) this.sccp.getRemoteSpc2()).toString());
         tbLocalSpc.setText(((Integer) this.sccp.getLocalSpc()).toString());
         tbNi.setText(((Integer) this.sccp.getNi()).toString());
         tbRemoteSsn.setText(((Integer) this.sccp.getRemoteSsn()).toString());
@@ -340,6 +348,7 @@ public class SccpForm extends JDialog {
         M3uaForm.setEnumeratedBaseComboBox(cbSccpProtocolVersion, new SccpProtocolVersionType(SccpProtocolVersion.ITU.getValue()));
 
         tbRemoteSpc.setText("2");
+        tbRemoteSpc2.setText("");
         tbLocalSpc.setText("1");
         tbNi.setText("2");
         tbTranslationType.setText("0");
@@ -377,6 +386,7 @@ public class SccpForm extends JDialog {
         M3uaForm.setEnumeratedBaseComboBox(cbSccpProtocolVersion, new SccpProtocolVersionType(SccpProtocolVersion.ITU.getValue()));
 
         tbRemoteSpc.setText("1");
+        tbRemoteSpc2.setText("");
         tbLocalSpc.setText("2");
         tbNi.setText("2");
         tbTranslationType.setText("0");
@@ -387,6 +397,7 @@ public class SccpForm extends JDialog {
 
     private boolean saveData() {
         int remoteSpc = 0;
+        int remoteSpc2 = 0;
         int localSpc = 0;
         int ni = 0;
         int remoteSsn = 0;
@@ -398,6 +409,14 @@ public class SccpForm extends JDialog {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Exception when parsing Dpc value: " + e.toString());
             return false;
+        }
+        if (tbRemoteSpc2.getText().length() > 0) {
+            try {
+                remoteSpc2 = Integer.parseInt(tbRemoteSpc2.getText());
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Exception when parsing Dpc2 value: " + e.toString());
+                return false;
+            }
         }
         try {
             localSpc = Integer.parseInt(tbLocalSpc.getText());
@@ -439,6 +458,7 @@ public class SccpForm extends JDialog {
         this.sccp.setRouteOnGtMode(this.rbRouteGt.isSelected());
 
         this.sccp.setRemoteSpc(remoteSpc);
+        this.sccp.setRemoteSpc2(remoteSpc2);
         this.sccp.setLocalSpc(localSpc);
         this.sccp.setNi(ni);
         this.sccp.setRemoteSsn(remoteSsn);
