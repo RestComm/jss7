@@ -54,6 +54,7 @@ import org.mobicents.protocols.ss7.m3ua.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
+import org.mobicents.protocols.ss7.m3ua.M3UACounterProvider;
 import org.mobicents.protocols.ss7.m3ua.M3UAManagement;
 import org.mobicents.protocols.ss7.m3ua.M3UAManagementEventListener;
 import org.mobicents.protocols.ss7.m3ua.RouteAs;
@@ -91,12 +92,13 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
     private static final String MAX_AS_FOR_ROUTE_PROP = "maxasforroute";
     private static final String MAX_SEQUENCE_NUMBER_PROP = "maxsequencenumber";
     private static final String HEART_BEAT_TIME_PROP = "heartbeattime";
+    private static final String STATISTICS_ENABLED = "statisticsenabled";
 
     private static final String M3UA_PERSIST_DIR_KEY = "m3ua.persist.dir";
     private static final String USER_DIR_KEY = "user.dir";
     private static final String PERSIST_FILE_NAME = "m3ua1.xml";
 
-    private static final M3UAXMLBinding binding = new M3UAXMLBinding();
+    protected static final M3UAXMLBinding binding = new M3UAXMLBinding();
     private static final String TAB_INDENT = "\t";
     private static final String CLASS_ATTRIBUTE = "type";
 
@@ -106,6 +108,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
     protected FastList<AspFactory> aspfactories = new FastList<AspFactory>();
 
     protected M3UAScheduler m3uaScheduler = new M3UAScheduler();
+    protected M3UACounterProviderImpl m3uaCounterProvider;
 
     private final TextBuilder persistFile = TextBuilder.newInstance();
 
@@ -119,13 +122,15 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
     protected Management transportManagement = null;
     protected boolean sctpLibNettySupport = false;
 
-    private ScheduledExecutorService fsmTicker;
+    protected ScheduledExecutorService fsmTicker;
 
     protected int maxAsForRoute = 2;
 
     protected int timeBetweenHeartbeat = 10000; // 10 sec default
 
     private M3UARouteManagement routeManagement = null;
+
+    private boolean statisticsEnabled = false;
 
     protected FastList<M3UAManagementEventListener> managementEventListeners = new FastList<M3UAManagementEventListener>();
 
@@ -144,6 +149,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
         binding.setAlias(AspImpl.class, "asp");
 
         this.routeManagement = new M3UARouteManagement(this);
+        this.m3uaCounterProvider = new M3UACounterProviderImpl(this);
 
     }
 
@@ -1000,6 +1006,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
             writer.setIndentation(TAB_INDENT);
 
             writer.write(this.timeBetweenHeartbeat, HEART_BEAT_TIME_PROP, Integer.class);
+            writer.write(this.statisticsEnabled, STATISTICS_ENABLED, Boolean.class);
             writer.write(this.isUseLsbForLinksetSelection(), USE_LSB_FOR_LINKSET_SELECTION, Boolean.class);
 
             writer.write(aspfactories, ASP_FACTORY_LIST, FastList.class);
@@ -1047,12 +1054,13 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
         }
     }
 
-    private void loadActualData(XMLObjectReader reader ) throws XMLStreamException, IOException{
+    protected void loadActualData(XMLObjectReader reader ) throws XMLStreamException, IOException{
         try {
             Integer vali = reader.read(MAX_SEQUENCE_NUMBER_PROP, Integer.class);
             vali = reader.read(MAX_AS_FOR_ROUTE_PROP, Integer.class);
 
             this.timeBetweenHeartbeat = reader.read(HEART_BEAT_TIME_PROP, Integer.class);
+            this.statisticsEnabled = reader.read(STATISTICS_ENABLED, Boolean.class);
         } catch (java.lang.Exception e) {
             // ignore.
             // For backward compatibility we can ignore if these values are not defined
@@ -1147,7 +1155,7 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
         reader.close();
     }
 
-    private void loadVer2(String fn) throws XMLStreamException, IOException{
+    protected void loadVer2(String fn) throws XMLStreamException, IOException{
         XMLObjectReader reader = XMLObjectReader.newInstance(new FileInputStream(fn));
         reader.setBinding(binding);
         this.loadActualData(reader);
@@ -1166,10 +1174,38 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
         AsImpl asImpl = this.routeManagement.getAsForRoute(data.getDpc(), data.getOpc(), data.getSI(), data.getSLS());
         if (asImpl == null) {
             logger.error(String.format("Tx : No AS found for routing message %s", payload));
-            return;
+            throw new IOException(String.format("Tx : No AS found for routing message %s", payload));
         }
         payload.setNetworkAppearance(asImpl.getNetworkAppearance());
         payload.setRoutingContext(asImpl.getRoutingContext());
         asImpl.write(payload);
     }
+
+    @Override
+    public void setStatisticsEnabled(boolean val) throws Exception {
+        if (!this.isStarted)
+            throw new Exception("StatisticsEnabled parameter can be updated only when M3UA management is running");
+
+        this.m3uaCounterProvider = new M3UACounterProviderImpl(this);
+
+        statisticsEnabled = val;
+
+        this.store();
+
+    }
+
+    @Override
+    public boolean getStatisticsEnabled() {
+        return statisticsEnabled;
+    }
+
+    @Override
+    public M3UACounterProvider getCounterProvider() {
+        return m3uaCounterProvider;
+    }
+
+    public M3UACounterProviderImpl getCounterProviderImpl() {
+        return m3uaCounterProvider;
+    }
+
 }

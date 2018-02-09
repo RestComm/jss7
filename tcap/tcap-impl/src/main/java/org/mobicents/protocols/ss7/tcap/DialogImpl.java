@@ -173,6 +173,8 @@ public class DialogImpl implements Dialog {
     private long startDialogTime;
     private int networkId;
 
+    private Boolean doNotSendProtocolVersion = null;
+
     private static int getIndexFromInvokeId(Long l) {
         int tmp = l.intValue();
         return tmp + _INVOKE_TABLE_SHIFT;
@@ -267,6 +269,28 @@ public class DialogImpl implements Dialog {
                 invoke.setDialog(this);
             }
         }
+    }
+
+    @Override
+    public Boolean isDoNotSendProtcolVersion() {
+        return doNotSendProtocolVersion;
+    }
+
+    @Override
+    public void setDoNotSendProtocolVersion(Boolean doNotSendProtocolVersion) {
+        this.doNotSendProtocolVersion = doNotSendProtocolVersion;
+    }
+
+    /**
+     * Compute convergent option value as combination from dialog level value
+     * and global value specified at stack level.
+     *
+     * @return
+     */
+    private boolean doNotSendProtocolVersion() {
+        return doNotSendProtocolVersion != null ?
+                doNotSendProtocolVersion  :
+                provider.getStack().getDoNotSendProtocolVersion();
     }
 
     public void release() {
@@ -539,7 +563,7 @@ public class DialogImpl implements Dialog {
                 DialogPortion dp = TcapFactory.createDialogPortion();
                 dp.setUnidirectional(false);
                 DialogRequestAPDU apdu = TcapFactory.createDialogAPDURequest();
-                apdu.setDoNotSendProtocolVersion(this.provider.getStack().getDoNotSendProtocolVersion());
+                apdu.setDoNotSendProtocolVersion(doNotSendProtocolVersion());
                 dp.setDialogAPDU(apdu);
                 apdu.setApplicationContextName(event.getApplicationContextName());
                 this.lastACN = event.getApplicationContextName();
@@ -618,7 +642,7 @@ public class DialogImpl implements Dialog {
                     DialogPortion dp = TcapFactory.createDialogPortion();
                     dp.setUnidirectional(false);
                     DialogResponseAPDU apdu = TcapFactory.createDialogAPDUResponse();
-                    apdu.setDoNotSendProtocolVersion(this.provider.getStack().getDoNotSendProtocolVersion());
+                    apdu.setDoNotSendProtocolVersion(doNotSendProtocolVersion());
                     dp.setDialogAPDU(apdu);
                     apdu.setApplicationContextName(event.getApplicationContextName());
                     if (event.getUserInformation() != null) {
@@ -751,7 +775,7 @@ public class DialogImpl implements Dialog {
                     DialogPortion dp = TcapFactory.createDialogPortion();
                     dp.setUnidirectional(false);
                     DialogResponseAPDU apdu = TcapFactory.createDialogAPDUResponse();
-                    apdu.setDoNotSendProtocolVersion(this.provider.getStack().getDoNotSendProtocolVersion());
+                    apdu.setDoNotSendProtocolVersion(doNotSendProtocolVersion());
                     dp.setDialogAPDU(apdu);
 
                     apdu.setApplicationContextName(event.getApplicationContextName());
@@ -853,7 +877,7 @@ public class DialogImpl implements Dialog {
             if (event.getApplicationContextName() != null) {
                 DialogPortion dp = TcapFactory.createDialogPortion();
                 DialogUniAPDU apdu = TcapFactory.createDialogAPDUUni();
-                apdu.setDoNotSendProtocolVersion(this.provider.getStack().getDoNotSendProtocolVersion());
+                apdu.setDoNotSendProtocolVersion(doNotSendProtocolVersion());
                 apdu.setApplicationContextName(event.getApplicationContextName());
                 if (event.getUserInformation() != null) {
                     apdu.setUserInformation(event.getUserInformation());
@@ -920,7 +944,7 @@ public class DialogImpl implements Dialog {
                         // Abnormal
                         // procedures on page 13 and 14
                         DialogResponseAPDU apdu = TcapFactory.createDialogAPDUResponse();
-                        apdu.setDoNotSendProtocolVersion(this.provider.getStack().getDoNotSendProtocolVersion());
+                        apdu.setDoNotSendProtocolVersion(doNotSendProtocolVersion());
                         apdu.setApplicationContextName(event.getApplicationContextName());
                         apdu.setUserInformation(event.getUserInformation());
 
@@ -1123,7 +1147,7 @@ public class DialogImpl implements Dialog {
             DialogPortion dp = TcapFactory.createDialogPortion();
             dp.setUnidirectional(false);
             DialogRequestAPDU apdu = TcapFactory.createDialogAPDURequest();
-            apdu.setDoNotSendProtocolVersion(this.provider.getStack().getDoNotSendProtocolVersion());
+            apdu.setDoNotSendProtocolVersion(doNotSendProtocolVersion());
             dp.setDialogAPDU(apdu);
             apdu.setApplicationContextName(event.getApplicationContextName());
             if (event.getUserInformation() != null) {
@@ -1164,7 +1188,7 @@ public class DialogImpl implements Dialog {
             DialogPortion dp = TcapFactory.createDialogPortion();
             dp.setUnidirectional(false);
             DialogResponseAPDU apdu = TcapFactory.createDialogAPDUResponse();
-            apdu.setDoNotSendProtocolVersion(this.provider.getStack().getDoNotSendProtocolVersion());
+            apdu.setDoNotSendProtocolVersion(doNotSendProtocolVersion());
             dp.setDialogAPDU(apdu);
             apdu.setApplicationContextName(event.getApplicationContextName());
             if (event.getUserInformation() != null) {
@@ -1230,7 +1254,7 @@ public class DialogImpl implements Dialog {
                 DialogPortion dp = TcapFactory.createDialogPortion();
                 dp.setUnidirectional(false);
                 DialogResponseAPDU apdu = TcapFactory.createDialogAPDUResponse();
-                apdu.setDoNotSendProtocolVersion(this.provider.getStack().getDoNotSendProtocolVersion());
+                apdu.setDoNotSendProtocolVersion(doNotSendProtocolVersion());
                 dp.setDialogAPDU(apdu);
 
                 apdu.setApplicationContextName(event.getApplicationContextName());
@@ -1270,7 +1294,7 @@ public class DialogImpl implements Dialog {
         if (event.getApplicationContextName() != null) {
             DialogPortion dp = TcapFactory.createDialogPortion();
             DialogUniAPDU apdu = TcapFactory.createDialogAPDUUni();
-            apdu.setDoNotSendProtocolVersion(this.provider.getStack().getDoNotSendProtocolVersion());
+            apdu.setDoNotSendProtocolVersion(doNotSendProtocolVersion());
             apdu.setApplicationContextName(event.getApplicationContextName());
             if (event.getUserInformation() != null) {
                 apdu.setUserInformation(event.getUserInformation());
@@ -2111,7 +2135,7 @@ public class DialogImpl implements Dialog {
                 if (d.idleTimerActionTaken) {
                     startIdleTimer();
                 } else {
-                    d.release();
+                    sendAbnormalDialog();
                 }
 
             } finally {

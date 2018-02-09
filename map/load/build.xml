@@ -14,6 +14,35 @@
 	<property name="srcroot" value="${root}/src" />
 
 	<property name="assemble.dir" value="${ant.file.restcomm.release}/../target/load" />
+
+	<property name="test.server.channelType" value="sctp" />
+	<property name="test.server.clientIp" value="127.0.0.1" />
+	<property name="test.server.clientPort" value="8011" />
+	<property name="test.server.serverIp" value="127.0.0.1" />
+	<property name="test.server.serverPort" value="8012" />
+	<property name="test.server.clientPc" value="1" />
+	<property name="test.server.serverPc" value="2" />
+	<property name="test.server.ni" value="2" />
+	<property name="test.server.si" value="3" />
+	<property name="test.server.ssn" value="8" />
+	<property name="test.server.rc" value="100" />
+
+	<property name="test.client.numOfDialogs" value="6000" />
+	<property name="test.client.concurrentDialog" value="100" />
+	<property name="test.client.channelType" value="sctp" />
+	<property name="test.client.clientIp" value="127.0.0.1" />
+	<property name="test.client.clientPort" value="8011" />
+	<property name="test.client.serverIp" value="127.0.0.1" />
+	<property name="test.client.serverPort" value="8012" />
+	<property name="test.client.clientPc" value="1" />
+	<property name="test.client.serverPc" value="2" />
+	<property name="test.client.ni" value="2" />
+	<property name="test.client.si" value="3" />
+	<property name="test.client.ssn" value="8" />
+	<property name="test.client.rc" value="100" />
+	<property name="test.client.clientAddress" value="1111112" />
+	<property name="test.client.serverAddress" value="9960639999" />
+
 	<path id="project.class.path">
 		<pathelement location="${assemble.dir}/sctp-api.jar" />
 		<pathelement location="${assemble.dir}/sctp-impl.jar" />
@@ -110,17 +139,17 @@
 			<jvmarg value="-XX:+PrintGCDetails" />
 			<jvmarg value="-XX:+PrintGCTimeStamps" />
 			-->
-			<arg value="sctp" /> <!-- socket type -->
-			<arg value="127.0.0.1" /> <!-- Client IP -->
-			<arg value="8011" /> <!-- Client Port -->
-			<arg value="127.0.0.1" /> <!-- Server Ip -->
-			<arg value="8012" /> <!-- Server Port -->
-			<arg value="1" /> <!-- Client PC -->
-			<arg value="2" /> <!-- Server PC -->
-			<arg value="2" /> <!-- NI -->
-			<arg value="3" /> <!-- SI -->
-			<arg value="8" /> <!-- SSN -->
-			<arg value="100" /> <!-- RC -->	
+			<arg value="${test.server.channelType}" /> <!-- socket type -->
+			<arg value="${test.server.clientIp}" /> <!-- Client IP -->
+			<arg value="${test.server.clientPort}" /> <!-- Client Port -->
+			<arg value="${test.server.serverIp}" /> <!-- Server Ip -->
+			<arg value="${test.server.serverPort}" /> <!-- Server Port -->
+			<arg value="${test.server.clientPc}" /> <!-- Client PC -->
+			<arg value="${test.server.serverPc}" /> <!-- Server PC -->
+			<arg value="${test.server.ni}" /> <!-- NI -->
+			<arg value="${test.server.si}" /> <!-- SI -->
+			<arg value="${test.server.ssn}" /> <!-- SSN -->
+			<arg value="${test.server.rc}" /> <!-- RC -->	
 			<arg value="16" /> <!-- deliveryTransferMessageThreadCount -->
 		</java>
 	</target>
@@ -149,21 +178,24 @@
 			<jvmarg value="-Dio.netty.leakDetection.level=advanced"/>
 			-->
 			<jvmarg value="-XX:+UseParallelOldGC"/>
-			<arg value="5000000" /> <!-- numbe of Dialogs -->
-			<arg value="50000" /> <!-- Concurrent Dialogs -->
-			<arg value="sctp" /> <!-- socket type -->
-			<arg value="127.0.0.1" /> <!-- Client IP -->
-			<arg value="8011" /> <!-- Client Port -->
-			<arg value="127.0.0.1" /> <!-- Server Ip -->
-			<arg value="8012" /> <!-- Server Port -->
-			<arg value="1" /> <!-- Client PC -->
-			<arg value="2" /> <!-- Server PC -->
-			<arg value="2" /> <!-- NI -->
-			<arg value="3" /> <!-- SI -->
-			<arg value="8" /> <!-- SSN -->
-			<arg value="100" /> <!-- RC -->
+			<arg value="${test.client.numOfDialogs}" /> <!-- number of Dialogs -->
+			<arg value="${test.client.concurrentDialog}" /> <!-- Concurrent Dialogs -->
+			<arg value="${test.client.channelType}" /> <!-- socket type -->
+			<arg value="${test.client.clientIp}" /> <!-- Client IP -->
+			<arg value="${test.client.clientPort}" /> <!-- Client Port -->
+			<arg value="${test.client.serverIp}" /> <!-- Server Ip -->
+			<arg value="${test.client.serverPort}" /> <!-- Server Port -->
+			<arg value="${test.client.clientPc}" /> <!-- Client PC -->
+			<arg value="${test.server.serverPc}" /> <!-- Server PC -->
+			<arg value="${test.client.ni}" /> <!-- NI -->
+			<arg value="${test.client.si}" /> <!-- SI -->
+			<arg value="${test.client.ssn}" /> <!-- SSN -->
+			<arg value="${test.client.rc}" /> <!-- RC -->
 			<arg value="16" /> <!-- deliveryTransferMessageThreadCount -->
 			<arg value="-100" /> <!-- ramp up period, set to zero to enable single dialog injection -->
+			<arg value="${test.client.clientAddress}" /> <!-- client sccp address -->
+			<arg value="${test.client.serverAddress}" /> <!-- server sccp address -->
+			<arg value="0" /> <!-- routing indicator -->
 		</java>
 	</target>
 

@@ -22,7 +22,8 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.parameter;
 
-import java.nio.ByteBuffer;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import javolution.text.TextBuilder;
 
@@ -38,7 +39,7 @@ public class RegistrationResultImpl extends ParameterImpl implements Registratio
     private RegistrationStatus status;
     private RoutingContext rc;
 
-    private ByteBuffer buffer = ByteBuffer.allocate(24);
+    private ByteBuf buf = Unpooled.buffer(24);
     private byte[] value;
 
     public RegistrationResultImpl(byte[] data) {
@@ -85,13 +86,15 @@ public class RegistrationResultImpl extends ParameterImpl implements Registratio
     }
 
     private void encode() {
-        ((LocalRKIdentifierImpl) this.localRKId).write(buffer);
+        ((LocalRKIdentifierImpl) this.localRKId).write(buf);
 
-        ((RoutingContextImpl) rc).write(buffer);
+        ((RoutingContextImpl) rc).write(buf);
 
-        ((RegistrationStatusImpl) this.status).write(buffer);
+        ((RegistrationStatusImpl) this.status).write(buf);
 
-        value = buffer.array();
+        int length = buf.readableBytes();
+        value = new byte[length];
+        buf.getBytes(buf.readerIndex(), value);
     }
 
     @Override

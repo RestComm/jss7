@@ -56,6 +56,7 @@ public class CAPStackImpl implements CAPStack {
     public CAPStackImpl(String name, TCAPProvider tcapProvider) {
         this.name = name;
         capProvider = new CAPProviderImpl(name, tcapProvider);
+        this.tcapStack = tcapProvider.getStack();
         this.state = State.CONFIGURED;
     }
 

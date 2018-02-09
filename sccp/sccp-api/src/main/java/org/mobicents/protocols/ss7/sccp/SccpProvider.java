@@ -123,4 +123,17 @@ public interface SccpProvider extends Serializable {
     SccpConnection newConnection(int localSsn, ProtocolClass protocolClass) throws MaxConnectionCountReached;
 
     FastMap<LocalReference, SccpConnection> getConnections();
+
+    /**
+     * @return SCCP stack
+     */
+    SccpStack getSccpStack();
+    /**
+     * Update Signaling Point congestion status
+     * @return
+     */
+
+    void updateSPCongestion(Integer ssn, Integer congestionLevel);
+
+
 }

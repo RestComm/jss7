@@ -22,7 +22,8 @@
 
 package org.mobicents.protocols.ss7.m3ua.impl.parameter;
 
-import java.nio.ByteBuffer;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import javolution.text.TextBuilder;
 import javolution.util.FastList;
@@ -65,7 +66,7 @@ public class RoutingKeyImpl extends ParameterImpl implements RoutingKey, XMLSeri
     private ServiceIndicators[] servInds;
     private OPCList[] opcList;
 
-    private ByteBuffer buffer = ByteBuffer.allocate(256);
+    private ByteBuf buf = Unpooled.buffer(256);
 
     private byte[] value;
 
@@ -160,36 +161,36 @@ public class RoutingKeyImpl extends ParameterImpl implements RoutingKey, XMLSeri
 
     private void encode() {
         if (this.localRkId != null) {
-            ((LocalRKIdentifierImpl) this.localRkId).write(buffer);
+            ((LocalRKIdentifierImpl) this.localRkId).write(buf);
         }
 
         if (this.rc != null) {
-            ((RoutingContextImpl) rc).write(buffer);
+            ((RoutingContextImpl) rc).write(buf);
         }
 
         if (this.trafMdTy != null) {
-            ((TrafficModeTypeImpl) trafMdTy).write(buffer);
+            ((TrafficModeTypeImpl) trafMdTy).write(buf);
         }
 
         if (this.netApp != null) {
-            ((NetworkAppearanceImpl) this.netApp).write(buffer);
+            ((NetworkAppearanceImpl) this.netApp).write(buf);
         }
 
         for (int i = 0; i < this.dpc.length; i++) {
-            ((DestinationPointCodeImpl) this.dpc[i]).write(buffer);
+            ((DestinationPointCodeImpl) this.dpc[i]).write(buf);
 
             if (this.servInds != null) {
-                ((ServiceIndicatorsImpl) this.servInds[i]).write(buffer);
+                ((ServiceIndicatorsImpl) this.servInds[i]).write(buf);
             }
 
             if (this.opcList != null) {
-                ((OPCListImpl) this.opcList[i]).write(buffer);
+                ((OPCListImpl) this.opcList[i]).write(buf);
             }
         }
 
-        this.value = new byte[buffer.position()];
-        buffer.flip();
-        buffer.get(this.value);
+        int length = buf.readableBytes();
+        value = new byte[length];
+        buf.getBytes(buf.readerIndex(), value);
     }
 
     @Override

@@ -36,7 +36,7 @@
 		<!-- restcomm but not strictly ss7 -->
 		<asn.version>2.2.0-22</asn.version>
 		<stream.version>1.0.0.CR1</stream.version>
-		<sctp.version>2.0.0-39</sctp.version>
+		<sctp.version>2.0.0-128</sctp.version>
 		<commons.version>1.0.0.CR1</commons.version>
 		<dialogic.version>6.7.1</dialogic.version>
 		<netty.version>4.0.33.Final</netty.version>
@@ -558,7 +558,7 @@
 		<repository>
 			<id>datanucleus</id>
 			<name>DataNucleus Releases</name>
-			<url>http://www.datanucleus.org/downloads/</url>
+			<url>http://www.datanucleus.org/downloads/maven2</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>

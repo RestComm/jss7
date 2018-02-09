@@ -37,6 +37,7 @@ import org.mobicents.protocols.ss7.map.api.datacoding.NationalLanguageIdentifier
 import org.mobicents.protocols.ss7.map.api.errors.AbsentSubscriberDiagnosticSM;
 import org.mobicents.protocols.ss7.map.api.errors.CallBarringCause;
 import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessageSMDeliveryFailure;
 import org.mobicents.protocols.ss7.map.api.errors.SMEnumeratedDeliveryFailureCause;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
@@ -72,8 +73,10 @@ import org.mobicents.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.mobicents.protocols.ss7.map.api.smstpdu.AddressField;
 import org.mobicents.protocols.ss7.map.api.smstpdu.CharacterSet;
 import org.mobicents.protocols.ss7.map.api.smstpdu.DataCodingScheme;
+import org.mobicents.protocols.ss7.map.api.smstpdu.FailureCause;
 import org.mobicents.protocols.ss7.map.api.smstpdu.NumberingPlanIdentification;
 import org.mobicents.protocols.ss7.map.api.smstpdu.ProtocolIdentifier;
+import org.mobicents.protocols.ss7.map.api.smstpdu.SmsDeliverReportTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsDeliverTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsStatusReportTpdu;
 import org.mobicents.protocols.ss7.map.api.smstpdu.SmsSubmitTpdu;
@@ -86,9 +89,11 @@ import org.mobicents.protocols.ss7.map.smstpdu.AddressFieldImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.ApplicationPortAddressing16BitAddressImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.ConcatenatedShortMessagesIdentifierImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.DataCodingSchemeImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.FailureCauseImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.NationalLanguageLockingShiftIdentifierImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.NationalLanguageSingleShiftIdentifierImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.ProtocolIdentifierImpl;
+import org.mobicents.protocols.ss7.map.smstpdu.SmsDeliverReportTpduImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.SmsSubmitTpduImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.UserDataHeaderImpl;
 import org.mobicents.protocols.ss7.map.smstpdu.UserDataImpl;
@@ -876,27 +881,42 @@ public class TestSmsClientMan extends TesterBase implements TestSmsClientManMBea
         switch (mtFSMReaction.intValue()) {
             case MtFSMReaction.VAL_ERROR_MEMORY_CAPACITY_EXCEEDED:
             case MtFSMReaction.VAL_ERROR_EQUIPMENT_PROTOCOL_ERROR:
+            case MtFSMReaction.VAL_ERROR_EQUIPMENT_PROTOCOL_ERROR_WITH_TPDU:
             case MtFSMReaction.VAL_ERROR_UNKNOWN_SERVICE_CENTRE:
                 SMEnumeratedDeliveryFailureCause smEnumeratedDeliveryFailureCause;
-                if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction().intValue() == MtFSMReaction.VAL_ERROR_MEMORY_CAPACITY_EXCEEDED)
+                SmsDeliverReportTpdu tpdu = null;
+                if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction().intValue() == MtFSMReaction.VAL_ERROR_MEMORY_CAPACITY_EXCEEDED) {
                     smEnumeratedDeliveryFailureCause = SMEnumeratedDeliveryFailureCause.memoryCapacityExceeded;
-                else if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction()
-                        .intValue() == MtFSMReaction.VAL_ERROR_EQUIPMENT_PROTOCOL_ERROR)
+                } else if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction()
+                        .intValue() == MtFSMReaction.VAL_ERROR_EQUIPMENT_PROTOCOL_ERROR) {
                     smEnumeratedDeliveryFailureCause = SMEnumeratedDeliveryFailureCause.equipmentProtocolError;
-                else
+                } else if (this.testerHost.getConfigurationData().getTestSmsClientConfigurationData().getMtFSMReaction()
+                        .intValue() == MtFSMReaction.VAL_ERROR_EQUIPMENT_PROTOCOL_ERROR_WITH_TPDU) {
+                    smEnumeratedDeliveryFailureCause = SMEnumeratedDeliveryFailureCause.equipmentProtocolError;
+                    // FailureCause failureCause, ProtocolIdentifier protocolIdentifier, UserData userData
+                    FailureCause failureCause = new FailureCauseImpl(0xD5);
+                    ProtocolIdentifier protocolIdentifier = new ProtocolIdentifierImpl(127);
+                    // String decodedMessage, DataCodingScheme dataCodingScheme, UserDataHeader decodedUserDataHeader, Charset gsm8Charset
+                    DataCodingScheme dataCodingScheme = new DataCodingSchemeImpl(246);
+                    UserData userData = new UserDataImpl("12345abcde", dataCodingScheme, null, Charset.forName("ISO-8859-1"));
+                    tpdu = new SmsDeliverReportTpduImpl(failureCause, protocolIdentifier, userData);
+                } else {
                     smEnumeratedDeliveryFailureCause = SMEnumeratedDeliveryFailureCause.unknownServiceCentre;
-                MAPErrorMessage mapErrorMessage = mapProvider.getMAPErrorMessageFactory()
+                }
+                MAPErrorMessageSMDeliveryFailure mapErrorMessageSMDeliveryFailure = mapProvider.getMAPErrorMessageFactory()
                         .createMAPErrorMessageSMDeliveryFailure(
                                 curDialog.getApplicationContext().getApplicationContextVersion().getVersion(),
                                 smEnumeratedDeliveryFailureCause, null, null);
-                curDialog.sendErrorComponent(invokeId, mapErrorMessage);
+                if (tpdu != null)
+                    mapErrorMessageSMDeliveryFailure.setSmsDeliverReportTpdu(tpdu);
+                curDialog.sendErrorComponent(invokeId, mapErrorMessageSMDeliveryFailure);
 
                 this.countErrSent++;
-                uData = this.createErrorData(curDialog.getLocalDialogId(), (int) invokeId, mapErrorMessage);
+                uData = this.createErrorData(curDialog.getLocalDialogId(), (int) invokeId, mapErrorMessageSMDeliveryFailure);
                 this.testerHost.sendNotif(SOURCE_NAME, "Sent: errSmDelFail", uData, Level.DEBUG);
                 break;
             case MtFSMReaction.VAL_ERROR_ABSENT_SUBSCRIBER:
-                mapErrorMessage = null;
+                MAPErrorMessage mapErrorMessage = null;
                 switch (curDialog.getApplicationContext().getApplicationContextVersion()) {
                     case version1:
                         mapErrorMessage = mapProvider.getMAPErrorMessageFactory().createMAPErrorMessageAbsentSubscriber(null);

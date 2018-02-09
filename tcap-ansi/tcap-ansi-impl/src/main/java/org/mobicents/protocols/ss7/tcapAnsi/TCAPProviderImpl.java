@@ -396,6 +396,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
         SccpDataMessage msg = messageFactory.createDataMessageClass1(destinationAddress, originatingAddress, data, seqControl,
                 localSsn, returnMessageOnError, null, null);
         msg.setNetworkId(networkId);
+        sccpProvider.updateSPCongestion(ssn, getCumulativeCongestionLevel());
         sccpProvider.send(msg);
     }
 

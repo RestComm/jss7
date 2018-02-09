@@ -35,8 +35,6 @@ import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
 import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
 import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 
 /**
  * @author abhayani
@@ -45,6 +43,10 @@ import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 public abstract class TestHarness implements MAPDialogListener, MAPServiceSupplementaryListener {
 
     private static final Logger logger = Logger.getLogger("map.test");
+
+    protected static final String CREATED_DIALOGS = "CreatedScenario";
+    protected static final String SUCCESSFUL_DIALOGS = "CompletedScenario";
+    protected static final String ERROR_DIALOGS = "FailedScenario";
 
     protected static final String LOG_FILE_NAME = "log.file.name";
     protected static String logFileName = "maplog.txt";
@@ -80,15 +82,19 @@ public abstract class TestHarness implements MAPDialogListener, MAPServiceSupple
 
     protected final String SERVER_NAME = "testserver";
 
-    //TCAP Details
+    // TCAP Details
     protected static final int MAX_DIALOGS = 500000;
 
-    protected final SccpAddress SCCP_CLIENT_ADDRESS = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN,
-            null, CLIENT_SPC, SSN);
-    protected final SccpAddress SCCP_SERVER_ADDRESS = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN,
-            null, SERVET_SPC, SSN);
+    protected static String SCCP_CLIENT_ADDRESS = null;
+    protected static String SCCP_SERVER_ADDRESS = null;
+
+    protected static RoutingIndicator ROUTING_INDICATOR = RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN;
 
     protected final ParameterFactoryImpl factory = new ParameterFactoryImpl();
+
+    protected static int TEST_START_DELAY = 20000;
+    protected static int TEST_END_DELAY = 3000;
+    protected static int PRINT_WRITER_PERIOD = 2000;
 
     protected TestHarness() {
         init();

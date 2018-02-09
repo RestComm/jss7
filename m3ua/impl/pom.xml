@@ -66,6 +66,10 @@
 			<artifactId>sctp-impl</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+			<artifactId>statistics-impl</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

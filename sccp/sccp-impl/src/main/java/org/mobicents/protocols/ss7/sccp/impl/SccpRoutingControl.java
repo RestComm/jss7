@@ -88,6 +88,7 @@ import static org.mobicents.protocols.ss7.sccp.parameter.ErrorCauseValue.LRN_MIS
 import static org.mobicents.protocols.ss7.sccp.parameter.ErrorCauseValue.SERVICE_CLASS_MISMATCH;
 import static org.mobicents.protocols.ss7.sccp.parameter.ReleaseCauseValue.SCCP_FAILURE;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
@@ -104,6 +105,7 @@ public class SccpRoutingControl {
     private SccpManagement sccpManagement = null;
 
     private MessageFactoryImpl messageFactory;
+    private ConcurrentHashMap<Integer, AtomicInteger> opcSscCounters = new ConcurrentHashMap<Integer, AtomicInteger>();
 
     private ConcurrentHashMap<Integer, Long> prohibitedSpcs = new ConcurrentHashMap<Integer, Long>();
 
@@ -154,8 +156,29 @@ public class SccpRoutingControl {
             return;
         }
 
-        // TODO if the local SCCP or node is in an overload condition, SCRC
+        //if the local SCCP or node is in an overload condition, SCRC
         // shall inform SCMG
+        int subsystemNumber = msg.getCalledPartyAddress().getSubsystemNumber();
+        Integer congestionLevel = this.sccpProviderImpl.getCongestionSsn().get(subsystemNumber);
+        if(congestionLevel != null) {
+            int inOpc = msg.getIncomingOpc();
+            if(congestionLevel > 0) {
+                if(subsystemNumber != 1)
+                    if(msg instanceof SccpDataMessage) {
+                        AtomicInteger aCounter = opcSscCounters.get(inOpc);
+                        if(aCounter == null) {
+                            opcSscCounters.put(inOpc, new AtomicInteger(1));
+                        } else if((aCounter.incrementAndGet() % 8) == 0) {
+                            this.sccpManagement.receivedForCongestionUser(msg, subsystemNumber, congestionLevel);
+                            aCounter.compareAndSet(Integer.MAX_VALUE, 0);
+                        }
+                    }
+            } else if (congestionLevel == 0) {
+                AtomicInteger aCounter = opcSscCounters.get(inOpc);
+                if(aCounter!=null)
+                    aCounter.set(0);
+            }
+        }
 
         SccpAddress calledPartyAddress = msg.getCalledPartyAddress();
         RoutingIndicator ri = calledPartyAddress.getAddressIndicator().getRoutingIndicator();

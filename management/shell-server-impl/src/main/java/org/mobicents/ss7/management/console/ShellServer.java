@@ -50,6 +50,7 @@ import org.jboss.security.audit.AuditEvent;
 import org.jboss.security.audit.AuditLevel;
 import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.mobicents.protocols.ss7.scheduler.Task;
+import org.mobicents.ss7.management.transceiver.ChannelException;
 import org.mobicents.ss7.management.transceiver.ChannelProvider;
 import org.mobicents.ss7.management.transceiver.ChannelSelectionKey;
 import org.mobicents.ss7.management.transceiver.ChannelSelector;
@@ -213,6 +214,18 @@ public abstract class ShellServer extends Task implements ShellServerMBean {
         FastSet<ChannelSelectionKey> keys = null;
         try {
             keys = selector.selectNow();
+        } catch (ChannelException ce) {
+            logger.error("An error occured while selecting selector key", ce);
+            if (ce.getKey() != null) {
+                ChannelSelectionKey key = ce.getKey();
+                ShellChannelExt channel = (ShellChannelExt) key.channel();
+                channelsMap.remove(key);
+                try {
+                    this.closeChannel(key, channel);
+                } catch (IOException e1) {
+                    logger.error("IO Exception while closing Channel", e1);
+                }
+            }
         } catch (Exception e) {
             logger.error("An error occured while selecting selector key", e);
         }
@@ -332,8 +345,8 @@ public abstract class ShellServer extends Task implements ShellServerMBean {
                                     }
                                 }
 
-                                if (txMessage.length() > 0 && txMessage.compareTo("Bye") == 0) {
-                                    logger.info("Channel has somethign to write " + txMessage);
+                                if (txMessage.length() > 0) {
+                                    logger.info("Channel has something to write: " + txMessage);
                                     if (txMessage.compareTo("Bye") == 0) {
                                         ShellChannelExt channel = (ShellChannelExt) key.channel();
                                         channelsMap.remove(key);

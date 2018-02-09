@@ -37,6 +37,7 @@ import javolution.xml.stream.XMLStreamException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.api.TCAPCounterEventsListener;
 import org.mobicents.protocols.ss7.tcap.api.TCAPCounterProvider;
@@ -83,7 +84,7 @@ public class TCAPStackImpl implements TCAPStack {
     private static final String CONG_CONTROL_BACK_TO_NORMAL_MEMORY_THRESHOLD_3 = "congControl_BackToNormalMemoryThreshold_3";
 
 
-    private static final XMLBinding binding = new XMLBinding();
+    protected static final XMLBinding binding = new XMLBinding();
 
     // default value of idle timeout and after TC_END remove of task.
     public static final long _DIALOG_TIMEOUT = 60000;
@@ -765,7 +766,14 @@ public class TCAPStackImpl implements TCAPStack {
             reader = XMLObjectReader.newInstance(new FileInputStream(persistFile.toString()));
 
             reader.setBinding(binding);
+            load(reader);
+        } catch (XMLStreamException ex) {
+            // this.logger.info(
+            // "Error while re-creating Linksets from persisted file", ex);
+        }
+    }
 
+     protected void load(XMLObjectReader reader) throws XMLStreamException{
             Long vall = reader.read(DIALOG_IDLE_TIMEOUT, Long.class);
             if (vall != null)
                 this.dialogTimeout = vall;
@@ -839,10 +847,6 @@ public class TCAPStackImpl implements TCAPStack {
                 this.statisticsEnabled = volb;
 
             reader.close();
-        } catch (XMLStreamException ex) {
-            // this.logger.info(
-            // "Error while re-creating Linksets from persisted file", ex);
-        }
     }
 
     @Override
@@ -853,5 +857,10 @@ public class TCAPStackImpl implements TCAPStack {
     @Override
     public void setTCAPCounterEventsListener(TCAPCounterEventsListener tcapCounterEventsListener) {
         this.tcapCounterEventsListener = tcapCounterEventsListener;
+    }
+
+    @Override
+    public SccpStack getSccpStack() {
+        return this.sccpProvider.getSccpStack();
     }
 }

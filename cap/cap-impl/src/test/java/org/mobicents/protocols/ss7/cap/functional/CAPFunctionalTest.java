@@ -1976,6 +1976,9 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
         te = TestEvent.createReceivedEvent(EventType.DialogTimeout, null, count++, stamp + _DIALOG_TIMEOUT);
         clientExpectedEvents.add(te);
 
+        te = TestEvent.createReceivedEvent(EventType.DialogProviderAbort, null, count++, stamp + _DIALOG_TIMEOUT);
+        clientExpectedEvents.add(te);
+
         te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++,
                 (stamp + _DIALOG_TIMEOUT + _TCAP_DIALOG_RELEASE_TIMEOUT));
         clientExpectedEvents.add(te);
@@ -1992,7 +1995,7 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
         te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
         serverExpectedEvents.add(te);
 
-        te = TestEvent.createReceivedEvent(EventType.DialogTimeout, null, count++, stamp + _DIALOG_TIMEOUT);
+        te = TestEvent.createReceivedEvent(EventType.DialogProviderAbort, null, count++, stamp + _DIALOG_TIMEOUT);
         serverExpectedEvents.add(te);
 
         te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++,
@@ -2001,10 +2004,10 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
 
         // setting dialog timeout little interval to invoke onDialogTimeout on SCF side
         server.capStack.getTCAPStack().setInvokeTimeout(_DIALOG_TIMEOUT - 100);
-        server.capStack.getTCAPStack().setDialogIdleTimeout(_DIALOG_TIMEOUT);
+        server.capStack.getTCAPStack().setDialogIdleTimeout(_DIALOG_TIMEOUT+50);
         server.suppressInvokeTimeout();
         client.capStack.getTCAPStack().setInvokeTimeout(_DIALOG_TIMEOUT - 100);
-        client.capStack.getTCAPStack().setDialogIdleTimeout(_DIALOG_TIMEOUT);
+        client.capStack.getTCAPStack().setDialogIdleTimeout(_DIALOG_TIMEOUT-50);
         client.suppressInvokeTimeout();
         client.sendInitialDp(CAPApplicationContext.CapV3_gsmSSF_scfGeneric);
 

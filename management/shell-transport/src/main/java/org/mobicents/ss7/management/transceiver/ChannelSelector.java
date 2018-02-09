@@ -105,28 +105,32 @@ public class ChannelSelector {
         Set<SelectionKey> selection = selector.selectedKeys();
         for (SelectionKey key : selection) {
             ChannelSelectionKey k = (ChannelSelectionKey) key.attachment();
-            if (key.isValid()) {
-                if (key.isValid() && key.isAcceptable()) {
-                    selectedKey.add(k);
+            try {
+                if (key.isValid()) {
+                    if (key.isValid() && key.isAcceptable()) {
+                        selectedKey.add(k);
+                    } else {
+
+                        if (key.isValid() && key.isReadable()) {
+                            ((ShellChannel) k.channel()).doRead();
+                            if (k.isValid() && k.isReadable()) {
+                                selectedKey.add(k);
+                            }
+                        }
+
+                        if (key.isValid() && key.isWritable()) {
+                            ((ShellChannel) k.channel()).doWrite();
+                            if (k.isValid() && k.isWritable()) {
+                                selectedKey.add(k);
+                            }
+                        }
+                    }
                 } else {
-
-                    if (key.isValid() && key.isReadable()) {
-                        ((ShellChannel) k.channel()).doRead();
-                        if (k.isValid() && k.isReadable()) {
-                            selectedKey.add(k);
-                        }
-                    }
-
-                    if (key.isValid() && key.isWritable()) {
-                        ((ShellChannel) k.channel()).doWrite();
-                        if (k.isValid() && k.isWritable()) {
-                            selectedKey.add(k);
-                        }
-                    }
+                    // adding invalid channel to allow its removal
+                    selectedKey.add(k);
                 }
-            } else {
-                // adding invalid channel to allow its removal
-                selectedKey.add(k);
+            } catch (IOException ioe) {
+                throw new ChannelException(k, ioe.getMessage());
             }
         } // for
         selection.clear();

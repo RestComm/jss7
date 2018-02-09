@@ -143,7 +143,7 @@ public class UserDataHeaderImpl implements UserDataHeader {
     @Override
     public ApplicationPortAddressing16BitAddress getApplicationPortAddressing16BitAddress() {
         byte[] buf = this.data.get(_InformationElementIdentifier_ApplicationPortAddressingScheme16BitAddress);
-        if (buf != null && buf.length == 1)
+        if (buf != null && buf.length == 4)
             return new ApplicationPortAddressing16BitAddressImpl(buf);
         else
             return null;

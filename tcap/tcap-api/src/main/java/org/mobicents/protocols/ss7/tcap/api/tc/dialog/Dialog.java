@@ -129,6 +129,27 @@ public interface Dialog extends Serializable {
     void setNetworkId(int networkId);
 
     /**
+     * Option responsible for presence of the protocol version in
+     * this dialogue portion.
+     *
+     * @return boolean true if protocol version must be omitted,
+     * false when it should be included and null if not defined at the
+     * dialog level and global option should be used.
+     */
+    Boolean isDoNotSendProtcolVersion();
+
+    /**
+     * Modifies option responsible for presence of the protocol version in
+     * this dialogue portion.
+     *
+     * @param doNotSendProtocolVersion
+     * boolean true if protocol version must be omitted,
+     * false when it should be included and null if not defined at the
+     * dialog level and global option should be used.
+     */
+    void setDoNotSendProtocolVersion(Boolean doNotSendProtocolVersion);
+
+    /**
      * Cancels INVOKE pending to be sent. It is equivalent to TC-U-CANCEL.
      *
      * @return <ul>

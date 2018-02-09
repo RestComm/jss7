@@ -201,13 +201,13 @@ public class RouterImpl implements Router {
 
     private final TextBuilder persistFile = TextBuilder.newInstance();
 
-    private static final SccpRouterXMLBinding binding = new SccpRouterXMLBinding();
+    protected static final SccpRouterXMLBinding binding = new SccpRouterXMLBinding();
     private static final String TAB_INDENT = "\t";
     private static final String CLASS_ATTRIBUTE = "type";
 
     private String persistDir = null;
 
-    private final RuleComparator ruleComparator = new RuleComparator();
+    private RuleComparatorFactory ruleComparatorFactory = null;
     // rule list
     private RuleMap<Integer, Rule> rulesMap = new RuleMap<Integer, Rule>();
     private SccpAddressMap<Integer, SccpAddressImpl> routingAddresses = new SccpAddressMap<Integer, SccpAddressImpl>();
@@ -221,6 +221,7 @@ public class RouterImpl implements Router {
     public RouterImpl(String name, SccpStack sccpStack) {
         this.name = name;
         this.sccpStack = sccpStack;
+        this.ruleComparatorFactory = RuleComparatorFactory.getInstance("RuleComparatorFactory");
 
         binding.setAlias(RuleImpl.class, RULE);
         binding.setClassAttribute(CLASS_ATTRIBUTE);
@@ -462,7 +463,7 @@ public class RouterImpl implements Router {
             rulesArray[count++] = rule;
 
             // Sort
-            Arrays.sort(rulesArray, ruleComparator);
+            Arrays.sort(rulesArray, this.ruleComparatorFactory.getRuleComparator());
 
             RuleMap<Integer, Rule> newRule = new RuleMap<Integer, Rule>();
             for (int i = 0; i < rulesArray.length; i++) {
@@ -538,7 +539,7 @@ public class RouterImpl implements Router {
             rulesArray[count++] = rule;
 
             // Sort
-            Arrays.sort(rulesArray, ruleComparator);
+            Arrays.sort(rulesArray, this.ruleComparatorFactory.getRuleComparator());
 
             RuleMap<Integer, Rule> newRule = new RuleMap<Integer, Rule>();
             for (int i = 0; i < rulesArray.length; i++) {
@@ -1113,10 +1114,13 @@ public class RouterImpl implements Router {
         moveBackupToRoutingAddress(backupAddresses);
     }
 
-    private void loadVer3(String fn) throws XMLStreamException, FileNotFoundException {
+    protected void loadVer3(String fn) throws XMLStreamException, FileNotFoundException {
         XMLObjectReader reader = XMLObjectReader.newInstance(new FileInputStream(fn));
 
         reader.setBinding(binding);
+        loadVer3(reader);
+    }
+    protected void loadVer3(XMLObjectReader reader) throws XMLStreamException{
         rulesMap = reader.read(RULE, RuleMap.class);
         routingAddresses = reader.read(ROUTING_ADDRESS, SccpAddressMap.class);
 

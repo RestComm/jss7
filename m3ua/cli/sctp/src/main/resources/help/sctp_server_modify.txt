@@ -1,0 +1,55 @@
+Name
+	sctp server modify
+
+SYNOPSIS
+	sctp server modify <sever-name> <stack-name> host <host-ip> port <host-port> sockettype <socket-type>
+	anonymconnect <accept-anonymous-connections> concurrentconnect <max-concurrent-connections-count> 
+	extraaddresses <extra-host-addresses>
+	
+DESCRIPTION
+	This command is used to modify a existed SCTP Server (or TCP Server) instance. 
+
+PARAMETERS
+
+	Standard Parameters
+
+	<server-name>	-	Name of the Server which will be modified.
+					
+	<stack-name>	-	Name of the stack on which this command is executed.
+	
+	Optional Parameters 
+
+	<host-ip>		-	The host IP address to which the SCTP Server 
+					socket will bind to.
+	
+	<host-port>		-	The host port to which the underlying SCTP Server 
+					socket will bind to.
+					
+	<socket-type>	-	Socket-type "TCP"/"SCTP".
+					
+	<extra-host-addresses>	-	For SCTP multi-home support, you can pass multiple
+					IP addresses as comma separated values. The Server
+					socket will bind to the primary IP address and 
+					when it becomes unavailable, it will automatically
+					fall back to secondary address. If the socket-type 
+					is TCP, these comma separated values will be 
+					ignored and the Server socket will always bind to
+					the primary IP address (host-ip).
+					
+	<accept-anonymous-connections>	-	will server check ip and port of the CLient
+										true/false
+	
+	<max-concurrent-connections-count>	-	set max concurrent connections
+
+EXAMPLES
+	sctp server modify TestServer sctpManagement1 port 2905
+	
+	The above command will modify a new SCTP Server identified as TestServer 
+	which belongs to SCTP management with name sctpManagement1 and modified 
+	the Server socket to the port 2905. Server MUST be stopped.
+	
+
+SEE ALSO
+	sctp, sctp server destroy, sctp server start, sctp server stop, sctp server show,
+	sctp association create, sctp association destroy, sctp association show
+

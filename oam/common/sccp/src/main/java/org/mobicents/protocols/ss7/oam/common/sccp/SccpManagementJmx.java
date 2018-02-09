@@ -21,13 +21,26 @@
  */
 package org.mobicents.protocols.ss7.oam.common.sccp;
 
+import java.util.Calendar;
 import java.util.Map;
 
+
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
+import org.mobicents.protocols.ss7.oam.common.alarm.AlarmListener;
+import org.mobicents.protocols.ss7.oam.common.alarm.AlarmListenerCollection;
+import org.mobicents.protocols.ss7.oam.common.alarm.AlarmMediator;
+import org.mobicents.protocols.ss7.oam.common.alarm.AlarmMessage;
+import org.mobicents.protocols.ss7.oam.common.alarm.AlarmMessageImpl;
+import org.mobicents.protocols.ss7.oam.common.alarm.AlarmSeverity;
+import org.mobicents.protocols.ss7.oam.common.alarm.CurrentAlarmList;
+import org.mobicents.protocols.ss7.oam.common.alarm.CurrentAlarmListImpl;
 import org.mobicents.protocols.ss7.oam.common.jmx.MBeanHost;
 import org.mobicents.protocols.ss7.oam.common.jmxss7.Ss7Layer;
+import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
+import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
 import org.mobicents.protocols.ss7.sccp.Router;
 import org.mobicents.protocols.ss7.sccp.SccpCongestionControlAlgo;
+import org.mobicents.protocols.ss7.sccp.SccpManagementEventListener;
 import org.mobicents.protocols.ss7.sccp.SccpProtocolVersion;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
 import org.mobicents.protocols.ss7.sccp.SccpResource;
@@ -37,11 +50,12 @@ import org.mobicents.protocols.ss7.sccp.SccpStack;
  * @author Amit Bhayani
  *
  */
-public class SccpManagementJmx implements SccpManagementJmxMBean {
+public class SccpManagementJmx implements SccpManagementJmxMBean, SccpManagementEventListener, AlarmMediator {
 
     private final MBeanHost ss7Management;
     private final SccpStack wrappedSccpStack;
 
+    private AlarmListenerCollection alc = new AlarmListenerCollection();
 
     public SccpManagementJmx(MBeanHost ss7Management, SccpStack wrappedSccpStack) {
         this.ss7Management = ss7Management;
@@ -62,6 +76,8 @@ public class SccpManagementJmx implements SccpManagementJmxMBean {
 
         SccpResourceJmx sccpResourceJmx = new SccpResourceJmx(this.wrappedSccpStack.getSccpResource());
         this.ss7Management.registerMBean(Ss7Layer.SCCP, SccpManagementType.RESOURCE, this.getName(), sccpResourceJmx);
+
+        this.wrappedSccpStack.getSccpProvider().registerManagementEventListener(this);
     }
 
     public void stop() {
@@ -71,6 +87,11 @@ public class SccpManagementJmx implements SccpManagementJmxMBean {
     @Override
     public int getMaxDataMessage() {
         return this.wrappedSccpStack.getMaxDataMessage();
+    }
+
+    @Override
+    public int getPeriodOfLogging() {
+        return this.wrappedSccpStack.getPeriodOfLogging();
     }
 
     @Override
@@ -181,6 +202,11 @@ public class SccpManagementJmx implements SccpManagementJmxMBean {
     @Override
     public void setMaxDataMessage(int maxDataMessage) throws Exception {
         this.wrappedSccpStack.setMaxDataMessage(maxDataMessage);
+    }
+
+    @Override
+    public void setPeriodOfLogging(int periodOfLogging) throws Exception {
+        this.wrappedSccpStack.setPeriodOfLogging(periodOfLogging);
     }
 
     @Override
@@ -337,6 +363,153 @@ public class SccpManagementJmx implements SccpManagementJmxMBean {
     @Override
     public boolean isStarted() {
         return this.wrappedSccpStack.isStarted();
+    }
+
+    @Override
+    public void onServiceStarted() {
+
+    }
+
+    @Override
+    public void onServiceStopped() {
+
+    }
+
+    @Override
+    public void onRemoveAllResources() {
+
+    }
+
+    @Override
+    public void onRemoteSubSystemUp(RemoteSubSystem rss) {
+        //do we need to check previous state?
+        AlarmMessage alm = this.generateRemoteSubSystemAlarm(rss, true);
+        this.alc.onAlarm(alm);
+
+    }
+
+    @Override
+    public void onRemoteSubSystemDown(RemoteSubSystem rss) {
+        AlarmMessage alm = this.generateRemoteSubSystemAlarm(rss, false);
+        this.alc.onAlarm(alm);
+    }
+
+    @Override
+    public void onRemoteSpcUp(RemoteSignalingPointCode remoteSpc) {
+        AlarmMessage alm = this.generateRemoteSpcAlarm(remoteSpc, true);
+        this.alc.onAlarm(alm);
+    }
+
+    @Override
+    public void onRemoteSpcDown(RemoteSignalingPointCode remoteSpc) {
+        AlarmMessage alm = this.generateRemoteSpcAlarm(remoteSpc, false);
+        this.alc.onAlarm(alm);
+    }
+
+    @Override
+    public void onRemoteSccpUp(RemoteSignalingPointCode remoteSpc) {
+        AlarmMessage alm = this.generateRemoteSccpAlarm(remoteSpc, true);
+        this.alc.onAlarm(alm);
+
+    }
+
+    @Override
+    public void onRemoteSccpDown(RemoteSignalingPointCode remoteSpc) {
+        AlarmMessage alm = this.generateRemoteSccpAlarm(remoteSpc, false);
+        this.alc.onAlarm(alm);
+
+    }
+
+    @Override
+    public void registerAlarmListener(AlarmListener al) {
+        this.alc.registerAlarmListener(al);
+
+    }
+
+    @Override
+    public void unregisterAlarmListener(AlarmListener al) {
+        this.alc.unregisterAlarmListener(al);
+
+    }
+
+    @Override
+    public CurrentAlarmList getCurrentAlarmList() {
+        CurrentAlarmListImpl all = new CurrentAlarmListImpl();
+        //check ssns
+        Map<Integer, RemoteSubSystem> remoteSsns = wrappedSccpStack.getSccpResource().getRemoteSsns();
+        for (RemoteSubSystem rss : remoteSsns.values()) {
+            if(rss.isRemoteSsnProhibited()) {
+                AlarmMessage alm = this.generateRemoteSubSystemAlarm(rss, false);
+                all.addAlarm(alm);
+            }
+        }
+        //Check spcs
+        Map<Integer, RemoteSignalingPointCode> remoteSpcs = wrappedSccpStack.getSccpResource().getRemoteSpcs();
+        for (RemoteSignalingPointCode rspc : remoteSpcs.values()) {
+            if(rspc.isRemoteSpcProhibited()) {
+                AlarmMessage alm = this.generateRemoteSpcAlarm(rspc, false);
+                all.addAlarm(alm);
+            }
+            if(rspc.isRemoteSccpProhibited()) {
+                AlarmMessage alm = this.generateRemoteSccpAlarm(rspc, false);
+                all.addAlarm(alm);
+            }
+        }
+
+        return all;
+    }
+
+    @Override
+    public String getAlarmProviderObjectPath() {
+        return this.alc.getAlarmProviderObjectPath();
+    }
+
+    @Override
+    public void setAlarmProviderObjectPath(String value) {
+        this.alc.setAlarmProviderObjectPath(value);
+
+    }
+
+    private AlarmMessage generateRemoteSubSystemAlarm(RemoteSubSystem rss, boolean isCleared) {
+
+        AlarmMessageImpl alm = new AlarmMessageImpl();
+        alm.setIsCleared(isCleared);
+        alm.setAlarmSeverity(AlarmSeverity.major);
+        alm.setAlarmSource("SS7_SCCP_" + this.getName());
+        alm.setObjectName("RemoteSubSystem: " + rss.getRemoteSsn());
+        alm.setObjectPath("/Sccp:" + this.getName() + "/Rss:" + rss.getRemoteSsn());
+        alm.setProblemName("Remote subsystem state is down");
+        alm.setTimeAlarm(Calendar.getInstance());
+
+        return alm;
+    }
+
+    private AlarmMessage generateRemoteSpcAlarm(RemoteSignalingPointCode rspc, boolean isCleared) {
+
+        AlarmMessageImpl alm = new AlarmMessageImpl();
+        alm.setIsCleared(isCleared);
+        alm.setAlarmSeverity(AlarmSeverity.major);
+        alm.setAlarmSource("SS7_SCCP_" + this.getName());
+        alm.setObjectName("RemoteSpc: " + rspc.getRemoteSpc());
+        alm.setObjectPath("/Sccp:" + this.getName() + "/Rspc:" + rspc.getRemoteSpc());
+        alm.setProblemName("Remote signaling point code state is down");
+        alm.setTimeAlarm(Calendar.getInstance());
+
+        return alm;
+    }
+
+    private AlarmMessage generateRemoteSccpAlarm(RemoteSignalingPointCode rspc, boolean isCleared) {
+
+        AlarmMessageImpl alm = new AlarmMessageImpl();
+        alm.setIsCleared(isCleared);
+        alm.setAlarmSeverity(AlarmSeverity.major);
+        alm.setAlarmSource("SS7_SCCP_" + this.getName());
+        alm.setObjectName("RemoteSccp: " + rspc.getRemoteSpc());
+        alm.setObjectPath("/Sccp:" + this.getName() + "/Rsccp:" + rspc.getRemoteSpc());
+        alm.setProblemName("Remote SCCP state is down");
+        alm.setTimeAlarm(Calendar.getInstance());
+
+        return alm;
     }
 
 }

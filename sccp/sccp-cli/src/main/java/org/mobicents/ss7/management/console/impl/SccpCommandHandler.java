@@ -87,6 +87,7 @@ public class SccpCommandHandler extends CommandHandlerWithHelp {
         set.addChild("zmarginxudtmessage");
         set.addChild("reassemblytimerdelay");
         set.addChild("maxdatamessage");
+        set.addChild("periodoflogging");
         set.addChild("removespc");
         set.addChild("previewmode");
         set.addChild("ssttimerduration_min");
@@ -118,6 +119,7 @@ public class SccpCommandHandler extends CommandHandlerWithHelp {
         get.addChild("zmarginxudtmessage");
         get.addChild("reassemblytimerdelay");
         get.addChild("maxdatamessage");
+        get.addChild("periodoflogging");
         get.addChild("removespc");
         get.addChild("previewmode");
         get.addChild("ssttimerduration_min");

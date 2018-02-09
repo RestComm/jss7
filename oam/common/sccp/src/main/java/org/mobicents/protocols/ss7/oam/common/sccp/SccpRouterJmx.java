@@ -64,6 +64,12 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
         this.wrappedRouter.addLongMessageRule(id, firstSpc, lastSpc, ruleType);
     }
 
+    @Override
+    public void addSccpLongMessageRule(int id, int firstSpc, int lastSpc, String ruleType) throws Exception {
+        LongMessageRuleType currRuleType = LongMessageRuleType.valueOf(ruleType);
+        this.wrappedRouter.addLongMessageRule(id, firstSpc, lastSpc, currRuleType);
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -102,6 +108,8 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
      * org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm, org.mobicents.protocols.ss7.sccp.OriginationType,
      * org.mobicents.protocols.ss7.sccp.parameter.SccpAddress, java.lang.String, int, int, java.lang.Integer)
      */
+    //RuleType;LoadSharingAlgorithm;OriginationType;SccpAddress;String;Integer;SccpAddress;
+    //int,RuleType,LoadSharingAlgorithm,OriginationType,SccpAddress,String, int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId, int networkId, SccpAddress patternCallingAddress
     @Override
     public void addRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType,
             SccpAddress pattern, String mask, int pAddressId, int sAddressId, Integer newCallingPartyAddressAddressId,
@@ -201,6 +209,12 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
         this.wrappedRouter.modifyLongMessageRule(id, firstSpc, lastSpc, ruleType);
     }
 
+    @Override
+    public void modifySccpLongMessageRule(int id, int firstSpc, int lastSpc, String ruleType) throws Exception {
+        LongMessageRuleType currRuleType = LongMessageRuleType.valueOf(ruleType);
+        this.wrappedRouter.modifyLongMessageRule(id, firstSpc, lastSpc, currRuleType);
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -230,6 +244,12 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
     @Override
     public void modifyRoutingAddress(int routingAddressId, SccpAddress routingAddress) throws Exception {
         this.wrappedRouter.modifyRoutingAddress(routingAddressId, routingAddress);
+    }
+
+    @Override
+    public void modifySccpRoutingAddress(int id, int ai, int pc, int ssn, int tt, int np, int nao, String digits) throws Exception {
+        SccpAddress sccpAddress = this.createSccpAddress(ai, pc, ssn, tt, np, nao, digits);
+        this.wrappedRouter.modifyRoutingAddress(id, sccpAddress);
     }
 
     /*
@@ -365,6 +385,26 @@ public class SccpRouterJmx implements SccpRouterJmxMBean {
         }
 
         this.wrappedRouter.addRule(id, RuleType.getInstance(ruleType), LoadSharingAlgorithm.getInstance(algo),
+                OriginationType.getInstance(originationType), patternAddress, mask, pAddressId, sAddressId,
+                newCallingPartyAddressAddressId == -1 ? null : newCallingPartyAddressAddressId, networkId, patternAddressCalling);
+
+    }
+
+    @Override
+    public void modifySccpRule(int id, String ruleType, String algo, String originationType, int ai, int pc, int ssn, int tt, int np,
+            int nao, String digits, String mask, int pAddressId, int sAddressId, int newCallingPartyAddressAddressId, int networkId,
+                        int callingai, int callingpc, int callingssn, int callingtt, int callingnp,int callingnao, String callingdigits)
+            throws Exception {
+
+        SccpAddress patternAddress = this.createSccpAddress(ai, pc, ssn, tt, np, nao, digits);
+
+        SccpAddress patternAddressCalling = null;
+        if (callingdigits != null && !callingdigits.isEmpty()) {
+            patternAddressCalling = this.createSccpAddress(callingai, callingpc, callingssn, callingtt, callingnp, callingnao,
+                    callingdigits);
+        }
+
+        this.wrappedRouter.modifyRule(id, RuleType.getInstance(ruleType), LoadSharingAlgorithm.getInstance(algo),
                 OriginationType.getInstance(originationType), patternAddress, mask, pAddressId, sAddressId,
                 newCallingPartyAddressAddressId == -1 ? null : newCallingPartyAddressAddressId, networkId, patternAddressCalling);
 

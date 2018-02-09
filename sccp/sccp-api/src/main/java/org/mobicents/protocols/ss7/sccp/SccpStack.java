@@ -207,6 +207,20 @@ public interface SccpStack {
     void setMaxDataMessage(int maxDataMessage) throws Exception;
 
     /**
+     * Returns period of logging warning messages
+     *
+     * @return
+     */
+    int getPeriodOfLogging();
+
+    /**
+     * Sets period of logging warning messages
+     *
+     * @param periodOfLogging
+     */
+    void setPeriodOfLogging(int periodOfLogging) throws Exception;
+
+    /**
      * Returns SCCP segmented message reassembling timeout (in milliseconds).
      *
      * @return

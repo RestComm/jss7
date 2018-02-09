@@ -34,6 +34,7 @@ import org.mobicents.protocols.ss7.sccp.SccpConnection;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpManagementEventListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
 import org.mobicents.protocols.ss7.sccp.message.MessageFactory;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
@@ -202,6 +203,18 @@ public class CreateDialogTest {
             // TODO Auto-generated method stub
             
         }
+
+		@Override
+		public SccpStack getSccpStack() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void updateSPCongestion(Integer ssn, Integer congestionLevel) {
+			// TODO Auto-generated method stub
+
+		}
     }
 
 }

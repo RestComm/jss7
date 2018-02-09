@@ -36,6 +36,8 @@ public enum RoutingLabelFormat {
 
     private static final String FORMAT_ITU = "ITU";
     private static final String FORMAT_ANSI = "ANSI";
+    private static final String FORMAT_ANSI_8BIT = "ANSI_Sls8Bit";
+    private static final String FORMAT_ANSI_5BIT = "ANSI_Sls5Bit";
     private static final String FORMAT_Japan_TTC_DDI = "Japan_TTC_DDI";
     private static final String FROMAT_China = "China";
     private static final String FORMAT_Japan_NTT = "Japan_NTT";
@@ -94,6 +96,10 @@ public enum RoutingLabelFormat {
             return ITU;
         } else if (FORMAT_ANSI.equals(format)) {
             return ANSI_Sls8Bit;
+        } else if (FORMAT_ANSI_8BIT.equals(format)) {
+            return ANSI_Sls8Bit;
+        } else if (FORMAT_ANSI_5BIT.equals(format)) {
+            return ANSI_Sls5Bit;
         } else if (FORMAT_Japan_TTC_DDI.equals(format)) {
             return Japan_TTC_DDI;
         } else if (FROMAT_China.equals(format)) {

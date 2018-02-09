@@ -137,6 +137,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
                 // = 16 bits each and SLS = 4 bits
                 return 272 - 4;
             case ANSI_Sls8Bit:
+            case ANSI_Sls5Bit:
                 // For PC_FORMAT_24, the MTP3 Routing Label takes 6 bytes - OPC/DPC
                 // = 24 bits each and SLS = 8 bits
                 return 272 - 7;
@@ -160,10 +161,14 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
     public void start() throws Exception {
         // lic dep 2
 
+        startNoLce();
+    }
+
+    protected void startNoLce() throws Exception{
         if (this.isStarted)
             return;
 
-        if (!(this.routingLabelFormat == RoutingLabelFormat.ITU || this.routingLabelFormat == RoutingLabelFormat.ANSI_Sls8Bit)) {
+        if (!(this.routingLabelFormat == RoutingLabelFormat.ITU || this.routingLabelFormat == RoutingLabelFormat.ANSI_Sls8Bit || this.routingLabelFormat == RoutingLabelFormat.ANSI_Sls5Bit)) {
             throw new Exception("Invalid PointCodeFormat set. We support only ITU or ANSI now");
         }
 

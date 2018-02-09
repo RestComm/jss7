@@ -22,6 +22,11 @@
 
 package org.mobicents.protocols.ss7.sccp.impl;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+
 import javolution.util.FastList;
 import javolution.util.FastMap;
 import org.apache.log4j.Level;
@@ -33,6 +38,7 @@ import org.mobicents.protocols.ss7.sccp.SccpConnection;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SccpManagementEventListener;
 import org.mobicents.protocols.ss7.sccp.SccpProvider;
+import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
@@ -47,9 +53,6 @@ import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.ss7.congestion.ExecutorCongestionMonitor;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -68,6 +71,9 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
 
     private MessageFactoryImpl messageFactory;
     private ParameterFactoryImpl parameterFactory;
+
+    //<ssn - congestion level>
+    private ConcurrentHashMap<Integer, Integer> congestionSsn = new ConcurrentHashMap<Integer, Integer>();
 
     SccpProviderImpl(SccpStackImpl stack) {
         this.stack = stack;
@@ -216,4 +222,19 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
         res.toArray(ress);
         return ress;
     }
+
+    @Override
+    public SccpStack getSccpStack() {
+        return this.stack;
+    }
+
+    public ConcurrentHashMap<Integer, Integer> getCongestionSsn() {
+        return this.congestionSsn;
+    }
+
+    @Override
+    public void updateSPCongestion(Integer ssn, Integer congestionLevel) {
+        congestionSsn.put(ssn, congestionLevel);
+    }
+
 }

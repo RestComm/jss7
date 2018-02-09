@@ -519,7 +519,7 @@ public class RouterTest {
                 factory.createGlobalTitle("800/????/9", 1),0, 0);
         router.addRoutingAddress(6, primaryAddr1);
 
-        router.addRule(6, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern4, "K/K/R", 6, -1,
+        router.addRule(6, RuleType.SOLITARY, LoadSharingAlgorithm.Undefined, OriginationType.ALL, pattern6, "K/K/R", 6, -1,
                 null, 0, null);
 
 
@@ -983,6 +983,18 @@ public class RouterTest {
             // TODO Auto-generated method stub
             return false;
         }
+
+		@Override
+		public int getPeriodOfLogging() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public void setPeriodOfLogging(int periodOfLogging) throws Exception {
+			// TODO Auto-generated method stub
+			
+		}
 
     }
 

@@ -43,6 +43,7 @@ import org.mobicents.protocols.ss7.oam.common.statistics.api.CounterDefSet;
 import org.mobicents.protocols.ss7.oam.common.statistics.api.CounterMediator;
 import org.mobicents.protocols.ss7.oam.common.statistics.api.CounterType;
 import org.mobicents.protocols.ss7.oam.common.statistics.api.SourceValueSet;
+import org.mobicents.protocols.ss7.sccp.SccpStack;
 import org.mobicents.protocols.ss7.statistics.api.LongValue;
 import org.mobicents.protocols.ss7.tcap.api.TCAPCounterEventsListener;
 import org.mobicents.protocols.ss7.tcap.api.TCAPCounterProvider;
@@ -727,6 +728,11 @@ public class TcapManagementJmx implements TcapManagementJmxMBean, CounterMediato
     @Override
     public String getSubSystemNumberList() {
         return this.wrappedTCAPStack.getSubSystemNumberList();
+    }
+
+    @Override
+    public SccpStack getSccpStack() {
+        return this.wrappedTCAPStack.getSccpStack();
     }
 
 }
