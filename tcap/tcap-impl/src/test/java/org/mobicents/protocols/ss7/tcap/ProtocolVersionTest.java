@@ -26,21 +26,29 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.NetworkIdState;
 import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
+import org.mobicents.protocols.ss7.sccp.SccpConnection;
 import org.mobicents.protocols.ss7.sccp.SccpListener;
 import org.mobicents.protocols.ss7.sccp.SignallingPointStatus;
 import org.mobicents.protocols.ss7.sccp.impl.SccpHarness;
 import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
 import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
+import org.mobicents.protocols.ss7.sccp.parameter.Credit;
+import org.mobicents.protocols.ss7.sccp.parameter.ErrorCause;
+import org.mobicents.protocols.ss7.sccp.parameter.Importance;
+import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.mobicents.protocols.ss7.sccp.parameter.RefusalCause;
+import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCause;
+import org.mobicents.protocols.ss7.sccp.parameter.ResetCause;
 import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
 import org.mobicents.protocols.ss7.tcap.asn.DialogRequestAPDU;
 import org.mobicents.protocols.ss7.tcap.asn.ParseException;
 import org.mobicents.protocols.ss7.tcap.asn.ProtocolVersion;
 import org.mobicents.protocols.ss7.tcap.asn.TcapFactory;
-
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCBeginMessage;
 import org.mobicents.protocols.ss7.tcap.asn.comp.TCContinueMessage;
 import org.testng.annotations.AfterClass;
@@ -242,6 +250,61 @@ public class ProtocolVersionTest extends SccpHarness {
 
         @Override
         public void onNetworkIdState(int networkId, NetworkIdState networkIdState) {
+        }
+
+        @Override
+        public void onConnectIndication(SccpConnection conn, SccpAddress calledAddress, SccpAddress callingAddress,
+                ProtocolClass clazz, Credit credit, byte[] data, Importance importance) throws Exception {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onConnectConfirm(SccpConnection conn, byte[] data) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onDisconnectIndication(SccpConnection conn, ReleaseCause reason, byte[] data) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onDisconnectIndication(SccpConnection conn, RefusalCause reason, byte[] data) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onDisconnectIndication(SccpConnection conn, ErrorCause errorCause) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onResetIndication(SccpConnection conn, ResetCause reason) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onResetConfirm(SccpConnection conn) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onData(SccpConnection conn, byte[] data) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onDisconnectConfirm(SccpConnection conn) {
+            // TODO Auto-generated method stub
+            
         }
 
     }
