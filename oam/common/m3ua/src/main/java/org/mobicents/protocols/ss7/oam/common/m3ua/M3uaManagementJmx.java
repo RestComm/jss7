@@ -33,6 +33,7 @@ import org.mobicents.protocols.ss7.m3ua.AspFactory;
 import org.mobicents.protocols.ss7.m3ua.ExchangeType;
 import org.mobicents.protocols.ss7.m3ua.Functionality;
 import org.mobicents.protocols.ss7.m3ua.IPSPType;
+import org.mobicents.protocols.ss7.m3ua.M3UACounterProvider;
 import org.mobicents.protocols.ss7.m3ua.M3UAManagement;
 import org.mobicents.protocols.ss7.m3ua.M3UAManagementEventListener;
 import org.mobicents.protocols.ss7.m3ua.RouteAs;
@@ -841,4 +842,22 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     public Map<String, RouteAs> getRoute() {
         return this.wrappedM3UAManagement.getRoute();
     }
+
+    @Override
+    public M3UACounterProvider getCounterProvider() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setStatisticsEnabled(boolean val) throws Exception {
+         // TODO Auto-generated method stub
+    }
+
+    @Override
+    public boolean getStatisticsEnabled() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }
