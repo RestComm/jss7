@@ -690,7 +690,7 @@ public class ConnectionTest extends SccpHarness {
         SccpConnection conn1 = sccpProvider1.newConnection(8, new ProtocolClassImpl(3));
         conn1.establish(crMsg);
 
-        Thread.sleep(100);
+        Thread.sleep(300); // 100
 
         assertBothConnectionsExist();
         SccpConnection conn2 = getConn2();
@@ -705,7 +705,7 @@ public class ConnectionTest extends SccpHarness {
 
         conn2.send(new byte[]{1, 2, 3, 4, 5, 6});
 
-        Thread.sleep(1600);
+        Thread.sleep(2500); // 1600
 
         assertEquals(u1.getReceivedData().size(), 129);
         for (int i=0; i<=127; i++) {

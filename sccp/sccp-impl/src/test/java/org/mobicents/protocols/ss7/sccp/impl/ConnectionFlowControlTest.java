@@ -27,7 +27,6 @@ import org.mobicents.protocols.ss7.Util;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.sccp.MaxConnectionCountReached;
 import org.mobicents.protocols.ss7.sccp.SccpConnection;
-import org.mobicents.protocols.ss7.sccp.SccpConnectionState;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt2MessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.CreditImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
@@ -47,8 +46,6 @@ import org.mobicents.protocols.ss7.scheduler.DefaultClock;
 import org.mobicents.protocols.ss7.scheduler.Scheduler;
 import org.testng.annotations.*;
 
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 

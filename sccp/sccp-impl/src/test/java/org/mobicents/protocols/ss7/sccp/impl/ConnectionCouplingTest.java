@@ -449,7 +449,7 @@ public class ConnectionCouplingTest extends SccpHarness3 {
         SccpConnection conn1 = sccpProvider1.newConnection(8, new ProtocolClassImpl(3));
         conn1.establish(crMsg);
 
-        Thread.sleep(100);
+        Thread.sleep(200); // 100
 
         assertEquals(sccpStack3.getConnectionsNumber(), 1);
         assertEquals(sccpStack2.getConnectionsNumber(), 2);
