@@ -26,10 +26,10 @@ import org.mobicents.protocols.ss7.oam.common.statistics.api.CounterDef;
 import org.mobicents.protocols.ss7.oam.common.statistics.api.CounterType;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public class CounterDefImpl implements CounterDef {
 
     public static final String OBJECT_NAME_SEPARATOR = "-";

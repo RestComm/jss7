@@ -24,35 +24,39 @@ package org.mobicents.protocols.ss7.oam.common.statistics.api;
 
 import java.io.Serializable;
 
-
 /**
-*
-* Description of a set of counters.
-* CounterMediator can supply one ore more CounterDefSet.
-*
-* @author sergey vetyutnev
-*
-*/
+ *
+ * Description of a set of counters. CounterMediator can supply one ore more CounterDefSet.
+ *
+ * @author sergey vetyutnev
+ *
+ */
 public interface CounterDefSet extends Serializable {
 
     /**
      * The name of CounterDefSet
+     * 
      * @return
      */
     String getName();
 
     /**
      * allows to add counters on a runtime
+     * 
      * @param val - counter to add
      */
     void addCounterDef(CounterDef val);
+
     /**
      * allows to delete counters on a runtime
+     * 
      * @param val - counter to add
      */
     void delCounterDef(String counterName);
+
     /**
      * Returns a list of CounterDef which are contained in CounterDefSet
+     * 
      * @return
      */
     CounterDef[] getCounterDefs();
