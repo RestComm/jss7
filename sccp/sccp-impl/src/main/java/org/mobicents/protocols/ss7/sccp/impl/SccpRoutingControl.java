@@ -908,23 +908,6 @@ public class SccpRoutingControl {
                         return;
                     }
 
-                    if (msg.getIncomingOpc() == -1
-                            && (msg instanceof org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrMessageImpl)) {
-                        int opc = msg.getCalledPartyAddress().getSignalingPointCode();
-                        int sls = msg.getSls();
-
-                        Mtp3ServiceAccessPoint sap = this.sccpStackImpl.router.findMtp3ServiceAccessPoint(opc, sls, msg.getNetworkId());
-                        if (sap == null) {
-                            if (logger.isEnabledFor(Level.WARN)) {
-                                logger.warn(String.format(
-                                        "SccpMessage for sending=%s but no matching dpc=%d & sls=%d SAP found", msg, opc, sls));
-                            }
-                            this.sendSccpError(msg, ReturnCauseValue.SCCP_FAILURE, RefusalCauseValue.SCCP_FAILURE);
-                            return;
-                        }
-                        msg.setIncomingOpc(sap.getOpc());
-                    }
-
                     // Notify Listener
                     try {
                         // JIC: user may behave bad and throw something here.
@@ -1340,7 +1323,13 @@ public class SccpRoutingControl {
             }
             answer.setRefusalCause(new RefusalCauseImpl(refusalCauseInt));
             answer.setImportance(msgCr.getImportance());
-            answer.setOutgoingDpc(msgCr.getIncomingOpc());
+
+            if (msg.getIncomingOpc() != -1) {
+                answer.setOutgoingDpc(msgCr.getIncomingOpc());
+            } else {
+                // when both users are on the same stack
+                answer.setOutgoingDpc(msgCr.getCalledPartyAddress().getSignalingPointCode());
+            }
             ans = answer;
         }
 

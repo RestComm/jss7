@@ -78,7 +78,12 @@ abstract class SccpConnectionBaseImpl {
             if (cr.getCallingPartyAddress() != null && cr.getCallingPartyAddress().getSignalingPointCode() != 0) {
                 remoteDpc = cr.getCallingPartyAddress().getSignalingPointCode();
             } else {
-                remoteDpc = cr.getIncomingOpc();
+                if (cr.getIncomingOpc() != -1) {
+                    remoteDpc = cr.getIncomingOpc();
+                } else {
+                    // when both users are on the same stack
+                    remoteDpc = cr.getCalledPartyAddress().getSignalingPointCode();
+                }
             }
             setState(CR_RECEIVED);
 
