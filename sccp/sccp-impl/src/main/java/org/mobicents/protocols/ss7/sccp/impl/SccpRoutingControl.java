@@ -135,7 +135,8 @@ public class SccpRoutingControl {
                     if(msg instanceof SccpDataMessage) {
                         AtomicInteger aCounter = opcSscCounters.get(inOpc);
                         if(aCounter == null) {
-                            opcSscCounters.put(inOpc, new AtomicInteger(1));
+                            opcSscCounters.put(inOpc, new AtomicInteger(0));
+                            this.sccpManagement.receivedForCongestionUser(msg, subsystemNumber, congestionLevel);
                         } else if((aCounter.incrementAndGet() % 8) == 0) {
                             this.sccpManagement.receivedForCongestionUser(msg, subsystemNumber, congestionLevel);
                             aCounter.compareAndSet(Integer.MAX_VALUE, 0);
