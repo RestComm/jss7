@@ -907,15 +907,16 @@ public class SccpRoutingControl {
                         return;
                     }
 
-                    if (msg.getIncomingOpc() == -1) {
+                    if (msg.getIncomingOpc() == -1
+                            && (msg instanceof org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCrMessageImpl)) {
                         int opc = msg.getCalledPartyAddress().getSignalingPointCode();
                         int sls = msg.getSls();
 
                         Mtp3ServiceAccessPoint sap = this.sccpStackImpl.router.findMtp3ServiceAccessPoint(opc, sls, msg.getNetworkId());
                         if (sap == null) {
                             if (logger.isEnabledFor(Level.WARN)) {
-                                logger.warn(String.format("SccpMessage for sending=%s but no matching dpc=%d & sls=%d SAP found", msg, opc,
-                                        sls));
+                                logger.warn(String.format(
+                                        "SccpMessage for sending=%s but no matching dpc=%d & sls=%d SAP found", msg, opc, sls));
                             }
                             this.sendSccpError(msg, ReturnCauseValue.SCCP_FAILURE, RefusalCauseValue.SCCP_FAILURE);
                             return;

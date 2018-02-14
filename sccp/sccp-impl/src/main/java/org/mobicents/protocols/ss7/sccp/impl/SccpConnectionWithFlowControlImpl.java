@@ -6,7 +6,6 @@ import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnAkMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnCcMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnDt2MessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnItMessageImpl;
-import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRscMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnRsrMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.message.SccpConnSegmentableMessageImpl;
 import org.mobicents.protocols.ss7.sccp.impl.parameter.CreditImpl;
