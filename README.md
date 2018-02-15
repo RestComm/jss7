@@ -15,11 +15,11 @@ jSS7 uses
 * jASN library https://github.com/RestComm/jasn 
 * SCTP library https://github.com/RestComm/sctp
 
-jSS7 is lead by [TeleStax, Inc.](http://www.telestax.com/) and developed collaboratively by a [community of individual and enterprise contributors](http://www.telestax.com/open-source-2/acknowledgments/).
+jSS7 is lead by [TeleStax, Inc.](http://www.telestax.com/) and developed collaboratively by a [community of individual and enterprise contributors](https://www.restcomm.com/acknowledgements/).
 
 ## License
 
-RestComm jSS7 is licensed under dual license policy. The default license is the Free Open Source [GNU Affero GPL v3.0](http://www.gnu.org/licenses/agpl-3.0.html). Alternatively a commercial license can be obtained from Telestax ([contact form](http://www.telestax.com/contactus/#InquiryForm))
+RestComm jSS7 is licensed under dual license policy. The default license is the Free Open Source [GNU Affero GPL v3.0](http://www.gnu.org/licenses/agpl-3.0.html). Alternatively a commercial license can be obtained from Telestax ([contact form](https://www.restcomm.com/contact/))
 
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2FRestComm%2Fjss7.svg?type=large)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2FRestComm%2Fjss7?ref=badge_large)
