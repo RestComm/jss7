@@ -343,7 +343,7 @@ public class ConnectionFlowControlTest extends SccpHarness {
         conn2.send(DATA4);
         conn2.send(DATA42);
 
-        Thread.sleep(300);
+        Thread.sleep(500);
 
         assertEquals(u1.getReceivedData().size(), 5);
         assertEquals(u1.getReceivedData().get(0), DATA1);
