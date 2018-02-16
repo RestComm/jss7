@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents.protocols.ss7.oam</groupId>
 		<artifactId>restcomm-ss7-oam</artifactId>
-		<version>8.0.0-SNAPSHOT</version>
+		<version>8.0.0-134</version>
 	</parent>
 
 	<artifactId>new-ui</artifactId>
