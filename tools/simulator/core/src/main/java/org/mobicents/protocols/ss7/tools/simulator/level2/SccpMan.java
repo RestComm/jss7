@@ -27,6 +27,7 @@ import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
 import org.mobicents.protocols.ss7.indicator.NumberingPlan;
 import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
 import org.mobicents.protocols.ss7.mtp.Mtp3UserPart;
+import org.mobicents.protocols.ss7.sccp.LoadSharingAlgorithm;
 import org.mobicents.protocols.ss7.sccp.OriginationType;
 import org.mobicents.protocols.ss7.sccp.RemoteSignalingPointCode;
 import org.mobicents.protocols.ss7.sccp.RemoteSubSystem;
@@ -403,8 +404,8 @@ public class SccpMan implements SccpManMBean, Stoppable {
                         11,
                         parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
                                 this.createGlobalTitle(""), dpc2, 0));
-                ((RouterImpl) this.router).addRule(1, RuleType.LOADSHARED, null, OriginationType.LOCAL, pattern, mask, 1,
-                        11, null, 0, null);
+                ((RouterImpl) this.router).addRule(1, RuleType.LOADSHARED, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL,
+                        pattern, mask, 1, 11, null, 0, null);
             } else {
                 ((RouterImpl) this.router).addRule(1, RuleType.SOLITARY, null, OriginationType.LOCAL, pattern, mask, 1,
                         -1, null, 0, null);
