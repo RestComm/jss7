@@ -105,7 +105,7 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Gprs_Short);
+            invoke.setTimeout(getTimerGprsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -157,7 +157,7 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Gprs_Short);
+            invoke.setTimeout(getTimerGprsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -209,7 +209,7 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Gprs_Short);
+            invoke.setTimeout(getTimerGprsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -260,7 +260,7 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class1);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Gprs_Short);
+            invoke.setTimeout(getTimerGprsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -329,7 +329,7 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Gprs_Short);
+            invoke.setTimeout(getTimerGprsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -379,7 +379,7 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Gprs_Short);
+            invoke.setTimeout(getTimerGprsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -429,7 +429,7 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Gprs_Short);
+            invoke.setTimeout(getTimerGprsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -479,7 +479,7 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Gprs_Short);
+            invoke.setTimeout(getTimerGprsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -531,7 +531,7 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Gprs_Short);
+            invoke.setTimeout(getTimerGprsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -582,7 +582,7 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Gprs_Short);
+            invoke.setTimeout(getTimerGprsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -634,7 +634,7 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class2);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Gprs_Short);
+            invoke.setTimeout(getTimerGprsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -689,7 +689,7 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class1);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Gprs_Short);
+            invoke.setTimeout(getTimerGprsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -760,7 +760,7 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class1);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Gprs_Short);
+            invoke.setTimeout(getTimerGprsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -828,7 +828,7 @@ public class CAPDialogGprsImpl extends CAPDialogImpl implements CAPDialogGprs {
         Invoke invoke = this.capProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class3);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_Gprs_Short);
+            invoke.setTimeout(getTimerGprsShort());
         else
             invoke.setTimeout(customInvokeTimeout);
 

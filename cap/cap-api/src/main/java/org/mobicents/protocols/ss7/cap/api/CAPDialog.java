@@ -43,11 +43,11 @@ import org.mobicents.protocols.ss7.tcap.asn.comp.ReturnResultLast;
 public interface CAPDialog extends Serializable {
 
     // Invoke timers
-    int _Timer_CircuitSwitchedCallControl_Short = 6000; // 1 - 10 sec
-    int _Timer_CircuitSwitchedCallControl_Medium = 30000; // 1 - 60 sec
-    int _Timer_CircuitSwitchedCallControl_Long = 300000; // 1 s - 30 minutes
-    int _Timer_Sms_Short = 10000; // 1 - 20 sec
-    int _Timer_Gprs_Short = 10000; // 1 - 20 sec
+    int getTimerCircuitSwitchedCallControlShort();// 1 - 10 sec
+    int getTimerCircuitSwitchedCallControlMedium();// 1 - 60 sec
+    int getTimerCircuitSwitchedCallControlLong();// 1 s - 30 minutes
+    int getTimerSmsShort();// 1 - 20 sec
+    int getTimerGprsShort();// 1 - 20 sec
 
     int _Timer_Default = -1;
 
