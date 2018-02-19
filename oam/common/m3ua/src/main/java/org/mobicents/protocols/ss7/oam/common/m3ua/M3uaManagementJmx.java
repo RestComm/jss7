@@ -857,4 +857,15 @@ public class M3uaManagementJmx implements M3uaManagementJmxMBean, M3UAManagement
     public boolean getStatisticsEnabled() {
         return this.wrappedM3UAManagement.getStatisticsEnabled();
     }
+
+    @Override
+    public boolean getRoutingKeyManagementEnabled() {
+        return this.wrappedM3UAManagement.getRoutingKeyManagementEnabled();
+    }
+
+    @Override
+    public void setRoutingKeyManagementEnabled(boolean routingKeyManagementEnabled) {
+        this.wrappedM3UAManagement.setRoutingKeyManagementEnabled(routingKeyManagementEnabled);
+    }
+
 }

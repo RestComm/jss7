@@ -342,4 +342,8 @@ public interface M3UAManagement {
      * @return
      */
     boolean getStatisticsEnabled();
+
+    boolean getRoutingKeyManagementEnabled();
+
+    void setRoutingKeyManagementEnabled(boolean routingKeyManagementEnabled);
 }
