@@ -63,14 +63,14 @@ Logging stats to main server log file::
 If you wish to have the stats logged in the main server log file located at [path]_jboss-5.1.0.GA/server/default/log/server.log_,  then you must add a new category to the [path]_jboss-log4j.xml_ as shown below and set priority value to "DEBUG". For verbose stats:
 ----
 
-<category name="org.mobicents.protocols.ss7.oam.common.statistics.StatsPrinter" additivity="false"> 
+<category name="org.restcomm.protocols.ss7.oam.common.statistics.StatsPrinter" additivity="false"> 
 	    <priority value="DEBUG" /> 
 </category>
 ----		
 and for a CSV stats:
 ----
 
-<category name="org.mobicents.protocols.ss7.oam.common.statistics.CsvStatsPrinter" additivity="false">
+<category name="org.restcomm.protocols.ss7.oam.common.statistics.CsvStatsPrinter" additivity="false">
 	    <priority value="DEBUG" />
 </category>
 ----
@@ -94,7 +94,7 @@ You must set the priority value to "DEBUG".
 <param name="ConversionPattern" value="%d %-5p [%c] %m%n"/> 
 </layout> 
 </appender>
-<category name="org.mobicents.protocols.ss7.oam.common.statistics.StatsPrinter" additivity="false"> 
+<category name="org.restcomm.protocols.ss7.oam.common.statistics.StatsPrinter" additivity="false"> 
 <priority value="DEBUG" /> 
 <appender-ref ref="STATS"/> 
 </category>
@@ -113,7 +113,7 @@ You must set the priority value to "DEBUG".
 <param name="ConversionPattern" value="%d %-5p [%c] %m%n"/>
 </layout>
 </appender>
-<category name="org.mobicents.protocols.ss7.oam.common.statistics.CsvStatsPrinter" additivity="false">
+<category name="org.restcomm.protocols.ss7.oam.common.statistics.CsvStatsPrinter" additivity="false">
 <priority value="DEBUG" />
 <appender-ref ref="CSVSTATS"/>
 </category>

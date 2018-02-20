@@ -13,7 +13,7 @@
 		<property name="persistDir">${sgw.home.dir}/ss7</property>
 	</bean>
 
-	<bean name="SCTPShellExecutor" class="org.mobicents.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
+	<bean name="SCTPShellExecutor" class="org.restcomm.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
 		<property name="sctpManagements">
 			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.sctp.ManagementImpl">
 				<entry>
@@ -26,7 +26,7 @@
 		</property>
 	</bean>
 	
-	<bean name="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl">
+	<bean name="Mtp3UserPart" class="org.restcomm.protocols.ss7.m3ua.impl.M3UAManagementImpl">
 		<constructor>
 			<parameter>Mtp3UserPart</parameter>
 			<parameter>Restcomm-jSS7</parameter>
@@ -43,9 +43,9 @@
 		</property>
 	</bean>
 
-	<bean name="M3UAShellExecutor" class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
+	<bean name="M3UAShellExecutor" class="org.restcomm.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
 		<property name="m3uaManagements">
-			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl">
+			<map keyClass="java.lang.String" valueClass="org.restcomm.protocols.ss7.m3ua.impl.M3UAManagementImpl">
 				<entry>
 					<key>Mtp3UserPart</key>
 					<value>
@@ -56,10 +56,10 @@
 		</property>
 	</bean>
 
-	<bean name="Clock" class="org.mobicents.protocols.ss7.scheduler.DefaultClock">
+	<bean name="Clock" class="org.restcomm.protocols.ss7.scheduler.DefaultClock">
 	</bean>
 
-	<bean name="Scheduler" class="org.mobicents.protocols.ss7.scheduler.Scheduler">
+	<bean name="Scheduler" class="org.restcomm.protocols.ss7.scheduler.Scheduler">
 		<property name="clock">
 			<inject bean="Clock" />
 		</property>

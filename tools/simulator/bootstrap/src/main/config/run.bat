@@ -136,7 +136,7 @@ echo ===========================================================================
 echo.
 
 :RESTART
-"%JAVA%" %JAVA_OPTS% -Djava.ext.dirs="%SIMULATOR_ENDORSED_DIRS%" -Dmbrola.base="%SIMULATOR_HOME%/mbrola" -classpath "%SIMULATOR_CLASSPATH%" org.mobicents.protocols.ss7.tools.simulator.bootstrap.Main %*
+"%JAVA%" %JAVA_OPTS% -Djava.ext.dirs="%SIMULATOR_ENDORSED_DIRS%" -Dmbrola.base="%SIMULATOR_HOME%/mbrola" -classpath "%SIMULATOR_CLASSPATH%" org.restcomm.protocols.ss7.tools.simulator.bootstrap.Main %*
 rem if ERRORLEVEL 10 goto RESTART
 
 :END

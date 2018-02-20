@@ -11,15 +11,15 @@
                     </run>
                 </groups>
                 <packages>
-                <package name="org.mobicents.protocols.ss7.map" />
-                <package name="org.mobicents.protocols.ss7.map.dialog" />
-                <package name="org.mobicents.protocols.ss7.map.errors" />
-                <package name="org.mobicents.protocols.ss7.map.primitives" />
-                <package name="org.mobicents.protocols.ss7.map.service.lsm" />
-                <package name="org.mobicents.protocols.ss7.map.service.sms" />
-                <package name="org.mobicents.protocols.ss7.map.service.supplementary" />
-                <package name="org.mobicents.protocols.ss7.map.functional" />   
-                <package name="org.mobicents.protocols.ss7.map.smstpdu" />
+                <package name="org.restcomm.protocols.ss7.map" />
+                <package name="org.restcomm.protocols.ss7.map.dialog" />
+                <package name="org.restcomm.protocols.ss7.map.errors" />
+                <package name="org.restcomm.protocols.ss7.map.primitives" />
+                <package name="org.restcomm.protocols.ss7.map.service.lsm" />
+                <package name="org.restcomm.protocols.ss7.map.service.sms" />
+                <package name="org.restcomm.protocols.ss7.map.service.supplementary" />
+                <package name="org.restcomm.protocols.ss7.map.functional" />   
+                <package name="org.restcomm.protocols.ss7.map.smstpdu" />
                  </packages>
                  -->
 	  

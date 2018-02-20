@@ -3,7 +3,7 @@
 
 	<parent>
 		<artifactId>sccp-parent</artifactId>
-		<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+		<groupId>org.restcomm.protocols.ss7.sccp</groupId>
 		<version>8.0.0-SNAPSHOT</version>
 	</parent>
 
@@ -19,17 +19,17 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.management</groupId>
+			<groupId>org.restcomm.protocols.ss7.management</groupId>
 			<artifactId>shell-server-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>		
 		<dependency>
 			<artifactId>mtp-api</artifactId>
-			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+			<groupId>org.restcomm.protocols.ss7.mtp</groupId>
 		</dependency>
 		<dependency>
 			<artifactId>m3ua-impl</artifactId>
-			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+			<groupId>org.restcomm.protocols.ss7.m3ua</groupId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -52,7 +52,7 @@
 			<artifactId>javolution</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+			<groupId>org.restcomm.protocols.ss7.mtp</groupId>
 			<artifactId>mtp</artifactId>
 		</dependency>
 	</dependencies>

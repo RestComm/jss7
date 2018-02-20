@@ -14,13 +14,13 @@
                 <suffix value=".yyyy-MM-dd"/>
                 <append value="true"/>
             </periodic-rotating-file-handler>
-            <logger category="org.mobicents.protocols.ss7.oam.common.statistics.StatsPrinter">
+            <logger category="org.restcomm.protocols.ss7.oam.common.statistics.StatsPrinter">
                 <level name="DEBUG"/>
                 <handlers>
                     <handler name="STATS"/>
                 </handlers>
             </logger>
-            <logger category="org.mobicents.protocols.ss7.oam.common.statistics.CsvStatsPrinter">
+            <logger category="org.restcomm.protocols.ss7.oam.common.statistics.CsvStatsPrinter">
                 <level name="DEBUG"/>
                 <handlers>
                     <handler name="CSVSTATS"/>

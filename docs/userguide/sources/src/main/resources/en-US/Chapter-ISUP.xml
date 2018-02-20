@@ -195,9 +195,9 @@
 	</section>
 	<section id="isup_usage">
 		<title>ISUP Usage</title>
-		<para> The <literal>org.mobicents.protocols.ss7.isup.ISUPStack</literal> interface defines the methods required to represent ISUP Protocol Stack. ISUPStack
-		exposes <literal>org.mobicents.protocols.ss7.isup.ISUPProvider</literal>. This interface defines the methods that will
-		be used by any registered ISUP User application implementing the <literal>org.mobicents.protocols.ss7.isup.ISUPListener</literal> to listen ISUP events(messages and timeouts). 
+		<para> The <literal>org.restcomm.protocols.ss7.isup.ISUPStack</literal> interface defines the methods required to represent ISUP Protocol Stack. ISUPStack
+		exposes <literal>org.restcomm.protocols.ss7.isup.ISUPProvider</literal>. This interface defines the methods that will
+		be used by any registered ISUP User application implementing the <literal>org.restcomm.protocols.ss7.isup.ISUPListener</literal> to listen ISUP events(messages and timeouts). 
 		</para>
 	</section>
 	<section id="isup_example">
@@ -213,14 +213,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.mobicents.protocols.ss7.isup.ISUPEvent;
-import org.mobicents.protocols.ss7.isup.ISUPListener;
-import org.mobicents.protocols.ss7.isup.ISUPProvider;
-import org.mobicents.protocols.ss7.isup.ISUPStack;
-import org.mobicents.protocols.ss7.isup.ISUPTimeoutEvent;
-import org.mobicents.protocols.ss7.isup.ParameterException;
-import org.mobicents.protocols.ss7.isup.impl.ISUPStackImpl;
-import org.mobicents.protocols.ss7.isup.message.ISUPMessage;	
+import org.restcomm.protocols.ss7.isup.ISUPEvent;
+import org.restcomm.protocols.ss7.isup.ISUPListener;
+import org.restcomm.protocols.ss7.isup.ISUPProvider;
+import org.restcomm.protocols.ss7.isup.ISUPStack;
+import org.restcomm.protocols.ss7.isup.ISUPTimeoutEvent;
+import org.restcomm.protocols.ss7.isup.ParameterException;
+import org.restcomm.protocols.ss7.isup.impl.ISUPStackImpl;
+import org.restcomm.protocols.ss7.isup.message.ISUPMessage;	
 
 import org.mobicents.ss7.linkset.oam.Layer4;
 import org.mobicents.ss7.linkset.oam.Linkset;

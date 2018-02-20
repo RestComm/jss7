@@ -17,14 +17,14 @@
 	  	 
 	  	
 	  	<packages>
-      		<package name="org.mobicents.protocols.ss7.tcap" />
-      		<package name="org.mobicents.protocols.ss7.tcap.dialog.timeout" />
-			<package name="org.mobicents.protocols.ss7.tcap.concurrent" />
+      		<package name="org.restcomm.protocols.ss7.tcap" />
+      		<package name="org.restcomm.protocols.ss7.tcap.dialog.timeout" />
+			<package name="org.restcomm.protocols.ss7.tcap.concurrent" />
   		 </packages>
   		 <!-- TODO: to speed up more, divide those tests into classes 
   		 <classes>
-  		 	<class name="org.mobicents.protocols.ss7.tcap.dialog.timeout.DialogIdleEndTest"/>
-  		 	<class name="org.mobicents.protocols.ss7.tcap.dialog.timeout.DialogIdleTest"/>
+  		 	<class name="org.restcomm.protocols.ss7.tcap.dialog.timeout.DialogIdleEndTest"/>
+  		 	<class name="org.restcomm.protocols.ss7.tcap.dialog.timeout.DialogIdleTest"/>
   		 </classes>
   		  -->
 	</test>

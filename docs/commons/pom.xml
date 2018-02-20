@@ -4,13 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.mobicents.protocols.ss7.docs</groupId>
+		<groupId>org.restcomm.protocols.ss7.docs</groupId>
 		<artifactId>restcomm-ss7-docs</artifactId>
 		<version>8.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>restcomm-ss7-commons-sources</artifactId>
-	<groupId>org.mobicents.protocols.ss7.docs.commons</groupId>
+	<groupId>org.restcomm.protocols.ss7.docs.commons</groupId>
 	<name>Restcomm jSS7 :: Docs :: Commons :: Sources :: ${project.artifactId}</name>
 	<properties>
 

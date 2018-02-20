@@ -22,7 +22,7 @@
 			<scope>runtime</scope>
 			<includes>
 				<!-- trace parser libraris -->
-				<include>org.mobicents.protocols.ss7.tools.traceparser:ss7-trace-parser</include>
+				<include>org.restcomm.protocols.ss7.tools.traceparser:ss7-trace-parser</include>
 
 				<!-- Common libraries -->
 				<include>log4j:log4j</include>
@@ -37,27 +37,27 @@
 				<include>org.mobicents.protocols.asn:asn</include>
 
 				<!-- SS7 Libraries -->
-				<include>org.mobicents.protocols.ss7.scheduler:scheduler</include>
-				<include>org.mobicents.protocols.ss7.sccp:sccp-api</include>
-				<include>org.mobicents.protocols.ss7.sccp:sccp-impl</include>
-				<include>org.mobicents.protocols.ss7.tcap:tcap-api</include>
-				<include>org.mobicents.protocols.ss7.tcap:tcap-impl</include>
-				<include>org.mobicents.protocols.ss7.isup:isup-api</include>
-				<include>org.mobicents.protocols.ss7.isup:isup-impl</include>				
-				<include>org.mobicents.protocols.ss7.map:map-api</include>
-				<include>org.mobicents.protocols.ss7.map:map-impl</include>
-				<include>org.mobicents.protocols.ss7.cap:cap-api</include>
-				<include>org.mobicents.protocols.ss7.cap:cap-impl</include>
-				<include>org.mobicents.protocols.ss7.inap:inap-api</include>
-				<include>org.mobicents.protocols.ss7.inap:inap-impl</include>				
-				<include>org.mobicents.protocols.ss7.m3ua:m3ua-api</include>
-				<include>org.mobicents.protocols.ss7.m3ua:m3ua-impl</include>
-				<include>org.mobicents.protocols.ss7.mtp:mtp</include>
-				<include>org.mobicents.protocols.ss7.mtp:mtp-api</include>
-				<!-- <include>org.mobicents.protocols.ss7.hardware:restcomm-dahdi</include> -->
-				<include>org.mobicents.protocols.ss7.congestion:congestion</include>
-             	<include>org.mobicents.protocols.ss7.statistics:statistics-api</include>
-                <include>org.mobicents.protocols.ss7.statistics:statistics-impl</include>
+				<include>org.restcomm.protocols.ss7.scheduler:scheduler</include>
+				<include>org.restcomm.protocols.ss7.sccp:sccp-api</include>
+				<include>org.restcomm.protocols.ss7.sccp:sccp-impl</include>
+				<include>org.restcomm.protocols.ss7.tcap:tcap-api</include>
+				<include>org.restcomm.protocols.ss7.tcap:tcap-impl</include>
+				<include>org.restcomm.protocols.ss7.isup:isup-api</include>
+				<include>org.restcomm.protocols.ss7.isup:isup-impl</include>				
+				<include>org.restcomm.protocols.ss7.map:map-api</include>
+				<include>org.restcomm.protocols.ss7.map:map-impl</include>
+				<include>org.restcomm.protocols.ss7.cap:cap-api</include>
+				<include>org.restcomm.protocols.ss7.cap:cap-impl</include>
+				<include>org.restcomm.protocols.ss7.inap:inap-api</include>
+				<include>org.restcomm.protocols.ss7.inap:inap-impl</include>				
+				<include>org.restcomm.protocols.ss7.m3ua:m3ua-api</include>
+				<include>org.restcomm.protocols.ss7.m3ua:m3ua-impl</include>
+				<include>org.restcomm.protocols.ss7.mtp:mtp</include>
+				<include>org.restcomm.protocols.ss7.mtp:mtp-api</include>
+				<!-- <include>org.restcomm.protocols.ss7.hardware:restcomm-dahdi</include> -->
+				<include>org.restcomm.protocols.ss7.congestion:congestion</include>
+             	<include>org.restcomm.protocols.ss7.statistics:statistics-api</include>
+                <include>org.restcomm.protocols.ss7.statistics:statistics-impl</include>
 
 			    <include>org.apache.commons:commons-email</include>
 

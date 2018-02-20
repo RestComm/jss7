@@ -4,7 +4,7 @@
 	<test name="simple">
 		
 	  	<packages>
-      		<package name="org.mobicents.protocols.ss7.isup.impl.stack.timers" />
+      		<package name="org.restcomm.protocols.ss7.isup.impl.stack.timers" />
   		 </packages>
 	</test>
 	

@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+		<groupId>org.restcomm.protocols.ss7.mtp</groupId>
 		<artifactId>mtp-parent</artifactId>
 		<version>8.0.0-SNAPSHOT</version>
 	</parent>
@@ -17,7 +17,7 @@
 			<artifactId>stream</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.congestion</groupId>
+			<groupId>org.restcomm.protocols.ss7.congestion</groupId>
 			<artifactId>congestion</artifactId>
 		</dependency>
 

@@ -19,15 +19,15 @@
 	<section>
 		<title>&THIS.PLATFORM; &THIS.APPLICATION; TCAP Usage</title>
 		<para>
-			The <classname>org.mobicents.protocols.ss7.tcap.api.TCAPStack</classname> interface defines the methods required to represent the TCAP
-			Protocol Stack. TCAPStack exposes <classname>org.mobicents.protocols.ss7.tcap.api.TCAPProvider</classname> that interacts directly
+			The <classname>org.restcomm.protocols.ss7.tcap.api.TCAPStack</classname> interface defines the methods required to represent the TCAP
+			Protocol Stack. TCAPStack exposes <classname>org.restcomm.protocols.ss7.tcap.api.TCAPProvider</classname> that interacts directly
 			with the TCAPStack. TCAPProvider defines methods that will be used by TCAP User Part to create new 
-			<classname>org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog</classname> to be sent across the network.
-			TCAP User Part also allows to register<classname>org.mobicents.protocols.ss7.tcap.api.TCListener</classname> to listen for TCAP messages.
+			<classname>org.restcomm.protocols.ss7.tcap.api.tc.dialog.Dialog</classname> to be sent across the network.
+			TCAP User Part also allows to register<classname>org.restcomm.protocols.ss7.tcap.api.TCListener</classname> to listen for TCAP messages.
 		</para>
 		<para>
-			TCAPProvider also exposes <classname>org.mobicents.protocols.ss7.tcap.api.DialogPrimitiveFactory</classname> to create dialog primitives 
-			and <classname>org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory</classname> to create components. 
+			TCAPProvider also exposes <classname>org.restcomm.protocols.ss7.tcap.api.DialogPrimitiveFactory</classname> to create dialog primitives 
+			and <classname>org.restcomm.protocols.ss7.tcap.api.ComponentPrimitiveFactory</classname> to create components. 
 			Components are a means of invoking an operation at a remote node.
 		</para>
 		
@@ -52,7 +52,7 @@
 		</mediaobject>	
 		
 		<para>
-			The <classname>org.mobicents.protocols.ss7.tcap.TCAPStackImpl</classname> is a concrete implementation of <classname>TCAPStack</classname>. 
+			The <classname>org.restcomm.protocols.ss7.tcap.TCAPStackImpl</classname> is a concrete implementation of <classname>TCAPStack</classname>. 
 			The TCAP User Part gets access to <classname>TCAPProvider</classname> by doing JNDI lookup as explained in the <xref linkend="design_overview_ss7_service"/>.					
 		</para>		
 		
@@ -169,32 +169,32 @@
 		language="Java"
 		role="JAVA"><![CDATA[	
 		
-package org.mobicents.protocols.ss7.tcap;
+package org.restcomm.protocols.ss7.tcap;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.tcap.api.ComponentPrimitiveFactory;
-import org.mobicents.protocols.ss7.tcap.api.TCAPException;
-import org.mobicents.protocols.ss7.tcap.api.TCAPProvider;
-import org.mobicents.protocols.ss7.tcap.api.TCAPSendException;
-import org.mobicents.protocols.ss7.tcap.api.TCListener;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.Dialog;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCContinueIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCNoticeIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCPAbortIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUniIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortIndication;
-import org.mobicents.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
-import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Invoke;
-import org.mobicents.protocols.ss7.tcap.asn.comp.OperationCode;
+import org.restcomm.protocols.ss7.indicator.RoutingIndicator;
+import org.restcomm.protocols.ss7.sccp.parameter.SccpAddress;
+import org.restcomm.protocols.ss7.tcap.api.ComponentPrimitiveFactory;
+import org.restcomm.protocols.ss7.tcap.api.TCAPException;
+import org.restcomm.protocols.ss7.tcap.api.TCAPProvider;
+import org.restcomm.protocols.ss7.tcap.api.TCAPSendException;
+import org.restcomm.protocols.ss7.tcap.api.TCListener;
+import org.restcomm.protocols.ss7.tcap.api.tc.dialog.Dialog;
+import org.restcomm.protocols.ss7.tcap.api.tc.dialog.events.TCBeginIndication;
+import org.restcomm.protocols.ss7.tcap.api.tc.dialog.events.TCBeginRequest;
+import org.restcomm.protocols.ss7.tcap.api.tc.dialog.events.TCContinueIndication;
+import org.restcomm.protocols.ss7.tcap.api.tc.dialog.events.TCEndIndication;
+import org.restcomm.protocols.ss7.tcap.api.tc.dialog.events.TCEndRequest;
+import org.restcomm.protocols.ss7.tcap.api.tc.dialog.events.TCNoticeIndication;
+import org.restcomm.protocols.ss7.tcap.api.tc.dialog.events.TCPAbortIndication;
+import org.restcomm.protocols.ss7.tcap.api.tc.dialog.events.TCUniIndication;
+import org.restcomm.protocols.ss7.tcap.api.tc.dialog.events.TCUserAbortIndication;
+import org.restcomm.protocols.ss7.tcap.api.tc.dialog.events.TerminationType;
+import org.restcomm.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.restcomm.protocols.ss7.tcap.asn.comp.Invoke;
+import org.restcomm.protocols.ss7.tcap.asn.comp.OperationCode;
 
 /**
  * Simple example demonstrates how to use TCAP Stack

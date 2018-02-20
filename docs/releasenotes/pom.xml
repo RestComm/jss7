@@ -4,13 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.mobicents.protocols.ss7.docs</groupId>
+		<groupId>org.restcomm.protocols.ss7.docs</groupId>
 		<artifactId>restcomm-ss7-docs</artifactId>
 		<version>7.1.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>restcomm-ss7-releasenotes</artifactId>
-	<groupId>org.mobicents.protocols.ss7.docs.releasenotes</groupId>
+	<groupId>org.restcomm.protocols.ss7.docs.releasenotes</groupId>
 	<name>Restcomm jSS7 :: Docs :: Release Notes :: ${project.artifactId}</name>
 	<packaging>pom</packaging>
 

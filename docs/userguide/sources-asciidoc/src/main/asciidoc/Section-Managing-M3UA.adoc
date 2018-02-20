@@ -256,8 +256,8 @@ If you are using the JBoss Application Server, then you can set this parameter b
 ----
 
 /*Extra bean for RoutingLabelFormat Enum*/
-	<bean name="RoutingLabelFormat" class="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat">
-		<constructor factoryClass="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat"
+	<bean name="RoutingLabelFormat" class="org.restcomm.protocols.ss7.mtp.RoutingLabelFormat">
+		<constructor factoryClass="org.restcomm.protocols.ss7.mtp.RoutingLabelFormat"
 			factoryMethod="getInstance">
 			<parameter>ITU</parameter>
 		</constructor>

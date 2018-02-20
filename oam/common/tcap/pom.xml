@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
+		<groupId>org.restcomm.protocols.ss7.oam.common</groupId>
 		<artifactId>restcomm-ss7-oam-common</artifactId>
 		<version>8.0.0-SNAPSHOT</version>
 	</parent>
@@ -19,39 +19,39 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
+			<groupId>org.restcomm.protocols.ss7.oam.common</groupId>
 			<artifactId>jmx</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
+			<groupId>org.restcomm.protocols.ss7.oam.common</groupId>
 			<artifactId>jmxss7</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
+			<groupId>org.restcomm.protocols.ss7.oam.common</groupId>
 			<artifactId>alarm</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
+			<groupId>org.restcomm.protocols.ss7.oam.common</groupId>
 			<artifactId>statistics-oam-impl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+			<groupId>org.restcomm.protocols.ss7.tcap</groupId>
 			<artifactId>tcap-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+			<groupId>org.restcomm.protocols.ss7.tcap</groupId>
 			<artifactId>tcap-impl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>statistics-api</artifactId>
-			<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+			<groupId>org.restcomm.protocols.ss7.statistics</groupId>
 			<version>${project.version}</version>
 		</dependency>	
 
@@ -140,30 +140,30 @@
 					<artifactId>testng</artifactId>
 				</dependency>
 				<dependency>
-					<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+					<groupId>org.restcomm.protocols.ss7.sccp</groupId>
 					<artifactId>sccp-impl</artifactId>
 					<scope>test</scope>
 				</dependency>
 				<dependency>
-					<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+					<groupId>org.restcomm.protocols.ss7.sccp</groupId>
 					<artifactId>sccp-impl</artifactId>
 					<type>test-jar</type>
 					<version>${project.version}</version>
 					<scope>test</scope>
 				</dependency>
 				<dependency>
-					<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+					<groupId>org.restcomm.protocols.ss7.mtp</groupId>
 					<artifactId>mtp-api</artifactId>
 					<scope>test</scope>
 				</dependency>
 				<dependency>
 					<artifactId>statistics-impl</artifactId>
-					<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+					<groupId>org.restcomm.protocols.ss7.statistics</groupId>
 					<version>${project.version}</version>
 				</dependency>	
 				<dependency>
 					<artifactId>statistics-api</artifactId>
-					<groupId>org.mobicents.protocols.ss7.statistics</groupId>
+					<groupId>org.restcomm.protocols.ss7.statistics</groupId>
 					<version>${project.version}</version>
 				</dependency>	
 			</dependencies>

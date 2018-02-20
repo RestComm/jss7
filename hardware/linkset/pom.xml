@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+		<groupId>org.restcomm.protocols.ss7.hardware</groupId>
 		<artifactId>restcomm-hardware</artifactId>
 		<version>8.0.0-SNAPSHOT</version>
 	</parent>
@@ -13,7 +13,7 @@
 	<dependencies>
 		<!-- shell -->
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.management</groupId>
+			<groupId>org.restcomm.protocols.ss7.management</groupId>
 			<artifactId>shell-server-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -28,7 +28,7 @@
 			<artifactId>javolution</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.scheduler</groupId>
+			<groupId>org.restcomm.protocols.ss7.scheduler</groupId>
 			<artifactId>scheduler</artifactId>
 		</dependency>
 		<dependency>

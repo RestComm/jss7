@@ -10,8 +10,8 @@
 	  	</groups>
 	  	 -->
 	  	<packages>
-      		<package name="org.mobicents.protocols.ss7.inap.primitives" />
-      		<package name="org.mobicents.protocols.ss7.inap.isup" />
+      		<package name="org.restcomm.protocols.ss7.inap.primitives" />
+      		<package name="org.restcomm.protocols.ss7.inap.isup" />
   		 </packages>
 	</test>
 	

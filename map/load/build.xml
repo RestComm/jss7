@@ -7,8 +7,8 @@
 	</condition>
 
 
-	<property name="packageprefix" value="org.mobicents.protocols.ss7.map.load" />
-	<!-- <property name="packageprefix" value="org.mobicents.protocols.ss7.map.loadDialogic" /> -->
+	<property name="packageprefix" value="org.restcomm.protocols.ss7.map.load" />
+	<!-- <property name="packageprefix" value="org.restcomm.protocols.ss7.map.loadDialogic" /> -->
 
 	<property name="javac.source" value="1.7" />
 	<property name="srcroot" value="${root}/src" />

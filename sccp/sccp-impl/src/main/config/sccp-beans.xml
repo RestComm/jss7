@@ -17,7 +17,7 @@
 		</constructor>
 	</bean>
 
-	<bean name="m3ua_linkset_1" class="org.mobicents.protocols.ss7.mtp.provider.m3ua.Provider">
+	<bean name="m3ua_linkset_1" class="org.restcomm.protocols.ss7.mtp.provider.m3ua.Provider">
 		<property name="name">m3ua1</property>
 		<property name="adjacentPointCode">12345</property>
 		<property name="originalPointCode">54321</property>
@@ -30,8 +30,8 @@
 	</bean>
  	-->
 	<!-- Endpoint definition  -->
-	<bean name="SccpService" class="org.mobicents.protocols.ss7.sccp.impl.SccpService">
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7.sccp:service=SccpService" ,exposedInterface=org.mobicents.protocols.ss7.sccp.impl.SccpServiceMBean.class,registerDirectly=true)</annotation>
+	<bean name="SccpService" class="org.restcomm.protocols.ss7.sccp.impl.SccpService">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7.sccp:service=SccpService" ,exposedInterface=org.restcomm.protocols.ss7.sccp.impl.SccpServiceMBean.class,registerDirectly=true)</annotation>
 		<property name="jndiName">java:/restcomm/ss7/sccp</property>
 		<property name="configPath">${catalina.home}/deploy/a${pom.artifactId}-stack/sccp-routing.txt</property>
 		<!-- 

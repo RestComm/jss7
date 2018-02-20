@@ -29,7 +29,7 @@
 			<scope>runtime</scope>
 			<includes>
 				<include>
-					org.mobicents.protocols.ss7.sgw:gateway
+					org.restcomm.protocols.ss7.sgw:gateway
 				</include>
 			</includes>
 		</dependencySet>

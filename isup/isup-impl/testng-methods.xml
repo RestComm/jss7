@@ -11,8 +11,8 @@
 	  	</groups>
 
 	  	<packages>
-      		<package name="org.mobicents.protocols.ss7.isup.impl.message" />
-      		<package name="org.mobicents.protocols.ss7.isup.impl.message.parameter" />
+      		<package name="org.restcomm.protocols.ss7.isup.impl.message" />
+      		<package name="org.restcomm.protocols.ss7.isup.impl.message.parameter" />
   		 </packages>
 	</test>
 </suite>

@@ -3,12 +3,12 @@
 
 	<parent>
 		<artifactId>tools</artifactId>
-		<groupId>org.mobicents.protocols.ss7</groupId>
+		<groupId>org.restcomm.protocols.ss7</groupId>
 		<version>8.0.0-SNAPSHOT</version>
 	</parent>
 
   <artifactId>ss7-trace-parser-parent</artifactId>
-  <groupId>org.mobicents.protocols.ss7.tools.traceparser</groupId>
+  <groupId>org.restcomm.protocols.ss7.tools.traceparser</groupId>
 
   <packaging>pom</packaging>
   <name>Restcomm jSS7 Trase Parser :: Parent</name>
@@ -28,11 +28,11 @@
 			<artifactId>sctp-impl</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+			<groupId>org.restcomm.protocols.ss7.m3ua</groupId>
 			<artifactId>m3ua-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+			<groupId>org.restcomm.protocols.ss7.m3ua</groupId>
 			<artifactId>m3ua-impl</artifactId>
 		</dependency>
 	</dependencies>
