@@ -68,6 +68,8 @@ import org.restcomm.protocols.ss7.m3ua.message.asptm.ASPActiveAck;
 import org.restcomm.protocols.ss7.m3ua.message.asptm.ASPInactive;
 import org.restcomm.protocols.ss7.m3ua.message.asptm.ASPInactiveAck;
 import org.restcomm.protocols.ss7.m3ua.message.mgmt.Notify;
+import org.restcomm.protocols.ss7.m3ua.message.rkm.DeregistrationRequest;
+import org.restcomm.protocols.ss7.m3ua.message.rkm.RegistrationRequest;
 import org.restcomm.protocols.ss7.m3ua.message.ssnm.DestinationAvailable;
 import org.restcomm.protocols.ss7.m3ua.message.ssnm.DestinationRestricted;
 import org.restcomm.protocols.ss7.m3ua.message.ssnm.DestinationStateAudit;
@@ -531,6 +533,20 @@ public class AspFactoryImpl implements AssociationListener, XMLSerializable, Asp
                 break;
 
             case MessageClass.ROUTING_KEY_MANAGEMENT:
+                if(m3UAManagementImpl.getRoutingKeyManagementEnabled()) {
+                    switch (message.getMessageType()) {
+                        case MessageType.REG_REQUEST:
+                            RegistrationRequest registrationRequest = (RegistrationRequest)message;
+                            routingKeyManagementHandler.handleRegistrationRequest(registrationRequest);
+                            break;
+                        case MessageType.DEREG_REQUEST:
+                            DeregistrationRequest deregistrationRequest = (DeregistrationRequest)message;
+                            routingKeyManagementHandler.handleDeregistrationRequest(deregistrationRequest);
+                            break;
+                        default:
+                            break;
+                    }
+                }
                 break;
             default:
                 logger.error(String.format("Received message with invalid MessageClass=%d message=%s",
