@@ -427,7 +427,7 @@ public class InvokeImpl implements Invoke {
         public void run() {
 
             try {
-                dialog.getDialogLock().lock();
+                dialog.getDialogLock().lockAndTriggerActions();
 
                 // op failed, we must delete it from dialog and notify!
                 timerFuture = null;
@@ -435,7 +435,7 @@ public class InvokeImpl implements Invoke {
                 // TC-L-CANCEL
                 ((DialogImpl) invoke.dialog).operationTimedOut(invoke);
             } finally {
-                dialog.getDialogLock().unlock();
+                dialog.getDialogLock().unlockAndTriggerActions();
             }
         }
 
