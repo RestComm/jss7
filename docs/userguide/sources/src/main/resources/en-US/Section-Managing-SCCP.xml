@@ -48,7 +48,7 @@
 
 		<para>
 			The first tab will display the properties of the SCCP Management unit. These details displayed here are fetched from the XML descriptor file <filename>jboss-beans.xml</filename>, which is
-			located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
+			located at <filename>$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
 			These properties can be modified here in the GUI. To modify them you must click on pencil, make changes and save. The GUI will then display the modified values.
 		</para>
 		<figure>
@@ -2327,7 +2327,7 @@ PARAMETERS
 							<route to backup>
 
 							This algorithm is the best if all
-							traffic is local (mobicents stack)
+							traffic is local (restcomm stack)
 							originated
 
 					bit3		if( (SLS & 0x08) == 0 )
@@ -2335,7 +2335,7 @@ PARAMETERS
 							<route to backup>
 							This algorithm can be used if not
 							all traffic is local
-							(mobicents stack) originated.
+							(restcomm stack) originated.
 							But only 8 links are acceptable in
 							both linksets.
 
@@ -2344,7 +2344,7 @@ PARAMETERS
 							<route to backup>
 							This algorithm can be used if not
 							all traffic is local
-							(mobicents stack) originated.
+							(restcomm stack) originated.
 							But only 8 links are acceptable in
 							both linksets.
 
@@ -2353,7 +2353,7 @@ PARAMETERS
 							<route to backup>
 							This algorithm can be used if not
 							all traffic is local
-							(mobicents stack) originated.
+							(restcomm stack) originated.
 							But only 8 links are acceptable in
 							both linksets.
 
@@ -2362,7 +2362,7 @@ PARAMETERS
 							<route to backup>
 							This algorithm can be used if not
 							all traffic is local
-							(mobicents stack) originated.
+							(restcomm stack) originated.
 							But only 8 links are acceptable in
 							both linksets.
 
@@ -2727,7 +2727,7 @@ PARAMETERS
 							<route to backup>
 
 							This algorithm is the best if all
-							traffic is local (mobicents stack)
+							traffic is local (restcomm stack)
 							originated
 
 					bit3		if( (SLS & 0x08) == 0 )
@@ -2735,7 +2735,7 @@ PARAMETERS
 							<route to backup>
 							This algorithm can be used if not
 							all traffic is local
-							(mobicents stack) originated.
+							(restcomm stack) originated.
 							But only 8 links are acceptable in
 							both linksets.
 

@@ -46,7 +46,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 
     private static final Logger logger = Logger.getLogger(Mtp3UserPartBaseImpl.class);
 
-    private static final String LICENSE_PRODUCT_NAME = "Mobicents-jSS7";
+    private static final String LICENSE_PRODUCT_NAME = "Restcomm-jSS7";
 
     protected static final String ROUTING_LABEL_FORMAT = "routingLabelFormat"; // we do not store this value
     protected static final String USE_LSB_FOR_LINKSET_SELECTION = "useLsbForLinksetSelection";

@@ -68,7 +68,7 @@
 		<priority value="INFO" />
 	</category>
 	
-	<category name="org.mobicents">
+	<category name="org.restcomm">
 		<priority value="INFO" />
 	</category>
 	

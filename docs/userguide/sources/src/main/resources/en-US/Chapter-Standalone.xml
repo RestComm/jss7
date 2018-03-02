@@ -219,7 +219,7 @@
 		</programlisting>
 		<para>
 		Once you have completed development of your application, next thing is setting the classpath, compiling and starting application. You must set the classpath to point to 
-		mobicents-jss7-X.Y.Z/ss7/mobicents-ss7-service/lib. It has all the libraries needed to compile and start your application.
+		restcomm-jss7-X.Y.Z/ss7/restcomm-ss7-service/lib. It has all the libraries needed to compile and start your application.
 		Don't forget to include your compiled Application class file in classpath before starting the Application. 
 		</para>
 	</section>

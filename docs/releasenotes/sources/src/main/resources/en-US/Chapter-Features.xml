@@ -9,7 +9,7 @@
 	<title>New Features</title>
 	<para>
 		&THIS.PLATFORM; &THIS.APPLICATION; &THIS.VERSION; is minor release that includes single new feature that replaces Dialogic native library 
-		<literal>libmobicents-dialogic-linux</literal> with Dialogic's own <literal>libgctjni</literal>. 
+		<literal>librestcomm-dialogic-linux</literal> with Dialogic's own <literal>libgctjni</literal>. 
 	</para>
 	
 	<para>

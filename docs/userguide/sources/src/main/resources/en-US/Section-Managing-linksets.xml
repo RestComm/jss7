@@ -24,7 +24,7 @@
 	</figure>
 		<para>
 The first tab will display the properties of the Linkset Management unit. These details displayed here are fetched from the XML descriptor file <filename>jboss-beans.xml</filename>, which is 
-		located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where 
+		located at <filename>$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF</filename>, where 
 		<application>profile_name</application> is the server profile name. These properties cannot be modified here in the GUI. To modify them you must modifiy the <filename>jboss-beans.xml</filename> and restart the Server. The GUI will then display the modified values. 
 		</para>
 		<para>		

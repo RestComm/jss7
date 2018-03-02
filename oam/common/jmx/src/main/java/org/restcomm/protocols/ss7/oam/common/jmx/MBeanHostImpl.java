@@ -54,7 +54,7 @@ public class MBeanHostImpl implements MBeanHost {
 
     protected static final Logger logger = Logger.getLogger(MBeanHostImpl.class);
 
-    public static final String DEFAULT_DOMAIN_NAME = "org.mobicents.ss7";
+    public static final String DEFAULT_DOMAIN_NAME = "org.restcomm.ss7";
 
     private String agentId;
     private int rmiPort;

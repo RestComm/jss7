@@ -119,7 +119,7 @@ You can find the list of implemented operations here: <ulink type="http" url="ht
 
 		<programlisting
 			language="Java"
-			role="JAVA"><![CDATA[String providerJndiName = "java:/mobicents/ss7/cap";
+			role="JAVA"><![CDATA[String providerJndiName = "java:/restcomm/ss7/cap";
 this.capProvider = ((CAPProvider) ctx.lookup(providerJndiName));
 ...]]>
 		</programlisting>
@@ -633,7 +633,7 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	public CallSsfExample() throws NamingException {
 		InitialContext ctx = new InitialContext();
 		try {
-			String providerJndiName = "java:/mobicents/ss7/cap";
+			String providerJndiName = "java:/restcomm/ss7/cap";
 			this.capProvider = ((CAPProvider) ctx.lookup(providerJndiName));
 		} finally {
 			ctx.close();
@@ -1045,7 +1045,7 @@ public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 	public CallScfExample() throws NamingException {
 		InitialContext ctx = new InitialContext();
 		try {
-			String providerJndiName = "java:/mobicents/ss7/cap";
+			String providerJndiName = "java:/restcomm/ss7/cap";
 			this.capProvider = ((CAPProvider) ctx.lookup(providerJndiName));
 		} finally {
 			ctx.close();

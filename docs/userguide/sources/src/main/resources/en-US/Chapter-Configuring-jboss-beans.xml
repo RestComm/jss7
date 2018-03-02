@@ -11,7 +11,7 @@
                 <title>
                         Configuring &THIS.PLATFORM; SS7 Service
                 </title>
-                <para>Configuration is done through an XML descriptor file named <filename>jboss-beans.xml</filename> located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where
+                <para>Configuration is done through an XML descriptor file named <filename>jboss-beans.xml</filename> located at <filename>$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF</filename>, where
                 <literal>profile_name</literal> is the name of the server profile.</para>
 
                 <para>&THIS.PLATFORM; SS7 Layer 4 (<literal>SCCP, ISUP</literal>) leverages either of the following <literal>MTP</literal>
@@ -118,20 +118,20 @@ This M3UA Management Bean takes a <classname>String</classname> as a constructor
 					<note>
 		                <para>
 		                	The corresponding native libraries for <literal>dahdi</literal> from folder
-		                	<literal>mobicents-jss7-&lt;version&gt;/ss7/native/32</literal> or <literal>mobicents-jss7-&lt;version&gt;/ss7/native/64</literal> should be copied to
+		                	<literal>restcomm-jss7-&lt;version&gt;/ss7/native/32</literal> or <literal>restcomm-jss7-&lt;version&gt;/ss7/native/64</literal> should be copied to
 		                	 copied to <literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x86</literal> if OS is 32 bit or <literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x64</literal> if OS is 64 bit.
 		                </para>
 		                <para>
 		                	libraries are compiled only for linux OS for now.
 		                </para>
 		                <para>
-		                	<literal>mobicents-jss7-&lt;version&gt;/ss7/native/32</literal> and <literal>mobicents-jss7-&lt;version&gt;/ss7/native/64</literal> folders carries
+		                	<literal>restcomm-jss7-&lt;version&gt;/ss7/native/32</literal> and <literal>restcomm-jss7-&lt;version&gt;/ss7/native/64</literal> folders carries
 		                	libraries compiled for 32 bit and 64 bit linux OS.
 		                </para>
 		                <para>
 	                        <variablelist>
 	                                <varlistentry>
-	                                        <term>libmobicents-dahdi-linux</term>
+	                                        <term>librestcomm-dahdi-linux</term>
 	                                        <listitem>
 	                                                <para>Native library for <literal>dahdi</literal> based cards - Diguim and Sangoma</para>
 	                                        </listitem>
@@ -149,7 +149,7 @@ This M3UA Management Bean takes a <classname>String</classname> as a constructor
 
                                         <programlisting language="XML" role="XML"><![CDATA[
         <bean name="DahdiLinksetFactory"
-                class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
+                class="org.restcomm.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
         </bean>]]>
                         </programlisting>
 
@@ -164,17 +164,17 @@ This M3UA Management Bean takes a <classname>String</classname> as a constructor
     <!-- Linkset manager Service                                              -->
     <!-- ================================================ -->
         <bean name="LinksetFactoryFactory"
-                class="org.mobicents.ss7.linkset.oam.LinksetFactoryFactory">
+                class="org.restcomm.ss7.linkset.oam.LinksetFactoryFactory">
                 <incallback method="addFactory" />
                 <uncallback method="removeFactory" />
         </bean>
 
         <bean name="DahdiLinksetFactory"
-                class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
+                class="org.restcomm.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
         </bean>
 
         <bean name="LinksetManager"
-                class="org.mobicents.ss7.linkset.oam.LinksetManagerImpl">
+                class="org.restcomm.ss7.linkset.oam.LinksetManagerImpl">
                 <constructor>
                                         <parameter>LinksetManager</parameter>
                                 </constructor>
@@ -187,7 +187,7 @@ This M3UA Management Bean takes a <classname>String</classname> as a constructor
                 <property name="persistDir">${jboss.server.data.dir}</property>
         </bean>
 
-                <bean name="LinksetExecutor" class="org.mobicents.ss7.linkset.oam.LinksetExecutor">
+                <bean name="LinksetExecutor" class="org.restcomm.ss7.linkset.oam.LinksetExecutor">
                         <property name="linksetManager">
                                 <inject bean="LinksetManager" />
                         </property>
@@ -209,7 +209,7 @@ This M3UA Management Bean takes a <classname>String</classname> as a constructor
 					<note>
 		                <para>
 		                	The corresponding native libraries for <literal>dialogic</literal> from folder
-		                	<literal>mobicents-jss7-&lt;version&gt;/ss7/native/32</literal> or <literal>mobicents-jss7-&lt;version&gt;/ss7/native/64</literal> should be copied
+		                	<literal>restcomm-jss7-&lt;version&gt;/ss7/native/32</literal> or <literal>restcomm-jss7-&lt;version&gt;/ss7/native/64</literal> should be copied
 		                	to <literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x86</literal> if OS is 32 bit or copied to
 		                	<literal>$JBOSS_HOME/bin/META-INF/lib/linux2/x64</literal> if OS is 64 bit.
 		                </para>
@@ -217,7 +217,7 @@ This M3UA Management Bean takes a <classname>String</classname> as a constructor
 		                	libraries are compiled only for linux OS for now.
 		                </para>
 		                <para>
-		                	<literal>mobicents-jss7-&lt;version&gt;/ss7/native/32</literal> and <literal>mobicents-jss7-&lt;version&gt;/ss7/native/64</literal> folders carries
+		                	<literal>restcomm-jss7-&lt;version&gt;/ss7/native/32</literal> and <literal>restcomm-jss7-&lt;version&gt;/ss7/native/64</literal> folders carries
 		                	libraries compiled for 32 bit and 64 bit linux OS.
 		                </para>
 		                <para>
@@ -229,7 +229,7 @@ This M3UA Management Bean takes a <classname>String</classname> as a constructor
 	                                        </listitem>
 	                                </varlistentry>
 	                                <varlistentry>
-	                                        <term>libmobicents-dahdi-linux</term>
+	                                        <term>librestcomm-dahdi-linux</term>
 	                                        <listitem>
 	                                                <para>Native library for <literal>dahdi</literal> based cards - Diguim and Sangoma</para>
 	                                        </listitem>
@@ -244,7 +244,7 @@ This M3UA Management Bean takes a <classname>String</classname> as a constructor
         <!-- Dialogic Mtp3UserPart -->
         <!-- ==================================================================== -->
         <!---->
-        <bean name="Mtp3UserPart" class="org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart">
+        <bean name="Mtp3UserPart" class="org.restcomm.ss7.hardware.dialogic.DialogicMtp3UserPart">
                 <property name="sourceModuleId">61</property>
                 <property name="destinationModuleId">34</property>
                 <property name="routingLabelFormat">
@@ -259,7 +259,7 @@ The other properties of the Stack are defined below:
                                 <term>sourceModuleId</term>
                                 <listitem>
                                         <para>
-                                                <literal>sourceModuleId</literal> is the id of source module and should match with the value configured in the file <filename>system.txt</filename> used by <literal>dialogic</literal> drivers. In the above example, 61 is assigned for mobicents process.
+                                                <literal>sourceModuleId</literal> is the id of source module and should match with the value configured in the file <filename>system.txt</filename> used by <literal>dialogic</literal> drivers. In the above example, 61 is assigned for restcomm process.
                                         </para>
                                 </listitem>
                         </varlistentry>
@@ -582,14 +582,14 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
         <!-- Shell Service -->
         <!-- ==================================================================== -->
         <!-- Define Shell Executor -->
-	<bean name="ShellExecutor" class="com.mobicents.ss7.management.console.ShellServer">
+	<bean name="ShellExecutor" class="org.restcomm.ss7.management.console.ShellServer">
 		<constructor>
 			<parameter>
 				<inject bean="SS7Scheduler" />
 			</parameter>
 			<parameter>
 				<list class="javolution.util.FastList"
-					elementClass="org.mobicents.ss7.management.console.ShellExecutor">
+					elementClass="org.restcomm.ss7.management.console.ShellExecutor">
 					<inject bean="SccpExecutor" />
 					<inject bean="M3UAShellExecutor" />
 					<inject bean="SCTPShellExecutor" />
@@ -728,48 +728,48 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                                 SS7Service acts as core engine binding all the components together.
                         </para>
                         <programlisting language="XML" role="XML"><![CDATA[<!-- ==================================================================== -->
-        <!-- Mobicents SS7 Service -->
+        <!-- Restcomm SS7 Service -->
         <!-- ==================================================================== -->
-        <bean name="TCAPSS7Service" class="org.mobicents.ss7.SS7Service">
+        <bean name="TCAPSS7Service" class="org.restcomm.ss7.SS7Service">
                 <constructor><parameter>TCAP</parameter></constructor>
-                <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=TCAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+                <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.restcomm.ss7:service=TCAPSS7Service",exposedInterface=org.restcomm.ss7.SS7ServiceMBean.class,registerDirectly=true)
                 </annotation>
-                <property name="jndiName">java:/mobicents/ss7/tcap</property>
+                <property name="jndiName">java:/restcomm/ss7/tcap</property>
                 <property name="stack">
                         <inject bean="TcapStack" property="provider" />
                 </property>
         </bean>
-        <bean name="MAPSS7Service" class="org.mobicents.ss7.SS7Service">
+        <bean name="MAPSS7Service" class="org.restcomm.ss7.SS7Service">
                 <constructor><parameter>MAP</parameter></constructor>
-                <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=MAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+                <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.restcomm.ss7:service=MAPSS7Service",exposedInterface=org.restcomm.ss7.SS7ServiceMBean.class,registerDirectly=true)
                 </annotation>
-                <property name="jndiName">java:/mobicents/ss7/map</property>
+                <property name="jndiName">java:/restcomm/ss7/map</property>
                 <property name="stack">
                         <inject bean="MapStack" property="MAPProvider" />
                 </property>
         </bean>
-        <bean name="CAPSS7Service" class="org.mobicents.ss7.SS7Service">
+        <bean name="CAPSS7Service" class="org.restcomm.ss7.SS7Service">
                 <constructor><parameter>CAP</parameter></constructor>
-                <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=CAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+                <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.restcomm.ss7:service=CAPSS7Service",exposedInterface=org.restcomm.ss7.SS7ServiceMBean.class,registerDirectly=true)
                 </annotation>
-                <property name="jndiName">java:/mobicents/ss7/cap</property>
+                <property name="jndiName">java:/restcomm/ss7/cap</property>
                 <property name="stack">
                         <inject bean="CapStack" property="CAPProvider" />
                 </property>
         </bean>
-        <bean name="ISUPSS7Service" class="org.mobicents.ss7.SS7Service">
+        <bean name="ISUPSS7Service" class="org.restcomm.ss7.SS7Service">
                 <constructor><parameter>ISUP</parameter></constructor>
-                <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=ISUPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+                <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.restcomm.ss7:service=ISUPSS7Service",exposedInterface=org.restcomm.ss7.SS7ServiceMBean.class,registerDirectly=true)
                 </annotation>
-                <property name="jndiName">java:/mobicents/ss7/isup</property>
+                <property name="jndiName">java:/restcomm/ss7/isup</property>
                 <property name="stack">
                         <inject bean="IsupStack" property="isupProvider" />
                 </property>
         </bean>]]></programlisting>
-                                                <para> TCAPSS7Service binds TcapStack to JNDI <literal>java:/mobicents/ss7/tcap</literal>. </para>
-                        <para> MAPSS7Service binds MapStack to JNDI <literal>java:/mobicents/ss7/map</literal>. </para>
-                        <para> CAPSS7Service binds CapStack to JNDI <literal>java:/mobicents/ss7/cap</literal>. </para>
-                          <para> ISUPSS7Service binds IsupStack to JNDI <literal>java:/mobicents/ss7/isup</literal>. </para>
+                                                <para> TCAPSS7Service binds TcapStack to JNDI <literal>java:/restcomm/ss7/tcap</literal>. </para>
+                        <para> MAPSS7Service binds MapStack to JNDI <literal>java:/restcomm/ss7/map</literal>. </para>
+                        <para> CAPSS7Service binds CapStack to JNDI <literal>java:/restcomm/ss7/cap</literal>. </para>
+                          <para> ISUPSS7Service binds IsupStack to JNDI <literal>java:/restcomm/ss7/isup</literal>. </para>
                         <para>The JNDI name can be configured to any valid JNDI name specific to your application.</para>
                         <para>Feel free to delete service that your application is not using.</para>
                 </section>
@@ -779,12 +779,12 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                         Configuring &THIS.PLATFORM; Signaling Gateway
                 </title>
                 <para>Configuration is done through an XML descriptor named <filename>sgw-beans.xml</filename> and is
-                located at <filename>mobicents-ss7-sgw/deploy</filename> </para>
+                located at <filename>restcomm-ss7-sgw/deploy</filename> </para>
 
                 <note>
 	                <para>
 	                	Before &THIS.PLATFORM; Signaling Gateway is configured the corresponding native libraries for <literal>dahdi</literal> or <literal>dialogic</literal> from folder
-	                	<literal>mobicents-ss7-sgw/native/32</literal> or <literal>mobicents-ss7-sgw/native/64</literal> should be copied to <literal>mobicents-ss7-sgw/native</literal>.
+	                	<literal>restcomm-ss7-sgw/native/32</literal> or <literal>restcomm-ss7-sgw/native/64</literal> should be copied to <literal>restcomm-ss7-sgw/native</literal>.
 	                </para>
 	                <para>
 	                	<literal>32</literal> and <literal>64</literal> folders carries libraries compiled for 32 bit and 64 bit. Depending on which JDK (32 or 64 bit) is used to start
@@ -799,7 +799,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                                         </listitem>
                                 </varlistentry>
                                 <varlistentry>
-                                        <term>libmobicents-dahdi-linux</term>
+                                        <term>librestcomm-dahdi-linux</term>
                                         <listitem>
                                                 <para>Native library for <literal>dahdi</literal> based cards - Diguim and Sangoma</para>
                                         </listitem>
@@ -858,7 +858,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                                         <para><literal>DahdiLinksetFactory</literal> </para>
                                         <programlisting language="XML" role="XML"><![CDATA[
         <bean name="DahdiLinksetFactory"
-                class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
+                class="org.restcomm.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
         </bean>]]>
                         </programlisting>
                                 </listitem>
@@ -866,7 +866,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                                         <para><literal>DialogicLinksetFactory</literal></para>
                                          <programlisting language="XML" role="XML"><![CDATA[
         <bean name="DialogicLinksetFactory"
-                class="org.mobicents.ss7.hardware.dialogic.oam.DialogicLinksetFactory">
+                class="org.restcomm.ss7.hardware.dialogic.oam.DialogicLinksetFactory">
         </bean>]]>
                         </programlisting>
                                 </listitem>
@@ -886,7 +886,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                         <programlisting language="XML" role="XML"><![CDATA[<!-- ================================================ -->
     <!-- Linkset manager Service                                              -->
     <!-- ================================================ -->
-        <bean name="LinksetManager" class="org.mobicents.ss7.linkset.oam.LinksetManagerImpl">
+        <bean name="LinksetManager" class="org.restcomm.ss7.linkset.oam.LinksetManagerImpl">
                 <constructor>
                         <parameter>LinksetManager</parameter>
                 </constructor>
@@ -901,7 +901,7 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
         </bean>
 
         <bean name="LinksetExecutor"
-                class="org.mobicents.ss7.linkset.oam.LinksetExecutor">
+                class="org.restcomm.ss7.linkset.oam.LinksetExecutor">
                 <property name="linksetManager">
                         <inject bean="LinksetManager" />
                 </property>
@@ -923,13 +923,13 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                         <programlisting language="XML" role="XML"><![CDATA[<!-- ================================================ -->
     <!-- Shell Service                                                        -->
     <!-- ================================================ -->
-        <bean name="ShellExecutor" class="org.mobicents.ss7.management.console.ShellServer">
+        <bean name="ShellExecutor" class="org.restcomm.ss7.management.console.ShellServer">
                 <constructor>
                         <parameter>
                                 <inject bean="Scheduler" />
                         </parameter>
                         <parameter>
-                                <list class="javolution.util.FastList" elementClass="org.mobicents.ss7.management.console.ShellExecutor">
+                                <list class="javolution.util.FastList" elementClass="org.restcomm.ss7.management.console.ShellExecutor">
                                         <inject bean="M3UAShellExecutor" />
                                         <inject bean="SCTPShellExecutor" />
                                         <inject bean="LinksetExecutor" />
@@ -951,10 +951,10 @@ All the outgoing Dialogs will have id starting with <literal>dialogIdRangeStart<
                                 <literal>SignalingGateway</literal> acts as core engine binding all the components together.
                         </para>
                         <programlisting language="XML" role="XML"><![CDATA[        <!-- ================================================ -->
-    <!-- mobicents Signaling Gateway                                      -->
+    <!-- restcomm Signaling Gateway                                      -->
     <!-- ================================================ -->
         <bean name="SignalingGateway"
-                class="org.mobicents.ss7.sgw.SignalingGateway">
+                class="org.restcomm.ss7.sgw.SignalingGateway">
 
                 <property name="shellExecutor">
                         <inject bean="ShellExecutor" />

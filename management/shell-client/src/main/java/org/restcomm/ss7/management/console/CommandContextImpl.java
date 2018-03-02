@@ -100,7 +100,7 @@ public class CommandContextImpl implements CommandContext {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandContext#isConnected()
+     * @see org.restcomm.ss7.management.console.CommandContext#isConnected()
      */
     @Override
     public boolean isControllerConnected() {
@@ -110,7 +110,7 @@ public class CommandContextImpl implements CommandContext {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandContext#printLine(java.lang .String)
+     * @see org.restcomm.ss7.management.console.CommandContext#printLine(java.lang .String)
      */
     @Override
     public void printLine(String message) {
@@ -121,7 +121,7 @@ public class CommandContextImpl implements CommandContext {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandContext#printColumns(java .util.Collection)
+     * @see org.restcomm.ss7.management.console.CommandContext#printColumns(java .util.Collection)
      */
     @Override
     public void printColumns(Collection<String> col) {
@@ -131,7 +131,7 @@ public class CommandContextImpl implements CommandContext {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandContext#clearScreen()
+     * @see org.restcomm.ss7.management.console.CommandContext#clearScreen()
      */
     @Override
     public void clearScreen() {
@@ -141,7 +141,7 @@ public class CommandContextImpl implements CommandContext {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandContext#terminateSession()
+     * @see org.restcomm.ss7.management.console.CommandContext#terminateSession()
      */
     @Override
     public void terminateSession() {
@@ -152,7 +152,7 @@ public class CommandContextImpl implements CommandContext {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandContext#isTerminated()
+     * @see org.restcomm.ss7.management.console.CommandContext#isTerminated()
      */
     @Override
     public boolean isTerminated() {
@@ -162,7 +162,7 @@ public class CommandContextImpl implements CommandContext {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandContext#connectController (java.lang.String, int)
+     * @see org.restcomm.ss7.management.console.CommandContext#connectController (java.lang.String, int)
      */
     @Override
     public void connectController(String host, int port) {
@@ -212,7 +212,7 @@ public class CommandContextImpl implements CommandContext {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandContext#disconnectController ()
+     * @see org.restcomm.ss7.management.console.CommandContext#disconnectController ()
      */
     @Override
     public void disconnectController() {
@@ -223,7 +223,7 @@ public class CommandContextImpl implements CommandContext {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandContext#getDefaultControllerHost ()
+     * @see org.restcomm.ss7.management.console.CommandContext#getDefaultControllerHost ()
      */
     @Override
     public String getDefaultControllerHost() {
@@ -233,7 +233,7 @@ public class CommandContextImpl implements CommandContext {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandContext#getDefaultControllerPort ()
+     * @see org.restcomm.ss7.management.console.CommandContext#getDefaultControllerPort ()
      */
     @Override
     public int getDefaultControllerPort() {
@@ -243,7 +243,7 @@ public class CommandContextImpl implements CommandContext {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandContext#getControllerHost()
+     * @see org.restcomm.ss7.management.console.CommandContext#getControllerHost()
      */
     @Override
     public String getControllerHost() {
@@ -253,7 +253,7 @@ public class CommandContextImpl implements CommandContext {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandContext#getControllerPort()
+     * @see org.restcomm.ss7.management.console.CommandContext#getControllerPort()
      */
     @Override
     public int getControllerPort() {
@@ -263,7 +263,7 @@ public class CommandContextImpl implements CommandContext {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandContext#getHistory()
+     * @see org.restcomm.ss7.management.console.CommandContext#getHistory()
      */
     @Override
     public CommandHistory getHistory() {

@@ -37,11 +37,11 @@
 			</insert>
 		</xmltask> 
 
-		<!-- adding of "org.mobicents.ss7.modules" name="com/sun/nio/sctp"/>" into /org/restcomm/slee/container/lib/main/module.xml -->
+		<!-- adding of "org.restcomm.ss7.modules" name="com/sun/nio/sctp"/>" into /org/restcomm/slee/container/lib/main/module.xml -->
 		<xmltask source="${jboss.modules.path}/org/restcomm/slee/container/lib/main/module.xml" dest="${jboss.modules.path}/org/restcomm/slee/container/lib/main/module.xml">
-			<remove path="/:module/:dependencies/:module[@name='org.mobicents.ss7.modules']"/>
+			<remove path="/:module/:dependencies/:module[@name='org.restcomm.ss7.modules']"/>
 			<insert path="/:module/:dependencies/:module[last()]" position="after">
-				<![CDATA[<module xmlns="urn:jboss:module:1.0" name="org.mobicents.ss7.modules" export="true"/>]]> 
+				<![CDATA[<module xmlns="urn:jboss:module:1.0" name="org.restcomm.ss7.modules" export="true"/>]]> 
 			</insert>
 		</xmltask> 
 
@@ -51,10 +51,10 @@
 			<insert path="/:server/:profile/*[local-name()='subsystem']/*[local-name()='security-domains']/*[local-name()='security-domain'][last()]" position="after" file="template/security-domains.txt"></insert>
 		</xmltask> 
 
-		<!-- adding of "<extension module="org.mobicents.ss7.extension"/>" into standalone.xml -->
+		<!-- adding of "<extension module="org.restcomm.ss7.extension"/>" into standalone.xml -->
 		<xmltask source="${jboss.standalone.path}/configuration/standalone.xml" dest="${jboss.standalone.path}/configuration/standalone.xml">
 			<insert path="/:server/:extensions/:extension[last()]" position="after">
-				<![CDATA[<extension xmlns="urn:jboss:domain:4.2" module="org.mobicents.ss7.extension"/>]]> 
+				<![CDATA[<extension xmlns="urn:jboss:domain:4.2" module="org.restcomm.ss7.extension"/>]]> 
 			</insert>
 		</xmltask>
 
@@ -108,7 +108,7 @@
 		</xmltask> 
 
 		<xmltask source="${jboss.modules.path}/org/restcomm/slee/container/lib/main/module.xml" dest="${jboss.modules.path}/org/restcomm/slee/container/lib/main/module.xml">
-			<remove path="/:module/:dependencies/:module[@name='org.mobicents.ss7.modules']"/>
+			<remove path="/:module/:dependencies/:module[@name='org.restcomm.ss7.modules']"/>
 		</xmltask> 
 
 		<xmltask source="${jboss.standalone.path}/configuration/standalone.xml" dest="${jboss.standalone.path}/configuration/standalone.xml">
@@ -116,7 +116,7 @@
 		</xmltask> 
 
 		<xmltask source="${jboss.standalone.path}/configuration/standalone.xml" dest="${jboss.standalone.path}/configuration/standalone.xml">
-			<remove path="/:server/:extensions/:extension[@module='org.mobicents.ss7.extension']"/>
+			<remove path="/:server/:extensions/:extension[@module='org.restcomm.ss7.extension']"/>
 		</xmltask>
 
 		<xmltask source="${jboss.standalone.path}/configuration/standalone.xml" dest="${jboss.standalone.path}/configuration/standalone.xml">

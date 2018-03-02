@@ -193,7 +193,7 @@ public class LinksetManagerImpl implements LinksetManager {
     /**
      * <p>
      * Expected command is "linkset create <linkset-type> <options> <linkset-name>". linkset is
-     * {@link org.mobicents.ss7.management.console.Subject}
+     * {@link org.restcomm.ss7.management.console.Subject}
      * </p>
      * <p>
      * For example for creation of dahdi linkset, the command is : linkset create dahdi opc 1 apc 2 ni 3 linkset1

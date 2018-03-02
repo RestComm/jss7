@@ -56,7 +56,7 @@ public class LinksetCommandHandler extends CommandHandlerWithHelp {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandHandler#isValid(java.lang .String)
+     * @see org.restcomm.ss7.management.console.CommandHandler#isValid(java.lang .String)
      */
     @Override
     public void handle(CommandContext ctx, String commandLine) {
@@ -73,7 +73,7 @@ public class LinksetCommandHandler extends CommandHandlerWithHelp {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandHandler#isAvailable(org.mobicents
+     * @see org.restcomm.ss7.management.console.CommandHandler#isAvailable(org.mobicents
      * .ss7.management.console.CommandContext)
      */
     @Override

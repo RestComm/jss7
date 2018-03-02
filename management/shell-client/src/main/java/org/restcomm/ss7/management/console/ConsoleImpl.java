@@ -109,7 +109,7 @@ public class ConsoleImpl implements Console {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.Console#addCompleter(org.mobicents
+     * @see org.restcomm.ss7.management.console.Console#addCompleter(org.mobicents
      * .ss7.management.console.CommandLineCompleter)
      */
     @Override
@@ -128,7 +128,7 @@ public class ConsoleImpl implements Console {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.Console#isUseHistory()
+     * @see org.restcomm.ss7.management.console.Console#isUseHistory()
      */
     @Override
     public boolean isUseHistory() {
@@ -138,7 +138,7 @@ public class ConsoleImpl implements Console {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.Console#setUseHistory(boolean)
+     * @see org.restcomm.ss7.management.console.Console#setUseHistory(boolean)
      */
     @Override
     public void setUseHistory(boolean useHistory) {
@@ -148,7 +148,7 @@ public class ConsoleImpl implements Console {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.Console#getHistory()
+     * @see org.restcomm.ss7.management.console.Console#getHistory()
      */
     @Override
     public CommandHistory getHistory() {
@@ -158,7 +158,7 @@ public class ConsoleImpl implements Console {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.Console#setHistoryFile(java.io.File)
+     * @see org.restcomm.ss7.management.console.Console#setHistoryFile(java.io.File)
      */
     @Override
     public void setHistoryFile(File f) {
@@ -168,7 +168,7 @@ public class ConsoleImpl implements Console {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.Console#clearScreen()
+     * @see org.restcomm.ss7.management.console.Console#clearScreen()
      */
     @Override
     public void clearScreen() {
@@ -182,7 +182,7 @@ public class ConsoleImpl implements Console {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.Console#printColumns(java.util. Collection)
+     * @see org.restcomm.ss7.management.console.Console#printColumns(java.util. Collection)
      */
     @Override
     public void printColumns(Collection<String> list) {
@@ -199,7 +199,7 @@ public class ConsoleImpl implements Console {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.Console#print(java.lang.String)
+     * @see org.restcomm.ss7.management.console.Console#print(java.lang.String)
      */
     @Override
     public void print(String line) {
@@ -213,7 +213,7 @@ public class ConsoleImpl implements Console {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.Console#printNewLine()
+     * @see org.restcomm.ss7.management.console.Console#printNewLine()
      */
     @Override
     public void printNewLine() {
@@ -227,7 +227,7 @@ public class ConsoleImpl implements Console {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.Console#readLine(java.lang.String)
+     * @see org.restcomm.ss7.management.console.Console#readLine(java.lang.String)
      */
     @Override
     public String readLine(String prompt) {
@@ -242,7 +242,7 @@ public class ConsoleImpl implements Console {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.Console#readLine(java.lang.String, java.lang.Character)
+     * @see org.restcomm.ss7.management.console.Console#readLine(java.lang.String, java.lang.Character)
      */
     @Override
     public String readLine(String prompt, Character mask) {

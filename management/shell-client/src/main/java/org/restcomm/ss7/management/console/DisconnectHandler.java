@@ -39,7 +39,7 @@ public class DisconnectHandler extends CommandHandlerWithHelp {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandHandler#isAvailable(org.mobicents
+     * @see org.restcomm.ss7.management.console.CommandHandler#isAvailable(org.mobicents
      * .ss7.management.console.CommandContext)
      */
     @Override
@@ -54,7 +54,7 @@ public class DisconnectHandler extends CommandHandlerWithHelp {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandHandler#handle(org.mobicents .ss7.management.console.CommandContext,
+     * @see org.restcomm.ss7.management.console.CommandHandler#handle(org.mobicents .ss7.management.console.CommandContext,
      * java.lang.String)
      */
     @Override

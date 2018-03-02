@@ -23,10 +23,10 @@ If you installed it as a JBoss Service then you must remember to clean up the SS
   <para>
    Result:
   <programlisting>
-Buildfile: /home/vinu/Downloads/mobicents-jss7-6.1.3.GA/ss7/build.xml
+Buildfile: /home/vinu/Downloads/restcomm-jss7-6.1.3.GA/ss7/build.xml
 
 undeploy:
-   [delete] Deleting directory /home/vinu/Downloads/mobicents-jss7-6.1.3.GA/ss7/${system.JBOSS_HOME}/server/default/deploy/mobicents-ss7-service
+   [delete] Deleting directory /home/vinu/Downloads/restcomm-jss7-6.1.3.GA/ss7/${system.JBOSS_HOME}/server/default/deploy/restcomm-ss7-service
 
 BUILD SUCCESSFUL
 Total time: 0 seconds

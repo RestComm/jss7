@@ -32,7 +32,7 @@
             </mbean>
 
 <!--
-            <mbean name="Mtp3UserPart_Dialogic" type="DialogicMtp3UserPart" class="org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart" interface="org.restcomm.protocols.ss7.mtp.Mtp3UserPart" enabled="true" reflection="true">
+            <mbean name="Mtp3UserPart_Dialogic" type="DialogicMtp3UserPart" class="org.restcomm.ss7.hardware.dialogic.DialogicMtp3UserPart" interface="org.restcomm.protocols.ss7.mtp.Mtp3UserPart" enabled="true" reflection="true">
                 <property name="productName" type="String" value="Restcomm-jSS7-2"/>
                 <property name="routingLabelFormat" type="Bean" value="RoutingLabelFormat"/>
 
@@ -50,7 +50,7 @@
                 <property name="localSpc" type="int" value="22234"/>
                 <property name="ni" type="int" value="2"/>
             </mbean>
-            <mbean name="ISUPSS7Service" type="ISUPSS7Service" class="org.mobicents.ss7.SS7Service" enabled="true" reflection="false">
+            <mbean name="ISUPSS7Service" type="ISUPSS7Service" class="org.restcomm.ss7.SS7Service" enabled="true" reflection="false">
                 <property name="serviceName" type="String" value="ISUP"/>
                 <property name="isupStack" type="Bean" value="IsupStack"/>
                 <property name="jndiName" type="String" value="java:/restcomm/ss7/isup"/>
@@ -130,7 +130,7 @@
                 <property name="jndiName" type="String" value="java:/restcomm/ss7/cap"/>
             </mbean>
 
-            <mbean name="ShellExecutor" type="ShellExecutor" class="org.mobicents.ss7.management.console.ShellServer" enabled="true" reflection="false">
+            <mbean name="ShellExecutor" type="ShellExecutor" class="org.restcomm.ss7.management.console.ShellServer" enabled="true" reflection="false">
                 <property name="address" type="String" value="127.0.0.1"/>
                 <property name="port" type="int" value="3435"/>
                 <property name="securityDomain" type="String" value="jmx-console"/>

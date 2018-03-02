@@ -78,8 +78,8 @@ import org.restcomm.protocols.ss7.isup.ParameterException;
 import org.restcomm.protocols.ss7.isup.impl.ISUPStackImpl;
 import org.restcomm.protocols.ss7.isup.message.ISUPMessage;	
 
-import org.mobicents.ss7.linkset.oam.Layer4;
-import org.mobicents.ss7.linkset.oam.Linkset;
+import org.restcomm.ss7.linkset.oam.Layer4;
+import org.restcomm.ss7.linkset.oam.Linkset;
 
 public class ISUPTest implements ISUPListener
 {

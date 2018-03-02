@@ -133,7 +133,7 @@ Libraries are compiled only for linux OS for 32-bit JAVA for now.
 
 [source,xml]
 ----
-    <bean name="DahdiLinksetFactory" class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
+    <bean name="DahdiLinksetFactory" class="org.restcomm.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
     </bean>
 ----
 
@@ -147,15 +147,15 @@ It maintains a Map of available 'factory name' vs 'factory'. You should never to
     <!-- ================================================ -->
     <!-- Linkset manager Service                          -->
     <!-- ================================================ -->
-    <bean name="LinksetFactoryFactory" class="org.mobicents.ss7.linkset.oam.LinksetFactoryFactory">
+    <bean name="LinksetFactoryFactory" class="org.restcomm.ss7.linkset.oam.LinksetFactoryFactory">
             <incallback method="addFactory" />
             <uncallback method="removeFactory" />
     </bean>
 
-    <bean name="DahdiLinksetFactory" class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
+    <bean name="DahdiLinksetFactory" class="org.restcomm.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
     </bean>
 
-    <bean name="LinksetManager" class="org.mobicents.ss7.linkset.oam.LinksetManagerImpl">
+    <bean name="LinksetManager" class="org.restcomm.ss7.linkset.oam.LinksetManagerImpl">
         <constructor>
             <parameter>LinksetManager</parameter>
         </constructor>
@@ -168,7 +168,7 @@ It maintains a Map of available 'factory name' vs 'factory'. You should never to
         <property name="persistDir">${jboss.server.data.dir}</property>
     </bean>
 
-    <bean name="LinksetExecutor" class="org.mobicents.ss7.linkset.oam.LinksetExecutor">
+    <bean name="LinksetExecutor" class="org.restcomm.ss7.linkset.oam.LinksetExecutor">
         <property name="linksetManager">
             <inject bean="LinksetManager" />
         </property>
@@ -208,7 +208,7 @@ See JSS7 Installation Guide for more details.
     <!-- Dialogic Mtp3UserPart -->
     <!-- ==================================================================== -->
     <!---->
-    <bean name="Mtp3UserPart" class="org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart">
+    <bean name="Mtp3UserPart" class="org.restcomm.ss7.hardware.dialogic.DialogicMtp3UserPart">
 		<constructor>
 			<parameter>{this-platform}-jSS7</parameter>
 		</constructor>
@@ -465,7 +465,7 @@ Received commands are executed on local resources to  perform actions like creat
 				<inject bean="SS7Scheduler" />
 			</parameter>
 			<parameter>
-				<list class="javolution.util.FastList" elementClass="org.mobicents.ss7.management.console.ShellExecutor">
+				<list class="javolution.util.FastList" elementClass="org.restcomm.ss7.management.console.ShellExecutor">
 					<inject bean="SccpExecutor" />
 					<inject bean="M3UAShellExecutor" />
 					<inject bean="SCTPShellExecutor" />
@@ -597,36 +597,36 @@ SS7Service acts as core engine binding all the components together.
     <!-- ==================================================================== -->
     <!-- RestComm SS7 Service -->
     <!-- ==================================================================== -->
-    <bean name="TCAPSS7Service" class="org.mobicents.ss7.SS7Service">
+    <bean name="TCAPSS7Service" class="org.restcomm.ss7.SS7Service">
         <constructor><parameter>TCAP</parameter></constructor>
-        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=TCAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.restcomm.ss7:service=TCAPSS7Service",exposedInterface=org.restcomm.ss7.SS7ServiceMBean.class,registerDirectly=true)
         </annotation>
         <property name="jndiName">java:/restcomm/ss7/tcap</property>
         <property name="stack">
             <inject bean="TcapStack" property="provider" />
         </property>
     </bean>
-    <bean name="MAPSS7Service" class="org.mobicents.ss7.SS7Service">
+    <bean name="MAPSS7Service" class="org.restcomm.ss7.SS7Service">
         <constructor><parameter>MAP</parameter></constructor>
-        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=MAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.restcomm.ss7:service=MAPSS7Service",exposedInterface=org.restcomm.ss7.SS7ServiceMBean.class,registerDirectly=true)
         </annotation>
         <property name="jndiName">java:/restcomm/ss7/map</property>
         <property name="stack">
             <inject bean="MapStack" property="MAPProvider" />
         </property>
     </bean>
-    <bean name="CAPSS7Service" class="org.mobicents.ss7.SS7Service">
+    <bean name="CAPSS7Service" class="org.restcomm.ss7.SS7Service">
         <constructor><parameter>CAP</parameter></constructor>
-        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=CAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.restcomm.ss7:service=CAPSS7Service",exposedInterface=org.restcomm.ss7.SS7ServiceMBean.class,registerDirectly=true)
         </annotation>
         <property name="jndiName">java:/restcomm/ss7/cap</property>
         <property name="stack">
             <inject bean="CapStack" property="CAPProvider" />
         </property>
     </bean>
-    <bean name="ISUPSS7Service" class="org.mobicents.ss7.SS7Service">
+    <bean name="ISUPSS7Service" class="org.restcomm.ss7.SS7Service">
         <constructor><parameter>ISUP</parameter></constructor>
-        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=ISUPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.restcomm.ss7:service=ISUPSS7Service",exposedInterface=org.restcomm.ss7.SS7ServiceMBean.class,registerDirectly=true)
         </annotation>
         <property name="jndiName">java:/restcomm/ss7/isup</property>
         <property name="stack">
@@ -656,7 +656,7 @@ jSS7 Managemenet Service provides some extra functionality for stack management 
 ----
 	<bean name="Ss7Management"
 		class="org.restcomm.protocols.ss7.oam.common.jmxss7.Ss7Management">
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=Ss7Management",exposedInterface=org.restcomm.protocols.ss7.oam.common.jmxss7.Ss7ManagementMBean.class,registerDirectly=true)</annotation>
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.restcomm.ss7:service=Ss7Management",exposedInterface=org.restcomm.protocols.ss7.oam.common.jmxss7.Ss7ManagementMBean.class,registerDirectly=true)</annotation>
 		<property name="agentId">jboss</property>
 	</bean>
 
@@ -846,7 +846,7 @@ Concrete implementation of `LinksetFactory` is responsible to create  new instan
 ----
 
 	<bean name="DahdiLinksetFactory"
-		class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
+		class="org.restcomm.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
 		<property name="scheduler">
 			<inject bean="Scheduler" />
 		</property>
@@ -859,7 +859,7 @@ Concrete implementation of `LinksetFactory` is responsible to create  new instan
 ----
 
 	<bean name="DialogicLinksetFactory"
-		class="org.mobicents.ss7.hardware.dialogic.oam.DialogicLinksetFactory">
+		class="org.restcomm.ss7.hardware.dialogic.oam.DialogicLinksetFactory">
 	</bean>
 ----
 
@@ -882,7 +882,7 @@ You should never touch this bean.
     <!-- ================================================ -->
     <!-- Linkset manager Service                                              -->
     <!-- ================================================ -->
-	<bean name="LinksetManager" class="org.mobicents.ss7.linkset.oam.LinksetManagerImpl">
+	<bean name="LinksetManager" class="org.restcomm.ss7.linkset.oam.LinksetManagerImpl">
 		<constructor>
 			<parameter>LinksetManager</parameter>
 		</constructor>
@@ -896,7 +896,7 @@ You should never touch this bean.
 		<property name="persistDir">${sgw.home.dir}/ss7</property>
 	</bean>
 
-	<bean name="LinksetExecutor" class="org.mobicents.ss7.linkset.oam.LinksetExecutor">
+	<bean name="LinksetExecutor" class="org.restcomm.ss7.linkset.oam.LinksetExecutor">
 		<property name="linksetManager">
 			<inject bean="LinksetManager" />
 		</property>
@@ -922,13 +922,13 @@ Received commands are executed on local resources to  perform actions like creat
     <!-- ================================================ -->
     <!-- Shell Service                                                        -->
     <!-- ================================================ -->
-	<bean name="ShellExecutor" class="org.mobicents.ss7.management.console.ShellServer">
+	<bean name="ShellExecutor" class="org.restcomm.ss7.management.console.ShellServer">
 		<constructor>
 			<parameter>
 				<inject bean="Scheduler" />
 			</parameter>
 			<parameter>
-				<list class="javolution.util.FastList" elementClass="org.mobicents.ss7.management.console.ShellExecutor">
+				<list class="javolution.util.FastList" elementClass="org.restcomm.ss7.management.console.ShellExecutor">
 					<inject bean="M3UAShellExecutor" />
 					<inject bean="SCTPShellExecutor" />
 					<inject bean="LinksetExecutor" />
@@ -956,7 +956,7 @@ The shell commands are exchanged over TCP/IP.
     <!-- ================================================ -->
     <!-- mobicents Signaling Gateway                                      -->
     <!-- ================================================ -->
-	<bean name="SignalingGateway" class="org.mobicents.ss7.sgw.SignalingGateway">
+	<bean name="SignalingGateway" class="org.restcomm.ss7.sgw.SignalingGateway">
 		<property name="scheduler">
 			<inject bean="Scheduler" />
 		</property>

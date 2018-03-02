@@ -59,7 +59,7 @@
 							$("#login-settings-error").hide();
 						}					
 						
-						var mbeanSearch="org.mobicents.ss7:layer=TCAP,type=Management,name="+mbeanName;
+						var mbeanSearch="org.restcomm.ss7:layer=TCAP,type=Management,name="+mbeanName;
 						jolokia.request(
 								[
 									{ type: "write", mbean: mbeanSearch, attribute: propertyName, value: inputTextEle.value },
@@ -93,7 +93,7 @@
 					}					
 					
 					function refreshTcapList(){
-						mbeanSearch="org.mobicents.ss7:layer=TCAP,type=Management,name=*";
+						mbeanSearch="org.restcomm.ss7:layer=TCAP,type=Management,name=*";
 						var mbean;
 						$.ajax({
 							dataType: "json",

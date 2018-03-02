@@ -57,12 +57,12 @@
     <step>
 	<para>If the service has been deployed successfully, you will find the below message appear on screen:</para>
 			<programlisting>
-Buildfile: /home/vinu/Downloads/mobicents-jss7-6.1.3.GA/ss7/build.xml
+Buildfile: /home/vinu/Downloads/restcomm-jss7-6.1.3.GA/ss7/build.xml
 
 deploy:
-     [copy] Copying 38 files to /home/vinu/Downloads/mobicents-jss7-6.1.3.GA/ss7/${system.JBOSS_HOME}/server/default/deploy/mobicents-ss7-service
-     [copy] Copying 2 files to /home/vinu/Downloads/mobicents-jss7-6.1.3.GA/ss7/${system.JBOSS_HOME}/bin
-     [copy] Copying 9 files to /home/vinu/Downloads/mobicents-jss7-6.1.3.GA/ss7/${system.JBOSS_HOME}/lib
+     [copy] Copying 38 files to /home/vinu/Downloads/restcomm-jss7-6.1.3.GA/ss7/${system.JBOSS_HOME}/server/default/deploy/restcomm-ss7-service
+     [copy] Copying 2 files to /home/vinu/Downloads/restcomm-jss7-6.1.3.GA/ss7/${system.JBOSS_HOME}/bin
+     [copy] Copying 9 files to /home/vinu/Downloads/restcomm-jss7-6.1.3.GA/ss7/${system.JBOSS_HOME}/lib
 
 BUILD SUCCESSFUL
 			</programlisting>
@@ -78,7 +78,7 @@ BUILD SUCCESSFUL
 	</section>
 		
 	
-	<section id="mobicents_ss7_sgw">
+	<section id="restcomm_ss7_sgw">
  	<title>&THIS.PLATFORM; &THIS.APPLICATION; as a Signaling Gateway</title>
 			<para>
 				&THIS.PLATFORM; &THIS.APPLICATION; can function as a standalone Signaling Gateway installed on any machine. It acts as a signaling agent that receives/sends Switched Circuit Network (SCN) native signaling at the edge of an IP network. Installing the Signaling Gateway is straightforward.
@@ -95,13 +95,13 @@ BUILD SUCCESSFUL
  </substeps>
 				</step>
 				<step>
-					<para>Copy <filename>&THIS.APPLICATION.DIRNAME;-&THIS.VERSION;/ss7/mobicents-ss7-sgw</filename>
+					<para>Copy <filename>&THIS.APPLICATION.DIRNAME;-&THIS.VERSION;/ss7/restcomm-ss7-sgw</filename>
 				to any folder of your choice in any machine that supports the requirements specified. Your Signaling Gateway is now ready to be used.</para>
 				</step>
 			</procedure>
 		</section>
 
-<section id="mobicents_ss7_shell">
+<section id="restcomm_ss7_shell">
  	<title>Shell - Command Line Interface (CLI)</title>
 			<para>
 				Once you have installed &THIS.PLATFORM; SS7 Service and the Signaling Gateway, you can configure and manage them both using Shell commands. &THIS.PLATFORM; &THIS.APPLICATION; comes with a Shell Management Interface that enables easy run-time configuration. You can install the Shell (CLI) Component on any machine (usually remote) and easily connect to and manage the Stack on a remote machine with simple commands. For more details on using the Shell and the commands available, please refer to the &THIS.PLATFORM; &THIS.APPLICATION; User Guide.
@@ -139,12 +139,12 @@ BUILD SUCCESSFUL
     <step>
 	<para>If the Shell has been deployed successfully, you will find the below message appear on screen:</para>
 			<programlisting>
-Buildfile: /home/vinu/Downloads/mobicents-jss7-6.1.3.GA/ss7/build.xml
+Buildfile: /home/vinu/Downloads/restcomm-jss7-6.1.3.GA/ss7/build.xml
 
 deploy:
-     [copy] Copying 38 files to /home/vinu/Downloads/mobicents-jss7-6.1.3.GA/ss7/${system.JBOSS_HOME}/server/default/deploy/mobicents-ss7-service
-     [copy] Copying 2 files to /home/vinu/Downloads/mobicents-jss7-6.1.3.GA/ss7/${system.JBOSS_HOME}/bin
-     [copy] Copying 9 files to /home/vinu/Downloads/mobicents-jss7-6.1.3.GA/ss7/${system.JBOSS_HOME}/lib
+     [copy] Copying 38 files to /home/vinu/Downloads/restcomm-jss7-6.1.3.GA/ss7/${system.JBOSS_HOME}/server/default/deploy/restcomm-ss7-service
+     [copy] Copying 2 files to /home/vinu/Downloads/restcomm-jss7-6.1.3.GA/ss7/${system.JBOSS_HOME}/bin
+     [copy] Copying 9 files to /home/vinu/Downloads/restcomm-jss7-6.1.3.GA/ss7/${system.JBOSS_HOME}/lib
 
 BUILD SUCCESSFUL
 			</programlisting>
@@ -157,7 +157,7 @@ BUILD SUCCESSFUL
 </step>	
 			</procedure>
 		</section> 
-<section id="mobicents_ss7_simulator">
+<section id="restcomm_ss7_simulator">
  	<title>Installing the &THIS.PLATFORM; &THIS.APPLICATION; Simulator</title>
 			<para>
 				&THIS.PLATFORM; &THIS.APPLICATION; Simulator can function as a standalone component installed on any machine. The Simulator module will enable you to test and understand the functionality of the Stack. 
@@ -174,7 +174,7 @@ BUILD SUCCESSFUL
  </substeps>
 				</step>
 				<step>
-					<para>Copy <filename>&THIS.APPLICATION.DIRNAME;-&THIS.VERSION;/ss7/mobicents-ss7-simulator</filename>
+					<para>Copy <filename>&THIS.APPLICATION.DIRNAME;-&THIS.VERSION;/ss7/restcomm-ss7-simulator</filename>
 				to any folder of your choice in any machine that supports the requirements specified. Your Simulator is now ready to be used.</para>
 				</step>
 			</procedure>
@@ -182,7 +182,7 @@ BUILD SUCCESSFUL
 <section id="running_without_jboss">
 		<title>&THIS.PLATFORM; &THIS.APPLICATION; as a Standalone Component</title>
 	<para>
-			&THIS.PLATFORM; &THIS.APPLICATION;  can be installed as a standalone Java library without any dependency on JBoss, mobicents JSLEE or any other container. The &THIS.PLATFORM; &THIS.APPLICATION; User Guide will assist you in implemeting this and also give some details of how jSS7 layers can be configured. If you do not intend to use it with JBoss AS, then you must follow the regular way of initializing jSS7 Stack, which is to build each of the protocols, configure individually and bind them together. </para> 
+			&THIS.PLATFORM; &THIS.APPLICATION;  can be installed as a standalone Java library without any dependency on JBoss, restcomm JSLEE or any other container. The &THIS.PLATFORM; &THIS.APPLICATION; User Guide will assist you in implemeting this and also give some details of how jSS7 layers can be configured. If you do not intend to use it with JBoss AS, then you must follow the regular way of initializing jSS7 Stack, which is to build each of the protocols, configure individually and bind them together. </para> 
 	</section>		
 </section>
 <section

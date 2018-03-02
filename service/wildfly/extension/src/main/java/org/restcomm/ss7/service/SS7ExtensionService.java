@@ -248,7 +248,7 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
         try {
             ss7ManagementMBean = new Ss7Management();
             ss7ManagementMBean.setAgentId(getPropertyString("Ss7Management", "agentId", "jboss"));
-            registerMBean(ss7ManagementMBean, "org.mobicents.ss7:service=Ss7Management");
+            registerMBean(ss7ManagementMBean, "org.restcomm.ss7:service=Ss7Management");
         } catch (Exception e) {
             throw new StartException("Ss7Management MBean creating is failed: " + e.getMessage(), e);
         }
@@ -1109,7 +1109,7 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
             isupSS7Service.setStack(isupStack.getIsupProvider());
 
             this.beanSS7Services.put(beanName, isupSS7Service);
-            registerMBean(isupSS7Service, "org.mobicents.ss7:service=" + beanName);
+            registerMBean(isupSS7Service, "org.restcomm.ss7:service=" + beanName);
         } catch (Exception e) {
             throw new StartException("IsupService MBean creating is failed: name=" + beanName + ", " + e.getMessage(), e);
         }
@@ -1246,7 +1246,7 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
             tcapSS7Service.setStack(tcapStack.getProvider());
 
             this.beanSS7Services.put(beanName, tcapSS7Service);
-            registerMBean(tcapSS7Service, "org.mobicents.ss7:service=" + beanName);
+            registerMBean(tcapSS7Service, "org.restcomm.ss7:service=" + beanName);
         } catch (Exception e) {
             throw new StartException("TcapService MBean creating is failed: name=" + beanName + ", " + e.getMessage(), e);
         }
@@ -1295,7 +1295,7 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
             mapSS7Service.setStack(mapStack.getMAPProvider());
 
             this.beanSS7Services.put(beanName, mapSS7Service);
-            registerMBean(mapSS7Service, "org.mobicents.ss7:service=" + beanName);
+            registerMBean(mapSS7Service, "org.restcomm.ss7:service=" + beanName);
         } catch (Exception e) {
             throw new StartException("MapService MBean creating is failed: name=" + beanName + ", " + e.getMessage(), e);
         }
@@ -1345,7 +1345,7 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
             capSS7Service.setStack(capStack.getCAPProvider());
 
             this.beanSS7Services.put(beanName, capSS7Service);
-            registerMBean(capSS7Service, "org.mobicents.ss7:service=" + beanName);
+            registerMBean(capSS7Service, "org.restcomm.ss7:service=" + beanName);
         } catch (Exception e) {
             throw new StartException("CapService MBean creating is failed: name=" + beanName + ", " + e.getMessage(), e);
         }

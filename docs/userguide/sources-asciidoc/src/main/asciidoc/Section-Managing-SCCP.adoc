@@ -39,7 +39,7 @@ The GUI will look similar to the figure below and is divided into tabs.
 
 
 The first tab will display the properties of the SCCP Management unit.
-These details displayed here are fetched from the XML descriptor file [path]_jboss-beans.xml_, which is  located at [path]_$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF_, where [app]`profile_name` is the server profile name.
+These details displayed here are fetched from the XML descriptor file [path]_jboss-beans.xml_, which is  located at [path]_$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF_, where [app]`profile_name` is the server profile name.
 These properties can be modified here in the GUI.
 To modify them you must click on pencil, make changes and save.
 The GUI will then display the modified values.

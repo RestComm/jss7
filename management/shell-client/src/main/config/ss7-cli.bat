@@ -136,7 +136,7 @@ echo ===========================================================================
 echo.
 
 :RESTART
-"%JAVA%" %JAVA_OPTS% -Djava.ext.dirs="%SHELL_ENDORSED_DIRS%" -classpath "%SHELL_CLASSPATH%" org.mobicents.ss7.management.console.Shell %*
+"%JAVA%" %JAVA_OPTS% -Djava.ext.dirs="%SHELL_ENDORSED_DIRS%" -classpath "%SHELL_CLASSPATH%" org.restcomm.ss7.management.console.Shell %*
 rem if ERRORLEVEL 10 goto RESTART
 
 :END

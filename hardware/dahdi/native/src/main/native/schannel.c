@@ -1,5 +1,5 @@
-#include <org_mobicents_ss7_hardware_dahdi_Channel.h>
-#include <org_mobicents_ss7_hardware_dahdi_Selector.h>
+#include <org_restcomm_ss7_hardware_dahdi_Channel.h>
+#include <org_restcomm_ss7_hardware_dahdi_Selector.h>
 #include <user.h>
 #include <errno.h>
 #include <stdio.h>
@@ -70,14 +70,14 @@ static int openFileChannel(jint zapid,jint ioBufferSize) {
     return fd;    	
 }
 
-JNIEXPORT void JNICALL Java_org_mobicents_ss7_hardware_dahdi_Selector_doRegister (JNIEnv *env, jobject obj, jint fd) {
+JNIEXPORT void JNICALL Java_org_restcomm_ss7_hardware_dahdi_Selector_doRegister (JNIEnv *env, jobject obj, jint fd) {
     int i = channel_count;
     channel_count = channel_count + 1;
     fds[i].fd = fd;
     fds[i].events = POLLIN|POLLPRI|POLLOUT;
 }
 
-JNIEXPORT void JNICALL Java_org_mobicents_ss7_hardware_dahdi_Selector_doUnregister (JNIEnv *env, jobject obj, jint fd) {
+JNIEXPORT void JNICALL Java_org_restcomm_ss7_hardware_dahdi_Selector_doUnregister (JNIEnv *env, jobject obj, jint fd) {
     struct pollfd temp[16];
     
     int i;
@@ -102,14 +102,14 @@ JNIEXPORT void JNICALL Java_org_mobicents_ss7_hardware_dahdi_Selector_doUnregist
     }    
 }
 
-JNIEXPORT void JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_doRegister (JNIEnv *env, jobject obj, jint fd) {
+JNIEXPORT void JNICALL Java_org_restcomm_ss7_hardware_dahdi_Channel_doRegister (JNIEnv *env, jobject obj, jint fd) {
     int i = channel_count;
     channel_count = channel_count + 1;
     fds[i].fd = fd;
     fds[i].events = POLLIN|POLLPRI|POLLOUT;
 }
 
-JNIEXPORT void JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_doUnregister (JNIEnv *env, jobject obj, jint fd) {
+JNIEXPORT void JNICALL Java_org_restcomm_ss7_hardware_dahdi_Channel_doUnregister (JNIEnv *env, jobject obj, jint fd) {
     struct pollfd temp[16];
     
     int i;
@@ -134,7 +134,7 @@ JNIEXPORT void JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_doUnregiste
     }    
 }
 
-JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dahdi_Selector_doPoll (JNIEnv *env, jobject obj, jintArray selected, jint flags, jint timeout) {
+JNIEXPORT jint JNICALL Java_org_restcomm_ss7_hardware_dahdi_Selector_doPoll (JNIEnv *env, jobject obj, jintArray selected, jint flags, jint timeout) {
     int res;
     jint *elements = (*env)->GetIntArrayElements(env, selected, 0);
     
@@ -161,7 +161,7 @@ JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dahdi_Selector_doPoll (JN
     return k;
 }
 
-JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_openChannel
+JNIEXPORT jint JNICALL Java_org_restcomm_ss7_hardware_dahdi_Channel_openChannel
   (JNIEnv *env, jobject obj, jint zapid, jint ioBufferSize) {
     return openFileChannel(zapid,ioBufferSize);
 }
@@ -173,7 +173,7 @@ JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_openChannel
  * Method:    read
  * Signature: ([B)I
  */
-JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_readData
+JNIEXPORT jint JNICALL Java_org_restcomm_ss7_hardware_dahdi_Channel_readData
   (JNIEnv *env, jobject obj, jint fd, jbyteArray buff, jint ioBufferSize) {
     int res = 0;
     int count = 0;
@@ -225,7 +225,7 @@ JNIEXPORT jint JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_readData
  * Method:    write
  * Signature: ([BI)V
  */
-JNIEXPORT void JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_writeData
+JNIEXPORT void JNICALL Java_org_restcomm_ss7_hardware_dahdi_Channel_writeData
   (JNIEnv *env, jobject obj, jint fd, jbyteArray buff, jint length) {
     int res;
     int len = length;
@@ -276,7 +276,7 @@ JNIEXPORT void JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_writeData
  * Method:    close
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_org_mobicents_ss7_hardware_dahdi_Channel_closeChannel (JNIEnv *env, jobject obj, jint fd) {
+JNIEXPORT void JNICALL Java_org_restcomm_ss7_hardware_dahdi_Channel_closeChannel (JNIEnv *env, jobject obj, jint fd) {
     close(fd);
 }
 

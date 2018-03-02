@@ -39,8 +39,8 @@ public abstract class BaseCongestionMonitor implements CongestionMonitor {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.congestion.CongestionMonitor#addCongestionListener(
-     * org.mobicents.ss7.congestion.CongestionListener)
+     * @see org.restcomm.ss7.congestion.CongestionMonitor#addCongestionListener(
+     * org.restcomm.ss7.congestion.CongestionListener)
      */
     @Override
     public void addCongestionListener(CongestionListener listener) {
@@ -57,8 +57,8 @@ public abstract class BaseCongestionMonitor implements CongestionMonitor {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.congestion.CongestionMonitor#removeCongestionListener
-     * (org.mobicents.ss7.congestion.CongestionListener)
+     * @see org.restcomm.ss7.congestion.CongestionMonitor#removeCongestionListener
+     * (org.restcomm.ss7.congestion.CongestionListener)
      */
     @Override
     public void removeCongestionListener(CongestionListener listener) {

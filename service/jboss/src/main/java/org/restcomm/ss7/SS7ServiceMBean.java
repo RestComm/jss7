@@ -27,7 +27,7 @@ package org.restcomm.ss7;
  * @author kulikov
  */
 public interface SS7ServiceMBean {
-    String ONAME = "org.mobicents.ss7:service=SS7Service";
+    String ONAME = "org.restcomm.ss7:service=SS7Service";
 
     void start() throws Exception;
 

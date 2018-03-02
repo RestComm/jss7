@@ -80,7 +80,7 @@ public abstract class AbstractCommandHandler implements CommandHandler {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandHandler#handles(java.lang .String)
+     * @see org.restcomm.ss7.management.console.CommandHandler#handles(java.lang .String)
      */
     @Override
     public boolean handles(String command) {
@@ -130,7 +130,7 @@ public abstract class AbstractCommandHandler implements CommandHandler {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.CommandHandler# getCommandLineCompleterList()
+     * @see org.restcomm.ss7.management.console.CommandHandler# getCommandLineCompleterList()
      */
     @Override
     public List<CommandLineCompleter> getCommandLineCompleterList() {

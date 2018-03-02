@@ -2211,7 +2211,7 @@ public class SccpExecutor implements ShellExecutor {
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.management.console.ShellExecutor#handles(java.lang. String)
+     * @see org.restcomm.ss7.management.console.ShellExecutor#handles(java.lang. String)
      */
     @Override
     public boolean handles(String command) {

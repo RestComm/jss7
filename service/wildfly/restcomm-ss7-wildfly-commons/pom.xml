@@ -13,8 +13,8 @@
 	<name>Restcomm jSS7 :: Service :: Commons :: ${project.artifactId}</name>
 
 	<properties>
-		<module.name>org.mobicents.ss7.commons</module.name>
-		<module.path>org/mobicents/ss7/commons</module.path>
+		<module.name>org.restcomm.ss7.commons</module.name>
+		<module.path>org/restcomm/ss7/commons</module.path>
 	</properties>
 
 	<build>

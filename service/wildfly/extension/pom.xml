@@ -13,8 +13,8 @@
 	<name>Restcomm jSS7 :: Service :: WildFly :: ${project.artifactId}</name>
 
     <properties>
-        <module.name>org.mobicents.ss7.extension</module.name>
-        <module.path>org/mobicents/ss7/extension</module.path>
+        <module.name>org.restcomm.ss7.extension</module.name>
+        <module.path>org/restcomm/ss7/extension</module.path>
     </properties>
 
     <build>

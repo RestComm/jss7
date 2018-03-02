@@ -24,7 +24,7 @@
 			<version>${project.version}</version>
 		</dependency>
 
-		<!-- non mobicents -->
+		<!-- non restcomm -->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>

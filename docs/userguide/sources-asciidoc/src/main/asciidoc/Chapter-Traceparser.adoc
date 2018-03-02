@@ -14,7 +14,7 @@ You can install and run the module on any machine.
 . Change the working directory to the bin folder in the Simulator's installation directory. 
 +
 ----
-downloads]$ cd mobicents-jss7-<version>/ss7/mobicents-ss7-traceparser/bin
+downloads]$ cd restcomm-jss7-<version>/ss7/restcomm-ss7-traceparser/bin
 ----
 
 . (Optional) Ensure that the [path]_run.sh_ start script is executable. 

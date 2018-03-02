@@ -95,7 +95,7 @@ public class Mtp3 implements Runnable {
         this.scheduler = scheduler;
         this.name = name;
         try {
-            selector = SelectorProvider.getSelector("org.mobicents.ss7.hardware.dahdi.Selector");
+            selector = SelectorProvider.getSelector("org.restcomm.ss7.hardware.dahdi.Selector");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -47,8 +47,8 @@
 					</compilerStartOptions>
 
 					<javahClassNames>
-						<javahClassName>org.mobicents.ss7.hardware.dahdi.Channel</javahClassName>
-						<javahClassName>org.mobicents.ss7.hardware.dahdi.Selector</javahClassName>
+						<javahClassName>org.restcomm.ss7.hardware.dahdi.Channel</javahClassName>
+						<javahClassName>org.restcomm.ss7.hardware.dahdi.Selector</javahClassName>
 					</javahClassNames>
 					<javahOS>linux</javahOS>
 
@@ -83,7 +83,7 @@
 						<configuration>
 							<classNames>
 								<className>
-									org.mobicents.ss7.hardware.dahdi.Channel
+									org.restcomm.ss7.hardware.dahdi.Channel
 								</className>
 							</classNames>
 						</configuration>
@@ -97,7 +97,7 @@
 						<configuration>
 							<classNames>
 								<className>
-									org.mobicents.ss7.hardware.dahdi.Selector
+									org.restcomm.ss7.hardware.dahdi.Selector
 								</className>
 							</classNames>
 						</configuration>

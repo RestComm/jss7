@@ -156,7 +156,7 @@ public class MemoryCongestionMonitorImpl extends BaseCongestionMonitor implement
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.congestion.CongestionMonitor#monitor()
+     * @see org.restcomm.ss7.congestion.CongestionMonitor#monitor()
      */
     @Override
     public void monitor() {
@@ -183,7 +183,7 @@ public class MemoryCongestionMonitorImpl extends BaseCongestionMonitor implement
     /*
      * (non-Javadoc)
      *
-     * @see org.mobicents.ss7.congestion.CongestionMonitor#getSource()
+     * @see org.restcomm.ss7.congestion.CongestionMonitor#getSource()
      */
     @Override
     public String getSource() {
