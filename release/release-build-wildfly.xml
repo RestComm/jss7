@@ -15,7 +15,7 @@
 
 	<property name="jboss.modules.path" value="${jboss.home}/modules/system/layers/base" />
 	<property name="jboss.standalone.path" value="${jboss.home}/standalone" />
-	<property name="restcomm-ss7.path" value="${jboss.modules.path}/org/mobicents/ss7" />
+	<property name="restcomm-ss7.path" value="${jboss.modules.path}/org/restcomm/ss7" />
 
 	<condition property="file_url" value="file:/">
 		<os family="windows" />
