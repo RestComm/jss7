@@ -156,7 +156,7 @@
 	<section id="sccp_design">
 		<title>SCCP Usage</title>
 		<para>
-			The instance of <classname>org.mobicents.protocols.ss7.sccp.SccpStack</classname> acts as starting point. 
+			The instance of <classname>org.restcomm.protocols.ss7.sccp.SccpStack</classname> acts as starting point. 
 			All the sccp messages sent by SCCP User Part are routed as per the rule configured in Router
 		</para>
 		<note><para>The term SCCP User Part refers to the applications that use SCCP's services.</para></note>
@@ -165,10 +165,10 @@
 		</para>
 		
 		<para>
-			<classname>SccpStack</classname> exposes <classname>org.mobicents.protocols.ss7.sccp.SccpProvider</classname> 
+			<classname>SccpStack</classname> exposes <classname>org.restcomm.protocols.ss7.sccp.SccpProvider</classname> 
 			that interacts directly with SccpStack. This interface defines the methods that will be used by SCCP User Part to send
-			connectionless <classname>org.mobicents.protocols.ss7.sccp.message.SccpMessage</classname>, create new connections and register
-			<classname>org.mobicents.protocols.ss7.sccp.SccpListener</classname>'s to listen for incoming SCCP messages and connection events.
+			connectionless <classname>org.restcomm.protocols.ss7.sccp.message.SccpMessage</classname>, create new connections and register
+			<classname>org.restcomm.protocols.ss7.sccp.SccpListener</classname>'s to listen for incoming SCCP messages and connection events.
 		</para>
 		
 		<para>
@@ -178,9 +178,9 @@
 		
 		<para>
 			[class]`SccpProvider` exposes [class]`SccpConnection` which allows to perform common connection actions such as establishing, resetting, confirming/refusing and disconnecting SCCP connections.
-			SccpProvider also exposes <classname>org.mobicents.protocols.ss7.sccp.message.MessageFactory</classname> and
-			<classname>org.mobicents.protocols.ss7.sccp.parameter.ParameterFactory</classname> to create new SccpMessage. For transfer data via
-			connectionless service <classname>org.mobicents.protocols.ss7.sccp.message.SccpDataMessage</classname> is used.
+			SccpProvider also exposes <classname>org.restcomm.protocols.ss7.sccp.message.MessageFactory</classname> and
+			<classname>org.restcomm.protocols.ss7.sccp.parameter.ParameterFactory</classname> to create new SccpMessage. For transfer data via
+			connectionless service <classname>org.restcomm.protocols.ss7.sccp.message.SccpDataMessage</classname> is used.
 			(This class use UDT, XUDT, LUDT SCCP message type for message transfer.)
 		</para>
 		
@@ -194,22 +194,22 @@
 			Below is SCCP User Part example listening for incoming SCCP message and sending back new message		
 		</para>		
 		<programlisting language="Java" role="JAVA">
-package org.mobicents.protocols.ss7.sccp.impl;
+package org.restcomm.protocols.ss7.sccp.impl;
 
 import java.io.IOException;
 
-import org.mobicents.protocols.ss7.indicator.NatureOfAddress;
-import org.mobicents.protocols.ss7.indicator.NumberingPlan;
-import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
-import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
-import org.mobicents.protocols.ss7.sccp.SccpListener;
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
-import org.mobicents.protocols.ss7.sccp.SignallingPointStatus;
-import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
-import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
-import org.mobicents.protocols.ss7.sccp.parameter.GlobalTitle;
-import org.mobicents.protocols.ss7.sccp.parameter.HopCounter;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.restcomm.protocols.ss7.indicator.NatureOfAddress;
+import org.restcomm.protocols.ss7.indicator.NumberingPlan;
+import org.restcomm.protocols.ss7.indicator.RoutingIndicator;
+import org.restcomm.protocols.ss7.sccp.RemoteSccpStatus;
+import org.restcomm.protocols.ss7.sccp.SccpListener;
+import org.restcomm.protocols.ss7.sccp.SccpProvider;
+import org.restcomm.protocols.ss7.sccp.SignallingPointStatus;
+import org.restcomm.protocols.ss7.sccp.message.SccpDataMessage;
+import org.restcomm.protocols.ss7.sccp.message.SccpNoticeMessage;
+import org.restcomm.protocols.ss7.sccp.parameter.GlobalTitle;
+import org.restcomm.protocols.ss7.sccp.parameter.HopCounter;
+import org.restcomm.protocols.ss7.sccp.parameter.SccpAddress;
 
 public class Test implements SccpListener {
         private SccpProvider sccpProvider;
@@ -331,34 +331,34 @@ public class Test implements SccpListener {
             new data message via already established protocol class 2 connection
 		</para>
 		<programlisting language="Java" role="JAVA">
-package org.mobicents.protocols.ss7.sccp.impl;
+package org.restcomm.protocols.ss7.sccp.impl;
 
-import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
-import org.mobicents.protocols.ss7.sccp.NetworkIdState;
-import org.mobicents.protocols.ss7.sccp.RemoteSccpStatus;
-import org.mobicents.protocols.ss7.sccp.SccpConnection;
-import org.mobicents.protocols.ss7.sccp.SccpListener;
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
-import org.mobicents.protocols.ss7.sccp.SignallingPointStatus;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
-import org.mobicents.protocols.ss7.sccp.impl.parameter.ReleaseCauseImpl;
-import org.mobicents.protocols.ss7.sccp.message.SccpConnCrMessage;
-import org.mobicents.protocols.ss7.sccp.message.SccpDataMessage;
-import org.mobicents.protocols.ss7.sccp.message.SccpNoticeMessage;
-import org.mobicents.protocols.ss7.sccp.parameter.Credit;
-import org.mobicents.protocols.ss7.sccp.parameter.ErrorCause;
-import org.mobicents.protocols.ss7.sccp.parameter.Importance;
-import org.mobicents.protocols.ss7.sccp.parameter.ProtocolClass;
-import org.mobicents.protocols.ss7.sccp.parameter.RefusalCause;
-import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCause;
-import org.mobicents.protocols.ss7.sccp.parameter.ReleaseCauseValue;
-import org.mobicents.protocols.ss7.sccp.parameter.ResetCause;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.scheduler.Clock;
-import org.mobicents.protocols.ss7.scheduler.DefaultClock;
-import org.mobicents.protocols.ss7.scheduler.Scheduler;
+import org.restcomm.protocols.ss7.indicator.RoutingIndicator;
+import org.restcomm.protocols.ss7.sccp.NetworkIdState;
+import org.restcomm.protocols.ss7.sccp.RemoteSccpStatus;
+import org.restcomm.protocols.ss7.sccp.SccpConnection;
+import org.restcomm.protocols.ss7.sccp.SccpListener;
+import org.restcomm.protocols.ss7.sccp.SccpProvider;
+import org.restcomm.protocols.ss7.sccp.SignallingPointStatus;
+import org.restcomm.protocols.ss7.sccp.impl.parameter.ImportanceImpl;
+import org.restcomm.protocols.ss7.sccp.impl.parameter.LocalReferenceImpl;
+import org.restcomm.protocols.ss7.sccp.impl.parameter.ProtocolClassImpl;
+import org.restcomm.protocols.ss7.sccp.impl.parameter.ReleaseCauseImpl;
+import org.restcomm.protocols.ss7.sccp.message.SccpConnCrMessage;
+import org.restcomm.protocols.ss7.sccp.message.SccpDataMessage;
+import org.restcomm.protocols.ss7.sccp.message.SccpNoticeMessage;
+import org.restcomm.protocols.ss7.sccp.parameter.Credit;
+import org.restcomm.protocols.ss7.sccp.parameter.ErrorCause;
+import org.restcomm.protocols.ss7.sccp.parameter.Importance;
+import org.restcomm.protocols.ss7.sccp.parameter.ProtocolClass;
+import org.restcomm.protocols.ss7.sccp.parameter.RefusalCause;
+import org.restcomm.protocols.ss7.sccp.parameter.ReleaseCause;
+import org.restcomm.protocols.ss7.sccp.parameter.ReleaseCauseValue;
+import org.restcomm.protocols.ss7.sccp.parameter.ResetCause;
+import org.restcomm.protocols.ss7.sccp.parameter.SccpAddress;
+import org.restcomm.protocols.ss7.scheduler.Clock;
+import org.restcomm.protocols.ss7.scheduler.DefaultClock;
+import org.restcomm.protocols.ss7.scheduler.Scheduler;
 
 public class Test2 implements SccpListener {
         private SccpProvider sccpProvider;

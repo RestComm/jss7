@@ -136,7 +136,7 @@ echo ===========================================================================
 echo.
 
 :RESTART
-"%JAVA%" %JAVA_OPTS% -classpath "%SGW_CLASSPATH%;%SGW_ENDORSED_DIRS%/*" org.mobicents.ss7.sgw.boot.Main %*
+"%JAVA%" %JAVA_OPTS% -classpath "%SGW_CLASSPATH%;%SGW_ENDORSED_DIRS%/*" org.restcomm.ss7.sgw.boot.Main %*
 rem if ERRORLEVEL 10 goto RESTART
 
 :END

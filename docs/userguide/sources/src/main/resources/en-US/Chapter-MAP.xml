@@ -58,14 +58,14 @@ MAP has full implementation for USSD, SMS and LMS (Location Management Service) 
 		<title>&THIS.APPLICATION; MAP 
 		</title>
 		<para>
-			The methods required to represent the MAP Protocol Stack are defined in the interface <classname>org.mobicents.protocols.ss7.map.api.MAPStack</classname> which exposes <classname>org.mobicents.protocols.ss7.map.api.MAPProvider</classname>
+			The methods required to represent the MAP Protocol Stack are defined in the interface <classname>org.restcomm.protocols.ss7.map.api.MAPStack</classname> which exposes <classname>org.restcomm.protocols.ss7.map.api.MAPProvider</classname>
 			that interacts directly with the <classname>MAPStack</classname>. 
 			This interface defines the methods that will be used by any registered MAP-User application.
 		</para>
 		<para>
-			A MAP-User application must implement interfaces to listen for MAP messages and also implement interfaces for dialogue and component handling primitives. One such interface is <classname>org.mobicents.protocols.ss7.map.api.MAPDialogListener</classname> which must be implemented for listening associated with dialog events. 
+			A MAP-User application must implement interfaces to listen for MAP messages and also implement interfaces for dialogue and component handling primitives. One such interface is <classname>org.restcomm.protocols.ss7.map.api.MAPDialogListener</classname> which must be implemented for listening associated with dialog events. 
 			Others are one or more interfaces for listening associated with component events based on 
-			<classname>org.mobicents.protocols.ss7.map.api.MAPServiceListener</classname> interface.
+			<classname>org.restcomm.protocols.ss7.map.api.MAPServiceListener</classname> interface.
 		</para>
 		<para>
 			Below is a list of MAP Service Listener classes. A MAP-User interested in listening for messages specific to a particular MAP Service must implement the corresponding MAPServiceListener.  
@@ -76,7 +76,7 @@ MAP has full implementation for USSD, SMS and LMS (Location Management Service) 
 				LMS operations	
 			</term>
 			<listitem>
-				<para><classname>org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener</classname>					
+				<para><classname>org.restcomm.protocols.ss7.map.api.service.lsm.MAPServiceLsmListener</classname>					
 				</para>
 			</listitem>
 		</varlistentry>	
@@ -84,7 +84,7 @@ MAP has full implementation for USSD, SMS and LMS (Location Management Service) 
 			<term>Mobility operations
 			</term>
 			<listitem>
-				<para><classname>org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobilityListener</classname>
+				<para><classname>org.restcomm.protocols.ss7.map.api.service.mobility.MAPServiceMobilityListener</classname>
 				</para>
 			</listitem>
 		</varlistentry>
@@ -92,7 +92,7 @@ MAP has full implementation for USSD, SMS and LMS (Location Management Service) 
 			<term>OAM operations
 			</term>
 			<listitem>
-				<para><classname>org.mobicents.protocols.ss7.map.api.service.oam.MAPServiceOamListener</classname>
+				<para><classname>org.restcomm.protocols.ss7.map.api.service.oam.MAPServiceOamListener</classname>
 				</para>
 			</listitem>
 		</varlistentry>		
@@ -100,7 +100,7 @@ MAP has full implementation for USSD, SMS and LMS (Location Management Service) 
 			<term>PDP context activation operations
 			</term>
 			<listitem>
-				<para><classname>org.mobicents.protocols.ss7.map.api.service.pdpContextActivation.MAPServicePdpContextActivationListener</classname>
+				<para><classname>org.restcomm.protocols.ss7.map.api.service.pdpContextActivation.MAPServicePdpContextActivationListener</classname>
 				</para>
 			</listitem>
 		</varlistentry>		
@@ -108,7 +108,7 @@ MAP has full implementation for USSD, SMS and LMS (Location Management Service) 
 			<term>SMS operations
 			</term>
 			<listitem>
-				<para><classname>org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSmsListener</classname>
+				<para><classname>org.restcomm.protocols.ss7.map.api.service.sms.MAPServiceSmsListener</classname>
 				</para>
 			</listitem>
 		</varlistentry>	
@@ -116,7 +116,7 @@ MAP has full implementation for USSD, SMS and LMS (Location Management Service) 
 			<term>Supplementary operations	
 			</term>
 			<listitem>
-				<para><classname>org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener</classname>
+				<para><classname>org.restcomm.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener</classname>
 				</para>
 			</listitem>
 		</varlistentry>					
@@ -145,14 +145,14 @@ MAP has full implementation for USSD, SMS and LMS (Location Management Service) 
 
 
 		<para>
-			The <classname>org.mobicents.protocols.ss7.map.MAPStackImpl</classname> class 
+			The <classname>org.restcomm.protocols.ss7.map.MAPStackImpl</classname> class 
 			is a concrete implementation of <classname>MAPStack</classname>.
 			The MAP-User application gets a reference to <classname>MAPProvider</classname> by doing a JNDI lookup as explained in <xref linkend="design_overview_ss7_service"/>.
 		</para>
 
 		<programlisting
 			language="Java"
-			role="JAVA"><![CDATA[String providerJndiName = "java:/mobicents/ss7/map";
+			role="JAVA"><![CDATA[String providerJndiName = "java:/restcomm/ss7/map";
 this.mapProvider = ((MAPProvider) ctx.lookup(providerJndiName));
 ...]]>
 		</programlisting>
@@ -167,7 +167,7 @@ this.mapProvider = ((MAPProvider) ctx.lookup(providerJndiName));
 			<term>Call handling service
 			</term>
 			<listitem>
-				<para><classname>org.mobicents.protocols.ss7.map.api.service.callhandling.MAPServiceCallHandling</classname>					
+				<para><classname>org.restcomm.protocols.ss7.map.api.service.callhandling.MAPServiceCallHandling</classname>					
 				</para>
 			</listitem>
 		</varlistentry>	
@@ -175,7 +175,7 @@ this.mapProvider = ((MAPProvider) ctx.lookup(providerJndiName));
 			<term>LSM service
 			</term>
 			<listitem>
-				<para><classname>org.mobicents.protocols.ss7.map.api.service.lsm.MAPServiceLsm</classname>					
+				<para><classname>org.restcomm.protocols.ss7.map.api.service.lsm.MAPServiceLsm</classname>					
 				</para>
 			</listitem>
 		</varlistentry>	
@@ -183,7 +183,7 @@ this.mapProvider = ((MAPProvider) ctx.lookup(providerJndiName));
 			<term>Mobility service
 			</term>
 			<listitem>
-				<para><classname>org.mobicents.protocols.ss7.map.api.service.mobility.MAPServiceMobility</classname>					
+				<para><classname>org.restcomm.protocols.ss7.map.api.service.mobility.MAPServiceMobility</classname>					
 				</para>
 			</listitem>
 		</varlistentry>	
@@ -191,7 +191,7 @@ this.mapProvider = ((MAPProvider) ctx.lookup(providerJndiName));
 			<term>OAM service
 			</term>
 			<listitem>
-				<para><classname>org.mobicents.protocols.ss7.map.api.service.oam.MAPServiceOam</classname>					
+				<para><classname>org.restcomm.protocols.ss7.map.api.service.oam.MAPServiceOam</classname>					
 				</para>
 			</listitem>
 		</varlistentry>	
@@ -199,7 +199,7 @@ this.mapProvider = ((MAPProvider) ctx.lookup(providerJndiName));
 			<term>PDP context activation service
 			</term>
 			<listitem>
-				<para><classname>org.mobicents.protocols.ss7.map.api.service.pdpContextActivation.MAPServicePdpContextActivation</classname>					
+				<para><classname>org.restcomm.protocols.ss7.map.api.service.pdpContextActivation.MAPServicePdpContextActivation</classname>					
 				</para>
 			</listitem>
 		</varlistentry>	
@@ -207,7 +207,7 @@ this.mapProvider = ((MAPProvider) ctx.lookup(providerJndiName));
 			<term>SMS service
 			</term>
 			<listitem>
-				<para><classname>org.mobicents.protocols.ss7.map.api.service.sms.MAPServiceSms</classname>					
+				<para><classname>org.restcomm.protocols.ss7.map.api.service.sms.MAPServiceSms</classname>					
 				</para>
 			</listitem>
 		</varlistentry>	
@@ -215,7 +215,7 @@ this.mapProvider = ((MAPProvider) ctx.lookup(providerJndiName));
 			<term>Supplementary service
 			</term>
 			<listitem>
-				<para><classname>org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary</classname>					
+				<para><classname>org.restcomm.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementary</classname>					
 				</para>
 			</listitem>
 		</varlistentry>	
@@ -451,45 +451,45 @@ public void onRejectComponent(MAPDialog mapDialog, Long invokeId, Problem proble
 		<programlisting
 			language="Java"
 			role="JAVA"><![CDATA[
-package org.mobicents.protocols.ss7.map;
+package org.restcomm.protocols.ss7.map;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.mobicents.protocols.ss7.map.api.MAPApplicationContext;
-import org.mobicents.protocols.ss7.map.api.MAPApplicationContextName;
-import org.mobicents.protocols.ss7.map.api.MAPApplicationContextVersion;
-import org.mobicents.protocols.ss7.map.api.MAPDialog;
-import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
-import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MAPMessage;
-import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
-import org.mobicents.protocols.ss7.map.api.MAPProvider;
-import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
-import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.AlertingPattern;
-import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
-import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequest;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
-import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.restcomm.protocols.ss7.map.api.MAPApplicationContext;
+import org.restcomm.protocols.ss7.map.api.MAPApplicationContextName;
+import org.restcomm.protocols.ss7.map.api.MAPApplicationContextVersion;
+import org.restcomm.protocols.ss7.map.api.MAPDialog;
+import org.restcomm.protocols.ss7.map.api.MAPDialogListener;
+import org.restcomm.protocols.ss7.map.api.MAPException;
+import org.restcomm.protocols.ss7.map.api.MAPMessage;
+import org.restcomm.protocols.ss7.map.api.MAPParameterFactory;
+import org.restcomm.protocols.ss7.map.api.MAPProvider;
+import org.restcomm.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
+import org.restcomm.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
+import org.restcomm.protocols.ss7.map.api.dialog.MAPAbortSource;
+import org.restcomm.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
+import org.restcomm.protocols.ss7.map.api.dialog.MAPRefuseReason;
+import org.restcomm.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
+import org.restcomm.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.restcomm.protocols.ss7.map.api.primitives.AddressString;
+import org.restcomm.protocols.ss7.map.api.primitives.AlertingPattern;
+import org.restcomm.protocols.ss7.map.api.primitives.IMSI;
+import org.restcomm.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.restcomm.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.restcomm.protocols.ss7.map.api.primitives.USSDString;
+import org.restcomm.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
+import org.restcomm.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
+import org.restcomm.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
+import org.restcomm.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
+import org.restcomm.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequest;
+import org.restcomm.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
+import org.restcomm.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
+import org.restcomm.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.restcomm.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
+import org.restcomm.protocols.ss7.sccp.parameter.SccpAddress;
+import org.restcomm.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.restcomm.protocols.ss7.tcap.asn.comp.Problem;
 
 /**
  * A simple example show-casing how to use MAP stack. Demonstrates how new MAP
@@ -506,7 +506,7 @@ public class UssdClientExample implements MAPDialogListener, MAPServiceSupplemen
 	public UssdClientExample() throws NamingException {
 		InitialContext ctx = new InitialContext();
 		try {
-			String providerJndiName = "java:/mobicents/ss7/map";
+			String providerJndiName = "java:/restcomm/ss7/map";
 			this.mapProvider = ((MAPProvider) ctx.lookup(providerJndiName));
 		} finally {
 			ctx.close();
@@ -672,39 +672,39 @@ public class UssdClientExample implements MAPDialogListener, MAPServiceSupplemen
 		<programlisting
 			language="Java"
 			role="JAVA"><![CDATA[
-package org.mobicents.protocols.ss7.map;
+package org.restcomm.protocols.ss7.map;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.mobicents.protocols.ss7.map.api.MAPDialog;
-import org.mobicents.protocols.ss7.map.api.MAPDialogListener;
-import org.mobicents.protocols.ss7.map.api.MAPException;
-import org.mobicents.protocols.ss7.map.api.MAPMessage;
-import org.mobicents.protocols.ss7.map.api.MAPParameterFactory;
-import org.mobicents.protocols.ss7.map.api.MAPProvider;
-import org.mobicents.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPAbortSource;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPRefuseReason;
-import org.mobicents.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
-import org.mobicents.protocols.ss7.map.api.errors.MAPErrorMessage;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
-import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
-import org.mobicents.protocols.ss7.map.api.primitives.USSDString;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequest;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
-import org.mobicents.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
-import org.mobicents.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
-import org.mobicents.protocols.ss7.tcap.asn.ApplicationContextName;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.restcomm.protocols.ss7.map.api.MAPDialog;
+import org.restcomm.protocols.ss7.map.api.MAPDialogListener;
+import org.restcomm.protocols.ss7.map.api.MAPException;
+import org.restcomm.protocols.ss7.map.api.MAPMessage;
+import org.restcomm.protocols.ss7.map.api.MAPParameterFactory;
+import org.restcomm.protocols.ss7.map.api.MAPProvider;
+import org.restcomm.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
+import org.restcomm.protocols.ss7.map.api.dialog.MAPAbortProviderReason;
+import org.restcomm.protocols.ss7.map.api.dialog.MAPAbortSource;
+import org.restcomm.protocols.ss7.map.api.dialog.MAPNoticeProblemDiagnostic;
+import org.restcomm.protocols.ss7.map.api.dialog.MAPRefuseReason;
+import org.restcomm.protocols.ss7.map.api.dialog.MAPUserAbortChoice;
+import org.restcomm.protocols.ss7.map.api.errors.MAPErrorMessage;
+import org.restcomm.protocols.ss7.map.api.primitives.AddressString;
+import org.restcomm.protocols.ss7.map.api.primitives.IMSI;
+import org.restcomm.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.restcomm.protocols.ss7.map.api.primitives.USSDString;
+import org.restcomm.protocols.ss7.map.api.service.supplementary.MAPDialogSupplementary;
+import org.restcomm.protocols.ss7.map.api.service.supplementary.MAPServiceSupplementaryListener;
+import org.restcomm.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSRequest;
+import org.restcomm.protocols.ss7.map.api.service.supplementary.ProcessUnstructuredSSResponse;
+import org.restcomm.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyRequest;
+import org.restcomm.protocols.ss7.map.api.service.supplementary.UnstructuredSSNotifyResponse;
+import org.restcomm.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
+import org.restcomm.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
+import org.restcomm.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
+import org.restcomm.protocols.ss7.tcap.asn.ApplicationContextName;
+import org.restcomm.protocols.ss7.tcap.asn.comp.Problem;
 
 /**
  * A simple example show-casing how to use MAP stack. Demonstrates how to listen
@@ -721,7 +721,7 @@ public class UssdServerExample implements MAPDialogListener, MAPServiceSupplemen
 	public UssdServerExample() throws NamingException {
 		InitialContext ctx = new InitialContext();
 		try {
-			String providerJndiName = "java:/mobicents/ss7/map";
+			String providerJndiName = "java:/restcomm/ss7/map";
 			this.mapProvider = ((MAPProvider) ctx.lookup(providerJndiName));
 		} finally {
 			ctx.close();

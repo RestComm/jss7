@@ -168,7 +168,7 @@ echo ""
       "$JAVA" $JAVA_OPTS \
          -Djava.ext.dirs="$TRACE_PARSER_ENDORSED_DIRS" \
          -classpath "$TRACE_PARSER_CLASSPATH" \
-         org.mobicents.protocols.ss7.tools.traceparser.bootstrap.Main "$@"
+         org.restcomm.protocols.ss7.tools.traceparser.bootstrap.Main "$@"
       TRACE_PARSER_STATUS=$?
 
 #java -Djava.ext.dirs=`pwd`/lib -Dmms.home=. -cp .:mms-standalone-2.0.0.BETA1-SNAPSHOT.jar org.mobicents.media.server.bootstrap.jmx.JMXMain

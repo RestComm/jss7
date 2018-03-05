@@ -24,7 +24,7 @@
 	</figure>
 		<para>
 The first tab will display the properties of the M3UA Management unit. These details displayed here are fetched from the XML descriptor file <filename>jboss-beans.xml</filename>, which is 
-		located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where 
+		located at <filename>$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF</filename>, where 
 		<application>profile_name</application> is the server profile name. These properties can be modified here in the GUI. To modify them you must click the pencil, change value and save. 
 		The GUI will then display the modified values. 
 		</para>
@@ -41,7 +41,7 @@ The first tab will display the properties of the M3UA Management unit. These det
 		<title>Maximum Sequence Number</title>
  <para>You can modify the settings for the parameter 'maxsequencenumber' only when the M3UA Stack is not running. In addition, this parameter cannot be modified through the CLI or GUI. You will have to invoke the setter function directly from the source code. 
 		 </para>
-		 <para>If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file <filename>jboss-beans.xml</filename>, which is located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
+		 <para>If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file <filename>jboss-beans.xml</filename>, which is located at <filename>$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
 <screen><![CDATA[
 /*Add property for the parameter 'maxsequencenumber' to jboss-beans.xml file and specify the value*/ 
 <property name="maxSequenceNumber">128</property>						 
@@ -230,8 +230,8 @@ DESCRIPTION
 		 is the server profile name.
 <screen><![CDATA[
 /*Extra bean for RoutingLabelFormat Enum*/
-	<bean name="RoutingLabelFormat" class="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat">
-		<constructor factoryClass="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat"
+	<bean name="RoutingLabelFormat" class="org.restcomm.protocols.ss7.mtp.RoutingLabelFormat">
+		<constructor factoryClass="org.restcomm.protocols.ss7.mtp.RoutingLabelFormat"
 			factoryMethod="getInstance">
 			<parameter>ITU</parameter>
 		</constructor>

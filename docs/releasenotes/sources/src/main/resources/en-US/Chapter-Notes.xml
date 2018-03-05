@@ -16,7 +16,7 @@
 	<section id="notes_doc">
 		<title>Documentation</title>
 		<para>
-		When you download the binary release and extract the contents of the zip file, you will notice that the top level directory is named <filename>mobicents-jss7-&THIS.VERSION;</filename> and within the <filename>mobicents-jss7-&THIS.VERSION;/_docs/</filename> folder you will find the &THIS.PLATFORM; &THIS.APPLICATION; Installation Guide and User Guide. For installation and usage guidance, please refer to these guides that will help you install and set up the SS7 Stack and use it.
+		When you download the binary release and extract the contents of the zip file, you will notice that the top level directory is named <filename>restcomm-jss7-&THIS.VERSION;</filename> and within the <filename>restcomm-jss7-&THIS.VERSION;/_docs/</filename> folder you will find the &THIS.PLATFORM; &THIS.APPLICATION; Installation Guide and User Guide. For installation and usage guidance, please refer to these guides that will help you install and set up the SS7 Stack and use it.
 		</para>
 	</section>
 	<section id="notes_whats_included">

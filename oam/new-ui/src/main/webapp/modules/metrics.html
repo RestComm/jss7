@@ -77,7 +77,7 @@
 						
 						jolokia.request(
 								[
-									{ type: "read", mbean: "org.mobicents.ss7:layer=COUNTER,name=CounterHost,type=Management"}
+									{ type: "read", mbean: "org.restcomm.ss7:layer=COUNTER,name=CounterHost,type=Management"}
 								],
 								{ success: 
 									function(response) {
@@ -147,7 +147,7 @@
 					
 					jolokia.request(
 						[ 
-							{ type: "exec", mbean: "org.mobicents.ss7:layer=COUNTER,name=CounterHost,type=Management", operation: "getLastCounterValues", arguments: [value]},
+							{ type: "exec", mbean: "org.restcomm.ss7:layer=COUNTER,name=CounterHost,type=Management", operation: "getLastCounterValues", arguments: [value]},
 						],
 						{ success: [ 
 							function(response) {

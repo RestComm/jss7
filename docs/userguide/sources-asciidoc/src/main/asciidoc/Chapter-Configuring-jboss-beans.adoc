@@ -35,7 +35,7 @@ Scroll down to the section for M3UA Layer in the [path]_jboss-beans.xml_ file an
         </bean>
 
         <bean name="SCTPShellExecutor"
-                class="org.mobicents.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
+                class="org.restcomm.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
             <property name="sctpManagements">
                 <map keyClass="java.lang.String" valueClass="org.mobicents.protocols.sctp.netty.NettySctpManagementImpl">
                     <entry>
@@ -53,7 +53,7 @@ Scroll down to the section for M3UA Layer in the [path]_jboss-beans.xml_ file an
         <!-- M3UAManagement is managing the m3ua side commands -->
         <!-- ==================================================================== -->
         <!-- -->
-        <bean name="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl">
+        <bean name="Mtp3UserPart" class="org.restcomm.protocols.ss7.m3ua.impl.M3UAManagementImpl">
             <constructor>
                 <parameter>Mtp3UserPart</parameter>
                 <parameter>{this-platform}-jSS7</parameter>
@@ -71,9 +71,9 @@ Scroll down to the section for M3UA Layer in the [path]_jboss-beans.xml_ file an
         </bean>
 
         <bean name="M3UAShellExecutor"
-                class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
+                class="org.restcomm.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
             <property name="m3uaManagements">
-                <map keyClass="java.lang.String" valueClass="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl">
+                <map keyClass="java.lang.String" valueClass="org.restcomm.protocols.ss7.m3ua.impl.M3UAManagementImpl">
                     <entry>
                         <key>Mtp3UserPart</key>
                         <value>
@@ -92,14 +92,14 @@ This XML file is stored in the path specified by the property `persistDir`.
 For example, in the above case, when {this-platform}  SS7 Service is started, a file named [path]_SCTPManagement_sctp.xml_ will be created at [path]_$JBOSS_HOME/server/profile_name/data_ directory.
 You can disable of using persistent configuration via using `org.mobicents.protocols.sctp.netty.NonPersistentNettySctpManagementImpl` class. The other properties of the Stack are defined below:
 
-.[class]`org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl`
+.[class]`org.restcomm.protocols.ss7.m3ua.impl.M3UAManagementImpl`
 This M3UA Management Bean takes a [class]`String` as a first constructor argument.
 The name is prepended to the name of the XML file created by the M3UA stack for persisting the state of M3UA resources.
 The second constructor argument of M3UA Management Bean is also a [class]`String`. This is a productName parameter.
 
 This XML file is stored in the path specified by the property `persistDir`.
 For example, in the above case, when {this-platform}  SS7 Service is started, a file named [path]_Mtp3UserPart_m3ua1.xml_ will be created at [path]_$JBOSS_HOME/server/profile_name/data_ directory.
-You can disable of using persistent configuration via using `org.mobicents.protocols.ss7.m3ua.impl.NonPersistentM3UAManagementImpl` class.
+You can disable of using persistent configuration via using `org.restcomm.protocols.ss7.m3ua.impl.NonPersistentM3UAManagementImpl` class.
 The other properties of the Stack are defined below:
 
 persistDir::
@@ -133,7 +133,7 @@ Libraries are compiled only for linux OS for 32-bit JAVA for now.
 
 [source,xml]
 ----
-    <bean name="DahdiLinksetFactory" class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
+    <bean name="DahdiLinksetFactory" class="org.restcomm.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
     </bean>
 ----
 
@@ -147,15 +147,15 @@ It maintains a Map of available 'factory name' vs 'factory'. You should never to
     <!-- ================================================ -->
     <!-- Linkset manager Service                          -->
     <!-- ================================================ -->
-    <bean name="LinksetFactoryFactory" class="org.mobicents.ss7.linkset.oam.LinksetFactoryFactory">
+    <bean name="LinksetFactoryFactory" class="org.restcomm.ss7.linkset.oam.LinksetFactoryFactory">
             <incallback method="addFactory" />
             <uncallback method="removeFactory" />
     </bean>
 
-    <bean name="DahdiLinksetFactory" class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
+    <bean name="DahdiLinksetFactory" class="org.restcomm.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
     </bean>
 
-    <bean name="LinksetManager" class="org.mobicents.ss7.linkset.oam.LinksetManagerImpl">
+    <bean name="LinksetManager" class="org.restcomm.ss7.linkset.oam.LinksetManagerImpl">
         <constructor>
             <parameter>LinksetManager</parameter>
         </constructor>
@@ -168,7 +168,7 @@ It maintains a Map of available 'factory name' vs 'factory'. You should never to
         <property name="persistDir">${jboss.server.data.dir}</property>
     </bean>
 
-    <bean name="LinksetExecutor" class="org.mobicents.ss7.linkset.oam.LinksetExecutor">
+    <bean name="LinksetExecutor" class="org.restcomm.ss7.linkset.oam.LinksetExecutor">
         <property name="linksetManager">
             <inject bean="LinksetManager" />
         </property>
@@ -208,7 +208,7 @@ See JSS7 Installation Guide for more details.
     <!-- Dialogic Mtp3UserPart -->
     <!-- ==================================================================== -->
     <!---->
-    <bean name="Mtp3UserPart" class="org.mobicents.ss7.hardware.dialogic.DialogicMtp3UserPart">
+    <bean name="Mtp3UserPart" class="org.restcomm.ss7.hardware.dialogic.DialogicMtp3UserPart">
 		<constructor>
 			<parameter>{this-platform}-jSS7</parameter>
 		</constructor>
@@ -252,8 +252,8 @@ For example An ANSI routing label uses 7 octets; an ITU-T routing label uses 4 o
         <!-- MTP3 Properties -->
         <!-- Define MTP3 routing label Format -->
         <!-- ==================================================================== -->
-        <bean name="RoutingLabelFormat" class="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat">
-                <constructor factoryClass="org.mobicents.protocols.ss7.mtp.RoutingLabelFormat"
+        <bean name="RoutingLabelFormat" class="org.restcomm.protocols.ss7.mtp.RoutingLabelFormat">
+                <constructor factoryClass="org.restcomm.protocols.ss7.mtp.RoutingLabelFormat"
                         factoryMethod="getInstance">
                         <parameter>ITU</parameter>
                 </constructor>
@@ -284,10 +284,10 @@ As name suggests `SccpStack` initiates the SCCP stack routines.
     <!-- ==================================================================== -->
     <!-- SCCP Service -->
     <!-- ==================================================================== -->
-    <!--<bean name="RuleComparator" class="org.mobicents.protocols.ss7.sccp.impl.router.RuleByIdComparator"/>-->
-	  <bean name="RuleComparator" class="org.mobicents.protocols.ss7.sccp.impl.router.RuleComparator"/>
-	  <bean name="RuleComparatorFactory" class="org.mobicents.protocols.ss7.sccp.impl.router.RuleComparatorFactory">
-		    <constructor factoryClass="org.mobicents.protocols.ss7.sccp.impl.router.RuleComparatorFactory"
+    <!--<bean name="RuleComparator" class="org.restcomm.protocols.ss7.sccp.impl.router.RuleByIdComparator"/>-->
+	  <bean name="RuleComparator" class="org.restcomm.protocols.ss7.sccp.impl.router.RuleComparator"/>
+	  <bean name="RuleComparatorFactory" class="org.restcomm.protocols.ss7.sccp.impl.router.RuleComparatorFactory">
+		    <constructor factoryClass="org.restcomm.protocols.ss7.sccp.impl.router.RuleComparatorFactory"
 					   factoryMethod="getInstance">
 			        <parameter>RuleComparatorFactory</parameter>
 		    </constructor>
@@ -295,7 +295,7 @@ As name suggests `SccpStack` initiates the SCCP stack routines.
 			     <inject bean="RuleComparator"/>
 		    </property>
 	  </bean>
-    <bean name="SccpStack" class="org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl">
+    <bean name="SccpStack" class="org.restcomm.protocols.ss7.sccp.impl.SccpStackImpl">
         <constructor>
             <parameter>
                 <inject bean="SS7Scheduler" />
@@ -304,7 +304,7 @@ As name suggests `SccpStack` initiates the SCCP stack routines.
         </constructor>
         <property name="persistDir">${jboss.server.data.dir}</property>
         <property name="mtp3UserParts">
-            <map keyClass="java.lang.Integer" valueClass="org.mobicents.protocols.ss7.mtp.Mtp3UserPart">
+            <map keyClass="java.lang.Integer" valueClass="org.restcomm.protocols.ss7.mtp.Mtp3UserPart">
                 <entry>
                     <key>1</key>
                         <value>
@@ -315,9 +315,9 @@ As name suggests `SccpStack` initiates the SCCP stack routines.
         </property>
     </bean>
 
-    <bean name="SccpExecutor" class="org.mobicents.protocols.ss7.sccp.impl.oam.SccpExecutor">
+    <bean name="SccpExecutor" class="org.restcomm.protocols.ss7.sccp.impl.oam.SccpExecutor">
 		<property name="sccpStacks">
-			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl">
+			<map keyClass="java.lang.String" valueClass="org.restcomm.protocols.ss7.sccp.impl.SccpStackImpl">
 				<entry>
 					<key>SccpStack</key>
 					<value>
@@ -329,12 +329,12 @@ As name suggests `SccpStack` initiates the SCCP stack routines.
     </bean>
 ----
 
-[class]`org.mobicents.protocols.ss7.sccp.impl.SccpStackImpl` takes [class]`String` as constructor argument.
+[class]`org.restcomm.protocols.ss7.sccp.impl.SccpStackImpl` takes [class]`String` as constructor argument.
 The name is prepend to `xml` file created by SCCP stack for persisting state of SCCP resources.
 The `xml` is stored in path specified by `persistDir` property above.
 
 For example in above case, when {this-platform} SS7 Service is started 3 file's [path]_SccpStack_management2.xml_, [path]_SccpStack_sccpresource2.xml_  and [path]_SccpStack_sccprouter2.xml_ will be created at [path]_$JBOSS_HOME/server/profile_name/data_ directory
-You can disable of using persistent configuration via using `org.mobicents.protocols.ss7.sccp.impl.NonPersistentSccpStackImpl` class.
+You can disable of using persistent configuration via using `org.restcomm.protocols.ss7.sccp.impl.NonPersistentSccpStackImpl` class.
 Stack has following properties:
 
 persistDir::
@@ -346,7 +346,7 @@ mtp3UserParts::
 
 `SccpExecutor` accepts `sccp` commands and executes necessary operations
 
-For sorting SCCP rules by ID we need to set  `RuleComparator` to `org.mobicents.protocols.ss7.sccp.impl.router.RuleByIdComparator`. By default it sorts by calledDigits and callingDigits patterns.
+For sorting SCCP rules by ID we need to set  `RuleComparator` to `org.restcomm.protocols.ss7.sccp.impl.router.RuleByIdComparator`. By default it sorts by calledDigits and callingDigits patterns.
 
 === Configuring TCAP
 
@@ -360,7 +360,7 @@ If you are using either one, feel free to delete the other.
     <!-- ==================================================================== -->
     <!-- TCAP Service -->
     <!-- ==================================================================== -->
-    <bean name="TcapStackMap" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
+    <bean name="TcapStackMap" class="org.restcomm.protocols.ss7.tcap.TCAPStackImpl">
         <constructor>
 			<parameter>TcapStackMap</parameter>
             <parameter>
@@ -372,7 +372,7 @@ If you are using either one, feel free to delete the other.
 		<property name="previewMode">false</property>
     </bean>
 
-    <bean name="TcapStackCap" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
+    <bean name="TcapStackCap" class="org.restcomm.protocols.ss7.tcap.TCAPStackImpl">
         <constructor>
 			<parameter>TcapStackCap</parameter>
                 <parameter>
@@ -384,7 +384,7 @@ If you are using either one, feel free to delete the other.
 		<property name="previewMode">false</property>
     </bean>
 
-    <bean name="TcapStack" class="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
+    <bean name="TcapStack" class="org.restcomm.protocols.ss7.tcap.TCAPStackImpl">
         <constructor>
             <parameter>TcapStack</parameter>
             <parameter>
@@ -396,9 +396,9 @@ If you are using either one, feel free to delete the other.
 		<property name="previewMode">false</property>
     </bean>
 
-	<bean name="TcapExecutor" class="org.mobicents.protocols.ss7.tcap.oam.TCAPExecutor">
+	<bean name="TcapExecutor" class="org.restcomm.protocols.ss7.tcap.oam.TCAPExecutor">
 		<property name="tcapStacks">
-			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.ss7.tcap.TCAPStackImpl">
+			<map keyClass="java.lang.String" valueClass="org.restcomm.protocols.ss7.tcap.TCAPStackImpl">
 				<entry>
 					<key>TcapStackMap</key>
 					<value>
@@ -421,13 +421,13 @@ If you are using either one, feel free to delete the other.
 		</property>
 	</bean>
 ----
-[class]`org.mobicents.protocols.ss7.tcap.TCAPStackImpl` takes [class]`String` as a first constructor argument.
+[class]`org.restcomm.protocols.ss7.tcap.TCAPStackImpl` takes [class]`String` as a first constructor argument.
 The name is prepend to `xml` file created by TCAP stack for persisting state of TCAP resources.
 The `xml` is stored in path specified by `persistDir` property above.
 
-For example in above case, when {this-platform} SS7 Service is started 3 file's [path]_TcapStack_management.xml_, [path]_TcapStack_managementMap.xml_  and [path]_TcapStack_managementCap.xml_ will be created at [path]_$JBOSS_HOME/server/profile_name/data_ directory. Then [class]`org.mobicents.protocols.ss7.tcap.TCAPStackImpl` takes [class]`SccpStack` as second constructor argument.
+For example in above case, when {this-platform} SS7 Service is started 3 file's [path]_TcapStack_management.xml_, [path]_TcapStack_managementMap.xml_  and [path]_TcapStack_managementCap.xml_ will be created at [path]_$JBOSS_HOME/server/profile_name/data_ directory. Then [class]`org.restcomm.protocols.ss7.tcap.TCAPStackImpl` takes [class]`SccpStack` as second constructor argument.
 TCAP uses passed SCCP stack. Constructor also takes the sub system number (SSN) which is registered with passed SCCP stack (this is the third parameter).
-You can disable of using persistent configuration via using `org.mobicents.protocols.ss7.tcap.NonPersistentTCAPStackImpl` class.
+You can disable of using persistent configuration via using `org.restcomm.protocols.ss7.tcap.NonPersistentTCAPStackImpl` class.
 TCAP Stack has following configurable properties:
 
 persistDir::
@@ -465,7 +465,7 @@ Received commands are executed on local resources to  perform actions like creat
 				<inject bean="SS7Scheduler" />
 			</parameter>
 			<parameter>
-				<list class="javolution.util.FastList" elementClass="org.mobicents.ss7.management.console.ShellExecutor">
+				<list class="javolution.util.FastList" elementClass="org.restcomm.ss7.management.console.ShellExecutor">
 					<inject bean="SccpExecutor" />
 					<inject bean="M3UAShellExecutor" />
 					<inject bean="SCTPShellExecutor" />
@@ -500,7 +500,7 @@ For `dahdi` need to declare `LinksetExecutor` bean and add in [class]`FastList` 
     <!-- ==================================================================== -->
     <!-- MAP Service -->
     <!-- ==================================================================== -->
-    <bean name="MapStack" class="org.mobicents.protocols.ss7.map.MAPStackImpl">
+    <bean name="MapStack" class="org.restcomm.protocols.ss7.map.MAPStackImpl">
         <constructor>
             <parameter>MapStack</parameter>
             <parameter>
@@ -509,7 +509,7 @@ For `dahdi` need to declare `LinksetExecutor` bean and add in [class]`FastList` 
         </constructor>
     </bean>
 ----
-[class]`org.mobicents.protocols.ss7.tcap.MAPStackImpl` takes [class]`String` as a first constructor argument.
+[class]`org.restcomm.protocols.ss7.tcap.MAPStackImpl` takes [class]`String` as a first constructor argument.
 The name is prepend to `xml` file created by MAP stack for persisting state of MAP resources.
 The `xml` is stored in path specified by `persistDir` property above. As for now MAP stack does not store any XML files.
 The second constructor argument is [class]`TcapStack`. MAP uses passed TCAP stack.
@@ -527,7 +527,7 @@ Feel free to delete declaration of this bean if your service is not consuming MA
     <!-- ==================================================================== -->
     <!-- CAP Service -->
     <!-- ==================================================================== -->
-    <bean name="CapStack" class="org.mobicents.protocols.ss7.cap.CAPStackImpl">
+    <bean name="CapStack" class="org.restcomm.protocols.ss7.cap.CAPStackImpl">
         <constructor>
             <parameter>CapStack</parameter>
             <parameter>
@@ -536,7 +536,7 @@ Feel free to delete declaration of this bean if your service is not consuming MA
         </constructor>
     </bean>
 ----
-[class]`org.mobicents.protocols.ss7.tcap.CAPStackImpl` takes [class]`String` as a first constructor argument.
+[class]`org.restcomm.protocols.ss7.tcap.CAPStackImpl` takes [class]`String` as a first constructor argument.
 The name is prepend to `xml` file created by CAP stack for persisting state of CAP resources.
 The `xml` is stored in path specified by `persistDir` property above. As for now CAP stack does not store any XML files.
 The second constructor argument is [class]`TcapStack`. CAP uses passed TCAP stack.
@@ -554,10 +554,10 @@ Feel free to delete declaration of this bean if your service is not consuming CA
     <!-- ==================================================================== -->
     <!-- ISUP Service -->
     <!-- ==================================================================== -->
-    <bean name="CircuitManager" class="org.mobicents.protocols.ss7.isup.impl.CircuitManagerImpl">
+    <bean name="CircuitManager" class="org.restcomm.protocols.ss7.isup.impl.CircuitManagerImpl">
     </bean>
 
-    <bean name="IsupStack" class="org.mobicents.protocols.ss7.isup.impl.ISUPStackImpl">
+    <bean name="IsupStack" class="org.restcomm.protocols.ss7.isup.impl.ISUPStackImpl">
         <constructor>
             <parameter>
                 <inject bean="SS7Scheduler" />
@@ -574,7 +574,7 @@ Feel free to delete declaration of this bean if your service is not consuming CA
     </bean>
 ----
 
-[class]`org.mobicents.protocols.ss7.isup.impl.ISUPStackImpl` takes [class]`SS7Scheduler`, local signaling pointcode and network indicator as constructor argument.
+[class]`org.restcomm.protocols.ss7.isup.impl.ISUPStackImpl` takes [class]`SS7Scheduler`, local signaling pointcode and network indicator as constructor argument.
 
 Stack has following properties:
 
@@ -597,36 +597,36 @@ SS7Service acts as core engine binding all the components together.
     <!-- ==================================================================== -->
     <!-- RestComm SS7 Service -->
     <!-- ==================================================================== -->
-    <bean name="TCAPSS7Service" class="org.mobicents.ss7.SS7Service">
+    <bean name="TCAPSS7Service" class="org.restcomm.ss7.SS7Service">
         <constructor><parameter>TCAP</parameter></constructor>
-        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=TCAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.restcomm.ss7:service=TCAPSS7Service",exposedInterface=org.restcomm.ss7.SS7ServiceMBean.class,registerDirectly=true)
         </annotation>
         <property name="jndiName">java:/restcomm/ss7/tcap</property>
         <property name="stack">
             <inject bean="TcapStack" property="provider" />
         </property>
     </bean>
-    <bean name="MAPSS7Service" class="org.mobicents.ss7.SS7Service">
+    <bean name="MAPSS7Service" class="org.restcomm.ss7.SS7Service">
         <constructor><parameter>MAP</parameter></constructor>
-        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=MAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.restcomm.ss7:service=MAPSS7Service",exposedInterface=org.restcomm.ss7.SS7ServiceMBean.class,registerDirectly=true)
         </annotation>
         <property name="jndiName">java:/restcomm/ss7/map</property>
         <property name="stack">
             <inject bean="MapStack" property="MAPProvider" />
         </property>
     </bean>
-    <bean name="CAPSS7Service" class="org.mobicents.ss7.SS7Service">
+    <bean name="CAPSS7Service" class="org.restcomm.ss7.SS7Service">
         <constructor><parameter>CAP</parameter></constructor>
-        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=CAPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.restcomm.ss7:service=CAPSS7Service",exposedInterface=org.restcomm.ss7.SS7ServiceMBean.class,registerDirectly=true)
         </annotation>
         <property name="jndiName">java:/restcomm/ss7/cap</property>
         <property name="stack">
             <inject bean="CapStack" property="CAPProvider" />
         </property>
     </bean>
-    <bean name="ISUPSS7Service" class="org.mobicents.ss7.SS7Service">
+    <bean name="ISUPSS7Service" class="org.restcomm.ss7.SS7Service">
         <constructor><parameter>ISUP</parameter></constructor>
-        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=ISUPSS7Service",exposedInterface=org.mobicents.ss7.SS7ServiceMBean.class,registerDirectly=true)
+        <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.restcomm.ss7:service=ISUPSS7Service",exposedInterface=org.restcomm.ss7.SS7ServiceMBean.class,registerDirectly=true)
         </annotation>
         <property name="jndiName">java:/restcomm/ss7/isup</property>
         <property name="stack">
@@ -655,13 +655,13 @@ jSS7 Managemenet Service provides some extra functionality for stack management 
 [source,xml]
 ----
 	<bean name="Ss7Management"
-		class="org.mobicents.protocols.ss7.oam.common.jmxss7.Ss7Management">
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.mobicents.ss7:service=Ss7Management",exposedInterface=org.mobicents.protocols.ss7.oam.common.jmxss7.Ss7ManagementMBean.class,registerDirectly=true)</annotation>
+		class="org.restcomm.protocols.ss7.oam.common.jmxss7.Ss7Management">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="org.restcomm.ss7:service=Ss7Management",exposedInterface=org.restcomm.protocols.ss7.oam.common.jmxss7.Ss7ManagementMBean.class,registerDirectly=true)</annotation>
 		<property name="agentId">jboss</property>
 	</bean>
 
 	<bean name="RestcommAlarmManagement"
-		class="org.mobicents.protocols.ss7.oam.common.alarm.AlarmProvider">
+		class="org.restcomm.protocols.ss7.oam.common.alarm.AlarmProvider">
 		<constructor>
 			<parameter>
 				<inject bean="Ss7Management" />
@@ -673,7 +673,7 @@ jSS7 Managemenet Service provides some extra functionality for stack management 
 	</bean>
 
 	<bean name="RestcommStatisticManagement"
-		class="org.mobicents.protocols.ss7.oam.common.statistics.CounterProviderManagement">
+		class="org.restcomm.protocols.ss7.oam.common.statistics.CounterProviderManagement">
 		<constructor>
 			<parameter>
 				<inject bean="Ss7Management" />
@@ -683,7 +683,7 @@ jSS7 Managemenet Service provides some extra functionality for stack management 
 	</bean>
 
 	<bean name="RestcommSctpManagement"
-		class="org.mobicents.protocols.ss7.oam.common.sctp.SctpManagementJmx">
+		class="org.restcomm.protocols.ss7.oam.common.sctp.SctpManagementJmx">
 		<constructor>
 			<parameter>
 				<inject bean="Ss7Management" />
@@ -695,7 +695,7 @@ jSS7 Managemenet Service provides some extra functionality for stack management 
 	</bean>
 
 	<bean name="RestcommM3uaManagement"
-		class="org.mobicents.protocols.ss7.oam.common.m3ua.M3uaManagementJmx">
+		class="org.restcomm.protocols.ss7.oam.common.m3ua.M3uaManagementJmx">
 		<constructor>
 			<parameter>
 				<inject bean="Ss7Management" />
@@ -707,7 +707,7 @@ jSS7 Managemenet Service provides some extra functionality for stack management 
 	</bean>
 
 	<bean name="RestcommSccpManagement"
-		class="org.mobicents.protocols.ss7.oam.common.sccp.SccpManagementJmx">
+		class="org.restcomm.protocols.ss7.oam.common.sccp.SccpManagementJmx">
 		<constructor>
 			<parameter>
 				<inject bean="Ss7Management" />
@@ -719,7 +719,7 @@ jSS7 Managemenet Service provides some extra functionality for stack management 
 	</bean>
 
 	<bean name="RestcommTcapManagement"
-		class="org.mobicents.protocols.ss7.oam.common.tcap.TcapManagementJmx">
+		class="org.restcomm.protocols.ss7.oam.common.tcap.TcapManagementJmx">
 		<constructor>
 			<parameter>
 				<inject bean="Ss7Management" />
@@ -731,7 +731,7 @@ jSS7 Managemenet Service provides some extra functionality for stack management 
 	</bean>
 
 	<bean name="RestcommTcapMapManagement"
-		class="org.mobicents.protocols.ss7.oam.common.tcap.TcapManagementJmx">
+		class="org.restcomm.protocols.ss7.oam.common.tcap.TcapManagementJmx">
 		<constructor>
 			<parameter>
 				<inject bean="Ss7Management" />
@@ -743,7 +743,7 @@ jSS7 Managemenet Service provides some extra functionality for stack management 
 	</bean>
 
 	<bean name="RestcommTcapCapManagement"
-		class="org.mobicents.protocols.ss7.oam.common.tcap.TcapManagementJmx">
+		class="org.restcomm.protocols.ss7.oam.common.tcap.TcapManagementJmx">
 		<constructor>
 			<parameter>
 				<inject bean="Ss7Management" />
@@ -756,7 +756,7 @@ jSS7 Managemenet Service provides some extra functionality for stack management 
 
 <!--
 	<bean name="RestcommLinksetManagement"
-		class="org.mobicents.protocols.ss7.oam.common.linkset.LinksetManagerJmx">
+		class="org.restcomm.protocols.ss7.oam.common.linkset.LinksetManagerJmx">
 		<constructor>
 			<parameter>
 				<inject bean="Ss7Management" />
@@ -796,7 +796,7 @@ SGW will expose the SS7 signals received from legacy network to IP network over 
         <property name="persistDir">${sgw.home.dir}/ss7</property>
     </bean>
 
-	<bean name="SCTPShellExecutor" class="org.mobicents.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
+	<bean name="SCTPShellExecutor" class="org.restcomm.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
 		<property name="sctpManagements">
 			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.sctp.ManagementImpl">
 				<entry>
@@ -809,7 +809,7 @@ SGW will expose the SS7 signals received from legacy network to IP network over 
 		</property>
 	</bean>
 
-	<bean name="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl">
+	<bean name="Mtp3UserPart" class="org.restcomm.protocols.ss7.m3ua.impl.M3UAManagementImpl">
 		<constructor>
 			<parameter>Mtp3UserPart</parameter>
 			<parameter>Restcomm-jSS7</parameter>
@@ -820,9 +820,9 @@ SGW will expose the SS7 signals received from legacy network to IP network over 
 		</property>
 	</bean>
 
-	<bean name="M3UAShellExecutor" class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
+	<bean name="M3UAShellExecutor" class="org.restcomm.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
 		<property name="m3uaManagements">
-			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl">
+			<map keyClass="java.lang.String" valueClass="org.restcomm.protocols.ss7.m3ua.impl.M3UAManagementImpl">
 				<entry>
 					<key>Mtp3UserPart</key>
 					<value>
@@ -846,7 +846,7 @@ Concrete implementation of `LinksetFactory` is responsible to create  new instan
 ----
 
 	<bean name="DahdiLinksetFactory"
-		class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
+		class="org.restcomm.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
 		<property name="scheduler">
 			<inject bean="Scheduler" />
 		</property>
@@ -859,7 +859,7 @@ Concrete implementation of `LinksetFactory` is responsible to create  new instan
 ----
 
 	<bean name="DialogicLinksetFactory"
-		class="org.mobicents.ss7.hardware.dialogic.oam.DialogicLinksetFactory">
+		class="org.restcomm.ss7.hardware.dialogic.oam.DialogicLinksetFactory">
 	</bean>
 ----
 
@@ -882,7 +882,7 @@ You should never touch this bean.
     <!-- ================================================ -->
     <!-- Linkset manager Service                                              -->
     <!-- ================================================ -->
-	<bean name="LinksetManager" class="org.mobicents.ss7.linkset.oam.LinksetManagerImpl">
+	<bean name="LinksetManager" class="org.restcomm.ss7.linkset.oam.LinksetManagerImpl">
 		<constructor>
 			<parameter>LinksetManager</parameter>
 		</constructor>
@@ -896,7 +896,7 @@ You should never touch this bean.
 		<property name="persistDir">${sgw.home.dir}/ss7</property>
 	</bean>
 
-	<bean name="LinksetExecutor" class="org.mobicents.ss7.linkset.oam.LinksetExecutor">
+	<bean name="LinksetExecutor" class="org.restcomm.ss7.linkset.oam.LinksetExecutor">
 		<property name="linksetManager">
 			<inject bean="LinksetManager" />
 		</property>
@@ -922,13 +922,13 @@ Received commands are executed on local resources to  perform actions like creat
     <!-- ================================================ -->
     <!-- Shell Service                                                        -->
     <!-- ================================================ -->
-	<bean name="ShellExecutor" class="org.mobicents.ss7.management.console.ShellServer">
+	<bean name="ShellExecutor" class="org.restcomm.ss7.management.console.ShellServer">
 		<constructor>
 			<parameter>
 				<inject bean="Scheduler" />
 			</parameter>
 			<parameter>
-				<list class="javolution.util.FastList" elementClass="org.mobicents.ss7.management.console.ShellExecutor">
+				<list class="javolution.util.FastList" elementClass="org.restcomm.ss7.management.console.ShellExecutor">
 					<inject bean="M3UAShellExecutor" />
 					<inject bean="SCTPShellExecutor" />
 					<inject bean="LinksetExecutor" />
@@ -956,7 +956,7 @@ The shell commands are exchanged over TCP/IP.
     <!-- ================================================ -->
     <!-- mobicents Signaling Gateway                                      -->
     <!-- ================================================ -->
-	<bean name="SignalingGateway" class="org.mobicents.ss7.sgw.SignalingGateway">
+	<bean name="SignalingGateway" class="org.restcomm.ss7.sgw.SignalingGateway">
 		<property name="scheduler">
 			<inject bean="Scheduler" />
 		</property>

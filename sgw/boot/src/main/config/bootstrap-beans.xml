@@ -6,7 +6,7 @@
         
 	<!-- File Filter -->
     <bean name="FileFilter"
-		class="org.mobicents.ss7.sgw.boot.FileFilterImpl">
+		class="org.restcomm.ss7.sgw.boot.FileFilterImpl">
 		<!-- Unless specified the default list of suffixes is , -beans.xml, -conf.xml -->
         <constructor>
             <parameter>
@@ -19,7 +19,7 @@
 
 	<!-- The MainDeployer -->
     <bean name="MainDeployer"
-		class="org.mobicents.ss7.sgw.boot.MainDeployer">
+		class="org.restcomm.ss7.sgw.boot.MainDeployer">
         <property name="path">${sgw.home.dir}/deploy</property>
         <property name="fileFilter"><inject bean="FileFilter"/></property>
     </bean>

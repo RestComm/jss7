@@ -7,7 +7,7 @@
 
 <chapter id="m3ua">
 	<title>M3UA</title>
-<section id="mobicents_signaling_gateway_m3ua">
+<section id="restcomm_signaling_gateway_m3ua">
 			<title>&THIS.PLATFORM; Signaling Gateway M3UA Stack</title>
 	
 			<para>
@@ -36,7 +36,7 @@ configuration (<literal>useLsbForLinksetSelection</literal> set to true or false
 load balancing between two Application Servers. The remaining bits in the SLS are used for load balancing
 between ASPs within each AS.</para>
 			</section>		
-			<section id="mobicents_signaling_gateway_m3ua_as">
+			<section id="restcomm_signaling_gateway_m3ua_as">
 				<title>&THIS.PLATFORM; M3UA Stack on the Application Server side</title>		
 				<para>
 					The figure below demonstrates the basic functionality of the &THIS.PLATFORM; M3UA Stack when configured as an Application Server (AS) 
@@ -62,7 +62,7 @@ between ASPs within each AS.</para>
 				</para>
 			</section>
 			
-			<section id="mobicents_signaling_gateway_m3ua_SG">
+			<section id="restcomm_signaling_gateway_m3ua_SG">
 				<title>&THIS.PLATFORM; M3UA Stack on the Signaling Gateway side</title>			
 				<para>
 					The figure below demonstrates the basic functionality of the &THIS.PLATFORM; M3UA Stack when configured as a Signaling Gateway (SG). 
@@ -89,7 +89,7 @@ between ASPs within each AS.</para>
 					You can configure the M3UA stack on SG side in one of the two traffic modes: Loadbalance or Override. Broadcast traffic mode is not supported. Refer to <xref linkend="configuring_sgw"/> for instructions on configuring M3UA Stack as SG. &THIS.PLATFORM; M3UA Stack used on SG side doesn't support routing key management messages. The Routing Key should be provisioned statically using the management console.
 				</para>	
 			</section>	
-			<section id="mobicents_ipsp_m3ua">
+			<section id="restcomm_ipsp_m3ua">
 				<title>&THIS.PLATFORM; M3UA Stack as IPSP</title>			
 				<para>
 					An IPSP is essentially the same as an ASP, except that it uses M3UA in a point-to-point fashion.  Conceptually, an IPSP does not use the services of a Signalling Gateway node.

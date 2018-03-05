@@ -36,7 +36,7 @@
 		</figure>
 		<para>
 			The first tab will display the properties of the TCAP Management unit. These details displayed here are fetched from the XML descriptor file <filename>jboss-beans.xml</filename>, which is 
-			located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where 
+			located at <filename>$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF</filename>, where 
 			<application>profile_name</application> is the server profile name. These properties can be modified here in the GUI. To modify them you must click the pencil, change value and save. 
 			The GUI will then display the modified values. 
 		</para>
@@ -307,7 +307,7 @@ EXAMPLES
 		<title>Preview Mode</title>
 		<para>You can modify the settings for the parameter 'previewmode' only when the TCAP Stack is not running. In addition, this parameter cannot be modified through the CLI or GUI. You will have to invoke the setter function directly from the source code. 
 		 </para>
-		 <para>If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file <filename>jboss-beans.xml</filename>, which is located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
+		 <para>If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file <filename>jboss-beans.xml</filename>, which is located at <filename>$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF</filename>, where <application>profile_name</application> is the server profile name.
 <screen><![CDATA[
 /*Add property for the parameter 'previewmode' to jboss-beans.xml file and specify true or false*/ 
 <property name="previewMode">true</property>						 

@@ -3,7 +3,7 @@
 	xmlns="urn:jboss:bean-deployer:2.0">
 
 	<bean name="DialogicLinksetFactory"
-		class="org.mobicents.ss7.hardware.dialogic.oam.DialogicLinksetFactory">
+		class="org.restcomm.ss7.hardware.dialogic.oam.DialogicLinksetFactory">
 	</bean>
 
 	<bean name="SCTPManagement" class="org.mobicents.protocols.sctp.netty.NettySctpManagementImpl">
@@ -13,7 +13,7 @@
 		<property name="persistDir">${sgw.home.dir}/ss7</property>
 	</bean>
 
-	<bean name="SCTPShellExecutor" class="org.mobicents.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
+	<bean name="SCTPShellExecutor" class="org.restcomm.protocols.ss7.m3ua.impl.oam.SCTPShellExecutor">
 		<property name="sctpManagements">
 			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.sctp.ManagementImpl">
 				<entry>
@@ -26,7 +26,7 @@
 		</property>
 	</bean>
 	
-	<bean name="Mtp3UserPart" class="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl">
+	<bean name="Mtp3UserPart" class="org.restcomm.protocols.ss7.m3ua.impl.M3UAManagementImpl">
 		<constructor>
 			<parameter>Mtp3UserPart</parameter>
 			<parameter>Restcomm-jSS7</parameter>
@@ -43,9 +43,9 @@
 		</property>
 	</bean>
 
-	<bean name="M3UAShellExecutor" class="org.mobicents.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
+	<bean name="M3UAShellExecutor" class="org.restcomm.protocols.ss7.m3ua.impl.oam.M3UAShellExecutor">
 		<property name="m3uaManagements">
-			<map keyClass="java.lang.String" valueClass="org.mobicents.protocols.ss7.m3ua.impl.M3UAManagementImpl">
+			<map keyClass="java.lang.String" valueClass="org.restcomm.protocols.ss7.m3ua.impl.M3UAManagementImpl">
 				<entry>
 					<key>Mtp3UserPart</key>
 					<value>
@@ -56,16 +56,16 @@
 		</property>
 	</bean>
 
-	<bean name="Clock" class="org.mobicents.protocols.ss7.scheduler.DefaultClock">
+	<bean name="Clock" class="org.restcomm.protocols.ss7.scheduler.DefaultClock">
 	</bean>
 
-	<bean name="Scheduler" class="org.mobicents.protocols.ss7.scheduler.Scheduler">
+	<bean name="Scheduler" class="org.restcomm.protocols.ss7.scheduler.Scheduler">
 		<property name="clock">
 			<inject bean="Clock" />
 		</property>
 	</bean>
 
-	<bean name="LinksetManager" class="org.mobicents.ss7.linkset.oam.LinksetManagerImpl">
+	<bean name="LinksetManager" class="org.restcomm.ss7.linkset.oam.LinksetManagerImpl">
 		<constructor>
 			<parameter>LinksetManager</parameter>
 		</constructor>
@@ -79,31 +79,31 @@
 		<property name="persistDir">${sgw.home.dir}/ss7</property>
 	</bean>
 
-	<bean name="LinksetExecutor" class="org.mobicents.ss7.linkset.oam.LinksetExecutor">
+	<bean name="LinksetExecutor" class="org.restcomm.ss7.linkset.oam.LinksetExecutor">
 		<property name="linksetManager">
 			<inject bean="LinksetManager" />
 		</property>
 	</bean>
 
 	<bean name="DahdiLinksetFactory"
-		class="org.mobicents.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
+		class="org.restcomm.ss7.hardware.dahdi.oam.DahdiLinksetFactory">
 		<property name="scheduler">
 			<inject bean="Scheduler" />
 		</property>
 	</bean>
 
-	<bean name="LinksetFactoryFactory" class="org.mobicents.ss7.linkset.oam.LinksetFactoryFactory">
+	<bean name="LinksetFactoryFactory" class="org.restcomm.ss7.linkset.oam.LinksetFactoryFactory">
 		<incallback method="addFactory" />
 		<uncallback method="removeFactory" />
 	</bean>
 
-	<bean name="ShellExecutor" class="org.mobicents.ss7.management.console.ShellServerJboss">
+	<bean name="ShellExecutor" class="org.restcomm.ss7.management.console.ShellServerJboss">
 		<constructor>
 			<parameter>
 				<inject bean="Scheduler" />
 			</parameter>
 			<parameter>
-				<list class="javolution.util.FastList" elementClass="org.mobicents.ss7.management.console.ShellExecutor">
+				<list class="javolution.util.FastList" elementClass="org.restcomm.ss7.management.console.ShellExecutor">
 					<inject bean="M3UAShellExecutor" />
 					<inject bean="SCTPShellExecutor" />
 					<inject bean="LinksetExecutor" />
@@ -115,7 +115,7 @@
 		<property name="port">3435</property>
 	</bean>
 
-	<bean name="NodalInterworkingFunction" class="org.mobicents.ss7.sgw.NodalInterworkingFunction">
+	<bean name="NodalInterworkingFunction" class="org.restcomm.ss7.sgw.NodalInterworkingFunction">
 		<constructor>
 			<parameter>
 				<inject bean="Scheduler" />
@@ -131,7 +131,7 @@
 	</bean>
 
 
-	<bean name="SignalingGateway" class="org.mobicents.ss7.sgw.SignalingGateway">
+	<bean name="SignalingGateway" class="org.restcomm.ss7.sgw.SignalingGateway">
 
 		<property name="scheduler">
 			<inject bean="Scheduler" />

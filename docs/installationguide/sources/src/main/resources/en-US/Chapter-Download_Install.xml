@@ -35,14 +35,14 @@
 <para>
 The major functional modules of the &THIS.APPLICATION; are:
 	<orderedlist>
-		<listitem><para>SS7 Service [dir: <filename>mobicents-ss7-service</filename>]</para></listitem>
-		<listitem><para>Signaling Gateway [dir: <filename>mobicents-ss7-sgw</filename>]</para></listitem>
+		<listitem><para>SS7 Service [dir: <filename>restcomm-ss7-service</filename>]</para></listitem>
+		<listitem><para>Signaling Gateway [dir: <filename>restcomm-ss7-sgw</filename>]</para></listitem>
 		<listitem><para>Shell [dir: <filename>shell</filename>]</para></listitem>
-		<listitem><para>SS7 Simulator [dir: <filename>mobicents-ss7-simulator</filename>]</para></listitem>
+		<listitem><para>SS7 Simulator [dir: <filename>restcomm-ss7-simulator</filename>]</para></listitem>
 	</orderedlist>
 </para>
 <screen><![CDATA[
-|- mobicents-jss7-<version>
+|- restcomm-jss7-<version>
 		|- asn	
 
 		|- _docs
@@ -55,9 +55,9 @@ The major functional modules of the &THIS.APPLICATION; are:
 				|+ native
 				|+ protocols
 				|+ shell
-				|+ mobicents-ss7-service
-				|+ mobicents-ss7-sgw
-				|+ mobicents-ss7-simulator 
+				|+ restcomm-ss7-service
+				|+ restcomm-ss7-sgw
+				|+ restcomm-ss7-simulator 
 
 ]]>
 </screen>

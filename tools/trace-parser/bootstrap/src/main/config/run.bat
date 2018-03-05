@@ -136,7 +136,7 @@ echo ===========================================================================
 echo.
 
 :RESTART
-"%JAVA%" %JAVA_OPTS% -Djava.ext.dirs="%TRACE_PARSER_ENDORSED_DIRS%" -Dmbrola.base="%TRACE_PARSER_HOME%/mbrola" -classpath "%TRACE_PARSER_CLASSPATH%" org.mobicents.protocols.ss7.tools.traceparser.bootstrap.Main %*
+"%JAVA%" %JAVA_OPTS% -Djava.ext.dirs="%TRACE_PARSER_ENDORSED_DIRS%" -Dmbrola.base="%TRACE_PARSER_HOME%/mbrola" -classpath "%TRACE_PARSER_CLASSPATH%" org.restcomm.protocols.ss7.tools.traceparser.bootstrap.Main %*
 rem if ERRORLEVEL 10 goto RESTART
 
 :END

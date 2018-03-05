@@ -3,7 +3,7 @@
 	<test name="asn">
 
 		<packages>
-			<package name="org.mobicents.protocols.ss7.tcap.asn" />
+			<package name="org.restcomm.protocols.ss7.tcap.asn" />
 		</packages>
 	</test>
 </suite>

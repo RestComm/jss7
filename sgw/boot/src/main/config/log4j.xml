@@ -39,7 +39,7 @@
 		</layout>
 	</appender>
 
-	<category name="org.mobicents">
+	<category name="org.restcomm">
 		<priority value="DEBUG" />
 	</category>
 

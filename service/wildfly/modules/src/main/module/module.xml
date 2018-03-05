@@ -71,7 +71,7 @@
         <module name="org.jboss.msc"/>
         <module name="org.jboss.jts"/>
         <module name="org.jboss.logging"/>
-		<module name="org.mobicents.ss7.commons"/>
+		<module name="org.restcomm.ss7.commons"/>
         <!-- lic dep -->
     </dependencies>
 </module>

@@ -24,7 +24,7 @@
 	</figure>
 		<para>
 The first tab will display the properties of the SCTP Management unit. These details displayed here are fetched from the XML descriptor file <filename>jboss-beans.xml</filename>, which is
-		located at <filename>$JBOSS_HOME/server/profile_name/deploy/mobicents-ss7-service/META-INF</filename>, where
+		located at <filename>$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF</filename>, where
 		<application>profile_name</application> is the server profile name. These properties can be modified here in the GUI. To modify them you must click the pencil, change the value and save. The GUI will then display the modified values.
 		</para>
 		<para>

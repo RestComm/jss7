@@ -25,11 +25,11 @@
 			<unpack>false</unpack>
 			<scope>compile</scope>
 			<includes>
-				<include>org.mobicents.protocols.ss7.sccp:sccp-api</include>
-				<include>org.mobicents.protocols.ss7.sccp:sccp-impl</include>
-				<include>org.mobicents.protocols.ss7.m3ua:m3ua-api</include>
-				<include>org.mobicents.protocols.ss7.m3ua:m3ua-impl</include>
-				<include>org.mobicents.protocols.ss7.mtp:mtp</include>
+				<include>org.restcomm.protocols.ss7.sccp:sccp-api</include>
+				<include>org.restcomm.protocols.ss7.sccp:sccp-impl</include>
+				<include>org.restcomm.protocols.ss7.m3ua:m3ua-api</include>
+				<include>org.restcomm.protocols.ss7.m3ua:m3ua-impl</include>
+				<include>org.restcomm.protocols.ss7.mtp:mtp</include>
 				<include>org.mobicents.protocols.stream:stream</include>
 			</includes>
 		</dependencySet>

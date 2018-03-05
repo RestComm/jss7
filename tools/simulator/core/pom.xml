@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<artifactId>simulator-parent</artifactId>
-		<groupId>org.mobicents.protocols.ss7.tools.simulator</groupId>
+		<groupId>org.restcomm.protocols.ss7.tools.simulator</groupId>
 		<version>8.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -24,51 +24,51 @@
 			<artifactId>asn</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+			<groupId>org.restcomm.protocols.ss7.sccp</groupId>
 			<artifactId>sccp-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.sccp</groupId>
+			<groupId>org.restcomm.protocols.ss7.sccp</groupId>
 			<artifactId>sccp-impl</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+			<groupId>org.restcomm.protocols.ss7.tcap</groupId>
 			<artifactId>tcap-impl</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.tcap</groupId>
+			<groupId>org.restcomm.protocols.ss7.tcap</groupId>
 			<artifactId>tcap-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.map</groupId>
+			<groupId>org.restcomm.protocols.ss7.map</groupId>
 			<artifactId>map-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.map</groupId>
+			<groupId>org.restcomm.protocols.ss7.map</groupId>
 			<artifactId>map-impl</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.cap</groupId>
+			<groupId>org.restcomm.protocols.ss7.cap</groupId>
 			<artifactId>cap-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.cap</groupId>
+			<groupId>org.restcomm.protocols.ss7.cap</groupId>
 			<artifactId>cap-impl</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.isup</groupId>
+			<groupId>org.restcomm.protocols.ss7.isup</groupId>
 			<artifactId>isup-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.isup</groupId>
+			<groupId>org.restcomm.protocols.ss7.isup</groupId>
 			<artifactId>isup-impl</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.inap</groupId>
+			<groupId>org.restcomm.protocols.ss7.inap</groupId>
 			<artifactId>inap-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.inap</groupId>
+			<groupId>org.restcomm.protocols.ss7.inap</groupId>
 			<artifactId>inap-impl</artifactId>
 		</dependency>
 		<dependency>
@@ -85,23 +85,23 @@
 			<artifactId>sctp-impl</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+			<groupId>org.restcomm.protocols.ss7.m3ua</groupId>
 			<artifactId>m3ua-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.m3ua</groupId>
+			<groupId>org.restcomm.protocols.ss7.m3ua</groupId>
 			<artifactId>m3ua-impl</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+			<groupId>org.restcomm.protocols.ss7.mtp</groupId>
 			<artifactId>mtp-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.mtp</groupId>
+			<groupId>org.restcomm.protocols.ss7.mtp</groupId>
 			<artifactId>mtp</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.hardware</groupId>
+			<groupId>org.restcomm.protocols.ss7.hardware</groupId>
 			<artifactId>restcomm-dialogic</artifactId>
 		</dependency>
 	</dependencies>

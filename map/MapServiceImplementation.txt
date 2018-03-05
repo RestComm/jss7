@@ -9,31 +9,31 @@ sms or lsm services).
 
 - Create 3 packages. Imagine that the service name is "xxx". New
 packages will be:
- - map-api/scr/main/java: org.mobicents.protocols.ss7.map.api.service.xxx
- - map-impl/scr/main/java: org.mobicents.protocols.ss7.map.service.xxx
- - map-impl/scr/test/java: org.mobicents.protocols.ss7.map.service.xxx
+ - map-api/scr/main/java: org.restcomm.protocols.ss7.map.api.service.xxx
+ - map-impl/scr/main/java: org.restcomm.protocols.ss7.map.service.xxx
+ - map-impl/scr/test/java: org.restcomm.protocols.ss7.map.service.xxx
 
 - Creating the following several interfaces and classes:
-- interface org.mobicents.protocols.ss7.map.api.service.xxx.MAPDialogXxx
+- interface org.restcomm.protocols.ss7.map.api.service.xxx.MAPDialogXxx
 extends MAPDialog
- class org.mobicents.protocols.ss7.map.service.xxx.MAPDialogXxxImpl
+ class org.restcomm.protocols.ss7.map.service.xxx.MAPDialogXxxImpl
 extends MAPDialogImpl implements MAPDialogXxx
  Now we are implementing a constructor like current sms implementation.
  Here we will implement methods to send operation requests and responses later
 
-- interface org.mobicents.protocols.ss7.map.api.service.xxx.XxxMessage
- class org.mobicents.protocols.ss7.map.service.xxx.XxxMessageImpl
+- interface org.restcomm.protocols.ss7.map.api.service.xxx.XxxMessage
+ class org.restcomm.protocols.ss7.map.service.xxx.XxxMessageImpl
 extends MessageImpl implements SmsMessage, MAPAsnPrimitive
  The only method to implement is: MAPDialogXxx getMAPDialog(); like
 current sms implementation.
 
-- interface org.mobicents.protocols.ss7.map.api.service.xxx.MAPServiceXxxListener
+- interface org.restcomm.protocols.ss7.map.api.service.xxx.MAPServiceXxxListener
 extends MAPServiceListener
  Now we are leaving it empty.
 
-- interface org.mobicents.protocols.ss7.map.api.service.xxx.MAPServiceXxx
+- interface org.restcomm.protocols.ss7.map.api.service.xxx.MAPServiceXxx
 extends MAPServiceBase
- class org.mobicents.protocols.ss7.map.service.xxx.MAPServiceXxxImpl
+ class org.restcomm.protocols.ss7.map.service.xxx.MAPServiceXxxImpl
 extends MAPServiceBaseImpl implements MAPServiceXxx
  Into the interface we are adding methods createNewDialog(),
 addMAPServiceListener()
@@ -43,7 +43,7 @@ addMAPServiceListener()
  removeMAPServiceListener() like current sms implementation.
  Other methods we will add later.
 
-- in the class org.mobicents.protocols.ss7.map.MAPProviderImpl:
+- in the class org.restcomm.protocols.ss7.map.MAPProviderImpl:
  - adding a property: private final MAPServiceXxx mapServiceXxx = new
 MAPServiceXxxImpl(this);
  - adding a method:
@@ -53,10 +53,10 @@ MAPServiceXxxImpl(this);
  - adding into the constructor:
                this.mapServices.add(this.mapServiceXxx);
 
-- into the enum org.mobicents.protocols.ss7.map.api.MAPApplicationContextName:
+- into the enum org.restcomm.protocols.ss7.map.api.MAPApplicationContextName:
  - adding new application context names for the new service
 
-- into the interface org.mobicents.protocols.ss7.map.api.MAPOperationCode:
+- into the interface org.restcomm.protocols.ss7.map.api.MAPOperationCode:
  - adding new operation codes for the new service
 
 2. Implementing a service
@@ -69,22 +69,22 @@ version is incorrect
  or unsupported and AC_NotServing if not supported.
 
 - MAPServiceXxxImpl.getMAPv1ApplicationContext() method:
- if the serviñe supports MAP V1, then this method should return
+ if the serviï¿½e supports MAP V1, then this method should return
  the application context name depending on the operation code for MAP V1
 
 - creating interfaces for requests (Invoke) and responses
 (ReturnResultLast) messages
- org.mobicents.protocols.ss7.map.api.service.xxx.MessageNameRequestIndication
+ org.restcomm.protocols.ss7.map.api.service.xxx.MessageNameRequestIndication
 extends XxxMessage
- org.mobicents.protocols.ss7.map.api.service.xxx.MessageNameResponseIndication
+ org.restcomm.protocols.ss7.map.api.service.xxx.MessageNameResponseIndication
 extends XxxMessage
  These interfaces contain getting parameters from messages
 
 - implementing classes for requests (Invoke) and responses
 (ReturnResultLast) messages
- org.mobicents.protocols.ss7.map.service.xxx.MessageNameRequestIndicationImpl
+ org.restcomm.protocols.ss7.map.service.xxx.MessageNameRequestIndicationImpl
    extends XxxMessageImpl implements MessageNameRequestIndication
- org.mobicents.protocols.ss7.map.service.xxx.MessageNameResponseIndicationImpl
+ org.restcomm.protocols.ss7.map.service.xxx.MessageNameResponseIndicationImpl
    extends XxxMessageImpl implements MessageNameResponseIndication
  These classes should implement MAPAsnPrimitive interface for encoding and
  decoding ASN.1 MAP message. Methods getTag(), getTagClass() and
@@ -102,8 +102,8 @@ encodeData()
 
 - Messages can contain some constructed parameters. For all of them we
 should create
- interface org.mobicents.protocols.ss7.map.api.service.xxx.ParameterName
- class org.mobicents.protocols.ss7.map.service.xxx.ParameterNameImpl
+ interface org.restcomm.protocols.ss7.map.api.service.xxx.ParameterName
+ class org.restcomm.protocols.ss7.map.service.xxx.ParameterNameImpl
 implements ParameterNameIMSI, MAPAsnPrimitive
  Implementing of these classes is like MAP message requests and responses.
  If a parameter is used in more then one MAP service we should implement it in

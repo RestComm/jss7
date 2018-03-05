@@ -129,9 +129,9 @@ linkset create m3ua opc &lt;point-code&gt; apc &lt;point-code&gt; ni &lt;network
 			<example>
 				<title>Linkset creation</title>
 				<screen>
-mobicents(10.65.208.215:3435)>linkset create dahdi opc 1 apc 2 ni 0 linkset1
+restcomm(10.65.208.215:3435)>linkset create dahdi opc 1 apc 2 ni 0 linkset1
 LinkSet successfully added
-mobicents(10.65.208.215:3435)>linkset create dialogic opc 3 apc 4 ni 3 srcmod 1 destmod 2 linkset2
+restcomm(10.65.208.215:3435)>linkset create dialogic opc 3 apc 4 ni 3 srcmod 1 destmod 2 linkset2
 LinkSet successfully added
 				</screen>
 			</example>
@@ -157,7 +157,7 @@ linkset delete  &lt;linkset-name&gt; </programlisting>
 			<example>
 				<title>Linkset Removal</title>
 				<screen>
-mobicents(10.65.208.215:3435)>linkset delete linkset1
+restcomm(10.65.208.215:3435)>linkset delete linkset1
 LinkSet successfully deleted
 				</screen>
 			</example>
@@ -182,7 +182,7 @@ linkset activate  &lt;linkset-name&gt; </programlisting>
 			<example>
 				<title>Linkset Activation</title>
 				<screen>
-mobicents(10.65.208.215)>linkset activate linkset1
+restcomm(10.65.208.215)>linkset activate linkset1
 LinkSet activated successfully
 				</screen>
 			</example>
@@ -207,7 +207,7 @@ linkset deactivate  &lt;linkset-name&gt; </programlisting>
 			<example>
 				<title>Linkset Deactivateion</title>
 				<screen>
-mobicents(10.65.208.215)>linkset deactivate linkset1
+restcomm(10.65.208.215)>linkset deactivate linkset1
 LinkSet deactivated successfully
 				</screen>
 			</example>
@@ -261,7 +261,7 @@ linkset link create span &lt;span-num&gt; code &lt;code-num&gt; channel &lt;chan
 			<example>
 				<title></title>
 				<screen>
-mobicents(10.65.208.215:3435)>linkset link create span 1 code 1 channel 1 linkset1 link1
+restcomm(10.65.208.215:3435)>linkset link create span 1 code 1 channel 1 linkset1 link1
 Link successfully added
 				</screen>
 			</example>
@@ -296,7 +296,7 @@ linkset link delete &lt;linkset-name&gt; &lt;link-name&gt; </programlisting>
 			<example>
 				<title>Link Removal</title>
 				<screen>
-mobicents(10.65.208.215:3435)>linkset link delete linkset1 link1
+restcomm(10.65.208.215:3435)>linkset link delete linkset1 link1
 Link successfully deleted
 				</screen>
 			</example>
@@ -325,7 +325,7 @@ linkset link activate &lt;linkset-name&gt; &lt;link-name&gt; </programlisting>
 			<example>
 				<title>Link Activation</title>
 				<screen>
-mobicents(10.65.208.215:3435)>linkset link activate linkset1 link1
+restcomm(10.65.208.215:3435)>linkset link activate linkset1 link1
 Link activated successfully
 			</screen>
 			</example>
@@ -354,7 +354,7 @@ linkset link deactivate &lt;linkset-name&gt; &lt;link-name&gt; </programlisting>
 			<example>
 				<title>Link Deactivateion</title>
 				<screen>
-mobicents(10.65.208.215:3435)>linkset link deactivate linkset1 link1
+restcomm(10.65.208.215:3435)>linkset link deactivate linkset1 link1
 Link deactivated successfully
 				</screen>
 			</example>
@@ -370,7 +370,7 @@ linkset show
 			<example>
 				<title>Linkset Status</title>
 				<screen>
-mobicents(10.65.208.215:3435)>linkset show
+restcomm(10.65.208.215:3435)>linkset show
 linkset1      dahdi    opc=1           apc=2           ni=0    state=UNAVAILABLE
     link1       span=1   channelId=1   code=1  state=UNAVAILABLE
 

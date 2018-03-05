@@ -5,16 +5,16 @@
 
 	<parent>
 		<artifactId>ss7-parent</artifactId>
-		<groupId>org.mobicents.protocols.ss7</groupId>
+		<groupId>org.restcomm.protocols.ss7</groupId>
 		<version>8.0.0-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.mobicents.protocols.ss7.scheduler</groupId>
+	<groupId>org.restcomm.protocols.ss7.scheduler</groupId>
 	<artifactId>scheduler</artifactId>
 	<name>Restcomm jSS7 :: Scheduler :: ${project.artifactId}</name>
 
 	<dependencies>
-                <!-- non mobicents -->
+                <!-- non restcomm -->
                 <dependency>
                         <groupId>log4j</groupId>
                         <artifactId>log4j</artifactId>

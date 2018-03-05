@@ -29,22 +29,22 @@ We will provide you with all the help that you may require initially.
 [[_cap_usage]]
 == {this-application}  CAP
 
-The [class]`org.mobicents.protocols.ss7.cap.api.CAPStack`			interface defines the methods required to represent CAP Protocol Stack.
-CAPStack exposes [class]`org.mobicents.protocols.ss7.cap.api.CAPProvider`			that interacts directly with CAPStack.
+The [class]`org.restcomm.protocols.ss7.cap.api.CAPStack`			interface defines the methods required to represent CAP Protocol Stack.
+CAPStack exposes [class]`org.restcomm.protocols.ss7.cap.api.CAPProvider`			that interacts directly with CAPStack.
 This interface defines the methods that will be used by any registered CAP-User application.
 CAP-User application must implement interfaces to listen for CAP messages and for dialogue and component handling primitives.
-One interface is [class]`org.mobicents.protocols.ss7.cap.api.CAPDialogListener`  (listening associated with dialog events). Others are one or more interfaces for listening to messages associated with component events based on  [class]`org.mobicents.protocols.ss7.cap.api.CAPServiceListener` interface.
+One interface is [class]`org.restcomm.protocols.ss7.cap.api.CAPDialogListener`  (listening associated with dialog events). Others are one or more interfaces for listening to messages associated with component events based on  [class]`org.restcomm.protocols.ss7.cap.api.CAPServiceListener` interface.
 
 Each CAP-User interested in listening to messages specific to a CAP Service must implement the specific [class]`CAPServiceListener`.
 
-* CAP-User interested only in circuit switched call operations implements [class]`org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.
+* CAP-User interested only in circuit switched call operations implements [class]`org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.
   CAPServiceCircuitSwitchedCallListener`
-* CAP-User interested only in GPRS operations implements [class]`org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprsListener`
-* CAP-User interested only in SMS operations implements [class]`org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSmsListener`
+* CAP-User interested only in GPRS operations implements [class]`org.restcomm.protocols.ss7.cap.api.service.gprs.CAPServiceGprsListener`
+* CAP-User interested only in SMS operations implements [class]`org.restcomm.protocols.ss7.cap.api.service.sms.CAPServiceSmsListener`
 
 CAP-User interested in all the services must implement all the service listener classes.
 
-The [class]`org.mobicents.protocols.ss7.cap.CAPStackImpl`  is a concrete implementation of [class]`CAPStack.`			The CAP-User application gets access to [class]`CAPProvider` by doing a JNDI look-up as explained in <<_design_overview_ss7_service>>.
+The [class]`org.restcomm.protocols.ss7.cap.CAPStackImpl`  is a concrete implementation of [class]`CAPStack.`			The CAP-User application gets access to [class]`CAPProvider` by doing a JNDI look-up as explained in <<_design_overview_ss7_service>>.
 
 
 [source,java]
@@ -58,10 +58,10 @@ The CAP-User application should register the concrete implementation of [class]`
 The CAP-User application should register the concrete implementation of [class]`CAPServiceListener`  with  corresponding [class]`CAPServiceBase ` to  listen  for  incoming  CAP  Service  messages.
 Following CAPServiceBase are exposed by [class]`CAPProvider`.
 
-* For circuit switched call service [class]`org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.
+* For circuit switched call service [class]`org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.
   CAPServiceCircuitSwitchedCall`
-* For GPRS service [class]`org.mobicents.protocols.ss7.cap.api.service.gprs.CAPServiceGprs`
-* For SMS service [class]`org.mobicents.protocols.ss7.cap.api.service.sms.CAPServiceSms`
+* For GPRS service [class]`org.restcomm.protocols.ss7.cap.api.service.gprs.CAPServiceGprs`
+* For SMS service [class]`org.restcomm.protocols.ss7.cap.api.service.sms.CAPServiceSms`
 
 [source,java]
 ----
@@ -282,30 +282,30 @@ For preventing an Invoke timeout you should invoke [class]`resetInvokeTimer(Long
 [source,java]
 ----
 
-package org.mobicents.protocols.ss7.cap;
+package org.restcomm.protocols.ss7.cap;
 
-import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
-import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ODisconnectSpecificInfo;
-import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
-import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
-import org.mobicents.protocols.ss7.cap.api.isup.CauseCap;
-import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
-import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
-import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
-import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
-import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
-import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
-import org.mobicents.protocols.ss7.indicator.RoutingIndicator;
-import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.CallingPartyNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.CauseIndicators;
-import org.mobicents.protocols.ss7.isup.message.parameter.LocationNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
-import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
-import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
-import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
+import org.restcomm.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
+import org.restcomm.protocols.ss7.cap.api.EsiBcsm.ODisconnectSpecificInfo;
+import org.restcomm.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.restcomm.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
+import org.restcomm.protocols.ss7.cap.api.isup.CauseCap;
+import org.restcomm.protocols.ss7.cap.api.isup.LocationNumberCap;
+import org.restcomm.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.restcomm.protocols.ss7.cap.api.primitives.ReceivingSideID;
+import org.restcomm.protocols.ss7.inap.api.primitives.LegType;
+import org.restcomm.protocols.ss7.inap.api.primitives.MiscCallInfo;
+import org.restcomm.protocols.ss7.inap.api.primitives.MiscCallInfoMessageType;
+import org.restcomm.protocols.ss7.indicator.RoutingIndicator;
+import org.restcomm.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.restcomm.protocols.ss7.isup.message.parameter.CallingPartyNumber;
+import org.restcomm.protocols.ss7.isup.message.parameter.CauseIndicators;
+import org.restcomm.protocols.ss7.isup.message.parameter.LocationNumber;
+import org.restcomm.protocols.ss7.isup.message.parameter.NAINumber;
+import org.restcomm.protocols.ss7.map.api.primitives.AddressNature;
+import org.restcomm.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.restcomm.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
+import org.restcomm.protocols.ss7.sccp.parameter.SccpAddress;
 
 public class Example {
 
@@ -418,66 +418,66 @@ public class Example {
 [source,java]
 ----
 
-package org.mobicents.protocols.ss7.cap;
+package org.restcomm.protocols.ss7.cap;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.mobicents.protocols.ss7.cap.api.CAPApplicationContext;
-import org.mobicents.protocols.ss7.cap.api.CAPDialog;
-import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
-import org.mobicents.protocols.ss7.cap.api.CAPException;
-import org.mobicents.protocols.ss7.cap.api.CAPMessage;
-import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
-import org.mobicents.protocols.ss7.cap.api.CAPProvider;
-import org.mobicents.protocols.ss7.cap.api.CAPStack;
-import org.mobicents.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
-import org.mobicents.protocols.ss7.cap.api.EsiBcsm.ODisconnectSpecificInfo;
-import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
-import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
-import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
-import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
-import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
-import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
-import org.mobicents.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
-import org.mobicents.protocols.ss7.cap.api.isup.LocationNumberCap;
-import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
-import org.mobicents.protocols.ss7.cap.api.primitives.ReceivingSideID;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestResponse;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.AssistRequestInstructionsRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallListener;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationReportRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CancelRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectToResourceRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EstablishTemporaryConnectionRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.FurnishChargingInformationRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PlayAnnouncementRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationResponse;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ReleaseCallRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
-import org.mobicents.protocols.ss7.inap.api.primitives.MiscCallInfo;
-import org.mobicents.protocols.ss7.map.api.MAPProvider;
-import org.mobicents.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
-import org.mobicents.protocols.ss7.sccp.SccpProvider;
-import org.mobicents.protocols.ss7.sccp.parameter.SccpAddress;
-import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.restcomm.protocols.ss7.cap.api.CAPApplicationContext;
+import org.restcomm.protocols.ss7.cap.api.CAPDialog;
+import org.restcomm.protocols.ss7.cap.api.CAPDialogListener;
+import org.restcomm.protocols.ss7.cap.api.CAPException;
+import org.restcomm.protocols.ss7.cap.api.CAPMessage;
+import org.restcomm.protocols.ss7.cap.api.CAPParameterFactory;
+import org.restcomm.protocols.ss7.cap.api.CAPProvider;
+import org.restcomm.protocols.ss7.cap.api.CAPStack;
+import org.restcomm.protocols.ss7.cap.api.EsiBcsm.OAnswerSpecificInfo;
+import org.restcomm.protocols.ss7.cap.api.EsiBcsm.ODisconnectSpecificInfo;
+import org.restcomm.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
+import org.restcomm.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
+import org.restcomm.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
+import org.restcomm.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
+import org.restcomm.protocols.ss7.cap.api.errors.CAPErrorMessage;
+import org.restcomm.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.restcomm.protocols.ss7.cap.api.isup.CallingPartyNumberCap;
+import org.restcomm.protocols.ss7.cap.api.isup.LocationNumberCap;
+import org.restcomm.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.restcomm.protocols.ss7.cap.api.primitives.ReceivingSideID;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestResponse;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.AssistRequestInstructionsRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallListener;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationReportRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.CancelRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectToResourceRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.EstablishTemporaryConnectionRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.FurnishChargingInformationRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.PlayAnnouncementRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationResponse;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ReleaseCallRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.EventSpecificInformationBCSM;
+import org.restcomm.protocols.ss7.inap.api.primitives.MiscCallInfo;
+import org.restcomm.protocols.ss7.map.api.MAPProvider;
+import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
+import org.restcomm.protocols.ss7.sccp.SccpProvider;
+import org.restcomm.protocols.ss7.sccp.parameter.SccpAddress;
+import org.restcomm.protocols.ss7.tcap.asn.comp.PAbortCauseType;
+import org.restcomm.protocols.ss7.tcap.asn.comp.Problem;
 
 public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitchedCallListener {
 
@@ -833,61 +833,61 @@ public class CallSsfExample implements CAPDialogListener, CAPServiceCircuitSwitc
 [source,java]
 ----
 
-package org.mobicents.protocols.ss7.cap;
+package org.restcomm.protocols.ss7.cap;
 
 import java.util.ArrayList;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.mobicents.protocols.ss7.cap.api.CAPDialog;
-import org.mobicents.protocols.ss7.cap.api.CAPDialogListener;
-import org.mobicents.protocols.ss7.cap.api.CAPException;
-import org.mobicents.protocols.ss7.cap.api.CAPMessage;
-import org.mobicents.protocols.ss7.cap.api.CAPParameterFactory;
-import org.mobicents.protocols.ss7.cap.api.CAPProvider;
-import org.mobicents.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
-import org.mobicents.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
-import org.mobicents.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
-import org.mobicents.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
-import org.mobicents.protocols.ss7.cap.api.errors.CAPErrorMessage;
-import org.mobicents.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
-import org.mobicents.protocols.ss7.cap.api.primitives.BCSMEvent;
-import org.mobicents.protocols.ss7.cap.api.primitives.EventTypeBCSM;
-import org.mobicents.protocols.ss7.cap.api.primitives.MonitorMode;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestResponse;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.AssistRequestInstructionsRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallListener;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationReportRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.CancelRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectToResourceRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EstablishTemporaryConnectionRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.FurnishChargingInformationRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PlayAnnouncementRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationResponse;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ReleaseCallRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
-import org.mobicents.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
-import org.mobicents.protocols.ss7.inap.api.primitives.LegID;
-import org.mobicents.protocols.ss7.inap.api.primitives.LegType;
-import org.mobicents.protocols.ss7.isup.message.parameter.CalledPartyNumber;
-import org.mobicents.protocols.ss7.isup.message.parameter.NAINumber;
-import org.mobicents.protocols.ss7.tcap.asn.comp.PAbortCauseType;
-import org.mobicents.protocols.ss7.tcap.asn.comp.Problem;
+import org.restcomm.protocols.ss7.cap.api.CAPDialog;
+import org.restcomm.protocols.ss7.cap.api.CAPDialogListener;
+import org.restcomm.protocols.ss7.cap.api.CAPException;
+import org.restcomm.protocols.ss7.cap.api.CAPMessage;
+import org.restcomm.protocols.ss7.cap.api.CAPParameterFactory;
+import org.restcomm.protocols.ss7.cap.api.CAPProvider;
+import org.restcomm.protocols.ss7.cap.api.dialog.CAPGeneralAbortReason;
+import org.restcomm.protocols.ss7.cap.api.dialog.CAPGprsReferenceNumber;
+import org.restcomm.protocols.ss7.cap.api.dialog.CAPNoticeProblemDiagnostic;
+import org.restcomm.protocols.ss7.cap.api.dialog.CAPUserAbortReason;
+import org.restcomm.protocols.ss7.cap.api.errors.CAPErrorMessage;
+import org.restcomm.protocols.ss7.cap.api.isup.CalledPartyNumberCap;
+import org.restcomm.protocols.ss7.cap.api.primitives.BCSMEvent;
+import org.restcomm.protocols.ss7.cap.api.primitives.EventTypeBCSM;
+import org.restcomm.protocols.ss7.cap.api.primitives.MonitorMode;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ActivityTestResponse;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingReportRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ApplyChargingRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.AssistRequestInstructionsRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPDialogCircuitSwitchedCall;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.CAPServiceCircuitSwitchedCallListener;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationReportRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.CallInformationRequestRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.CancelRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ConnectToResourceRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ContinueRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.DisconnectForwardConnectionRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.EstablishTemporaryConnectionRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.EventReportBCSMRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.FurnishChargingInformationRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.InitialDPRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.PlayAnnouncementRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.PromptAndCollectUserInformationResponse;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ReleaseCallRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestReportBCSMEventRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.DestinationRoutingAddress;
+import org.restcomm.protocols.ss7.inap.api.primitives.LegID;
+import org.restcomm.protocols.ss7.inap.api.primitives.LegType;
+import org.restcomm.protocols.ss7.isup.message.parameter.CalledPartyNumber;
+import org.restcomm.protocols.ss7.isup.message.parameter.NAINumber;
+import org.restcomm.protocols.ss7.tcap.asn.comp.PAbortCauseType;
+import org.restcomm.protocols.ss7.tcap.asn.comp.Problem;
 
 public class CallScfExample implements CAPDialogListener, CAPServiceCircuitSwitchedCallListener {
 

@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
+		<groupId>org.restcomm.protocols.ss7.oam.common</groupId>
 		<artifactId>restcomm-ss7-oam-common</artifactId>
 		<version>8.0.0-SNAPSHOT</version>
 	</parent>
@@ -19,22 +19,22 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
+			<groupId>org.restcomm.protocols.ss7.oam.common</groupId>
 			<artifactId>alarm</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
+			<groupId>org.restcomm.protocols.ss7.oam.common</groupId>
 			<artifactId>statistics-oam-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
+			<groupId>org.restcomm.protocols.ss7.oam.common</groupId>
 			<artifactId>statistics-oam-impl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mobicents.protocols.ss7.oam.common</groupId>
+			<groupId>org.restcomm.protocols.ss7.oam.common</groupId>
 			<artifactId>jmx</artifactId>
 			<version>${project.version}</version>
 		</dependency>

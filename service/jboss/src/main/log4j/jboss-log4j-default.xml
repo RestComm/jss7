@@ -54,12 +54,12 @@
 		</layout>
 	</appender>
 
-	<category name="org.mobicents.protocols.ss7.oam.common.statistics.StatsPrinter" additivity="false">
+	<category name="org.restcomm.protocols.ss7.oam.common.statistics.StatsPrinter" additivity="false">
 		<priority value="DEBUG" /> 
 		<appender-ref ref="STATS"/> 
 	</category>
 
-	<category name="org.mobicents.protocols.ss7.oam.common.statistics.CsvStatsPrinter" additivity="false">
+	<category name="org.restcomm.protocols.ss7.oam.common.statistics.CsvStatsPrinter" additivity="false">
 		<priority value="DEBUG" />
 		<appender-ref ref="CSVSTATS"/>
 	</category>
@@ -68,7 +68,7 @@
 		<priority value="INFO" />
 	</category>
 	
-	<category name="org.mobicents">
+	<category name="org.restcomm">
 		<priority value="INFO" />
 	</category>
 	

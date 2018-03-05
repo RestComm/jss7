@@ -51,9 +51,9 @@ CircuitManager::
 
 == ISUP Usage
 
-The `org.mobicents.protocols.ss7.isup.ISUPStack` interface defines the methods required to represent ISUP Protocol Stack.
-ISUPStack exposes `org.mobicents.protocols.ss7.isup.ISUPProvider`.
-This interface defines the methods that will be used by any registered ISUP User application implementing the `org.mobicents.protocols.ss7.isup.ISUPListener` to listen ISUP events(messages and timeouts).  
+The `org.restcomm.protocols.ss7.isup.ISUPStack` interface defines the methods required to represent ISUP Protocol Stack.
+ISUPStack exposes `org.restcomm.protocols.ss7.isup.ISUPProvider`.
+This interface defines the methods that will be used by any registered ISUP User application implementing the `org.restcomm.protocols.ss7.isup.ISUPListener` to listen ISUP events(messages and timeouts).  
 
 == ISUP Example
 
@@ -69,17 +69,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.mobicents.protocols.ss7.isup.ISUPEvent;
-import org.mobicents.protocols.ss7.isup.ISUPListener;
-import org.mobicents.protocols.ss7.isup.ISUPProvider;
-import org.mobicents.protocols.ss7.isup.ISUPStack;
-import org.mobicents.protocols.ss7.isup.ISUPTimeoutEvent;
-import org.mobicents.protocols.ss7.isup.ParameterException;
-import org.mobicents.protocols.ss7.isup.impl.ISUPStackImpl;
-import org.mobicents.protocols.ss7.isup.message.ISUPMessage;	
+import org.restcomm.protocols.ss7.isup.ISUPEvent;
+import org.restcomm.protocols.ss7.isup.ISUPListener;
+import org.restcomm.protocols.ss7.isup.ISUPProvider;
+import org.restcomm.protocols.ss7.isup.ISUPStack;
+import org.restcomm.protocols.ss7.isup.ISUPTimeoutEvent;
+import org.restcomm.protocols.ss7.isup.ParameterException;
+import org.restcomm.protocols.ss7.isup.impl.ISUPStackImpl;
+import org.restcomm.protocols.ss7.isup.message.ISUPMessage;	
 
-import org.mobicents.ss7.linkset.oam.Layer4;
-import org.mobicents.ss7.linkset.oam.Linkset;
+import org.restcomm.ss7.linkset.oam.Layer4;
+import org.restcomm.ss7.linkset.oam.Linkset;
 
 public class ISUPTest implements ISUPListener
 {
