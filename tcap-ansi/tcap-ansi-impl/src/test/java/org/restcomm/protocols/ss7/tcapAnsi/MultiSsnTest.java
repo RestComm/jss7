@@ -346,7 +346,7 @@ public class MultiSsnTest extends SccpHarness {
         List<TestEvent> clientExpectedEvents = fillClientEventErr(stamp);
         List<TestEvent> serverExpectedEvents = fillServerEventErr(stamp);
 
-        this.saveTrafficInFile();
+//        this.saveTrafficInFile();
 
         client.startClientDialog(peer1AddressWrongSsnGt, peer2AddressWrongSsnGt);
         assertNotNull(client.dialog.getLocalAddress());

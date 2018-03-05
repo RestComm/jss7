@@ -670,7 +670,7 @@ public class ConnectionTest extends SccpHarness {
 
     @Test(groups = { "SccpMessage", "functional.connection" }, dataProvider = "ConnectionTestDataProvider")
     public void testSendDataProtocolClass3(boolean onlyOneStack) throws Exception {
-        this.saveTrafficInFile();
+//        this.saveTrafficInFile();
         stackParameterInit();
 
         a1 = sccpProvider1.getParameterFactory().createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, null, getStack1PC(), getSSN());

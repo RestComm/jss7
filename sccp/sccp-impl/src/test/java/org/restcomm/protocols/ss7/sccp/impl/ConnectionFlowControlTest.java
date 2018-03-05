@@ -288,7 +288,7 @@ public class ConnectionFlowControlTest extends SccpHarness {
         conn2.send(DATA3);
         conn2.send(DATA4);
 
-        Thread.sleep(100);
+        Thread.sleep(200);
 
         assertEquals(u2.getReceivedData().size(), 1);
         assertEquals(u1.getReceivedData().size(), 4);
@@ -636,7 +636,7 @@ public class ConnectionFlowControlTest extends SccpHarness {
         Thread.sleep(1600);
 
         conn1.reset(new ResetCauseImpl(ResetCauseValue.END_USER_ORIGINATED));
-        Thread.sleep(300);
+        Thread.sleep(500);
 
         for (int i=0; i<=127*2; i++) {
             byte val = (byte)(i % 128);

@@ -887,7 +887,7 @@ TC-CONTINUE + EventReportBCSMRequest (ODisconnect)
                 (stamp + _SLEEP_BEFORE_ODISCONNECT + _TCAP_DIALOG_RELEASE_TIMEOUT));
         serverExpectedEvents.add(te);
 
-        this.saveTrafficInFile();
+//        this.saveTrafficInFile();
         
         // setting dialog timeout little interval to invoke onDialogTimeout on SCF side
         server.capStack.getTCAPStack().setInvokeTimeout(_DIALOG_TIMEOUT - 100);

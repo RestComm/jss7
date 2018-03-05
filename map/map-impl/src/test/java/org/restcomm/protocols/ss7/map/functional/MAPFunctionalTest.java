@@ -7590,7 +7590,7 @@ TC-CONTINUE
         te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
         serverExpectedEvents.add(te);
 
-        this.saveTrafficInFile();
+//        this.saveTrafficInFile();
         
         client.sendSendRoutingInformation_V3();
         waitForEnd();
