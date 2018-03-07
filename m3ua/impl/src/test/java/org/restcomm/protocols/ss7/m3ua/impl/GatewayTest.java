@@ -117,7 +117,7 @@ public class GatewayTest {
                                                       // delay to 5 secs
         this.sctpManagement.removeAllResourses();
 
-        this.m3uaMgmt = new M3UAManagementImpl("GatewayTest", null);
+        this.m3uaMgmt = new M3UAManagementImpl("GatewayTest", null, null);
         this.m3uaMgmt.setPersistDir(Util.getTmpTestDir());
         this.m3uaMgmt.setTransportManagement(this.sctpManagement);
         this.m3uaMgmt.addMtp3UserPartListener(mtp3UserPartListener);

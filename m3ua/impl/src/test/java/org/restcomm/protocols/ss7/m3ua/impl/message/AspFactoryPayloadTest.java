@@ -346,7 +346,7 @@ public class AspFactoryPayloadTest {
     
     private class M3UAManagementImplProxy extends M3UAManagementImpl {
         public M3UAManagementImplProxy(String name, String productName, boolean sctpLibNettySupport) {
-            super(name, productName);
+            super(name, productName, null);
             this.sctpLibNettySupport = sctpLibNettySupport;
         }
     }

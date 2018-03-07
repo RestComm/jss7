@@ -107,7 +107,7 @@ public class NetworkIdAffectedPCTest {
         router.addRoutingAddress(1, sccpAddress1);
 
         // isPcLocal()==true
-        Mtp3UserPart mtp3UserPart = new M3UAManagementImpl("Test", "Test2");
+        Mtp3UserPart mtp3UserPart = new M3UAManagementImpl("Test", "Test2", null);
         sccpStack.setMtp3UserPart(1, mtp3UserPart);
         router.addMtp3ServiceAccessPoint(1, 1, 101, 0, 1, null);
         map = router.getNetworkIdList(101);

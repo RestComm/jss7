@@ -76,7 +76,7 @@ public class M3UAShellExecutorTest {
         this.transportManagement = new TransportManagement();
         this.transportManagement.setPersistDir(Util.getTmpTestDir());
 
-        this.clientM3UAMgmt = new M3UAManagementImpl("M3UAShellExecutorTest", null);
+        this.clientM3UAMgmt = new M3UAManagementImpl("M3UAShellExecutorTest", null, null);
         this.clientM3UAMgmt.setTransportManagement(this.transportManagement);
         this.clientM3UAMgmt.setPersistDir(Util.getTmpTestDir());
         this.clientM3UAMgmt.start();

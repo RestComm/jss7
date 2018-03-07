@@ -127,7 +127,7 @@ public class RemSgFSMTest {
         this.transportManagement = new NettyTransportManagement();
         this.transportManagement.setPersistDir(Util.getTmpTestDir());
         this.m3uaManagementEventListenerImpl = new M3UAManagementEventListenerImpl();
-        this.clientM3UAMgmt = new M3UAManagementImpl("RemSgFSMTest", null);
+        this.clientM3UAMgmt = new M3UAManagementImpl("RemSgFSMTest", null, null);
         this.clientM3UAMgmt.setPersistDir(Util.getTmpTestDir());
         this.clientM3UAMgmt.addM3UAManagementEventListener(this.m3uaManagementEventListenerImpl);
         this.clientM3UAMgmt.setTransportManagement(this.transportManagement);

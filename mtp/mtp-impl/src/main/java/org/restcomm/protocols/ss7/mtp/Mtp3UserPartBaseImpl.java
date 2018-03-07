@@ -31,6 +31,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
+import org.restcomm.protocols.ss7.ss7ext.Ss7ExtInterface;
+import org.restcomm.protocols.ss7.ss7ext.Ss7ExtInterfaceDefault;
 import org.restcomm.ss7.congestion.ExecutorCongestionMonitor;
 import org.restcomm.ss7.congestion.ExecutorCongestionMonitorImpl;
 
@@ -76,12 +78,18 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
     private Mtp3TransferPrimitiveFactory mtp3TransferPrimitiveFactory = null;
 
     private final String productName;
+    private final Ss7ExtInterface ss7ExtInterface;
 
-    public Mtp3UserPartBaseImpl(String productName) {
-        if(productName == null){
+    public Mtp3UserPartBaseImpl(String productName, Ss7ExtInterface ss7ExtInterface) {
+        if (productName == null) {
             this.productName = LICENSE_PRODUCT_NAME;
         } else {
             this.productName = productName;
+        }
+        if (ss7ExtInterface != null) {
+            this.ss7ExtInterface = ss7ExtInterface;
+        } else {
+            this.ss7ExtInterface = new Ss7ExtInterfaceDefault();
         }
     }
 
@@ -160,6 +168,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
 
     public void start() throws Exception {
         // lic dep 2
+        ss7ExtInterface.startMtpSs7Ext(this.productName);
 
         startNoLce();
     }

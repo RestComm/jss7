@@ -74,17 +74,74 @@
     </build>
 
     <dependencies>
+        <!-- dependencies -->
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>restcomm-ss7-wildfly-modules</artifactId>
+            <groupId>org.restcomm.protocols.ss7.management</groupId>
+            <artifactId>shell-server-impl</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- dependencies -->
+        <dependency>
+            <groupId>org.restcomm.protocols.ss7</groupId>
+            <artifactId>restcomm-ss7-service</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.restcomm.protocols.ss7.m3ua</groupId>
+            <artifactId>m3ua-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.restcomm.protocols.ss7.m3ua</groupId>
+            <artifactId>m3ua-cli-sctp</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.restcomm.protocols.ss7.m3ua</groupId>
+            <artifactId>m3ua-cli-m3ua</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.restcomm.protocols.ss7.map</groupId>
+            <artifactId>map-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.restcomm.protocols.ss7.cap</groupId>
+            <artifactId>cap-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mobicents.protocols.sctp</groupId>
+            <artifactId>sctp-impl</artifactId>
+            <version>${sctp.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.restcomm.protocols.ss7.sccp</groupId>
+            <artifactId>sccp-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wildfly.core</groupId>
+            <artifactId>wildfly-controller</artifactId>
+            <version>${version.wildfly.core}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- WildFly Core modules  -->

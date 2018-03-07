@@ -303,7 +303,7 @@ public abstract class EventTestHarness /* extends TestCase */implements ISUPList
     private class TimerTestMtp3UserPart extends Mtp3UserPartBaseImpl {
         
         public TimerTestMtp3UserPart() {
-            super(null);
+            super(null, null);
         }
 
         public void sendTransferMessageToLocalUser(Mtp3TransferPrimitive msg, int seqControl) {

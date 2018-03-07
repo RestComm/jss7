@@ -113,7 +113,7 @@ public class IPSPServerFSMTest {
     public void setUp() throws Exception {
         semaphore = new Semaphore(0);
         this.transportManagement = new NettyTransportManagement();
-        this.serverM3UAMgmt = new M3UAManagementImpl("IPSPServerFSMTest", null);
+        this.serverM3UAMgmt = new M3UAManagementImpl("IPSPServerFSMTest", null, null);
         this.serverM3UAMgmt.setTransportManagement(this.transportManagement);
         this.mtp3UserPartListener = new Mtp3UserPartListenerimpl();
         this.serverM3UAMgmt.addMtp3UserPartListener(this.mtp3UserPartListener);

@@ -9,6 +9,7 @@
         <resource-root path="congestion-${project.version}.jar"/>
         <resource-root path="statistics-api-${project.version}.jar"/>
         <resource-root path="statistics-impl-${project.version}.jar"/>
+        <resource-root path="ss7-ext-api-${project.version}.jar"/>
 
         <resource-root path="commons-${commons.version}.jar"/>
         <resource-root path="asn-${asn.version}.jar"/>
@@ -31,23 +32,7 @@
         <resource-root path="inap-api-${project.version}.jar"/>
         <resource-root path="inap-impl-${project.version}.jar"/>
 
-        <resource-root path="restcomm-dahdi-${project.version}.jar"/>
-        <resource-root path="restcomm-dialogic-${project.version}.jar"/>
-
-        <resource-root path="restcomm-ss7-${project.version}.jar"/>
-
-        <resource-root path="linkset-${project.version}.jar"/>
-
-        <resource-root path="jmx-${project.version}.jar"/>
-        <resource-root path="alarm-${project.version}.jar"/>
-        <resource-root path="jmxss7-${project.version}.jar"/>
-        <resource-root path="statistics-oam-api-${project.version}.jar"/>
-        <resource-root path="statistics-oam-impl-${project.version}.jar"/>
-        <resource-root path="tcap-oam-${project.version}.jar"/>
-        <resource-root path="sctp-oam-${project.version}.jar"/>
-        <resource-root path="m3ua-oam-${project.version}.jar"/>
-        <resource-root path="sccp-oam-${project.version}.jar"/>
-        <resource-root path="linkset-oam-${project.version}.jar"/>
+        <resource-root path="restcomm-ss7-service-${project.version}.jar"/>
     </resources>
 
     <dependencies>

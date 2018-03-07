@@ -79,6 +79,7 @@ import org.restcomm.protocols.ss7.mtp.Mtp3UserPartBaseImpl;
 import org.restcomm.protocols.ss7.mtp.RoutingLabelFormat;
 import org.restcomm.protocols.ss7.m3ua.M3UAManagement;
 import org.restcomm.protocols.ss7.m3ua.M3UAManagementEventListener;
+import org.restcomm.protocols.ss7.ss7ext.Ss7ExtInterface;
 
 /**
  * @author amit bhayani
@@ -142,8 +143,8 @@ public class M3UAManagementImpl extends Mtp3UserPartBaseImpl implements M3UAMana
      */
     private int maxSequenceNumber = MAX_SEQUENCE_NUMBER;
 
-    public M3UAManagementImpl(String name, String productName) {
-        super(productName);
+    public M3UAManagementImpl(String name, String productName, Ss7ExtInterface ss7ExtInterface) {
+        super(productName, ss7ExtInterface);
         this.name = name;
         binding.setClassAttribute(CLASS_ATTRIBUTE);
         binding.setAlias(AspFactoryImpl.class, "aspFactory");

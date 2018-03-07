@@ -93,7 +93,7 @@ public class M3UAManagementTest {
     public void setUp() throws Exception {
         this.transportManagement = new NettyTransportManagement();
 
-        this.m3uaMgmt = new M3UAManagementImpl("M3UAManagementTest", null);
+        this.m3uaMgmt = new M3UAManagementImpl("M3UAManagementTest", null, null);
         this.m3uaMgmt.setPersistDir(Util.getTmpTestDir());
         this.m3uaMgmt.setTransportManagement(this.transportManagement);
         this.m3uaMgmt.start();
@@ -124,7 +124,7 @@ public class M3UAManagementTest {
 
         this.m3uaMgmt.stop();
 
-        M3UAManagementImpl m3uaMgmt1 = new M3UAManagementImpl("M3UAManagementTest", null);
+        M3UAManagementImpl m3uaMgmt1 = new M3UAManagementImpl("M3UAManagementTest", null, null);
         m3uaMgmt1.setPersistDir(Util.getTmpTestDir());
         m3uaMgmt1.setTransportManagement(this.transportManagement);
         m3uaMgmt1.start();
@@ -194,7 +194,7 @@ public class M3UAManagementTest {
         association = this.transportManagement.addAssociation(null, 0, null, 0, "test1");
         
         //now start M3UA again and it should read from old data file
-        M3UAManagementImpl m3uaMgmt1 = new M3UAManagementImpl(name, null);
+        M3UAManagementImpl m3uaMgmt1 = new M3UAManagementImpl(name, null, null);
         m3uaMgmt1.setPersistDir(Util.getTmpTestDir());
         m3uaMgmt1.setTransportManagement(this.transportManagement);
         m3uaMgmt1.start();
@@ -217,7 +217,7 @@ public class M3UAManagementTest {
 
     @Test
     public void testPersistFileName() throws Exception {
-        M3UAManagementImpl m3ua = new M3UAManagementImpl("test", null);
+        M3UAManagementImpl m3ua = new M3UAManagementImpl("test", null, null);
         m3ua.setMaxAsForRoute(10);
 
     }

@@ -100,10 +100,6 @@
 			<groupId>org.restcomm.protocols.ss7.mtp</groupId>
 			<artifactId>mtp</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.restcomm.protocols.ss7.hardware</groupId>
-			<artifactId>restcomm-dialogic</artifactId>
-		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

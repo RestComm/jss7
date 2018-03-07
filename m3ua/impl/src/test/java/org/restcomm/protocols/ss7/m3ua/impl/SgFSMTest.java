@@ -130,7 +130,7 @@ public class SgFSMTest {
         this.m3uaManagementEventListenerImpl = new M3UAManagementEventListenerImpl();
         this.transportManagement = new NettyTransportManagement();
         this.transportManagement.setPersistDir(Util.getTmpTestDir());
-        this.serverM3UAMgmt = new M3UAManagementImpl("SgFSMTest", null);
+        this.serverM3UAMgmt = new M3UAManagementImpl("SgFSMTest", null, null);
         this.serverM3UAMgmt.setPersistDir(Util.getTmpTestDir());
         this.serverM3UAMgmt.addM3UAManagementEventListener(this.m3uaManagementEventListenerImpl);
         this.serverM3UAMgmt.setTransportManagement(this.transportManagement);

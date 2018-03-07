@@ -39,8 +39,6 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
-import org.restcomm.protocols.ss7.tools.simulator.level1.DialogicManMBean;
-import org.restcomm.protocols.ss7.tools.simulator.level1.DialogicManStandardMBean;
 import org.restcomm.protocols.ss7.tools.simulator.level1.M3uaManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.level1.M3uaManStandardMBean;
 import org.restcomm.protocols.ss7.tools.simulator.level2.SccpManMBean;
@@ -258,8 +256,9 @@ public class MainCore {
             M3uaManStandardMBean m3uaMBean = new M3uaManStandardMBean(host.getM3uaMan(), M3uaManMBean.class);
             mbs.registerMBean(m3uaMBean, nameM3uaMan);
 
-            DialogicManStandardMBean dialogicMBean = new DialogicManStandardMBean(host.getDialogicMan(), DialogicManMBean.class);
-            mbs.registerMBean(dialogicMBean, nameDialogicMan);
+            // !!! DIALODIG !!!
+//            DialogicManStandardMBean dialogicMBean = new DialogicManStandardMBean(host.getDialogicMan(), DialogicManMBean.class);
+//            mbs.registerMBean(dialogicMBean, nameDialogicMan);
 
             SccpManStandardMBean sccpMBean = new SccpManStandardMBean(host.getSccpMan(), SccpManMBean.class);
             mbs.registerMBean(sccpMBean, nameSccpMan);

@@ -38,7 +38,6 @@
 		<stream.version>1.0.0.CR1</stream.version>
 		<sctp.version>2.0.0-128</sctp.version>
 		<commons.version>1.0.0.CR1</commons.version>
-		<dialogic.version>6.7.1</dialogic.version>
 		<netty.version>4.0.33.Final</netty.version>
 
 
@@ -53,9 +52,9 @@
 		<module>congestion</module>
 		<module>statistics</module>
 		<module>management</module>
+		<module>ss7-ext</module>
 		<module>mtp</module>
 		<module>m3ua</module>
-		<module>hardware</module>
 		<module>isup</module>
 		<module>sccp</module>
 		<module>tcap</module>
@@ -64,10 +63,7 @@
 		<module>inap</module>
 		<module>cap</module>
 
-		<module>oam</module>
-
 		<module>service</module>
-		<module>sgw</module>
 
 		<module>tools</module>
 	</modules>
@@ -136,38 +132,6 @@
 			<dependency>
 				<artifactId>shell-server-impl</artifactId>
 				<groupId>org.restcomm.protocols.ss7.management</groupId>
-				<version>${project.version}</version>
-			</dependency>
-			<!-- Management linkset -->
-			<dependency>
-				<artifactId>linkset</artifactId>
-				<groupId>org.restcomm.protocols.ss7.hardware</groupId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<!-- Hardware Dahdi Java -->
-			<dependency>
-				<artifactId>restcomm-dahdi</artifactId>
-				<groupId>org.restcomm.protocols.ss7.hardware</groupId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<!-- Hardware Dialogic Java -->
-			<dependency>
-				<groupId>com.vendor.dialogic</groupId>
-				<artifactId>gctapi</artifactId>
-				<version>${dialogic.version}</version>
-			</dependency>
-			<dependency>
-				<artifactId>restcomm-dialogic</artifactId>
-				<groupId>org.restcomm.protocols.ss7.hardware</groupId>
-				<version>${project.version}</version>
-			</dependency>
-
-			<!-- /hardware m3ua Java -->
-			<dependency>
-				<artifactId>restcomm-m3ua</artifactId>
-				<groupId>org.restcomm.protocols.ss7.hardware</groupId>
 				<version>${project.version}</version>
 			</dependency>
 

@@ -176,7 +176,7 @@ public class Client extends TestHarness {
     }
 
     private void initM3UA() throws Exception {
-        this.clientM3UAMgmt = new M3UAManagementImpl("Client", null);
+        this.clientM3UAMgmt = new M3UAManagementImpl("Client", null, null);
         this.clientM3UAMgmt.setTransportManagement(this.sctpManagement);
         this.clientM3UAMgmt.setDeliveryMessageThreadCount(DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT);
         this.clientM3UAMgmt.start();

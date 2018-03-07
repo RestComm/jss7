@@ -159,7 +159,7 @@ public class Server extends TestHarness {
     }
 
     private void initM3UA() throws Exception {
-        this.serverM3UAMgmt = new M3UAManagementImpl("Server", null);
+        this.serverM3UAMgmt = new M3UAManagementImpl("Server", null, null);
         this.serverM3UAMgmt.setTransportManagement(this.sctpManagement);
         this.serverM3UAMgmt.setDeliveryMessageThreadCount(DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT);
         this.serverM3UAMgmt.start();

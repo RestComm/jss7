@@ -55,7 +55,7 @@ public class Mtp3UserPartImpl extends Mtp3UserPartBaseImpl {
     SccpHarness sccpHarness;
 
     public Mtp3UserPartImpl(SccpHarness sccpHarness) {
-        super(null);
+        super(null, null);
         this.sccpHarness = sccpHarness;
         try {
             this.start();

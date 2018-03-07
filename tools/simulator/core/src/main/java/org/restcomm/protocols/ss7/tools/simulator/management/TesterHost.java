@@ -46,7 +46,6 @@ import org.restcomm.protocols.ss7.tools.simulator.Stoppable;
 import org.restcomm.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.restcomm.protocols.ss7.tools.simulator.common.ConfigurationData;
 import org.restcomm.protocols.ss7.tools.simulator.level1.DialogicConfigurationData_OldFormat;
-import org.restcomm.protocols.ss7.tools.simulator.level1.DialogicMan;
 import org.restcomm.protocols.ss7.tools.simulator.level1.M3uaConfigurationData_OldFormat;
 import org.restcomm.protocols.ss7.tools.simulator.level1.M3uaMan;
 import org.restcomm.protocols.ss7.tools.simulator.level2.NatureOfAddressType;
@@ -118,7 +117,8 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
     // levels
     M3uaMan m3ua;
-    DialogicMan dialogic;
+ // !!! DIALODIG !!!
+//    DialogicMan dialogic;
     SccpMan sccp;
     MapMan map;
     CapMan cap;
@@ -144,8 +144,9 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
         this.m3ua = new M3uaMan(appName);
         this.m3ua.setTesterHost(this);
 
-        this.dialogic = new DialogicMan(appName);
-        this.dialogic.setTesterHost(this);
+     // !!! DIALODIG !!!
+//        this.dialogic = new DialogicMan(appName);
+//        this.dialogic.setTesterHost(this);
 
         this.sccp = new SccpMan(appName);
         this.sccp.setTesterHost(this);
@@ -232,9 +233,10 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
         return this.m3ua;
     }
 
-    public DialogicMan getDialogicMan() {
-        return this.dialogic;
-    }
+ // !!! DIALODIG !!!
+//    public DialogicMan getDialogicMan() {
+//        return this.dialogic;
+//    }
 
     public SccpMan getSccpMan() {
         return this.sccp;
@@ -486,11 +488,12 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
                 started = this.m3ua.start();
                 mtp3UserPart = this.m3ua.getMtp3UserPart();
                 break;
-            case Instance_L1.VAL_DIALOGIC:
-                this.instance_L1_B = this.dialogic;
-                started = this.dialogic.start();
-                mtp3UserPart = this.dialogic.getMtp3UserPart();
-                break;
+             // !!! DIALODIG !!!
+//            case Instance_L1.VAL_DIALOGIC:
+//                this.instance_L1_B = this.dialogic;
+//                started = this.dialogic.start();
+//                mtp3UserPart = this.dialogic.getMtp3UserPart();
+//                break;
 
             default:
                 // TODO: implement others test tasks ...
@@ -916,8 +919,9 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
             DialogicConfigurationData_OldFormat _dial = reader.read(ConfigurationData.DIALOGIC,
                     DialogicConfigurationData_OldFormat.class);
-            this.dialogic.setSourceModuleId(_dial.getSourceModuleId());
-            this.dialogic.setDestinationModuleId(_dial.getDestinationModuleId());
+         // !!! DIALODIG !!!
+//            this.dialogic.setSourceModuleId(_dial.getSourceModuleId());
+//            this.dialogic.setDestinationModuleId(_dial.getDestinationModuleId());
 
             SccpConfigurationData_OldFormat _sccp = reader.read(ConfigurationData.SCCP, SccpConfigurationData_OldFormat.class);
             this.sccp.setRouteOnGtMode(_sccp.isRouteOnGtMode());

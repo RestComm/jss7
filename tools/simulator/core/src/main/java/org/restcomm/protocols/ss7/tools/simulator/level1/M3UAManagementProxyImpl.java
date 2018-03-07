@@ -12,7 +12,7 @@ public class M3UAManagementProxyImpl extends M3UAManagementImpl {
     private String pcapTraceName;
 
     public M3UAManagementProxyImpl(String name) {
-        super(name, null);
+        super(name, null, null);
     }
 
     public void startPcapTrace(String fileName) {

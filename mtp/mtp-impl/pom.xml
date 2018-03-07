@@ -24,6 +24,11 @@
 			<groupId>org.mobicents.protocols.stream</groupId>
 			<artifactId>stream</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.restcomm.protocols.ss7.ss7ext</groupId>
+			<artifactId>ss7-ext-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.restcomm.protocols.ss7.scheduler</groupId>

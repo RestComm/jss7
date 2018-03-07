@@ -40,6 +40,11 @@
 			<artifactId>congestion</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.restcomm.protocols.ss7.ss7ext</groupId>
+			<artifactId>ss7-ext-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.restcomm.protocols.ss7.map</groupId>
 			<artifactId>map-api</artifactId>
 		</dependency>
@@ -100,10 +105,6 @@
 			<groupId>org.mobicents.protocols.stream</groupId>
 			<artifactId>stream</artifactId>
 			<version>${stream.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.restcomm.protocols.ss7.hardware</groupId>
-			<artifactId>restcomm-dialogic</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.commons</groupId>
@@ -210,6 +211,19 @@
 											</outputDirectory>
 											<destFileName>
 												restcomm-congestion.jar
+											</destFileName>
+										</artifactItem>
+
+										<artifactItem>
+											<groupId>org.restcomm.protocols.ss7.ss7ext</groupId>
+											<artifactId>ss7-ext-api</artifactId>
+											<type>jar</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>
+												${assemble.dir}
+											</outputDirectory>
+											<destFileName>
+												ss7-ext-api.jar
 											</destFileName>
 										</artifactItem>
 

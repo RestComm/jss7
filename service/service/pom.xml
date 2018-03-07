@@ -1,0 +1,157 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>restcomm-service-parent</artifactId>
+		<groupId>org.restcomm.protocols.ss7</groupId>
+		<version>8.0.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>restcomm-ss7-service</artifactId>
+
+	<name>Restcomm jSS7 :: Service :: Service :: ${project.artifactId}</name>
+
+	<properties>
+		<restcomm.name>restcomm-ss7</restcomm.name>
+		<restcomm.vendor>TeleStax</restcomm.vendor>
+		<restcomm.version>${project.version}</restcomm.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.wildfly</groupId>
+			<artifactId>wildfly-system-jmx</artifactId>
+			<version>${version.wildfly.as}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<artifactId>asn</artifactId>
+			<groupId>org.mobicents.protocols.asn</groupId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.commons</groupId>
+			<artifactId>commons</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mobicents.protocols.sctp</groupId>
+			<artifactId>sctp-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.protocols.sctp</groupId>
+			<artifactId>sctp-impl</artifactId>
+		</dependency>
+
+		<dependency>
+			<artifactId>congestion</artifactId>
+			<groupId>org.restcomm.protocols.ss7.congestion</groupId>
+		</dependency>
+
+		<dependency>
+			<artifactId>shell-server-api</artifactId>
+			<groupId>org.restcomm.protocols.ss7.management</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>shell-server-impl</artifactId>
+			<groupId>org.restcomm.protocols.ss7.management</groupId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>shell-transport</artifactId>
+			<groupId>org.restcomm.protocols.ss7.management</groupId>
+		</dependency>
+
+		<dependency>
+			<artifactId>scheduler</artifactId>
+			<groupId>org.restcomm.protocols.ss7.scheduler</groupId>
+		</dependency>
+
+		<dependency>
+			<artifactId>mtp-api</artifactId>
+			<groupId>org.restcomm.protocols.ss7.mtp</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>mtp</artifactId>
+			<groupId>org.restcomm.protocols.ss7.mtp</groupId>
+		</dependency>
+
+		<!-- m3ua -->
+		<dependency>
+			<artifactId>m3ua-api</artifactId>
+			<groupId>org.restcomm.protocols.ss7.m3ua</groupId>
+		</dependency>
+
+		<dependency>
+			<artifactId>m3ua-impl</artifactId>
+			<groupId>org.restcomm.protocols.ss7.m3ua</groupId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.restcomm.protocols.ss7.isup</groupId>
+			<artifactId>isup-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.restcomm.protocols.ss7.isup</groupId>
+			<artifactId>isup-impl</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.restcomm.protocols.ss7.sccp</groupId>
+			<artifactId>sccp-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.restcomm.protocols.ss7.sccp</groupId>
+			<artifactId>sccp-impl</artifactId>
+		</dependency>
+		<dependency>
+			<artifactId>tcap-api</artifactId>
+			<groupId>org.restcomm.protocols.ss7.tcap</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>tcap-impl</artifactId>
+			<groupId>org.restcomm.protocols.ss7.tcap</groupId>
+		</dependency>
+
+		<dependency>
+			<artifactId>map-api</artifactId>
+			<groupId>org.restcomm.protocols.ss7.map</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>map-impl</artifactId>
+			<groupId>org.restcomm.protocols.ss7.map</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>cap-api</artifactId>
+			<groupId>org.restcomm.protocols.ss7.cap</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>cap-impl</artifactId>
+			<groupId>org.restcomm.protocols.ss7.cap</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>inap-api</artifactId>
+			<groupId>org.restcomm.protocols.ss7.inap</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>inap-impl</artifactId>
+			<groupId>org.restcomm.protocols.ss7.inap</groupId>
+		</dependency>
+
+		<!-- SS7 stats -->
+		<dependency>
+			<artifactId>statistics-api</artifactId>
+			<groupId>org.restcomm.protocols.ss7.statistics</groupId>
+			<version>${project.version}</version>
+		</dependency>	
+		<dependency>
+			<artifactId>statistics-impl</artifactId>
+			<groupId>org.restcomm.protocols.ss7.statistics</groupId>
+			<version>${project.version}</version>
+		</dependency>	
+	</dependencies>
+
+	<build>
+		<finalName>${project.artifactId}-${project.version}</finalName>
+	</build>
+
+</project>

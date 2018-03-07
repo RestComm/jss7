@@ -1,23 +1,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<packaging>pom</packaging>
+
 	<parent>
 		<artifactId>ss7-parent</artifactId>
 		<groupId>org.restcomm.protocols.ss7</groupId>
 		<version>8.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>tools</artifactId>
-
-	<name>Restcomm jSS7 :: Tools :: Parent</name>
+	<groupId>org.restcomm.protocols.ss7.ss7ext</groupId>
+	<artifactId>ss7-ext-parent</artifactId>
+	<name>Restcomm jSS7 :: SS7-Ext :: Parent :: ${project.artifactId}</name>
+	<packaging>pom</packaging>
 
 	<modules>
-		<module>simulator</module>
-		<module>trace-parser</module>
+		<module>ss7-ext-api</module>
 	</modules>
 
 	<build>
-
+		<finalName>${project.artifactId}-${project.version}</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
@@ -36,8 +36,26 @@
 						true
 					</resolveTransitiveDependencies>
 					<eclipseProjectName>
-						tools
+						mtp
 					</eclipseProjectName>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>
+					${maven-surefire-plugin.version}
+				</version>
+				<configuration>
+					<systemProperties>
+						<property>
+							<name>file.name</name>
+							<value>target/log4j.log</value>
+						</property>
+					</systemProperties>
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
 				</configuration>
 			</plugin>
 		</plugins>

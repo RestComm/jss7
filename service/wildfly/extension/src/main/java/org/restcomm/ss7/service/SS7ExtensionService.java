@@ -56,13 +56,6 @@ import org.restcomm.protocols.ss7.map.MAPStackImpl;
 import org.restcomm.protocols.ss7.map.api.MAPStack;
 import org.restcomm.protocols.ss7.mtp.Mtp3UserPart;
 import org.restcomm.protocols.ss7.mtp.RoutingLabelFormat;
-import org.restcomm.protocols.ss7.oam.common.alarm.AlarmProvider;
-import org.restcomm.protocols.ss7.oam.common.jmxss7.Ss7Management;
-import org.restcomm.protocols.ss7.oam.common.m3ua.M3uaManagementJmx;
-import org.restcomm.protocols.ss7.oam.common.sccp.SccpManagementJmx;
-import org.restcomm.protocols.ss7.oam.common.sctp.SctpManagementJmx;
-import org.restcomm.protocols.ss7.oam.common.statistics.CounterProviderManagement;
-import org.restcomm.protocols.ss7.oam.common.tcap.TcapManagementJmx;
 import org.restcomm.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.restcomm.protocols.ss7.sccp.impl.oam.SccpExecutor;
 import org.restcomm.protocols.ss7.sccp.impl.router.RuleComparatorFactory;
@@ -73,7 +66,6 @@ import org.restcomm.protocols.ss7.tcap.TCAPStackImpl;
 import org.restcomm.protocols.ss7.tcap.api.TCAPStack;
 import org.restcomm.protocols.ss7.tcap.oam.TCAPExecutor;
 import org.restcomm.ss7.SS7Service;
-import org.restcomm.ss7.hardware.dialogic.DialogicMtp3UserPart;
 import org.restcomm.ss7.management.console.ShellExecutor;
 import org.restcomm.ss7.management.console.ShellServer;
 import org.restcomm.ss7.management.console.ShellServerWildFly;
@@ -115,13 +107,10 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
 
     private FastMap<String, Management> beanSctpManagements = new FastMap<String, Management>();
     private SCTPShellExecutor beanSctpShellExecutor;
-    private FastMap<String, SctpManagementJmx> beanSctpManagementJmxs = new FastMap<String, SctpManagementJmx>();
     private FastMap<String, RoutingLabelFormat> routingLabelFormats = new FastMap<String, RoutingLabelFormat>();
     private FastMap<String, Mtp3UserPart> beanMtp3UserParts = new FastMap<String, Mtp3UserPart>();
     private FastMap<String, M3UAManagementImpl> beanM3uaManagementImpls = new FastMap<String, M3UAManagementImpl>();
-    private FastMap<String, DialogicMtp3UserPart> beanDialogicImpls = new FastMap<String, DialogicMtp3UserPart>();
     private M3UAShellExecutor beanM3uaShellExecutor;
-    private FastMap<String, M3uaManagementJmx> beanM3uaManagementJmxs = new FastMap<String, M3uaManagementJmx>();
 
     private Scheduler schedulerMBean = null;
 
@@ -131,19 +120,14 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
     private FastMap<String, ISUPStack> beanISUPStacks = new FastMap<String, ISUPStack>();
     private FastMap<String, SccpStackImpl> beanSccpStacks = new FastMap<String, SccpStackImpl>();
     private SccpExecutor beanSccpExecutor;
-    private FastMap<String, SccpManagementJmx> beanSccpManagementJmxs = new FastMap<String, SccpManagementJmx>();
     private FastMap<String, TCAPStackImpl> beanTcapStacks = new FastMap<String, TCAPStackImpl>();
     private TCAPExecutor beanTcapExecutor;
-    private FastMap<String, TcapManagementJmx> beanTcapManagementJmxs = new FastMap<String, TcapManagementJmx>();
     private FastMap<String, MAPStackImpl> beanMapStacks = new FastMap<String, MAPStackImpl>();
     private FastMap<String, CAPStackImpl> beanCapStacks = new FastMap<String, CAPStackImpl>();
 
     private FastMap<String, SS7Service> beanSS7Services = new FastMap<String, SS7Service>();
 
     private ShellServer shellExecutorMBean = null;
-    private Ss7Management ss7ManagementMBean = null;
-    private AlarmProvider restcommAlarmManagementMBean = null;
-    private CounterProviderManagement restcommStatisticManagementMBean = null;
 
     public void setModel(ModelNode model) {
         this.fullModel = model;
@@ -244,88 +228,6 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
             }
         }
 
-        // Ss7Management
-        try {
-            ss7ManagementMBean = new Ss7Management();
-            ss7ManagementMBean.setAgentId(getPropertyString("Ss7Management", "agentId", "jboss"));
-            registerMBean(ss7ManagementMBean, "org.restcomm.ss7:service=Ss7Management");
-        } catch (Exception e) {
-            throw new StartException("Ss7Management MBean creating is failed: " + e.getMessage(), e);
-        }
-
-        // AlarmProvider
-        try {
-            restcommAlarmManagementMBean = new AlarmProvider(ss7ManagementMBean, ss7ManagementMBean);
-        } catch (Exception e) {
-            throw new StartException("AlarmProvider MBean creating is failed: " + e.getMessage(), e);
-        }
-
-        // CounterProviderManagement
-        try {
-            restcommStatisticManagementMBean = new CounterProviderManagement(ss7ManagementMBean);
-            restcommStatisticManagementMBean.setPersistDir(dataDir);
-        } catch (Exception e) {
-            throw new StartException("CounterProviderManagement MBean creating is failed: " + e.getMessage(), e);
-        }
-
-        // SctpManagementJmx
-        for (FastMap.Entry<String, Management> n = beanSctpManagements.head(), end = beanSctpManagements.tail(); (n = n
-                .getNext()) != end;) {
-            String beanName = n.getKey();
-            Management sctpManagement = n.getValue();
-
-            try {
-                SctpManagementJmx restcommSctpManagementMBean = new SctpManagementJmx(ss7ManagementMBean, sctpManagement);
-                this.beanSctpManagementJmxs.put(beanName, restcommSctpManagementMBean);
-            } catch (Exception e) {
-                throw new StartException("SctpManagementJmx MBean creating is failed: beanName=" + beanName + ", "
-                        + e.getMessage(), e);
-            }
-        }
-
-        // M3uaManagementJmx
-        for (FastMap.Entry<String, M3UAManagementImpl> n = beanM3uaManagementImpls.head(), end = beanM3uaManagementImpls.tail(); (n = n
-                .getNext()) != end;) {
-            String beanName = n.getKey();
-            M3UAManagementImpl m3uaManagement = n.getValue();
-
-            try {
-                M3uaManagementJmx restcommM3uaManagementMBean = new M3uaManagementJmx(ss7ManagementMBean, m3uaManagement);
-                this.beanM3uaManagementJmxs.put(beanName, restcommM3uaManagementMBean);
-            } catch (Exception e) {
-                throw new StartException("M3uaManagementJmx MBean creating is failed: beanName=" + beanName + ", "
-                        + e.getMessage(), e);
-            }
-        }
-
-        // SccpManagementJmx
-        for (FastMap.Entry<String, SccpStackImpl> n = beanSccpStacks.head(), end = beanSccpStacks.tail(); (n = n.getNext()) != end;) {
-            String beanName = n.getKey();
-            SccpStackImpl sccpStack = n.getValue();
-
-            try {
-                SccpManagementJmx restcommSccpManagementMBean = new SccpManagementJmx(ss7ManagementMBean, sccpStack);
-                this.beanSccpManagementJmxs.put(beanName, restcommSccpManagementMBean);
-            } catch (Exception e) {
-                throw new StartException("SccpManagementJmx MBean creating is failed: beanName=" + beanName + ", "
-                        + e.getMessage(), e);
-            }
-        }
-
-        // TcapManagementJmx
-        for (FastMap.Entry<String, TCAPStackImpl> n = beanTcapStacks.head(), end = beanTcapStacks.tail(); (n = n.getNext()) != end;) {
-            String beanName = n.getKey();
-            TCAPStackImpl tcapStack = n.getValue();
-
-            try {
-                TcapManagementJmx restcommTcapManagementMBean = new TcapManagementJmx(ss7ManagementMBean, tcapStack);
-                this.beanTcapManagementJmxs.put(beanName, restcommTcapManagementMBean);
-            } catch (Exception e) {
-                throw new StartException("TcapManagementJmx MBean creating is failed: beanName=" + beanName + ", "
-                        + e.getMessage(), e);
-            }
-        }
-
         // SCTPManagement - start
         for (FastMap.Entry<String, Management> n = beanSctpManagements.head(), end = beanSctpManagements.tail(); (n = n
                 .getNext()) != end;) {
@@ -416,9 +318,6 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
             if(shellExecutorMBean != null) {
                 shellExecutorMBean.start();
             }
-            ss7ManagementMBean.start();
-            restcommAlarmManagementMBean.start();
-            restcommStatisticManagementMBean.start();
         } catch (Exception e) {
             throw new StartException("Genaral MBean starting is failed: " + e.getMessage(), e);
         }
@@ -434,54 +333,6 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
                 throw new StartException("SS7Service_" + beanName + " MBean starting is failed: " + e.getMessage(), e);
             }
         }
-
-        // SctpManagementMBean - start
-        for (FastMap.Entry<String, SctpManagementJmx> n = beanSctpManagementJmxs.head(), end = beanSctpManagementJmxs.tail(); (n = n
-                .getNext()) != end;) {
-            String beanName = n.getKey();
-            SctpManagementJmx sctpManagementJmx = n.getValue();
-            try {
-                sctpManagementJmx.start();
-            } catch (Exception e) {
-                throw new StartException("SCTPManagementJmx_" + beanName + " MBean starting is failed: " + e.getMessage(), e);
-            }
-        }
-
-        // M3uaManagementMBean - start
-        for (FastMap.Entry<String, M3uaManagementJmx> n = beanM3uaManagementJmxs.head(), end = beanM3uaManagementJmxs.tail(); (n = n
-                .getNext()) != end;) {
-            String beanName = n.getKey();
-            M3uaManagementJmx m3uaManagementJmx = n.getValue();
-            try {
-                m3uaManagementJmx.start();
-            } catch (Exception e) {
-                throw new StartException("M3uaManagementJmx_" + beanName + " MBean starting is failed: " + e.getMessage(), e);
-            }
-        }
-
-        // SccpManagementMBean - start
-        for (FastMap.Entry<String, SccpManagementJmx> n = beanSccpManagementJmxs.head(), end = beanSccpManagementJmxs.tail(); (n = n
-                .getNext()) != end;) {
-            String beanName = n.getKey();
-            SccpManagementJmx sccpManagementJmx = n.getValue();
-            try {
-                sccpManagementJmx.start();
-            } catch (Exception e) {
-                throw new StartException("SccpManagementJmx_" + beanName + " MBean starting is failed: " + e.getMessage(), e);
-            }
-        }
-
-        // TcapManagementMBean - start
-        for (FastMap.Entry<String, TcapManagementJmx> n = beanTcapManagementJmxs.head(), end = beanTcapManagementJmxs.tail(); (n = n
-                .getNext()) != end;) {
-            String beanName = n.getKey();
-            TcapManagementJmx tcapManagementJmx = n.getValue();
-            try {
-                tcapManagementJmx.start();
-            } catch (Exception e) {
-                throw new StartException("TcapManagementJmx_" + beanName + " MBean starting is failed: " + e.getMessage(), e);
-            }
-        }
     }
 
     private boolean shellExecutorExists() {
@@ -492,54 +343,6 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
     @Override
     public void stop(StopContext context) {
         log.info("Stopping SS7ExtensionService");
-
-        // TcapManagementMBean - stop
-        for (FastMap.Entry<String, TcapManagementJmx> n = beanTcapManagementJmxs.head(), end = beanTcapManagementJmxs.tail(); (n = n
-                .getNext()) != end;) {
-            String beanName = n.getKey();
-            TcapManagementJmx tcapManagementJmx = n.getValue();
-            try {
-                tcapManagementJmx.stop();
-            } catch (Exception e) {
-                log.warn("TcapManagementJmx_" + beanName + " MBean stopping is failed: " + e);
-            }
-        }
-
-        // SccpManagementMBean - stop
-        for (FastMap.Entry<String, SccpManagementJmx> n = beanSccpManagementJmxs.head(), end = beanSccpManagementJmxs.tail(); (n = n
-                .getNext()) != end;) {
-            String beanName = n.getKey();
-            SccpManagementJmx sccpManagementJmx = n.getValue();
-            try {
-                sccpManagementJmx.stop();
-            } catch (Exception e) {
-                log.warn("SccpManagementJmx_" + beanName + " MBean stopping is failed: " + e);
-            }
-        }
-
-        // M3uaManagementMBean - stop
-        for (FastMap.Entry<String, M3uaManagementJmx> n = beanM3uaManagementJmxs.head(), end = beanM3uaManagementJmxs.tail(); (n = n
-                .getNext()) != end;) {
-            String beanName = n.getKey();
-            M3uaManagementJmx m3uaManagementJmx = n.getValue();
-            try {
-                m3uaManagementJmx.stop();
-            } catch (Exception e) {
-                log.warn("M3uaManagementJmx_" + beanName + " MBean stopping is failed: " + e);
-            }
-        }
-
-        // SctpManagementMBean - stop
-        for (FastMap.Entry<String, SctpManagementJmx> n = beanSctpManagementJmxs.head(), end = beanSctpManagementJmxs.tail(); (n = n
-                .getNext()) != end;) {
-            String beanName = n.getKey();
-            SctpManagementJmx sctpManagementJmx = n.getValue();
-            try {
-                sctpManagementJmx.stop();
-            } catch (Exception e) {
-                log.warn("SCTPManagementJmx_" + beanName + " MBean stopping is failed: " + e);
-            }
-        }
 
         // Services - stop
         for (FastMap.Entry<String, SS7Service> n = beanSS7Services.head(), end = beanSS7Services.tail(); (n = n.getNext()) != end;) {
@@ -554,12 +357,6 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
 
         // stopping of general beans
         try {
-            if (restcommStatisticManagementMBean != null)
-                restcommStatisticManagementMBean.stop();
-            if (restcommAlarmManagementMBean != null)
-                restcommAlarmManagementMBean.stop();
-            if (ss7ManagementMBean != null)
-                ss7ManagementMBean.stop();
             if (shellExecutorMBean != null)
                 shellExecutorMBean.stop();
         } catch (Exception e) {
@@ -738,18 +535,6 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
             }
         } else {
             beanM3uaShellExecutor = null;
-        }
-
-        // Dialogic
-        for (ModelNode node : mbeansNode.asList()) {
-            for (Property prop : node.asPropertyList()) {
-                String type = prop.getValue().get("type").asString();
-                String beanName = prop.getValue().get("name").asString();
-
-                if (type.equals("DialogicMtp3UserPart")) {
-                    createDialogicStack(prop.getValue(), beanName, dataDir);
-                }
-            }
         }
     }
 
@@ -993,7 +778,7 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
 
         M3UAManagementImpl m3uaManagement = null;
         try {
-            m3uaManagement = new M3UAManagementImpl(beanName, m3uaManagementPropertyName);
+            m3uaManagement = new M3UAManagementImpl(beanName, m3uaManagementPropertyName, null);
             m3uaManagement.setPersistDir(dataDir);
 
             m3uaManagement.setTransportManagement(transportManagement);
@@ -1018,39 +803,6 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
             this.beanM3uaManagementImpls.put(beanName, m3uaManagement);
         } catch (Exception e) {
             throw new StartException("M3UAManagement MBean creating is failed: name=" + beanName + ", " + e.getMessage(), e);
-        }
-    }
-
-    private void createDialogicStack(ModelNode dialogicNode, String beanName, String dataDir) throws StartException {
-        // DialogicStack
-        String dialogicManagementPropertyName = getPropertyString(beanName, "productName", "Restcomm-jSS7");
-        String routingLabelFormatName = getPropertyString(beanName, "routingLabelFormat", null);
-        int sourceModuleId = getPropertyInt(beanName, "sourceModuleId", 61);
-        int destinationModuleId = getPropertyInt(beanName, "destinationModuleId", 34);
-
-        if (routingLabelFormatName == null) {
-            throw new StartException("DialogicMtp3UserPart MBean creating is failed: name=" + beanName
-                    + ", routingLabelFormatName is null");
-        }
-
-        RoutingLabelFormat routingLabelFormat = routingLabelFormats.get(routingLabelFormatName);
-        if (routingLabelFormat == null) {
-            throw new StartException("DialogicMtp3UserPart MBean creating is failed: name=" + beanName
-                    + ", routingLabelFormat is not found: " + routingLabelFormat);
-        }
-
-        DialogicMtp3UserPart dialogicManagement = null;
-        try {
-            dialogicManagement = new DialogicMtp3UserPart(dialogicManagementPropertyName);
-            dialogicManagement.setRoutingLabelFormat(routingLabelFormat);
-
-            dialogicManagement.setSourceModuleId(sourceModuleId);
-            dialogicManagement.setDestinationModuleId(destinationModuleId);
-
-            this.beanMtp3UserParts.put(beanName, dialogicManagement);
-            this.beanDialogicImpls.put(beanName, dialogicManagement);
-        } catch (Exception e) {
-            throw new StartException("DialogicMtp3UserPart MBean creating is failed: name=" + beanName + ", " + e.getMessage(), e);
         }
     }
 
@@ -1369,10 +1121,5 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
     @Override
     public ShellExecutor getBeanTcapExecutor() {
         return beanTcapExecutor;
-    }
-
-    @Override
-    public Ss7Management getSs7Management() {
-        return ss7ManagementMBean;
     }
 }

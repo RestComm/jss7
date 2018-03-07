@@ -309,7 +309,7 @@ public class RKMAsDoesNotExistTest {
     }
     
     private M3UAManagementImpl getM3uaManagement(String s, Management sctpManagement) throws Exception {
-        M3UAManagementImpl m3uaMgmt = new M3UAManagementImpl(s, null);
+        M3UAManagementImpl m3uaMgmt = new M3UAManagementImpl(s, null, null);
         m3uaMgmt.setPersistDir(Util.getTmpTestDir());
         m3uaMgmt.setTransportManagement(sctpManagement);
         m3uaMgmt.addMtp3UserPartListener(mtp3UserPartListener);
