@@ -101,19 +101,21 @@
             </fileset>
         </copy>
 
+<!--
         <echo>Copy SS7 - SWG</echo>
         <copy todir="${restcomm.jss7.dist}/ss7/restcomm-ss7-sgw" failonerror="true">
             <fileset dir="${jss7.dir}/sgw/boot/target/restcomm-sgw">
                 <include name="**"/>
             </fileset>
         </copy>
+-->
 
-        <!-- echo>Copy SS7 native libs</echo>
+<!-- echo>Copy SS7 native libs</echo>
         <copy todir="${restcomm.jss7.dist}/ss7/native" failonerror="true">
                 <fileset dir="${jss7.dir}/sgw/boot/target/restcomm-sgw/native">
                         <include name="**" />
                 </fileset>
-        </copy -->
+</copy -->
 
         <echo>Copy Protocols</echo>
         <copy todir="${restcomm.jss7.dist}/ss7/protocols" failonerror="true">
@@ -168,8 +170,10 @@
                 <include name="**"/>
             </fileset>
         </copy>
+<!--
         <copy file="${jss7.dir}/hardware/cli/target/linkset-cli.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib"
               failonerror="true"/>
+-->
         <copy file="${jss7.dir}/m3ua/cli/m3ua/target/m3ua-cli-m3ua.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib"
               failonerror="true"/>
         <copy file="${jss7.dir}/m3ua/cli/sctp/target/m3ua-cli-sctp.jar" todir="${restcomm.jss7.dist}/ss7/shell/lib"
@@ -182,8 +186,10 @@
               todir="${restcomm.jss7.dist}/ss7/shell/lib" failonerror="true"/>
 
         <!-- Copy files for deploying/undeployng jSS7 to JBoss 5 and WildFly -->
+<!--
         <copy file="${jss7.dir}/release/release-build-jboss5.xml" tofile="${restcomm.jss7.dist}/ss7-jboss/build.xml"
               failonerror="true"/>
+-->
 
     	<copy file="${jss7.dir}/release/release-build-wildfly.xml" tofile="${restcomm.jss7.dist}/ss7-wildfly/build.xml"
               failonerror="true"/>
@@ -203,6 +209,7 @@
     	              failonerror="true"/>
     		
         <!-- Copy templates for JBoss 5 -->
+<!--
         <copy todir="${restcomm.jss7.dist}/ss7-jboss/template/META-INF-dialogic/" failonerror="true">
             <fileset dir="${jss7.dir}/service/jboss/src/main/config-dialogic">
                 <include name="**"/>
@@ -219,13 +226,17 @@
                 <include name="**" />
             </fileset>
         </copy>
+-->
+
 
         <!-- Copy RestComm SS7 Service for JBoss 5 -->
+<!--
         <copy todir="${restcomm.jss7.dist}/ss7-jboss/restcomm-ss7-service" failonerror="true">
             <fileset dir="${jss7.dir}/service/jboss/target/restcomm-ss7-service">
                 <include name="**"/>
             </fileset>
         </copy>
+-->
 
         <!-- Copy RestComm SS7 Service for WildFly -->
         <copy todir="${restcomm.jss7.dist}/ss7-wildfly/restcomm-ss7-service/extension" failonerror="true">
@@ -244,6 +255,7 @@
 			</fileset>
 		</copy>
     	
+<!--
         <echo>Copy OAM ui</echo>
         <copy todir="${restcomm.jss7.dist}/oam/new-ui" failonerror="true">
             <fileset dir="${jss7.dir}/oam/new-ui/target/">
@@ -253,6 +265,7 @@
 
         <echo>Copy Modified Jolokia War</echo>
         <copy file="./jolokia.war" todir="${restcomm.jss7.dist}/oam/new-ui" failonerror="true"/>
+-->
     </target>
 
     <target name="build-jss7">

@@ -62,6 +62,7 @@
 				<include>org.restcomm.protocols.ss7.congestion:congestion</include>
               	<include>org.restcomm.protocols.ss7.statistics:statistics-api</include>
               	<include>org.restcomm.protocols.ss7.statistics:statistics-impl</include>
+              	<include>org.restcomm.protocols.ss7.ss7ext:ss7-ext-api</include>
 			    <include>org.apache.commons:commons-email</include>				
 
 				<!-- lic dep -->

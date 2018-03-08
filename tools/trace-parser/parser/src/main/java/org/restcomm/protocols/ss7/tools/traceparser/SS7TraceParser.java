@@ -456,7 +456,7 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
 
             this.setFinishedState(null);
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             this.setFinishedState("Exception while parsing: " + e.getMessage());
         } finally {

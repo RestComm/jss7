@@ -31,16 +31,6 @@
                 </property>
             </mbean>
 
-<!--
-            <mbean name="Mtp3UserPart_Dialogic" type="DialogicMtp3UserPart" class="org.restcomm.ss7.hardware.dialogic.DialogicMtp3UserPart" interface="org.restcomm.protocols.ss7.mtp.Mtp3UserPart" enabled="true" reflection="true">
-                <property name="productName" type="String" value="Restcomm-jSS7-2"/>
-                <property name="routingLabelFormat" type="Bean" value="RoutingLabelFormat"/>
-
-                <property name="sourceModuleId" type="int" value="61"/>
-                <property name="destinationModuleId" type="int" value="34"/>
-            </mbean>
--->
-
             <mbean name="SS7Clock" type="SS7Clock" class="org.restcomm.protocols.ss7.scheduler.DefaultClock" enabled="true" reflection="false"/>
             <mbean name="SS7Scheduler" type="SS7Scheduler" class="org.restcomm.protocols.ss7.scheduler.Scheduler" enabled="true" reflection="false"/>
 
@@ -135,17 +125,4 @@
                 <property name="port" type="int" value="3435"/>
                 <property name="securityDomain" type="String" value="jmx-console"/>
             </mbean>
-
-            <mbean name="Ss7Management" type="Ss7Management" class="org.restcomm.protocols.ss7.oam.common.jmxss7.Ss7Management" enabled="true" reflection="false">
-                <property name="agentId" type="String" value="jboss"/>
-            </mbean>
-
-            <mbean name="RestcommAlarmManagement" type="RestcommAlarmManagement" class="org.restcomm.protocols.ss7.oam.common.alarm.AlarmProvider" enabled="true" reflection="false"/>
-            <mbean name="RestcommStatisticManagement" type="RestcommStatisticManagement" class="org.restcomm.protocols.ss7.oam.common.statistics.CounterProviderManagement" enabled="true" reflection="false"/>
-            <mbean name="RestcommSctpManagement" type="RestcommSctpManagement" class="org.restcomm.protocols.ss7.oam.common.sctp.SctpManagementJmx" enabled="true" reflection="false"/>
-            <mbean name="RestcommM3uaManagement" type="RestcommM3uaManagement" class="org.restcomm.protocols.ss7.oam.common.m3ua.M3uaManagementJmx" enabled="true" reflection="false"/>
-            <mbean name="RestcommSccpManagement" type="RestcommSccpManagement" class="org.restcomm.protocols.ss7.oam.common.sccp.SccpManagementJmx" enabled="true" reflection="false"/>
-            <mbean name="RestcommTcapManagement" type="RestcommTcapManagement" class="org.restcomm.protocols.ss7.oam.common.tcap.TcapManagementJmx" enabled="true" reflection="false"/>
-            <mbean name="RestcommTcapMapManagement" type="RestcommTcapManagement" class="org.restcomm.protocols.ss7.oam.common.tcap.TcapManagementJmx" enabled="true" reflection="false"/>
-            <mbean name="RestcommTcapCapManagement" type="RestcommTcapManagement" class="org.restcomm.protocols.ss7.oam.common.tcap.TcapManagementJmx" enabled="true" reflection="false"/>
         </subsystem>

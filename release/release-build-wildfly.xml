@@ -69,9 +69,6 @@
 			<fileset dir="${basedir}/restcomm-ss7-service">
 				<include name="*/**" />
 			</fileset>
-			<fileset dir="${basedir}/restcomm-ss7-service">
-				<include name="*/**" />
-			</fileset>
 		</copy>
 
 		<copy overwrite="true" todir="${jboss.home}/bin">
@@ -82,12 +79,6 @@
 
 		<copy overwrite="true" todir="${jboss.home}/lib">
 			<fileset dir="${basedir}/../ss7/shell/lib">
-				<include name="**" />
-			</fileset>			
-		</copy>
-
-		<copy overwrite="true" todir="${jboss.deploy}">
-			<fileset dir="${basedir}/../oam/new-ui">
 				<include name="**" />
 			</fileset>			
 		</copy>
@@ -125,9 +116,6 @@
 
 		<delete dir="${restcomm-ss7.path}" />
 
-		<delete file="${jboss.deploy}/jss7-management-console.war" />
-		<delete file="${jboss.deploy}/jolokia.war" />
-
 		<delete file="${jboss.home}/bin/ss7-cli.sh" />
 		<delete file="${jboss.home}/bin/ss7-cli.bat" />
 
@@ -143,7 +131,6 @@
 		<delete verbose="true">
 			<fileset dir="${jboss.home}/lib" includes="**/shell-transport-*.jar"/>
 		</delete>
-		<delete file="${jboss.home}/lib/linkset-cli.jar" />
 		<delete file="${jboss.home}/lib/m3ua-cli-m3ua.jar" />
 		<delete file="${jboss.home}/lib/m3ua-cli-sctp.jar" />
 		<delete file="${jboss.home}/lib/restcomm-ss7-shell.jar" />

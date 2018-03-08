@@ -13,34 +13,6 @@
                 <suffix value=".yyyy-MM-dd"/>
                 <append value="true"/>
             </periodic-rotating-file-handler>
-            <periodic-rotating-file-handler name="STATS" autoflush="true">
-                <formatter>
-                    <named-formatter name="PATTERN"/>
-                </formatter>
-                <file relative-to="jboss.server.log.dir" path="stats.log"/>
-                <suffix value=".yyyy-MM-dd"/>
-                <append value="true"/>
-            </periodic-rotating-file-handler>
-            <periodic-rotating-file-handler name="CSVSTATS" autoflush="true">
-                <formatter>
-                    <named-formatter name="PATTERN"/>
-                </formatter>
-                <file relative-to="jboss.server.log.dir" path="csvstats.log"/>
-                <suffix value=".yyyy-MM-dd"/>
-                <append value="true"/>
-            </periodic-rotating-file-handler>
-            <logger category="org.restcomm.protocols.ss7.oam.common.statistics.StatsPrinter" use-parent-handlers="false">
-                <level name="DEBUG"/>
-                <handlers>
-                    <handler name="STATS"/>
-                </handlers>
-            </logger>
-            <logger category="org.restcomm.protocols.ss7.oam.common.statistics.CsvStatsPrinter" use-parent-handlers="false">
-                <level name="DEBUG"/>
-                    <handlers>
-                        <handler name="CSVSTATS"/>
-                    </handlers>
-            </logger>
             <logger category="com.arjuna">
                 <level name="WARN"/>
             </logger>
