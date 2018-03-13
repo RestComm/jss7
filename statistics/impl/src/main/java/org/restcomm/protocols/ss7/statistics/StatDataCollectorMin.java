@@ -25,34 +25,37 @@ package org.restcomm.protocols.ss7.statistics;
 import org.restcomm.protocols.ss7.statistics.api.StatDataCollectorType;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ * @author <a href="mailto:serg.vetyutnev@gmail.com"> Sergey Vetyutnev </a>
+ * @modified <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>
+ */
 public class StatDataCollectorMin extends StatDataCollectorLongImpl {
 
-    public StatDataCollectorMin(String name) {
-        super(name);
-    }
+  public StatDataCollectorMin(String name) {
+    super(name);
+  }
 
-    @Override
-    protected void reset() {
-        val = Long.MAX_VALUE;
-    }
+  @Override
+  protected void reset() {
+    val = Long.MAX_VALUE;
+  }
 
-    @Override
-    public void updateData(long newVal) {
-        if (val > newVal)
-            val = newVal;
-    }
+  @Override
+  public void updateData(long newVal) {
+    if (val > newVal)
+      val = newVal;
+  }
 
-    @Override
-    public StatDataCollectorType getStatDataCollectorType() {
-        return StatDataCollectorType.MIN;
-    }
+  @Override
+  public StatDataCollectorType getStatDataCollectorType() {
+    return StatDataCollectorType.MIN;
+  }
 
-    @Override
-    public void updateData(String newVal) {
-    }
+  @Override
+  public void updateData(String newVal) {
+  }
+
+  @Override
+  public void updateData(String newVal, double d) {
+  }
 
 }

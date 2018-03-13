@@ -40,7 +40,6 @@ public interface StatDataCollector {
 
     Date getSessionStartTime();
 
-
     StatResult restartAndGet();
 
     void updateData(long newVal);

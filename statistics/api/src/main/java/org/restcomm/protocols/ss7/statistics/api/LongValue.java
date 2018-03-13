@@ -24,7 +24,7 @@ package org.restcomm.protocols.ss7.statistics.api;
 
 /**
 *
-* @author sergey vetyutnev
+* @author <a href="mailto:serg.vetyutnev@gmail.com"> Sergey Vetyutnev </a>
 *
 */
 public class LongValue {

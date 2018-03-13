@@ -30,21 +30,20 @@ import org.restcomm.protocols.ss7.statistics.api.StatDataCollectorType;
 import org.restcomm.protocols.ss7.statistics.api.StatResult;
 
 /**
- * @author <a href="mailto:serg.vetyutnev@gmail.com"> Sergey Vetyutnev </a>
- * @modified <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>
+ * @author <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>
  */
-public class StringLongMap extends StatDataCollectorAbstractImpl {
+public class StringDoubleMap extends StatDataCollectorAbstractImpl {
 
-  private FastMap<String, LongValue> data = new FastMap<String, LongValue>();
+  private FastMap<String, DoubleValue> data = new FastMap<String, DoubleValue>();
 
-  public StringLongMap(String campaignName) {
+  public StringDoubleMap(String campaignName) {
     super(campaignName);
   }
 
   public StatResult restartAndGet() {
     synchronized (this) {
-      StatResultStringLongMap res = new StatResultStringLongMap(this.data);
-      this.data = new FastMap<String, LongValue>();
+      StatResultStringDoubleMap res = new StatResultStringDoubleMap(this.data);
+      this.data = new FastMap<String, DoubleValue>();
       this.reset();
       return res;
     }
@@ -57,23 +56,24 @@ public class StringLongMap extends StatDataCollectorAbstractImpl {
   }
 
   @Override
-  public void updateData(long newVal) {
-  }
-
-  @Override
-  public void updateData(String name) {
+  public void updateData(String name, double value) {
     synchronized (this) {
-      LongValue val = data.get(name);
+      DoubleValue val = data.get(name);
       if (val == null) {
-        val = new LongValue();
+        val = new DoubleValue();
         data.put(name, val);
       }
-      val.updateValue();
+      val.updateDoubleValue(value);
     }
   }
 
   @Override
-  public void updateData(String name, double value) {
+  public void updateData(String name) {
+    //
+  }
+
+  @Override
+  public void updateData(long newVal) {
   }
 
   @Override
@@ -81,14 +81,14 @@ public class StringLongMap extends StatDataCollectorAbstractImpl {
     return StatDataCollectorType.StringLongMap;
   }
 
-  public class StatResultStringLongMap implements StatResult {
-
-    private FastMap<String, LongValue> longData;
+  public class StatResultStringDoubleMap implements StatResult {
 
     private FastMap<String, DoubleValue> doubleData;
 
-    public StatResultStringLongMap(FastMap<String, LongValue> data) {
-      this.longData = data;
+    private FastMap<String, LongValue> longData;
+
+    public StatResultStringDoubleMap(FastMap<String, DoubleValue> data) {
+      this.doubleData = data;
     }
 
     @Override
@@ -102,13 +102,15 @@ public class StringLongMap extends StatDataCollectorAbstractImpl {
     }
 
     @Override
+    public FastMap<String, DoubleValue> getStringDoubleValue() {
+      return doubleData;
+    }
+
+    @Override
     public FastMap<String, LongValue> getStringLongValue() {
       return longData;
     }
 
-    @Override
-    public FastMap<String, DoubleValue> getStringDoubleValue() {
-      return doubleData;
-    }
   }
+
 }

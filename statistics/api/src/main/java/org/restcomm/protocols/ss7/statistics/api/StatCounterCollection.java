@@ -25,23 +25,22 @@ package org.restcomm.protocols.ss7.statistics.api;
 import java.util.Date;
 
 /**
-*
-* Collection of data for a whole counter data
-* Contains StatDataCollector data depending on a campaign name
-*
-* @author sergey vetyutnev
-*
-*/
+ * Collection of data for a whole counter data
+ * Contains StatDataCollector data depending on a campaign name
+ *
+ * @author <a href="mailto:serg.vetyutnev@gmail.com"> Sergey Vetyutnev </a>
+ * @modified <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>
+ */
 public interface StatCounterCollection {
 
-    String getCounterName();
+  String getCounterName();
 
-    void clearDeadCampaignes(Date lastTime);
+  void clearDeadCampaigns(Date lastTime);
 
-    StatResult restartAndGet(String campaignName);
+  StatResult restartAndGet(String campaignName);
 
-    void updateData(long newVal);
+  void updateData(long newVal);
 
-    void updateData(String newVal);
+  void updateData(String newVal);
 
 }
