@@ -69,7 +69,14 @@ public class StringDoubleMap extends StatDataCollectorAbstractImpl {
 
   @Override
   public void updateData(String name) {
-    //
+    synchronized (this) {
+      DoubleValue val = data.get(name);
+      if (val == null) {
+        val = new DoubleValue();
+        data.put(name, val);
+      }
+      val.updateDoubleValue(val.getDoubleValue());
+    }
   }
 
   @Override

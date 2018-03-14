@@ -26,7 +26,6 @@ import org.restcomm.protocols.ss7.statistics.api.StatDataCollectorType;
 
 /**
  * @author <a href="mailto:serg.vetyutnev@gmail.com"> Sergey Vetyutnev </a>
- * @modified <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>
  */
 public class StatDataCollectorMin extends StatDataCollectorLongImpl {
 

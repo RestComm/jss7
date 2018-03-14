@@ -43,4 +43,5 @@ public interface StatCounterCollection {
 
   void updateData(String newVal);
 
+  void updateData(double newVal);
 }

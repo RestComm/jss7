@@ -87,6 +87,10 @@ public class StatCounterCollectionImpl implements StatCounterCollection {
             sdc = new StringLongMap(campaignName);
             sdc.reset();
             break;
+          case AVERAGE:
+            sdc = new StatDataCollectorAverage(campaignName);
+            sdc.reset();
+            break;
         }
         if (sdc != null) {
           coll.put(campaignName, sdc);
@@ -112,6 +116,16 @@ public class StatCounterCollectionImpl implements StatCounterCollection {
       for (String s : coll.keySet()) {
         StatDataCollectorAbstractImpl d = coll.get(s);
         d.updateData(newVal);
+      }
+    }
+  }
+
+  @Override
+  public void updateData(double newVal) {
+    synchronized (this) {
+      for (String s : coll.keySet()) {
+        StatDataCollectorAbstractImpl d = coll.get(s);
+        d.updateData(s, newVal);
       }
     }
   }

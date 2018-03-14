@@ -28,6 +28,6 @@ package org.restcomm.protocols.ss7.statistics.api;
  */
 public enum StatDataCollectorType {
 
-  MIN, MAX, StringLongMap, Average;
+  MIN, MAX, AVERAGE, StringLongMap;
 
 }

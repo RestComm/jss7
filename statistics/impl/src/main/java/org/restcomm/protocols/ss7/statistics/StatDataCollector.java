@@ -29,7 +29,7 @@ import org.restcomm.protocols.ss7.statistics.api.StatResult;
 
 /**
 *
-* @author sergey vetyutnev
+* @author <a href="mailto:serg.vetyutnev@gmail.com"> Sergey Vetyutnev </a>
 *
 */
 public interface StatDataCollector {
