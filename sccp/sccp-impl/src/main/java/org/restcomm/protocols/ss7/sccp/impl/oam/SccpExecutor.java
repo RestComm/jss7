@@ -1960,6 +1960,9 @@ public class SccpExecutor implements ShellExecutor {
         } else if (parName.equals("removespc")) {
             boolean val = Boolean.parseBoolean(options[3]);
             this.sccpStack.setRemoveSpc(val);
+        } else if (parName.equals("respectpc")) {
+            boolean val = Boolean.parseBoolean(options[3]);
+            this.sccpStack.setRespectPc(val);
         } else if (parName.equals("previewmode")) {
             boolean val = Boolean.parseBoolean(options[3]);
             this.sccpStack.setPreviewMode(val);
@@ -2084,6 +2087,8 @@ public class SccpExecutor implements ShellExecutor {
                 sb.append(this.sccpStack.getPeriodOfLogging());
             } else if (parName.equals("removespc")) {
                 sb.append(this.sccpStack.isRemoveSpc());
+            } else if (parName.equals("respectpc")) {
+                sb.append(this.sccpStack.isRespectPc());
             } else if (parName.equals("previewmode")) {
                 sb.append(this.sccpStack.isPreviewMode());
             } else if (parName.equals("ssttimerduration_min")) {
@@ -2161,6 +2166,10 @@ public class SccpExecutor implements ShellExecutor {
 
                 sb.append("removeSpc = ");
                 sb.append(managementImplTmp.isRemoveSpc());
+                sb.append("\n");
+
+                sb.append("respectPc = ");
+                sb.append(managementImplTmp.isRespectPc());
                 sb.append("\n");
 
                 sb.append("previewMode = ");

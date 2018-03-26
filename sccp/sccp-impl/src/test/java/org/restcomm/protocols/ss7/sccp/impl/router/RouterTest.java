@@ -999,6 +999,18 @@ public class RouterTest {
 			
 		}
 
+        @Override
+        public void setRespectPc(boolean respectPc) throws Exception {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public boolean isRespectPc() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
     }
 
     private class Mtp3UserPartImpl implements Mtp3UserPart {

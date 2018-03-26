@@ -89,6 +89,7 @@ public class SccpCommandHandler extends CommandHandlerWithHelp {
         set.addChild("maxdatamessage");
         set.addChild("periodoflogging");
         set.addChild("removespc");
+        set.addChild("respectpc");
         set.addChild("previewmode");
         set.addChild("ssttimerduration_min");
         set.addChild("ssttimerduration_max");
@@ -121,6 +122,7 @@ public class SccpCommandHandler extends CommandHandlerWithHelp {
         get.addChild("maxdatamessage");
         get.addChild("periodoflogging");
         get.addChild("removespc");
+        get.addChild("respectpc");
         get.addChild("previewmode");
         get.addChild("ssttimerduration_min");
         get.addChild("ssttimerduration_max");

@@ -125,6 +125,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     private static final String MAX_DATA_MSG = "maxdatamessage";
     private static final String PERIOD_OF_LOG = "periodoflogging";
     private static final String REMOVE_SPC = "removespc";
+    private static final String RESPECT_PC = "respectpc";
     private static final String CAN_RELAY = "canrelay";
     private static final String RESERVED_FOR_NATIONAL_USE_VALUE_ADDRESS_INDICATOR = "reservedfornationalusevalue_addressindicator";
     private static final String SCCP_PROTOCOL_VERSION = "sccpProtocolVersion";
@@ -167,6 +168,9 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     private int periodOfLogging = 60000;
     // remove PC from calledPartyAddress when sending to MTP3
     private boolean removeSpc = true;
+    // respect point-code for outgoing messages
+    //https://github.com/RestComm/jss7/issues/13
+    private boolean respectPc = false;
     // can relay when relay with coupling condition is met
     private boolean canRelay = false;
     // min (starting) SST sending interval (millisec)
@@ -345,6 +349,15 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             throw new Exception("RemoveSpc parameter can be updated only when SCCP stack is running");
 
         this.removeSpc = removeSpc;
+
+        this.store();
+    }
+
+    public void setRespectPc(boolean respectPc) throws Exception {
+        if (!this.isStarted())
+            throw new Exception("RespectPc parameter can be updated only when SCCP stack is running");
+
+        this.respectPc = respectPc;
 
         this.store();
     }
@@ -535,6 +548,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
     public boolean isRemoveSpc() {
         return this.removeSpc;
+    }
+
+    public boolean isRespectPc() {
+        return this.respectPc;
     }
 
     public boolean isCanRelay() {
@@ -1531,6 +1548,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             writer.write(this.maxDataMessage, MAX_DATA_MSG, Integer.class);
             writer.write(this.periodOfLogging, PERIOD_OF_LOG, Integer.class);
             writer.write(this.removeSpc, REMOVE_SPC, Boolean.class);
+            writer.write(this.respectPc, RESPECT_PC, Boolean.class);
             writer.write(this.canRelay, CAN_RELAY, Boolean.class);
             writer.write(this.timerExecutorsThreadCount, TIMER_EXECUTORS_THREAD_COUNT, Integer.class);
             writer.write(this.previewMode, PREVIEW_MODE, Boolean.class);
@@ -1617,6 +1635,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             Boolean volb = reader.read(REMOVE_SPC, Boolean.class);
             if (volb != null)
                 this.removeSpc = volb;
+
+            volb = reader.read(RESPECT_PC, Boolean.class);
+            if (volb != null)
+                this.respectPc = volb;
 
             volb = reader.read(CAN_RELAY, Boolean.class);
             if (volb != null)

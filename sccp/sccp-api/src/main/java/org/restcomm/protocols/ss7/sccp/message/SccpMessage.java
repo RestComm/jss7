@@ -82,6 +82,8 @@ public interface SccpMessage {
 
     int getIncomingDpc();
 
+    void setOutgoingDpc(int dpc);
+
     int getNetworkId();
 
     void setNetworkId(int networkId);

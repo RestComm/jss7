@@ -137,6 +137,7 @@ public class DialogImpl implements Dialog {
     private SccpAddress localAddress;
     private SccpAddress remoteAddress;
     private int localSsn;
+    private int remotePc = -1;
 
     private Future idleTimerFuture;
     private boolean idleTimerActionTaken = false;
@@ -599,7 +600,7 @@ public class DialogImpl implements Dialog {
                     this.provider.getStack().getCounterProviderImpl().updateTcBeginSentCount(this);
                 }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
-                        this.seqControl, this.networkId, this.localSsn);
+                        this.seqControl, this.networkId, this.localSsn, this.remotePc);
                 this.scheduledComponentList.clear();
             } catch (Throwable e) {
                 // FIXME: remove freshly added invokes to free invoke ID??
@@ -679,7 +680,7 @@ public class DialogImpl implements Dialog {
                         this.provider.getStack().getCounterProviderImpl().updateTcContinueSentCount(this);
                     }
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
-                            this.localAddress, this.seqControl, this.networkId, this.localSsn);
+                            this.localAddress, this.seqControl, this.networkId, this.localSsn, this.remotePc);
                     this.setState(TRPseudoState.Active);
                     this.scheduledComponentList.clear();
                 } catch (Exception e) {
@@ -710,7 +711,7 @@ public class DialogImpl implements Dialog {
                     tcbm.encode(aos);
                     this.provider.getStack().getCounterProviderImpl().updateTcContinueSentCount(this);
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
-                            this.localAddress, this.seqControl, this.networkId, this.localSsn);
+                            this.localAddress, this.seqControl, this.networkId, this.localSsn, this.remotePc);
                     this.scheduledComponentList.clear();
                 } catch (Exception e) {
                     // FIXME: remove freshly added invokes to free invoke ID??
@@ -837,7 +838,7 @@ public class DialogImpl implements Dialog {
                     this.provider.getStack().getCounterProviderImpl().updateTcEndSentCount(this);
                 }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
-                        this.seqControl, this.networkId, this.localSsn);
+                        this.seqControl, this.networkId, this.localSsn, this.remotePc);
 
                 this.scheduledComponentList.clear();
             } catch (Exception e) {
@@ -902,7 +903,7 @@ public class DialogImpl implements Dialog {
                     this.provider.getStack().getCounterProviderImpl().updateTcUniSentCount(this);
                 }
                 this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress, this.localAddress,
-                        this.seqControl, this.networkId, this.localSsn);
+                        this.seqControl, this.networkId, this.localSsn, this.remotePc);
                 this.scheduledComponentList.clear();
             } catch (Exception e) {
                 if (logger.isEnabledFor(Level.ERROR)) {
@@ -1008,7 +1009,7 @@ public class DialogImpl implements Dialog {
                         this.provider.getStack().getCounterProviderImpl().updateTcUserAbortSentCount(this);
                     }
                     this.provider.send(aos.toByteArray(), event.getReturnMessageOnError(), this.remoteAddress,
-                            this.localAddress, this.seqControl, this.networkId, this.localSsn);
+                            this.localAddress, this.seqControl, this.networkId, this.localSsn, this.remotePc);
 
                     this.scheduledComponentList.clear();
                 } catch (Exception e) {
@@ -1864,7 +1865,7 @@ public class DialogImpl implements Dialog {
                                 PAbortCauseType.NoReasonGiven);
                     }
                     this.provider.send(aos.toByteArray(), false, this.remoteAddress, this.localAddress, this.seqControl,
-                            this.networkId, this.localSsn);
+                            this.networkId, this.localSsn, this.remotePc);
                 } catch (Exception e) {
                     if (logger.isEnabledFor(Level.ERROR)) {
                         logger.error("Failed to send message: ", e);
@@ -2226,6 +2227,14 @@ public class DialogImpl implements Dialog {
 
     public void setIdleTaskTimeout(long idleTaskTimeoutMs) {
         this.idleTaskTimeout = idleTaskTimeoutMs;
+    }
+
+    public int getRemotePc() {
+        return remotePc;
+    }
+
+    public void setRemotePc(int remotePc) {
+        this.remotePc = remotePc;
     }
 
     /*

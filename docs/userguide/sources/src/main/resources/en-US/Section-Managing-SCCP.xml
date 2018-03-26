@@ -322,6 +322,49 @@ EXAMPLES
 				<para>On SCCP management page, click on pencil against the 'RemoveSpc' property and text box becomes editable. Change value and save. </para>
 		</section>
 	</section>
+	
+	***
+	<section id="sccp_property_respectpc">
+		<title>Respect Point Code</title>
+
+			<section id="sccp_property_respectpc_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can set the 'respectpc' by issuing the command <command>sccp set respectpc</command> with appropriate parameters as described below.
+					You can verify this by issuing the command <command>sccp get respectpc</command> which will display the value set for this property.
+				</para>
+				<screen><![CDATA[
+Name
+	sccp set respectpc
+
+SYNOPSIS
+	sccp set respectpc <false | true> stackname <stack-name>
+
+DESCRIPTION
+	If set, the PC will be used for choosing primary or secondary address 
+	for outgoing messages if corresponding routing is based on GT
+
+PARAMETERS
+
+	Standard Parameters
+
+	<respectpc>	-	true or false value.
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed.
+					If not passed, the first stack configured in ShellExecutor
+					will be used.
+
+EXAMPLES
+	sccp set respectpc true
+			]]></screen>
+		</section>
+		<section id="sccp_property_respectpc_GUI">
+			<title>Using GUI</title>
+				<para>On SCCP management page, click on pencil against the 'RespectPc' property and text box becomes editable. Change value and save. </para>
+		</section>
+	</section>
 
 	<section id="sccp_property_ssttimerduration_increasefactor">
 		<title>SST Timer Duration Increase Factor</title>

@@ -96,6 +96,20 @@ public interface SccpStack {
     boolean isRemoveSpc();
 
     /**
+     * If set, the PC will be used for choosing primary or secondary address for outgoing messages if corresponding routing is based on GT
+     *
+     * @param respectPc
+     */
+    void setRespectPc(boolean respectPc) throws Exception;
+
+    /**
+     * Get the respect signaling point code flag
+     *
+     * @return
+     */
+    boolean isRespectPc();
+
+    /**
      * Stack only listens for incoming messages and does not send anything out of stack. Messages are silently dropped.
      *
      * @param previewMode

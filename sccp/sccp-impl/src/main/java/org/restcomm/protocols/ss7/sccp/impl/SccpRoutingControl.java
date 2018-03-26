@@ -726,8 +726,18 @@ public class SccpRoutingControl {
         } else {
             switch (rule.getRuleType()) {
                 case SOLITARY:
-                case DOMINANT:
                     translationAddress = translationAddressPri;
+                    break;
+                case DOMINANT:
+                    if(!msg.getIsIncoming() && sccpStackImpl.isRespectPc()) {
+                        int pc = msg.getOutgoingDpc();
+                        if(pc > 0 && pc == translationAddressSec.getSignalingPointCode())
+                            translationAddress = translationAddressSec;
+                        else
+                            translationAddress = translationAddressPri;
+                    } else {
+                        translationAddress = translationAddressPri;
+                    }
                     break;
 
                 case LOADSHARED:

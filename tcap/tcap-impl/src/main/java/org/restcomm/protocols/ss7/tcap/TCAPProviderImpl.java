@@ -392,13 +392,14 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     }
 
     public void send(byte[] data, boolean returnMessageOnError, SccpAddress destinationAddress, SccpAddress originatingAddress,
-            int seqControl, int networkId, int localSsn) throws IOException {
+            int seqControl, int networkId, int localSsn, int remotePc) throws IOException {
         if (this.stack.getPreviewMode())
             return;
 
         SccpDataMessage msg = messageFactory.createDataMessageClass1(destinationAddress, originatingAddress, data, seqControl,
                 localSsn, returnMessageOnError, null, null);
         msg.setNetworkId(networkId);
+        msg.setOutgoingDpc(remotePc);
         sccpProvider.updateSPCongestion(ssn, getCumulativeCongestionLevel());
         sccpProvider.send(msg);
     }
@@ -645,7 +646,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     }
 
     protected void sendProviderAbort(PAbortCauseType pAbortCause, byte[] remoteTransactionId, SccpAddress remoteAddress,
-            SccpAddress localAddress, int seqControl, int networkId) {
+            SccpAddress localAddress, int seqControl, int networkId, int remotePc) {
         if (this.stack.getPreviewMode())
             return;
 
@@ -659,7 +660,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             if (this.stack.getStatisticsEnabled()) {
                 this.stack.getCounterProviderImpl().updateTcPAbortSentCount(remoteTransactionId, pAbortCause);
             }
-            this.send(aos.toByteArray(), false, remoteAddress, localAddress, seqControl, networkId, localAddress.getSubsystemNumber());
+            this.send(aos.toByteArray(), false, remoteAddress, localAddress, seqControl, networkId, localAddress.getSubsystemNumber(), remotePc);
         } catch (Exception e) {
             if (logger.isEnabledFor(Level.ERROR)) {
                 logger.error("Failed to send message: ", e);
@@ -668,7 +669,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     }
 
     protected void sendProviderAbort(DialogServiceProviderType pt, byte[] remoteTransactionId, SccpAddress remoteAddress,
-            SccpAddress localAddress, int seqControl, ApplicationContextName acn, int networkId) {
+            SccpAddress localAddress, int seqControl, ApplicationContextName acn, int networkId, int remotePc) {
         if (this.stack.getPreviewMode())
             return;
 
@@ -697,7 +698,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             if (this.stack.getStatisticsEnabled()) {
                 this.stack.getCounterProviderImpl().updateTcPAbortSentCount(remoteTransactionId, PAbortCauseType.NoReasonGiven);
             }
-            this.send(aos.toByteArray(), false, remoteAddress, localAddress, seqControl, networkId, localAddress.getSubsystemNumber());
+            this.send(aos.toByteArray(), false, remoteAddress, localAddress, seqControl, networkId, localAddress.getSubsystemNumber(), remotePc);
         } catch (Exception e) {
             if (logger.isEnabledFor(Level.ERROR)) {
                 logger.error("Failed to send message: ", e);
@@ -743,11 +744,11 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                         if (tcUnidentified.getOriginatingTransactionId() != null) {
                             if (e.getPAbortCauseType() != null) {
                                 this.sendProviderAbort(e.getPAbortCauseType(), tcUnidentified.getOriginatingTransactionId(),
-                                        remoteAddress, localAddress, message.getSls(), message.getNetworkId());
+                                        remoteAddress, localAddress, message.getSls(), message.getNetworkId(), message.getIncomingOpc());
                             } else {
                                 this.sendProviderAbort(PAbortCauseType.BadlyFormattedTxPortion,
                                         tcUnidentified.getOriginatingTransactionId(), remoteAddress, localAddress,
-                                        message.getSls(), message.getNetworkId());
+                                        message.getSls(), message.getNetworkId(), message.getIncomingOpc());
                             }
                         }
                         return;
@@ -756,7 +757,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                     if (this.stack.isCongControl_blockingIncomingTcapMessages() && cumulativeCongestionLevel >= 3) {
                         // rejecting of new incoming TCAP dialogs
                         this.sendProviderAbort(PAbortCauseType.ResourceLimitation, tcm.getOriginatingTransactionId(),
-                                remoteAddress, localAddress, message.getSls(), message.getNetworkId());
+                                remoteAddress, localAddress, message.getSls(), message.getNetworkId(), message.getIncomingOpc());
                         return;
                     }
 
@@ -780,7 +781,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                     if (di == null) {
                         logger.warn("TC-CONTINUE: No dialog/transaction for id: " + dialogId);
                         this.sendProviderAbort(PAbortCauseType.UnrecognizedTxID, tcm.getOriginatingTransactionId(),
-                                remoteAddress, localAddress, message.getSls(), message.getNetworkId());
+                                remoteAddress, localAddress, message.getSls(), message.getNetworkId(), message.getIncomingOpc());
                     } else {
                         di.processContinue(tcm, localAddress, remoteAddress);
                     }
@@ -802,11 +803,11 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                         if (tcUnidentified.getOriginatingTransactionId() != null) {
                             if (e.getPAbortCauseType() != null) {
                                 this.sendProviderAbort(e.getPAbortCauseType(), tcUnidentified.getOriginatingTransactionId(),
-                                        remoteAddress, localAddress, message.getSls(), message.getNetworkId());
+                                        remoteAddress, localAddress, message.getSls(), message.getNetworkId(), message.getIncomingOpc());
                             } else {
                                 this.sendProviderAbort(PAbortCauseType.BadlyFormattedTxPortion,
                                         tcUnidentified.getOriginatingTransactionId(), remoteAddress, localAddress,
-                                        message.getSls(), message.getNetworkId());
+                                        message.getSls(), message.getNetworkId(), message.getIncomingOpc());
                             }
                         }
                         return;
@@ -818,7 +819,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                             logger.error("Unsupported protocol version of  has been received when parsing TCBeginMessage");
                             this.sendProviderAbort(DialogServiceProviderType.NoCommonDialogPortion,
                                     tcb.getOriginatingTransactionId(), remoteAddress, localAddress, message.getSls(),
-                                    dlg.getApplicationContextName(), message.getNetworkId());
+                                    dlg.getApplicationContextName(), message.getNetworkId(), message.getIncomingOpc());
                             return;
                         }
                     }
@@ -826,7 +827,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                     if (this.stack.isCongControl_blockingIncomingTcapMessages() && cumulativeCongestionLevel >= 2) {
                         // rejecting of new incoming TCAP dialogs
                         this.sendProviderAbort(PAbortCauseType.ResourceLimitation, tcb.getOriginatingTransactionId(),
-                                remoteAddress, localAddress, message.getSls(), message.getNetworkId());
+                                remoteAddress, localAddress, message.getSls(), message.getNetworkId(), message.getIncomingOpc());
                         return;
                     }
 
@@ -841,13 +842,15 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                             di = (DialogImpl) this.createPreviewDialog(ky, localAddress, remoteAddress, 0);
                             setSsnToDialog(di, message.getCalledPartyAddress().getSubsystemNumber());
                         } else {
+                            int remotePc = message.getIncomingOpc();
                             di = (DialogImpl) this.getNewDialog(localAddress, remoteAddress, message.getSls(), null);
+                            di.setRemotePc(remotePc);
                             setSsnToDialog(di, message.getCalledPartyAddress().getSubsystemNumber());
                         }
 
                     } catch (TCAPException e) {
                         this.sendProviderAbort(PAbortCauseType.ResourceLimitation, tcb.getOriginatingTransactionId(),
-                                remoteAddress, localAddress, message.getSls(), message.getNetworkId());
+                                remoteAddress, localAddress, message.getSls(), message.getNetworkId(), message.getIncomingOpc());
                         logger.error("Can not add a new dialog when receiving TCBeginMessage: " + e.getMessage(), e);
                         return;
                     }
@@ -953,8 +956,9 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                         // rejecting of new incoming TCAP dialogs
                         return;
                     }
-
+                    int remotePc = message.getIncomingOpc();
                     DialogImpl uniDialog = (DialogImpl) this.getNewUnstructuredDialog(localAddress, remoteAddress);
+                    uniDialog.setRemotePc(remotePc);
                     setSsnToDialog(uniDialog, message.getCalledPartyAddress().getSubsystemNumber());
                     uniDialog.processUni(tcuni, localAddress, remoteAddress);
                     break;
@@ -984,12 +988,12 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
 
             if (tcUnidentified.getDestinationTransactionId() != null) {
                 Long dtid = Utils.decodeTransactionId(tcUnidentified.getDestinationTransactionId());
-                this.sendProviderAbort(PAbortCauseType.UnrecognizedMessageType, otid, remoteAddress, localAddress, message.getSls(), networkId);
+                this.sendProviderAbort(PAbortCauseType.UnrecognizedMessageType, otid, remoteAddress, localAddress, message.getSls(), networkId, message.getIncomingOpc());
             } else {
-                this.sendProviderAbort(PAbortCauseType.UnrecognizedMessageType, otid, remoteAddress, localAddress, message.getSls(), networkId);
+                this.sendProviderAbort(PAbortCauseType.UnrecognizedMessageType, otid, remoteAddress, localAddress, message.getSls(), networkId, message.getIncomingOpc());
             }
         } else {
-            this.sendProviderAbort(PAbortCauseType.UnrecognizedMessageType, new byte[0], remoteAddress, localAddress, message.getSls(), networkId);
+            this.sendProviderAbort(PAbortCauseType.UnrecognizedMessageType, new byte[0], remoteAddress, localAddress, message.getSls(), networkId, message.getIncomingOpc());
         }
     }
 
