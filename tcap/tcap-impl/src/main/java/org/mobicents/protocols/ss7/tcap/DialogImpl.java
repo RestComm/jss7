@@ -2198,6 +2198,9 @@ public class DialogImpl implements Dialog {
         this.localRelayedTransactionIdObject = relayedDialogId;
     }
 
+    public long getStartTimeDialog() {
+        return this.startDialogTime;
+    }
 
     /*
      * (non-Javadoc)

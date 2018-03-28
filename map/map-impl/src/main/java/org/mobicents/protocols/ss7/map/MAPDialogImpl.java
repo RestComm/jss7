@@ -653,4 +653,8 @@ public abstract class MAPDialogImpl implements MAPDialog {
     protected enum DelayedAreaState {
         No, Continue, End, PrearrangedEnd;
     }
+
+    public long getStartTimeDialog() {
+        return this.tcapDialog.getStartTimeDialog();
+    }
 }

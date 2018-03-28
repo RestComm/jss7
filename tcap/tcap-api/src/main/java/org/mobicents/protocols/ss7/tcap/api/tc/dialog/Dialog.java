@@ -324,4 +324,10 @@ public interface Dialog extends Serializable {
      */
     ReentrantLock getDialogLock();
 
+    /**
+     * Return the dialog start time epoch timestamp in milliseconds
+     *
+     * @return
+     */
+    long getStartTimeDialog();
 }

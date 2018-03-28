@@ -354,4 +354,10 @@ public interface MAPDialog extends Serializable {
      */
     void addEricssonData(AddressString imsi, AddressString vlrNo);
 
+    /**
+     * Return the dialog start time epoch timestamp in milliseconds
+     *
+     * @return
+     */
+    long getStartTimeDialog();
 }
