@@ -2237,6 +2237,10 @@ public class DialogImpl implements Dialog {
         this.remotePc = remotePc;
     }
 
+    public long getStartTimeDialog() {
+        return this.startDialogTime;
+    }
+
     /*
      * (non-Javadoc)
      *

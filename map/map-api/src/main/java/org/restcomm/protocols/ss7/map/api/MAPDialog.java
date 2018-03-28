@@ -388,4 +388,11 @@ public interface MAPDialog extends Serializable {
      * @param idleTaskTimeoutMs
      */
     void setIdleTaskTimeout(long idleTaskTimeoutMs);
+
+    /**
+     * Return the dialog start time epoch timestamp in milliseconds
+     *
+     * @return
+     */
+    long getStartTimeDialog();
 }

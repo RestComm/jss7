@@ -343,4 +343,11 @@ public interface Dialog extends Serializable {
      */
     void setIdleTaskTimeout(long idleTaskTimeoutMs);
 
+    /**
+     * Return the dialog start time epoch timestamp in milliseconds
+     *
+     * @return
+     */
+    long getStartTimeDialog();
+
 }
