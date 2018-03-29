@@ -22,6 +22,11 @@
 
 package org.restcomm.protocols.ss7.map.primitives;
 
+import javax.xml.bind.DatatypeConverter;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.restcomm.protocols.ss7.map.api.MAPException;
 import org.restcomm.protocols.ss7.map.api.primitives.GSNAddress;
 import org.restcomm.protocols.ss7.map.api.primitives.GSNAddressAddressType;
@@ -32,6 +37,10 @@ import org.restcomm.protocols.ss7.map.api.primitives.GSNAddressAddressType;
  *
  */
 public class GSNAddressImpl extends OctetStringBase implements GSNAddress {
+
+    private static final String DATA = "data";
+
+    private static final String DEFAULT_VALUE = null;
 
     public GSNAddressImpl() {
         super(5, 17, "GSNAddress");
@@ -142,4 +151,25 @@ public class GSNAddressImpl extends OctetStringBase implements GSNAddress {
 
         return sb.toString();
     }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<GSNAddressImpl> GSN_ADDRESS_XML = new XMLFormat<GSNAddressImpl>(GSNAddressImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, GSNAddressImpl gsnAddress) throws XMLStreamException {
+            String s = xml.getAttribute(DATA, DEFAULT_VALUE);
+            if (s != null) {
+                gsnAddress.data = DatatypeConverter.parseHexBinary(s);
+            }
+        }
+
+        @Override
+        public void write(GSNAddressImpl gsnAddress, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            if (gsnAddress.data != null) {
+                xml.setAttribute(DATA, DatatypeConverter.printHexBinary(gsnAddress.data));
+            }
+        }
+    };
 }

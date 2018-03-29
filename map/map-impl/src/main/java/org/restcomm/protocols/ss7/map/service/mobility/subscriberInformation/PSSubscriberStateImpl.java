@@ -25,6 +25,9 @@ package org.restcomm.protocols.ss7.map.service.mobility.subscriberInformation;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -36,6 +39,7 @@ import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.PDPContextInfo;
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberState;
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberStateChoice;
+import org.restcomm.protocols.ss7.map.primitives.ArrayListSerializingBase;
 import org.restcomm.protocols.ss7.map.primitives.MAPAsnPrimitive;
 
 /**
@@ -53,6 +57,14 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
     public static final int _ID_ps_PDP_ActiveReachableForPaging = 5;
 
     public static final String _PrimitiveName = "PSSubscriberState";
+
+    private static final String DEFAULT_STRING_VALUE = null;
+
+    private static final String PDP_CONTEXT_INFO = "pdpContextInfo";
+
+    private static final String CHOICE = "choice";
+    private static final String NET_DET_NOT_REACHABLE = "netDetNotReachable";
+    private static final String PDP_CONTEXT_INFO_LIST = "pdpContextInfoList";
 
     private PSSubscriberStateChoice choice;
     private NotReachableReason netDetNotReachable;
@@ -385,5 +397,53 @@ public class PSSubscriberStateImpl implements PSSubscriberState, MAPAsnPrimitive
         sb.append("]");
 
         return sb.toString();
+    }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<PSSubscriberStateImpl> PS_SUBSCRIBER_STATE_XML = new XMLFormat<PSSubscriberStateImpl>(
+            PSSubscriberStateImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, PSSubscriberStateImpl subscriberState)
+                throws XMLStreamException {
+            String ssc = xml.getAttribute(CHOICE, DEFAULT_STRING_VALUE);
+            if (ssc != null) {
+                subscriberState.choice = Enum.valueOf(PSSubscriberStateChoice.class, ssc);
+            }
+            String nrr = xml.getAttribute(NET_DET_NOT_REACHABLE, DEFAULT_STRING_VALUE);
+            if (nrr != null) {
+                subscriberState.netDetNotReachable = Enum.valueOf(NotReachableReason.class, nrr);
+            }
+            PSSubscriberState_PDPContextInfo al = xml.get(PDP_CONTEXT_INFO_LIST, PSSubscriberState_PDPContextInfo.class);
+            if (al != null) {
+                subscriberState.pdpContextInfoList = al.getData();
+            }
+        }
+
+        @Override
+        public void write(PSSubscriberStateImpl subscriberState, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            if (subscriberState.choice != null)
+                xml.setAttribute(CHOICE, subscriberState.choice.toString());
+            if (subscriberState.netDetNotReachable != null)
+                xml.setAttribute(NET_DET_NOT_REACHABLE, subscriberState.netDetNotReachable.toString());
+            if(subscriberState.pdpContextInfoList != null) {
+                PSSubscriberState_PDPContextInfo al = new PSSubscriberState_PDPContextInfo(subscriberState.pdpContextInfoList);
+                xml.add(al, PDP_CONTEXT_INFO_LIST, PSSubscriberState_PDPContextInfo.class);
+            }
+        }
+    };
+
+    public static class PSSubscriberState_PDPContextInfo extends ArrayListSerializingBase<PDPContextInfo> {
+
+        public PSSubscriberState_PDPContextInfo() {
+            super(PDP_CONTEXT_INFO, PDPContextInfoImpl.class);
+        }
+
+        public PSSubscriberState_PDPContextInfo(ArrayList<PDPContextInfo> data) {
+            super(PDP_CONTEXT_INFO, PDPContextInfoImpl.class, data);
+        }
     }
 }

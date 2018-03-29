@@ -22,6 +22,11 @@
 
 package org.restcomm.protocols.ss7.map.service.mobility.subscriberManagement;
 
+import javax.xml.bind.DatatypeConverter;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberManagement.Ext2QoSSubscribed;
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberManagement.Ext2QoSSubscribed_SourceStatisticsDescriptor;
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtQoSSubscribed_BitRateExtended;
@@ -33,6 +38,10 @@ import org.restcomm.protocols.ss7.map.primitives.OctetStringBase;
  *
  */
 public class Ext2QoSSubscribedImpl extends OctetStringBase implements Ext2QoSSubscribed {
+
+    private static final String DATA = "data";
+
+    private static final String DEFAULT_VALUE = null;
 
     public Ext2QoSSubscribedImpl() {
         super(1, 3, "Ext2QoSSubscribed");
@@ -135,4 +144,25 @@ public class Ext2QoSSubscribedImpl extends OctetStringBase implements Ext2QoSSub
             return super.toString();
         }
     }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<Ext2QoSSubscribedImpl> EXT2_QOS_SUBSCRIBED_XML = new XMLFormat<Ext2QoSSubscribedImpl>(Ext2QoSSubscribedImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, Ext2QoSSubscribedImpl qos2Subscribed) throws XMLStreamException {
+            String s = xml.getAttribute(DATA, DEFAULT_VALUE);
+            if (s != null) {
+                qos2Subscribed.data = DatatypeConverter.parseHexBinary(s);
+            }
+        }
+
+        @Override
+        public void write(Ext2QoSSubscribedImpl qos2Subscribed, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            if (qos2Subscribed.data != null) {
+                xml.setAttribute(DATA, DatatypeConverter.printHexBinary(qos2Subscribed.data));
+            }
+        }
+    };
 }
