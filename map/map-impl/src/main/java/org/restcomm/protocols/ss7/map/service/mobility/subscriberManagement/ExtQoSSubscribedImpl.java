@@ -22,6 +22,11 @@
 
 package org.restcomm.protocols.ss7.map.service.mobility.subscriberManagement;
 
+import javax.xml.bind.DatatypeConverter;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtQoSSubscribed;
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtQoSSubscribed_BitRate;
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtQoSSubscribed_DeliveryOfErroneousSdus;
@@ -40,6 +45,10 @@ import org.restcomm.protocols.ss7.map.primitives.OctetStringBase;
  *
  */
 public class ExtQoSSubscribedImpl extends OctetStringBase implements ExtQoSSubscribed {
+
+    private static final String DATA = "data";
+
+    private static final String DEFAULT_VALUE = null;
 
     public ExtQoSSubscribedImpl() {
         super(1, 9, "ExtQoSSubscribed");
@@ -282,4 +291,25 @@ public class ExtQoSSubscribedImpl extends OctetStringBase implements ExtQoSSubsc
             return super.toString();
         }
     }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<ExtQoSSubscribedImpl> EXT_QOS_SUBSCRIBED_XML = new XMLFormat<ExtQoSSubscribedImpl>(ExtQoSSubscribedImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, ExtQoSSubscribedImpl qosSubscribed) throws XMLStreamException {
+            String s = xml.getAttribute(DATA, DEFAULT_VALUE);
+            if (s != null) {
+                qosSubscribed.data = DatatypeConverter.parseHexBinary(s);
+            }
+        }
+
+        @Override
+        public void write(ExtQoSSubscribedImpl qosSubscribed, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            if (qosSubscribed.data != null) {
+                xml.setAttribute(DATA, DatatypeConverter.printHexBinary(qosSubscribed.data));
+            }
+        }
+    };
 }

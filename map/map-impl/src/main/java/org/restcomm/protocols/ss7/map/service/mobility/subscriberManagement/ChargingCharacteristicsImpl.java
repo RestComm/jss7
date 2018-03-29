@@ -22,6 +22,11 @@
 
 package org.restcomm.protocols.ss7.map.service.mobility.subscriberManagement;
 
+import javax.xml.bind.DatatypeConverter;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberManagement.ChargingCharacteristics;
 import org.restcomm.protocols.ss7.map.primitives.OctetStringBase;
 
@@ -36,6 +41,10 @@ public class ChargingCharacteristicsImpl extends OctetStringBase implements Char
     public static final int _FLAG_PREPAID_CHARGING = 0x04;
     public static final int _FLAG_FLAT_RATE_CHARGING_CHARGING = 0x02;
     public static final int _FLAG_CHARGING_BY_HOT_BILLING_CHARGING = 0x01;
+
+    private static final String DATA = "data";
+
+    private static final String DEFAULT_VALUE = null;
 
     public ChargingCharacteristicsImpl() {
         super(2, 2, "ChargingCharacteristics");
@@ -137,4 +146,25 @@ public class ChargingCharacteristicsImpl extends OctetStringBase implements Char
             return super.toString();
         }
     }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<ChargingCharacteristicsImpl> CHARGING_CHARACTERISTICS_XML = new XMLFormat<ChargingCharacteristicsImpl>(ChargingCharacteristicsImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, ChargingCharacteristicsImpl chargingCharacteristics) throws XMLStreamException {
+            String s = xml.getAttribute(DATA, DEFAULT_VALUE);
+            if (s != null) {
+                chargingCharacteristics.data = DatatypeConverter.parseHexBinary(s);
+            }
+        }
+
+        @Override
+        public void write(ChargingCharacteristicsImpl chargingCharacteristics, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            if (chargingCharacteristics.data != null) {
+                xml.setAttribute(DATA, DatatypeConverter.printHexBinary(chargingCharacteristics.data));
+            }
+        }
+    };
 }

@@ -27,7 +27,13 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -38,9 +44,11 @@ import org.restcomm.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.restcomm.protocols.ss7.map.api.primitives.LAIFixedLength;
 import org.restcomm.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
+import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.PDPContextInfo;
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberStateChoice;
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberState;
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberStateChoice;
+import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.TypeOfShape;
 import org.restcomm.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdFixedLengthImpl;
 import org.restcomm.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
 import org.restcomm.protocols.ss7.map.primitives.IMEIImpl;
@@ -189,5 +197,57 @@ public class SubscriberInfoTest {
         encodedData = asnOS.toByteArray();
         rawData = dataFull;
         assertTrue(Arrays.equals(rawData, encodedData));
+    }
+
+    @Test(groups = { "functional.xml.serialize", "subscriberInformation" })
+    public void testXMLSerialize() throws Exception {
+
+        ISDNAddressStringImpl vlrN = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "554433221100");
+        LocationInformationImpl li = new LocationInformationImpl(null, null, vlrN, null, null, null, null, null, null, false, false, null, null);
+        SubscriberStateImpl ss = new SubscriberStateImpl(SubscriberStateChoice.camelBusy, null);
+        LAIFixedLengthImpl laiFixedLength = new LAIFixedLengthImpl(260, 11, 144);
+        CellGlobalIdOrServiceAreaIdOrLAIImpl cg = new CellGlobalIdOrServiceAreaIdOrLAIImpl(laiFixedLength);
+        LocationInformationGPRSImpl liGprs = new LocationInformationGPRSImpl(cg, null, null, null, null, null, false, null, false, null);
+        GPRSMSClassImpl gprsMSClass = new GPRSMSClassImpl(new MSNetworkCapabilityImpl(dataMSNetworkCapability), null);
+        MNPInfoResImpl mnpInfoRes = new MNPInfoResImpl(null, new IMSIImpl("456787654"), null, null, null);
+
+        ArrayList<PDPContextInfo> pdpContextInfoList = new ArrayList<PDPContextInfo>();
+        PDPContextInfoImpl ci1 = new PDPContextInfoImpl(5, false, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        PDPContextInfoImpl ci2 = new PDPContextInfoImpl(6, false, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        pdpContextInfoList.add(ci1);
+        pdpContextInfoList.add(ci2);
+        PSSubscriberStateImpl pSSubscriberState = new PSSubscriberStateImpl(PSSubscriberStateChoice.notProvidedFromSGSNorMME, null, pdpContextInfoList);
+        SubscriberInfoImpl original = new SubscriberInfoImpl(li, ss, null, liGprs, pSSubscriberState, new IMEIImpl("1122334455667788"), new MSClassmark2Impl(dataMsClassMark2), gprsMSClass, mnpInfoRes);
+
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "subscriberInfo", SubscriberInfoImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        SubscriberInfoImpl copy = reader.read("subscriberInfo", SubscriberInfoImpl.class);
+
+        assertEquals(copy.getLocationInformationGPRS().getCellGlobalIdOrServiceAreaIdOrLAI(), original.getLocationInformationGPRS().getCellGlobalIdOrServiceAreaIdOrLAI());
+        assertEquals(copy.getLocationInformationGPRS().isCurrentLocationRetrieved(), original.getLocationInformationGPRS().isCurrentLocationRetrieved());
+        assertEquals(copy.getLocationInformationGPRS().isSaiPresent(), original.getLocationInformationGPRS().isSaiPresent());
+
+        assertEquals(copy.getPSSubscriberState().getChoice(), original.getPSSubscriberState().getChoice());
+        assertEquals(copy.getPSSubscriberState().getPDPContextInfoList().get(0).getPdpContextIdentifier(), original.getPSSubscriberState().getPDPContextInfoList().get(0).getPdpContextIdentifier());
+        assertEquals(copy.getPSSubscriberState().getPDPContextInfoList().get(1).getPdpContextIdentifier(), original.getPSSubscriberState().getPDPContextInfoList().get(1).getPdpContextIdentifier());
+
+        assertEquals(copy.getGPRSMSClass().getMSNetworkCapability(), original.getGPRSMSClass().getMSNetworkCapability());
+
+        assertEquals(copy.getMNPInfoRes().getIMSI(), original.getMNPInfoRes().getIMSI());
     }
 }

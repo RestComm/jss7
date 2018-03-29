@@ -24,6 +24,9 @@ package org.restcomm.protocols.ss7.map.service.mobility.subscriberInformation;
 
 import java.io.IOException;
 
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.mobicents.protocols.asn.AsnException;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -64,6 +67,17 @@ public class LocationInformationGPRSImpl extends SequenceBase implements Locatio
     private static final int _ID_geodeticInformation = 7;
     private static final int _ID_currentLocationRetrieved = 8;
     private static final int _ID_ageOfLocationInformation = 9;
+
+    private static final String CELL_GLOBAL_ID_OR_SERVICE_AREA_ID_OR_LAI = "cellGlobalIdOrServiceAreaIdOrLAI";
+    private static final String ROUTEING_AREA_ID = "routeingAreaIdentity";
+    private static final String GEOGRAPHICAL_INFORMATION = "geographicalInformation";
+    private static final String SGSN_NUMBER = "sgsnNumber";
+    private static final String SELECTED_LSA_ID = "selectedLSAIdentity";
+    private static final String EXTENSION_CONTAINER = "extensionContainer";
+    private static final String SAI_PRESENT = "saiPresent";
+    private static final String GEODETIC_INFORMATION = "geodeticInformation";
+    private static final String CURRENT_LOCATION_RETRIEVED = "currentLocationRetrieved";
+    private static final String AGE_OF_LOCATION_INFORMATION = "ageOfLocationInformation";
 
     private CellGlobalIdOrServiceAreaIdOrLAI cellGlobalIdOrServiceAreaIdOrLAI = null;
     private RAIdentity routeingAreaIdentity = null;
@@ -481,4 +495,75 @@ public class LocationInformationGPRSImpl extends SequenceBase implements Locatio
         sb.append("]");
         return sb.toString();
     }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<LocationInformationGPRSImpl> LOCATION_INFORMATION_GPRS_XML = new XMLFormat<LocationInformationGPRSImpl>(
+            LocationInformationGPRSImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, LocationInformationGPRSImpl locationInformation)
+                throws XMLStreamException {
+            locationInformation.ageOfLocationInformation = xml.get(AGE_OF_LOCATION_INFORMATION, Integer.class);
+            locationInformation.geographicalInformation = xml.get(GEOGRAPHICAL_INFORMATION, GeographicalInformationImpl.class);
+            locationInformation.routeingAreaIdentity = xml.get(ROUTEING_AREA_ID, RAIdentityImpl.class);
+            locationInformation.sgsnNumber = xml.get(SGSN_NUMBER, ISDNAddressStringImpl.class);
+            locationInformation.cellGlobalIdOrServiceAreaIdOrLAI = xml.get(CELL_GLOBAL_ID_OR_SERVICE_AREA_ID_OR_LAI,
+                    CellGlobalIdOrServiceAreaIdOrLAIImpl.class);
+
+            locationInformation.extensionContainer = xml.get(EXTENSION_CONTAINER, MAPExtensionContainerImpl.class);
+            locationInformation.geodeticInformation = xml.get(GEODETIC_INFORMATION, GeodeticInformationImpl.class);
+            locationInformation.selectedLSAIdentity = xml.get(SELECTED_LSA_ID, LSAIdentityImpl.class);
+
+            Boolean bval = xml.get(CURRENT_LOCATION_RETRIEVED, Boolean.class);
+            if (bval != null)
+                locationInformation.currentLocationRetrieved = bval;
+            bval = xml.get(SAI_PRESENT, Boolean.class);
+            if (bval != null)
+                locationInformation.saiPresent = bval;
+        }
+
+        @Override
+        public void write(LocationInformationGPRSImpl locationInformation, javolution.xml.XMLFormat.OutputElement xml)
+                throws XMLStreamException {
+            if (locationInformation.ageOfLocationInformation != null) {
+                xml.add((Integer) locationInformation.ageOfLocationInformation, AGE_OF_LOCATION_INFORMATION, Integer.class);
+            }
+            if (locationInformation.geographicalInformation != null) {
+                xml.add((GeographicalInformationImpl) locationInformation.geographicalInformation, GEOGRAPHICAL_INFORMATION,
+                        GeographicalInformationImpl.class);
+            }
+            if (locationInformation.routeingAreaIdentity != null) {
+                xml.add((RAIdentityImpl) locationInformation.routeingAreaIdentity, ROUTEING_AREA_ID, RAIdentityImpl.class);
+            }
+            if (locationInformation.sgsnNumber != null) {
+                xml.add((ISDNAddressStringImpl) locationInformation.sgsnNumber, SGSN_NUMBER,
+                        ISDNAddressStringImpl.class);
+            }
+            if (locationInformation.cellGlobalIdOrServiceAreaIdOrLAI != null) {
+                xml.add((CellGlobalIdOrServiceAreaIdOrLAIImpl) locationInformation.cellGlobalIdOrServiceAreaIdOrLAI,
+                        CELL_GLOBAL_ID_OR_SERVICE_AREA_ID_OR_LAI, CellGlobalIdOrServiceAreaIdOrLAIImpl.class);
+            }
+
+            if (locationInformation.extensionContainer != null) {
+                xml.add((MAPExtensionContainerImpl) locationInformation.extensionContainer, EXTENSION_CONTAINER,
+                        MAPExtensionContainerImpl.class);
+            }
+            if (locationInformation.selectedLSAIdentity != null) {
+                xml.add((LSAIdentityImpl) locationInformation.selectedLSAIdentity, SELECTED_LSA_ID, LSAIdentityImpl.class);
+            }
+            if (locationInformation.geodeticInformation != null) {
+                xml.add((GeodeticInformationImpl) locationInformation.geodeticInformation, GEODETIC_INFORMATION,
+                        GeodeticInformationImpl.class);
+            }
+
+            if (locationInformation.currentLocationRetrieved) {
+                xml.add((Boolean) locationInformation.currentLocationRetrieved, CURRENT_LOCATION_RETRIEVED, Boolean.class);
+            }
+            if (locationInformation.saiPresent) {
+                xml.add((Boolean) locationInformation.saiPresent, SAI_PRESENT, Boolean.class);
+            }
+        }
+    };
 }

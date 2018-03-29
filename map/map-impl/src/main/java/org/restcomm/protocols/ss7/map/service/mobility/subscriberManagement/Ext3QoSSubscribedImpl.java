@@ -22,6 +22,11 @@
 
 package org.restcomm.protocols.ss7.map.service.mobility.subscriberManagement;
 
+import javax.xml.bind.DatatypeConverter;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberManagement.Ext3QoSSubscribed;
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberManagement.ExtQoSSubscribed_BitRateExtended;
 import org.restcomm.protocols.ss7.map.primitives.OctetStringBase;
@@ -32,6 +37,10 @@ import org.restcomm.protocols.ss7.map.primitives.OctetStringBase;
  *
  */
 public class Ext3QoSSubscribedImpl extends OctetStringBase implements Ext3QoSSubscribed {
+
+    private static final String DATA = "data";
+
+    private static final String DEFAULT_VALUE = null;
 
     public Ext3QoSSubscribedImpl() {
         super(1, 2, "Ext3QoSSubscribed");
@@ -102,4 +111,25 @@ public class Ext3QoSSubscribedImpl extends OctetStringBase implements Ext3QoSSub
             return super.toString();
         }
     }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<Ext3QoSSubscribedImpl> EXT3_QOS_SUBSCRIBED_XML = new XMLFormat<Ext3QoSSubscribedImpl>(Ext3QoSSubscribedImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, Ext3QoSSubscribedImpl qos3Subscribed) throws XMLStreamException {
+            String s = xml.getAttribute(DATA, DEFAULT_VALUE);
+            if (s != null) {
+                qos3Subscribed.data = DatatypeConverter.parseHexBinary(s);
+            }
+        }
+
+        @Override
+        public void write(Ext3QoSSubscribedImpl qos3Subscribed, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            if (qos3Subscribed.data != null) {
+                xml.setAttribute(DATA, DatatypeConverter.printHexBinary(qos3Subscribed.data));
+            }
+        }
+    };
 }

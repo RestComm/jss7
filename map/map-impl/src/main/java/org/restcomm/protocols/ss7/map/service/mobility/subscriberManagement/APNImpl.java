@@ -25,6 +25,11 @@ package org.restcomm.protocols.ss7.map.service.mobility.subscriberManagement;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+import javax.xml.bind.DatatypeConverter;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.restcomm.protocols.ss7.map.api.MAPException;
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberManagement.APN;
 import org.restcomm.protocols.ss7.map.primitives.OctetStringBase;
@@ -35,6 +40,10 @@ import org.restcomm.protocols.ss7.map.primitives.OctetStringBase;
  *
  */
 public class APNImpl extends OctetStringBase implements APN {
+
+    private static final String DATA = "data";
+
+    private static final String DEFAULT_VALUE = null;
 
     private static Charset ascii = Charset.forName("US-ASCII");
 
@@ -129,4 +138,25 @@ public class APNImpl extends OctetStringBase implements APN {
             return super.toString();
         }
     }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<APNImpl> APN_XML = new XMLFormat<APNImpl>(APNImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, APNImpl apn) throws XMLStreamException {
+            String s = xml.getAttribute(DATA, DEFAULT_VALUE);
+            if (s != null) {
+                apn.data = DatatypeConverter.parseHexBinary(s);
+            }
+        }
+
+        @Override
+        public void write(APNImpl apn, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            if (apn.data != null) {
+                xml.setAttribute(DATA, DatatypeConverter.printHexBinary(apn.data));
+            }
+        }
+    };
 }

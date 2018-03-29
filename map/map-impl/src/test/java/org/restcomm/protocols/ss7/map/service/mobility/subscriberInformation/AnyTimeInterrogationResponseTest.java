@@ -27,20 +27,30 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
 import org.restcomm.protocols.ss7.map.api.primitives.AddressNature;
+import org.restcomm.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.restcomm.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.LocationInformation;
+import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.PSSubscriberStateChoice;
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberInfo;
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberState;
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.SubscriberStateChoice;
 import org.restcomm.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdFixedLengthImpl;
 import org.restcomm.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
+import org.restcomm.protocols.ss7.map.primitives.IMEIImpl;
+import org.restcomm.protocols.ss7.map.primitives.IMSIImpl;
 import org.restcomm.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.restcomm.protocols.ss7.map.primitives.LAIFixedLengthImpl;
 import org.restcomm.protocols.ss7.map.primitives.MAPExtensionContainerTest;
 import org.restcomm.protocols.ss7.map.service.mobility.subscriberInformation.AnyTimeInterrogationResponseImpl;
 import org.restcomm.protocols.ss7.map.service.mobility.subscriberInformation.GeographicalInformationImpl;
@@ -67,6 +77,9 @@ public class AnyTimeInterrogationResponseTest {
             48, 5, 6, 3, 42, 3, 6, 48, 11, 6, 3, 42, 3, 5, 21, 22, 23, 24, 25, 26, -95, 3, 31, 32, 33 };
 
     byte[] dataGeoInfo = new byte[] { 16, 0, 0, 0, 0, 0, 0, 0 };
+
+    byte[] dataMSNetworkCapability = new byte[] { 12 };
+    byte[] dataMsClassMark2 = new byte[] { 11, 12, 13 };
 
     @Test(groups = { "functional.decode", "subscriberInformation" })
     public void testDecode() throws Exception {
@@ -156,5 +169,48 @@ public class AnyTimeInterrogationResponseTest {
         anyTimeInt.encodeAll(asnOS);
         encodedData = asnOS.toByteArray();
         assertTrue(Arrays.equals(dataFull, encodedData));
+    }
+
+    @Test(groups = { "functional.xml.serialize", "subscriberInformation" })
+    public void testXMLSerialize() throws Exception {
+
+        ISDNAddressStringImpl vlrN = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "554433221100");
+        LocationInformationImpl li = new LocationInformationImpl(null, null, vlrN, null, null, null, null, null, null, false, false, null, null);
+        SubscriberStateImpl ss = new SubscriberStateImpl(SubscriberStateChoice.camelBusy, null);
+        LAIFixedLengthImpl laiFixedLength = new LAIFixedLengthImpl(260, 11, 144);
+        CellGlobalIdOrServiceAreaIdOrLAIImpl cg = new CellGlobalIdOrServiceAreaIdOrLAIImpl(laiFixedLength);
+        LocationInformationGPRSImpl liGprs = new LocationInformationGPRSImpl(cg, null, null, null, null, null, false, null, false, null);
+        GPRSMSClassImpl gprsMSClass = new GPRSMSClassImpl(new MSNetworkCapabilityImpl(dataMSNetworkCapability), null);
+        MNPInfoResImpl mnpInfoRes = new MNPInfoResImpl(null, new IMSIImpl("456787654"), null, null, null);
+        SubscriberInfoImpl si = new SubscriberInfoImpl(li, ss, null, liGprs, new PSSubscriberStateImpl(PSSubscriberStateChoice.notProvidedFromSGSNorMME,
+                null, null), new IMEIImpl("1122334455667788"), new MSClassmark2Impl(dataMsClassMark2), gprsMSClass, mnpInfoRes);
+        AnyTimeInterrogationResponseImpl original = new AnyTimeInterrogationResponseImpl(si, MAPExtensionContainerTest.GetTestExtensionContainer());
+
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "anyTimeInterrogationResponse", AnyTimeInterrogationResponseImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        AnyTimeInterrogationResponseImpl copy = reader.read("anyTimeInterrogationResponse", AnyTimeInterrogationResponseImpl.class);
+
+        assertEquals(copy.getExtensionContainer(), original.getExtensionContainer());
+
+        assertEquals(copy.getSubscriberInfo().getLocationInformationGPRS().getCellGlobalIdOrServiceAreaIdOrLAI(), original.getSubscriberInfo().getLocationInformationGPRS().getCellGlobalIdOrServiceAreaIdOrLAI());
+        assertEquals(copy.getSubscriberInfo().getLocationInformationGPRS().isCurrentLocationRetrieved(), original.getSubscriberInfo().getLocationInformationGPRS().isCurrentLocationRetrieved());
+        assertEquals(copy.getSubscriberInfo().getLocationInformationGPRS().isSaiPresent(), original.getSubscriberInfo().getLocationInformationGPRS().isSaiPresent());
+        assertEquals(copy.getSubscriberInfo().getPSSubscriberState().getChoice(), original.getSubscriberInfo().getPSSubscriberState().getChoice());
+        assertEquals(copy.getSubscriberInfo().getGPRSMSClass().getMSNetworkCapability(), original.getSubscriberInfo().getGPRSMSClass().getMSNetworkCapability());
+        assertEquals(copy.getSubscriberInfo().getMNPInfoRes().getIMSI(), original.getSubscriberInfo().getMNPInfoRes().getIMSI());
+
     }
 }
