@@ -624,6 +624,10 @@ public abstract class MAPDialogImpl implements MAPDialog {
      */
     public int getMessageUserDataLengthOnClose(boolean prearrangedEnd) throws MAPException {
 
+        if (prearrangedEnd)
+            // we do not send any data in prearrangedEnd dialog termination
+            return 0;
+
         try {
             switch (this.tcapDialog.getState()) {
                 case InitialReceived:

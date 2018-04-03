@@ -561,6 +561,9 @@ public abstract class CAPDialogImpl implements CAPDialog {
 
     @Override
     public int getMessageUserDataLengthOnClose(boolean prearrangedEnd) throws CAPException {
+        if (prearrangedEnd)
+            // we do not send any data in prearrangedEnd dialog termination
+            return 0;
 
         try {
             switch (this.tcapDialog.getState()) {
