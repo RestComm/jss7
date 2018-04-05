@@ -36,10 +36,10 @@ import org.restcomm.protocols.ss7.sccp.impl.SccpProviderImpl;
 import org.restcomm.protocols.ss7.sccp.impl.SccpResourceImpl;
 import org.restcomm.protocols.ss7.sccp.impl.SccpRoutingControl;
 import org.restcomm.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.restcomm.protocols.ss7.sccp.impl.congestion.SccpCongestionControl;
 import org.restcomm.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.restcomm.protocols.ss7.sccp.impl.router.RouterImpl;
 import org.restcomm.protocols.ss7.scheduler.Scheduler;
+import org.restcomm.protocols.ss7.ss7ext.Ss7ExtInterface;
 
 /**
  * @author baranowb
@@ -50,15 +50,15 @@ public class SccpStackImplProxy extends SccpStackImpl {
     /**
 	 *
 	 */
-    public SccpStackImplProxy(Scheduler scheduler, String name) {
-        super(scheduler, name);
+    public SccpStackImplProxy(Scheduler scheduler, String name, Ss7ExtInterface ss7ExtInterface) {
+        super(scheduler, name, ss7ExtInterface);
     }
 
     /**
      *
      */
-    public SccpStackImplProxy(String name) {
-        super(null, name);
+    public SccpStackImplProxy(String name, Ss7ExtInterface ss7ExtInterface) {
+        super(null, name, ss7ExtInterface);
     }
 
     public SccpManagementProxy getManagementProxy() {
@@ -68,6 +68,8 @@ public class SccpStackImplProxy extends SccpStackImpl {
     @Override
     public void start() {
         this.persistFile.clear();
+
+        ss7ExtSccpDetailedInterface.startExtBefore();
 
         if (persistDir != null) {
             this.persistFile.append(persistDir).append(File.separator).append(this.name).append("_").append(PERSIST_FILE_NAME);
@@ -90,17 +92,17 @@ public class SccpStackImplProxy extends SccpStackImpl {
 
         super.sccpManagement = new SccpManagementProxy(this.getName(), sccpProvider, this);
         super.sccpRoutingControl = new SccpRoutingControl(sccpProvider, this);
-        super.sccpCongestionControl = new SccpCongestionControl(sccpManagement, this);
+//        super.sccpCongestionControl = new SccpCongestionControl(sccpManagement, this);
 
         super.sccpManagement.setSccpRoutingControl(sccpRoutingControl);
         super.sccpRoutingControl.setSccpManagement(sccpManagement);
-        this.sccpManagement.setSccpCongestionControl(sccpCongestionControl);
+//        this.sccpManagement.setSccpCongestionControl(sccpCongestionControl);
 
         this.router = new RouterImpl(this.getName(), this);
         this.router.setPersistDir(this.getPersistDir());
         this.router.start();
 
-        this.sccpResource = new SccpResourceImpl(this.getName());
+        this.sccpResource = new SccpResourceImpl(this.getName(), this.ss7ExtSccpDetailedInterface);
         this.sccpResource.setPersistDir(this.getPersistDir());
         this.sccpResource.start();
 
@@ -127,6 +129,8 @@ public class SccpStackImplProxy extends SccpStackImpl {
             this.msgDeliveryExecutors[i] = Executors.newFixedThreadPool(1, new DefaultThreadFactory(
                     "SccpTransit-DeliveryExecutor-" + i));
         }
+
+        ss7ExtSccpDetailedInterface.startExtAfter(this.router, this.sccpManagement);
 
         this.state = State.RUNNING;
     }

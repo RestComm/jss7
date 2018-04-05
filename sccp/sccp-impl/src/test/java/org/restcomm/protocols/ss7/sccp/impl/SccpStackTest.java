@@ -68,7 +68,7 @@ public class SccpStackTest {
 
     @Test(groups = { "sccpStack", "functional.encode" })
     public void testSerialization() throws Exception {
-        this.sccpStackImpl = new SccpStackImpl("SccpStackTest");
+        this.sccpStackImpl = new SccpStackImpl("SccpStackTest", null);
         this.sccpStackImpl.setPersistDir(Util.getTmpTestDir());
         this.sccpStackImpl.start();
 

@@ -22,8 +22,6 @@
 
 package org.restcomm.protocols.ss7.sccp.impl;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

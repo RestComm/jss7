@@ -14,7 +14,7 @@ public class SccpConnectionImpl extends SccpConnectionWithCouplingImpl implement
         super(stack.newSls(), localSsn, localReference, protocol, stack, sccpRoutingControl);
     }
 
-    protected void receiveMessage(SccpConnMessage message) throws Exception {
+    public void receiveMessage(SccpConnMessage message) throws Exception {
         try {
             connectionLock.lock();
             super.receiveMessage(message);

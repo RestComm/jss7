@@ -66,7 +66,7 @@ import org.testng.annotations.Test;
 public class SccpNoticeMessageTest {
 
     private Logger logger;
-    private SccpStackImpl stack = new SccpStackImpl("SccpNoticeMessageTestStack");
+    private SccpStackImpl stack = new SccpStackImpl("SccpNoticeMessageTestStack", null);
     private MessageFactoryImpl messageFactory;
 
     @BeforeMethod

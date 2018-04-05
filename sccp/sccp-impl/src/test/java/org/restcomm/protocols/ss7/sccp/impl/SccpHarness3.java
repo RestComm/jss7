@@ -69,7 +69,7 @@ public abstract class SccpHarness3 extends SccpHarness {
     }
 
     protected void createStack3() {
-        sccpStack3 = createStack(sccpStack3Name);
+        sccpStack3 = createStack(sccpStack3Name, null);
     }
 
     protected void setUpStack1() throws Exception {

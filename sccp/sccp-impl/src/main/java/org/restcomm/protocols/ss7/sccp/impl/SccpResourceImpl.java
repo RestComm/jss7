@@ -61,14 +61,16 @@ public class SccpResourceImpl implements SccpResource {
     private String persistDir = null;
     protected final boolean rspProhibitedByDefault;
     private final PersistentStorage persistanceStorage = new PersistentStorage();
+    private final Ss7ExtSccpDetailedInterface ss7ExtSccpDetailedInterface;
 
-    public SccpResourceImpl(String name) {
-        this(name, false);
+    public SccpResourceImpl(String name, Ss7ExtSccpDetailedInterface ss7ExtSccpDetailedInterface) {
+        this(name, false, ss7ExtSccpDetailedInterface);
     }
 
-    public SccpResourceImpl(String name, boolean rspProhibitedByDefault) {
+    public SccpResourceImpl(String name, boolean rspProhibitedByDefault, Ss7ExtSccpDetailedInterface ss7ExtSccpDetailedInterface) {
         this.name = name;
         this.rspProhibitedByDefault = rspProhibitedByDefault;
+        this.ss7ExtSccpDetailedInterface = ss7ExtSccpDetailedInterface;
     }
 
     public String getPersistDir() {
@@ -91,7 +93,7 @@ public class SccpResourceImpl implements SccpResource {
     }
 
     protected void load() {
-        PersistentStorage.ResourcesSet resources = this.persistanceStorage.load();
+        PersistentStorage.ResourcesSet resources = this.persistanceStorage.load(ss7ExtSccpDetailedInterface);
         if (resources == null) {
             return;
         }
@@ -191,7 +193,9 @@ public class SccpResourceImpl implements SccpResource {
             throw new Exception(SccpOAMMessage.RSPC_ALREADY_EXIST);
         }
 
-        RemoteSignalingPointCodeImpl rspcObj = new RemoteSignalingPointCodeImpl(remoteSpc, remoteSpcFlag, mask, this.rspProhibitedByDefault);
+        RemoteSignalingPointCodeImpl rspcObj = new RemoteSignalingPointCodeImpl(remoteSpc, remoteSpcFlag, mask,
+                this.rspProhibitedByDefault);
+        rspcObj.createRemoteSignalingPointCodeExt(ss7ExtSccpDetailedInterface);
 
         synchronized (this) {
             RemoteSignalingPointCodeMap<Integer, RemoteSignalingPointCode> newRemoteSpcs = new RemoteSignalingPointCodeMap<Integer, RemoteSignalingPointCode>();
@@ -406,7 +410,7 @@ public class SccpResourceImpl implements SccpResource {
          *
          * @throws Exception
          */
-        protected ResourcesSet load() {
+        protected ResourcesSet load(Ss7ExtSccpDetailedInterface ss7ExtSccpDetailedInterface) {
             ResourcesSet resources = null;
             try {
                 File f = new File(persistFile.toString());
@@ -431,7 +435,20 @@ public class SccpResourceImpl implements SccpResource {
             } catch (IOException e) {
                 logger.error(String.format("Failed to load the SS7 configuration file. \n%s", e.getMessage()));
             }
+
+            if (resources != null)
+                addExtenstionToRemoteSignalingPointCodeMap(resources.remoteSpcs, ss7ExtSccpDetailedInterface);
+
             return resources;
+        }
+
+        protected void addExtenstionToRemoteSignalingPointCodeMap(
+                RemoteSignalingPointCodeMap<Integer, RemoteSignalingPointCode> remoteSpcs,
+                Ss7ExtSccpDetailedInterface ss7ExtSccpDetailedInterface) {
+            for (Map.Entry<Integer, RemoteSignalingPointCode> entry : remoteSpcs.entrySet()) {
+                ((RemoteSignalingPointCodeImpl) entry.getValue())
+                        .createRemoteSignalingPointCodeExt(ss7ExtSccpDetailedInterface);
+            }
         }
 
         private ResourcesSet loadVer1(String fn) throws XMLStreamException, IOException {

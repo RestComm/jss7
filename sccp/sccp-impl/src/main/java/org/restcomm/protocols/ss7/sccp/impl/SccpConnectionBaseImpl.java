@@ -324,6 +324,10 @@ abstract class SccpConnectionBaseImpl {
         return remoteSsn;
     }
 
+    public void setRemoteSsn(Integer val) {
+        remoteSsn = val;
+    }
+
     public SccpListener getListener() {
         return stack.sccpProvider.getSccpListener(localSsn);
     }

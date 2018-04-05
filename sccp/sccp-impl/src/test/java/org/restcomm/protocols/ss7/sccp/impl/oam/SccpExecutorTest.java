@@ -25,34 +25,23 @@ package org.restcomm.protocols.ss7.sccp.impl.oam;
 import javolution.util.FastMap;
 
 import org.restcomm.protocols.ss7.Util;
-import org.restcomm.protocols.ss7.indicator.GlobalTitleIndicator;
-import org.restcomm.protocols.ss7.indicator.NatureOfAddress;
-import org.restcomm.protocols.ss7.indicator.NumberingPlan;
-import org.restcomm.protocols.ss7.indicator.RoutingIndicator;
 import org.restcomm.protocols.ss7.mtp.Mtp3TransferPrimitive;
 import org.restcomm.protocols.ss7.mtp.Mtp3TransferPrimitiveFactory;
 import org.restcomm.protocols.ss7.mtp.Mtp3UserPart;
 import org.restcomm.protocols.ss7.mtp.Mtp3UserPartListener;
 import org.restcomm.protocols.ss7.mtp.RoutingLabelFormat;
 import org.restcomm.protocols.ss7.sccp.ConcernedSignalingPointCode;
-import org.restcomm.protocols.ss7.sccp.LoadSharingAlgorithm;
 import org.restcomm.protocols.ss7.sccp.LongMessageRule;
 import org.restcomm.protocols.ss7.sccp.LongMessageRuleType;
 import org.restcomm.protocols.ss7.sccp.Mtp3Destination;
 import org.restcomm.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
-import org.restcomm.protocols.ss7.sccp.OriginationType;
 import org.restcomm.protocols.ss7.sccp.RemoteSignalingPointCode;
 import org.restcomm.protocols.ss7.sccp.RemoteSubSystem;
 import org.restcomm.protocols.ss7.sccp.Router;
-import org.restcomm.protocols.ss7.sccp.Rule;
-import org.restcomm.protocols.ss7.sccp.RuleType;
-import org.restcomm.protocols.ss7.sccp.SccpProtocolVersion;
 import org.restcomm.protocols.ss7.sccp.SccpResource;
 import org.restcomm.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.restcomm.protocols.ss7.sccp.impl.oam.SccpExecutor;
 import org.restcomm.protocols.ss7.sccp.impl.oam.SccpOAMMessage;
-import org.restcomm.protocols.ss7.sccp.parameter.GlobalTitle0100;
-import org.restcomm.protocols.ss7.sccp.parameter.SccpAddress;
 import org.restcomm.ss7.congestion.ExecutorCongestionMonitor;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -64,7 +53,6 @@ import java.io.IOException;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -99,7 +87,7 @@ public class SccpExecutorTest {
     public void setUp() throws IllegalStateException {
         Mtp3UserPartImpl mtp3UserPartImpl = new Mtp3UserPartImpl();
 
-        this.sccpStack = new SccpStackImpl("SccpExecutorTest");
+        this.sccpStack = new SccpStackImpl("SccpExecutorTest", null);
         this.sccpStack.setPersistDir(Util.getTmpTestDir());
         this.sccpStack.setMtp3UserPart(1, mtp3UserPartImpl);
         this.sccpStack.start();
@@ -120,318 +108,6 @@ public class SccpExecutorTest {
         this.sccpStack.stop();
     }
 
-    @Test(groups = { "oam", "functional.mgmt" })
-    public void testManageRule() {
-
-        String addressCmd = "sccp rule modify 4 K 18 0 146 0 1 4 * loadshared 2 backup-addressid 3 loadsharing-algo bit0";
-        String result = this.sccpExecutor.execute(addressCmd.split(" "));
-
-        addressCmd = "sccp address create 1 71 2 8 0 0 3 123456789";
-        result = this.sccpExecutor.execute(addressCmd.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.ADDRESS_SUCCESSFULLY_ADDED, this.sccpStack.getName()));
-        assertEquals(this.router.getRoutingAddresses().size(), 1);
-
-        String createRuleCmd = "sccp rule create 1 R 71 2 8 0 0 3 123456789 solitary 1";
-
-        result = this.sccpExecutor.execute(createRuleCmd.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, this.sccpStack.getName()));
-        assertEquals(this.router.getRules().size(), 1);
-        assertEquals(this.router.getRules().get(1).getPrimaryAddressId(), 1);
-
-        // test show
-        createRuleCmd = "sccp rule show";
-        result = this.sccpExecutor.execute(createRuleCmd.split(" "));
-
-        assertEquals(
-                result,
-                "key=1  Rule=ruleId(1);ruleType(Solitary);originatingType(All);patternSccpAddress(pc=2,ssn=8,AI=71,gt=GlobalTitle0001Impl [digits=123456789, natureOfAddress=NATIONAL, encodingScheme=BCDOddEncodingScheme[type=BCD_ODD, code=1]]);paddress(1);saddress(-1);mask(R);networkId(0)\n");
-
-        // TODO: this update for fixing "sccp rule create needs not zero pc"
-//        createRuleCmd = "sccp rule create 2 K 18 0 180 0 1 4 * solitary 1";
-        createRuleCmd = "sccp rule create 2 K 18 1 180 0 1 4 * solitary 1";
-        result = this.sccpExecutor.execute(createRuleCmd.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, this.sccpStack.getName()));
-
-        assertEquals(this.router.getRules().size(), 2);
-
-        Rule rule = this.router.getRules().get(2);
-        assertNotNull(rule);
-        SccpAddress pattern = rule.getPattern();
-        assertNotNull(pattern);
-//        assertEquals((int) pattern.getAddressIndicator().getValue(SccpProtocolVersion.ITU), 18);
-        assertEquals((int) pattern.getAddressIndicator().getValue(SccpProtocolVersion.ITU), 19);
-        assertEquals(pattern.getAddressIndicator().getRoutingIndicator(), RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE);
-        assertEquals(
-                pattern.getGlobalTitle().getGlobalTitleIndicator(),
-                GlobalTitleIndicator.GLOBAL_TITLE_INCLUDES_TRANSLATION_TYPE_NUMBERING_PLAN_ENCODING_SCHEME_AND_NATURE_OF_ADDRESS);
-        GlobalTitle0100 gt = (GlobalTitle0100) pattern.getGlobalTitle();
-        assertEquals(gt.getTranslationType(), 0);
-        assertEquals(gt.getNumberingPlan(), NumberingPlan.ISDN_TELEPHONY);
-        assertEquals(gt.getNatureOfAddress(), NatureOfAddress.INTERNATIONAL);
-        assertEquals(rule.getRuleType(), RuleType.SOLITARY);
-
-        String sec_addressCmd = "sccp address create 2 71 3 8 0 0 3 123456789";
-        result = this.sccpExecutor.execute(sec_addressCmd.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.ADDRESS_SUCCESSFULLY_ADDED, this.sccpStack.getName()));
-        assertEquals(this.router.getRoutingAddresses().size(), 2);
-
-        String createRuleCmd2 = "sccp rule create 3 R 71 2 8 0 0 3 123456789 dominant 1 backup-addressid 2";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, this.sccpStack.getName()));
-        assertEquals(this.router.getRules().size(), 3);
-        assertEquals(this.router.getRule(3).getRuleType(), RuleType.DOMINANT);
-
-        createRuleCmd2 = "sccp rule create 4 R 71 2 8 0 0 3 123456789 loadshared 1 backup-addressid 2 loadsharing-algo bit3";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, this.sccpStack.getName()));
-        assertEquals(this.router.getRules().size(), 4);
-        assertEquals(this.router.getRule(4).getRuleType(), RuleType.LOADSHARED);
-        assertEquals(this.router.getRule(4).getLoadSharingAlgorithm(), LoadSharingAlgorithm.Bit3);
-
-        createRuleCmd2 = "sccp rule create 11 R 71 2 8 0 0 3 123456789 dominant 1 backup-addressid 3";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertTrue(result.substring(0, 10).equals(SccpOAMMessage.NO_BACKUP_ADDRESS.substring(0, 10)));
-        assertEquals(this.router.getRules().size(), 4);
-
-        createRuleCmd2 = "sccp rule create 11 R 71 2 8 0 0 3 123456789 dominant 4 backup-addressid 3";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertTrue(result.substring(0, 10).equals(SccpOAMMessage.NO_PRIMARY_ADDRESS.substring(0, 10)));
-        assertEquals(this.router.getRules().size(), 4);
-
-        // Full rule command
-        createRuleCmd2 = "sccp rule create 12 R 71 2 8 0 0 3 123456789 dominant 2 backup-addressid 1 loadsharing-algo bit3 newcgparty-addressid 1 origination-type remoteoriginated";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, this.sccpStack.getName()));
-        assertEquals(this.router.getRules().size(), 5);
-
-        rule = this.router.getRule(12);
-        assertEquals(rule.getOriginationType(), OriginationType.REMOTE);
-
-
-
-        // Test Modify Rule
-
-        createRuleCmd2 = "sccp rule modify 1 R 71 2 8 0 0 3 123456789 loadshared 1 backup-addressid 2 loadsharing-algo bit4";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_SUCCESSFULLY_MODIFIED, this.sccpStack.getName()));
-        assertEquals(this.router.getRules().size(), 5);
-        assertEquals(this.router.getRule(1).getRuleType(), RuleType.LOADSHARED);
-        assertEquals(this.router.getRule(1).getLoadSharingAlgorithm(), LoadSharingAlgorithm.Bit4);
-
-        createRuleCmd2 = "sccp rule modify 1 R 71 2 8 0 0 3 123456789 dominant 1 backup-addressid 2";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_SUCCESSFULLY_MODIFIED, this.sccpStack.getName()));
-        assertEquals(this.router.getRules().size(), 5);
-        assertEquals(this.router.getRule(1).getRuleType(), RuleType.DOMINANT);
-
-        createRuleCmd2 = "sccp rule modify 1 R 71 2 8 0 0 3 123456789 solitary 1 backup-addressid 2";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_SUCCESSFULLY_MODIFIED, this.sccpStack.getName()));
-        assertEquals(this.router.getRules().size(), 5);
-        assertEquals(this.router.getRule(1).getRuleType(), RuleType.SOLITARY);
-
-        createRuleCmd2 = "sccp rule modify 1 R 71 2 8 0 0 3 123456789 dominant 1";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertEquals(result, SccpOAMMessage.RULETYPE_NOT_SOLI_SEC_ADD_MANDATORY);
-        assertEquals(this.router.getRules().size(), 5);
-        assertEquals(this.router.getRule(1).getRuleType(), RuleType.SOLITARY);
-
-        createRuleCmd2 = "sccp rule modify 1 R 71 2 8 0 0 3 123456789 dominant 1 backup-addressid 3";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertTrue(result.substring(0, 10).equals(SccpOAMMessage.NO_BACKUP_ADDRESS.substring(0, 10)));
-        assertEquals(this.router.getRules().size(), 5);
-
-        createRuleCmd2 = "sccp rule modify 1 R 71 2 8 0 0 3 123456789 dominant 3 backup-addressid 3";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertTrue(result.substring(0, 10).equals(SccpOAMMessage.NO_PRIMARY_ADDRESS.substring(0, 10)));
-        assertEquals(this.router.getRules().size(), 5);
-
-        createRuleCmd2 = "sccp rule modify 15 R 71 2 8 0 0 3 123456789 dominant 1 backup-addressid 2";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_DOESNT_EXIST, this.sccpStack.getName()));
-        assertEquals(this.router.getRules().size(), 5);
-
-        createRuleCmd2 = "sccp rule delete 15";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_DOESNT_EXIST, this.sccpStack.getName()));
-        assertEquals(this.router.getRules().size(), 5);
-
-        createRuleCmd2 = "sccp rule delete 1";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_SUCCESSFULLY_REMOVED, this.sccpStack.getName()));
-        assertEquals(this.router.getRules().size(), 4);
-
-        createRuleCmd2 = "sccp rule show 2";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-
-        createRuleCmd2 = "sccp rule show";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-
-        // Rules for callingAddress matching
-        // Command with all calling address related params
-        createRuleCmd2 = "sccp rule create 20 R 71 2 8 0 0 3 123456789 dominant 2 backup-addressid 1 loadsharing-algo bit3 newcgparty-addressid 1 origination-type remoteoriginated calling-ai 0 calling-pc 0 calling-ssn 0 calling-tt 0 calling-nai 0 calling-np 0 calling-digits-pattern 4567";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, this.sccpStack.getName()));
-        assertEquals(this.router.getRules().size(), 5);
-
-        rule = this.router.getRule(20);
-        assertEquals(rule.getOriginationType(), OriginationType.REMOTE);
-        assertTrue(rule.getPatternCallingAddress().getGlobalTitle().getDigits().equals( "4567" ));
-
-        createRuleCmd2 = "sccp rule create 21 R 71 2 8 0 0 3 123456789 dominant 2 backup-addressid 1 loadsharing-algo bit3 newcgparty-addressid 1 origination-type remoteoriginated calling-ai 18 calling-pc 0 calling-ssn 0 calling-tt 0 calling-nai 0 calling-np 0 calling-digits-pattern 567*";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, this.sccpStack.getName()));
-        assertEquals(this.router.getRules().size(), 6);
-
-        rule = this.router.getRule(21);
-        assertEquals(rule.getOriginationType(), OriginationType.REMOTE);
-        assertTrue(rule.getPatternCallingAddress().getGlobalTitle().getDigits().equals( "567*" ));
-
-
-        createRuleCmd2 = "sccp rule create 22 R 71 2 8 0 0 3 123456789 dominant 2 backup-addressid 1 loadsharing-algo bit3 newcgparty-addressid 1 origination-type remoteoriginated calling-ai 0 calling-pc 0 calling-ssn 0 calling-np 0";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, this.sccpStack.getName()));
-        assertEquals(this.router.getRules().size(), 7);
-
-        rule = this.router.getRule(22);
-        assertEquals(rule.getOriginationType(), OriginationType.REMOTE);
-        assertTrue(rule.getPatternCallingAddress()==null);
-
-        // Calling party modify rule
-        createRuleCmd2 = "sccp rule modify 20 R 71 2 8 0 0 3 123456789 dominant 2 backup-addressid 1 loadsharing-algo bit3 newcgparty-addressid 1 origination-type remoteoriginated calling-ai 0 calling-pc 0 calling-ssn 0 calling-np 0";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_SUCCESSFULLY_MODIFIED, this.sccpStack.getName()));
-        assertEquals(this.router.getRules().size(), 7);
-
-        rule = this.router.getRule(20);
-        assertEquals(rule.getOriginationType(), OriginationType.REMOTE);
-        assertTrue(rule.getPatternCallingAddress()==null);
-
-        createRuleCmd2 = "sccp rule modify 22 R 71 2 8 0 0 3 123456789 dominant 2 backup-addressid 1 loadsharing-algo bit3 newcgparty-addressid 1 origination-type remoteoriginated calling-ai 0 calling-pc 0 calling-ssn 0 calling-tt 0 calling-nai 0 calling-np 0 calling-digits-pattern 4567";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_SUCCESSFULLY_MODIFIED, this.sccpStack.getName()));
-        assertEquals(this.router.getRules().size(), 7);
-
-        rule = this.router.getRule(22);
-        assertEquals(rule.getOriginationType(), OriginationType.REMOTE);
-        assertTrue(rule.getPatternCallingAddress().getGlobalTitle().getDigits().equals( "4567" ));
-
-        // Delete the rules
-        createRuleCmd2 = "sccp rule delete 20";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_SUCCESSFULLY_REMOVED, this.sccpStack.getName()));
-        assertEquals(this.router.getRules().size(), 6);
-        createRuleCmd2 = "sccp rule delete 21";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_SUCCESSFULLY_REMOVED, this.sccpStack.getName()));
-        assertEquals(this.router.getRules().size(), 5);
-        createRuleCmd2 = "sccp rule delete 22";
-        result = this.sccpExecutor.execute(createRuleCmd2.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.RULE_SUCCESSFULLY_REMOVED, this.sccpStack.getName()));
-        assertEquals(this.router.getRules().size(), 4);
-
-    }
-    
-    @Test(groups = { "oam", "functional.mgmt" })
-    public void testMaskSectionsValidations() {
-
-        String incorrect_prim_addressCmd = "sccp address create 1 71 6535 8 0 0 12 93707100007";
-        String incorrect_prim_address_deleteCmd = "sccp address delete 1";
-        String correct_prim_addressCmd = "sccp address create 1 71 6535 8 0 0 12 -/-";
-
-        // TODO: this update for fixing "sccp rule create needs not zero pc"
-//        String incorrectCreateRuleCmd = "sccp rule create 2 R/K 18 0 180 0 1 4 * solitary 1";
-//        String correctCreateRuleCmd = "sccp rule create 2 R/K 18 0 180 0 1 4 937/* solitary 1";
-        String incorrectCreateRuleCmd = "sccp rule create 2 R/K 18 1 180 0 1 4 * solitary 1";
-        String correctCreateRuleCmd = "sccp rule create 2 R/K 18 1 180 0 1 4 937/* solitary 1";
-
-        String incorrect_sec_addressCmd = "sccp address create 3 71 6535 8 0 0 12 93707100007";
-        // TODO: this update for fixing "sccp rule create needs not zero pc"
-//        String correctCreateRuleCmdWithSecId = "sccp rule create 2 R/K 18 0 180 0 1 4 937/* solitary 1 backup-addressid 3";
-        String correctCreateRuleCmdWithSecId = "sccp rule create 2 R/K 18 1 180 0 1 4 937/* solitary 1 backup-addressid 3";
-
-        String result = this.sccpExecutor.execute(incorrectCreateRuleCmd.split(" "));
-        assertEquals(result, SccpOAMMessage.SEC_MISMATCH_PATTERN);
-
-        this.sccpExecutor.execute(incorrect_prim_addressCmd.split(" "));
-        result = this.sccpExecutor.execute(correctCreateRuleCmd.split(" "));
-        assertEquals(result, SccpOAMMessage.SEC_MISMATCH_PRIMADDRESS);
-
-        this.sccpExecutor.execute(incorrect_prim_address_deleteCmd.split(" "));
-        this.sccpExecutor.execute(correct_prim_addressCmd.split(" "));
-        this.sccpExecutor.execute(incorrect_sec_addressCmd.split(" "));
-        result = this.sccpExecutor.execute(correctCreateRuleCmdWithSecId.split(" "));
-
-        assertEquals(result, SccpOAMMessage.SEC_MISMATCH_SECADDRESS);
-    }
-    
-    /**
-     * Test for bug http://code.google.com/p/mobicents/issues/detail?id=3057 NPE when creating SCCP primary address via CLI
-     */
-    @Test(groups = { "oam", "functional.mgmt" })
-    public void testManageAddress() {
-        String prim_addressCmd = "sccp address create 1 71 6535 8 0 0 12 93707100007";
-        String result = this.sccpExecutor.execute(prim_addressCmd.split(" "));
-        assertEquals(result, String.format(SccpOAMMessage.ADDRESS_SUCCESSFULLY_ADDED, this.sccpStack.getName()));
-        assertEquals(this.router.getRoutingAddresses().size(), 1);
-
-        // test show
-        prim_addressCmd = "sccp address show";
-        result = this.sccpExecutor.execute(prim_addressCmd.split(" "));
-        assertEquals(result, "key=1  pc=6535,ssn=8,AI=71,gt=GlobalTitle0001Impl [digits=93707100007, natureOfAddress=SPARE_12, encodingScheme=BCDOddEncodingScheme[type=BCD_ODD, code=1]]\n");
-    }
-
-    @Test(groups = { "oam", "functional.mgmt" })
-    public void testPrimAddress() {
-
-        String rspCmd = "sccp address create 11 71 6535 8 0 0 12 93707100007";
-        // <id> <address-indicator> <point-code> <subsystem-number>
-        // <translation-type> <numbering-plan> <nature-of-address-indicator>
-        // <digits>
-        String res = this.sccpExecutor.execute(rspCmd.split(" "));
-        assertEquals(this.router.getRoutingAddresses().size(), 1);
-        SccpAddress addr = this.router.getRoutingAddress(11);
-        assertEquals(addr.getAddressIndicator().getValue(SccpProtocolVersion.ITU), 71);
-        assertEquals(addr.getSignalingPointCode(), 6535);
-        assertEquals(addr.getSubsystemNumber(), 8);
-        assertTrue(addr.getGlobalTitle().getDigits().equals("93707100007"));
-
-        rspCmd = "sccp address create 11 71 6536 8 0 0 12 93707100007";
-        res = this.sccpExecutor.execute(rspCmd.split(" "));
-        assertTrue(res.equals(SccpOAMMessage.ADDRESS_ALREADY_EXIST));
-        assertEquals(this.router.getRoutingAddresses().size(), 1);
-        addr = this.router.getRoutingAddress(11);
-        assertEquals(addr.getSignalingPointCode(), 6535);
-
-        rspCmd = "sccp address modify 11 71 6537 8 0 0 12 93707100007";
-        res = this.sccpExecutor.execute(rspCmd.split(" "));
-        assertEquals(this.router.getRoutingAddresses().size(), 1);
-        addr = this.router.getRoutingAddress(11);
-        assertEquals(addr.getSignalingPointCode(), 6537);
-
-        rspCmd = "sccp address modify 12 71 6538 8 0 0 12 93707100007";
-        res = this.sccpExecutor.execute(rspCmd.split(" "));
-        assertTrue(res.equals(String.format(SccpOAMMessage.ADDRESS_DOESNT_EXIST, this.sccpStack.getName())));
-        assertEquals(this.router.getRoutingAddresses().size(), 1);
-        addr = this.router.getRoutingAddress(11);
-        assertEquals(addr.getSignalingPointCode(), 6537);
-
-        rspCmd = "sccp address show 11";
-        res = this.sccpExecutor.execute(rspCmd.split(" "));
-
-        rspCmd = "sccp address show";
-        res = this.sccpExecutor.execute(rspCmd.split(" "));
-
-        rspCmd = "sccp address delete 12";
-        res = this.sccpExecutor.execute(rspCmd.split(" "));
-        assertTrue(res.equals(String.format(SccpOAMMessage.ADDRESS_DOESNT_EXIST, this.sccpStack.getName())));
-        assertEquals(this.router.getRoutingAddresses().size(), 1);
-
-        rspCmd = "sccp address delete 11";
-        res = this.sccpExecutor.execute(rspCmd.split(" "));
-        assertEquals(this.router.getRoutingAddresses().size(), 0);
-    }   
-    
     @Test(groups = { "oam", "functional.mgmt" })
     public void testLmr() {
 

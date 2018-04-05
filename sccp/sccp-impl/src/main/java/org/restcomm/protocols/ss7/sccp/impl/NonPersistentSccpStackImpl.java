@@ -7,11 +7,12 @@ import javolution.util.FastMap;
 import org.restcomm.protocols.ss7.mtp.Mtp3UserPart;
 import org.restcomm.protocols.ss7.sccp.SccpManagementEventListener;
 import org.restcomm.protocols.ss7.sccp.impl.router.NonPersistentRouterImpl;
+import org.restcomm.protocols.ss7.ss7ext.Ss7ExtInterface;
 
 public class NonPersistentSccpStackImpl extends SccpStackImpl {
 
-    public NonPersistentSccpStackImpl(String name) {
-        super(name);
+    public NonPersistentSccpStackImpl(String name, Ss7ExtInterface ss7ExtInterface) {
+        super(name, ss7ExtInterface);
     }
 
     @Override
@@ -29,7 +30,7 @@ public class NonPersistentSccpStackImpl extends SccpStackImpl {
         this.router = new NonPersistentRouterImpl(this.name, this);
         this.router.start();
 
-        this.sccpResource = new NonPersistentSccpResourceImpl(this.name);
+        this.sccpResource = new NonPersistentSccpResourceImpl(this.name, ss7ExtSccpDetailedInterface);
         this.sccpResource.start();
 
         logger.info("Starting routing engine...");

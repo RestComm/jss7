@@ -37,14 +37,11 @@ import org.restcomm.protocols.ss7.indicator.RoutingIndicator;
 import org.restcomm.protocols.ss7.mtp.Mtp3StatusCause;
 import org.restcomm.protocols.ss7.sccp.ConcernedSignalingPointCode;
 import org.restcomm.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
-import org.restcomm.protocols.ss7.sccp.NetworkIdState;
 import org.restcomm.protocols.ss7.sccp.RemoteSccpStatus;
 import org.restcomm.protocols.ss7.sccp.RemoteSubSystem;
 import org.restcomm.protocols.ss7.sccp.SccpListener;
 import org.restcomm.protocols.ss7.sccp.SccpManagementEventListener;
 import org.restcomm.protocols.ss7.sccp.SccpProtocolVersion;
-import org.restcomm.protocols.ss7.sccp.SignallingPointStatus;
-import org.restcomm.protocols.ss7.sccp.impl.congestion.SccpCongestionControl;
 import org.restcomm.protocols.ss7.sccp.impl.message.SccpDataMessageImpl;
 import org.restcomm.protocols.ss7.sccp.impl.message.SccpMessageImpl;
 import org.restcomm.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
@@ -91,7 +88,6 @@ public class SccpManagement {
     private SccpProviderImpl sccpProviderImpl;
     private SccpStackImpl sccpStackImpl;
     private SccpRoutingControl sccpRoutingControl;
-    private SccpCongestionControl sccpCongestionControl;
 
     private ScheduledExecutorService managementExecutors;
 
@@ -116,14 +112,6 @@ public class SccpManagement {
 
     public void setSccpRoutingControl(SccpRoutingControl sccpRoutingControl) {
         this.sccpRoutingControl = sccpRoutingControl;
-    }
-
-    public SccpCongestionControl getSccpCongestionControl() {
-        return sccpCongestionControl;
-    }
-
-    public void setSccpCongestionControl(SccpCongestionControl sccpCongestionControl) {
-        this.sccpCongestionControl = sccpCongestionControl;
     }
 
     public ScheduledExecutorService getManagementExecutors() {
@@ -495,25 +483,7 @@ public class SccpManagement {
             if (remoteSccpStatus != null && remoteSccpStatus != RemoteSccpStatus.AVAILABLE)
                 remoteSpc.setRemoteSccpProhibited(true);
 
-            FastMap<Integer, NetworkIdState> lst = this.sccpStackImpl.getNetworkIdList(affectedPc);
-            FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
-            for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
-                try {
-                    e1.getValue().onPcState(
-                            affectedPc,
-                            (remoteSpc.isRemoteSpcProhibited() ? SignallingPointStatus.INACCESIBBLE
-                                    : SignallingPointStatus.ACCESSIBLE), 0, remoteSccpStatus);
-                } catch (Exception ee) {
-                    logger.error("Exception while invoking onPcState", ee);
-                }
-                for (FastMap.Entry<Integer, NetworkIdState> e2 = lst.head(), end2 = lst.tail(); (e2 = e2.getNext()) != end2;) {
-                    try {
-                        e1.getValue().onNetworkIdState(e2.getKey(), e2.getValue());
-                    } catch (Exception ee) {
-                        logger.error("Exception while invoking onNetworkIdState", ee);
-                    }
-                }
-            }
+            this.sccpStackImpl.ss7ExtSccpDetailedInterface.onProhibitRsp(affectedPc, remoteSccpStatus, remoteSpc);
 
             for (SccpManagementEventListener lstr : this.sccpProviderImpl.managementEventListeners) {
                 try {
@@ -548,24 +518,9 @@ public class SccpManagement {
                 remoteSpc.setRemoteSpcProhibited(false);
             if (remoteSccpStatus != null && remoteSccpStatus == RemoteSccpStatus.AVAILABLE)
                 remoteSpc.setRemoteSccpProhibited(false);
-            remoteSpc.clearCongLevel(sccpCongestionControl);
+            remoteSpc.clearCongLevel();
 
-            FastMap<Integer, NetworkIdState> lst = this.sccpStackImpl.getNetworkIdList(affectedPc);
-            FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
-            for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
-                try {
-                    e1.getValue().onPcState(affectedPc, SignallingPointStatus.ACCESSIBLE, 0, remoteSccpStatus);
-                } catch (Exception ee) {
-                    logger.error("Exception while invoking onPcState", ee);
-                }
-                for (FastMap.Entry<Integer, NetworkIdState> e2 = lst.head(), end2 = lst.tail(); (e2 = e2.getNext()) != end2;) {
-                    try {
-                        e1.getValue().onNetworkIdState(e2.getKey(), e2.getValue());
-                    } catch (Exception ee) {
-                        logger.error("Exception while invoking onNetworkIdState", ee);
-                    }
-                }
-            }
+            this.sccpStackImpl.ss7ExtSccpDetailedInterface.onAllowRsp(affectedPc, remoteSccpStatus);
 
             for (SccpManagementEventListener lstr : this.sccpProviderImpl.managementEventListeners) {
                 try {
@@ -729,7 +684,7 @@ public class SccpManagement {
         RemoteSignalingPointCodeImpl remoteSpc = (RemoteSignalingPointCodeImpl) this.sccpStackImpl.getSccpResource()
                 .getRemoteSpcByPC(affectedPc);
         if (remoteSpc != null) {
-            remoteSpc.increaseCongLevel(sccpCongestionControl, congStatus);
+            remoteSpc.increaseCongLevel(congStatus);
         }
     }
 
@@ -737,31 +692,12 @@ public class SccpManagement {
         RemoteSignalingPointCodeImpl remoteSpc = (RemoteSignalingPointCodeImpl) this.sccpStackImpl.getSccpResource()
                 .getRemoteSpcByPC(affectedPc);
         if (remoteSpc != null) {
-            remoteSpc.clearCongLevel(sccpCongestionControl);
+            remoteSpc.clearCongLevel();
         }
     }
 
     public void onRestrictionLevelChange(int affectedPc, int restrictionLevel, boolean levelEncreased) {
-        int congLevel = SccpCongestionControl.generateSccpUserCongLevel(restrictionLevel);
-
-        FastMap<Integer, NetworkIdState> lst = this.sccpStackImpl.getNetworkIdList(affectedPc);
-        FastMap<Integer, SccpListener> lstrs = this.sccpProviderImpl.getAllSccpListeners();
-        for (FastMap.Entry<Integer, SccpListener> e1 = lstrs.head(), end1 = lstrs.tail(); (e1 = e1.getNext()) != end1;) {
-            try {
-                e1.getValue().onPcState(affectedPc,
-                        levelEncreased ? SignallingPointStatus.CONGESTED : SignallingPointStatus.CONGESTION_REDUCED, congLevel,
-                        null);
-            } catch (Exception ee) {
-                logger.error("Exception while invoking onPcState", ee);
-            }
-            for (FastMap.Entry<Integer, NetworkIdState> e2 = lst.head(), end2 = lst.tail(); (e2 = e2.getNext()) != end2;) {
-                try {
-                    e1.getValue().onNetworkIdState(e2.getKey(), e2.getValue());
-                } catch (Exception ee) {
-                    logger.error("Exception while invoking onNetworkIdState", ee);
-                }
-            }
-        }
+        this.sccpStackImpl.ss7ExtSccpDetailedInterface.onRestrictionLevelChange(affectedPc, restrictionLevel, levelEncreased);
     }
 
     private void doOnNetworkIdState(int affectedPc) {

@@ -42,7 +42,7 @@ public class XudtReassemblingTest {
 
     @Test
     public void testA() throws Exception {
-        SccpStackImpl sccpStack = new SccpStackImpl("TestUudt");
+        SccpStackImpl sccpStack = new SccpStackImpl("TestUudt", null);
         sccpStack.start();
 
         SccpListenerProxy listenerProxy = new SccpListenerProxy();

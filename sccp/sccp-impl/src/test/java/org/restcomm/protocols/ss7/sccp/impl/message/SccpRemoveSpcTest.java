@@ -57,7 +57,7 @@ public class SccpRemoveSpcTest {
 
     @BeforeMethod
     public void setUp() {
-        this.stack = new SccpStackImpl("SccpRemoveSpcTest");
+        this.stack = new SccpStackImpl("SccpRemoveSpcTest", null);
         this.stack.setPersistDir(Util.getTmpTestDir());
         this.stack.start();
         this.messageFactory = new MessageFactoryImpl(stack);

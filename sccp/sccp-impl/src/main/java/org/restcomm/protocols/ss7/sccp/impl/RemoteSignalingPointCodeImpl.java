@@ -26,12 +26,7 @@ import javolution.xml.XMLFormat;
 import javolution.xml.XMLSerializable;
 import javolution.xml.stream.XMLStreamException;
 
-import org.apache.log4j.Logger;
 import org.restcomm.protocols.ss7.sccp.RemoteSignalingPointCode;
-import org.restcomm.protocols.ss7.sccp.SccpCongestionControlAlgo;
-import org.restcomm.protocols.ss7.sccp.impl.congestion.CongStateTimerA;
-import org.restcomm.protocols.ss7.sccp.impl.congestion.CongStateTimerD;
-import org.restcomm.protocols.ss7.sccp.impl.congestion.SccpCongestionControl;
 
 /**
  * @author amit bhayani
@@ -43,8 +38,6 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSign
     private static final String REMOTE_SPC_FLAG = "remoteSpcFlag";
     private static final String MASK = "mask";
 
-    private Logger logger = Logger.getLogger(RemoteSignalingPointCodeImpl.class);
-
     private int remoteSpc;
     private int remoteSpcFlag;
     private int mask;
@@ -53,10 +46,8 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSign
 
     protected int rl;
     protected int rsl;
-    private CongStateTimerA timerA;
-    private CongStateTimerD timerD;
 
-    private SccpCongestionControl sccpCongestionControl;
+    private RemoteSignalingPointCodeExt remoteSignalingPointCodeExt;
 
     public RemoteSignalingPointCodeImpl() {
     }
@@ -67,6 +58,10 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSign
         this.mask = mask;
         this.remoteSccpProhibited = isProhibited;
         this.remoteSpcProhibited = isProhibited;
+    }
+
+    public void createRemoteSignalingPointCodeExt(Ss7ExtSccpDetailedInterface ss7ExtSccpDetailedInterface) {
+        remoteSignalingPointCodeExt = ss7ExtSccpDetailedInterface.createRemoteSignalingPointCodeExt(this);
     }
 
     public int getRemoteSpc() {
@@ -132,78 +127,12 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSign
         return rsl;
     }
 
-    public void clearCongLevel(SccpCongestionControl sccpCongestionControl) {
-        this.sccpCongestionControl = sccpCongestionControl;
-
-        this.rl = 0;
-        this.rsl = 0;
-
-        this.sccpCongestionControl.onRestrictionLevelChange(remoteSpc, rl, false);
+    void clearCongLevel() {
+        remoteSignalingPointCodeExt.clearCongLevel();
     }
 
-    public void increaseCongLevel(SccpCongestionControl sccpCongestionControl, int level) {
-        this.sccpCongestionControl = sccpCongestionControl;
-
-        if (this.timerA != null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("SCCP cong increaseCongLevel - no actions because of timerA is not over: " + this);
-            }
-            return;
-        }
-
-        timerA = new CongStateTimerA(this);
-        this.sccpCongestionControl.scheduleTimer(timerA, sccpCongestionControl.getCongControlTIMER_A());
-        CongStateTimerD _timerD = timerD;
-        if (_timerD != null) {
-            _timerD.cancel();
-        }
-        timerD = new CongStateTimerD(this);
-        this.sccpCongestionControl.scheduleTimer(timerD, sccpCongestionControl.getCongControlTIMER_D());
-
-        if (rl >= sccpCongestionControl.getCongControlN()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("SCCP cong increaseCongLevel - no actions because rl has its max level: " + this);
-            }
-            return;
-        }
-        if (sccpCongestionControl.getCongControl_Algo() == SccpCongestionControlAlgo.levelDepended
-                && rl >= SccpCongestionControl.getMaxRestrictionLevelForMtp3Level(level)) {
-            return;
-        }
-
-        rsl++;
-        if (rsl >= sccpCongestionControl.getCongControlM()) {
-            rsl = 0;
-            rl++;
-            if (logger.isDebugEnabled()) {
-                logger.debug("SCCP cong increaseCongLevel - rl has increased: " + this);
-            }
-
-            this.sccpCongestionControl.onRestrictionLevelChange(remoteSpc, rl, true);
-        }
-    }
-
-    public void clearTimerA() {
-        timerA = null;
-    }
-
-    public void decreaseCongLevel() {
-        if (rl == 0 && rsl == 0)
-            return;
-
-        rsl--;
-        if (rsl < 0) {
-            rsl = sccpCongestionControl.getCongControlM() - 1;
-            rl--;
-            if (logger.isDebugEnabled()) {
-                logger.debug("SCCP cong increaseCongLevel - rl has decreased: " + this);
-            }
-
-            this.sccpCongestionControl.onRestrictionLevelChange(remoteSpc, rl, false);
-        }
-
-        timerD = new CongStateTimerD(this);
-        this.sccpCongestionControl.scheduleTimer(timerD, sccpCongestionControl.getCongControlTIMER_D());
+    void increaseCongLevel(int level) {
+        remoteSignalingPointCodeExt.increaseCongLevel(level);
     }
 
     /**

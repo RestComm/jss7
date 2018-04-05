@@ -59,7 +59,7 @@ import org.testng.annotations.Test;
 public class SccpDataMessageTest {
 
     private Logger logger;
-    private SccpStackImpl stack = new SccpStackImpl("SccpDataMessageTestStack");
+    private SccpStackImpl stack = new SccpStackImpl("SccpDataMessageTestStack", null);
     private MessageFactoryImpl messageFactory;
 
     @BeforeMethod

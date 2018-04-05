@@ -104,7 +104,7 @@ public class SccpConnectionWithFlowControlImpl extends SccpConnectionImpl implem
         }
     }
 
-    protected void receiveMessage(SccpConnMessage message) throws Exception {
+    public void receiveMessage(SccpConnMessage message) throws Exception {
         try {
             connectionLock.lock();
             super.receiveMessage(message);

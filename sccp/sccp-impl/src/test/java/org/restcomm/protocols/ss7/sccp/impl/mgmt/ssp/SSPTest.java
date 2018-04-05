@@ -37,6 +37,7 @@ import org.restcomm.protocols.ss7.sccp.impl.mgmt.Mtp3PrimitiveMessageType;
 import org.restcomm.protocols.ss7.sccp.impl.mgmt.SccpMgmtMessage;
 import org.restcomm.protocols.ss7.sccp.impl.mgmt.SccpMgmtMessageType;
 import org.restcomm.protocols.ss7.sccp.parameter.SccpAddress;
+import org.restcomm.protocols.ss7.ss7ext.Ss7ExtInterface;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -68,18 +69,18 @@ public class SSPTest extends SccpHarness {
     }
 
     protected void createStack1() {
-        sccpStack1 = createStack(sccpStack1Name);
+        sccpStack1 = createStack(sccpStack1Name, null);
         sccpProvider1 = sccpStack1.getSccpProvider();
     }
 
     protected void createStack2() {
-        sccpStack2 = createStack(sccpStack2Name);
+        sccpStack2 = createStack(sccpStack2Name, null);
         sccpProvider2 = sccpStack2.getSccpProvider();
     }
 
     @Override
-    protected SccpStackImpl createStack(String name) {
-        SccpStackImpl stack = new SccpStackImplProxy(name);
+    protected SccpStackImpl createStack(String name, Ss7ExtInterface ss7ExtInterface) {
+        SccpStackImpl stack = new SccpStackImplProxy(name, ss7ExtInterface);
         final String dir = Util.getTmpTestDir();
         if (dir != null) {
             stack.setPersistDir(dir);

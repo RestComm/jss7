@@ -37,7 +37,6 @@ import org.restcomm.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
 import org.restcomm.protocols.ss7.sccp.OriginationType;
 import org.restcomm.protocols.ss7.sccp.RemoteSignalingPointCode;
 import org.restcomm.protocols.ss7.sccp.RemoteSubSystem;
-import org.restcomm.protocols.ss7.sccp.Rule;
 import org.restcomm.protocols.ss7.sccp.RuleType;
 import org.restcomm.protocols.ss7.sccp.SccpCongestionControlAlgo;
 import org.restcomm.protocols.ss7.sccp.SccpProtocolVersion;
@@ -574,7 +573,8 @@ public class SccpExecutor implements ShellExecutor {
             this.setDefaultValue();
             SccpAddress address = this.createAddress(options, 4, false);
 
-            this.sccpStack.getRouter().addRoutingAddress(addressId, address);
+            // TODO: .................. restore this
+//            this.sccpStack.getRouter().addRoutingAddress(addressId, address);
             return String.format(SccpOAMMessage.ADDRESS_SUCCESSFULLY_ADDED, this.sccpStack.getName());
         } else if (command.equals("modify")) {
             if (options.length < 4) {
@@ -610,7 +610,8 @@ public class SccpExecutor implements ShellExecutor {
 
             SccpAddress address = this.createAddress(options, 4, false);
 
-            this.sccpStack.getRouter().modifyRoutingAddress(addressId, address);
+            // TODO: .................. restore this
+//            this.sccpStack.getRouter().modifyRoutingAddress(addressId, address);
             return String.format(SccpOAMMessage.ADDRESS_SUCCESSFULLY_MODIFIED, this.sccpStack.getName());
         } else if (command.equals("delete")) {
             // sccp address delete <id> stackname <stack-name>
@@ -646,7 +647,8 @@ public class SccpExecutor implements ShellExecutor {
 
             this.setDefaultValue();
 
-            this.sccpStack.getRouter().removeRoutingAddress(addressId);
+            // TODO: .................. restore this
+//            this.sccpStack.getRouter().removeRoutingAddress(addressId);
             return String.format(SccpOAMMessage.ADDRESS_SUCCESSFULLY_DELETED, this.sccpStack.getName());
 
         } else if (command.equals("show")) {
@@ -681,28 +683,31 @@ public class SccpExecutor implements ShellExecutor {
             this.setDefaultValue();
 
             if (addressId != -1) {
-                SccpAddress pa = this.sccpStack.getRouter().getRoutingAddress(addressId);
-                if (pa == null) {
-                    return String.format(SccpOAMMessage.ADDRESS_DOESNT_EXIST, this.sccpStack.getName());
-                }
-                return pa.toString();
+                // TODO: .................. restore this
+//                SccpAddress pa = this.sccpStack.getRouter().getRoutingAddress(addressId);
+//                if (pa == null) {
+//                    return String.format(SccpOAMMessage.ADDRESS_DOESNT_EXIST, this.sccpStack.getName());
+//                }
+//                return pa.toString();
             }
 
-            if (this.sccpStack.getRouter().getRoutingAddresses().size() == 0) {
-                return String.format(SccpOAMMessage.ADDRESS_DOESNT_EXIST, this.sccpStack.getName());
-            }
+            // TODO: .................. restore this
+//            if (this.sccpStack.getRouter().getRoutingAddresses().size() == 0) {
+//                return String.format(SccpOAMMessage.ADDRESS_DOESNT_EXIST, this.sccpStack.getName());
+//            }
 
             StringBuffer sb = new StringBuffer();
 
-            Map<Integer, SccpAddress> idVsPrimAdd = this.sccpStack.getRouter().getRoutingAddresses();
-            for (Integer e : idVsPrimAdd.keySet()) {
-                SccpAddress address = idVsPrimAdd.get(e);
-                sb.append("key=");
-                sb.append(e);
-                sb.append("  ");
-                sb.append(address);
-                sb.append("\n");
-            }
+            // TODO: .................. restore this
+//            Map<Integer, SccpAddress> idVsPrimAdd = this.sccpStack.getRouter().getRoutingAddresses();
+//            for (Integer e : idVsPrimAdd.keySet()) {
+//                SccpAddress address = idVsPrimAdd.get(e);
+//                sb.append("key=");
+//                sb.append(e);
+//                sb.append("  ");
+//                sb.append(address);
+//                sb.append("\n");
+//            }
             return sb.toString();
         }
 
@@ -845,8 +850,9 @@ public class SccpExecutor implements ShellExecutor {
             callingPattern = this.createAddress( callingAI, callingPC, callingSSN, callingTT, callingNP, callingNAI, callingDigits, true );
         }
 
-        this.sccpStack.getRouter().addRule( ruleId, ruleType, algo, originationType, pattern, mask, pAddressId, sAddressId,
-                newcgpartyAddressId, networkId, callingPattern);
+        // TODO: .................. restore this
+//        this.sccpStack.getRouter().addRule( ruleId, ruleType, algo, originationType, pattern, mask, pAddressId, sAddressId,
+//                newcgpartyAddressId, networkId, callingPattern);
 
         return String.format(SccpOAMMessage.RULE_SUCCESSFULLY_ADDED, this.sccpStack.getName());
     }
@@ -950,8 +956,9 @@ public class SccpExecutor implements ShellExecutor {
             callingPattern = this.createAddress( callingAI, callingPC, callingSSN, callingTT, callingNP, callingNAI, callingDigits, true );
         }
 
-        this.sccpStack.getRouter().modifyRule(ruleId, ruleType, algo, originationType, pattern, mask, pAddressId, sAddressId,
-                newcgpartyAddressId, networkId, callingPattern);
+        // TODO: .................. restore this
+//        this.sccpStack.getRouter().modifyRule(ruleId, ruleType, algo, originationType, pattern, mask, pAddressId, sAddressId,
+//                newcgpartyAddressId, networkId, callingPattern);
         return String.format(SccpOAMMessage.RULE_SUCCESSFULLY_MODIFIED, this.sccpStack.getName());
     }
 
@@ -996,7 +1003,8 @@ public class SccpExecutor implements ShellExecutor {
 
         this.setDefaultValue();
 
-        this.sccpStack.getRouter().removeRule(ruleId);
+        // TODO: .................. restore this
+//        this.sccpStack.getRouter().removeRule(ruleId);
         return String.format(SccpOAMMessage.RULE_SUCCESSFULLY_REMOVED, this.sccpStack.getName());
     }
 
@@ -1042,29 +1050,30 @@ public class SccpExecutor implements ShellExecutor {
 
         this.setDefaultValue();
 
-        if (ruleId != -1) {
-            Rule rule = this.sccpStack.getRouter().getRule(ruleId);
-            if (rule == null) {
-                return String.format(SccpOAMMessage.RULE_DOESNT_EXIST, this.sccpStack.getName());
-            }
-            return rule.toString();
-        }
-
-        if (this.sccpStack.getRouter().getRules().size() == 0) {
-            return String.format(SccpOAMMessage.RULE_DOESNT_EXIST, this.sccpStack.getName());
-        }
-
-        Map<Integer, Rule> idVsRule = this.sccpStack.getRouter().getRules();
-
+        // TODO: .................. restore this
+//        if (ruleId != -1) {
+//            Rule rule = this.sccpStack.getRouter().getRule(ruleId);
+//            if (rule == null) {
+//                return String.format(SccpOAMMessage.RULE_DOESNT_EXIST, this.sccpStack.getName());
+//            }
+//            return rule.toString();
+//        }
+//
+//        if (this.sccpStack.getRouter().getRules().size() == 0) {
+//            return String.format(SccpOAMMessage.RULE_DOESNT_EXIST, this.sccpStack.getName());
+//        }
+//
+//        Map<Integer, Rule> idVsRule = this.sccpStack.getRouter().getRules();
+//
         StringBuffer sb = new StringBuffer();
-        for (Integer e : idVsRule.keySet()) {
-            Rule rule = idVsRule.get(e);
-            sb.append("key=");
-            sb.append(e);
-            sb.append("  Rule=");
-            sb.append(rule);
-            sb.append("\n");
-        }
+//        for (Integer e : idVsRule.keySet()) {
+//            Rule rule = idVsRule.get(e);
+//            sb.append("key=");
+//            sb.append(e);
+//            sb.append("  Rule=");
+//            sb.append(rule);
+//            sb.append("\n");
+//        }
 
         return sb.toString();
     }

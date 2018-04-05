@@ -46,10 +46,8 @@ import org.restcomm.protocols.ss7.sccp.LongMessageRule;
 import org.restcomm.protocols.ss7.sccp.LongMessageRuleType;
 import org.restcomm.protocols.ss7.sccp.MaxConnectionCountReached;
 import org.restcomm.protocols.ss7.sccp.Mtp3ServiceAccessPoint;
-import org.restcomm.protocols.ss7.sccp.NetworkIdState;
 import org.restcomm.protocols.ss7.sccp.RemoteSignalingPointCode;
 import org.restcomm.protocols.ss7.sccp.Router;
-import org.restcomm.protocols.ss7.sccp.Rule;
 import org.restcomm.protocols.ss7.sccp.SccpCongestionControlAlgo;
 import org.restcomm.protocols.ss7.sccp.SccpConnectionState;
 import org.restcomm.protocols.ss7.sccp.SccpManagementEventListener;
@@ -57,7 +55,6 @@ import org.restcomm.protocols.ss7.sccp.SccpProtocolVersion;
 import org.restcomm.protocols.ss7.sccp.SccpProvider;
 import org.restcomm.protocols.ss7.sccp.SccpResource;
 import org.restcomm.protocols.ss7.sccp.SccpStack;
-import org.restcomm.protocols.ss7.sccp.impl.congestion.SccpCongestionControl;
 import org.restcomm.protocols.ss7.sccp.impl.message.MessageFactoryImpl;
 import org.restcomm.protocols.ss7.sccp.impl.message.SccpAddressedMessageImpl;
 import org.restcomm.protocols.ss7.sccp.impl.message.SccpDataNoticeTemplateMessageImpl;
@@ -74,6 +71,8 @@ import org.restcomm.protocols.ss7.sccp.parameter.ProtocolClass;
 import org.restcomm.protocols.ss7.sccp.parameter.ReturnCauseValue;
 import org.restcomm.protocols.ss7.sccp.parameter.SccpAddress;
 import org.restcomm.protocols.ss7.scheduler.Scheduler;
+import org.restcomm.protocols.ss7.ss7ext.Ss7ExtInterface;
+import org.restcomm.protocols.ss7.ss7ext.Ss7ExtSccpInterface;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -224,7 +223,6 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
 
     protected SccpManagement sccpManagement;
     protected SccpRoutingControl sccpRoutingControl;
-    protected SccpCongestionControl sccpCongestionControl;
 
     protected FastMap<Integer, SccpConnectionImpl> connections = new FastMap<Integer, SccpConnectionImpl>().shared();
 
@@ -258,16 +256,27 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     private FastMap<Integer, Date> lastUserPartUnavailNotice = new FastMap<Integer, Date>();
 
     protected Scheduler scheduler;
+    protected Ss7ExtSccpDetailedInterface ss7ExtSccpDetailedInterface;
 
     /*
      * For non-connection oriented protocol class usage
      */
-    public SccpStackImpl(String name) {
-        this(null, name);
+    public SccpStackImpl(String name, Ss7ExtInterface ss7ExtInterface) {
+        this(null, name, ss7ExtInterface);
     }
 
-    public SccpStackImpl(Scheduler scheduler, String name) {
+    public SccpStackImpl(Scheduler scheduler, String name, Ss7ExtInterface ss7ExtInterface) {
         this.scheduler = scheduler;
+
+        Ss7ExtSccpInterface ss7ExtSccpInterface = null;
+        if (ss7ExtInterface != null)
+            ss7ExtSccpInterface = ss7ExtInterface.getSs7ExtSccpInterface();
+        if (ss7ExtSccpInterface != null && ss7ExtSccpInterface instanceof Ss7ExtSccpDetailedInterface) {
+            ss7ExtSccpDetailedInterface = (Ss7ExtSccpDetailedInterface) ss7ExtSccpInterface;
+        } else {
+            ss7ExtSccpDetailedInterface = new Ss7ExtSccpDetailedInterfaceDefault();
+        }
+        ss7ExtSccpDetailedInterface.init(this);
 
         binding.setClassAttribute(CLASS_ATTRIBUTE);
 
@@ -820,6 +829,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     public void start() throws IllegalStateException {
         logger.info("Starting ...");
 
+        ss7ExtSccpDetailedInterface.startExtBefore();
+
         this.persistFile.clear();
 
         if (persistDir != null) {
@@ -841,17 +852,15 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         // FIXME: move creation to constructor ?
         this.sccpManagement = new SccpManagement(name, sccpProvider, this);
         this.sccpRoutingControl = new SccpRoutingControl(sccpProvider, this);
-        this.sccpCongestionControl = new SccpCongestionControl(sccpManagement, this);
 
         this.sccpManagement.setSccpRoutingControl(sccpRoutingControl);
         this.sccpRoutingControl.setSccpManagement(sccpManagement);
-        this.sccpManagement.setSccpCongestionControl(sccpCongestionControl);
 
         this.router = new RouterImpl(this.name, this);
         this.router.setPersistDir(this.persistDir);
         this.router.start();
 
-        this.sccpResource = new SccpResourceImpl(this.name, this.rspProhibitedByDefault);
+        this.sccpResource = new SccpResourceImpl(this.name, this.rspProhibitedByDefault, ss7ExtSccpDetailedInterface);
         this.sccpResource.setPersistDir(this.persistDir);
         this.sccpResource.start();
 
@@ -890,6 +899,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
             }
         }
 
+        ss7ExtSccpDetailedInterface.startExtAfter(this.router, this.sccpManagement);
+
         this.state = State.RUNNING;
     }
 
@@ -902,6 +913,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         // executor = null;
         //
         // layer3exec = null;
+
+        ss7ExtSccpDetailedInterface.stopExt();
 
         if (this.msgDeliveryExecutors != null) {
             for (ExecutorService es : this.msgDeliveryExecutors) {
@@ -975,7 +988,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         IDLE, CONFIGURED, RUNNING;
     }
 
-    protected SccpConnectionImpl newConnection(int localSsn, ProtocolClass protocol) throws MaxConnectionCountReached {
+    public SccpConnectionImpl newConnection(int localSsn, ProtocolClass protocol) throws MaxConnectionCountReached {
         SccpConnectionImpl conn;
         Integer refNumber = newReferenceNumber();
 
@@ -1126,18 +1139,9 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     }
 
     private int getMaxUserDataLengthForGT(SccpAddress calledPartyAddress, SccpAddress callingPartyAddress, int msgNetworkId) {
+        int dpc = ss7ExtSccpDetailedInterface.findDpsForAddresses(calledPartyAddress, callingPartyAddress, msgNetworkId);
 
-        Rule rule = this.router.findRule(calledPartyAddress, callingPartyAddress, false, msgNetworkId);
-        if (rule == null) {
-            return 0;
-        }
-        SccpAddress translationAddressPri = this.router.getRoutingAddress(rule.getPrimaryAddressId());
-        if (translationAddressPri == null) {
-            return 0;
-        }
-
-        return getMaxUserDataLengthForDpc(translationAddressPri.getSignalingPointCode(), calledPartyAddress,
-                callingPartyAddress);
+        return getMaxUserDataLengthForDpc(dpc, calledPartyAddress, callingPartyAddress);
     }
 
     protected void broadcastChangedSsnState(int affectedSsn, boolean inService) {
@@ -1160,6 +1164,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
                 logger.error("Exception while invoking onRemoveAllResources", ee);
             }
         }
+
+        ss7ExtSccpDetailedInterface.removeAllResourses();
     }
 
     public void onMtp3PauseMessage(Mtp3PausePrimitive msg) {
@@ -1452,10 +1458,6 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         } catch (Exception e) {
             logger.error("IOException while handling SCCP message: " + e.getMessage(), e);
         }
-    }
-
-    public FastMap<Integer, NetworkIdState> getNetworkIdList(int affectedPc) {
-        return router.getNetworkIdList(affectedPc);
     }
 
     public class MessageReassemblyProcess implements Runnable {

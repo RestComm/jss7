@@ -26,12 +26,8 @@ import org.restcomm.protocols.ss7.sccp.NetworkIdState;
 import org.restcomm.protocols.ss7.sccp.RemoteSccpStatus;
 import org.restcomm.protocols.ss7.sccp.SccpConnection;
 import org.restcomm.protocols.ss7.sccp.SccpListener;
-import org.restcomm.protocols.ss7.sccp.SccpProvider;
 import org.restcomm.protocols.ss7.sccp.SignallingPointStatus;
-import org.restcomm.protocols.ss7.sccp.message.MessageFactory;
-import org.restcomm.protocols.ss7.sccp.message.SccpAddressedMessage;
 import org.restcomm.protocols.ss7.sccp.message.SccpDataMessage;
-import org.restcomm.protocols.ss7.sccp.message.SccpMessage;
 import org.restcomm.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.restcomm.protocols.ss7.sccp.parameter.Credit;
 import org.restcomm.protocols.ss7.sccp.parameter.ErrorCause;
@@ -41,10 +37,6 @@ import org.restcomm.protocols.ss7.sccp.parameter.RefusalCause;
 import org.restcomm.protocols.ss7.sccp.parameter.ReleaseCause;
 import org.restcomm.protocols.ss7.sccp.parameter.ResetCause;
 import org.restcomm.protocols.ss7.sccp.parameter.SccpAddress;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BaseSccpListener implements SccpListener {
     public BaseSccpListener() {

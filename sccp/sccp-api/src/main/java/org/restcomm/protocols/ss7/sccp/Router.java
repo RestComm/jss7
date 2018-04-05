@@ -19,9 +19,8 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.restcomm.protocols.ss7.sccp;
 
-import org.restcomm.protocols.ss7.sccp.parameter.SccpAddress;
+package org.restcomm.protocols.ss7.sccp;
 
 import java.util.Map;
 
@@ -31,16 +30,6 @@ import java.util.Map;
  *
  */
 public interface Router {
-
-    void addRoutingAddress(int id, SccpAddress routingAddress) throws Exception;
-
-    void removeRoutingAddress(int id) throws Exception;
-
-    void modifyRoutingAddress(int routingAddressId, SccpAddress routingAddress) throws Exception;
-
-    Map<Integer, SccpAddress> getRoutingAddresses();
-
-    SccpAddress getRoutingAddress(int id);
 
     void addMtp3ServiceAccessPoint(int id, int mtp3Id, int opc, int ni, int networkId, String localGtDigits) throws Exception;
 
@@ -70,16 +59,6 @@ public interface Router {
 
     Map<Integer, LongMessageRule> getLongMessageRules();
 
-    void addRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern, String mask, int pAddressId,
-            int sAddressId, Integer newCallingPartyAddressAddressId, int networkId, SccpAddress patternCallingAddress) throws Exception;
-
-    void modifyRule(int id, RuleType ruleType, LoadSharingAlgorithm algo, OriginationType originationType, SccpAddress pattern, String mask, int pAddressId,
-            int sAddressId, Integer newCallingPartyAddressAddressId, int networkId, SccpAddress patternCallingAddress) throws Exception;
-
-    Rule getRule(int id);
-
-    void removeRule(int id) throws Exception;
-
-    Map<Integer, Rule> getRules();
+    boolean spcIsLocal(int spc);
 
 }

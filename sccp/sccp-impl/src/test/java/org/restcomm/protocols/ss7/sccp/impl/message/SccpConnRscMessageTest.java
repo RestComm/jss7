@@ -43,7 +43,7 @@ import static org.testng.Assert.assertNotNull;
 public class SccpConnRscMessageTest {
 
     private Logger logger;
-    private SccpStackImpl stack = new SccpStackImpl("SccpConnRscMessageTestStack");
+    private SccpStackImpl stack = new SccpStackImpl("SccpConnRscMessageTestStack", null);
     private MessageFactoryImpl messageFactory;
 
     @BeforeMethod

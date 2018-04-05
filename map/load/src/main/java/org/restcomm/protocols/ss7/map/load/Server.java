@@ -184,7 +184,7 @@ public class Server extends TestHarness {
     }
 
     private void initSCCP() throws Exception {
-        this.sccpStack = new SccpStackImpl("MapLoadServerSccpStack");
+        this.sccpStack = new SccpStackImpl("MapLoadServerSccpStack", null);
         this.sccpStack.setMtp3UserPart(1, this.serverM3UAMgmt);
 
         this.sccpStack.start();
@@ -203,17 +203,17 @@ public class Server extends TestHarness {
         GlobalTitle gt2 = fact.createGlobalTitle("-", 0, org.restcomm.protocols.ss7.indicator.NumberingPlan.ISDN_TELEPHONY,
                 ec, NatureOfAddress.INTERNATIONAL);
         SccpAddress localAddress = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt1, SERVET_SPC, 0);
-        this.sccpStack.getRouter().addRoutingAddress(1, localAddress);
+//        this.sccpStack.getRouter().addRoutingAddress(1, localAddress);
         SccpAddress remoteAddress = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt2, CLIENT_SPC, 0);
-        this.sccpStack.getRouter().addRoutingAddress(2, remoteAddress);
+//        this.sccpStack.getRouter().addRoutingAddress(2, remoteAddress);
 
         GlobalTitle gt = fact.createGlobalTitle("*", 0, org.restcomm.protocols.ss7.indicator.NumberingPlan.ISDN_TELEPHONY, ec,
                 NatureOfAddress.INTERNATIONAL);
         SccpAddress pattern = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt, 0, 0);
-        this.sccpStack.getRouter().addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.REMOTE, pattern,
-                "K", 1, -1, null, 0, null);
-        this.sccpStack.getRouter().addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern,
-                "K", 2, -1, null, 0, null);
+//        this.sccpStack.getRouter().addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.REMOTE, pattern,
+//                "K", 1, -1, null, 0, null);
+//        this.sccpStack.getRouter().addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern,
+//                "K", 2, -1, null, 0, null);
     }
 
     private void initTCAP() throws Exception {

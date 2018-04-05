@@ -66,7 +66,7 @@ import org.testng.annotations.Test;
 public class MessageSegmentationTest {
 
     private Logger logger;
-    private SccpStackImpl stack = new SccpStackImpl("MessageSegmentationTestStack");
+    private SccpStackImpl stack = new SccpStackImpl("MessageSegmentationTestStack", null);
     private MessageFactoryImpl messageFactory;
     private static byte[] dataA;
 

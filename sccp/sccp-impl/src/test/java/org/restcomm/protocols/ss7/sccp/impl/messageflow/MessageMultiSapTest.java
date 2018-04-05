@@ -36,6 +36,7 @@ import org.restcomm.protocols.ss7.sccp.message.SccpDataMessage;
 import org.restcomm.protocols.ss7.sccp.message.SccpNoticeMessage;
 import org.restcomm.protocols.ss7.sccp.parameter.ReturnCauseValue;
 import org.restcomm.protocols.ss7.sccp.parameter.SccpAddress;
+import org.restcomm.protocols.ss7.ss7ext.Ss7ExtInterface;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -65,20 +66,22 @@ public class MessageMultiSapTest extends SccpHarness {
     public void tearDownClass() throws Exception {
     }
 
+    @Override
     protected void createStack1() {
-        sccpStack1 = createStack(sccpStack1Name);
+        sccpStack1 = createStack(sccpStack1Name, null);
         sccpStack1.setMtp3UserPart(2, mtp3UserPart11);
         sccpProvider1 = sccpStack1.getSccpProvider();
     }
 
+    @Override
     protected void createStack2() {
-        sccpStack2 = createStack(sccpStack2Name);
+        sccpStack2 = createStack(sccpStack2Name, null);
         sccpProvider2 = sccpStack2.getSccpProvider();
     }
 
     @Override
-    protected SccpStackImpl createStack(String name) {
-        SccpStackImpl stack = new SccpStackImplProxy(name);
+    protected SccpStackImpl createStack(String name, Ss7ExtInterface ss7ExtInterface) {
+        SccpStackImpl stack = new SccpStackImplProxy(name, ss7ExtInterface);
         final String dir = Util.getTmpTestDir();
         if (dir != null) {
             stack.setPersistDir(dir);

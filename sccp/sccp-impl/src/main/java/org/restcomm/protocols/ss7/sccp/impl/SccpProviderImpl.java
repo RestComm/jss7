@@ -148,11 +148,11 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
         }
     }
 
-    protected SccpListener getSccpListener(int ssn) {
+    public SccpListener getSccpListener(int ssn) {
         return ssnToListener.get(ssn);
     }
 
-    protected FastMap<Integer, SccpListener> getAllSccpListeners() {
+    public FastMap<Integer, SccpListener> getAllSccpListeners() {
         return ssnToListener;
     }
 
@@ -199,7 +199,7 @@ public class SccpProviderImpl implements SccpProvider, Serializable {
 
     @Override
     public FastMap<Integer, NetworkIdState> getNetworkIdStateList() {
-        return this.stack.router.getNetworkIdList(-1);
+        return this.stack.ss7ExtSccpDetailedInterface.getNetworkIdList(-1);
     }
 
     @Override

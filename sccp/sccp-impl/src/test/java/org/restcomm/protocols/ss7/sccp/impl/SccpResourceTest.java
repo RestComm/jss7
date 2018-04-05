@@ -56,7 +56,7 @@ public class SccpResourceTest {
 
     @BeforeMethod
     public void setUp() {
-        resource = new SccpResourceImpl("SccpResourceTest");
+        resource = new SccpResourceImpl("SccpResourceTest", new Ss7ExtSccpDetailedInterfaceDefault());
         resource.setPersistDir(Util.getTmpTestDir());
         resource.start();
         resource.removeAllResourses();
@@ -81,7 +81,7 @@ public class SccpResourceTest {
         resource.addConcernedSpc(1, 603);
         resource.addConcernedSpc(2, 604);
 
-        SccpResourceImpl resource1 = new SccpResourceImpl("SccpResourceTest");
+        SccpResourceImpl resource1 = new SccpResourceImpl("SccpResourceTest", new Ss7ExtSccpDetailedInterfaceDefault());
         resource1.setPersistDir(Util.getTmpTestDir());
         resource1.start();
 
