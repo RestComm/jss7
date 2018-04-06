@@ -40,7 +40,7 @@ public interface Ss7ExtSccpDetailedInterface extends Ss7ExtSccpInterface {
 
     void init(SccpStackImpl sccpStackImpl);
 
-    void startExtBefore();
+    void startExtBefore(String persistDir, String name);
 
     void startExtAfter(Router router, SccpManagement sccpManagement);
 

@@ -69,7 +69,7 @@ public class SccpStackImplProxy extends SccpStackImpl {
     public void start() {
         this.persistFile.clear();
 
-        ss7ExtSccpDetailedInterface.startExtBefore();
+        ss7ExtSccpDetailedInterface.startExtBefore(persistDir, name);
 
         if (persistDir != null) {
             this.persistFile.append(persistDir).append(File.separator).append(this.name).append("_").append(PERSIST_FILE_NAME);

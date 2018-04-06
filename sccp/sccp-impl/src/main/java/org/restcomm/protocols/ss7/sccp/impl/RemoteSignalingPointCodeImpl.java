@@ -64,6 +64,10 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSign
         remoteSignalingPointCodeExt = ss7ExtSccpDetailedInterface.createRemoteSignalingPointCodeExt(this);
     }
 
+    public RemoteSignalingPointCodeExt getRemoteSignalingPointCodeExt() {
+        return remoteSignalingPointCodeExt;
+    }
+
     public int getRemoteSpc() {
         return remoteSpc;
     }

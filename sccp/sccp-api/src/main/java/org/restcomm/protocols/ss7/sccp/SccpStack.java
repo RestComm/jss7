@@ -25,6 +25,7 @@ package org.restcomm.protocols.ss7.sccp;
 import java.util.Map;
 
 import org.restcomm.protocols.ss7.mtp.Mtp3UserPart;
+import org.restcomm.protocols.ss7.ss7ext.Ss7ExtSccpInterface;
 
 /**
  * @author amit bhayani
@@ -35,6 +36,12 @@ import org.restcomm.protocols.ss7.mtp.Mtp3UserPart;
 public interface SccpStack {
     int UDT_ONLY = 1;
     int XUDT_ONLY = 2;
+
+    /**
+     * Returns SCCP stack extensions implementation
+     * @return
+     */
+    Ss7ExtSccpInterface getSs7ExtSccpInterface();
 
     /**
      * Starts SCCP stack.

@@ -289,6 +289,11 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         this.state = State.CONFIGURED;
     }
 
+    @Override
+    public Ss7ExtSccpInterface getSs7ExtSccpInterface() {
+        return ss7ExtSccpDetailedInterface;
+    }
+
     public String getName() {
         return this.name;
     }
@@ -829,7 +834,7 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
     public void start() throws IllegalStateException {
         logger.info("Starting ...");
 
-        ss7ExtSccpDetailedInterface.startExtBefore();
+        ss7ExtSccpDetailedInterface.startExtBefore(persistDir, this.name);
 
         this.persistFile.clear();
 

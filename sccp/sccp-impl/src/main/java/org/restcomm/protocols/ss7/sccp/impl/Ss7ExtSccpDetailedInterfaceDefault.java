@@ -48,7 +48,7 @@ public class Ss7ExtSccpDetailedInterfaceDefault implements Ss7ExtSccpDetailedInt
     }
 
     @Override
-    public void startExtBefore() {
+    public void startExtBefore(String persistDir, String name) {
     }
 
     @Override

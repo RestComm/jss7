@@ -321,7 +321,6 @@ public abstract class ShellServer extends Task implements ShellServerMBean {
                                         ShellExecutor value = n.getValue();
                                         if (value.handles(options[0])) {
                                             shellExecutor = value;
-                                            break;
                                         }
                                     }
 

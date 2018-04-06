@@ -47,18 +47,6 @@ public class SccpCommandHandler extends CommandHandlerWithHelp {
         dest.addChild("delete");
         dest.addChild("show");
 
-        Node rule = parent.addChild("rule");
-        rule.addChild("create");
-        rule.addChild("modify");
-        rule.addChild("delete");
-        rule.addChild("show");
-
-        Node address = parent.addChild("address");
-        address.addChild("create");
-        address.addChild("modify");
-        address.addChild("delete");
-        address.addChild("show");
-
         Node rsp = parent.addChild("rsp");
         rsp.addChild("create");
         rsp.addChild("modify");

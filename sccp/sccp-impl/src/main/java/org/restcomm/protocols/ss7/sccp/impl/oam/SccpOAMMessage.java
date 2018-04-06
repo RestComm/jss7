@@ -133,4 +133,6 @@ public interface SccpOAMMessage {
     String SEC_MISMATCH_SECADDRESS = "Number of sections in mask doesn't match with number of sections in secondary address GlobalTitle digits";
 
     String NO_SCCP_MANAGEMENT_BEAN_FOR_NAME = "No SCCP management bean found for passed name=%s";
+
+    String NO_SCCP_EXT_MODULE = "No SCCP external module found name=%s";
 }
