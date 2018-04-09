@@ -591,8 +591,9 @@ public class MAPFunctionalTest extends SccpHarness {
     /**
      * Ending Dialog in the middle of conversation by "close(true)" - without sending components
      *
-     * TC-BEGIN + ExtensionContainer + addProcessUnstructuredSSRequest TC-CONTINUE + ExtensionContainer +
-     * addUnstructuredSSRequest TC-END
+     * TC-BEGIN + ExtensionContainer + addProcessUnstructuredSSRequest
+     *   TC-CONTINUE + ExtensionContainer + addUnstructuredSSRequest 
+     * prearranged TC-END
      */
     @Test(groups = { "functional.flow", "dialog" })
     public void testDialogEndAtTheMiddleConversation() throws Exception {
@@ -703,10 +704,12 @@ public class MAPFunctionalTest extends SccpHarness {
                                 sequence++));
                         mapDialog.setExtentionContainer(MAPExtensionContainerTest.GetTestExtensionContainer());
                         mapDialog.send();
-                    } else {
-                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProcessUnstructuredSSResponseIndication,
-                                null, sequence++));
-                        mapDialog.close(false);
+
+                        mapDialog.close(true);
+//                    } else {
+//                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.ProcessUnstructuredSSResponseIndication,
+//                                null, sequence++));
+//                        mapDialog.close(false);
                     }
                 } catch (MAPException e) {
                     this.error("Error while trying to send Response", e);
@@ -734,7 +737,8 @@ public class MAPFunctionalTest extends SccpHarness {
         te = TestEvent.createSentEvent(EventType.UnstructuredSSResponseIndication, null, count++, stamp);
         clientExpectedEvents.add(te);
 
-        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+//        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp));
         clientExpectedEvents.add(te);
 
         count = 0;
@@ -752,12 +756,13 @@ public class MAPFunctionalTest extends SccpHarness {
         te = TestEvent.createSentEvent(EventType.UnstructuredSSRequestIndication, null, count++, stamp);
         serverExpectedEvents.add(te);
 
-        te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
-        serverExpectedEvents.add(te);
+//        te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
+//        serverExpectedEvents.add(te);
 
         te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
         serverExpectedEvents.add(te);
 
+//        this.saveTrafficInFile();
         client.actionA();
         waitForEnd();
         client.compareEvents(clientExpectedEvents);
@@ -1771,8 +1776,8 @@ public class MAPFunctionalTest extends SccpHarness {
      * Responses as ReturnError component from the Server as a response to ProcessUnstructuredSSRequest but the error received
      * because of "close(true)"
      *
-     * TC-BEGIN + addProcessUnstructuredSSRequest TC-END + ReturnError(systemFailure) - using "close(true)" - so no ReturnError
-     * must be sent !
+     * TC-BEGIN + addProcessUnstructuredSSRequest
+     *   no TC-END + ReturnError(systemFailure) (prearranged end)
      */
     @Test(groups = { "functional.flow", "dialog" })
     public void testComponentErrorCloseTrue() throws Exception {
@@ -1832,13 +1837,13 @@ public class MAPFunctionalTest extends SccpHarness {
         TestEvent te = TestEvent.createSentEvent(EventType.ProcessUnstructuredSSRequestIndication, null, count++, stamp);
         clientExpectedEvents.add(te);
 
-        te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
-        clientExpectedEvents.add(te);
+//        te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, stamp);
+//        clientExpectedEvents.add(te);
+//
+//        te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
+//        clientExpectedEvents.add(te);
 
-        te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, stamp);
-        clientExpectedEvents.add(te);
-
-        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp));
         clientExpectedEvents.add(te);
 
         count = 0;
@@ -1856,10 +1861,12 @@ public class MAPFunctionalTest extends SccpHarness {
         te = TestEvent.createSentEvent(EventType.ErrorComponent, null, count++, stamp);
         serverExpectedEvents.add(te);
 
-        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, stamp);
         serverExpectedEvents.add(te);
 
+//        this.saveTrafficInFile();
         client.actionA();
+        client.clientDialog.close(true);
         waitForEnd();
         client.compareEvents(clientExpectedEvents);
         server.compareEvents(serverExpectedEvents);
@@ -5881,8 +5888,9 @@ TC-END + provideSubscriberInfoResponse
     }
 
     /**
-     * Some not real test for testing: - closeDelayed(true) - getTCAPMessageType() TC-BEGIN + checkImeiRequest +
-     * checkImeiRequest TC-END + Prearranged + [checkImeiResponse + checkImeiResponse]
+     * Some not real test for testing: - closeDelayed(true) - getTCAPMessageType()
+     * TC-BEGIN + checkImeiRequest + checkImeiRequest
+     *   no TC-END (Prearranged) + [checkImeiResponse + checkImeiResponse]
      */
     @Test(groups = { "functional.flow", "dialog" })
     public void testDelayedClosePrearranged() throws Exception {
@@ -5947,13 +5955,13 @@ TC-END + provideSubscriberInfoResponse
         te = TestEvent.createSentEvent(EventType.CheckImei, null, count++, stamp);
         clientExpectedEvents.add(te);
 
-        te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp));
-        clientExpectedEvents.add(te);
+//        te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp));
+//        clientExpectedEvents.add(te);
+//
+//        te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp));
+//        clientExpectedEvents.add(te);
 
-        te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp));
-        clientExpectedEvents.add(te);
-
-        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, stamp);
         clientExpectedEvents.add(te);
 
         count = 0;
@@ -5977,10 +5985,11 @@ TC-END + provideSubscriberInfoResponse
         te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp));
         serverExpectedEvents.add(te);
 
-        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, stamp);
         serverExpectedEvents.add(te);
 
         client.sendCheckImei_ForDelayedTest2();
+        client.clientDialogMobility.close(true);
         waitForEnd();
         client.compareEvents(clientExpectedEvents);
         server.compareEvents(serverExpectedEvents);

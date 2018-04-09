@@ -290,24 +290,46 @@ public abstract class MAPDialogImpl implements MAPDialog {
                     ApplicationContextName acn = this.mapProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
                             .createApplicationContextName(this.appCntx.getOID());
 
-                    this.mapProviderImpl.fireTCEnd(this.getTcapDialog(), true, prearrangedEnd, acn, this.extContainer,
-                            this.getReturnMessageOnError());
-                    this.extContainer = null;
+                    if (prearrangedEnd) {
+                        // we do not send any data in a prearrangedEnd case
+                        if (this.tcapDialog != null)
+                            this.tcapDialog.release();
+                    } else {
+                        this.mapProviderImpl.fireTCEnd(this.getTcapDialog(), true, prearrangedEnd, acn, this.extContainer,
+                                this.getReturnMessageOnError());
+                        this.extContainer = null;
+                    }
 
                     this.setState(MAPDialogState.EXPUNGED);
                     break;
 
                 case Active:
-                    this.mapProviderImpl.fireTCEnd(this.getTcapDialog(), false, prearrangedEnd, null, null,
-                            this.getReturnMessageOnError());
+                    if (prearrangedEnd) {
+                        // we do not send any data in a prearrangedEnd case
+                        if (this.tcapDialog != null)
+                            this.tcapDialog.release();
+                    } else {
+                        this.mapProviderImpl.fireTCEnd(this.getTcapDialog(), false, prearrangedEnd, null, null,
+                                this.getReturnMessageOnError());
+                    }
 
                     this.setState(MAPDialogState.EXPUNGED);
                     break;
 
                 case Idle:
                     throw new MAPException("Awaiting TC-BEGIN to be sent, can not send another dialog initiating primitive!");
+
                 case InitialSent: // we have sent TC-BEGIN already, need to wait
-                    throw new MAPException("Awaiting TC-BEGIN response, can not send another dialog initiating primitive!");
+                    if (prearrangedEnd) {
+                        // we do not send any data in a prearrangedEnd case
+                        if (this.tcapDialog != null)
+                            this.tcapDialog.release();
+                        this.setState(MAPDialogState.EXPUNGED);
+                        return;
+                    } else {
+                        throw new MAPException("Awaiting TC-BEGIN response, can not send another dialog initiating primitive!");
+                    }
+
                 case Expunged: // dialog has been terminated on TC level, cant send
                     throw new MAPException("Dialog has been terminated, can not send primitives!");
             }

@@ -1889,11 +1889,6 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
             return;
         }
 
-        if (prearrangedEnd) {
-            // we do not send any data in a prearrangedEnd case
-            return;
-        }
-
         TCEndRequest endRequest = encodeTCEnd(tcapDialog, sendMapCloseInfo, prearrangedEnd, acn, mapExtensionContainer);
         if (returnMessageOnError)
             endRequest.setReturnMessageOnError(true);
