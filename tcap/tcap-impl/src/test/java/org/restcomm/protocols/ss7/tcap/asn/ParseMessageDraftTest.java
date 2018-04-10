@@ -128,7 +128,7 @@ public class ParseMessageDraftTest {
     @Test(groups = { "functional.decode" })
     public void testTCBegin() throws IOException, EncodeException, ParseException {
 
-        SccpStackImpl sccpStack = new SccpStackImpl("ParseMessageDraftTest");
+        SccpStackImpl sccpStack = new SccpStackImpl("ParseMessageDraftTest", null);
         TCAPStackImpl stack = new TCAPStackImpl("TCAPAbnormalTest", sccpStack.getSccpProvider(), 8);
         TCAPProvider provider = stack.getProvider();
         DraftParsedMessage msg = provider.parseMessageDraft(dataTcBegin);
@@ -142,7 +142,7 @@ public class ParseMessageDraftTest {
     @Test(groups = { "functional.decode" })
     public void testTCContinue() throws IOException, EncodeException, ParseException {
 
-        SccpStackImpl sccpStack = new SccpStackImpl("ParseMessageDraftTest");
+        SccpStackImpl sccpStack = new SccpStackImpl("ParseMessageDraftTest", null);
         TCAPStackImpl stack = new TCAPStackImpl("TCAPAbnormalTest", sccpStack.getSccpProvider(), 8);
         TCAPProvider provider = stack.getProvider();
         DraftParsedMessage msg = provider.parseMessageDraft(dataTcContinue);
@@ -156,7 +156,7 @@ public class ParseMessageDraftTest {
     @Test(groups = { "functional.decode" })
     public void testTCEnd() throws IOException, EncodeException, ParseException {
 
-        SccpStackImpl sccpStack = new SccpStackImpl("ParseMessageDraftTest");
+        SccpStackImpl sccpStack = new SccpStackImpl("ParseMessageDraftTest", null);
         TCAPStackImpl stack = new TCAPStackImpl("TCAPAbnormalTest", sccpStack.getSccpProvider(), 8);
         TCAPProvider provider = stack.getProvider();
         DraftParsedMessage msg = provider.parseMessageDraft(dataTcEnd);
@@ -170,7 +170,7 @@ public class ParseMessageDraftTest {
     @Test(groups = { "functional.decode" })
     public void testTCAbort() throws IOException, EncodeException, ParseException {
 
-        SccpStackImpl sccpStack = new SccpStackImpl("ParseMessageDraftTest");
+        SccpStackImpl sccpStack = new SccpStackImpl("ParseMessageDraftTest", null);
         TCAPStackImpl stack = new TCAPStackImpl("TCAPAbnormalTest", sccpStack.getSccpProvider(), 8);
         TCAPProvider provider = stack.getProvider();
         DraftParsedMessage msg = provider.parseMessageDraft(dataTcAbort);
@@ -184,7 +184,7 @@ public class ParseMessageDraftTest {
     @Test(groups = { "functional.decode" })
     public void testTCUnidirectional() throws IOException, EncodeException, ParseException {
 
-        SccpStackImpl sccpStack = new SccpStackImpl("ParseMessageDraftTest");
+        SccpStackImpl sccpStack = new SccpStackImpl("ParseMessageDraftTest", null);
         TCAPStackImpl stack = new TCAPStackImpl("TCAPAbnormalTest", sccpStack.getSccpProvider(), 8);
         TCAPProvider provider = stack.getProvider();
         DraftParsedMessage msg = provider.parseMessageDraft(dataTcUnidirectional);

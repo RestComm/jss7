@@ -39,7 +39,7 @@ public class JMHTcapDialogAddingTest {
     @Setup
     @BeforeMethod
     public void doStart() throws Exception {
-        SccpStackImpl sccpStack = new SccpStackImpl("Test_Benchmark");
+        SccpStackImpl sccpStack = new SccpStackImpl("Test_Benchmark", null);
         final String dir = getTmpTestDir();
         if (dir != null) {
             sccpStack.setPersistDir(dir);

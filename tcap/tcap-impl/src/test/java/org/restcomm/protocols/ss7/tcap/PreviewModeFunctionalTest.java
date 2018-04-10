@@ -92,7 +92,7 @@ public class PreviewModeFunctionalTest {
         // this.sccpStack1Name = "TCAPFunctionalTestSccpStack1";
         // this.sccpStack2Name = "TCAPFunctionalTestSccpStack2";
         System.out.println("setUpClass");
-        SccpStackImpl stack = new SccpStackImpl("XXX");
+        SccpStackImpl stack = new SccpStackImpl("XXX", null);
         this.parameterFactory = stack.getSccpProvider().getParameterFactory();
         this.messageFactory = stack.getSccpProvider().getMessageFactory();
     }

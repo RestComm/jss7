@@ -304,7 +304,7 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
     private TCAPStackImplWrapper tcapStack;
     private TCAPCounterProvider tcapCntProv;
     private SccpProviderWrapper sccpProvider;
-    private SccpStackImpl sccpStack = new SccpStackImpl("TraceParserSccpStack");
+    private SccpStackImpl sccpStack = new SccpStackImpl("TraceParserSccpStack", null);
     private MAPProviderImpl mapProvider;
     private CAPProviderImpl capProvider;
     private MessageFactoryImpl msgFact;

@@ -25,7 +25,6 @@ package org.restcomm.protocols.ss7.map.load;
 import org.apache.log4j.Logger;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.sctp.netty.NettySctpManagementImpl;
-import org.restcomm.protocols.ss7.indicator.NatureOfAddress;
 import org.restcomm.protocols.ss7.indicator.RoutingIndicator;
 import org.restcomm.protocols.ss7.m3ua.Asp;
 import org.restcomm.protocols.ss7.m3ua.ExchangeType;
@@ -78,17 +77,10 @@ import org.restcomm.protocols.ss7.map.api.service.supplementary.UnstructuredSSNo
 import org.restcomm.protocols.ss7.map.api.service.supplementary.UnstructuredSSRequest;
 import org.restcomm.protocols.ss7.map.api.service.supplementary.UnstructuredSSResponse;
 import org.restcomm.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
-import org.restcomm.protocols.ss7.sccp.LoadSharingAlgorithm;
 import org.restcomm.protocols.ss7.sccp.NetworkIdState;
-import org.restcomm.protocols.ss7.sccp.OriginationType;
-import org.restcomm.protocols.ss7.sccp.RuleType;
 import org.restcomm.protocols.ss7.sccp.SccpResource;
 import org.restcomm.protocols.ss7.sccp.impl.SccpStackImpl;
-import org.restcomm.protocols.ss7.sccp.impl.parameter.BCDEvenEncodingScheme;
 import org.restcomm.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl;
-import org.restcomm.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
-import org.restcomm.protocols.ss7.sccp.parameter.EncodingScheme;
-import org.restcomm.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.restcomm.protocols.ss7.sccp.parameter.SccpAddress;
 import org.restcomm.protocols.ss7.tcap.TCAPStackImpl;
 import org.restcomm.protocols.ss7.tcap.api.TCAPStack;
@@ -213,25 +205,6 @@ public class Client extends TestHarness {
 
         this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, 1, CLIENT_SPC, NETWORK_INDICATOR, 0, null);
         this.sccpStack.getRouter().addMtp3Destination(1, 1, SERVET_SPC, SERVET_SPC, 0, 255, 255);
-
-        ParameterFactoryImpl fact = new ParameterFactoryImpl();
-        EncodingScheme ec = new BCDEvenEncodingScheme();
-        GlobalTitle gt1 = fact.createGlobalTitle("-", 0, org.restcomm.protocols.ss7.indicator.NumberingPlan.ISDN_TELEPHONY, ec,
-                NatureOfAddress.INTERNATIONAL);
-        GlobalTitle gt2 = fact.createGlobalTitle("-", 0, org.restcomm.protocols.ss7.indicator.NumberingPlan.ISDN_TELEPHONY, ec,
-                NatureOfAddress.INTERNATIONAL);
-        SccpAddress localAddress = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt1, CLIENT_SPC, 0);
-//        this.sccpStack.getRouter().addRoutingAddress(1, localAddress);
-        SccpAddress remoteAddress = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt2, SERVET_SPC, 0);
-//        this.sccpStack.getRouter().addRoutingAddress(2, remoteAddress);
-
-        GlobalTitle gt = fact.createGlobalTitle("*", 0, org.restcomm.protocols.ss7.indicator.NumberingPlan.ISDN_TELEPHONY, ec,
-                NatureOfAddress.INTERNATIONAL);
-        SccpAddress pattern = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt, 0, 0);
-//        this.sccpStack.getRouter().addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.REMOTE, pattern,
-//                "K", 1, -1, null, 0, null);
-//        this.sccpStack.getRouter().addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K",
-//                2, -1, null, 0, null);
     }
 
     private void initTCAP() throws Exception {
@@ -310,12 +283,10 @@ public class Client extends TestHarness {
 
     private SccpAddress createSccpAddress(RoutingIndicator ri, int dpc, int ssn, String address) {
         ParameterFactoryImpl fact = new ParameterFactoryImpl();
-        GlobalTitle gt = fact.createGlobalTitle(address, 0, org.restcomm.protocols.ss7.indicator.NumberingPlan.ISDN_TELEPHONY,
-                BCDEvenEncodingScheme.INSTANCE, NatureOfAddress.INTERNATIONAL);
         if (ssn < 0) {
             ssn = SSN;
         }
-        return fact.createSccpAddress(ri, gt, dpc, ssn);
+        return fact.createSccpAddress(ri, null, dpc, ssn);
     }
 
     public void terminate() {

@@ -95,6 +95,7 @@
 				<not>
 					<or>
 						<contains string="${java.version}" substring="1.7" casesensitive="false" />
+						<contains string="${java.version}" substring="1.8" casesensitive="false" />
 					</or>
 				</not>
 			</condition>
@@ -196,7 +197,7 @@
 			<arg value="-100" /> <!-- ramp up period, set to zero to enable single dialog injection -->
 			<arg value="${test.client.clientAddress}" /> <!-- client sccp address -->
 			<arg value="${test.client.serverAddress}" /> <!-- server sccp address -->
-			<arg value="0" /> <!-- routing indicator -->
+			<arg value="1" /> <!-- routing indicator -->
 		</java>
 	</target>
 
