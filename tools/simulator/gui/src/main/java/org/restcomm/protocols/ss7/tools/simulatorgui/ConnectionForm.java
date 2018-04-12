@@ -47,11 +47,12 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import org.restcomm.protocols.ss7.tools.simulator.TesterHostFactoryInterface;
 import org.restcomm.protocols.ss7.tools.simulator.level1.M3uaManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.level2.SccpManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.level3.CapManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.level3.MapManMBean;
-import org.restcomm.protocols.ss7.tools.simulator.management.TesterHost;
+import org.restcomm.protocols.ss7.tools.simulator.management.TesterHostInterface;
 import org.restcomm.protocols.ss7.tools.simulator.management.TesterHostMBean;
 import org.restcomm.protocols.ss7.tools.simulator.tests.ati.TestAtiClientManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.tests.ati.TestAtiServerManMBean;
@@ -74,6 +75,9 @@ import org.restcomm.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerManMB
 public class ConnectionForm extends JFrame {
 
     private static final long serialVersionUID = 1892971654619519775L;
+
+    private TesterHostFactoryInterface testerHostFactoryInterface;
+
     private JPanel contentPane;
     private JTextField tbUrl;
     private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -94,7 +98,9 @@ public class ConnectionForm extends JFrame {
     // });
     // }
 
-    public ConnectionForm() {
+    public ConnectionForm(TesterHostFactoryInterface testerHostFactoryInterface) {
+        this.testerHostFactoryInterface = testerHostFactoryInterface;
+
         setResizable(false);
         setTitle("Connecting to a testerHost ...");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -169,10 +175,10 @@ public class ConnectionForm extends JFrame {
     private void startLocal(String appName) {
         // creating a testerHost
 
-        String sim_home = System.getenv(TesterHost.SIMULATOR_HOME_VAR);
+        String sim_home = System.getenv(TesterHostInterface.SIMULATOR_HOME_VAR);
         if (sim_home != null)
             sim_home += File.separator + "data";
-        TesterHost host = new TesterHost(appName, sim_home);
+        TesterHostInterface host = testerHostFactoryInterface.createTesterHost(appName, sim_home);
 
         // starting the main form
         SimulatorGuiForm frame = new SimulatorGuiForm();

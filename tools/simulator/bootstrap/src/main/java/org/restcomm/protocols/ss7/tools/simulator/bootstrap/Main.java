@@ -54,11 +54,11 @@ public class Main {
 
     private static Logger logger = Logger.getLogger(Main.class);
 
-    private String command = null;
-    private String appName = "main";
-    private int rmiPort = -1;
-    private int rmiPort2 = -1;
-    private int httpPort = -1;
+    protected String command = null;
+    protected String appName = "main";
+    protected int rmiPort = -1;
+    protected int rmiPort2 = -1;
+    protected int httpPort = -1;
 
     public static void main(String[] args) throws Throwable {
         String homeDir = getHomeDir(args);
@@ -171,7 +171,7 @@ public class Main {
 
     }
 
-    private void genericHelp() {
+    protected void genericHelp() {
         System.out.println("usage: " + APP_NAME + "<command> [options]");
         System.out.println();
         System.out.println("command:");

@@ -24,6 +24,9 @@ package org.restcomm.protocols.ss7.tools.simulatorgui;
 
 import java.awt.EventQueue;
 
+import org.restcomm.protocols.ss7.tools.simulator.TesterHostFactoryImpl;
+import org.restcomm.protocols.ss7.tools.simulator.TesterHostFactoryInterface;
+
 /**
  *
  * @author sergey vetyutnev
@@ -35,6 +38,10 @@ public class MainGui implements Runnable {
 
     public MainGui(String appName) {
         this.appName = appName;
+    }
+
+    protected TesterHostFactoryInterface getTesterHostFactory() {
+        return new TesterHostFactoryImpl();
     }
 
     public static void main(String[] args) {
@@ -50,7 +57,7 @@ public class MainGui implements Runnable {
     @Override
     public void run() {
         try {
-            ConnectionForm frame = new ConnectionForm();
+            ConnectionForm frame = new ConnectionForm(this.getTesterHostFactory());
             frame.setAppName(appName);
             frame.setVisible(true);
         } catch (Exception e) {

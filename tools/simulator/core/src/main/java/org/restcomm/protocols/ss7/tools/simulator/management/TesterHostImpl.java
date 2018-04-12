@@ -81,8 +81,8 @@ import org.restcomm.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerMan;
  * @author sergey vetyutnev
  *
  */
-public class TesterHost extends NotificationBroadcasterSupport implements TesterHostMBean, Stoppable {
-    private static final Logger logger = Logger.getLogger(TesterHost.class);
+public class TesterHostImpl extends NotificationBroadcasterSupport implements TesterHostInterface, Stoppable {
+    private static final Logger logger = Logger.getLogger(TesterHostImpl.class);
 
     private static final String TESTER_HOST_PERSIST_DIR_KEY = "testerhost.persist.dir";
     private static final String USER_DIR_KEY = "user.dir";
@@ -94,8 +94,6 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
     private static final String PERSIST_FILE_NAME_OLD = "simulator.xml";
     private static final String PERSIST_FILE_NAME = "simulator2.xml";
     private static final String CONFIGURATION_DATA = "configurationData";
-
-    public static String SIMULATOR_HOME_VAR = "SIMULATOR_HOME";
 
     private final String appName;
     private String persistDir = null;
@@ -137,7 +135,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
     // testers
 
-    public TesterHost(String appName, String persistDir) {
+    public TesterHostImpl(String appName, String persistDir) {
         this.appName = appName;
         this.persistDir = persistDir;
 
@@ -438,7 +436,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
     @Override
     public String getState() {
-        return TesterHost.SOURCE_NAME + ": " + (this.isStarted() ? "Started" : "Stopped");
+        return TesterHostImpl.SOURCE_NAME + ": " + (this.isStarted() ? "Started" : "Stopped");
     }
 
     @Override
@@ -497,12 +495,12 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
             default:
                 // TODO: implement others test tasks ...
-                this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L1." + this.configurationData.getInstance_L1().toString()
+                this.sendNotif(TesterHostImpl.SOURCE_NAME, "Instance_L1." + this.configurationData.getInstance_L1().toString()
                         + " has not been implemented yet", "", Level.WARN);
                 break;
         }
         if (!started) {
-            this.sendNotif(TesterHost.SOURCE_NAME, "Layer 1 has not started", "", Level.WARN);
+            this.sendNotif(TesterHostImpl.SOURCE_NAME, "Layer 1 has not started", "", Level.WARN);
             this.stop();
             return;
         }
@@ -513,7 +511,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
         switch (this.configurationData.getInstance_L2().intValue()) {
             case Instance_L2.VAL_SCCP:
                 if (mtp3UserPart == null) {
-                    this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing SCCP: No Mtp3UserPart is defined at L1", "",
+                    this.sendNotif(TesterHostImpl.SOURCE_NAME, "Error initializing SCCP: No Mtp3UserPart is defined at L1", "",
                             Level.WARN);
                 } else {
                     this.instance_L2_B = this.sccp;
@@ -524,17 +522,17 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
                 break;
             case Instance_L2.VAL_ISUP:
                 // TODO Implement L2 = ISUP
-                this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L2.VAL_ISUP has not been implemented yet", "", Level.WARN);
+                this.sendNotif(TesterHostImpl.SOURCE_NAME, "Instance_L2.VAL_ISUP has not been implemented yet", "", Level.WARN);
                 break;
 
             default:
                 // TODO: implement others test tasks ...
-                this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L2." + this.configurationData.getInstance_L2().toString()
+                this.sendNotif(TesterHostImpl.SOURCE_NAME, "Instance_L2." + this.configurationData.getInstance_L2().toString()
                         + " has not been implemented yet", "", Level.WARN);
                 break;
         }
         if (!started) {
-            this.sendNotif(TesterHost.SOURCE_NAME, "Layer 2 has not started", "", Level.WARN);
+            this.sendNotif(TesterHostImpl.SOURCE_NAME, "Layer 2 has not started", "", Level.WARN);
             this.stop();
             return;
         }
@@ -546,7 +544,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
         switch (this.configurationData.getInstance_L3().intValue()) {
             case Instance_L3.VAL_MAP:
                 if (sccpStack == null) {
-                    this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing TCAP+MAP: No SccpStack is defined at L2", "",
+                    this.sendNotif(TesterHostImpl.SOURCE_NAME, "Error initializing TCAP+MAP: No SccpStack is defined at L2", "",
                             Level.WARN);
                 } else {
                     this.instance_L3_B = this.map;
@@ -557,7 +555,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
                 break;
             case Instance_L3.VAL_CAP:
                 if (sccpStack == null) {
-                    this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing TCAP+CAP: No SccpStack is defined at L2", "",
+                    this.sendNotif(TesterHostImpl.SOURCE_NAME, "Error initializing TCAP+CAP: No SccpStack is defined at L2", "",
                             Level.WARN);
                 } else {
                     this.instance_L3_B = this.cap;
@@ -568,17 +566,17 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
                 break;
             case Instance_L3.VAL_INAP:
                 // TODO: implement INAP .......
-                this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L3.VAL_INAP has not been implemented yet", "", Level.WARN);
+                this.sendNotif(TesterHostImpl.SOURCE_NAME, "Instance_L3.VAL_INAP has not been implemented yet", "", Level.WARN);
                 break;
 
             default:
                 // TODO: implement others test tasks ...
-                this.sendNotif(TesterHost.SOURCE_NAME, "Instance_L3." + this.configurationData.getInstance_L3().toString()
+                this.sendNotif(TesterHostImpl.SOURCE_NAME, "Instance_L3." + this.configurationData.getInstance_L3().toString()
                         + " has not been implemented yet", "", Level.WARN);
                 break;
         }
         if (!started) {
-            this.sendNotif(TesterHost.SOURCE_NAME, "Layer 3 has not started", "", Level.WARN);
+            this.sendNotif(TesterHostImpl.SOURCE_NAME, "Layer 3 has not started", "", Level.WARN);
             this.stop();
             return;
         }
@@ -588,7 +586,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
         switch (this.configurationData.getInstance_TestTask().intValue()) {
             case Instance_TestTask.VAL_USSD_TEST_CLIENT:
                 if (curMap == null) {
-                    this.sendNotif(TesterHost.SOURCE_NAME,
+                    this.sendNotif(TesterHostImpl.SOURCE_NAME,
                             "Error initializing USSD_TEST_CLIENT: No MAP stack is defined at L3", "", Level.WARN);
                 } else {
                     this.instance_TestTask_B = this.testUssdClientMan;
@@ -599,7 +597,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
             case Instance_TestTask.VAL_USSD_TEST_SERVER:
                 if (curMap == null) {
-                    this.sendNotif(TesterHost.SOURCE_NAME,
+                    this.sendNotif(TesterHostImpl.SOURCE_NAME,
                             "Error initializing USSD_TEST_SERVER: No MAP stack is defined at L3", "", Level.WARN);
                 } else {
                     this.instance_TestTask_B = this.testUssdServerMan;
@@ -610,7 +608,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
             case Instance_TestTask.VAL_SMS_TEST_CLIENT:
                 if (curMap == null) {
-                    this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing SMS_TEST_CLIENT: No MAP stack is defined at L3",
+                    this.sendNotif(TesterHostImpl.SOURCE_NAME, "Error initializing SMS_TEST_CLIENT: No MAP stack is defined at L3",
                             "", Level.WARN);
                 } else {
                     this.instance_TestTask_B = this.testSmsClientMan;
@@ -621,7 +619,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
             case Instance_TestTask.VAL_SMS_TEST_SERVER:
                 if (curMap == null) {
-                    this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing SMS_TEST_SERVER: No MAP stack is defined at L3",
+                    this.sendNotif(TesterHostImpl.SOURCE_NAME, "Error initializing SMS_TEST_SERVER: No MAP stack is defined at L3",
                             "", Level.WARN);
                 } else {
                     this.instance_TestTask_B = this.testSmsServerMan;
@@ -632,7 +630,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
             case Instance_TestTask.VAL_CAP_TEST_SCF:
                 if (curCap == null) {
-                    this.sendNotif(TesterHost.SOURCE_NAME,
+                    this.sendNotif(TesterHostImpl.SOURCE_NAME,
                             "Error initializing VAL_CAP_TEST_SCF: No CAP stack is defined at L3", "", Level.WARN);
                 } else {
                     this.instance_TestTask_B = this.testCapScfMan;
@@ -643,7 +641,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
             case Instance_TestTask.VAL_CAP_TEST_SSF:
                 if (curCap == null) {
-                    this.sendNotif(TesterHost.SOURCE_NAME,
+                    this.sendNotif(TesterHostImpl.SOURCE_NAME,
                             "Error initializing VAL_CAP_TEST_SSF: No CAP stack is defined at L3", "", Level.WARN);
                 } else {
                     this.instance_TestTask_B = this.testCapSsfMan;
@@ -654,7 +652,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
             case Instance_TestTask.VAL_ATI_TEST_CLIENT:
                 if (curMap == null) {
-                    this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing ATI_TEST_CLIENT: No MAP stack is defined at L3",
+                    this.sendNotif(TesterHostImpl.SOURCE_NAME, "Error initializing ATI_TEST_CLIENT: No MAP stack is defined at L3",
                             "", Level.WARN);
                 } else {
                     this.instance_TestTask_B = this.testAtiClientMan;
@@ -665,7 +663,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
             case Instance_TestTask.VAL_ATI_TEST_SERVER:
                 if (curMap == null) {
-                    this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing ATI_TEST_SERVER: No MAP stack is defined at L3",
+                    this.sendNotif(TesterHostImpl.SOURCE_NAME, "Error initializing ATI_TEST_SERVER: No MAP stack is defined at L3",
                             "", Level.WARN);
                 } else {
                     this.instance_TestTask_B = this.testAtiServerMan;
@@ -676,7 +674,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
             case Instance_TestTask.VAL_CHECK_IMEI_TEST_CLIENT:
                 if (curMap == null) {
-                    this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing CHECK_IMEI_TEST_CLIENT: No MAP stack is defined at L3",
+                    this.sendNotif(TesterHostImpl.SOURCE_NAME, "Error initializing CHECK_IMEI_TEST_CLIENT: No MAP stack is defined at L3",
                             "", Level.WARN);
                 } else {
                     this.instance_TestTask_B = this.testCheckImeiClientMan;
@@ -687,7 +685,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
             case Instance_TestTask.VAL_CHECK_IMEI_TEST_SERVER:
                 if (curMap == null) {
-                    this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing CHECK_IMEI_TEST_SERVER: No MAP stack is defined at L3",
+                    this.sendNotif(TesterHostImpl.SOURCE_NAME, "Error initializing CHECK_IMEI_TEST_SERVER: No MAP stack is defined at L3",
                             "", Level.WARN);
                 } else {
                     this.instance_TestTask_B = this.testCheckImeiServerMan;
@@ -698,7 +696,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
             case Instance_TestTask.VAL_MAP_LCS_TEST_CLIENT:
                 if (curMap == null) {
-                    this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing MAP_LCS_TEST_CLIENT: No MAP stack is defined at L3",
+                    this.sendNotif(TesterHostImpl.SOURCE_NAME, "Error initializing MAP_LCS_TEST_CLIENT: No MAP stack is defined at L3",
                             "", Level.WARN);
                 } else {
                     this.instance_TestTask_B = this.testMapLcsClientMan;
@@ -709,7 +707,7 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
             case Instance_TestTask.VAL_MAP_LCS_TEST_SERVER:
                 if (curMap == null) {
-                    this.sendNotif(TesterHost.SOURCE_NAME, "Error initializing MAP_LCS_TEST_SERVER: No MAP stack is defined at L3",
+                    this.sendNotif(TesterHostImpl.SOURCE_NAME, "Error initializing MAP_LCS_TEST_SERVER: No MAP stack is defined at L3",
                             "", Level.WARN);
                 } else {
                     this.instance_TestTask_B = this.testMapLcsServerMan;
@@ -720,13 +718,13 @@ public class TesterHost extends NotificationBroadcasterSupport implements Tester
 
             default:
                 // TODO: implement others test tasks ...
-                this.sendNotif(TesterHost.SOURCE_NAME, "Instance_TestTask."
+                this.sendNotif(TesterHostImpl.SOURCE_NAME, "Instance_TestTask."
                         + this.configurationData.getInstance_TestTask().toString() + " has not been implemented yet", "",
                         Level.WARN);
                 break;
         }
         if (!started) {
-            this.sendNotif(TesterHost.SOURCE_NAME, "Testing task has not started", "", Level.WARN);
+            this.sendNotif(TesterHostImpl.SOURCE_NAME, "Testing task has not started", "", Level.WARN);
             this.stop();
             return;
         }

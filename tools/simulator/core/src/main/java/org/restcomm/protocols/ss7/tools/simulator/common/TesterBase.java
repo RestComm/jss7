@@ -37,18 +37,18 @@ import org.restcomm.protocols.ss7.map.api.primitives.AddressString;
 import org.restcomm.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.restcomm.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.restcomm.protocols.ss7.tcap.asn.comp.Problem;
-import org.restcomm.protocols.ss7.tools.simulator.management.TesterHost;
+import org.restcomm.protocols.ss7.tools.simulator.management.TesterHostInterface;
 
 public abstract class TesterBase implements MAPDialogListener, MAPServiceListener {
 
-    protected TesterHost testerHost;
+    protected TesterHostInterface testerHost;
     protected final String className;
 
     public TesterBase(String name) {
         this.className = name;
     }
 
-    public void setTesterHost(TesterHost testerHost) {
+    public void setTesterHost(TesterHostInterface testerHost) {
         this.testerHost = testerHost;
     }
 

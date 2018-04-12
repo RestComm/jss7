@@ -75,7 +75,7 @@ import org.restcomm.protocols.ss7.tools.simulator.Stoppable;
 import org.restcomm.protocols.ss7.tools.simulator.common.TesterBase;
 import org.restcomm.protocols.ss7.tools.simulator.level3.MapMan;
 import org.restcomm.protocols.ss7.tools.simulator.level3.MapProtocolVersion;
-import org.restcomm.protocols.ss7.tools.simulator.management.TesterHost;
+import org.restcomm.protocols.ss7.tools.simulator.management.TesterHostInterface;
 
 /**
  * @author mnowa
@@ -110,7 +110,7 @@ public class TestCheckImeiClientMan extends TesterBase implements TestCheckImeiC
         this.name = name;
     }
 
-    public void setTesterHost(TesterHost testerHost) {
+    public void setTesterHost(TesterHostInterface testerHost) {
         this.testerHost = testerHost;
     }
 

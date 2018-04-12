@@ -77,7 +77,7 @@ import org.restcomm.protocols.ss7.tools.simulator.common.AddressNatureType;
 import org.restcomm.protocols.ss7.tools.simulator.common.TesterBase;
 import org.restcomm.protocols.ss7.tools.simulator.level3.MapMan;
 import org.restcomm.protocols.ss7.tools.simulator.level3.NumberingPlanMapType;
-import org.restcomm.protocols.ss7.tools.simulator.management.TesterHost;
+import org.restcomm.protocols.ss7.tools.simulator.management.TesterHostInterface;
 
 /**
  *
@@ -108,7 +108,7 @@ public class TestAtiClientMan extends TesterBase implements TestAtiClientManMBea
         this.name = name;
     }
 
-    public void setTesterHost(TesterHost testerHost) {
+    public void setTesterHost(TesterHostInterface testerHost) {
         this.testerHost = testerHost;
     }
 

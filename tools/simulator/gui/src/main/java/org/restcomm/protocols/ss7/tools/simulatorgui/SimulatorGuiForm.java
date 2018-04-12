@@ -48,7 +48,7 @@ import org.restcomm.protocols.ss7.tools.simulator.management.Instance_L1;
 import org.restcomm.protocols.ss7.tools.simulator.management.Instance_L2;
 import org.restcomm.protocols.ss7.tools.simulator.management.Instance_L3;
 import org.restcomm.protocols.ss7.tools.simulator.management.Instance_TestTask;
-import org.restcomm.protocols.ss7.tools.simulator.management.TesterHost;
+import org.restcomm.protocols.ss7.tools.simulator.management.TesterHostInterface;
 import org.restcomm.protocols.ss7.tools.simulator.management.TesterHostMBean;
 import org.restcomm.protocols.ss7.tools.simulator.tests.ati.TestAtiClientManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.tests.ati.TestAtiServerManMBean;
@@ -96,7 +96,7 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
 
     private static final long serialVersionUID = 3154289048277602010L;
 
-    private TesterHost hostImpl;
+    private TesterHostInterface hostImpl;
     private TesterHostMBean host;
     private M3uaManMBean m3ua;
  // !!! DIALODIG !!!
@@ -509,7 +509,7 @@ public class SimulatorGuiForm extends JFrame implements NotificationListener {
     }
 
  // !!! DIALODIG !!!
-    protected void startHost(String appName, boolean isRemote, final TesterHost hostImpl, TesterHostMBean host, M3uaManMBean m3ua, /* DialogicManMBean dialogic, */
+    protected void startHost(String appName, boolean isRemote, final TesterHostInterface hostImpl, TesterHostMBean host, M3uaManMBean m3ua, /* DialogicManMBean dialogic, */
             SccpManMBean sccp, MapManMBean map, CapManMBean cap, TestUssdClientManMBean ussdClient, TestUssdServerManMBean ussdServer,
             TestSmsClientManMBean smsClient, TestSmsServerManMBean smsServer, TestCapScfManMBean capScf, TestCapSsfManMBean capSsf,
             TestAtiClientManMBean atiClient, TestAtiServerManMBean atiServer,

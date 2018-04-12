@@ -36,7 +36,7 @@ import org.restcomm.protocols.ss7.sccp.SccpStack;
 import org.restcomm.protocols.ss7.sccp.parameter.SccpAddress;
 import org.restcomm.protocols.ss7.tools.simulator.Stoppable;
 import org.restcomm.protocols.ss7.tools.simulator.common.AddressNatureType;
-import org.restcomm.protocols.ss7.tools.simulator.management.TesterHost;
+import org.restcomm.protocols.ss7.tools.simulator.management.TesterHostInterface;
 
 /**
  *
@@ -48,7 +48,7 @@ public class MapMan implements MapManMBean, Stoppable {
     public static String SOURCE_NAME = "MAP";
 
     private final String name;
-    private TesterHost testerHost;
+    private TesterHostInterface testerHost;
 
     private SccpStack sccpStack;
 
@@ -63,7 +63,7 @@ public class MapMan implements MapManMBean, Stoppable {
         this.name = name;
     }
 
-    public void setTesterHost(TesterHost testerHost) {
+    public void setTesterHost(TesterHostInterface testerHost) {
         this.testerHost = testerHost;
     }
 

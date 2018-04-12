@@ -54,7 +54,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 
-import org.restcomm.protocols.ss7.tools.simulator.management.TesterHost;
+import org.restcomm.protocols.ss7.tools.simulator.management.TesterHostInterface;
 import org.restcomm.protocols.ss7.tools.simulator.management.TesterHostMBean;
 
 /**
@@ -342,8 +342,12 @@ public class TestingForm extends JDialog {
 
     public void refreshState() {
 
-        if (this.host instanceof TesterHost) {
-            TesterHost thost = (TesterHost)host;
+//        if (this.host instanceof TesterHostImpl) {
+//            TesterHostImpl thost = (TesterHostImpl)host;
+//            thost.execute();
+//        }
+        if (this.host instanceof TesterHostInterface) {
+            TesterHostInterface thost = (TesterHostInterface) host;
             thost.execute();
         }
 

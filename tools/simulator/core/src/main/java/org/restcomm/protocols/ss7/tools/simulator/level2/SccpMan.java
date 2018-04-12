@@ -39,7 +39,7 @@ import org.restcomm.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.restcomm.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.restcomm.protocols.ss7.sccp.parameter.SccpAddress;
 import org.restcomm.protocols.ss7.tools.simulator.Stoppable;
-import org.restcomm.protocols.ss7.tools.simulator.management.TesterHost;
+import org.restcomm.protocols.ss7.tools.simulator.management.TesterHostInterface;
 
 /**
  *
@@ -51,7 +51,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
     public static String SOURCE_NAME = "SCCP";
 
     private final String name;
-    private TesterHost testerHost;
+    private TesterHostInterface testerHost;
 
     private Mtp3UserPart mtp3UserPart;
 
@@ -71,7 +71,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
         this.name = name;
     }
 
-    public void setTesterHost(TesterHost testerHost) {
+    public void setTesterHost(TesterHostInterface testerHost) {
         this.testerHost = testerHost;
     }
 

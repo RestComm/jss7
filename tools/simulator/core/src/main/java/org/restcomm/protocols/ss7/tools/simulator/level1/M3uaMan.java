@@ -45,7 +45,7 @@ import org.restcomm.protocols.ss7.m3ua.parameter.TrafficModeType;
 import org.restcomm.protocols.ss7.mtp.Mtp3UserPart;
 import org.restcomm.protocols.ss7.mtp.RoutingLabelFormat;
 import org.restcomm.protocols.ss7.tools.simulator.Stoppable;
-import org.restcomm.protocols.ss7.tools.simulator.management.TesterHost;
+import org.restcomm.protocols.ss7.tools.simulator.management.TesterHostImpl;
 
 /**
  *
@@ -57,7 +57,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
     public static String SOURCE_NAME = "M3UA";
 
     private final String name;
-    private TesterHost testerHost;
+    private TesterHostImpl testerHost;
     private NettySctpManagementImpl sctpManagement;
     private ParameterFactoryImpl factory = new ParameterFactoryImpl();
     private M3UAManagementProxyImpl m3uaMgmt;
@@ -83,7 +83,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
         this.name = name;
     }
 
-    public void setTesterHost(TesterHost testerHost) {
+    public void setTesterHost(TesterHostImpl testerHost) {
         this.testerHost = testerHost;
     }
 

@@ -39,7 +39,7 @@ import javax.management.StandardEmitterMBean;
  */
 public class TesterHostStandardMBean extends StandardEmitterMBean {
 
-    public TesterHostStandardMBean(TesterHost impl, Class<TesterHostMBean> intf, NotificationEmitter emitter)
+    public TesterHostStandardMBean(TesterHostInterface impl, Class<TesterHostMBean> intf, NotificationEmitter emitter)
             throws NotCompliantMBeanException {
         // super(intf, impl);
         super(impl, intf, emitter);
@@ -86,8 +86,8 @@ public class TesterHostStandardMBean extends StandardEmitterMBean {
                         Void.TYPE.getName(), MBeanOperationInfo.ACTION), };
 
         MBeanNotificationInfo[] notifications = new MBeanNotificationInfo[] { new MBeanNotificationInfo(
-                new String[] { TesterHost.SS7_EVENT }, Notification.class.getName(), "SS7 events notification"), };
+                new String[] { TesterHostImpl.SS7_EVENT }, Notification.class.getName(), "SS7 events notification"), };
 
-        return new MBeanInfo(TesterHost.class.getName(), "Tester host", attributes, null, operations, notifications);
+        return new MBeanInfo(TesterHostImpl.class.getName(), "Tester host", attributes, null, operations, notifications);
     }
 }

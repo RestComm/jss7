@@ -47,7 +47,7 @@ import org.restcomm.protocols.ss7.tools.simulator.level3.CapManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.level3.CapManStandardMBean;
 import org.restcomm.protocols.ss7.tools.simulator.level3.MapManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.level3.MapManStandardMBean;
-import org.restcomm.protocols.ss7.tools.simulator.management.TesterHost;
+import org.restcomm.protocols.ss7.tools.simulator.management.TesterHostInterface;
 import org.restcomm.protocols.ss7.tools.simulator.management.TesterHostMBean;
 import org.restcomm.protocols.ss7.tools.simulator.management.TesterHostStandardMBean;
 import org.restcomm.protocols.ss7.tools.simulator.tests.ati.TestAtiClientManMBean;
@@ -188,7 +188,11 @@ public class MainCore {
 
     }
 
-    private static void parseRmi(int[] rmiPort, String s1) {
+    protected TesterHostFactoryInterface getTesterHostFactory() {
+        return new TesterHostFactoryImpl();
+    }
+
+    protected static void parseRmi(int[] rmiPort, String s1) {
         String[] ss = s1.split(",");
         int porta = Integer.parseInt(ss[0]);
         if (porta > 0 && porta < 65000)
@@ -241,10 +245,10 @@ public class MainCore {
         }
 
         // Tester host initializing
-        String sim_home = System.getProperty(TesterHost.SIMULATOR_HOME_VAR);
+        String sim_home = System.getProperty(TesterHostInterface.SIMULATOR_HOME_VAR);
         if (sim_home != null)
             sim_home += File.separator + "data";
-        TesterHost host = new TesterHost(appName, sim_home);
+        TesterHostInterface host = getTesterHostFactory().createTesterHost(appName, sim_home);
 
         JMXConnectorServer cs = null;
         Registry reg = null;
