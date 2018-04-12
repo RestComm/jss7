@@ -22,7 +22,6 @@
 
 package org.restcomm.ss7.service;
 
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -58,8 +57,6 @@ import org.restcomm.protocols.ss7.mtp.Mtp3UserPart;
 import org.restcomm.protocols.ss7.mtp.RoutingLabelFormat;
 import org.restcomm.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.restcomm.protocols.ss7.sccp.impl.oam.SccpExecutor;
-import org.restcomm.protocols.ss7.sccp.impl.router.RuleComparatorFactory;
-import org.restcomm.protocols.ss7.sccp.impl.router.RuleImpl;
 import org.restcomm.protocols.ss7.scheduler.DefaultClock;
 import org.restcomm.protocols.ss7.scheduler.Scheduler;
 import org.restcomm.protocols.ss7.tcap.TCAPStackImpl;
@@ -113,9 +110,6 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
     private M3UAShellExecutor beanM3uaShellExecutor;
 
     private Scheduler schedulerMBean = null;
-
-    private FastMap<String, Comparator<RuleImpl>> beanRuleComparators = new FastMap<String, Comparator<RuleImpl>>();
-    private RuleComparatorFactory ruleComparatorMbean;
 
     private FastMap<String, ISUPStack> beanISUPStacks = new FastMap<String, ISUPStack>();
     private FastMap<String, SccpStackImpl> beanSccpStacks = new FastMap<String, SccpStackImpl>();
@@ -573,32 +567,6 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
             }
         }
 
-        // SCCPRuleComparator
-        for (ModelNode node : mbeansNode.asList()) {
-            for (Property prop : node.asPropertyList()) {
-                String type = prop.getValue().get("type").asString();
-                String beanName = prop.getValue().get("name").asString();
-                if (type.equals("RuleComparator")) {
-                    createRuleComparator(prop.getValue(), beanName, dataDir);
-                }
-            }
-        }
-
-        if (beanRuleComparators.size() > 0) {
-            // Rule Comparator Factory
-            for (ModelNode node : mbeansNode.asList()) {
-                for (Property prop : node.asPropertyList()) {
-                    String type = prop.getValue().get("type").asString();
-                    String beanName = prop.getValue().get("name").asString();
-                    if (type.equals("RuleComparatorFactory")) {
-                        createRuleFactory(prop.getValue(), beanName, dataDir);
-                    }
-                }
-            }
-        } else {
-            ruleComparatorMbean = null;
-        }
-
         // SCCPShellExecutor
         if (beanSccpStacks.size() > 0) {
             beanSccpExecutor = new SccpExecutor();
@@ -889,7 +857,7 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
 
         SccpStackImpl sccpStack = null;
         try {
-            sccpStack = new SccpStackImpl(schedulerMBean, beanName);
+            sccpStack = new SccpStackImpl(schedulerMBean, beanName, null);
             sccpStack.setPersistDir(dataDir);
             sccpStack.setMtp3UserParts(mtp3UserPartsTemp);
 
@@ -897,44 +865,6 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
         } catch (Exception e) {
             throw new StartException("SccpStack MBean creating is failed: name=" + beanName + ", " + e.getMessage(), e);
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void createRuleComparator(ModelNode ruleNode, String beanName, String dataDir) throws StartException {
-
-        Comparator<RuleImpl> ruleComparator = null;
-        String comparatorClass = ruleNode.get("class").asString();
-        if(comparatorClass!=null) {
-            try {
-                ruleComparator=(Comparator<RuleImpl>)Class.forName(comparatorClass).newInstance();
-            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-            }
-        }
-
-        try {
-            if(ruleComparator!=null)
-                this.beanRuleComparators.put(beanName, ruleComparator);
-
-        } catch (Exception e) {
-            throw new StartException("RuleComparator MBean creating is failed: name=" + beanName + ", " + e.getMessage(), e);
-        }
-    }
-
-    private void createRuleFactory(ModelNode tcapNode, String beanName, String dataDir) throws StartException {
-        // Rule Comparator Factory
-        String name=getPropertyString(beanName, "name", null);
-        String ruleComparatorName = getPropertyString(beanName, "ruleComparator", null);
-        if (ruleComparatorName == null) {
-            throw new StartException("RuleComparatorFactory MBean creating is failed: name=" + beanName + ", rule comparator is null");
-        }
-        Comparator<RuleImpl> ruleComparator = beanRuleComparators.get(ruleComparatorName);
-        if (ruleComparator == null) {
-            throw new StartException("RuleComparatorFactory MBean creating is failed: name=" + beanName + ", rule comparator is not found"
-                    + ruleComparatorName);
-        }
-
-        ruleComparatorMbean=RuleComparatorFactory.getInstance(name);
-        ruleComparatorMbean.setRuleComparator(ruleComparator);
     }
 
     private void createTcapStack(ModelNode tcapNode, String beanName, String dataDir) throws StartException {

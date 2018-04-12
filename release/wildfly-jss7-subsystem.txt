@@ -56,14 +56,6 @@
             </mbean>
             <mbean name="SccpExecutor" type="SCTPShellExecutor" class="org.restcomm.protocols.ss7.sccp.impl.oam.SccpExecutor" enabled="true" reflection="false"/>
 
-            <mbean name="RuleComparator" type="RuleComparator" class="org.restcomm.protocols.ss7.sccp.impl.router.RuleComparator" enabled="true" reflection="false"/>
-            <mbean name="RuleByIdComparator" type="RuleComparator" class="org.restcomm.protocols.ss7.sccp.impl.router.RuleByIdComparator" enabled="true" reflection="false"/>
-
-            <mbean name="RuleComparatorFactory" type="RuleComparatorFactory" class="org.restcomm.protocols.ss7.sccp.impl.router.RuleComparatorFactory" enabled="true" reflection="false">
-                <property name="ruleComparator" type="Bean" value="RuleByIdComparator"/>
-                <property name="name" type="String" value="RuleComparatorFactory"/>                
-            </mbean>
-
             <mbean name="TcapStackMap" type="TcapStack" class="org.restcomm.protocols.ss7.tcap.TCAPStackImpl" enabled="true" reflection="false">
                 <property name="sccpStack" type="Bean" value="SccpStack"/>
                 <property name="ssn" type="int" value="8"/>

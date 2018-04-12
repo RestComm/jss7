@@ -19,6 +19,8 @@ public class NonPersistentSccpStackImpl extends SccpStackImpl {
     public void start() throws IllegalStateException {
         logger.info("Starting ...");
 
+        ss7ExtSccpDetailedInterface.startExtBefore(persistDir, this.name);
+
         this.load();
 
         this.sccpManagement = new SccpManagement(name, sccpProvider, this);
@@ -54,6 +56,8 @@ public class NonPersistentSccpStackImpl extends SccpStackImpl {
                 logger.error("Exception while invoking onServiceStarted", ee);
             }
         }
+
+        ss7ExtSccpDetailedInterface.startExtAfter(this.router, this.sccpManagement);
 
         this.state = State.RUNNING;
     }

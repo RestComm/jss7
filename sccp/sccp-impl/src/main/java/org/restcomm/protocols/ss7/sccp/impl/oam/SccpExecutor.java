@@ -49,10 +49,10 @@ import java.util.Set;
  */
 public class SccpExecutor implements ShellExecutor {
 
-    private static final Logger logger = Logger.getLogger(SccpExecutor.class);
+    protected static final Logger logger = Logger.getLogger(SccpExecutor.class);
 
-    private FastMap<String, SccpStackImpl> sccpStacks = new FastMap<String, SccpStackImpl>();
-    private SccpStackImpl sccpStack = null;
+    protected FastMap<String, SccpStackImpl> sccpStacks = new FastMap<String, SccpStackImpl>();
+    protected SccpStackImpl sccpStack = null;
 
     public SccpExecutor() {
 
@@ -68,7 +68,7 @@ public class SccpExecutor implements ShellExecutor {
         }
     }
 
-    private void setDefaultValue() {
+    protected void setDefaultValue() {
         if (this.sccpStack == null) {
             Map.Entry<String, SccpStackImpl> sccpStacksTmp = this.sccpStacks.entrySet().iterator().next();
             this.sccpStack = sccpStacksTmp.getValue();
