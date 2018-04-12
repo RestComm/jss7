@@ -690,6 +690,10 @@ public abstract class MAPDialogImpl implements MAPDialog {
         No, Continue, End, PrearrangedEnd;
     }
 
+    public long getStartTimeDialog() {
+        return this.tcapDialog.getStartTimeDialog();
+    }
+
     public long getIdleTaskTimeout() {
         return tcapDialog.getIdleTaskTimeout();
     }

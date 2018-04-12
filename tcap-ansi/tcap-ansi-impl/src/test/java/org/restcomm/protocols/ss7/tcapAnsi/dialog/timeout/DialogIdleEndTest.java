@@ -175,6 +175,8 @@ public class DialogIdleEndTest extends SccpHarness {
         serverExpectedEvents.add(te);
         te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3, stamp + _WAIT + _DIALOG_TIMEOUT);
         serverExpectedEvents.add(te);
+        te = TestEvent.createReceivedEvent(EventType.PAbort, null, 4, stamp + _WAIT + _DIALOG_TIMEOUT);
+        serverExpectedEvents.add(te);
 
         client.startClientDialog();
         client.waitFor(_WAIT);
@@ -241,6 +243,8 @@ public class DialogIdleEndTest extends SccpHarness {
         te = TestEvent.createSentEvent(EventType.UAbort, null, 3, stamp + _WAIT * 2 + _DIALOG_TIMEOUT);
         serverExpectedEvents.add(te);
         te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 4, stamp + _WAIT * 2 + _DIALOG_TIMEOUT);
+        serverExpectedEvents.add(te);
+        te = TestEvent.createReceivedEvent(EventType.PAbort, null, 5, stamp + _WAIT * 2 + _DIALOG_TIMEOUT);
         serverExpectedEvents.add(te);
 
         client.startClientDialog();
@@ -315,6 +319,8 @@ public class DialogIdleEndTest extends SccpHarness {
         te = TestEvent.createSentEvent(EventType.UAbort, null, 4, stamp + _WAIT * 3 + _DIALOG_TIMEOUT);
         serverExpectedEvents.add(te);
         te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 5, stamp + _WAIT * 3 + _DIALOG_TIMEOUT);
+        serverExpectedEvents.add(te);
+        te = TestEvent.createReceivedEvent(EventType.PAbort, null, 6, stamp + _WAIT * 3 + _DIALOG_TIMEOUT);
         serverExpectedEvents.add(te);
 
         client.startClientDialog();
@@ -445,9 +451,9 @@ public class DialogIdleEndTest extends SccpHarness {
         clientExpectedEvents.add(te);
         te = TestEvent.createReceivedEvent(EventType.Continue, null, 2, stamp + _WAIT * 2 + _DIALOG_TIMEOUT);
         clientExpectedEvents.add(te);
-        te = TestEvent.createReceivedEvent(EventType.DialogTimeout, null, 3, stamp + _WAIT * 4 + _DIALOG_TIMEOUT * 2);
+        te = TestEvent.createReceivedEvent(EventType.PAbort, null, 3, stamp + _WAIT * 2 + _DIALOG_TIMEOUT * 2);
         clientExpectedEvents.add(te);
-        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 4, stamp + _WAIT * 4 + _DIALOG_TIMEOUT * 2);
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 4, stamp + _WAIT * 2 + _DIALOG_TIMEOUT * 2);
         clientExpectedEvents.add(te);
 
         List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
@@ -461,7 +467,9 @@ public class DialogIdleEndTest extends SccpHarness {
         serverExpectedEvents.add(te);
         te = TestEvent.createReceivedEvent(EventType.DialogTimeout, null, 4, stamp + _WAIT * 2 + _DIALOG_TIMEOUT * 2);
         serverExpectedEvents.add(te);
-        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 5, stamp + _WAIT * 2 + _DIALOG_TIMEOUT * 2);
+        te = TestEvent.createReceivedEvent(EventType.PAbort, null, 5, stamp + _WAIT * 2 + _DIALOG_TIMEOUT * 2);
+        serverExpectedEvents.add(te);
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 6, stamp + _WAIT * 2 + _DIALOG_TIMEOUT * 2);
         serverExpectedEvents.add(te);
 
         client.startClientDialog();
@@ -496,10 +504,11 @@ public class DialogIdleEndTest extends SccpHarness {
         List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
         TestEvent te = TestEvent.createSentEvent(EventType.Begin, null, 0, stamp + _WAIT);
         clientExpectedEvents.add(te);
-        te = TestEvent.createReceivedEvent(EventType.DialogTimeout, null, 1, stamp + _WAIT + _DIALOG_TIMEOUT * 2); // *2 cause
-                                                                                                                   // its
+        te = TestEvent.createReceivedEvent(EventType.DialogTimeout, null, 1, stamp + _WAIT + _DIALOG_TIMEOUT * 2); // *2 cause its
         clientExpectedEvents.add(te);
-        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 2, stamp + _WAIT + _DIALOG_TIMEOUT * 2);
+        te = TestEvent.createReceivedEvent(EventType.PAbort, null, 2, stamp + _WAIT + _DIALOG_TIMEOUT * 2);
+        clientExpectedEvents.add(te);
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3, stamp + _WAIT + _DIALOG_TIMEOUT * 2);
         clientExpectedEvents.add(te);
 
         List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
