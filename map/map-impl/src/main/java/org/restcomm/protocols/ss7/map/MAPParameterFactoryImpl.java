@@ -789,8 +789,16 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
         return new AddressStringImpl(addNature, numPlan, address);
     }
 
+    public AddressString createAddressString(boolean isExtension, AddressNature addNature, NumberingPlan numPlan, String address) {
+        return new AddressStringImpl(addNature, numPlan, address);
+    }
+
     public ISDNAddressString createISDNAddressString(AddressNature addNature, NumberingPlan numPlan, String address) {
         return new ISDNAddressStringImpl(addNature, numPlan, address);
+    }
+
+    public ISDNAddressString createISDNAddressString(boolean extension, AddressNature addNature, NumberingPlan numPlan, String address) {
+        return new ISDNAddressStringImpl(extension, addNature, numPlan, address);
     }
 
     public FTNAddressString createFTNAddressString(AddressNature addNature, NumberingPlan numPlan, String address) {

@@ -81,4 +81,5 @@ public interface AddressString extends Serializable {
 
     String getAddress();
 
+    boolean isExtension();
 }

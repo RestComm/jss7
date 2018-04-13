@@ -484,7 +484,20 @@ public interface MAPParameterFactory {
      */
     AddressString createAddressString(AddressNature addNature, NumberingPlan numPlan, String address);
 
+    /**
+     * Creates a new instance of {@link AddressString}
+     *
+     * @param extension
+     * @param addNature The nature of this AddressString. See
+     * {@link AddressNature}.
+     * @param numPlan The {@link NumberingPlan} of this AddressString
+     * @param address The actual address (number)
+     * @return new instance of {@link AddressString}
+     */
+    AddressString createAddressString(boolean extension, AddressNature addNature, NumberingPlan numPlan, String address);
+
     ISDNAddressString createISDNAddressString(AddressNature addNature, NumberingPlan numPlan, String address);
+    ISDNAddressString createISDNAddressString(boolean extension, AddressNature addNature, NumberingPlan numPlan, String address);
 
     FTNAddressString createFTNAddressString(AddressNature addNature, NumberingPlan numPlan, String address);
 
