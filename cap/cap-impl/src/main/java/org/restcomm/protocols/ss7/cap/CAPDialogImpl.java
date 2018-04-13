@@ -302,18 +302,28 @@ public abstract class CAPDialogImpl implements CAPDialog {
                     ApplicationContextName acn = this.capProviderImpl.getTCAPProvider().getDialogPrimitiveFactory()
                             .createApplicationContextName(this.appCntx.getOID());
 
-                    // this.setNormalDialogShutDown();
-                    this.capProviderImpl.fireTCEnd(this.getTcapDialog(), prearrangedEnd, acn, this.gprsReferenceNumber,
-                            this.getReturnMessageOnError());
-                    this.gprsReferenceNumber = null;
+                    if (prearrangedEnd) {
+                        // we do not send any data in a prearrangedEnd case
+                        if (this.tcapDialog != null)
+                            this.tcapDialog.release();
+                    } else {
+                        this.capProviderImpl.fireTCEnd(this.getTcapDialog(), prearrangedEnd, acn, this.gprsReferenceNumber,
+                                this.getReturnMessageOnError());
+                        this.gprsReferenceNumber = null;
+                    }
 
                     this.setState(CAPDialogState.Expunged);
                     break;
 
                 case Active:
-                    // this.setNormalDialogShutDown();
-                    this.capProviderImpl.fireTCEnd(this.getTcapDialog(), prearrangedEnd, null, null,
-                            this.getReturnMessageOnError());
+                    if (prearrangedEnd) {
+                        // we do not send any data in a prearrangedEnd case
+                        if (this.tcapDialog != null)
+                            this.tcapDialog.release();
+                    } else {
+                        this.capProviderImpl.fireTCEnd(this.getTcapDialog(), prearrangedEnd, null, null,
+                                this.getReturnMessageOnError());
+                    }
 
                     this.setState(CAPDialogState.Expunged);
                     break;
@@ -321,7 +331,15 @@ public abstract class CAPDialogImpl implements CAPDialog {
                 case Idle:
                     throw new CAPException("Awaiting TC-BEGIN to be sent, can not send another dialog initiating primitive!");
                 case InitialSent: // we have sent TC-BEGIN already, need to wait
-                    throw new CAPException("Awaiting TC-BEGIN response, can not send another dialog initiating primitive!");
+                    if (prearrangedEnd) {
+                        // we do not send any data in a prearrangedEnd case
+                        if (this.tcapDialog != null)
+                            this.tcapDialog.release();
+                        this.setState(CAPDialogState.Expunged);
+                        return;
+                    } else {
+                        throw new CAPException("Awaiting TC-BEGIN response, can not send another dialog initiating primitive!");
+                    }
                 case Expunged: // dialog has been terminated on TC level, cant send
                     throw new CAPException("Dialog has been terminated, can not send primitives!");
             }

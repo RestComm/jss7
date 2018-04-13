@@ -2622,8 +2622,9 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
     }
 
     /**
-     * Some not real test for testing: - closeDelayed(true) - getTCAPMessageType() TC-BEGIN + initialDPRequest +
-     * initialDPRequest TC-END + Prearranged + [ContinueRequest + ContinueRequest]
+     * Some not real test for testing: - closeDelayed(true) - getTCAPMessageType() 
+     * TC-BEGIN + initialDPRequest + initialDPRequest
+     *   TC-END + Prearranged + [ContinueRequest + ContinueRequest]
      */
     @Test(groups = { "functional.flow", "dialog" })
     public void testDelayedClosePrearranged() throws Exception {
@@ -2688,13 +2689,13 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
         te = TestEvent.createSentEvent(EventType.InitialDpRequest, null, count++, stamp);
         clientExpectedEvents.add(te);
 
-        te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp));
-        clientExpectedEvents.add(te);
+//        te = TestEvent.createReceivedEvent(EventType.DialogAccept, null, count++, (stamp));
+//        clientExpectedEvents.add(te);
+//
+//        te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp));
+//        clientExpectedEvents.add(te);
 
-        te = TestEvent.createReceivedEvent(EventType.DialogClose, null, count++, (stamp));
-        clientExpectedEvents.add(te);
-
-        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, stamp);
         clientExpectedEvents.add(te);
 
         count = 0;
@@ -2718,10 +2719,12 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
         te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, (stamp));
         serverExpectedEvents.add(te);
 
-        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, (stamp + _TCAP_DIALOG_RELEASE_TIMEOUT));
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, count++, stamp);
         serverExpectedEvents.add(te);
 
+//        this.saveTrafficInFile();
         client.sendInitialDp3();
+        client.clientCscDialog.close(true);
 
         waitForEnd();
         client.compareEvents(clientExpectedEvents);

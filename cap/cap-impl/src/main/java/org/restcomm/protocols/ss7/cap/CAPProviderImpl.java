@@ -1208,11 +1208,6 @@ public class CAPProviderImpl implements CAPProvider, TCListener {
             return;
         }
 
-        if (prearrangedEnd) {
-            // we do not send any data in a prearrangedEnd case
-            return;
-        }
-
         TCEndRequest endRequest = encodeTCEnd(tcapDialog, prearrangedEnd, acn, gprsReferenceNumber);
         if (returnMessageOnError)
             endRequest.setReturnMessageOnError(true);
