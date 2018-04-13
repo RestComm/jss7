@@ -50,7 +50,7 @@ import org.restcomm.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerMan;
 */
 public interface TesterHostInterface extends TesterHostMBean, NotificationEmitter {
 
-    static String SIMULATOR_HOME_VAR = "SIMULATOR_HOME";
+    String SIMULATOR_HOME_VAR = "SIMULATOR_HOME";
 
     M3uaMan getM3uaMan();
 
