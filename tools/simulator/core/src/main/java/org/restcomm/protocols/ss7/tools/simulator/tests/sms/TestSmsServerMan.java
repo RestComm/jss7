@@ -483,7 +483,7 @@ public class TestSmsServerMan extends TesterBase implements TestSmsServerManMBea
 
             curDialog.addSendRoutingInfoForSMRequest(msisdn, true, serviceCentreAddress, null, this.testerHost
                     .getConfigurationData().getTestSmsServerConfigurationData().isGprsSupportIndicator(), null, null, null,
-                    false, null, false, false, null);
+                    false, null, false, false, null, null);
 
             // this cap helps us give SCCP error if any
             // curDialog.setReturnMessageOnError(true);

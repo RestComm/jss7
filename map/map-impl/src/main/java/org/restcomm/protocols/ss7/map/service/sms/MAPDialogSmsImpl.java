@@ -36,6 +36,7 @@ import org.restcomm.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.restcomm.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberManagement.TeleserviceCode;
 import org.restcomm.protocols.ss7.map.api.service.sms.AlertReason;
+import org.restcomm.protocols.ss7.map.api.service.sms.CorrelationID;
 import org.restcomm.protocols.ss7.map.api.service.sms.IpSmGwGuidance;
 import org.restcomm.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
 import org.restcomm.protocols.ss7.map.api.service.sms.MAPDialogSms;
@@ -311,17 +312,17 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
     public Long addSendRoutingInfoForSMRequest(ISDNAddressString msisdn, boolean sm_RP_PRI, AddressString serviceCentreAddress,
             MAPExtensionContainer extensionContainer, boolean gprsSupportIndicator, SM_RP_MTI sM_RP_MTI, SM_RP_SMEA sM_RP_SMEA,
             SMDeliveryNotIntended smDeliveryNotIntended, boolean ipSmGwGuidanceIndicator, IMSI imsi, boolean t4TriggerIndicator,
-            boolean singleAttemptDelivery, TeleserviceCode teleservice) throws MAPException {
+            boolean singleAttemptDelivery, TeleserviceCode teleservice, CorrelationID correlationId) throws MAPException {
         return this.addSendRoutingInfoForSMRequest(_Timer_Default, msisdn, sm_RP_PRI, serviceCentreAddress, extensionContainer,
                 gprsSupportIndicator, sM_RP_MTI, sM_RP_SMEA, smDeliveryNotIntended, ipSmGwGuidanceIndicator, imsi,
-                t4TriggerIndicator, singleAttemptDelivery, teleservice);
+                t4TriggerIndicator, singleAttemptDelivery, teleservice, correlationId);
     }
 
     public Long addSendRoutingInfoForSMRequest(int customInvokeTimeout, ISDNAddressString msisdn, boolean sm_RP_PRI,
             AddressString serviceCentreAddress, MAPExtensionContainer extensionContainer, boolean gprsSupportIndicator,
             SM_RP_MTI sM_RP_MTI, SM_RP_SMEA sM_RP_SMEA, SMDeliveryNotIntended smDeliveryNotIntended,
             boolean ipSmGwGuidanceIndicator, IMSI imsi, boolean t4TriggerIndicator, boolean singleAttemptDelivery,
-            TeleserviceCode teleservice) throws MAPException {
+            TeleserviceCode teleservice, CorrelationID correlationId) throws MAPException {
 
         MAPApplicationContextVersion vers = this.appCntx.getApplicationContextVersion();
         if (this.appCntx.getApplicationContextName() != MAPApplicationContextName.shortMsgGatewayContext
@@ -343,7 +344,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
         try {
             SendRoutingInfoForSMRequestImpl req = new SendRoutingInfoForSMRequestImpl(msisdn, sm_RP_PRI, serviceCentreAddress,
                     extensionContainer, gprsSupportIndicator, sM_RP_MTI, sM_RP_SMEA, smDeliveryNotIntended,
-                    ipSmGwGuidanceIndicator, imsi, t4TriggerIndicator, singleAttemptDelivery, teleservice);
+                    ipSmGwGuidanceIndicator, imsi, t4TriggerIndicator, singleAttemptDelivery, teleservice, correlationId);
             AsnOutputStream aos = new AsnOutputStream();
             req.encodeData(aos);
 
