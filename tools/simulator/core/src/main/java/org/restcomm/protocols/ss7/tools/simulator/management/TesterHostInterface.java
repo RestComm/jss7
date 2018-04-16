@@ -26,6 +26,7 @@ import javax.management.NotificationEmitter;
 
 import org.apache.log4j.Level;
 import org.restcomm.protocols.ss7.tools.simulator.common.ConfigurationData;
+import org.restcomm.protocols.ss7.tools.simulator.level1.DialogicMan;
 import org.restcomm.protocols.ss7.tools.simulator.level1.M3uaMan;
 import org.restcomm.protocols.ss7.tools.simulator.level2.SccpMan;
 import org.restcomm.protocols.ss7.tools.simulator.level3.CapMan;
@@ -53,6 +54,8 @@ public interface TesterHostInterface extends TesterHostMBean, NotificationEmitte
     String SIMULATOR_HOME_VAR = "SIMULATOR_HOME";
 
     M3uaMan getM3uaMan();
+
+    DialogicMan getDialogicMan();
 
     SccpMan getSccpMan();
 

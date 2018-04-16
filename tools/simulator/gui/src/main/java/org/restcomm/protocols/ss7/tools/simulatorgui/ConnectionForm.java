@@ -48,6 +48,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import org.restcomm.protocols.ss7.tools.simulator.TesterHostFactoryInterface;
+import org.restcomm.protocols.ss7.tools.simulator.level1.DialogicManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.level1.M3uaManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.level2.SccpManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.level3.CapManMBean;
@@ -183,12 +184,11 @@ public class ConnectionForm extends JFrame {
         // starting the main form
         SimulatorGuiForm frame = new SimulatorGuiForm();
         host.addNotificationListener(frame, null, null);
-     // !!! DIALODIG !!!
-        frame.startHost(appName + "-local", false, host, host, host.getM3uaMan(), /* host.getDialogicMan(), */ host.getSccpMan(),
+        frame.startHost(appName + "-local", false, host, host, host.getM3uaMan(), host.getDialogicMan(), host.getSccpMan(),
                 host.getMapMan(), host.getCapMan(), host.getTestUssdClientMan(), host.getTestUssdServerMan(),
                 host.getTestSmsClientMan(), host.getTestSmsServerMan(), host.getTestCapScfMan(), host.getTestCapSsfMan(),
-                host.getTestAtiClientMan(), host.getTestAtiServerMan(), host.getTestCheckImeiClientMan() , host.getTestCheckImeiServerMan(),
-                host.getTestMapLcsClientMan(),host.getTestMapLcsServerMan());
+                host.getTestAtiClientMan(), host.getTestAtiServerMan(), host.getTestCheckImeiClientMan(),
+                host.getTestCheckImeiServerMan(), host.getTestMapLcsClientMan(), host.getTestMapLcsServerMan());
         frame.setVisible(true);
 
         // closing the connection form
@@ -223,8 +223,7 @@ public class ConnectionForm extends JFrame {
             ObjectName mbeanNameM3ua = new ObjectName(tagDomain + ":type=M3uaMan");
             M3uaManMBean m3ua = JMX.newMBeanProxy(mbsc, mbeanNameM3ua, M3uaManMBean.class, false);
             ObjectName mbeanNameDialogic = new ObjectName(tagDomain + ":type=DialogicMan");
-         // !!! DIALODIG !!!
-//            DialogicManMBean dialogic = JMX.newMBeanProxy(mbsc, mbeanNameDialogic, DialogicManMBean.class, false);
+            DialogicManMBean dialogic = JMX.newMBeanProxy(mbsc, mbeanNameDialogic, DialogicManMBean.class, false);
             ObjectName mbeanNameSccp = new ObjectName(tagDomain + ":type=SccpMan");
             SccpManMBean sccp = JMX.newMBeanProxy(mbsc, mbeanNameSccp, SccpManMBean.class, false);
             ObjectName mbeanNameMap = new ObjectName(tagDomain + ":type=MapMan");
@@ -264,8 +263,7 @@ public class ConnectionForm extends JFrame {
             // starting the main form
             SimulatorGuiForm frame = new SimulatorGuiForm();
             mbsc.addNotificationListener(mbeanNameTesterHost, frame, null, null);
-         // !!! DIALODIG !!!
-            frame.startHost(appName + "-remote", true, null, host, m3ua, /* dialogic, */ sccp, map, cap, ussdClient, ussdServer,
+            frame.startHost(appName + "-remote", true, null, host, m3ua, dialogic, sccp, map, cap, ussdClient, ussdServer,
                     smsClient, smsServer, capScf, capSsf, atiClient, atiServer, checkImeiClient, checkImeiServer,
                     checkMapLcsClient,checkMapLcsServer);
             frame.setVisible(true);
