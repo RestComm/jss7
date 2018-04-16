@@ -371,12 +371,14 @@ import org.restcomm.protocols.ss7.map.api.service.oam.TraceNETypeList;
 import org.restcomm.protocols.ss7.map.api.service.oam.TraceReference;
 import org.restcomm.protocols.ss7.map.api.service.oam.TraceType;
 import org.restcomm.protocols.ss7.map.api.service.oam.TraceTypeInvokingEvent;
+import org.restcomm.protocols.ss7.map.api.service.sms.CorrelationID;
 import org.restcomm.protocols.ss7.map.api.service.sms.IpSmGwGuidance;
 import org.restcomm.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
 import org.restcomm.protocols.ss7.map.api.service.sms.MWStatus;
 import org.restcomm.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.restcomm.protocols.ss7.map.api.service.sms.SM_RP_OA;
 import org.restcomm.protocols.ss7.map.api.service.sms.SM_RP_SMEA;
+import org.restcomm.protocols.ss7.map.api.service.sms.SipUri;
 import org.restcomm.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.restcomm.protocols.ss7.map.api.service.supplementary.CCBSFeature;
 import org.restcomm.protocols.ss7.map.api.service.supplementary.CallBarringFeature;
@@ -1532,5 +1534,7 @@ public interface MAPParameterFactory {
 
     IpSmGwGuidance createIpSmGwGuidance(int minimumDeliveryTimeValue, int recommendedDeliveryTimeValue,
             MAPExtensionContainer extensionContainer);
+
+    CorrelationID createCorrelationID(IMSI hlrId, SipUri sipUriA, SipUri sipUriB);
 
 }

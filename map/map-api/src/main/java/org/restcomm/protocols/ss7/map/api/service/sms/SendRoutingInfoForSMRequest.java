@@ -104,8 +104,7 @@ public interface SendRoutingInfoForSMRequest extends SmsMessage {
 
     boolean getSingleAttemptDelivery();
 
-    // TODO: CorrelationID parameter is not still implemented
-    // CorrelationID getCorrelationID();
+    CorrelationID getCorrelationID();
 
     // for MAP V1 only
     TeleserviceCode getTeleservice();

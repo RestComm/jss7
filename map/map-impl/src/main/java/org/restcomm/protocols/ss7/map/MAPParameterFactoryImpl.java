@@ -488,12 +488,14 @@ import org.restcomm.protocols.ss7.map.api.service.oam.TraceNETypeList;
 import org.restcomm.protocols.ss7.map.api.service.oam.TraceReference;
 import org.restcomm.protocols.ss7.map.api.service.oam.TraceType;
 import org.restcomm.protocols.ss7.map.api.service.oam.TraceTypeInvokingEvent;
+import org.restcomm.protocols.ss7.map.api.service.sms.CorrelationID;
 import org.restcomm.protocols.ss7.map.api.service.sms.IpSmGwGuidance;
 import org.restcomm.protocols.ss7.map.api.service.sms.LocationInfoWithLMSI;
 import org.restcomm.protocols.ss7.map.api.service.sms.MWStatus;
 import org.restcomm.protocols.ss7.map.api.service.sms.SM_RP_DA;
 import org.restcomm.protocols.ss7.map.api.service.sms.SM_RP_OA;
 import org.restcomm.protocols.ss7.map.api.service.sms.SM_RP_SMEA;
+import org.restcomm.protocols.ss7.map.api.service.sms.SipUri;
 import org.restcomm.protocols.ss7.map.api.service.sms.SmsSignalInfo;
 import org.restcomm.protocols.ss7.map.api.service.supplementary.CCBSFeature;
 import org.restcomm.protocols.ss7.map.api.service.supplementary.CallBarringFeature;
@@ -679,6 +681,7 @@ import org.restcomm.protocols.ss7.map.service.oam.TraceInterfaceListImpl;
 import org.restcomm.protocols.ss7.map.service.oam.TraceNETypeListImpl;
 import org.restcomm.protocols.ss7.map.service.oam.TraceReferenceImpl;
 import org.restcomm.protocols.ss7.map.service.oam.TraceTypeImpl;
+import org.restcomm.protocols.ss7.map.service.sms.CorrelationIDImpl;
 import org.restcomm.protocols.ss7.map.service.sms.IpSmGwGuidanceImpl;
 import org.restcomm.protocols.ss7.map.service.sms.LocationInfoWithLMSIImpl;
 import org.restcomm.protocols.ss7.map.service.sms.MWStatusImpl;
@@ -2836,6 +2839,11 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
     public IpSmGwGuidance createIpSmGwGuidance(int minimumDeliveryTimeValue, int recommendedDeliveryTimeValue,
             MAPExtensionContainer extensionContainer) {
         return new IpSmGwGuidanceImpl(minimumDeliveryTimeValue, recommendedDeliveryTimeValue, extensionContainer);
+    }
+
+    @Override
+    public CorrelationID createCorrelationID(IMSI hlrId, SipUri sipUriA, SipUri sipUriB) {
+        return new CorrelationIDImpl(hlrId, sipUriA, sipUriB);
     }
 }
 

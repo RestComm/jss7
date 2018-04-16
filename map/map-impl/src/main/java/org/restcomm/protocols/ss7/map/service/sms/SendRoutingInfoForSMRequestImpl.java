@@ -36,6 +36,7 @@ import org.restcomm.protocols.ss7.map.api.primitives.IMSI;
 import org.restcomm.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.restcomm.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberManagement.TeleserviceCode;
+import org.restcomm.protocols.ss7.map.api.service.sms.CorrelationID;
 import org.restcomm.protocols.ss7.map.api.service.sms.SMDeliveryNotIntended;
 import org.restcomm.protocols.ss7.map.api.service.sms.SM_RP_MTI;
 import org.restcomm.protocols.ss7.map.api.service.sms.SM_RP_SMEA;
@@ -86,6 +87,7 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
     private boolean t4TriggerIndicator;
     private boolean singleAttemptDelivery;
     private IMSI imsi;
+    private CorrelationID correlationID;
 
     public SendRoutingInfoForSMRequestImpl() {
     }
@@ -93,7 +95,7 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
     public SendRoutingInfoForSMRequestImpl(ISDNAddressString msisdn, boolean sm_RP_PRI, AddressString serviceCentreAddress,
             MAPExtensionContainer extensionContainer, boolean gprsSupportIndicator, SM_RP_MTI sM_RP_MTI, SM_RP_SMEA sM_RP_SMEA,
             SMDeliveryNotIntended smDeliveryNotIntended, boolean ipSmGwGuidanceIndicator, IMSI imsi, boolean t4TriggerIndicator,
-            boolean singleAttemptDelivery, TeleserviceCode teleservice) {
+            boolean singleAttemptDelivery, TeleserviceCode teleservice, CorrelationID correlationID) {
         this.msisdn = msisdn;
         this.sm_RP_PRI = sm_RP_PRI;
         this.serviceCentreAddress = serviceCentreAddress;
@@ -107,6 +109,7 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
         this.t4TriggerIndicator = t4TriggerIndicator;
         this.singleAttemptDelivery = singleAttemptDelivery;
         this.teleservice = teleservice;
+        this.correlationID = correlationID;
     }
 
     public MAPMessageType getMessageType() {
@@ -169,6 +172,10 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
         return smDeliveryNotIntended;
     }
 
+    public CorrelationID getCorrelationID() {
+        return correlationID;
+    }
+
     public int getTag() throws MAPException {
         return Tag.SEQUENCE;
     }
@@ -223,6 +230,7 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
         this.t4TriggerIndicator = false;
         this.singleAttemptDelivery = false;
         this.teleservice = null;
+        this.correlationID = null;
 
         AsnInputStream ais = ansIS.readSequenceStreamData(length);
         int num = 0;
@@ -327,7 +335,7 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
                                             + ".ipSmGwGuidanceIndicator: Parameter ipSmGwGuidanceIndicator is not primitive",
                                             MAPParsingComponentExceptionReason.MistypedParameter);
                                 ais.readNull();
-                                this.ipSmGwGuidanceIndicator = false;
+                                this.ipSmGwGuidanceIndicator = true;
                                 break;
 
                             case _TAG_imsi:
@@ -345,7 +353,7 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
                                             + ".t4TriggerIndicator: Parameter t4TriggerIndicator is not primitive",
                                             MAPParsingComponentExceptionReason.MistypedParameter);
                                 ais.readNull();
-                                this.t4TriggerIndicator = false;
+                                this.t4TriggerIndicator = true;
                                 break;
 
                             case _TAG_singleAttemptDelivery:
@@ -354,7 +362,16 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
                                             + ".singleAttemptDelivery: Parameter singleAttemptDelivery is not primitive",
                                             MAPParsingComponentExceptionReason.MistypedParameter);
                                 ais.readNull();
-                                this.singleAttemptDelivery = false;
+                                this.singleAttemptDelivery = true;
+                                break;
+
+                            case _TAG_correlationId:
+                                if (ais.isTagPrimitive())
+                                    throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                            + ".correlationID: Parameter correlationID is primitive",
+                                            MAPParsingComponentExceptionReason.MistypedParameter);
+                                this.correlationID = new CorrelationIDImpl();
+                                ((CorrelationIDImpl) this.correlationID).decodeAll(ais);
                                 break;
 
                             default:
@@ -429,6 +446,8 @@ public class SendRoutingInfoForSMRequestImpl extends SmsMessageImpl implements S
                 asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_t4TriggerIndicator);
             if (this.singleAttemptDelivery == true)
                 asnOs.writeNull(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_singleAttemptDelivery);
+            if (this.correlationID != null)
+                ((CorrelationIDImpl) this.correlationID).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_correlationId);
         } catch (IOException e) {
             throw new MAPException("IOException when encoding " + _PrimitiveName + ": " + e.getMessage(), e);
         } catch (AsnException e) {
