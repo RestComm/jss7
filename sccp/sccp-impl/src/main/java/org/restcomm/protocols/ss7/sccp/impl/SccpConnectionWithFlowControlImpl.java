@@ -77,7 +77,7 @@ public class SccpConnectionWithFlowControlImpl extends SccpConnectionImpl implem
         }
     }
 
-    protected void prepareMessageForSending(SccpConnSegmentableMessageImpl message) {
+    public void prepareMessageForSending(SccpConnSegmentableMessageImpl message) {
         if (message instanceof SccpConnDt2MessageImpl) {
             SccpConnDt2MessageImpl dt2 = (SccpConnDt2MessageImpl) message;
 

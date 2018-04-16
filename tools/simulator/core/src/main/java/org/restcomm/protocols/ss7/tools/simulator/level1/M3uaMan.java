@@ -56,7 +56,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
 
     public static String SOURCE_NAME = "M3UA";
 
-    private final String name;
+    protected final String name;
     private TesterHostImpl testerHost;
     private NettySctpManagementImpl sctpManagement;
     private ParameterFactoryImpl factory = new ParameterFactoryImpl();
@@ -621,6 +621,10 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
         }
     }
 
+    protected M3UAManagementProxyImpl createM3UAManagement() {
+        return new M3UAManagementProxyImpl("SimM3uaServer_" + name, null, null);
+    }
+
     private void initM3ua(boolean storePcapTrace, boolean isSctpServer, String localHost, int localPort, String remoteHost, int remotePort, String localHost2,
             int localPort2, String remoteHost2, int remotePort2, IpChannelType ipChannelType, String[] extraHostAddresses, String persistDir,
             int trafficModeTypeInt, RoutingLabelFormat routingLabelFormat) throws Exception {
@@ -640,7 +644,7 @@ public class M3uaMan implements M3uaManMBean, Stoppable {
         Thread.sleep(500); // waiting for freeing ip ports
 
         // init M3UA stack
-        this.m3uaMgmt = new M3UAManagementProxyImpl("SimM3uaServer_" + name);
+        this.m3uaMgmt = createM3UAManagement();
         this.m3uaMgmt.setPersistDir(persistDir);
         this.m3uaMgmt.setTransportManagement(this.sctpManagement);
         this.m3uaMgmt.setRoutingLabelFormat(routingLabelFormat);

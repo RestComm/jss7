@@ -135,18 +135,31 @@ public class TesterHostImpl extends NotificationBroadcasterSupport implements Te
 
     // testers
 
+    protected SccpMan createSccpMan() {
+        return new SccpMan(appName);
+    }
+
+    protected M3uaMan createM3uaMan() {
+        return new M3uaMan(appName);
+    }
+
+    protected void initiateExt() {
+    }
+
     public TesterHostImpl(String appName, String persistDir) {
+        initiateExt();
+
         this.appName = appName;
         this.persistDir = persistDir;
 
-        this.m3ua = new M3uaMan(appName);
+        this.m3ua = createM3uaMan();
         this.m3ua.setTesterHost(this);
 
      // !!! DIALODIG !!!
 //        this.dialogic = new DialogicMan(appName);
 //        this.dialogic.setTesterHost(this);
 
-        this.sccp = new SccpMan(appName);
+        this.sccp = createSccpMan();
         this.sccp.setTesterHost(this);
 
         this.map = new MapMan(appName);

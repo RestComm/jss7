@@ -51,15 +51,15 @@ public class SccpMan implements SccpManMBean, Stoppable {
     public static String SOURCE_NAME = "SCCP";
 
     private final String name;
-    private TesterHostInterface testerHost;
+    protected TesterHostInterface testerHost;
 
     private Mtp3UserPart mtp3UserPart;
 
-    private SccpStackImpl sccpStack;
-    private SccpProvider sccpProvider;
-    private ParameterFactory parameterFactory;
+    protected SccpStackImpl sccpStack;
+    protected SccpProvider sccpProvider;
+    protected ParameterFactory parameterFactory;
     private SccpResource resource;
-    private Router router;
+    protected Router router;
     private boolean isRspcUp = true;
     private boolean isRssUp = true;
 
@@ -355,10 +355,17 @@ public class SccpMan implements SccpManMBean, Stoppable {
         }
     }
 
+    protected SccpStackImpl createSccpStack() {
+        return new SccpStackImpl("TestingSccp", null);
+    }
+
+    protected void sccpConfigExt(int opc, int dpc, int dpc2, int localSsn) throws Exception {
+    }
+
     private void initSccp(Mtp3UserPart mtp3UserPart, int remoteSsn, int localSsn, int dpc, int dpc2, int opc, int ni,
             String callingPartyAddressDigits, String persistDir, SccpProtocolVersion sccpProtocolVersion) throws Exception {
 
-        this.sccpStack = new SccpStackImpl("TestingSccp", null);
+        this.sccpStack = createSccpStack();
         this.sccpStack.setPersistDir(persistDir);
 
         this.sccpStack.setMtp3UserPart(1, mtp3UserPart);
@@ -384,36 +391,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
             this.resource.addRemoteSsn(2, dpc2, remoteSsn, 0, false);
         }
 
-        // !!! DIALODIG !!!
-//        if (this.testerHost.getConfigurationData().getSccpConfigurationData().isRouteOnGtMode()) {
-//            this.router = this.sccpStack.getRouter();
-//
-//            this.router.addRoutingAddress(1,parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, this.createGlobalTitle(""), dpc, 0));
-//            this.router.addRoutingAddress(2,
-//                    parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, this.createGlobalTitle(""), opc, localSsn));
-//
-//            SccpAddress pattern = parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, this.createGlobalTitle("*"), 0,
-//                    0);
-//            String mask = "K";
-//
-//            if (dpc2 > 0) {
-//                this.router.addRoutingAddress(
-//                        11,
-//                        parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE,
-//                                this.createGlobalTitle(""), dpc2, 0));
-//                ((RouterImpl) this.router).addRule(1, RuleType.LOADSHARED, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL,
-//                        pattern, mask, 1, 11, null, 0, null);
-//            } else {
-//                ((RouterImpl) this.router).addRule(1, RuleType.SOLITARY, null, OriginationType.LOCAL, pattern, mask, 1,
-//                        -1, null, 0, null);
-//            }
-//
-//            pattern = parameterFactory.createSccpAddress(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, this.createGlobalTitle("*"), 0, 0);
-//            mask = "K";
-//            ((RouterImpl) this.router).addRule(2, RuleType.SOLITARY, null, OriginationType.REMOTE, pattern, mask, 2,
-//                    -1, null, 0, null);
-//
-//        }
+        sccpConfigExt(opc, dpc, dpc2, localSsn);
     }
 
     private void stopSccp() {

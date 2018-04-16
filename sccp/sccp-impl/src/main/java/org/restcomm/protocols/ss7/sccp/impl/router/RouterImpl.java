@@ -508,7 +508,7 @@ public class RouterImpl implements Router {
      *
      * @throws Exception
      */
-    protected void load() {
+    public void load() {
 
         try {
             File f = new File(persistFile.toString());

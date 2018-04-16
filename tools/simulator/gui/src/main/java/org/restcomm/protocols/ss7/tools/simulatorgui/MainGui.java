@@ -54,10 +54,14 @@ public class MainGui implements Runnable {
         EventQueue.invokeLater(new MainGui(appName));
     }
 
+    protected ConnectionForm createConnectionForm() {
+        return new ConnectionForm(this.getTesterHostFactory());
+    }
+
     @Override
     public void run() {
         try {
-            ConnectionForm frame = new ConnectionForm(this.getTesterHostFactory());
+            ConnectionForm frame = createConnectionForm();
             frame.setAppName(appName);
             frame.setVisible(true);
         } catch (Exception e) {

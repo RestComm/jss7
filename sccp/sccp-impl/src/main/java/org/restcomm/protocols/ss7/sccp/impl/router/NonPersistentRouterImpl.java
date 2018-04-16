@@ -9,7 +9,7 @@ public class NonPersistentRouterImpl extends RouterImpl {
     }
 
     @Override
-    protected void load() {
+    public void load() {
 
     }
 

@@ -63,7 +63,7 @@ abstract class SccpConnectionWithTransmitQueueImpl extends SccpConnectionBaseImp
         clearTransmitQueue();
     }
 
-    protected int getTransmitQueueSize() {
+    public int getTransmitQueueSize() {
         return outgoing.size();
     }
 

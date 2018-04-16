@@ -136,7 +136,7 @@ public class SccpManagementProxy extends SccpManagement {
     }
 
     @Override
-    protected void handleMtp3Pause(int affectedPc) {
+    public void handleMtp3Pause(int affectedPc) {
         super.handleMtp3Pause(affectedPc);
 
         Mtp3PrimitiveMessage prim = new Mtp3PrimitiveMessage(seq++, MTP3_PAUSE, affectedPc);

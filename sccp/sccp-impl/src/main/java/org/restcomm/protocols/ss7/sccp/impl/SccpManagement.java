@@ -354,7 +354,7 @@ public class SccpManagement {
         }
     }
 
-    protected void handleMtp3Pause(int affectedPc) {
+    public void handleMtp3Pause(int affectedPc) {
         // Look at Q.714 Section 5.2.2
         this.cancelAllSst(affectedPc, true);
         this.prohibitRsp(affectedPc, true, RemoteSccpStatus.INACCESIBBLE);

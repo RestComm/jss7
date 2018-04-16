@@ -279,7 +279,7 @@ public class SccpRoutingControl implements SccpRoutingCtxInterface {
         }
     }
 
-    protected void routeMssgFromSccpUserConn(SccpConnMessage msg) throws Exception {
+    public void routeMssgFromSccpUserConn(SccpConnMessage msg) throws Exception {
         if (this.sccpStackImpl.isPreviewMode()) {
             // we drop off local originated message in pereviewMode
             return;
@@ -383,7 +383,7 @@ public class SccpRoutingControl implements SccpRoutingCtxInterface {
         }
     }
 
-    protected ReleaseCauseValue sendConn(SccpConnMessage connMessage) throws Exception {
+    public ReleaseCauseValue sendConn(SccpConnMessage connMessage) throws Exception {
         SccpMessageImpl message = (SccpMessageImpl)connMessage;
         int dpc = message.getOutgoingDpc();
         int sls = message.getSls();

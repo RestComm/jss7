@@ -10,6 +10,10 @@
 /lcs_simulator2.xml
 /lcsc_simulator2.xml
 /lcss_simulator2.xml
+/main_simulator2.xml
+/MsgLog_s.pcap
+/MsgLog_ss1.pcap
+/MsgLog_u.pcap
 /s_simulator2.xml
 /s1_simulator2.xml
 /s111_simulator2.xml
@@ -24,6 +28,7 @@
 /SimM3uaServer_lcsc_m3ua1.xml
 /SimM3uaServer_lcss_m3ua1.xml
 /SimM3uaServer_lscs_m3ua1.xml
+/SimM3uaServer_main_m3ua1.xml
 /SimM3uaServer_s_m3ua1.xml
 /SimM3uaServer_s1_m3ua1.xml
 /SimM3uaServer_s111_m3ua1.xml
@@ -44,6 +49,7 @@
 /SimSCTPServer_lcsc_sctp.xml
 /SimSCTPServer_lcss_sctp.xml
 /SimSCTPServer_lscs_sctp.xml
+/SimSCTPServer_main_sctp.xml
 /SimSCTPServer_s_sctp.xml
 /SimSCTPServer_s1_sctp.xml
 /SimSCTPServer_s111_sctp.xml
@@ -59,15 +65,10 @@
 /ss1_simulator2.xml
 /TestingSccp_management2.xml
 /TestingSccp_sccpresource2.xml
-/TestingSccp_sccprouter2.xml
+/TestingSccp_sccprouter3.xml
 /u_simulator2.xml
 /u1_simulator2.xml
 /u111_simulator2.xml
 /uu_simulator2.xml
 /win_simulator2.xml
-/MsgLog_s.pcap
-/MsgLog_u.pcap
-/main_simulator2.xml
-/MsgLog_ss1.pcap
-/SimM3uaServer_main_m3ua1.xml
-/SimSCTPServer_main_sctp.xml
+/.gitignore

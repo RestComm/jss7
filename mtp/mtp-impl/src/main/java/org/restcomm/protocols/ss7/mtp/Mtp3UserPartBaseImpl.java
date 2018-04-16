@@ -325,7 +325,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
                     for (Mtp3UserPartListener lsn : userListeners) {
                         lsn.onMtp3TransferMessage(this.msg);
                     }
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     logger.error("Exception while delivering a system messages to the MTP3-user: " + e.getMessage(), e);
                 }
             } else {
@@ -357,7 +357,7 @@ public abstract class Mtp3UserPartBaseImpl implements Mtp3UserPart {
                         if (this.msg.getType() == Mtp3Primitive.END_CONGESTION)
                             lsn.onMtp3EndCongestionMessage((Mtp3EndCongestionPrimitive) this.msg);
                     }
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     logger.error("Exception while delivering a payload messages to the MTP3-user: " + e.getMessage(), e);
                 }
             } else {

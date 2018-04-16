@@ -41,7 +41,7 @@ public class SccpConnectionImpl extends SccpConnectionWithCouplingImpl implement
         }
     }
 
-    protected void prepareMessageForSending(SccpConnSegmentableMessageImpl message) {
+    public void prepareMessageForSending(SccpConnSegmentableMessageImpl message) {
         // not needed for protocol class 2
     }
 

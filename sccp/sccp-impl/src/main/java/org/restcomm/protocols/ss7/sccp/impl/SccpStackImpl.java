@@ -318,6 +318,10 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         return sccpProvider;
     }
 
+    public SccpRoutingControl getSccpRoutingControl() {
+        return sccpRoutingControl;
+    }
+
     public Map<Integer, Mtp3UserPart> getMtp3UserParts() {
         return mtp3UserParts;
     }
@@ -865,6 +869,8 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
         this.router.setPersistDir(this.persistDir);
         this.router.start();
 
+        ss7ExtSccpDetailedInterface.startExtAfter(this.router, this.sccpManagement);
+
         this.sccpResource = new SccpResourceImpl(this.name, this.rspProhibitedByDefault, ss7ExtSccpDetailedInterface);
         this.sccpResource.setPersistDir(this.persistDir);
         this.sccpResource.start();
@@ -903,8 +909,6 @@ public class SccpStackImpl implements SccpStack, Mtp3UserPartListener {
                 logger.error("Exception while invoking onServiceStarted", ee);
             }
         }
-
-        ss7ExtSccpDetailedInterface.startExtAfter(this.router, this.sccpManagement);
 
         this.state = State.RUNNING;
     }

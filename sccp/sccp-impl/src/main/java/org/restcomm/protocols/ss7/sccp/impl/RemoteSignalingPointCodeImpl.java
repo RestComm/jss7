@@ -144,9 +144,17 @@ public class RemoteSignalingPointCodeImpl implements XMLSerializable, RemoteSign
      *
      * @param value
      */
-    protected void setCurrentRestrictionLevel(int value) {
+    public void setCurrentRestrictionLevel(int value) {
         this.rl = value;
         this.rsl = 0;
+    }
+
+    public void setRl(int val) {
+        rl = val;
+    }
+
+    public void setRsl(int val) {
+        rsl = val;
     }
 
     @Override

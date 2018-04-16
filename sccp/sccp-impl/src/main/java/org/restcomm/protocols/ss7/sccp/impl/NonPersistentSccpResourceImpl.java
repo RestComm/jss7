@@ -12,12 +12,12 @@ public class NonPersistentSccpResourceImpl extends SccpResourceImpl {
     }
 
     @Override
-    protected void load() {
+    public void load() {
 
     }
 
     @Override
-    protected synchronized void store() {
+    public synchronized void store() {
 
     }
 
