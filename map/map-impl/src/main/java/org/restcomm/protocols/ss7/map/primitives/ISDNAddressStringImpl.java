@@ -46,6 +46,10 @@ public class ISDNAddressStringImpl extends AddressStringImpl implements ISDNAddr
         super(addressNature, numberingPlan, address);
     }
 
+    public ISDNAddressStringImpl(boolean extension, AddressNature addressNature, NumberingPlan numberingPlan, String address) {
+        super(extension, addressNature, numberingPlan, address);
+    }
+
     @Override
     protected void _testLengthDecode(int length) throws MAPParsingComponentException {
         if (length > 10)

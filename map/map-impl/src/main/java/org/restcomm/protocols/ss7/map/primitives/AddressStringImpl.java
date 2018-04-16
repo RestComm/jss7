@@ -72,6 +72,14 @@ public class AddressStringImpl implements AddressString, MAPAsnPrimitive {
         this.address = address;
     }
 
+    public AddressStringImpl(boolean isExtension, AddressNature addressNature, NumberingPlan numberingPlan, String address) {
+        super();
+        this.isExtension = isExtension;
+        this.addressNature = addressNature;
+        this.numberingPlan = numberingPlan;
+        this.address = address;
+    }
+
     public String getAddress() {
         return this.address;
     }
