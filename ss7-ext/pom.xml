@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>ss7-parent</artifactId>
 		<groupId>org.restcomm.protocols.ss7</groupId>
-		<version>8.0.0-SNAPSHOT</version>
+		<version>8.0.0-153</version>
 	</parent>
 
 	<groupId>org.restcomm.protocols.ss7.ss7ext</groupId>
