@@ -125,9 +125,7 @@ public class DialogIdleTest extends SccpHarness {
         List<TestEvent> expectedEvents = new ArrayList<TestEvent>();
         TestEvent te = TestEvent.createReceivedEvent(EventType.DialogTimeout, null, 0, stamp + _DIALOG_TIMEOUT);
         expectedEvents.add(te);
-        te = TestEvent.createReceivedEvent(EventType.PAbort, null, 1, stamp + _DIALOG_TIMEOUT);
-        expectedEvents.add(te);
-        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 2, stamp + _DIALOG_TIMEOUT);
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 1, stamp + _DIALOG_TIMEOUT);
         expectedEvents.add(te);
 
         client.startClientDialog();

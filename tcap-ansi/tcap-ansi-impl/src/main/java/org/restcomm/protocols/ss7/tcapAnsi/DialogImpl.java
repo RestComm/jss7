@@ -1535,6 +1535,11 @@ public class DialogImpl implements Dialog {
             this.dialogLock.lock();
 
             try {
+                if (this.remoteTransactionId == null) {
+                    // no remoteTransactionId - we can not send back TC-ABORT
+                    return;
+                }
+
                 // sending to the remote side
                 if (this.getProtocolVersion() != null) {
                     this.provider.sendProviderAbort(PAbortCause.InconsistentDialoguePortion, remoteTransactionId, remoteAddress,
@@ -1850,7 +1855,10 @@ public class DialogImpl implements Dialog {
                 if (d.idleTimerActionTaken) {
                     startIdleTimer();
                 } else {
-                    sendAbnormalDialog();
+                    if (remoteTransactionId != null)
+                        sendAbnormalDialog();
+                    else
+                        release();
                 }
 
             } finally {

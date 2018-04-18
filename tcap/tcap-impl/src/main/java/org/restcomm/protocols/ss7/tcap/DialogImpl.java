@@ -2132,7 +2132,10 @@ public class DialogImpl implements Dialog {
                 if (d.idleTimerActionTaken) {
                     startIdleTimer();
                 } else {
-                    sendAbnormalDialog();
+                    if (remoteTransactionId != null)
+                        sendAbnormalDialog();
+                    else
+                        release();
                 }
 
             } finally {
