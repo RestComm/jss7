@@ -970,8 +970,10 @@ public class TesterHostImpl extends NotificationBroadcasterSupport implements Te
             this.testUssdClientMan.setAlertingPattern(_TestUssdClientMan.getAlertingPattern());
             this.testUssdClientMan.setUssdClientAction(_TestUssdClientMan.getUssdClientAction());
             this.testUssdClientMan.setAutoRequestString(_TestUssdClientMan.getAutoRequestString());
+            this.testUssdClientMan.setAutoResponseString(_TestUssdClientMan.getAutoResponseString());
             this.testUssdClientMan.setMaxConcurrentDialogs(_TestUssdClientMan.getMaxConcurrentDialogs());
             this.testUssdClientMan.setOneNotificationFor100Dialogs(_TestUssdClientMan.isOneNotificationFor100Dialogs());
+            this.testUssdClientMan.setAutoResponseOnUnstructuredSSRequests(_TestUssdClientMan.isAutoResponseOnUnstructuredSSRequests());
 
             TestUssdServerConfigurationData_OldFormat _TestUssdServerMan = reader.read(ConfigurationData.TEST_USSD_SERVER,
                     TestUssdServerConfigurationData_OldFormat.class);

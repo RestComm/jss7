@@ -44,8 +44,10 @@ public class TestUssdClientConfigurationData {
     protected static final String ALERTING_PATTERN = "alertingPattern";
     protected static final String USSD_CLIENT_ACTION = "ussdClientAction";
     protected static final String AUTO_REQUEST_STRING = "autoRequestString";
+    protected static final String AUTO_RESPONSE_STRING = "autoResponseString";
     protected static final String MAX_CONCURENT_DIALOGS = "maxConcurrentDialogs";
     protected static final String ONE_NOTIFICATION_FOR_100_DIALOGS = "oneNotificationFor100Dialogs";
+    protected static final String AUTO_RESPONSE_ON_UNSTRUCTURED_SS_REQUESTS = "autoResponseOnUnstructuredSSRequests";
     protected static final String SRI_RESPONSE_IMSI = "sriResponseImsi";
     protected static final String SRI_RESPONSE_VLR = "sriResponseVlr";
     protected static final String SRI_REACTION = "sriReaction";
@@ -63,8 +65,10 @@ public class TestUssdClientConfigurationData {
 
     protected UssdClientAction ussdClientAction = new UssdClientAction(UssdClientAction.VAL_MANUAL_OPERATION);
     protected String autoRequestString = "???";
+    protected String autoResponseString = "";
     protected int maxConcurrentDialogs = 10;
     protected boolean oneNotificationFor100Dialogs = false;
+    protected boolean autoResponseOnUnstructuredSSRequests = false;
 
     public String getMsisdnAddress() {
         return msisdnAddress;
@@ -122,6 +126,14 @@ public class TestUssdClientConfigurationData {
         this.autoRequestString = autoRequestString;
     }
 
+    public String getAutoResponseString() {
+        return autoResponseString;
+    }
+
+    public void setAutoResponseString(String autoResponseString) {
+        this.autoResponseString = autoResponseString;
+    }
+
     public int getMaxConcurrentDialogs() {
         return maxConcurrentDialogs;
     }
@@ -136,6 +148,14 @@ public class TestUssdClientConfigurationData {
 
     public void setOneNotificationFor100Dialogs(boolean oneNotificationFor100Dialogs) {
         this.oneNotificationFor100Dialogs = oneNotificationFor100Dialogs;
+    }
+
+    public boolean isAutoResponseOnUnstructuredSSRequests() {
+        return autoResponseOnUnstructuredSSRequests;
+    }
+
+    public void setAutoResponseOnUnstructuredSSRequests(boolean autoResponseOnUnstructuredSSRequests) {
+        this.autoResponseOnUnstructuredSSRequests = autoResponseOnUnstructuredSSRequests;
     }
 
     public String getSriResponseImsi() {
@@ -178,6 +198,7 @@ public class TestUssdClientConfigurationData {
             xml.setAttribute(ALERTING_PATTERN, clt.alertingPattern);
             xml.setAttribute(MAX_CONCURENT_DIALOGS, clt.maxConcurrentDialogs);
             xml.setAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS, clt.oneNotificationFor100Dialogs);
+            xml.setAttribute(AUTO_RESPONSE_ON_UNSTRUCTURED_SS_REQUESTS, clt.autoResponseOnUnstructuredSSRequests);
             xml.setAttribute(RETURN_20_PERS_DELIVERY_ERRORS, clt.return20PersDeliveryErrors);
 
             xml.add(clt.msisdnAddress, MSISDN_ADDRESS, String.class);
@@ -189,6 +210,7 @@ public class TestUssdClientConfigurationData {
 
             xml.add(clt.ussdClientAction.toString(), USSD_CLIENT_ACTION, String.class);
             xml.add(clt.autoRequestString, AUTO_REQUEST_STRING, String.class);
+            xml.add(clt.autoResponseString, AUTO_RESPONSE_STRING, String.class);
         }
 
         public void read(InputElement xml, TestUssdClientConfigurationData clt) throws XMLStreamException {
@@ -196,6 +218,7 @@ public class TestUssdClientConfigurationData {
             clt.alertingPattern = xml.getAttribute(ALERTING_PATTERN).toInt();
             clt.maxConcurrentDialogs = xml.getAttribute(MAX_CONCURENT_DIALOGS).toInt();
             clt.oneNotificationFor100Dialogs = xml.getAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS).toBoolean();
+            clt.autoResponseOnUnstructuredSSRequests = xml.getAttribute(AUTO_RESPONSE_ON_UNSTRUCTURED_SS_REQUESTS).toBoolean();
             CharArray chArr = xml.getAttribute(RETURN_20_PERS_DELIVERY_ERRORS);
             if (chArr != null)
                 clt.return20PersDeliveryErrors = chArr.toBoolean();
@@ -213,6 +236,7 @@ public class TestUssdClientConfigurationData {
             String uca = (String) xml.get(USSD_CLIENT_ACTION, String.class);
             clt.ussdClientAction = UssdClientAction.createInstance(uca);
             clt.autoRequestString = (String) xml.get(AUTO_REQUEST_STRING, String.class);
+            clt.autoResponseString = (String) xml.get(AUTO_RESPONSE_STRING, String.class);
         }
     };
 

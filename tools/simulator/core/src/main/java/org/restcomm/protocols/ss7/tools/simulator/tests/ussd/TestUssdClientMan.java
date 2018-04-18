@@ -242,8 +242,19 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
     }
 
     @Override
+    public String getAutoResponseString() {
+        return this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getAutoResponseString();
+    }
+
+    @Override
     public void setAutoRequestString(String val) {
         this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().setAutoRequestString(val);
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public void setAutoResponseString(String val) {
+        this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().setAutoResponseString(val);
         this.testerHost.markStore();
     }
 
@@ -264,8 +275,19 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
     }
 
     @Override
+    public boolean isAutoResponseOnUnstructuredSSRequests() {
+        return this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().isAutoResponseOnUnstructuredSSRequests();
+    }
+
+    @Override
     public void setOneNotificationFor100Dialogs(boolean val) {
         this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().setOneNotificationFor100Dialogs(val);
+        this.testerHost.markStore();
+    }
+
+    @Override
+    public void setAutoResponseOnUnstructuredSSRequests(boolean val) {
+        this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().setAutoResponseOnUnstructuredSSRequests(val);
         this.testerHost.markStore();
     }
 
@@ -591,8 +613,9 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
     public String performUnstructuredResponse(String msg) {
         if (!isStarted)
             return "The tester is not started";
-        if (this.sender != null)
-            return "The tester is not ion manual mode";
+        if (!this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().isAutoResponseOnUnstructuredSSRequests()
+                && this.sender != null)
+            return "The tester is not in manual mode";
 
         MAPDialogSupplementary curDialog = currentDialog;
         if (curDialog == null)
@@ -753,6 +776,10 @@ public class TestUssdClientMan extends TesterBase implements TestUssdClientManMB
         } catch (MAPException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }
+
+        if(this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().isAutoResponseOnUnstructuredSSRequests()) {
+            performUnstructuredResponse(this.testerHost.getConfigurationData().getTestUssdClientConfigurationData().getAutoResponseString());
         }
     }
 

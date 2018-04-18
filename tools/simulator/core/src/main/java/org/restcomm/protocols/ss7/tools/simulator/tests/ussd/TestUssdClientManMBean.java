@@ -113,4 +113,12 @@ public interface TestUssdClientManMBean {
 
     void putSRIReaction(String val);
 
+    void setAutoResponseString(String text);
+
+    void setAutoResponseOnUnstructuredSSRequests(boolean selected);
+
+    String getAutoResponseString();
+
+    boolean isAutoResponseOnUnstructuredSSRequests();
+
 }

@@ -26,6 +26,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -69,6 +71,8 @@ public class TestUssdClientParamForm extends JDialog {
     private JTextField tbAutoRequestString;
     private JTextField tbMaxConcurrentDialogs;
     private JCheckBox cbOneNotificationFor100Dialogs;
+    private JCheckBox cbAutoResponseOnUnstructuredSSRequests;
+    private JTextField tbResponseString;
     private JTextField tbSRIResponseImsi;
     private JTextField tbSRIResponseVlr;
     private JComboBox cbSRIReaction;
@@ -80,7 +84,7 @@ public class TestUssdClientParamForm extends JDialog {
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         setResizable(false);
         setTitle("USSD test client settings");
-        setBounds(100, 100, 638, 529);
+        setBounds(100, 100, 638, 575);
 
         JPanel panel = new JPanel();
         getContentPane().add(panel, BorderLayout.CENTER);
@@ -92,7 +96,7 @@ public class TestUssdClientParamForm extends JDialog {
                 loadDataA();
             }
         });
-        button.setBounds(10, 430, 256, 23);
+        button.setBounds(10, 476, 256, 23);
         panel.add(button);
 
         JButton button_1 = new JButton("Load default values for side B");
@@ -101,7 +105,7 @@ public class TestUssdClientParamForm extends JDialog {
                 loadDataB();
             }
         });
-        button_1.setBounds(276, 430, 245, 23);
+        button_1.setBounds(276, 476, 245, 23);
         panel.add(button_1);
 
         JButton button_2 = new JButton("Reload");
@@ -110,7 +114,7 @@ public class TestUssdClientParamForm extends JDialog {
                 reloadData();
             }
         });
-        button_2.setBounds(10, 464, 144, 23);
+        button_2.setBounds(10, 510, 144, 23);
         panel.add(button_2);
 
         JButton button_3 = new JButton("Save");
@@ -121,7 +125,7 @@ public class TestUssdClientParamForm extends JDialog {
                 }
             }
         });
-        button_3.setBounds(277, 464, 117, 23);
+        button_3.setBounds(277, 510, 117, 23);
         panel.add(button_3);
 
         JButton button_4 = new JButton("Cancel");
@@ -130,11 +134,11 @@ public class TestUssdClientParamForm extends JDialog {
                 getJFrame().dispose();
             }
         });
-        button_4.setBounds(404, 464, 117, 23);
+        button_4.setBounds(404, 510, 117, 23);
         panel.add(button_4);
 
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-        tabbedPane.setBounds(0, 0, 630, 419);
+        tabbedPane.setBounds(0, 0, 630, 465);
         panel.add(tabbedPane);
 
         JPanel panel_gen = new JPanel();
@@ -226,6 +230,34 @@ public class TestUssdClientParamForm extends JDialog {
         cbOneNotificationFor100Dialogs.setBounds(10, 349, 511, 23);
         panel_gen.add(cbOneNotificationFor100Dialogs);
 
+        cbAutoResponseOnUnstructuredSSRequests = new JCheckBox("Auto response to incoming UnstructuredSS requests");
+        cbAutoResponseOnUnstructuredSSRequests.setBounds(10, 372, 511, 23);
+        cbAutoResponseOnUnstructuredSSRequests.addItemListener(new ItemListener(){
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(e.getStateChange() == ItemEvent.SELECTED){
+                    tbResponseString.setEnabled(true);
+                    //tbResponseString.setText("Please enter response string");
+                }
+                else if(e.getStateChange() == ItemEvent.DESELECTED){
+                    tbResponseString.setEnabled(false);
+                }
+                validate();
+                repaint();
+            }
+        });
+        panel_gen.add(cbAutoResponseOnUnstructuredSSRequests);
+
+        JLabel lblResponseString = new JLabel("Response string");
+        lblResponseString.setBounds(10, 395, 324, 14);
+        panel_gen.add(lblResponseString);
+
+        tbResponseString = new JTextField();
+        tbResponseString.setBounds(10, 418, 511, 20);
+        tbResponseString.setColumns(10);
+        tbResponseString.setEnabled(false);
+        panel_gen.add(tbResponseString);
+
         JPanel panel_sri = new JPanel();
         tabbedPane.addTab("SRI response", null, panel_sri, null);
         panel_sri.setLayout(null);
@@ -278,12 +310,14 @@ public class TestUssdClientParamForm extends JDialog {
 
         tbMsisdnAddress.setText(this.ussdClient.getMsisdnAddress());
         tbAutoRequestString.setText(this.ussdClient.getAutoRequestString());
+        tbResponseString.setText(this.ussdClient.getAutoResponseString());
 
         tbDataCodingScheme.setText(((Integer) this.ussdClient.getDataCodingScheme()).toString());
         tbAlertingPattern.setText(((Integer) this.ussdClient.getAlertingPattern()).toString());
         tbMaxConcurrentDialogs.setText(((Integer) this.ussdClient.getMaxConcurrentDialogs()).toString());
 
         cbOneNotificationFor100Dialogs.setSelected(this.ussdClient.isOneNotificationFor100Dialogs());
+        cbAutoResponseOnUnstructuredSSRequests.setSelected(this.ussdClient.isAutoResponseOnUnstructuredSSRequests());
 
         tbSRIResponseImsi.setText(this.ussdClient.getSRIResponseImsi());
         tbSRIResponseVlr.setText(this.ussdClient.getSRIResponseVlr());
@@ -299,12 +333,14 @@ public class TestUssdClientParamForm extends JDialog {
 
         tbMsisdnAddress.setText("");
         tbAutoRequestString.setText("");
+        tbResponseString.setText("");
         tbMaxConcurrentDialogs.setText("10");
 
         tbDataCodingScheme.setText("15");
         tbAlertingPattern.setText("-1");
 
         cbOneNotificationFor100Dialogs.setSelected(false);
+        cbAutoResponseOnUnstructuredSSRequests.setSelected(false);
 
         tbSRIResponseImsi.setText("");
         tbSRIResponseVlr.setText("");
@@ -344,12 +380,14 @@ public class TestUssdClientParamForm extends JDialog {
         this.ussdClient.setMsisdnAddress(tbMsisdnAddress.getText());
         this.ussdClient.setUssdClientAction((UssdClientAction) cbUssdClientAction.getSelectedItem());
         this.ussdClient.setAutoRequestString(tbAutoRequestString.getText());
+        this.ussdClient.setAutoResponseString(tbResponseString.getText());
 
         this.ussdClient.setDataCodingScheme(dataCodingScheme);
         this.ussdClient.setAlertingPattern(alertingPattern);
         this.ussdClient.setMaxConcurrentDialogs(maxConcurrentDialogs);
 
         this.ussdClient.setOneNotificationFor100Dialogs(cbOneNotificationFor100Dialogs.isSelected());
+        this.ussdClient.setAutoResponseOnUnstructuredSSRequests(cbAutoResponseOnUnstructuredSSRequests.isSelected());
 
         this.ussdClient.setSRIResponseImsi(tbSRIResponseImsi.getText());
         this.ussdClient.setSRIResponseVlr(tbSRIResponseVlr.getText());

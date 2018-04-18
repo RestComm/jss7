@@ -180,6 +180,10 @@ public class TestUssdClientForm extends TestingForm {
             btSendUnstructuredresponse.setEnabled(false);
             btCloseCurrentDialog.setEnabled(false);
         }
+        if(ussdClient.isAutoResponseOnUnstructuredSSRequests()
+                || ussdClient.getUssdClientAction().intValue() == UssdClientAction.VAL_AUTO_SendProcessUnstructuredSSRequest) {
+            btSendUssdBusyError.setEnabled(false);
+        }
     }
 
     private void sendProcessUnstructuredRequest() {
