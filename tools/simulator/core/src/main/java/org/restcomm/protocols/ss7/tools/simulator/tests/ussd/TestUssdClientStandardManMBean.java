@@ -87,7 +87,10 @@ public class TestUssdClientStandardManMBean extends StandardMBean {
                 new MBeanAttributeInfo("SRIReaction_Value", String.class.getName(), "SRI response type", true, false, false),
                 new MBeanAttributeInfo("Return20PersDeliveryErrors", boolean.class.getName(), "Return 20% delivery errors for SRI or MtForwardSM Requests",
                         true, true, true),
-
+                new MBeanAttributeInfo("AutoResponseOnUnstructuredSSRequests", boolean.class.getName(),
+                        "Auto response to incoming Unstructured SS requests", true, true, true),
+                new MBeanAttributeInfo("AutoResponseString", String.class.getName(),
+                        "Value of auto ProcessSsUnstructured request", true, true, false),
         };
 
         MBeanParameterInfo[] signString = new MBeanParameterInfo[] { new MBeanParameterInfo("val", String.class.getName(),

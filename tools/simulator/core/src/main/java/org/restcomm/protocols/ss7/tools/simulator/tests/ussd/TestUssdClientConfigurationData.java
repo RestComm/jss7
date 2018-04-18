@@ -218,8 +218,10 @@ public class TestUssdClientConfigurationData {
             clt.alertingPattern = xml.getAttribute(ALERTING_PATTERN).toInt();
             clt.maxConcurrentDialogs = xml.getAttribute(MAX_CONCURENT_DIALOGS).toInt();
             clt.oneNotificationFor100Dialogs = xml.getAttribute(ONE_NOTIFICATION_FOR_100_DIALOGS).toBoolean();
-            clt.autoResponseOnUnstructuredSSRequests = xml.getAttribute(AUTO_RESPONSE_ON_UNSTRUCTURED_SS_REQUESTS).toBoolean();
-            CharArray chArr = xml.getAttribute(RETURN_20_PERS_DELIVERY_ERRORS);
+            CharArray chArr = xml.getAttribute(AUTO_RESPONSE_ON_UNSTRUCTURED_SS_REQUESTS);
+            if (chArr != null)
+                clt.autoResponseOnUnstructuredSSRequests = chArr.toBoolean();
+            chArr = xml.getAttribute(RETURN_20_PERS_DELIVERY_ERRORS);
             if (chArr != null)
                 clt.return20PersDeliveryErrors = chArr.toBoolean();
 
