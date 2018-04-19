@@ -25,7 +25,12 @@ package org.restcomm.protocols.ss7.map.primitives;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -112,6 +117,33 @@ public class GSNAddressTest {
         encodedData = asnOS.toByteArray();
         rawData = getEncodedData2();
         assertTrue(Arrays.equals(rawData, encodedData));
+
+    }
+
+    @Test(groups = { "functional.xml.serialize", "primitives" })
+    public void testXMLSerialize() throws Exception {
+
+        GSNAddressImpl original = new GSNAddressImpl(GSNAddressAddressType.IPv4, getData());
+
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "gsnAddress", GSNAddressImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        GSNAddressImpl copy = reader.read("gsnAddress", GSNAddressImpl.class);
+
+        assertEquals(copy.getGSNAddressData(), original.getGSNAddressData());
+        assertEquals(copy.getGSNAddressAddressType(), original.getGSNAddressAddressType());
 
     }
 

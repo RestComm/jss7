@@ -27,8 +27,13 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -133,6 +138,90 @@ public class PSSubscriberStateTest {
         encodedData = asnOS.toByteArray();
         rawData = getEncodedDataNotReachableReason();
         assertTrue(Arrays.equals(rawData, encodedData));
+    }
+
+    @Test(groups = { "functional.xml.serialize", "subscriberInformation" })
+    public void testXMLSerialize() throws Exception {
+
+        PSSubscriberStateImpl original = new PSSubscriberStateImpl(PSSubscriberStateChoice.psDetached, null, null);
+
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "psSubscriberState", PSSubscriberStateImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        PSSubscriberStateImpl copy = reader.read("psSubscriberState", PSSubscriberStateImpl.class);
+
+        assertEquals(copy.getChoice(), original.getChoice());
+        assertNull(copy.getPDPContextInfoList());
+        assertNull(copy.getNetDetNotReachable());
+
+
+        original = new PSSubscriberStateImpl(PSSubscriberStateChoice.netDetNotReachable, NotReachableReason.imsiDetached, null);
+
+        // Writes the area to a file.
+        baos = new ByteArrayOutputStream();
+        writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "psSubscriberState", PSSubscriberStateImpl.class);
+        writer.close();
+
+        rawData = baos.toByteArray();
+        serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        bais = new ByteArrayInputStream(rawData);
+        reader = XMLObjectReader.newInstance(bais);
+        copy = reader.read("psSubscriberState", PSSubscriberStateImpl.class);
+
+        assertEquals(copy.getChoice(), original.getChoice());
+        assertNull(copy.getPDPContextInfoList());
+        assertEquals(copy.getNetDetNotReachable(), original.getNetDetNotReachable());
+
+
+        ArrayList<PDPContextInfo> lst = new ArrayList<PDPContextInfo>();
+        PDPContextInfoImpl pdpCI = new PDPContextInfoImpl(10, true, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        lst.add(pdpCI);
+        PDPContextInfoImpl pdpCI2 = new PDPContextInfoImpl(11, false, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        lst.add(pdpCI2);
+        original = new PSSubscriberStateImpl(PSSubscriberStateChoice.psPDPActiveNotReachableForPaging, null, lst);
+
+        // Writes the area to a file.
+        baos = new ByteArrayOutputStream();
+        writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "psSubscriberState", PSSubscriberStateImpl.class);
+        writer.close();
+
+        rawData = baos.toByteArray();
+        serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        bais = new ByteArrayInputStream(rawData);
+        reader = XMLObjectReader.newInstance(bais);
+        copy = reader.read("psSubscriberState", PSSubscriberStateImpl.class);
+
+        assertEquals(copy.getChoice(), original.getChoice());
+        assertNull(copy.getNetDetNotReachable());
+        assertEquals(copy.getPDPContextInfoList().size(), original.getPDPContextInfoList().size());
+        assertEquals(copy.getPDPContextInfoList().get(0).getPdpContextIdentifier(), original.getPDPContextInfoList().get(0).getPdpContextIdentifier());
+        assertEquals(copy.getPDPContextInfoList().get(1).getPdpContextIdentifier(), original.getPDPContextInfoList().get(1).getPdpContextIdentifier());
     }
 
 }

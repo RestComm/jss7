@@ -25,8 +25,6 @@ package org.restcomm.protocols.ss7.map.service.mobility.subscriberManagement;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
-import javax.xml.bind.DatatypeConverter;
-
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
@@ -63,6 +61,10 @@ public class APNImpl extends OctetStringBase implements APN {
         if (apn.length() == 0)
             throw new MAPException("apn paramater must not have zero length");
 
+        setApnString(apn);
+    }
+
+    private void setApnString(String apn) throws MAPException {
         String[] ss = apn.split("\\.");
         int tLen = ss.length;
         for (String s : ss) {
@@ -147,15 +149,21 @@ public class APNImpl extends OctetStringBase implements APN {
         @Override
         public void read(javolution.xml.XMLFormat.InputElement xml, APNImpl apn) throws XMLStreamException {
             String s = xml.getAttribute(DATA, DEFAULT_VALUE);
-            if (s != null) {
-                apn.data = DatatypeConverter.parseHexBinary(s);
+            if (s != null && s.length() > 0) {
+                try {
+                    apn.setApnString(s);
+                } catch (MAPException e) {
+                }
             }
         }
 
         @Override
         public void write(APNImpl apn, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
             if (apn.data != null) {
-                xml.setAttribute(DATA, DatatypeConverter.printHexBinary(apn.data));
+                try {
+                    xml.setAttribute(DATA, apn.getApn());
+                } catch (Exception e) {
+                }
             }
         }
     };

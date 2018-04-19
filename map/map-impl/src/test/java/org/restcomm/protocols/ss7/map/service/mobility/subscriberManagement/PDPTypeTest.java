@@ -24,6 +24,12 @@ package org.restcomm.protocols.ss7.map.service.mobility.subscriberManagement;
 
 import static org.testng.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
+
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
@@ -112,6 +118,31 @@ public class PDPTypeTest {
         prim.encodeAll(asn);
 
         assertEquals(asn.toByteArray(), this.getData3());
+    }
+
+    @Test(groups = { "functional.xml.serialize", "mobility.subscriberManagement" })
+    public void testXMLSerialize() throws Exception {
+
+        PDPTypeImpl original = new PDPTypeImpl(PDPTypeValue.IPv4);
+
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "pdpType", PDPTypeImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        PDPTypeImpl copy = reader.read("pdpType", PDPTypeImpl.class);
+
+        assertEquals(copy.getPDPTypeValue(), original.getPDPTypeValue());
     }
 
 }

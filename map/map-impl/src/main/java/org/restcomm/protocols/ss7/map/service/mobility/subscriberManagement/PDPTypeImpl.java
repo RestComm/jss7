@@ -38,7 +38,7 @@ import org.restcomm.protocols.ss7.map.primitives.OctetStringBase;
  */
 public class PDPTypeImpl extends OctetStringBase implements PDPType {
 
-    private static final String DATA = "data";
+    private static final String PDP_TYPE_VALUE = "pdpTypeValue";
 
     private static final String DEFAULT_VALUE = null;
 
@@ -126,16 +126,16 @@ public class PDPTypeImpl extends OctetStringBase implements PDPType {
 
         @Override
         public void read(javolution.xml.XMLFormat.InputElement xml, PDPTypeImpl pdpType) throws XMLStreamException {
-            String s = xml.getAttribute(DATA, DEFAULT_VALUE);
+            String s = xml.getAttribute(PDP_TYPE_VALUE, DEFAULT_VALUE);
             if (s != null) {
-                pdpType.data = DatatypeConverter.parseHexBinary(s);
+                pdpType.setPDPTypeValue(Enum.valueOf(PDPTypeValue.class, s));
             }
         }
 
         @Override
         public void write(PDPTypeImpl pdpType, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
-            if (pdpType.data != null) {
-                xml.setAttribute(DATA, DatatypeConverter.printHexBinary(pdpType.data));
+            if (pdpType.getPDPTypeValue() != null) {
+                xml.setAttribute(PDP_TYPE_VALUE, pdpType.getPDPTypeValue().toString());
             }
         }
     };

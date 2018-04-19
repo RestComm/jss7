@@ -26,7 +26,12 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+
+import javolution.xml.XMLObjectReader;
+import javolution.xml.XMLObjectWriter;
 
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
@@ -34,6 +39,7 @@ import org.mobicents.protocols.asn.Tag;
 import org.restcomm.protocols.ss7.map.api.primitives.AddressNature;
 import org.restcomm.protocols.ss7.map.api.primitives.CellGlobalIdOrServiceAreaIdFixedLength;
 import org.restcomm.protocols.ss7.map.api.primitives.NumberingPlan;
+import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.TypeOfShape;
 import org.restcomm.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdFixedLengthImpl;
 import org.restcomm.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
 import org.restcomm.protocols.ss7.map.primitives.ISDNAddressStringImpl;
@@ -194,6 +200,60 @@ public class LocationInformationGPRSTest {
         rawData = getEncodedData_3();
 
         assertTrue(Arrays.equals(rawData, encodedData));
+    }
+
+    @Test(groups = { "functional.xml.serialize", "subscriberInformation" })
+    public void testXMLSerialize() throws Exception {
+        LAIFixedLengthImpl lai = new LAIFixedLengthImpl(250, 1, 4444);
+        CellGlobalIdOrServiceAreaIdOrLAIImpl cgi = new CellGlobalIdOrServiceAreaIdOrLAIImpl(lai);
+        RAIdentityImpl ra = new RAIdentityImpl(this.getEncodedDataRAIdentity());
+        GeographicalInformationImpl ggi = new GeographicalInformationImpl(TypeOfShape.EllipsoidPointWithUncertaintyCircle, 12.2, -13.3, 4);
+        ISDNAddressStringImpl sgsn = new ISDNAddressStringImpl(AddressNature.international_number, NumberingPlan.ISDN, "654321");
+        LSAIdentityImpl lsa = new LSAIdentityImpl(this.getEncodedDataLSAIdentity());
+        GeodeticInformationImpl gdi = new GeodeticInformationImpl(0, TypeOfShape.EllipsoidPointWithUncertaintyCircle, -11,
+                12.3, 5, 6);
+        // int screeningAndPresentationIndicators, TypeOfShape typeOfShape, double latitude, double longitude, double uncertainty, int confidence
+
+        LocationInformationGPRSImpl original = new LocationInformationGPRSImpl(cgi, ra, ggi, sgsn, lsa, null, true, gdi, true, 13);
+
+        // Writes the area to a file.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLObjectWriter writer = XMLObjectWriter.newInstance(baos);
+        // writer.setBinding(binding); // Optional.
+        writer.setIndentation("\t"); // Optional (use tabulation for indentation).
+        writer.write(original, "locationInformationGPRS", LocationInformationGPRSImpl.class);
+        writer.close();
+
+        byte[] rawData = baos.toByteArray();
+        String serializedEvent = new String(rawData);
+
+        System.out.println(serializedEvent);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawData);
+        XMLObjectReader reader = XMLObjectReader.newInstance(bais);
+        LocationInformationGPRSImpl copy = reader.read("locationInformationGPRS", LocationInformationGPRSImpl.class);
+
+        assertEquals(copy.getCellGlobalIdOrServiceAreaIdOrLAI().getLAIFixedLength().getLac(), original.getCellGlobalIdOrServiceAreaIdOrLAI().getLAIFixedLength().getLac());
+        assertEquals(copy.getCellGlobalIdOrServiceAreaIdOrLAI().getLAIFixedLength().getMCC(), original.getCellGlobalIdOrServiceAreaIdOrLAI().getLAIFixedLength().getMCC());
+
+        assertEquals(copy.getRouteingAreaIdentity().getData(), original.getRouteingAreaIdentity().getData());
+
+        assertEquals(copy.getGeographicalInformation().getLatitude(), original.getGeographicalInformation().getLatitude());
+        assertEquals(copy.getGeographicalInformation().getLongitude(), original.getGeographicalInformation().getLongitude());
+        assertEquals(copy.getGeographicalInformation().getUncertainty(), original.getGeographicalInformation().getUncertainty());
+        assertEquals(copy.getGeographicalInformation().getTypeOfShape(), original.getGeographicalInformation().getTypeOfShape());
+
+        assertEquals(copy.getSGSNNumber().getAddress(), original.getSGSNNumber().getAddress());
+
+        assertEquals(copy.getLSAIdentity().getData(), original.getLSAIdentity().getData());
+
+        assertEquals(copy.isSaiPresent(), original.isSaiPresent());
+
+        assertEquals(copy.getGeodeticInformation().getLatitude(), original.getGeodeticInformation().getLatitude());
+
+        assertEquals(copy.isCurrentLocationRetrieved(), original.isCurrentLocationRetrieved());
+        assertEquals(copy.getAgeOfLocationInformation(), original.getAgeOfLocationInformation());
+        
     }
 
 }

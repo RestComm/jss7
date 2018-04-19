@@ -22,14 +22,24 @@
 
 package org.restcomm.protocols.ss7.map.service.mobility.subscriberInformation;
 
+import javax.xml.bind.DatatypeConverter;
+
+import javolution.xml.XMLFormat;
+import javolution.xml.stream.XMLStreamException;
+
 import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.RAIdentity;
 import org.restcomm.protocols.ss7.map.primitives.OctetStringBase;
 
 /**
  * @author amit bhayani
+ * @author sergey vetyutnev
  *
  */
 public class RAIdentityImpl extends OctetStringBase implements RAIdentity {
+
+    private static final String DATA = "data";
+
+    private static final String DEFAULT_STRING_VALUE = null;
 
     public RAIdentityImpl() {
         super(6, 6, "RAIdentity");
@@ -42,4 +52,23 @@ public class RAIdentityImpl extends OctetStringBase implements RAIdentity {
     public byte[] getData() {
         return data;
     }
+
+    /**
+     * XML Serialization/Deserialization
+     */
+    protected static final XMLFormat<RAIdentityImpl> IMEI_XML = new XMLFormat<RAIdentityImpl>(RAIdentityImpl.class) {
+
+        @Override
+        public void read(javolution.xml.XMLFormat.InputElement xml, RAIdentityImpl raIdentity) throws XMLStreamException {
+            String s = xml.getAttribute(DATA, DEFAULT_STRING_VALUE);
+            if (s != null) {
+                raIdentity.data = DatatypeConverter.parseHexBinary(s);
+            }
+        }
+
+        @Override
+        public void write(RAIdentityImpl raIdentity, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
+            xml.setAttribute(DATA, DatatypeConverter.printHexBinary(raIdentity.data));
+        }
+    };
 }

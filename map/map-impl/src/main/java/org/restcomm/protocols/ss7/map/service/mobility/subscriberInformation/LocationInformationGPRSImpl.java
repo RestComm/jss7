@@ -505,64 +505,60 @@ public class LocationInformationGPRSImpl extends SequenceBase implements Locatio
         @Override
         public void read(javolution.xml.XMLFormat.InputElement xml, LocationInformationGPRSImpl locationInformation)
                 throws XMLStreamException {
-            locationInformation.ageOfLocationInformation = xml.get(AGE_OF_LOCATION_INFORMATION, Integer.class);
-            locationInformation.geographicalInformation = xml.get(GEOGRAPHICAL_INFORMATION, GeographicalInformationImpl.class);
-            locationInformation.routeingAreaIdentity = xml.get(ROUTEING_AREA_ID, RAIdentityImpl.class);
-            locationInformation.sgsnNumber = xml.get(SGSN_NUMBER, ISDNAddressStringImpl.class);
             locationInformation.cellGlobalIdOrServiceAreaIdOrLAI = xml.get(CELL_GLOBAL_ID_OR_SERVICE_AREA_ID_OR_LAI,
                     CellGlobalIdOrServiceAreaIdOrLAIImpl.class);
-
-            locationInformation.extensionContainer = xml.get(EXTENSION_CONTAINER, MAPExtensionContainerImpl.class);
-            locationInformation.geodeticInformation = xml.get(GEODETIC_INFORMATION, GeodeticInformationImpl.class);
+            locationInformation.routeingAreaIdentity = xml.get(ROUTEING_AREA_ID, RAIdentityImpl.class);
+            locationInformation.geographicalInformation = xml.get(GEOGRAPHICAL_INFORMATION, GeographicalInformationImpl.class);
+            locationInformation.sgsnNumber = xml.get(SGSN_NUMBER, ISDNAddressStringImpl.class);
             locationInformation.selectedLSAIdentity = xml.get(SELECTED_LSA_ID, LSAIdentityImpl.class);
-
-            Boolean bval = xml.get(CURRENT_LOCATION_RETRIEVED, Boolean.class);
-            if (bval != null)
-                locationInformation.currentLocationRetrieved = bval;
-            bval = xml.get(SAI_PRESENT, Boolean.class);
+            locationInformation.extensionContainer = xml.get(EXTENSION_CONTAINER, MAPExtensionContainerImpl.class);
+            Boolean bval = xml.get(SAI_PRESENT, Boolean.class);
             if (bval != null)
                 locationInformation.saiPresent = bval;
+            locationInformation.geodeticInformation = xml.get(GEODETIC_INFORMATION, GeodeticInformationImpl.class);
+            bval = xml.get(CURRENT_LOCATION_RETRIEVED, Boolean.class);
+            if (bval != null)
+                locationInformation.currentLocationRetrieved = bval;
+            locationInformation.ageOfLocationInformation = xml.get(AGE_OF_LOCATION_INFORMATION, Integer.class);
         }
 
         @Override
         public void write(LocationInformationGPRSImpl locationInformation, javolution.xml.XMLFormat.OutputElement xml)
                 throws XMLStreamException {
-            if (locationInformation.ageOfLocationInformation != null) {
-                xml.add((Integer) locationInformation.ageOfLocationInformation, AGE_OF_LOCATION_INFORMATION, Integer.class);
+            if (locationInformation.cellGlobalIdOrServiceAreaIdOrLAI != null) {
+                xml.add((CellGlobalIdOrServiceAreaIdOrLAIImpl) locationInformation.cellGlobalIdOrServiceAreaIdOrLAI,
+                        CELL_GLOBAL_ID_OR_SERVICE_AREA_ID_OR_LAI, CellGlobalIdOrServiceAreaIdOrLAIImpl.class);
+            }
+            if (locationInformation.routeingAreaIdentity != null) {
+                xml.add((RAIdentityImpl) locationInformation.routeingAreaIdentity, ROUTEING_AREA_ID, RAIdentityImpl.class);
             }
             if (locationInformation.geographicalInformation != null) {
                 xml.add((GeographicalInformationImpl) locationInformation.geographicalInformation, GEOGRAPHICAL_INFORMATION,
                         GeographicalInformationImpl.class);
             }
-            if (locationInformation.routeingAreaIdentity != null) {
-                xml.add((RAIdentityImpl) locationInformation.routeingAreaIdentity, ROUTEING_AREA_ID, RAIdentityImpl.class);
-            }
             if (locationInformation.sgsnNumber != null) {
                 xml.add((ISDNAddressStringImpl) locationInformation.sgsnNumber, SGSN_NUMBER,
                         ISDNAddressStringImpl.class);
             }
-            if (locationInformation.cellGlobalIdOrServiceAreaIdOrLAI != null) {
-                xml.add((CellGlobalIdOrServiceAreaIdOrLAIImpl) locationInformation.cellGlobalIdOrServiceAreaIdOrLAI,
-                        CELL_GLOBAL_ID_OR_SERVICE_AREA_ID_OR_LAI, CellGlobalIdOrServiceAreaIdOrLAIImpl.class);
+            if (locationInformation.selectedLSAIdentity != null) {
+                xml.add((LSAIdentityImpl) locationInformation.selectedLSAIdentity, SELECTED_LSA_ID, LSAIdentityImpl.class);
             }
-
             if (locationInformation.extensionContainer != null) {
                 xml.add((MAPExtensionContainerImpl) locationInformation.extensionContainer, EXTENSION_CONTAINER,
                         MAPExtensionContainerImpl.class);
             }
-            if (locationInformation.selectedLSAIdentity != null) {
-                xml.add((LSAIdentityImpl) locationInformation.selectedLSAIdentity, SELECTED_LSA_ID, LSAIdentityImpl.class);
+            if (locationInformation.saiPresent) {
+                xml.add((Boolean) locationInformation.saiPresent, SAI_PRESENT, Boolean.class);
             }
             if (locationInformation.geodeticInformation != null) {
                 xml.add((GeodeticInformationImpl) locationInformation.geodeticInformation, GEODETIC_INFORMATION,
                         GeodeticInformationImpl.class);
             }
-
             if (locationInformation.currentLocationRetrieved) {
                 xml.add((Boolean) locationInformation.currentLocationRetrieved, CURRENT_LOCATION_RETRIEVED, Boolean.class);
             }
-            if (locationInformation.saiPresent) {
-                xml.add((Boolean) locationInformation.saiPresent, SAI_PRESENT, Boolean.class);
+            if (locationInformation.ageOfLocationInformation != null) {
+                xml.add((Integer) locationInformation.ageOfLocationInformation, AGE_OF_LOCATION_INFORMATION, Integer.class);
             }
         }
     };

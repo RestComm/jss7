@@ -38,6 +38,7 @@ import org.restcomm.protocols.ss7.map.api.primitives.GSNAddressAddressType;
  */
 public class GSNAddressImpl extends OctetStringBase implements GSNAddress {
 
+    private static final String GSN_ADDRESS_ADDRESS_TYPE = "gsnAddressAddressType";
     private static final String DATA = "data";
 
     private static final String DEFAULT_VALUE = null;
@@ -58,6 +59,10 @@ public class GSNAddressImpl extends OctetStringBase implements GSNAddress {
         if (addressData == null)
             throw new MAPException("addressData argument must not be null");
 
+        fillData(addressType, addressData);
+    }
+
+    private void fillData(GSNAddressAddressType addressType, byte[] addressData) throws MAPException {
         switch (addressType) {
         case IPv4:
             if (addressData.length != 4)
@@ -159,16 +164,23 @@ public class GSNAddressImpl extends OctetStringBase implements GSNAddress {
 
         @Override
         public void read(javolution.xml.XMLFormat.InputElement xml, GSNAddressImpl gsnAddress) throws XMLStreamException {
+            String s0 = xml.getAttribute(GSN_ADDRESS_ADDRESS_TYPE, DEFAULT_VALUE);
             String s = xml.getAttribute(DATA, DEFAULT_VALUE);
-            if (s != null) {
-                gsnAddress.data = DatatypeConverter.parseHexBinary(s);
+            if (s0 != null && s != null) {
+                try {
+                    GSNAddressAddressType addressType = Enum.valueOf(GSNAddressAddressType.class, s0);
+                    byte[] addressData = DatatypeConverter.parseHexBinary(s);
+                    gsnAddress.fillData(addressType, addressData);
+                } catch (Exception e) {
+                }
             }
         }
 
         @Override
         public void write(GSNAddressImpl gsnAddress, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
             if (gsnAddress.data != null) {
-                xml.setAttribute(DATA, DatatypeConverter.printHexBinary(gsnAddress.data));
+                xml.setAttribute(GSN_ADDRESS_ADDRESS_TYPE, gsnAddress.getGSNAddressAddressType().toString());
+                xml.setAttribute(DATA, DatatypeConverter.printHexBinary(gsnAddress.getGSNAddressData()));
             }
         }
     };

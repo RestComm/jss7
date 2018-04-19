@@ -130,6 +130,9 @@ public class PDPContextInfoImpl implements PDPContextInfo, MAPAsnPrimitive {
     private static final String EXT_PDP_TYPE = "extPdpType";
     private static final String EXT_PDP_ADDRESS = "extPdpAddress";
 
+    private static final Integer DEFAULT_INTEGER_VALUE = 0;
+    private static final Boolean DEFAULT_BOOL_VALUE = false;
+
     private int pdpContextIdentifier;
     private boolean pdpContextActive;
     private PDPType pdpType;
@@ -929,8 +932,11 @@ public class PDPContextInfoImpl implements PDPContextInfo, MAPAsnPrimitive {
         public void read(javolution.xml.XMLFormat.InputElement xml, PDPContextInfoImpl pdpContextInfo)
                 throws XMLStreamException {
 
-            pdpContextInfo.pdpContextIdentifier = xml.get(PDP_CONTEXT_IDENTIFIER, Integer.class);
-            pdpContextInfo.pdpContextActive = xml.get(PDP_CONTEXT_ACTIVE, Boolean.class);
+            pdpContextInfo.pdpContextIdentifier = xml.getAttribute(PDP_CONTEXT_IDENTIFIER, DEFAULT_INTEGER_VALUE);
+            Boolean bv = xml.getAttribute(PDP_CONTEXT_ACTIVE, DEFAULT_BOOL_VALUE);
+            if (bv != null)
+                pdpContextInfo.pdpContextActive = bv;
+
             pdpContextInfo.pdpType = xml.get(PDP_TYPE, PDPTypeImpl.class);
             pdpContextInfo.pdpAddress = xml.get(PDP_ADDRESS, PDPAddressImpl.class);
             pdpContextInfo.apnSubscribed = xml.get(APN_SUBSCRIBED, APNImpl.class);
@@ -963,61 +969,70 @@ public class PDPContextInfoImpl implements PDPContextInfo, MAPAsnPrimitive {
         @Override
         public void write(PDPContextInfoImpl pdpContextInfo, javolution.xml.XMLFormat.OutputElement xml)
                 throws XMLStreamException {
-              xml.add((Integer) pdpContextInfo.getPdpContextIdentifier(), PDP_CONTEXT_IDENTIFIER, Integer.class);
-              xml.add((Boolean) pdpContextInfo.getPdpContextActive(), PDP_CONTEXT_ACTIVE, Boolean.class);
-              if (pdpContextInfo.getPdpType() != null)
-                  xml.add((PDPTypeImpl) pdpContextInfo.getPdpType(), PDP_TYPE, PDPTypeImpl.class);
-              if (pdpContextInfo.getPdpAddress() != null)
-                  xml.add((PDPAddressImpl) pdpContextInfo.getPdpAddress(), PDP_ADDRESS, PDPAddressImpl.class);
-              if (pdpContextInfo.getApnSubscribed() != null)
-                  xml.add((APNImpl) pdpContextInfo.getApnSubscribed(), APN_SUBSCRIBED, APNImpl.class);
-              if (pdpContextInfo.getApnInUse() != null)
-                  xml.add((APNImpl) pdpContextInfo.getApnInUse(), APN_IN_USE, APNImpl.class);
-              xml.add((Integer) pdpContextInfo.getNsapi(), NSAPI, Integer.class);
-              if (pdpContextInfo.getTransactionId() != null)
-                  xml.add((TransactionIdImpl) pdpContextInfo.getTransactionId(), TRANSACTION_ID, TransactionIdImpl.class);
-              if (pdpContextInfo.getTeidForGnAndGp() != null)
-                  xml.add((TEIDImpl) pdpContextInfo.getTeidForGnAndGp(), TEID_FOR_GN_AND_GP, TEIDImpl.class);
-              if (pdpContextInfo.getTeidForIu() != null)
-                  xml.add((TEIDImpl) pdpContextInfo.getTeidForIu(), TEID_FOR_IU, TEIDImpl.class);
-              if (pdpContextInfo.getGgsnAddress() != null)
-                  xml.add((GSNAddressImpl) pdpContextInfo.getGgsnAddress(), GGSN_ADDRESS, GSNAddressImpl.class);
-              if (pdpContextInfo.getQosSubscribed() != null)
-                  xml.add((ExtQoSSubscribedImpl) pdpContextInfo.getQosSubscribed(), QOS_SUBSCRIBED, ExtQoSSubscribedImpl.class);
-              if (pdpContextInfo.getQosRequested() != null)
-                  xml.add((ExtQoSSubscribedImpl) pdpContextInfo.getQosRequested(), QOS_REQUESTED, ExtQoSSubscribedImpl.class);
-              if (pdpContextInfo.getQosNegotiated() != null)
-                  xml.add((ExtQoSSubscribedImpl) pdpContextInfo.getQosNegotiated(), QOS_NEGOTIATED, ExtQoSSubscribedImpl.class);
-              if (pdpContextInfo.getChargingId() != null)
-                  xml.add((GPRSChargingIDImpl) pdpContextInfo.getChargingId(), CHARGING_ID, GPRSChargingIDImpl.class);
-              if (pdpContextInfo.getChargingCharacteristics() != null)
-                  xml.add((ChargingCharacteristicsImpl) pdpContextInfo.getChargingCharacteristics(), CHARGING_CHARACTERISTICS, ChargingCharacteristicsImpl.class);
-              if (pdpContextInfo.getRncAddress() != null)
-                  xml.add((GSNAddressImpl) pdpContextInfo.getRncAddress(), RNC_ADDRESS, GSNAddressImpl.class);
-              if (pdpContextInfo.getExtensionContainer() != null)
-                  xml.add((MAPExtensionContainerImpl) pdpContextInfo.getExtensionContainer(), EXTENTSION_CONTAINER, MAPExtensionContainerImpl.class);
-              if (pdpContextInfo.getQos2Subscribed() != null)
-                  xml.add((Ext2QoSSubscribedImpl) pdpContextInfo.getQos2Subscribed(), QOS2_SUBSCRIBED, Ext2QoSSubscribedImpl.class);
-              if (pdpContextInfo.getQos2Requested() != null)
-                  xml.add((Ext2QoSSubscribedImpl) pdpContextInfo.getQos2Requested(), QOS2_REQUESTED, Ext2QoSSubscribedImpl.class);
-              if (pdpContextInfo.getQos2Negotiated() != null)
-                  xml.add((Ext2QoSSubscribedImpl) pdpContextInfo.getQos2Negotiated(), QOS2_NEGOTIATED, Ext2QoSSubscribedImpl.class);
-              if (pdpContextInfo.getQos3Subscribed() != null)
-                  xml.add((Ext3QoSSubscribedImpl) pdpContextInfo.getQos3Subscribed(), QOS3_SUBSCRIBED, Ext3QoSSubscribedImpl.class);
-              if (pdpContextInfo.getQos3Requested() != null)
-                  xml.add((Ext3QoSSubscribedImpl) pdpContextInfo.getQos3Requested(), QOS3_REQUESTED, Ext3QoSSubscribedImpl.class);
-              if (pdpContextInfo.getQos3Negotiated() != null)
-                  xml.add((Ext3QoSSubscribedImpl) pdpContextInfo.getQos3Negotiated(), QOS2_NEGOTIATED, Ext3QoSSubscribedImpl.class);
-              if (pdpContextInfo.getQos4Subscribed() != null)
-                  xml.add((Ext4QoSSubscribedImpl) pdpContextInfo.getQos4Subscribed(), QOS4_SUBSCRIBED, Ext4QoSSubscribedImpl.class);
-              if (pdpContextInfo.getQos4Requested() != null)
-                  xml.add((Ext4QoSSubscribedImpl) pdpContextInfo.getQos4Requested(), QOS4_REQUESTED, Ext4QoSSubscribedImpl.class);
-              if (pdpContextInfo.getQos4Negotiated() != null)
-                  xml.add((Ext4QoSSubscribedImpl) pdpContextInfo.getQos4Negotiated(), QOS4_NEGOTIATED, Ext4QoSSubscribedImpl.class);
-              if (pdpContextInfo.getExtPdpType() != null)
-                  xml.add((ExtPDPTypeImpl) pdpContextInfo.getExtPdpType(), EXT_PDP_TYPE, ExtPDPTypeImpl.class);
-              if (pdpContextInfo.getExtPdpAddress() != null)
-                  xml.add((PDPAddressImpl) pdpContextInfo.getExtPdpAddress(), EXT_PDP_ADDRESS, PDPAddressImpl.class);
+            xml.setAttribute(PDP_CONTEXT_IDENTIFIER, pdpContextInfo.getPdpContextIdentifier());
+            if (pdpContextInfo.getPdpContextActive())
+                xml.setAttribute(PDP_CONTEXT_ACTIVE, pdpContextInfo.getPdpContextActive());
+            if (pdpContextInfo.getPdpType() != null)
+                xml.add((PDPTypeImpl) pdpContextInfo.getPdpType(), PDP_TYPE, PDPTypeImpl.class);
+            if (pdpContextInfo.getPdpAddress() != null)
+                xml.add((PDPAddressImpl) pdpContextInfo.getPdpAddress(), PDP_ADDRESS, PDPAddressImpl.class);
+            if (pdpContextInfo.getApnSubscribed() != null)
+                xml.add((APNImpl) pdpContextInfo.getApnSubscribed(), APN_SUBSCRIBED, APNImpl.class);
+            if (pdpContextInfo.getApnInUse() != null)
+                xml.add((APNImpl) pdpContextInfo.getApnInUse(), APN_IN_USE, APNImpl.class);
+            xml.add((Integer) pdpContextInfo.getNsapi(), NSAPI, Integer.class);
+            if (pdpContextInfo.getTransactionId() != null)
+                xml.add((TransactionIdImpl) pdpContextInfo.getTransactionId(), TRANSACTION_ID, TransactionIdImpl.class);
+            if (pdpContextInfo.getTeidForGnAndGp() != null)
+                xml.add((TEIDImpl) pdpContextInfo.getTeidForGnAndGp(), TEID_FOR_GN_AND_GP, TEIDImpl.class);
+            if (pdpContextInfo.getTeidForIu() != null)
+                xml.add((TEIDImpl) pdpContextInfo.getTeidForIu(), TEID_FOR_IU, TEIDImpl.class);
+            if (pdpContextInfo.getGgsnAddress() != null)
+                xml.add((GSNAddressImpl) pdpContextInfo.getGgsnAddress(), GGSN_ADDRESS, GSNAddressImpl.class);
+            if (pdpContextInfo.getQosSubscribed() != null)
+                xml.add((ExtQoSSubscribedImpl) pdpContextInfo.getQosSubscribed(), QOS_SUBSCRIBED, ExtQoSSubscribedImpl.class);
+            if (pdpContextInfo.getQosRequested() != null)
+                xml.add((ExtQoSSubscribedImpl) pdpContextInfo.getQosRequested(), QOS_REQUESTED, ExtQoSSubscribedImpl.class);
+            if (pdpContextInfo.getQosNegotiated() != null)
+                xml.add((ExtQoSSubscribedImpl) pdpContextInfo.getQosNegotiated(), QOS_NEGOTIATED, ExtQoSSubscribedImpl.class);
+            if (pdpContextInfo.getChargingId() != null)
+                xml.add((GPRSChargingIDImpl) pdpContextInfo.getChargingId(), CHARGING_ID, GPRSChargingIDImpl.class);
+            if (pdpContextInfo.getChargingCharacteristics() != null)
+                xml.add((ChargingCharacteristicsImpl) pdpContextInfo.getChargingCharacteristics(), CHARGING_CHARACTERISTICS,
+                        ChargingCharacteristicsImpl.class);
+            if (pdpContextInfo.getRncAddress() != null)
+                xml.add((GSNAddressImpl) pdpContextInfo.getRncAddress(), RNC_ADDRESS, GSNAddressImpl.class);
+            if (pdpContextInfo.getExtensionContainer() != null)
+                xml.add((MAPExtensionContainerImpl) pdpContextInfo.getExtensionContainer(), EXTENTSION_CONTAINER,
+                        MAPExtensionContainerImpl.class);
+            if (pdpContextInfo.getQos2Subscribed() != null)
+                xml.add((Ext2QoSSubscribedImpl) pdpContextInfo.getQos2Subscribed(), QOS2_SUBSCRIBED,
+                        Ext2QoSSubscribedImpl.class);
+            if (pdpContextInfo.getQos2Requested() != null)
+                xml.add((Ext2QoSSubscribedImpl) pdpContextInfo.getQos2Requested(), QOS2_REQUESTED, Ext2QoSSubscribedImpl.class);
+            if (pdpContextInfo.getQos2Negotiated() != null)
+                xml.add((Ext2QoSSubscribedImpl) pdpContextInfo.getQos2Negotiated(), QOS2_NEGOTIATED,
+                        Ext2QoSSubscribedImpl.class);
+            if (pdpContextInfo.getQos3Subscribed() != null)
+                xml.add((Ext3QoSSubscribedImpl) pdpContextInfo.getQos3Subscribed(), QOS3_SUBSCRIBED,
+                        Ext3QoSSubscribedImpl.class);
+            if (pdpContextInfo.getQos3Requested() != null)
+                xml.add((Ext3QoSSubscribedImpl) pdpContextInfo.getQos3Requested(), QOS3_REQUESTED, Ext3QoSSubscribedImpl.class);
+            if (pdpContextInfo.getQos3Negotiated() != null)
+                xml.add((Ext3QoSSubscribedImpl) pdpContextInfo.getQos3Negotiated(), QOS2_NEGOTIATED,
+                        Ext3QoSSubscribedImpl.class);
+            if (pdpContextInfo.getQos4Subscribed() != null)
+                xml.add((Ext4QoSSubscribedImpl) pdpContextInfo.getQos4Subscribed(), QOS4_SUBSCRIBED,
+                        Ext4QoSSubscribedImpl.class);
+            if (pdpContextInfo.getQos4Requested() != null)
+                xml.add((Ext4QoSSubscribedImpl) pdpContextInfo.getQos4Requested(), QOS4_REQUESTED, Ext4QoSSubscribedImpl.class);
+            if (pdpContextInfo.getQos4Negotiated() != null)
+                xml.add((Ext4QoSSubscribedImpl) pdpContextInfo.getQos4Negotiated(), QOS4_NEGOTIATED,
+                        Ext4QoSSubscribedImpl.class);
+            if (pdpContextInfo.getExtPdpType() != null)
+                xml.add((ExtPDPTypeImpl) pdpContextInfo.getExtPdpType(), EXT_PDP_TYPE, ExtPDPTypeImpl.class);
+            if (pdpContextInfo.getExtPdpAddress() != null)
+                xml.add((PDPAddressImpl) pdpContextInfo.getExtPdpAddress(), EXT_PDP_ADDRESS, PDPAddressImpl.class);
         }
     };
 }
