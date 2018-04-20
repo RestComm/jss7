@@ -77,7 +77,7 @@ public class StatCounterTest {
         assertNull(res1);
         assertNull(res2);
 
-        sdc.clearDeadCampaignes(d2);
+        sdc.clearDeadCampaigns(d2);
         
         res1 = sdc.restartAndGet("counter1", "a1");
         res2 = sdc.restartAndGet("counter1", "a2");

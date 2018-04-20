@@ -1,8 +1,7 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012.
- * and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2011-2018, Telestax Inc and individual contributors
+ * by the @authors tag.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -22,19 +21,19 @@
 
 package org.restcomm.protocols.ss7.statistics.api;
 
-import javolution.util.FastMap;
-
 /**
- * @author <a href="mailto:serg.vetyutnev@gmail.com"> Sergey Vetyutnev </a>
- * @modified <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>
+ * @author <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>
  */
-public interface StatResult {
+public class DoubleValue {
 
-  long getLongValue();
+  private double value;
 
-  double getDoubleValue();
+  public double getDoubleValue() {
+    return value;
+  }
 
-  FastMap<String, LongValue> getStringLongValue();
+  public void updateDoubleValue(double val) {
+    this.value = val;
+  }
 
-  FastMap<String, DoubleValue> getStringDoubleValue();
 }

@@ -23,12 +23,11 @@
 package org.restcomm.protocols.ss7.statistics.api;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ * @author <a href="mailto:serg.vetyutnev@gmail.com"> Sergey Vetyutnev </a>
+ * @modified <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>
+ */
 public enum StatDataCollectorType {
 
-    MIN, MAX, StringLongMap;
+  MIN, MAX, AVERAGE, StringLongMap;
 
 }

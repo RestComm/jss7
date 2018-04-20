@@ -1,8 +1,7 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012.
- * and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2011-2018, Telestax Inc and individual contributors
+ * by the @authors tag.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -25,17 +24,17 @@ package org.restcomm.protocols.ss7.statistics;
 import org.restcomm.protocols.ss7.statistics.api.StatDataCollectorType;
 
 /**
- * @author <a href="mailto:serg.vetyutnev@gmail.com"> Sergey Vetyutnev </a>
+ * @author <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>
  */
-public class StatDataCollectorMax extends StatDataCollectorLongImpl {
+public class StatDataCollectorAverage extends StatDataCollectorDoubleImpl {
 
-  public StatDataCollectorMax(String name) {
+  public StatDataCollectorAverage(String name) {
     super(name);
   }
 
   @Override
   protected void reset() {
-    val = Long.MIN_VALUE;
+    val = Double.MIN_VALUE;
   }
 
   @Override
@@ -46,7 +45,7 @@ public class StatDataCollectorMax extends StatDataCollectorLongImpl {
 
   @Override
   public StatDataCollectorType getStatDataCollectorType() {
-    return StatDataCollectorType.MAX;
+    return StatDataCollectorType.AVERAGE;
   }
 
   @Override

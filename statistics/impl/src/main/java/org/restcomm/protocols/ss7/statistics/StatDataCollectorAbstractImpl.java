@@ -28,35 +28,36 @@ import org.restcomm.protocols.ss7.statistics.api.StatDataCollectorType;
 import org.restcomm.protocols.ss7.statistics.api.StatResult;
 
 /**
-*
-* @author sergey vetyutnev
-*
-*/
+ * @author <a href="mailto:serg.vetyutnev@gmail.com"> Sergey Vetyutnev </a>
+ * @modified <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>
+ */
 public abstract class StatDataCollectorAbstractImpl implements StatDataCollector {
 
-    private String campaignName;
-    protected Date sessionStartTime = new Date();
+  private String campaignName;
+  protected Date sessionStartTime = new Date();
 
-    public StatDataCollectorAbstractImpl(String campaignName) {
-        this.campaignName = campaignName;
-    }
+  public StatDataCollectorAbstractImpl(String campaignName) {
+    this.campaignName = campaignName;
+  }
 
-    public String getCampaignName() {
-        return campaignName;
-    }
+  public String getCampaignName() {
+    return campaignName;
+  }
 
-    public Date getSessionStartTime() {
-        return sessionStartTime;
-    }
+  public Date getSessionStartTime() {
+    return sessionStartTime;
+  }
 
-    public abstract StatResult restartAndGet();
+  public abstract StatResult restartAndGet();
 
-    protected abstract void reset();
+  protected abstract void reset();
 
-    public abstract void updateData(long newVal);
+  public abstract void updateData(long newVal);
 
-    public abstract void updateData(String newVal);
+  public abstract void updateData(String name, double data);
 
-    public abstract StatDataCollectorType getStatDataCollectorType();
+  public abstract void updateData(String newVal);
+
+  public abstract StatDataCollectorType getStatDataCollectorType();
 
 }

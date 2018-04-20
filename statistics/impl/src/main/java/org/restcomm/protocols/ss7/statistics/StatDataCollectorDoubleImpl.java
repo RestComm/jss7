@@ -1,8 +1,7 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012.
- * and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2011-2018, Telestax Inc and individual contributors
+ * by the @authors tag.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -31,34 +30,35 @@ import org.restcomm.protocols.ss7.statistics.api.LongValue;
 import org.restcomm.protocols.ss7.statistics.api.StatResult;
 
 /**
- * @author <a href="mailto:serg.vetyutnev@gmail.com"> Sergey Vetyutnev </a>
+ * @author <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>
  */
-public abstract class StatDataCollectorLongImpl extends StatDataCollectorAbstractImpl {
+public abstract class StatDataCollectorDoubleImpl extends StatDataCollectorAbstractImpl {
 
-  protected long val;
+  protected double val;
 
-  public StatDataCollectorLongImpl(String campaignName) {
+  public StatDataCollectorDoubleImpl(String campaignName) {
     super(campaignName);
   }
 
   public StatResult restartAndGet() {
-    StatResultLong res = new StatResultLong(val);
+    StatResultDouble res = new StatResultDouble(val);
     this.sessionStartTime = new Date();
     this.reset();
     return res;
   }
 
-  public class StatResultLong implements StatResult {
+  public class StatResultDouble implements StatResult {
 
-    private long val;
+    private double val;
 
-    public StatResultLong(long val) {
+    public StatResultDouble(double val) {
       this.val = val;
     }
 
     @Override
     public long getLongValue() {
-      return val;
+      long longVal = (long) val;
+      return longVal;
     }
 
     @Override
@@ -76,4 +76,5 @@ public abstract class StatDataCollectorLongImpl extends StatDataCollectorAbstrac
       return null;
     }
   }
+
 }
