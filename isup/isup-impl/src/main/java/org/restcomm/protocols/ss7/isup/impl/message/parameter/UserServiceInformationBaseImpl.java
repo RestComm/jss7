@@ -22,6 +22,8 @@
 
 package org.restcomm.protocols.ss7.isup.impl.message.parameter;
 
+import javax.xml.bind.DatatypeConverter;
+
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
@@ -67,6 +69,12 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
     private static final String MODEM_TYPE = "modemType";
     private static final String L3_PROTOCOL = "l3Protocol";
 
+    private static final String BYTE_5A_IS_PRESENT = "byte5aIsPresent";
+    private static final String BYTE_5B_IS_PRESENT = "byte5bIsPresent";
+    private static final String BYTE_5C_IS_PRESENT = "byte5cIsPresent";
+    private static final String BYTE_5D_IS_PRESENT = "byte5dIsPresent";
+    private static final String DATA = "data";
+
     private static final int DEFAULT_VALUES = 0;
 
     private int codingStandart = 0;
@@ -99,11 +107,20 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
     private int modemType = 0;
     private int l3Protocol = 0;
 
+    private boolean byte5aIsPresent;
+    private boolean byte5bIsPresent;
+    private boolean byte5cIsPresent;
+    private boolean byte5dIsPresent;
+
+    private byte[] data;
+
     public int decode(byte[] b) throws ParameterException {
 
         if (b == null || b.length < 2 || b.length > 13) {
             throw new IllegalArgumentException("byte[] must not be null and should be between 2 and 13 bytes in length");
         }
+
+        this.data = b;
 
         int v = 0;
         int index = 0;
@@ -152,6 +169,7 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
                     case _L1_NON_ITUT:
                         // should have 5a
                         if (extBit == 0) {
+                            byte5aIsPresent = true;
                             v = b[index++];
                             this.syncMode = (v >> 6) & 0x01;
                             this.negotiation = (v >> 5) & 0x01;
@@ -168,6 +186,7 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
                                 // rate adaption (see
                                 // Recommendations V.110 [7], I.460 [15] and
                                 // X.30 [8]).
+                                byte5bIsPresent = true;
                                 v = b[index++];
                                 this.intermediateRate = (v >> 5) & 0x3;
                                 this.nicOnTx = (v >> 4) & 0x1;
@@ -178,6 +197,7 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
 
                                 if (extBit == 0) {
                                     // 5c
+                                    byte5cIsPresent = true;
                                     v = b[index++];
                                     this.stopBits = (v >> 5) & 0x03;
                                     this.dataBits = (v >> 3) & 0x03;
@@ -186,6 +206,7 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
 
                                     if (extBit == 0) {
                                         // 5d
+                                        byte5dIsPresent = true;
                                         v = b[index++];
                                         this.duplexMode = (v >> 6) & 0x1;
                                         this.modemType = v & 0x1F;
@@ -198,6 +219,7 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
                     case _L1_ITUT_120:
                         // should have 5a
                         if (extBit == 0) {
+                            byte5aIsPresent = true;
                             v = b[index++];
                             this.syncMode = (v >> 6) & 0x01;
                             this.negotiation = (v >> 5) & 0x01;
@@ -211,6 +233,7 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
                                 // octet 5 indicates ITU-T standardized
                                 // rate adaption (see
                                 // Recommendation V.120 [9]).
+                                byte5bIsPresent = true;
                                 v = b[index++];
                                 this.hdr = (v >> 6) & 0x01;
                                 this.multiframe = (v >> 5) & 0x01;
@@ -222,6 +245,7 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
 
                                 if (extBit == 0) {
                                     // 5c
+                                    byte5cIsPresent = true;
                                     v = b[index++];
                                     this.stopBits = (v >> 5) & 0x03;
                                     this.dataBits = (v >> 3) & 0x03;
@@ -230,6 +254,7 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
 
                                     if (extBit == 0) {
                                         // 5d
+                                        byte5dIsPresent = true;
                                         v = b[index++];
                                         this.duplexMode = (v >> 6) & 0x1;
                                         this.modemType = v & 0x1F;
@@ -247,6 +272,7 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
                     case _L1_G711_A:
                         // read 5a
                         if (extBit == 0) {
+                            byte5aIsPresent = true;
                             v = b[index++];
                             this.syncMode = (v >> 6) & 0x01;
                             this.negotiation = (v >> 5) & 0x01;
@@ -254,16 +280,17 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
                             extBit = v & 0x80;
                             if (extBit == 0) {
                                 // 5b - TODO: not sure that this is a correct decoding
-                                v = b[index++];
-                                this.intermediateRate = (v >> 5) & 0x3;
-                                this.nicOnTx = (v >> 4) & 0x1;
-                                this.nicOnRx = (v >> 3) & 0x1;
-                                this.fcOnTx = (v >> 2) & 0x1;
-                                this.fcOnRx = (v >> 1) & 0x1;
-                                extBit = v & 0x80;
+//                                v = b[index++];
+//                                this.intermediateRate = (v >> 5) & 0x3;
+//                                this.nicOnTx = (v >> 4) & 0x1;
+//                                this.nicOnRx = (v >> 3) & 0x1;
+//                                this.fcOnTx = (v >> 2) & 0x1;
+//                                this.fcOnRx = (v >> 1) & 0x1;
+//                                extBit = v & 0x80;
 
                                 if (extBit == 0) {
                                     // 5c
+                                    byte5cIsPresent = true;
                                     v = b[index++];
                                     this.stopBits = (v >> 5) & 0x03;
                                     this.dataBits = (v >> 3) & 0x03;
@@ -272,6 +299,7 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
 
                                     if (extBit == 0) {
                                         // 5d
+                                        byte5dIsPresent = true;
                                         v = b[index++];
                                         this.duplexMode = (v >> 6) & 0x1;
                                         this.modemType = v & 0x1F;
@@ -321,6 +349,11 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
     }
 
     public byte[] encode() throws ParameterException {
+        if (this.data != null) {
+            // we just use an already encoded value
+            return data;
+        }
+
         int byteLength = 2;
         if (this.informationTransferRate == _ITR_MULTIRATE)
             byteLength++;
@@ -328,18 +361,32 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
         if (this.l1UserInformation > 0) {
             byteLength++;
             switch (this.l1UserInformation) {
-            case _L1_ITUT_110:
-            case _L1_NON_ITUT:
-            case _L1_ITUT_120:
-                if (this.informationTransferCapability == _ITS_UNRESTRICTED_DIGITAL) {
-                    byteLength += 4;
-                }
-                break;
-            case _L1_G711_MU:
-            case _L1_G711_A:
-                if (this.informationTransferCapability == _ITS_3_1_KHZ)
-                    byteLength += 4;
-                break;
+                case _L1_ITUT_110:
+                case _L1_NON_ITUT:
+                case _L1_ITUT_120:
+                    if (this.informationTransferCapability == _ITS_UNRESTRICTED_DIGITAL) {
+                        if (byte5aIsPresent)
+                            byteLength++;
+                        if (byte5bIsPresent)
+                            byteLength++;
+                        if (byte5cIsPresent)
+                            byteLength++;
+                        if (byte5dIsPresent)
+                            byteLength++;
+                    }
+                    break;
+                case _L1_G711_MU:
+                case _L1_G711_A:
+                    if (this.informationTransferCapability == _ITS_3_1_KHZ)
+                        if (byte5aIsPresent)
+                            byteLength++;
+                    if (byte5bIsPresent)
+                        byteLength++;
+                    if (byte5cIsPresent)
+                        byteLength++;
+                    if (byte5dIsPresent)
+                        byteLength++;
+                    break;
             }
         }
 
@@ -373,82 +420,106 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
             b[byteLength++] |= l1UserInformation & 0x1f;
 
             switch (this.l1UserInformation) {
-            case _L1_ITUT_110:
-            case _L1_NON_ITUT:
-                if (this.informationTransferCapability == _ITS_UNRESTRICTED_DIGITAL) {
-                    b[byteLength] |= this.syncMode << 6;
-                    b[byteLength] |= this.negotiation << 5;
-                    b[byteLength++] |= this.userRate;
+                case _L1_ITUT_110:
+                case _L1_NON_ITUT:
+                    if (this.informationTransferCapability == _ITS_UNRESTRICTED_DIGITAL) {
+                        if (byte5aIsPresent) {
+                            b[byteLength] |= this.syncMode << 6;
+                            b[byteLength] |= this.negotiation << 5;
+                            b[byteLength++] |= this.userRate;
+                        }
 
-                    // 5b
-                    b[byteLength] |= this.intermediateRate << 5;
-                    b[byteLength] |= this.nicOnTx << 4;
-                    b[byteLength] |= this.nicOnRx << 3;
-                    b[byteLength] |= this.fcOnTx << 2;
-                    b[byteLength++] |= this.fcOnRx << 1;
+                        // 5b
+                        if (byte5bIsPresent) {
+                            b[byteLength] |= this.intermediateRate << 5;
+                            b[byteLength] |= this.nicOnTx << 4;
+                            b[byteLength] |= this.nicOnRx << 3;
+                            b[byteLength] |= this.fcOnTx << 2;
+                            b[byteLength++] |= this.fcOnRx << 1;
+                        }
 
-                    // 5c
-                    b[byteLength] |= this.stopBits << 5;
-                    b[byteLength] |= this.dataBits << 3;
-                    b[byteLength++] |= this.parity;
+                        // 5c
+                        if (byte5cIsPresent) {
+                            b[byteLength] |= this.stopBits << 5;
+                            b[byteLength] |= this.dataBits << 3;
+                            b[byteLength++] |= this.parity;
+                        }
 
-                    // 5d
-                    // b[byteLength] |= 0x80;
-                    b[byteLength] |= this.duplexMode << 6;
-                    b[byteLength++] |= this.modemType;
-                }
-                break;
-            case _L1_ITUT_120:
-                if (this.informationTransferCapability == _ITS_UNRESTRICTED_DIGITAL) {
-                    b[byteLength] |= this.syncMode << 6;
-                    b[byteLength] |= this.negotiation << 5;
-                    b[byteLength++] |= this.userRate;
+                        // 5d
+                        // b[byteLength] |= 0x80;
+                        if (byte5dIsPresent) {
+                            b[byteLength] |= this.duplexMode << 6;
+                            b[byteLength++] |= this.modemType;
+                        }
+                    }
+                    break;
+                case _L1_ITUT_120:
+                    if (this.informationTransferCapability == _ITS_UNRESTRICTED_DIGITAL) {
+                        if (byte5aIsPresent) {
+                            b[byteLength] |= this.syncMode << 6;
+                            b[byteLength] |= this.negotiation << 5;
+                            b[byteLength++] |= this.userRate;
+                        }
 
-                    // 5b
-                    b[byteLength] |= this.hdr << 6;
-                    b[byteLength] |= this.multiframe << 5;
-                    b[byteLength] |= this.mode << 4;
-                    b[byteLength] |= this.lli << 3;
-                    b[byteLength] |= this.assignor << 3;
-                    b[byteLength++] |= this.inBandNegotiation << 1;
+                        // 5b
+                        if (byte5bIsPresent) {
+                            b[byteLength] |= this.hdr << 6;
+                            b[byteLength] |= this.multiframe << 5;
+                            b[byteLength] |= this.mode << 4;
+                            b[byteLength] |= this.lli << 3;
+                            b[byteLength] |= this.assignor << 3;
+                            b[byteLength++] |= this.inBandNegotiation << 1;
+                        }
 
-                    // 5c
-                    b[byteLength] |= this.stopBits << 5;
-                    b[byteLength] |= this.dataBits << 3;
-                    b[byteLength++] |= this.parity;
+                        // 5c
+                        if (byte5cIsPresent) {
+                            b[byteLength] |= this.stopBits << 5;
+                            b[byteLength] |= this.dataBits << 3;
+                            b[byteLength++] |= this.parity;
+                        }
 
-                    // 5d
-                    // b[byteLength] |= 0x80;
-                    b[byteLength] |= this.duplexMode << 6;
-                    b[byteLength++] |= this.modemType;
-                }
-                break;
-            case _L1_G711_MU:
-            case _L1_G711_A:
-                if (this.informationTransferCapability == _ITS_3_1_KHZ) {
-                    // read 5a
-                    b[byteLength] |= this.syncMode << 6;
-                    b[byteLength] |= this.negotiation << 5;
-                    b[byteLength++] |= this.userRate;
+                        // 5d
+                        if (byte5dIsPresent) {
+                            // b[byteLength] |= 0x80;
+                            b[byteLength] |= this.duplexMode << 6;
+                            b[byteLength++] |= this.modemType;
+                        }
+                    }
+                    break;
+                case _L1_G711_MU:
+                case _L1_G711_A:
+                    if (this.informationTransferCapability == _ITS_3_1_KHZ) {
+                        // read 5a
+                        if (byte5aIsPresent) {
+                            b[byteLength] |= this.syncMode << 6;
+                            b[byteLength] |= this.negotiation << 5;
+                            b[byteLength++] |= this.userRate;
+                        }
 
-                    // 5b
-                    b[byteLength] |= this.intermediateRate << 5;
-                    b[byteLength] |= this.nicOnTx << 4;
-                    b[byteLength] |= this.nicOnRx << 3;
-                    b[byteLength] |= this.fcOnTx << 2;
-                    b[byteLength++] |= this.fcOnRx << 1;
+                        // 5b
+                        if (byte5bIsPresent) {
+                            b[byteLength] |= this.intermediateRate << 5;
+                            b[byteLength] |= this.nicOnTx << 4;
+                            b[byteLength] |= this.nicOnRx << 3;
+                            b[byteLength] |= this.fcOnTx << 2;
+                            b[byteLength++] |= this.fcOnRx << 1;
+                        }
 
-                    // 5c
-                    b[byteLength] |= this.stopBits << 5;
-                    b[byteLength] |= this.dataBits << 3;
-                    b[byteLength++] |= this.parity;
+                        // 5c
+                        if (byte5cIsPresent) {
+                            b[byteLength] |= this.stopBits << 5;
+                            b[byteLength] |= this.dataBits << 3;
+                            b[byteLength++] |= this.parity;
+                        }
 
-                    // 5d
-                    // b[byteLength] |= 0x80;
-                    b[byteLength] |= this.duplexMode << 6;
-                    b[byteLength++] |= this.modemType;
-                }
-                break;
+                        // 5d
+                        if (byte5dIsPresent) {
+                            // b[byteLength] |= 0x80;
+                            b[byteLength] |= this.duplexMode << 6;
+                            b[byteLength++] |= this.modemType;
+                        }
+                    }
+                    break;
             }
             b[byteLength - 1] |= 0x80;
         }
@@ -709,6 +780,56 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
         this.l3Protocol = l3Protocol;
     }
 
+    @Override
+    public boolean isByte5aIsPresent() {
+        return byte5aIsPresent;
+    }
+
+    @Override
+    public void setByte5aIsPresent(boolean byte5aIsPresent) {
+        this.byte5aIsPresent = byte5aIsPresent;
+    }
+
+    @Override
+    public boolean isByte5bIsPresent() {
+        return byte5bIsPresent;
+    }
+
+    @Override
+    public void setByte5bIsPresent(boolean byte5bIsPresent) {
+        this.byte5bIsPresent = byte5bIsPresent;
+    }
+
+    @Override
+    public boolean isByte5cIsPresent() {
+        return byte5cIsPresent;
+    }
+
+    @Override
+    public void setByte5cIsPresent(boolean byte5cIsPresent) {
+        this.byte5cIsPresent = byte5cIsPresent;
+    }
+
+    @Override
+    public boolean isByte5dIsPresent() {
+        return byte5dIsPresent;
+    }
+
+    @Override
+    public void setByte5dIsPresent(boolean byte5dIsPresent) {
+        this.byte5dIsPresent = byte5dIsPresent;
+    }
+
+    @Override
+    public byte[] getData() {
+        return data;
+    }
+
+    @Override
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
     protected abstract String getPrimitiveName();
 
     public String toString() {
@@ -727,7 +848,7 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
         sb.append(customInformationTransferRate);
 
         if (l1UserInformation > 0) {
-            sb.append(", l1UserInformation=");
+            sb.append(",\nl1UserInformation=");
             sb.append(l1UserInformation);
 
             sb.append(", syncMode=");
@@ -764,20 +885,32 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
             sb.append(duplexMode);
             sb.append(", modemType=");
             sb.append(modemType);
+
+            sb.append(", byte5aIsPresent=");
+            sb.append(byte5aIsPresent);
+            sb.append(", byte5bIsPresent=");
+            sb.append(byte5bIsPresent);
+            sb.append(", byte5cIsPresent=");
+            sb.append(byte5cIsPresent);
+            sb.append(", byte5dIsPresent=");
+            sb.append(byte5dIsPresent);
         }
 
         if (l2UserInformation > 0) {
-            sb.append(", l2UserInformation=");
+            sb.append("\nl2UserInformation=");
             sb.append(l2UserInformation);
         }
 
         if (l3UserInformation > 0) {
-            sb.append(", l3UserInformation=");
+            sb.append("\nl3UserInformation=");
             sb.append(l3UserInformation);
 
             sb.append(", l3Protocol=");
             sb.append(l3Protocol);
         }
+
+        if (data != null)
+            sb.append(DatatypeConverter.printHexBinary(data));
 
         sb.append("]");
 
@@ -823,6 +956,15 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
             userServiceInformation.duplexMode = xml.getAttribute(DUPLEX_MODE, DEFAULT_VALUES);
             userServiceInformation.modemType = xml.getAttribute(MODEM_TYPE, DEFAULT_VALUES);
             userServiceInformation.l3Protocol = xml.getAttribute(L3_PROTOCOL, DEFAULT_VALUES);
+
+            userServiceInformation.byte5aIsPresent = xml.getAttribute(BYTE_5A_IS_PRESENT, false);
+            userServiceInformation.byte5bIsPresent = xml.getAttribute(BYTE_5B_IS_PRESENT, false);
+            userServiceInformation.byte5cIsPresent = xml.getAttribute(BYTE_5C_IS_PRESENT, false);
+            userServiceInformation.byte5dIsPresent = xml.getAttribute(BYTE_5D_IS_PRESENT, false);
+
+            String str = xml.get(DATA, String.class);
+            if (str != null)
+                userServiceInformation.data = DatatypeConverter.parseHexBinary(str);
         }
 
         @Override
@@ -857,6 +999,11 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
                 xml.setAttribute(PARITY, userServiceInformation.parity);
                 xml.setAttribute(DUPLEX_MODE, userServiceInformation.duplexMode);
                 xml.setAttribute(MODEM_TYPE, userServiceInformation.modemType);
+
+                xml.setAttribute(BYTE_5A_IS_PRESENT, userServiceInformation.byte5aIsPresent);
+                xml.setAttribute(BYTE_5B_IS_PRESENT, userServiceInformation.byte5bIsPresent);
+                xml.setAttribute(BYTE_5C_IS_PRESENT, userServiceInformation.byte5cIsPresent);
+                xml.setAttribute(BYTE_5D_IS_PRESENT, userServiceInformation.byte5dIsPresent);
             }
 
             if (userServiceInformation.l2UserInformation > 0)
@@ -866,6 +1013,9 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
                 xml.setAttribute(L3_USER_INFORMATION, userServiceInformation.l3UserInformation);
                 xml.setAttribute(L3_PROTOCOL, userServiceInformation.l3Protocol);
             }
+
+            if (userServiceInformation.data != null)
+                xml.add(DatatypeConverter.printHexBinary(userServiceInformation.data), DATA, String.class);
         }
     };
 

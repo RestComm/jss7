@@ -836,4 +836,35 @@ public interface UserServiceInformationBase extends ISUPParameter {
 
     void setL3Protocol(int l3Protocol);
 
+    boolean isByte5aIsPresent();
+
+    void setByte5aIsPresent(boolean byte5aIsPresent);
+
+    boolean isByte5bIsPresent();
+
+    void setByte5bIsPresent(boolean byte5bIsPresent);
+
+    boolean isByte5cIsPresent();
+
+    void setByte5cIsPresent(boolean byte5cIsPresent);
+
+    boolean isByte5dIsPresent();
+
+    void setByte5dIsPresent(boolean byte5dIsPresent);
+
+    /**
+     * Returns the encoded data from the original message
+     * @return
+     */
+    byte[] getData();
+
+    /**
+     * You can specify by this method encoded message. If this parameter is specified than when sending this data will be used
+     * for message encoding and all other parameters will be ignored. Leave this field as null if you want ISUP stack encode
+     * source parameters.
+     *
+     * @param data
+     */
+    void setData(byte[] data);
+
 }
