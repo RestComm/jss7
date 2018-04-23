@@ -1537,4 +1537,6 @@ public interface MAPParameterFactory {
 
     CorrelationID createCorrelationID(IMSI hlrId, SipUri sipUriA, SipUri sipUriB);
 
+    SipUri createSipUri();
+
 }

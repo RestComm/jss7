@@ -74,7 +74,6 @@ public class CorrelationIDImpl extends SequenceBase implements CorrelationID {
             int tag = ais.readTag();
 
             switch (ais.getTagClass()) {
-                case Tag.CLASS_UNIVERSAL:
                 case Tag.CLASS_CONTEXT_SPECIFIC:
                     switch (tag) {
                         case _TAG_HlrId:

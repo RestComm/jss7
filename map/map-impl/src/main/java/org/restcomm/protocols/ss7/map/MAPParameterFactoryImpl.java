@@ -688,6 +688,7 @@ import org.restcomm.protocols.ss7.map.service.sms.MWStatusImpl;
 import org.restcomm.protocols.ss7.map.service.sms.SM_RP_DAImpl;
 import org.restcomm.protocols.ss7.map.service.sms.SM_RP_OAImpl;
 import org.restcomm.protocols.ss7.map.service.sms.SM_RP_SMEAImpl;
+import org.restcomm.protocols.ss7.map.service.sms.SipUriImpl;
 import org.restcomm.protocols.ss7.map.service.sms.SmsSignalInfoImpl;
 import org.restcomm.protocols.ss7.map.service.supplementary.CCBSFeatureImpl;
 import org.restcomm.protocols.ss7.map.service.supplementary.CallBarringFeatureImpl;
@@ -2844,6 +2845,14 @@ public class MAPParameterFactoryImpl implements MAPParameterFactory {
     @Override
     public CorrelationID createCorrelationID(IMSI hlrId, SipUri sipUriA, SipUri sipUriB) {
         return new CorrelationIDImpl(hlrId, sipUriA, sipUriB);
+    }
+
+    /* (non-Javadoc)
+     * @see org.restcomm.protocols.ss7.map.api.MAPParameterFactory#createSipUri()
+     */
+    @Override
+    public SipUri createSipUri() {
+        return new SipUriImpl();
     }
 }
 

@@ -22,7 +22,6 @@
 
 package org.restcomm.protocols.ss7.map.service.mobility.subscriberManagement;
 
-import javax.xml.bind.DatatypeConverter;
 
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
