@@ -9,7 +9,7 @@ You can manage all M3UA Application Server, Application Server Process and Route
 You can create, destroy, start and stop ASPs by issuing the `m3ua asp` command with appropriate parameters.
 You can create, destroy, add and remove AS by issuing the `m3ua as` command with appropriate parameters.
 You can add and remove M3UA Routes by issuing the `m3ua route` command with appropriate parameters.
- 
+
 
 [[_managing_m3ua_using_gui]]
 == Using GUI
@@ -18,7 +18,7 @@ The GUI will allow you to manage your M3UA configurations efficiently using a us
 Open a Web Browser and navigate to http://localhost:8080/jss7-management-console/. Click on the 'M3UA' link in the left panel.
 The main panel will display the names of all configured M3UA Management units.
 To configure or view the settings of a particular M3UA Management Unit you must click on the name of that unit.
-The GUI will look similar to the figure below and is divided into four tabs. 
+The GUI will look similar to the figure below and is divided into four tabs.
 
 .GUI - M3UA Management
 image::images/GUI_M3UA_Management.png[]
@@ -28,10 +28,10 @@ These details displayed here are fetched from the XML descriptor file [path]_jbo
 These properties can be modified here in the GUI.
 To modify them you must click the pencil, change value and save.
 The GUI will then display the modified values.
- 
+
 
 The other three tabs will allow you to manage and monitor all Servers, ASPs and Routers within this M3UA Management unit.
- 
+
 
 [[_m3ua_properties]]
 == M3UA stack properties
@@ -42,44 +42,44 @@ The other three tabs will allow you to manage and monitor all Servers, ASPs and 
 You can modify the settings for the parameter 'maxsequencenumber' only when the M3UA Stack is not running.
 In addition, this parameter cannot be modified through the CLI or GUI.
 You will have to invoke the setter function directly from the source code.
- 
 
-If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file [path]_jboss-beans.xml_, which is located at [path]_$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF_, where [app]`profile_name` is the server profile name. 
+
+If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file [path]_jboss-beans.xml_, which is located at [path]_$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF_, where [app]`profile_name` is the server profile name.
 ----
 
-/*Add property for the parameter 'maxsequencenumber' to jboss-beans.xml file and specify the value*/ 
+/*Add property for the parameter 'maxsequencenumber' to jboss-beans.xml file and specify the value*/
 <property name="maxSequenceNumber">128</property>
-----		 
+----
 
-The current settings of the parameter can be viewed in the GUI or by invoking the appropriate CLI command as described below. 
+The current settings of the parameter can be viewed in the GUI or by invoking the appropriate CLI command as described below.
 
 [[_m3ua_property_maxsequencenumber_cli]]
 ==== Using CLI
 
 You can retrieve the current settings of the parameter 'maxsequencenumber' by issuing the command `m3ua get maxsequencenumber`.
-However as explained above, you cannot modify the settings through the CLI. 
+However as explained above, you cannot modify the settings through the CLI.
 
 ----
 
 Name
-	m3ua get maxsequencenumber 
+	m3ua get maxsequencenumber
 
 SYNOPSIS
 	m3ua get maxsequencenumber stackname <stack-name>
 
-DESCRIPTION	
+DESCRIPTION
 	This command is used to retrieve the current settings of the parameter
 	'maxsequencenumber'. The 'maxsequencenumber' parameter is used to specify
 	the maximum sequence number used for load-balancing algorithm.
-	
-	Sequence number or Signalling Link Selection (SLS) is used for load-balancing 
-	between ASPs in AS and also between various AS for the same point-code. 
+
+	Sequence number or Signalling Link Selection (SLS) is used for load-balancing
+	between ASPs in AS and also between various AS for the same point-code.
 	The parameter 'maxsequencenumber' controls the maximum SLS that should be
 	used for this. It is safe to leave it at 256.
-	
+
 	The settings can be modified only when the M3UA Stack is not running.
 	To modify this parameter you must invoke the setter function
-	directly from the code or if you are using the JBoss AS, you can add a 
+	directly from the code or if you are using the JBoss AS, you can add a
 	property to the XML descriptor file jboss-beans.xml. You cannot change the
 	settings through the CLI.
 ----
@@ -97,27 +97,27 @@ For more details about this parameter, refer to the detailed description about t
 You can modify the settings for the parameter 'maxasforroute' only when the M3UA Stack is not running.
 In addition, this parameter cannot be modified through the CLI or GUI.
 You will have to invoke the setter function directly from the source code.
- 
 
-If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file [path]_jboss-beans.xml_, which is located at [path]_$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF_, where [app]`profile_name` is the server profile name. 
+
+If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file [path]_jboss-beans.xml_, which is located at [path]_$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF_, where [app]`profile_name` is the server profile name.
 ----
 
-/*Add property for the parameter 'maxasforroute' to jboss-beans.xml file and specify the value*/ 
+/*Add property for the parameter 'maxasforroute' to jboss-beans.xml file and specify the value*/
 <property name="maxAsForRoute">4</property>
-----		 
+----
 
-The current settings of the parameter can be viewed in the GUI or by invoking the appropriate CLI command as described below. 
+The current settings of the parameter can be viewed in the GUI or by invoking the appropriate CLI command as described below.
 
 [[_m3ua_property_maxasforroute_cli]]
 ==== Using CLI
 
 You can retrieve the current settings of the parameter 'maxasforroute' by issuing the command `m3ua get maxasforroute`.
-However as explained above, you cannot modify the settings through the CLI. 
+However as explained above, you cannot modify the settings through the CLI.
 
 ----
 
 Name
-	m3ua get maxasforroute 
+	m3ua get maxasforroute
 
 SYNOPSIS
 	m3ua get maxasforroute stackname <stack-name>
@@ -126,21 +126,21 @@ DESCRIPTION
 	This command is used to retrieve the current settings of the parameter
 	'maxasforroute'. The 'maxasforroute' parameter is used to specify
 	the maximum routes for destination point code.
-	
+
 	Every destination point code should be configured in M3UA with the
 	corresponding AS. The parameter 'maxasforroute' controls the
-	maximum number of AS that can be used to route the message to the 
-	same Destination Point Code. 
-	
-	It is better to always maintain this parameter as an even number for better 
+	maximum number of AS that can be used to route the message to the
+	same Destination Point Code.
+
+	It is better to always maintain this parameter as an even number for better
 	load-sharing and a maximum of 2 is standard and widely accepted. You should
 	not change this value if there is at least one route defined, else it will
 	throw Exception for that route. You have to delete all the routes,
-	change this property and redefine routes. 
-	
+	change this property and redefine routes.
+
 	The settings can be modified only when the M3UA Stack is not running.
 	To modify this parameter you must invoke the setter function
-	directly from the code or if you are using the JBoss AS, you can add a 
+	directly from the code or if you are using the JBoss AS, you can add a
 	property to the XML descriptor file jboss-beans.xml. You cannot change the
 	settings through the CLI.
 ----
@@ -159,33 +159,33 @@ For more details about this parameter, refer to the detailed description about t
 ==== Using CLI
 
 You can set the 'heartbeattime' by issuing the command `m3ua set heartbeattime` with appropriate parameters as described below.
-You can verify this by issuing the command `m3ua get heartbeattime` which will display the value set for this property. 
+You can verify this by issuing the command `m3ua get heartbeattime` which will display the value set for this property.
 
 ----
 
 Name
-	m3ua set heartbeattime 
+	m3ua set heartbeattime
 
 SYNOPSIS
 	m3ua set heartbeattime <heartbeattime> stackname <stack-name>
 
 DESCRIPTION
-	Each ASP can send HEART_BEAT to peer to determine the availability of 
-	link. If there is no traffic M3UA will initiate heart beat every 
-	'heartbeatTime' milli seconds. If 3 consecutive HEART_BEAT are 
-	missed, stack will close and re-initiate connection. 
-	
+	Each ASP can send HEART_BEAT to peer to determine the availability of
+	link. If there is no traffic M3UA will initiate heart beat every
+	'heartbeatTime' milli seconds. If 3 consecutive HEART_BEAT are
+	missed, stack will close and re-initiate connection.
+
 PARAMETERS
 
 	Standard Parameters
 
 	<heartbeattime>	-	Heart Beat time in milliseconds.
-	
+
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	
+					will be used.
 
 EXAMPLES
 	m3ua set heartbeattime 30000
@@ -195,7 +195,93 @@ EXAMPLES
 ==== Using GUI
 
 On M3UA management page, click on pencil against the 'heartbeatTime' property and text box becomes editable.
-Change value and save. 
+Change value and save.
+
+[[_m3ua_property_statisticsenabled]]
+=== Enable M3UA statistic
+
+[[_m3ua_property_statisticsenabled_cli]]
+==== Using CLI
+
+You can set the 'statisticsenabled' by issuing the command `m3ua set statisticsenabled` with appropriate parameters as described below.
+You can verify this by issuing the command `m3ua get statisticsenabled` which will display the value set for this property.
+
+----
+
+Name
+	m3ua set statisticsenabled
+
+SYNOPSIS
+	m3ua set statisticsenabled <statisticsenabled> stackname <stack-name>
+
+DESCRIPTION
+	You can enable/disable statistic via this property.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<statisticsenabled>	-	true/false.
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed.
+					If not passed, the first stack configured in ShellExecutor
+					will be used.
+
+EXAMPLES
+	m3ua set statisticsenabled true
+----
+
+[[_m3ua_property_statisticsenabled_gui]]
+==== Using GUI
+
+On M3UA management page, click on pencil against the 'statisticsEnabled' property and text box becomes editable.
+Change value and save.
+
+
+[[_m3ua_property_routingkeymanagementenabled]]
+=== Enable routing key management
+
+[[_m3ua_property_routingkeymanagementenabled_cli]]
+==== Using CLI
+
+You can set the 'routingkeymanagementenabled' by issuing the command `m3ua set routingkeymanagementenabled` with appropriate parameters as described below.
+You can verify this by issuing the command `m3ua get routingkeymanagementenabled` which will display the value set for this property.
+
+----
+
+Name
+	m3ua set routingkeymanagementenabled
+
+SYNOPSIS
+	m3ua set routingkeymanagementenabled <routingkeymanagementenabled> stackname <stack-name>
+
+DESCRIPTION
+	You can enable/disable routing key management via this property.
+
+PARAMETERS
+
+	Standard Parameters
+
+	<routingkeymanagementenabled>	-	true/false.
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed.
+					If not passed, the first stack configured in ShellExecutor
+					will be used.
+
+EXAMPLES
+	m3ua set routingkeymanagementenabled true
+----
+
+[[_m3ua_property_routingkeymanagementenabled_gui]]
+==== Using GUI
+
+On M3UA management page, click on pencil against the 'routingkeymanagementenabled' property and text box becomes editable.
+Change value and save.
+
 
 [[_m3ua_property_deliverymessagethreadcount]]
 === Threads count for processing of incoming messages
@@ -203,30 +289,30 @@ Change value and save.
 You can modify the settings for the parameter 'deliverymessagethreadcount' only when the M3UA Stack is not running.
 In addition, this parameter cannot be modified through the CLI or GUI.
 You will have to invoke the setter function directly from the source code.
- 
 
-If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file [path]_jboss-beans.xml_, which is located at [path]_$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF_, where [app]`profile_name` is the server profile name. 
+
+If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file [path]_jboss-beans.xml_, which is located at [path]_$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF_, where [app]`profile_name` is the server profile name.
 ----
 
-/*Add property for the parameter 'deliverymessagethreadcount' to jboss-beans.xml file and specify the value*/ 
+/*Add property for the parameter 'deliverymessagethreadcount' to jboss-beans.xml file and specify the value*/
 <property name="deliveryTransferMessageThreadCount">4</property>
-----		 
+----
 
-The current settings of the parameter can be viewed in the GUI or by invoking the appropriate CLI command as described below. 
+The current settings of the parameter can be viewed in the GUI or by invoking the appropriate CLI command as described below.
 
 [[_m3ua_property_deliverymessagethreadcount_cli]]
 ==== Using CLI
 
 You can retrieve the current settings of the parameter 'deliverymessagethreadcount' by issuing the command `m3ua get deliverymessagethreadcount`.
-However as explained above, you cannot modify the settings through the CLI. 
+However as explained above, you cannot modify the settings through the CLI.
 
 ----
 
 Name
-	m3ua get deliverymessagethreadcount 
+	m3ua get deliverymessagethreadcount
 
 SYNOPSIS
-	m3ua get deliverymessagethreadcount 
+	m3ua get deliverymessagethreadcount
 
 DESCRIPTION
 	Returns the count of threads that will be used for message delivering
@@ -250,9 +336,9 @@ For more details about this parameter, refer to the detailed description about t
 You can modify the settings for the parameter 'routinglabelformat' only when the M3UA Stack is not running.
 In addition, this parameter cannot be modified through the CLI or GUI.
 You will have to invoke the setter function directly from the source code.
- 
 
-If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file [path]_jboss-beans.xml_, which is located at [path]_$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF_, where [app]`profile_name`		 and also an extra separate bean - RoutingLabelFormat (to which we refer from ). is the server profile name. 
+
+If you are using the JBoss Application Server, then you can set this parameter by adding a property (as shown below) to the XML descriptor file [path]_jboss-beans.xml_, which is located at [path]_$JBOSS_HOME/server/profile_name/deploy/restcomm-ss7-service/META-INF_, where [app]`profile_name`		 and also an extra separate bean - RoutingLabelFormat (to which we refer from ). is the server profile name.
 ----
 
 /*Extra bean for RoutingLabelFormat Enum*/
@@ -263,24 +349,24 @@ If you are using the JBoss Application Server, then you can set this parameter b
 		</constructor>
 	</bean>
 
-/*Add property for the parameter 'routinglabelformat' to jboss-beans.xml file and specify the value into M3UAManagementImpl mbean*/ 
+/*Add property for the parameter 'routinglabelformat' to jboss-beans.xml file and specify the value into M3UAManagementImpl mbean*/
 		<property name="routingLabelFormat">
 			<inject bean="RoutingLabelFormat" />
 		</property>
-----		 
+----
 
-The current settings of the parameter can be viewed in the GUI or by invoking the appropriate CLI command as described below. 
+The current settings of the parameter can be viewed in the GUI or by invoking the appropriate CLI command as described below.
 
 [[_m3ua_property_routinglabelformat_cli]]
 ==== Using CLI
 
 You can retrieve the current settings of the parameter 'routinglabelformat' by issuing the command `m3ua get routinglabelformat`.
-However as explained above, you cannot modify the settings through the CLI. 
+However as explained above, you cannot modify the settings through the CLI.
 
 ----
 
 Name
-	m3ua get routinglabelformat 
+	m3ua get routinglabelformat
 
 SYNOPSIS
 	m3ua get routinglabelformat stackname <stack-name>
@@ -304,7 +390,7 @@ For more details about this parameter, refer to the detailed description about t
 ==== Using CLI
 
 You can set the 'uselsbforlinksetselection' by issuing the command `m3ua set uselsbforlinksetselection` with appropriate parameters as described below.
-You can verify this by issuing the command `m3ua get uselsbforlinksetselection` which will display the value set for this property. 
+You can verify this by issuing the command `m3ua get uselsbforlinksetselection` which will display the value set for this property.
 
 ----
 
@@ -319,7 +405,7 @@ DESCRIPTION
 	for loadbalancing between Linkset. True value means lowest bit of SLS
 	is used for loadbalancing between Linkset, false value means highest bit
 	of SLS is used.
-	
+
 PARAMETERS
 
 	Standard Parameters
@@ -327,12 +413,12 @@ PARAMETERS
 	<true | false>	-	True value means lowest bit of SLS is used for
 						loadbalancing between Linkset, false value means
 						highest bit of SLS is used. Default value is false.
-	
+
 	Optional Parameters
 
-	<stack-name>	-	Name of the stack on which this command is executed. 
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	
+					will be used.
 
 EXAMPLES
 	m3ua set uselsbforlinksetselection false
@@ -350,7 +436,7 @@ Change value and save.
 [[_managing_show_m3ua_asp_cli]]
 === Using CLI
 
-You can view the details of all configured M3UA Application Server Processes by issuing the command `m3ua asp show` as described below: 
+You can view the details of all configured M3UA Application Server Processes by issuing the command `m3ua asp show` as described below:
 
 ----
 
@@ -361,15 +447,15 @@ SYNOPSIS
 	m3ua asp show stackname <stack-name>
 
 DESCRIPTION
-	This command is used to view the details of all configured Application Server 
-	Processes. The information displayed will include the name, the SCTP Association 
+	This command is used to view the details of all configured Application Server
+	Processes. The information displayed will include the name, the SCTP Association
 	name and if it is started or stopped.
 
 PARAMETERS
 
 	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
 					will be used.
 ----
@@ -380,7 +466,7 @@ PARAMETERS
 Navigate to the specific M3UA Management unit and switch to the 'AspFactories' tab.
 Here you can view a list of all the ASPs created.
 Every correctly configured ASP will be displayed in a row and for each ASP, the first column will display the name of the ASP.
-The icon adjacent to the name will be lit 'green' if the ASP is currently running or if the ASP is stopped the icon will be lit 'orange'. The second column will indicate the current state of the ASP (true / false), the third column will allow you to Start / Stop the ASP and the fourth column will allow you to delete the ASP. 
+The icon adjacent to the name will be lit 'green' if the ASP is currently running or if the ASP is stopped the icon will be lit 'orange'. The second column will indicate the current state of the ASP (true / false), the third column will allow you to Start / Stop the ASP and the fourth column will allow you to delete the ASP.
 
 .GUI - M3UA Management - AspFactories
 image::images/GUI_M3UA_Management_AspFactories.png[]
@@ -388,7 +474,7 @@ image::images/GUI_M3UA_Management_AspFactories.png[]
 In the screen above, click on the name of the ASP whose details you wish to view.
 This will launch the ASP Details and display all the configured properties of the selected ASP.
 The second tab in this view will allow you to view all connected Application Servers.
-You can click on the bread crumbs at the top to return to any of the previous pages you navigated through. 
+You can click on the bread crumbs at the top to return to any of the previous pages you navigated through.
 
 .GUI - M3UA Management - ASP Details
 image::images/GUI_M3UA_Management_AspDetails.png[]
@@ -399,7 +485,7 @@ image::images/GUI_M3UA_Management_AspDetails.png[]
 [[_managing_create_m3ua_asp_cli]]
 === Using CLI
 
-You can create a new M3UA ASP by issuing the command `m3ua asp create` with appropriate parameters as described below: 
+You can create a new M3UA ASP by issuing the command `m3ua asp create` with appropriate parameters as described below:
 
 ----
 
@@ -407,26 +493,26 @@ Name
 	m3ua asp create
 
 SYNOPSIS
-	m3ua asp create <asp-name> <sctp-association> aspid <aspid> heartbeat <true|false> 
+	m3ua asp create <asp-name> <sctp-association> aspid <aspid> heartbeat <true|false>
 	stackname <stack-name>
 
 DESCRIPTION
-	This command is used to create a new Application Server Process. 
+	This command is used to create a new Application Server Process.
 
 PARAMETERS
 
 	Standard Parameters
 
-	<asp-name>			-	Name of the new Application Server Process 
+	<asp-name>			-	Name of the new Application Server Process
 						created. This must be unique and takes any
 						String value.
 
 	<sctp-association>		-	Name of the SCTP Association
-	
+
 	Optional Parameters
 
 	<aspid>				-	Identifier for this newly created
-						Application Server Process. If this is 
+						Application Server Process. If this is
 						not passed, next available aspid will be
 						used.
 
@@ -434,25 +520,25 @@ PARAMETERS
 						true), then heartbeat mechanism is enabled
 						between M3UA peers. When this is enabled,
 						it sends a Heartbeat message every 10
-						seconds. If there is no response for the 
-						third heartbeat then it assumes that the 
-						underlying network is dead. So it closes 
-						the connection and attempts to connect 
-						again. The M3UA peers are brought back to 
-						the same state as they were prior to 
+						seconds. If there is no response for the
+						third heartbeat then it assumes that the
+						underlying network is dead. So it closes
+						the connection and attempts to connect
+						again. The M3UA peers are brought back to
+						the same state as they were prior to
 						dying.
 
-						This is an optional parameter and if 
-						unspecified, heartbeat mechanism is 
-						disabled.  	
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+						This is an optional parameter and if
+						unspecified, heartbeat mechanism is
+						disabled.
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					    If not passed, the first stack configured in ShellExecutor
-					    will be used. 						
+					    will be used.
 
 EXAMPLES
 	m3ua asp create ASP1 Assoc1 aspid 12 heartbeat true
-	
+
 	The above command will create a new M3UA Application Server Process with name ASP1
 	and id 12. Heartbeat mechanism is enabled.
 ----
@@ -466,11 +552,11 @@ EXAMPLES
 . In the 'Create ASP' page, add details of the new ASP.
   You must ensure that you fill in all the mandatory parameters (Name, SCTP Association Name).  For definition of these parameters, please refer to the description of the CLI command for the same in the preceding section.
   You must ensure that a correctly configured SCTP Association is created and available prior to creating a new ASP.
-  When the ASP is started or stopped, this corresponding SCTP Association will start / stop automatically. 
+  When the ASP is started or stopped, this corresponding SCTP Association will start / stop automatically.
 . Verify the details entered and then click on the 'Create' button.
   A new ASP will be created with parameters as specified.
   If there is an error in creating the ASP then you will find the details of the error in the Management Console Log section below.
-. Click on the 'Close' button to close the 'Create Server' pop-up. 
+. Click on the 'Close' button to close the 'Create Server' pop-up.
 
 [[_managing_destroy_m3ua_asp]]
 == Delete an Application Server Process
@@ -478,7 +564,7 @@ EXAMPLES
 [[_managing_destroy_m3ua_asp_cli]]
 === Using CLI
 
-You can delete an existing M3UA ASP by issuing the command `m3ua asp destroy` with appropriate parameters as described below: 
+You can delete an existing M3UA ASP by issuing the command `m3ua asp destroy` with appropriate parameters as described below:
 
 ----
 
@@ -490,7 +576,7 @@ SYNOPSIS
 
 DESCRIPTION
 	This command is used to delete an existing M3UA Application Server Process
-	identified by the name 'asp-name'. You must ensure that the ASP is stopped prior 
+	identified by the name 'asp-name'. You must ensure that the ASP is stopped prior
 	to issuing the command.
 
 PARAMETERS
@@ -498,16 +584,16 @@ PARAMETERS
 	Standard Parameters
 
 	<asp-name>		-	Name of the ASP to be deleted.
-	
+
 	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	
+					will be used.
 
 EXAMPLES
 	m3ua asp destroy ASP1
-	
+
 	The above command will destroy the ASP identified by the name ASP1.
 ----
 
@@ -527,7 +613,7 @@ EXAMPLES
 [[_managing_start_m3ua_asp_cli]]
 === Using CLI
 
-You can start an existing ASP by issuing the command `m3ua asp start` with appropriate parameters as described below: 
+You can start an existing ASP by issuing the command `m3ua asp start` with appropriate parameters as described below:
 
 ----
 
@@ -538,7 +624,7 @@ SYNOPSIS
 	m3ua asp start <asp-name> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to start an existing ASP. You must ensure that the ASP is 
+	This command is used to start an existing ASP. You must ensure that the ASP is
 	assigned to at least one AS prior to starting it.
 
 PARAMETERS
@@ -546,16 +632,16 @@ PARAMETERS
 	Standard Parameters
 
 	<asp-name>		-	Name of the ASP to be started.
-	
+
 	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	
+					will be used.
 
 EXAMPLES
 	m3ua asp start ASP1
-	
+
 	The above command will start the ASP identified by the name ASP1.
 ----
 
@@ -565,7 +651,7 @@ EXAMPLES
 .Procedure: Start an Application Server Process
 . Navigate to the 'AspFactories' tab in the M3UA Management Unit window and locate the row corresponding to the ASP you wish to start.
 . Click on the 'Start' button in the actions column to start the corresponding ASP.
-  You must ensure that the ASP is assigned to at least one AS prior to starting it. 
+  You must ensure that the ASP is assigned to at least one AS prior to starting it.
 . If the ASP has started successfully you will find the status indicating the ASP running as 'true' and the icon will be lit green.
   If there is an error and the ASP failed to start, you will find details of the error in the Management Console log below.
 
@@ -575,7 +661,7 @@ EXAMPLES
 [[_managing_stop_m3ua_asp_cli]]
 === Using CLI
 
-You can stop a currently running ASP by issuing the command `m3ua asp stop` with appropriate parameters as described below: 
+You can stop a currently running ASP by issuing the command `m3ua asp stop` with appropriate parameters as described below:
 
 ----
 
@@ -586,23 +672,23 @@ SYNOPSIS
 	m3ua asp stop <asp-name> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to stop a currently running ASP. 
+	This command is used to stop a currently running ASP.
 
 PARAMETERS
 
 	Standard Parameters
 
 	<asp-name>		-	Name of the ASP to be stopped.
-	
+
 	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used.	
+					will be used.
 
 EXAMPLES
 	m3ua asp stop ASP1
-	
+
 	The above command will stop the ASP identified by the name ASP1.
 ----
 
@@ -621,7 +707,7 @@ EXAMPLES
 [[_managing_m3ua_as_show_cli]]
 === Using CLI
 
-You can view the details of all configured M3UA Application Servers by issuing the command `m3ua as show` as described below: 
+You can view the details of all configured M3UA Application Servers by issuing the command `m3ua as show` as described below:
 
 ----
 
@@ -632,16 +718,16 @@ SYNOPSIS
 	m3ua as show stackname <stack-name>
 
 DESCRIPTION
-	This command is used to view the details of all configured Application Servers. 
-	The information displayed will include the configured 
-	functionality (AS or IPSP or SGW), mode (SE or DE), IPSP type (if applicable), 
-	routing context, traffic mode and network appearance values. 
-	
+	This command is used to view the details of all configured Application Servers.
+	The information displayed will include the configured
+	functionality (AS or IPSP or SGW), mode (SE or DE), IPSP type (if applicable),
+	routing context, traffic mode and network appearance values.
+
 PARAMETERS
 
 	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
 					will be used.
 ----
@@ -652,7 +738,7 @@ PARAMETERS
 Navigate to the specific M3UA Management unit and switch to the 'ApplicationServers' tab.
 Here you can view a list of all the ASs created.
 Every correctly configured AS will be displayed in a row and for each AS, the first column will display the name of the AS.
-The icon adjacent to the name will be lit 'green' if the AS is currently running or if the AS is stopped the icon will be lit 'orange'. The second column will indicate the current state of the AS (defined / undefined), the third column will allow you to delete the AS. 
+The icon adjacent to the name will be lit 'green' if the AS is currently running or if the AS is stopped the icon will be lit 'orange'. The second column will indicate the current state of the AS (defined / undefined), the third column will allow you to delete the AS.
 
 .GUI - M3UA Management - ApplicationServers
 image::images/GUI_M3UA_Management_ApplicationServers.png[]
@@ -660,18 +746,18 @@ image::images/GUI_M3UA_Management_ApplicationServers.png[]
 In the screen above, click on the name of the AS whose details you wish to view.
 This will launch the AS Details and display all the configured properties of the selected AS.
 The second tab in this view will allow you to view the details of the connected ASP.
-You can click on the bread crumbs at the top to return to any of the previous pages you navigated through. 
+You can click on the bread crumbs at the top to return to any of the previous pages you navigated through.
 
 .GUI - M3UA Management - AS Details
 image::images/GUI_M3UA_Management_ApplicationServer_Details.png[]
 
 [[_managing_show_m3ua_as_create]]
-== Create a new M3UA AS 
+== Create a new M3UA AS
 
 [[_managing_show_m3ua_as_create_cli]]
 === Using CLI
 
-You can create a new M3UA AS by issuing the command `m3ua as create` with appropriate parameters as described below: 
+You can create a new M3UA AS by issuing the command `m3ua as create` with appropriate parameters as described below:
 
 ----
 
@@ -679,113 +765,113 @@ Name
 	m3ua as create
 
 SYNOPSIS
-	m3ua as create <as-name> <AS | SGW | IPSP> mode <SE | DE> 
-	ipspType <client | server> rc <routing- context> traffic-mode <traffic mode> 
+	m3ua as create <as-name> <AS | SGW | IPSP> mode <SE | DE>
+	ipspType <client | server> rc <routing- context> traffic-mode <traffic mode>
 	min-asp <minimum asp active for TrafficModeType.Loadshare>
 	network-appearance <network appearance value> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to create a new Application Server. 
+	This command is used to create a new Application Server.
 
 PARAMETERS
 
 	Standard Parameters
 
-	<as-name>		-	Name of the new Server created. This must be 
+	<as-name>		-	Name of the new Server created. This must be
 					unique and takes any String value.
 
 	<AS | SGW | IPSP>	-	The type of the new Server is specified using this
-					parameter. The three possible values are 
-					AS (Application Server), SGW (Signaling Gateway) 
+					parameter. The three possible values are
+					AS (Application Server), SGW (Signaling Gateway)
 					and IPSP.
 
-	<SE | DE>		-	You must specify if Single Exchange or 
+	<SE | DE>		-	You must specify if Single Exchange or
 					Double Exchange of ASPSM (ASP State Maintenance)
-					and ASPTM (ASP Traffic Maintenance) messages 
-					should be performed. 
+					and ASPTM (ASP Traffic Maintenance) messages
+					should be performed.
 
 	<client | server>	-	This is required if the newly created AS is of
-					type IPSP. You must specify is if it is of type 
-					Client or Server. 
+					type IPSP. You must specify is if it is of type
+					Client or Server.
 
 	Optional Parameters
-	
-	<routing-context>	-	This refers to the Routing Context configured for 
-					M3UA Stack on SGW. This parameter is optional. 
 
-					However for an ASP (Application Server Process) 
-					assigned to this AS to be configured to process 
+	<routing-context>	-	This refers to the Routing Context configured for
+					M3UA Stack on SGW. This parameter is optional.
+
+					However for an ASP (Application Server Process)
+					assigned to this AS to be configured to process
 					signaling traffic related to more than one AS over
-					a single SCTP Association, it is mandatory to 
+					a single SCTP Association, it is mandatory to
 					specify a routing-context for the AS. If an ASP is
-					configured to always process signaling traffic 
+					configured to always process signaling traffic
 					from one AS, irrespective of whether the received
-					messages have routing context set or not, it will 
-					always be delivered to AS for further processing. 
+					messages have routing context set or not, it will
+					always be delivered to AS for further processing.
 
-					However if an ASP is configured to process 
+					However if an ASP is configured to process
 					signaling traffic related to more than one AS over
-					a single SCTP Association and if a signaling 
-					message is received without RC, then the ASP will 
+					a single SCTP Association and if a signaling
+					message is received without RC, then the ASP will
 					drop the message and send back an Error message.
 					A respective log4j error will also be logged.
 
-	<traffic-mode>		-	You may choose to specify the traffic mode for 
-					ASPs. At the moment jSS7 M3UA supports only 
+	<traffic-mode>		-	You may choose to specify the traffic mode for
+					ASPs. At the moment jSS7 M3UA supports only
 					2 modes: loadshare and override. Broadcast mode is
-					not supported. 
+					not supported.
 
 					This is an optional parameter and if not specified
 					the default mode is 'loadshare'.
-					
-	<min-asp>			-	You may choose to specify the minumum asp 
-					active for traffic mode 'loadshare' before the  
+
+	<min-asp>			-	You may choose to specify the minumum asp
+					active for traffic mode 'loadshare' before the
 					payload starts flowing.
 
 					This is an optional parameter and if not specified
-					the default value is 1. Also if traffic-mode is not 	
-					'loadshare' setting this value has no effect.				
-	
-	<network-appearance>	-	This is a M3UA local reference (typically an 
-					integer) shared by SG and AS. This value together 
+					the default value is 1. Also if traffic-mode is not
+					'loadshare' setting this value has no effect.
+
+	<network-appearance>	-	This is a M3UA local reference (typically an
+					integer) shared by SG and AS. This value together
 					with a Signaling Point Code, uniquely identifies a
 					SS7 node by indicating the specific SS7 network to
-					which it belongs. It can be used to distinguish 
-					between signalling traffic, associated with 
-					different networks, being sent between the SG and 
-					the ASP over a common SCTP association. 
-					
-	<stack-name>	-	Name of the stack on which this command is executed. 
+					which it belongs. It can be used to distinguish
+					between signalling traffic, associated with
+					different networks, being sent between the SG and
+					the ASP over a common SCTP association.
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used. 					
+					will be used.
 
 EXAMPLES
-	m3ua as create AS1 IPSP mode DE ipspType server rc 1 traffic-mode loadshare 
+	m3ua as create AS1 IPSP mode DE ipspType server rc 1 traffic-mode loadshare
 
-	The above command will create a new M3UA Application Server identified as AS1, 
-	of type IPSP (Server), Double Exchange mode. The Routing Context is 1 and 
-	traffic-mode is 'loadshare'.  
+	The above command will create a new M3UA Application Server identified as AS1,
+	of type IPSP (Server), Double Exchange mode. The Routing Context is 1 and
+	traffic-mode is 'loadshare'.
 
-	m3ua as create AS2 AS mode SE rc 100 traffic-mode loadshare 2 network-appearance 12 
-	
-	The above command will create a new M3UA Application Server identified as AS2, 
-	of type AS, Single Exchange mode. The Routing Context is 100, 
-	traffic-mode is 'loadshare' and minimun asp to be active for payload transfer is 2. 
+	m3ua as create AS2 AS mode SE rc 100 traffic-mode loadshare 2 network-appearance 12
+
+	The above command will create a new M3UA Application Server identified as AS2,
+	of type AS, Single Exchange mode. The Routing Context is 100,
+	traffic-mode is 'loadshare' and minimun asp to be active for payload transfer is 2.
 	The network-appearance value is 12.
 ----
 
 [[_managing_show_m3ua_as_create_gui]]
 === Using GUI
 
-.Procedure: Create a new M3UA Application Server using GUI 
+.Procedure: Create a new M3UA Application Server using GUI
 . Navigate to the tab 'ApplicationServers' in the M3UA Management Unit window and click on the 'Create AS' button.
   This will launch a pop-up 'Create AS'.
 . In the 'Create Application Server' pop-up, add details of the new AS.
-  For definition of these parameters, please refer to the description of the CLI command for the same in the preceding section. 
+  For definition of these parameters, please refer to the description of the CLI command for the same in the preceding section.
 . Verify the details entered and then click on the 'Create' button.
   A new AS will be created with parameters as specified.
   If there is an error in creating the AS then you will find the details of the error in the Management Console Log section below.
-. Click on the 'Close' button to close the 'Create Application Server' pop-up. 
+. Click on the 'Close' button to close the 'Create Application Server' pop-up.
 
 [[_managing_show_m3ua_as_destroy]]
 == Delete a M3UA AS
@@ -793,7 +879,7 @@ EXAMPLES
 [[_managing_show_m3ua_as_destroy_cli]]
 === Using CLI
 
-You can create a new M3UA AS by issuing the command `m3ua as create` with appropriate parameters as described below: 
+You can create a new M3UA AS by issuing the command `m3ua as create` with appropriate parameters as described below:
 
 ----
 
@@ -804,8 +890,8 @@ SYNOPSIS
 	m3ua as destroy <as-name> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to delete an existing M3UA Application Server instance 
-	identified by the name 'as-name'. You must ensure that all ASPs are unassigned and 
+	This command is used to delete an existing M3UA Application Server instance
+	identified by the name 'as-name'. You must ensure that all ASPs are unassigned and
 	the AS state is 'INACTIVE' prior to destroying the AS.
 
 PARAMETERS
@@ -813,12 +899,12 @@ PARAMETERS
 	Standard Parameters
 
 	<as-name>		-	Name of the AS instance to be deleted.
-	
+
 	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used. 	
+					will be used.
 
 EXAMPLES
 	m3ua as destroy AS1
@@ -842,7 +928,7 @@ EXAMPLES
 [[_managing_show_m3ua_as_add_cli]]
 === Using CLI
 
-You can assign an ASP to an AS by issuing the command `m3ua as add` with appropriate parameters as described below: 
+You can assign an ASP to an AS by issuing the command `m3ua as add` with appropriate parameters as described below:
 
 ----
 
@@ -853,11 +939,11 @@ SYNOPSIS
 	m3ua as add <as-name> <asp-name> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to assign an Application Server Process to an Application 
-	Server. The AS and ASP must both be created prior to executing this command. 
+	This command is used to assign an Application Server Process to an Application
+	Server. The AS and ASP must both be created prior to executing this command.
 
 	You can configure an ASP to process signaling traffic related to more than one AS,
-	over a single SCTP Association. However you must ensure that all the Application 
+	over a single SCTP Association. However you must ensure that all the Application
 	Servers that share the ASP are configured with a valid Routing Context value.
 
 PARAMETERS
@@ -867,12 +953,12 @@ PARAMETERS
 	<as-name>		-	Name of the AS to which this ASP is being assigned.
 
 	<asp-name>		-	Name of the ASP that is being assigned to the AS.
-	
+
 	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used. 	
+					will be used.
 
 EXAMPLES
 	m3ua as add AS1 ASP1
@@ -885,14 +971,14 @@ EXAMPLES
 .Procedure: Assign an ASP to an AS using GUI
 . Navigate to the 'ApplicationServers' tab in the M3UA Management Unit window, locate the row corresponding to the AS you wish to assign an ASP and click on the name of the AS.
 This will launch the AS details page where all the properties of the AS will be displayed.
-Switch to the second tab in this view called "Application Server Processes". As shown in the figure below, you will find a list of all currently assigned ASPs to this selected AS. 
+Switch to the second tab in this view called "Application Server Processes". As shown in the figure below, you will find a list of all currently assigned ASPs to this selected AS.
 
 .GUI - M3UA Management - Assign ASP to an AS
-. image::images/GUI_M3UA_Management_ASP_Assign.png[]				
+. image::images/GUI_M3UA_Management_ASP_Assign.png[]
 . Click on the 'Add ASP' button at the bottom.
   This will launch a pop-up named 'Add ASP' where all available ASPs will be listed in a drop down box.
 . Click on the 'Create' button to add the selected ASP to this AS.
-  The ASP will be assigned to this AS and will be displayed in the ASP list for this AS. 
+  The ASP will be assigned to this AS and will be displayed in the ASP list for this AS.
 . You can configure an ASP to process signaling traffic related to more than one AS, over a single SCTP Association.
   However you must ensure that all the Application Servers that share the ASP are configured with a valid Routing Context value.
 
@@ -902,7 +988,7 @@ Switch to the second tab in this view called "Application Server Processes". As 
 [[_managing_show_m3ua_as_remove_cli]]
 === Using CLI
 
-You can unassign an ASP from an AS by issuing the command `m3ua as remove` with appropriate parameters as described below: 
+You can unassign an ASP from an AS by issuing the command `m3ua as remove` with appropriate parameters as described below:
 
 ----
 
@@ -913,23 +999,23 @@ SYNOPSIS
 	m3ua as remove <as-name> <asp-name> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to un-assign an Application Server Process from an 
-	Application Server that it was previously assigned to. 
+	This command is used to un-assign an Application Server Process from an
+	Application Server that it was previously assigned to.
 
 PARAMETERS
 
 	Standard Parameters
 
-	<as-name>		-	Name of the AS from which this ASP is being 
+	<as-name>		-	Name of the AS from which this ASP is being
 					un-assigned.
 
 	<asp-name>		-	Name of the ASP to be un-assigned.
-	
+
 	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used. 	
+					will be used.
 
 EXAMPLES
 	m3ua as remove AS1 ASP1
@@ -954,7 +1040,7 @@ EXAMPLES
 [[_managing_show_m3ua_route_cli]]
 === Using CLI
 
-You can view the details of all configured M3UA Routes by issuing the command `m3ua route show` as described below: 
+You can view the details of all configured M3UA Routes by issuing the command `m3ua route show` as described below:
 
 ----
 
@@ -966,12 +1052,12 @@ SYNOPSIS
 
 DESCRIPTION
 	This command is used to display all configured routes.
-	
+
 PARAMETERS
 
 	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
 					will be used.
 ----
@@ -988,12 +1074,12 @@ The icon adjacent to the name will be lit 'green' if the Route is currently acti
 image::images/GUI_M3UA_Management_Route.png[]
 
 [[_managing_add_m3ua_route]]
-== Create a new M3UA Route 
+== Create a new M3UA Route
 
 [[_managing_add_m3ua_route_cli]]
 === Using CLI
 
-You can create a new M3UA Route by issuing the command `m3ua route add` with appropriate parameters as described below: 
+You can create a new M3UA Route by issuing the command `m3ua route add` with appropriate parameters as described below:
 
 ----
 
@@ -1004,15 +1090,15 @@ SYNOPSIS
 	m3ua route add <as-name> <dpc> <opc> <si> trafficmode <traffic-mode> stackname <stack-name>
 
 DESCRIPTION
-	This command is used to configure an AS to route message, i.e. configure the 
-	destination point code that the message will be routed to. You must ensure that 
+	This command is used to configure an AS to route message, i.e. configure the
+	destination point code that the message will be routed to. You must ensure that
 	the AS is created prior to executing this command.
 
 PARAMETERS
 
 	Standard Parameters
 
-	<as-name>		-	Name of the AS assigned to route message for 
+	<as-name>		-	Name of the AS assigned to route message for
 					this dpc.
 
 	<dpc>			-	Destination Point Code.
@@ -1020,19 +1106,19 @@ PARAMETERS
 	<opc>			-	Originating Point Code.
 
 	<si>			-	Service Indicator.
-	
+
 	Optional Parameters
 	<traffic-mode>	-	There can be two or more AS defined for each route.
 						The M3UA Stack will do load-balancing between these
-						AS depending on the traffic-mode set for this m3ua 
+						AS depending on the traffic-mode set for this m3ua
 						route. Possible values are:
 						1. Override
 						2. Loadshare
 						3. Broadcast (Broadcast is not yet supported by M3UA)
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 						If this is not passed, the first stack configured in
-						ShellExecutor will be used. 	
+						ShellExecutor will be used.
 
 EXAMPLES
 	m3ua route add AS1 2 -1 -1
@@ -1041,21 +1127,21 @@ EXAMPLES
 [[_managing_add_m3ua_route_gui]]
 === Using GUI
 
-.Procedure: Create a new M3UA Route using GUI 
+.Procedure: Create a new M3UA Route using GUI
 . Navigate to the 'Routers' tab in the M3UA Management Unit window and click on the 'Create/Remove' button.
 . This will launch the pop-up 'Create/Remove Route', where you can add values for DPC, OPC, SI, traffic-mode and Application Server Name.
-  For definition of these parameters, please refer to the description of the CLI command for the same in the preceding section. 
+  For definition of these parameters, please refer to the description of the CLI command for the same in the preceding section.
 . Verify the details entered and then click on the 'Create' button.
   A new Route will be configured with parameters as specified.
   If there is an error in creating the Route then you will find the details of the error in the Management Console Log section below.
 
 [[_managing_remove_m3ua_route]]
-== Delete a M3UA Route 
+== Delete a M3UA Route
 
 [[_managing_remove_m3ua_route_cli]]
 === Using CLI
 
-You can delete a M3UA Route by issuing the command `m3ua route remove` with appropriate parameters as described below: 
+You can delete a M3UA Route by issuing the command `m3ua route remove` with appropriate parameters as described below:
 
 ----
 
@@ -1072,7 +1158,7 @@ PARAMETERS
 
 	Standard Parameters
 
-	<as-name>		-	Name of the AS assigned to route message for 
+	<as-name>		-	Name of the AS assigned to route message for
 					this dpc.
 
 	<dpc>			-	Destination Point Code.
@@ -1080,12 +1166,12 @@ PARAMETERS
 	<opc>			-	Originating Point Code.
 
 	<si>			-	Service Indicator.
-	
+
 	Optional Parameters
-						
-	<stack-name>	-	Name of the stack on which this command is executed. 
+
+	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
-					will be used. 	
+					will be used.
 
 EXAMPLES
 	m3ua route remove AS1 2 -1 -1
@@ -1097,5 +1183,5 @@ EXAMPLES
 .Procedure: Delete a M3UA Route using GUI
 . Navigate to the 'Routers' tab in the M3UA Management Unit window and click on the 'Create/Remove' button.
 . This will launch the pop-up 'Create/Remove Route'. Enter the values for DPC, OPC, SI and Application Server Name that you wish to remove from the list of Routes.
-  For definition of these parameters, please refer to the description of the CLI command for the same in the preceding section. 
+  For definition of these parameters, please refer to the description of the CLI command for the same in the preceding section.
 . Click on the 'Remove' button to delete the Route corresponding to the parameters specified.
