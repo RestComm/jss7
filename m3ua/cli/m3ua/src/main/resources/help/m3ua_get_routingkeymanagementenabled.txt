@@ -1,0 +1,19 @@
+Name
+	m3ua get routingkeymanagementenabled 
+
+SYNOPSIS
+	m3ua get routingkeymanagementenabled stackname <stack-name>
+
+DESCRIPTION
+	Returns is routing key management enabled
+	
+PARAMETERS
+
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.		
+
+EXAMPLES
+	m3ua get routingkeymanagementenabled

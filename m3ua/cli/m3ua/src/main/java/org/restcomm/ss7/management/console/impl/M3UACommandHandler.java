@@ -56,10 +56,12 @@ public class M3UACommandHandler extends CommandHandlerWithHelp {
 
         Node set = parent.addChild("set");
         set.addChild("heartbeattime");
+        set.addChild("routingkeymanagementenabled");
         set.addChild("uselsbforlinksetselection");
 
         Node get = parent.addChild("get");
         get.addChild("heartbeattime");
+        get.addChild("routingkeymanagementenabled");
         get.addChild("uselsbforlinksetselection");
         get.addChild("maxsequencenumber");
         get.addChild("maxasforroute");
