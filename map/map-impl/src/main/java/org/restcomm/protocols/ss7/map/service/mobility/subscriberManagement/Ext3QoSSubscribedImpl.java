@@ -22,8 +22,6 @@
 
 package org.restcomm.protocols.ss7.map.service.mobility.subscriberManagement;
 
-import javax.xml.bind.DatatypeConverter;
-
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
 
@@ -38,9 +36,10 @@ import org.restcomm.protocols.ss7.map.primitives.OctetStringBase;
  */
 public class Ext3QoSSubscribedImpl extends OctetStringBase implements Ext3QoSSubscribed {
 
-    private static final String DATA = "data";
+    private static final String MAX_BIT_RATE_FOR_UPLINK_EXT = "maximumBitRateForUplinkExtended";
+    private static final String GUARANTEED_BIT_RATE_FOR_UPLINK_EXT = "guaranteedBitRateForUplinkExtended";
 
-    private static final String DEFAULT_VALUE = null;
+    private static final int DEFAULT_INT_VALUE = 0;
 
     public Ext3QoSSubscribedImpl() {
         super(1, 2, "Ext3QoSSubscribed");
@@ -119,16 +118,18 @@ public class Ext3QoSSubscribedImpl extends OctetStringBase implements Ext3QoSSub
 
         @Override
         public void read(javolution.xml.XMLFormat.InputElement xml, Ext3QoSSubscribedImpl qos3Subscribed) throws XMLStreamException {
-            String s = xml.getAttribute(DATA, DEFAULT_VALUE);
-            if (s != null) {
-                qos3Subscribed.data = DatatypeConverter.parseHexBinary(s);
-            }
+            ExtQoSSubscribed_BitRateExtended maximumBitRateForUplinkExtended = new ExtQoSSubscribed_BitRateExtendedImpl(xml.getAttribute(MAX_BIT_RATE_FOR_UPLINK_EXT, DEFAULT_INT_VALUE), false);
+            ExtQoSSubscribed_BitRateExtended guaranteedBitRateForUplinkExtended = new ExtQoSSubscribed_BitRateExtendedImpl(xml.getAttribute(GUARANTEED_BIT_RATE_FOR_UPLINK_EXT, DEFAULT_INT_VALUE), false);
+            qos3Subscribed.setData(maximumBitRateForUplinkExtended, guaranteedBitRateForUplinkExtended);
         }
 
         @Override
         public void write(Ext3QoSSubscribedImpl qos3Subscribed, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
             if (qos3Subscribed.data != null) {
-                xml.setAttribute(DATA, DatatypeConverter.printHexBinary(qos3Subscribed.data));
+                if (qos3Subscribed.getMaximumBitRateForUplinkExtended() != null)
+                    xml.setAttribute(MAX_BIT_RATE_FOR_UPLINK_EXT, qos3Subscribed.getMaximumBitRateForUplinkExtended().getBitRate());
+                if (qos3Subscribed.getGuaranteedBitRateForUplinkExtended() != null)
+                    xml.setAttribute(GUARANTEED_BIT_RATE_FOR_UPLINK_EXT, qos3Subscribed.getGuaranteedBitRateForUplinkExtended().getBitRate());
             }
         }
     };

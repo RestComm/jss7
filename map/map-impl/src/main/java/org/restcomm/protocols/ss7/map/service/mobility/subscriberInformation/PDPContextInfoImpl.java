@@ -1019,7 +1019,7 @@ public class PDPContextInfoImpl implements PDPContextInfo, MAPAsnPrimitive {
             if (pdpContextInfo.getQos3Requested() != null)
                 xml.add((Ext3QoSSubscribedImpl) pdpContextInfo.getQos3Requested(), QOS3_REQUESTED, Ext3QoSSubscribedImpl.class);
             if (pdpContextInfo.getQos3Negotiated() != null)
-                xml.add((Ext3QoSSubscribedImpl) pdpContextInfo.getQos3Negotiated(), QOS2_NEGOTIATED,
+                xml.add((Ext3QoSSubscribedImpl) pdpContextInfo.getQos3Negotiated(), QOS3_NEGOTIATED,
                         Ext3QoSSubscribedImpl.class);
             if (pdpContextInfo.getQos4Subscribed() != null)
                 xml.add((Ext4QoSSubscribedImpl) pdpContextInfo.getQos4Subscribed(), QOS4_SUBSCRIBED,

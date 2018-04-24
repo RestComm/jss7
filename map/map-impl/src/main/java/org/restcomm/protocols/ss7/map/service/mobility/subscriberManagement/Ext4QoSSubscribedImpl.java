@@ -35,7 +35,7 @@ import org.restcomm.protocols.ss7.map.primitives.OctetStringLength1Base;
  */
 public class Ext4QoSSubscribedImpl extends OctetStringLength1Base implements Ext4QoSSubscribed {
 
-    private static final String DATA = "data";
+    private static final String PRIORITY_LEVEL = "priorityLevel";
 
     private static final int DEFAULT_INT_VALUE = 0;
 
@@ -59,14 +59,14 @@ public class Ext4QoSSubscribedImpl extends OctetStringLength1Base implements Ext
         @Override
         public void read(javolution.xml.XMLFormat.InputElement xml, Ext4QoSSubscribedImpl qos4Subscribed) throws XMLStreamException {
 
-            qos4Subscribed.data = xml.getAttribute(DATA, DEFAULT_INT_VALUE);
+            qos4Subscribed.data = xml.getAttribute(PRIORITY_LEVEL, DEFAULT_INT_VALUE);
 
         }
 
         @Override
         public void write(Ext4QoSSubscribedImpl qos4Subscribed, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
 
-            xml.setAttribute(DATA, qos4Subscribed.data);
+            xml.setAttribute(PRIORITY_LEVEL, qos4Subscribed.data);
 
         }
     };

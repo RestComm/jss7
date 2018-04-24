@@ -297,9 +297,9 @@ public class PDPContextInfoTest {
 //                chargingCharacteristics, rncAddress, null, qos2Subscribed, qos2Requested, qos2Negotiated, qos3Subscribed,
 //                qos3Requested, qos3Negotiated, qos4Subscribed, qos4Requested, qos4Negotiated, extPdpType, extPdpAddress);
         PDPContextInfoImpl original = new PDPContextInfoImpl(10, true, pdpType, pdpAddress, apnSubscribed, apnInUse, 11,
-                transactionId, teidForGnAndGp, teidForIu, ggsnAddress, null, null, null, null,
-                null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null);
+                transactionId, teidForGnAndGp, teidForIu, ggsnAddress, qosSubscribed, qosRequested, qosNegotiated, chargingId,
+                chargingCharacteristics, rncAddress, null, qos2Subscribed, qos2Requested, qos2Negotiated, qos3Subscribed,
+                qos3Requested, qos3Negotiated, qos4Subscribed, qos4Requested, qos4Negotiated, extPdpType, extPdpAddress);
 
         // Writes the area to a file.
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -333,6 +333,42 @@ public class PDPContextInfoTest {
         assertEquals(copy.getTeidForIu().getData(), original.getTeidForIu().getData());
         assertEquals(copy.getGgsnAddress().getGSNAddressAddressType(), original.getGgsnAddress().getGSNAddressAddressType());
         assertEquals(copy.getGgsnAddress().getGSNAddressData(), original.getGgsnAddress().getGSNAddressData());
+        
+        assertEquals(copy.getChargingId().getData(), original.getChargingId().getData());
+        
+        assertEquals(copy.getChargingCharacteristics().isNormalCharging(), original.getChargingCharacteristics().isNormalCharging());
+        assertEquals(copy.getChargingCharacteristics().isPrepaidCharging(), original.getChargingCharacteristics().isPrepaidCharging());
+        assertEquals(copy.getChargingCharacteristics().isFlatRateChargingCharging(), original.getChargingCharacteristics().isFlatRateChargingCharging());
+        assertEquals(copy.getChargingCharacteristics().isChargingByHotBillingCharging(), original.getChargingCharacteristics().isChargingByHotBillingCharging());
+        
+        assertEquals(copy.getQosSubscribed().getAllocationRetentionPriority(), original.getQosSubscribed().getAllocationRetentionPriority());
+        assertEquals(copy.getQosRequested().getAllocationRetentionPriority(), original.getQosRequested().getAllocationRetentionPriority());
+        assertEquals(copy.getQosNegotiated().getAllocationRetentionPriority(), original.getQosNegotiated().getAllocationRetentionPriority());
+        
+        assertEquals(copy.getRncAddress().getData(), original.getRncAddress().getData());
+        assertEquals(copy.getRncAddress().getGSNAddressAddressType(), original.getRncAddress().getGSNAddressAddressType());
+        
+        assertEquals(copy.getQos2Subscribed().getSourceStatisticsDescriptor(), original.getQos2Subscribed().getSourceStatisticsDescriptor());
+        assertEquals(copy.getQos2Subscribed().isOptimisedForSignallingTraffic(), original.getQos2Subscribed().isOptimisedForSignallingTraffic());
+        assertEquals(copy.getQos2Requested().getSourceStatisticsDescriptor(), original.getQos2Requested().getSourceStatisticsDescriptor());
+        assertEquals(copy.getQos2Requested().isOptimisedForSignallingTraffic(), original.getQos2Requested().isOptimisedForSignallingTraffic());
+        assertEquals(copy.getQos2Negotiated().getSourceStatisticsDescriptor(), original.getQos2Negotiated().getSourceStatisticsDescriptor());
+        assertEquals(copy.getQos2Negotiated().isOptimisedForSignallingTraffic(), original.getQos2Negotiated().isOptimisedForSignallingTraffic());
+        
+        assertEquals(copy.getQos3Subscribed().getMaximumBitRateForUplinkExtended().getBitRate(), original.getQos3Subscribed().getMaximumBitRateForUplinkExtended().getBitRate());
+        assertEquals(copy.getQos3Requested().getMaximumBitRateForUplinkExtended().getBitRate(), original.getQos3Requested().getMaximumBitRateForUplinkExtended().getBitRate());
+        assertEquals(copy.getQos3Negotiated().getMaximumBitRateForUplinkExtended().getBitRate(), original.getQos3Negotiated().getMaximumBitRateForUplinkExtended().getBitRate());
+        
+        assertEquals(copy.getQos4Subscribed().getData(), original.getQos4Subscribed().getData());
+        assertEquals(copy.getQos4Requested().getData(), original.getQos4Requested().getData());
+        assertEquals(copy.getQos4Negotiated().getData(), original.getQos4Negotiated().getData());
+        
+        assertEquals(copy.getExtPdpType().getData(), original.getExtPdpType().getData());
+        
+        assertEquals(copy.getPdpAddress().getData(), original.getPdpAddress().getData());
+        
+        
+        
     }
 
 }

@@ -22,7 +22,6 @@
 
 package org.restcomm.protocols.ss7.map.service.mobility.subscriberManagement;
 
-import javax.xml.bind.DatatypeConverter;
 
 import javolution.xml.XMLFormat;
 import javolution.xml.stream.XMLStreamException;
@@ -46,9 +45,21 @@ import org.restcomm.protocols.ss7.map.primitives.OctetStringBase;
  */
 public class ExtQoSSubscribedImpl extends OctetStringBase implements ExtQoSSubscribed {
 
-    private static final String DATA = "data";
+    private static final String ALLOCATION_RETENTION_PRIORITY = "allocationRetentionPriority";
+    private static final String DELIVERY_OF_ERRONEOUS_SDUS = "deliveryOfErroneousSdus";
+    private static final String DELIVERY_ORDER = "deliveryOrder";
+    private static final String TRAFFIC_CLASS = "trafficClass";
+    private static final String MAXIMUM_SDU_SIZE = "maximumSduSize";
+    private static final String MAXIMUM_BIT_RATE_FOR_UPLINK = "maximumBitRateForUplink";
+    private static final String MAXIMUM_BIT_RATE_FOR_DOWNLINK = "maximumBitRateForDownlink";
+    private static final String RESIDUAL_BER = "residualBER";
+    private static final String SDU_ERROR_RATIO = "sduErrorRatio";
+    private static final String TRAFFIC_HANDLING_PRIORITY = "trafficHandlingPriority";
+    private static final String TRANSFER_DELAY = "transferDelay";
+    private static final String GUARANTEED_BIT_RATE_FOR_UPLINK = "guaranteedBitRateForUplink";
+    private static final String GUARANTEED_BIT_RATE_FOR_DOWNLINK = "guaranteedBitRateForDownlink";
 
-    private static final String DEFAULT_VALUE = null;
+    private static final int DEFAULT_INT_VALUE = 0;
 
     public ExtQoSSubscribedImpl() {
         super(1, 9, "ExtQoSSubscribed");
@@ -299,16 +310,58 @@ public class ExtQoSSubscribedImpl extends OctetStringBase implements ExtQoSSubsc
 
         @Override
         public void read(javolution.xml.XMLFormat.InputElement xml, ExtQoSSubscribedImpl qosSubscribed) throws XMLStreamException {
-            String s = xml.getAttribute(DATA, DEFAULT_VALUE);
-            if (s != null) {
-                qosSubscribed.data = DatatypeConverter.parseHexBinary(s);
-            }
+            int allocationRetentionPriority = xml.getAttribute(ALLOCATION_RETENTION_PRIORITY, DEFAULT_INT_VALUE);
+            ExtQoSSubscribed_DeliveryOfErroneousSdus deliveryOfErroneousSdus =
+                    Enum.valueOf(ExtQoSSubscribed_DeliveryOfErroneousSdus.class, xml.getAttribute(DELIVERY_OF_ERRONEOUS_SDUS, "subscribedDeliveryOfErroneousSdus_Reserved"));
+            ExtQoSSubscribed_DeliveryOrder deliveryOrder =
+                    Enum.valueOf(ExtQoSSubscribed_DeliveryOrder.class, xml.getAttribute(DELIVERY_ORDER, "subscribeddeliveryOrder_Reserved"));
+            ExtQoSSubscribed_TrafficClass trafficClass =
+                    Enum.valueOf(ExtQoSSubscribed_TrafficClass.class, xml.getAttribute(TRAFFIC_CLASS, "subscribedTrafficClass_Reserved"));
+            ExtQoSSubscribed_MaximumSduSize  maximumSduSize = new ExtQoSSubscribed_MaximumSduSizeImpl(xml.getAttribute(MAXIMUM_SDU_SIZE, DEFAULT_INT_VALUE), false);
+            ExtQoSSubscribed_BitRate maximumBitRateForUplink = new ExtQoSSubscribed_BitRateImpl(xml.getAttribute(MAXIMUM_BIT_RATE_FOR_UPLINK, DEFAULT_INT_VALUE), false);
+            ExtQoSSubscribed_BitRate maximumBitRateForDownlink = new ExtQoSSubscribed_BitRateImpl(xml.getAttribute(MAXIMUM_BIT_RATE_FOR_DOWNLINK, DEFAULT_INT_VALUE), false);
+            ExtQoSSubscribed_ResidualBER residualBER =
+                    Enum.valueOf(ExtQoSSubscribed_ResidualBER.class, xml.getAttribute(RESIDUAL_BER, "subscribedResidualBER_Reserved"));
+            ExtQoSSubscribed_SduErrorRatio sduErrorRatio =
+                    Enum.valueOf(ExtQoSSubscribed_SduErrorRatio.class, xml.getAttribute(SDU_ERROR_RATIO, "subscribedSduErrorRatio_Reserved"));
+            ExtQoSSubscribed_TrafficHandlingPriority trafficHandlingPriority =
+                    Enum.valueOf(ExtQoSSubscribed_TrafficHandlingPriority.class, xml.getAttribute(TRAFFIC_HANDLING_PRIORITY, "subscribedTrafficHandlingPriority_Reserved"));
+            ExtQoSSubscribed_TransferDelay transferDelay = new ExtQoSSubscribed_TransferDelayImpl(xml.getAttribute(TRANSFER_DELAY, DEFAULT_INT_VALUE),false);
+            ExtQoSSubscribed_BitRate guaranteedBitRateForUplink = new ExtQoSSubscribed_BitRateImpl(xml.getAttribute(GUARANTEED_BIT_RATE_FOR_UPLINK, DEFAULT_INT_VALUE),false);
+            ExtQoSSubscribed_BitRate guaranteedBitRateForDownlink = new ExtQoSSubscribed_BitRateImpl(xml.getAttribute(GUARANTEED_BIT_RATE_FOR_DOWNLINK, DEFAULT_INT_VALUE), false);
+            qosSubscribed.setData(allocationRetentionPriority, deliveryOfErroneousSdus, deliveryOrder, trafficClass, maximumSduSize, maximumBitRateForUplink,
+                    maximumBitRateForDownlink, residualBER, sduErrorRatio, trafficHandlingPriority, transferDelay, guaranteedBitRateForUplink,
+                    guaranteedBitRateForDownlink);
         }
 
         @Override
         public void write(ExtQoSSubscribedImpl qosSubscribed, javolution.xml.XMLFormat.OutputElement xml) throws XMLStreamException {
             if (qosSubscribed.data != null) {
-                xml.setAttribute(DATA, DatatypeConverter.printHexBinary(qosSubscribed.data));
+                xml.setAttribute(ALLOCATION_RETENTION_PRIORITY, qosSubscribed.getAllocationRetentionPriority());
+                if(qosSubscribed.getDeliveryOfErroneousSdus()!=null)
+                    xml.setAttribute(DELIVERY_OF_ERRONEOUS_SDUS, qosSubscribed.getDeliveryOfErroneousSdus().toString());
+                if(qosSubscribed.getDeliveryOrder()!=null)
+                    xml.setAttribute(DELIVERY_ORDER, qosSubscribed.getDeliveryOrder().toString());
+                if(qosSubscribed.getTrafficClass()!=null)
+                    xml.setAttribute(TRAFFIC_CLASS, qosSubscribed.getTrafficClass().toString());
+                if(qosSubscribed.getMaximumSduSize()!=null)
+                    xml.setAttribute(MAXIMUM_SDU_SIZE, qosSubscribed.getMaximumSduSize().getMaximumSduSize());
+                if(qosSubscribed.getMaximumBitRateForUplink()!=null)
+                    xml.setAttribute(MAXIMUM_BIT_RATE_FOR_UPLINK, qosSubscribed.getMaximumBitRateForUplink().getBitRate());
+                if(qosSubscribed.getMaximumBitRateForDownlink()!=null)
+                    xml.setAttribute(MAXIMUM_BIT_RATE_FOR_DOWNLINK, qosSubscribed.getMaximumBitRateForDownlink().getBitRate());
+                if(qosSubscribed.getResidualBER()!=null)
+                    xml.setAttribute(RESIDUAL_BER, qosSubscribed.getResidualBER().toString());
+                if(qosSubscribed.getSduErrorRatio()!=null)
+                    xml.setAttribute(SDU_ERROR_RATIO, qosSubscribed.getSduErrorRatio().toString());
+                if(qosSubscribed.getTrafficHandlingPriority()!=null)
+                    xml.setAttribute(TRAFFIC_HANDLING_PRIORITY, qosSubscribed.getTrafficHandlingPriority().toString());
+                if(qosSubscribed.getTransferDelay()!=null)
+                    xml.setAttribute(TRANSFER_DELAY, qosSubscribed.getTransferDelay().getTransferDelay());
+                if(qosSubscribed.getGuaranteedBitRateForUplink()!=null)
+                    xml.setAttribute(GUARANTEED_BIT_RATE_FOR_UPLINK, qosSubscribed.getGuaranteedBitRateForUplink().getBitRate());
+                if(qosSubscribed.getGuaranteedBitRateForDownlink()!=null)
+                    xml.setAttribute(GUARANTEED_BIT_RATE_FOR_DOWNLINK, qosSubscribed.getGuaranteedBitRateForDownlink().getBitRate());
             }
         }
     };
