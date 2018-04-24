@@ -1,0 +1,23 @@
+Name
+	m3ua set statisticsenabled 
+
+SYNOPSIS
+	m3ua set statisticsenabled <statisticsenabled> stackname <stack-name>
+
+DESCRIPTION
+	You can enable/disable statistic via this property 
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<statisticsenabled>	-	true/false.
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	m3ua set statisticsenabled true
