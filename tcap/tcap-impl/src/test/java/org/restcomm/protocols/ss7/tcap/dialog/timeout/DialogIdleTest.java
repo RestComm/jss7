@@ -137,7 +137,8 @@ public class DialogIdleTest extends SccpHarness {
     }
 
     @Test(groups = { "functional.timeout.idle" })
-    public void testAfterBeginOnly() throws TCAPException, TCAPSendException {
+    public void testAfterBeginOnly1() throws TCAPException, TCAPSendException {
+      //client timeout first
         long stamp = System.currentTimeMillis();
         List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
         TestEvent te = TestEvent.createSentEvent(EventType.Begin, null, 0, stamp + _WAIT);
@@ -164,6 +165,38 @@ public class DialogIdleTest extends SccpHarness {
         client.compareEvents(clientExpectedEvents);
         server.compareEvents(serverExpectedEvents);
 
+    }
+
+    @Test(groups = { "functional.timeout.idle" })
+    public void testAfterBeginOnly2() throws Exception {
+      //server timeout first
+        this.tcapStack1.setDialogIdleTimeout(_DIALOG_TIMEOUT);
+        this.tcapStack2.setDialogIdleTimeout(_DIALOG_TIMEOUT-100);
+        long stamp = System.currentTimeMillis();
+        List<TestEvent> clientExpectedEvents = new ArrayList<TestEvent>();
+        TestEvent te = TestEvent.createSentEvent(EventType.Begin, null, 0, stamp + _WAIT);
+        clientExpectedEvents.add(te);
+        te = TestEvent.createReceivedEvent(EventType.PAbort, null, 1, stamp + _WAIT + _DIALOG_TIMEOUT);
+        clientExpectedEvents.add(te);
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 2, stamp + _WAIT + _DIALOG_TIMEOUT);
+        clientExpectedEvents.add(te);
+
+        List<TestEvent> serverExpectedEvents = new ArrayList<TestEvent>();
+        te = TestEvent.createReceivedEvent(EventType.Begin, null, 0, stamp + _WAIT);
+        serverExpectedEvents.add(te);
+        te = TestEvent.createReceivedEvent(EventType.DialogTimeout, null, 1, stamp + _WAIT + _DIALOG_TIMEOUT);
+        serverExpectedEvents.add(te);
+        te = TestEvent.createReceivedEvent(EventType.PAbort, null, 2, stamp + _WAIT + _DIALOG_TIMEOUT);
+        serverExpectedEvents.add(te);
+        te = TestEvent.createReceivedEvent(EventType.DialogRelease, null, 3, stamp + _WAIT + _DIALOG_TIMEOUT);
+        serverExpectedEvents.add(te);
+
+        client.startClientDialog();
+        client.waitFor(_WAIT);
+        client.sendBegin();
+        client.waitFor(_WAIT * 3);
+        client.compareEvents(clientExpectedEvents);
+        server.compareEvents(serverExpectedEvents);
     }
 
     @Test(groups = { "functional.timeout.idle" })
