@@ -100,6 +100,8 @@ import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.RequestRep
 import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.ResetTimerRequest;
 import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.SendChargingInformationRequest;
 import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.SpecializedResourceReportRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.SplitLegRequest;
+import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.SplitLegResponse;
 import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AOCBeforeAnswer;
 import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AOCSubsequent;
 import org.restcomm.protocols.ss7.cap.api.service.circuitSwitchedCall.primitive.AlertingPatternCap;
@@ -4805,6 +4807,8 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
      *
      * TC-BEGIN + InitiateCallAttemptRequest
      *   TC-CONTINUE + InitiateCallAttemptResponse
+     * TC-CONTINUE + SplitLegRequest
+     *   TC-CONTINUE + SplitLegResponse
      * TC-CONTINUE + MoveLegRequest
      *   TC-CONTINUE + MoveLegResponse
      * TC-CONTINUE + DisconnectLegRequest 
@@ -4830,17 +4834,24 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
             }
 
             @Override
+            public void onSplitLegResponse(SplitLegResponse ind) {
+                super.onSplitLegResponse(ind);
+
+                dialogStep = 2;
+            }
+
+            @Override
             public void onMoveLegResponse(MoveLegResponse ind) {
                 super.onMoveLegResponse(ind);
 
-                dialogStep = 2;
+                dialogStep = 3;
             }
 
             @Override
             public void onDisconnectLegResponse(DisconnectLegResponse ind) {
                 super.onDisconnectLegResponse(ind);
 
-                dialogStep = 3;
+                dialogStep = 4;
             }
 
             public void onDialogDelimiter(CAPDialog capDialog) {
@@ -4851,13 +4862,20 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
                 try {
                     switch (dialogStep) {
                     case 1: // after InitiateCallAttemptResponse
+                        LegID logIDToSplit = this.inapParameterFactory.createLegID(false, LegType.leg1);
+                        dlg.addSplitLegRequest(logIDToSplit, 1, null);
+                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.SplitLegRequest, null, sequence++));
+                        dlg.send();
+                        break;
+
+                    case 2: // after SplitLegResponse
                         LegID logIDToMove = this.inapParameterFactory.createLegID(false, LegType.leg1);
                         dlg.addMoveLegRequest(logIDToMove, null);
                         this.observerdEvents.add(TestEvent.createSentEvent(EventType.MoveLegRequest, null, sequence++));
                         dlg.send();
                         break;
 
-                    case 2: // after MoveLegResponse
+                    case 3: // after MoveLegResponse
                         LegID logToBeReleased = this.inapParameterFactory.createLegID(false, LegType.leg2);
                         CauseIndicators causeIndicators = this.isupParameterFactory.createCauseIndicators();
                         causeIndicators.setCauseValue(3);
@@ -4867,7 +4885,7 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
                         dlg.send();
                         break;
 
-                    case 3: // after MoveLegResponse
+                    case 4: // after MoveLegResponse
                         dlg.addDisconnectForwardConnectionWithArgumentRequest(15, null);
                         this.observerdEvents.add(TestEvent.createSentEvent(EventType.DisconnectForwardConnectionWithArgumentRequest, null, sequence++));
                         dlg.close(false);
@@ -4882,6 +4900,7 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
         Server server = new Server(this.stack2, this, peer2Address, peer1Address) {
             private int dialogStep = 0;
             private long invokeIdInitiateCallAttempt;
+            private long invokeIdSplitLeg;
             private long invokeIdMoveLeg;
             private long invokeIdDisconnectLeg;
 
@@ -4902,13 +4921,23 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
             }
 
             @Override
+            public void onSplitLegRequest(SplitLegRequest ind) {
+                super.onSplitLegRequest(ind);
+
+                invokeIdSplitLeg = ind.getInvokeId();
+                assertEquals(ind.getLegToBeSplit().getReceivingSideID(), LegType.leg1);
+
+                dialogStep = 2;
+            }
+
+            @Override
             public void onMoveLegRequest(MoveLegRequest ind) {
                 super.onMoveLegRequest(ind);
 
                 invokeIdMoveLeg = ind.getInvokeId();
                 assertEquals(ind.getLegIDToMove().getReceivingSideID(), LegType.leg1);
 
-                dialogStep = 2;
+                dialogStep = 3;
             }
 
             @Override
@@ -4924,7 +4953,7 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
                     e.printStackTrace();
                 }
 
-                dialogStep = 3;
+                dialogStep = 4;
             }
 
             @Override
@@ -4936,7 +4965,7 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
 
                 ind.getCAPDialog().processInvokeWithoutAnswer(ind.getInvokeId());
 
-                dialogStep = 4;
+                dialogStep = 5;
             }
 
             @Override
@@ -4956,7 +4985,15 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
                         dialogStep = 0;
                         break;
 
-                    case 2: // after MoveLegRequest
+                    case 2: // after SplitLegRequest
+                        dlg.addSplitLegResponse(invokeIdSplitLeg);
+                        this.observerdEvents.add(TestEvent.createSentEvent(EventType.SplitLegResponse, null, sequence++));
+                        dlg.send();
+
+                        dialogStep = 0;
+                        break;
+
+                    case 3: // after MoveLegRequest
                         dlg.addMoveLegResponse(invokeIdMoveLeg);
                         this.observerdEvents.add(TestEvent.createSentEvent(EventType.MoveLegResponse, null, sequence++));
                         dlg.send();
@@ -4964,7 +5001,7 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
                         dialogStep = 0;
                         break;
 
-                    case 3: // after DisconnectLegRequest
+                    case 4: // after DisconnectLegRequest
                         dlg.addDisconnectLegResponse(invokeIdDisconnectLeg);
                         this.observerdEvents.add(TestEvent.createSentEvent(EventType.DisconnectLegResponse, null, sequence++));
                         dlg.send();
@@ -4989,6 +5026,15 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
         clientExpectedEvents.add(te);
 
         te = TestEvent.createReceivedEvent(EventType.InitiateCallAttemptResponse, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.SplitLegRequest, null, count++, stamp);
+        clientExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.SplitLegResponse, null, count++, stamp);
         clientExpectedEvents.add(te);
 
         te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
@@ -5031,6 +5077,15 @@ TC-BEGIN + establishTemporaryConnection + callInformationRequest + collectInform
         serverExpectedEvents.add(te);
 
         te = TestEvent.createSentEvent(EventType.InitiateCallAttemptResponse, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.SplitLegRequest, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createReceivedEvent(EventType.DialogDelimiter, null, count++, stamp);
+        serverExpectedEvents.add(te);
+
+        te = TestEvent.createSentEvent(EventType.SplitLegResponse, null, count++, stamp);
         serverExpectedEvents.add(te);
 
         te = TestEvent.createReceivedEvent(EventType.MoveLegRequest, null, count++, stamp);
