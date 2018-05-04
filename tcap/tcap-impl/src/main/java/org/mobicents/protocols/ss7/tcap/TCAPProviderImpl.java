@@ -726,7 +726,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                 if (tcb.getDialogPortion() != null && tcb.getDialogPortion().getDialogAPDU() != null
                         && tcb.getDialogPortion().getDialogAPDU() instanceof DialogRequestAPDUImpl) {
                     DialogRequestAPDUImpl dlg = (DialogRequestAPDUImpl) tcb.getDialogPortion().getDialogAPDU();
-                    if (!dlg.getProtocolVersion().isSupportedVersion()) {
+                    if (dlg.getProtocolVersion() != null && !dlg.getProtocolVersion().isSupportedVersion()) {
                         logger.error("Unsupported protocol version of  has been received when parsing TCBeginMessage");
                         this.sendProviderAbort(DialogServiceProviderType.NoCommonDialogPortion, tcb.getOriginatingTransactionId(), remoteAddress, localAddress,
                                 message.getSls(), dlg.getApplicationContextName(), message.getNetworkId());
