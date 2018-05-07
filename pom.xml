@@ -34,9 +34,9 @@
 		<compiler.plugin.version>2.0.2</compiler.plugin.version>
 		<compile.source>1.7</compile.source>
 		<!-- restcomm but not strictly ss7 -->
-		<asn.version>2.2.0-22</asn.version>
+		<asn.version>2.2.0-143</asn.version>
 		<stream.version>1.0.0.CR1</stream.version>
-		<sctp.version>2.0.0-128</sctp.version>
+		<sctp.version>2.0.0-158</sctp.version>
 		<commons.version>1.0.0.CR1</commons.version>
 		<netty.version>4.0.33.Final</netty.version>
 
