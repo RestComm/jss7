@@ -9,11 +9,24 @@
     <property name="jss7.addon" value="${release.dir}/jss7-addon"/>
     <property name="jss7.dir" value="${base.dir}/.."/>
     <property name="docs.dir" location="${restcomm.jss7.dist}/_docs"/>
+	<property name="checkout.dir" value="${base.dir}/checkout" />	
 
     <!--Versions -->
+    <property name="asn.version" value="2.2.0-143"/>
+    <property name="sctp.version" value="2.0.0-158"/>
+    <property name="release.version" value="${jSS7.release.version}"/>
+
     <property name="checkout.asn.version" value="2.2.0-22"/>
     <property name="checkout.sctp.version" value="2.0.0-39"/>
-    <property name="release.version" value="${jSS7.release.version}"/>
+
+	<property name="github.url" value="https://github.com/RestComm" />
+
+	<property name="jasn.download.distro.file" value="restcomm-jasn-${asn.version}.zip" />
+	<property name="jasn.download.url" value="${github.url}/jasn/releases/download/${asn.version}/${jasn.download.distro.file}" />
+	<property name="jasn.distro.zip.path" value="${checkout.dir}/${jasn.download.distro.file}" />
+	<property name="sctp.download.distro.file" value="restcomm-sctp-${sctp.version}.zip" />
+	<property name="sctp.download.url" value="${github.url}/sctp/releases/download/${sctp.version}/${sctp.download.distro.file}" />
+	<property name="sctp.distro.zip.path" value="${checkout.dir}/${sctp.download.distro.file}" />
 
 
     <condition property="mvn.executable" value="${sys.M2_HOME}\bin\mvn.bat" else="mvn">
@@ -27,10 +40,13 @@
     </taskdef>
 
     <target name="release"
-            depends="clean,build-asn,build-sctp,build-jss7,build-docs,copy-asn,copy-sctp,copy-jss7,copy-documentation,make-final-zip"/>
+            depends="clean,get-deps,extract-deps,build-jss7,build-docs,copy-asn,copy-sctp,copy-jss7,copy-documentation,make-final-zip"/>
 
     <target name="release-restcomm"
-            depends="clean,build-asn,build-sctp,build-docs,copy-asn,copy-sctp,copy-jss7,copy-documentation,make-final-zip"/>
+            depends="clean,get-deps,extract-deps,build-docs,copy-asn,copy-sctp,copy-jss7,copy-documentation,make-final-zip"/>
+
+	<target name="get-deps" depends="get-asn,get-sctp" />
+	<target name="extract-deps" depends="extract-asn,extract-sctp" />
 
 
     <!-- Build dependencies-->
@@ -55,6 +71,36 @@
         </exec>
     </target>
 
+	<target name="get-asn" unless="got.asn">
+		<echo>Downloading RestComm JASN version: ${asn.version}</echo>
+		<exec failonerror="true" executable="wget">
+			<arg value="${jasn.download.url}" />
+		    <arg value="--output-document=${jasn.download.distro.file}" />
+		    <arg value="--no-check-certificate" />
+		</exec>
+		<move file="${base.dir}/${jasn.download.distro.file}" todir="${checkout.dir}"/>
+	</target>
+	<target name="extract-asn" depends="get-asn">
+		<delete dir="${checkout.asn.dir}" failonerror="false" />
+		<unzip src="${jasn.distro.zip.path}" dest="${checkout.asn.dir}"/>
+		<move file="${checkout.asn.dir}/jasn-${asn.version}-restcomm" tofile="${checkout.asn.dir}/jasn-${asn.version}" failonerror="false"/>
+	</target>
+
+	<target name="get-sctp" unless="got.sctp">
+		<echo>Downloading RestComm SCTP version: ${sctp.version}</echo>
+		<exec failonerror="true" executable="wget">
+			<arg value="${sctp.download.url}" />
+		    <arg value="--output-document=${sctp.download.distro.file}" />
+		    <arg value="--no-check-certificate" />
+		</exec>
+		<move file="${base.dir}/${sctp.download.distro.file}" todir="${checkout.dir}"/>
+	</target>
+	<target name="extract-sctp" depends="get-sctp">
+		<delete dir="${checkout.sctp.dir}" failonerror="false" />
+		<unzip src="${sctp.distro.zip.path}" dest="${checkout.sctp.dir}"/>
+		<move file="${checkout.sctp.dir}/sctp-${sctp.version}-restcomm" tofile="${checkout.asn.dir}/sctp-${sctp.version}" failonerror="false"/>
+	</target>
+
     <target name="build-sctp">
         <echo>Building SCTP</echo>
 
@@ -74,7 +120,7 @@
     <target name="copy-asn">
         <echo>Copy ASN</echo>
         <copy todir="${restcomm.jss7.dist}/asn/" failonerror="true">
-            <fileset dir="${checkout.asn.dir}/asn-impl/target/">
+            <fileset dir="${checkout.asn.dir}/restcomm-jasn-${asn.version}">
                 <include name="*.jar"/>
             </fileset>
         </copy>
@@ -83,10 +129,7 @@
     <target name="copy-sctp">
         <echo>Copy SCTP</echo>
         <copy todir="${restcomm.jss7.dist}/sctp/" failonerror="true">
-            <fileset dir="${checkout.sctp.dir}/sctp-impl/target/">
-                <include name="*.jar"/>
-            </fileset>
-            <fileset dir="${checkout.sctp.dir}/sctp-api/target/">
+            <fileset dir="${checkout.sctp.dir}/restcomm-sctp-${sctp.version}">
                 <include name="*.jar"/>
             </fileset>
         </copy>
@@ -300,15 +343,14 @@
         <mkdir dir="${docs.dir}"/>
 
         <mkdir dir="${docs.dir}/ASNLibrary"/>
-        <mkdir dir="${docs.dir}/ASNLibrary/html-book"/>
         <copy todir="${docs.dir}/ASNLibrary/html-book" failonerror="true">
-            <fileset dir="${checkout.asn.dir}/docs/sources-asciidoc/target/generated-docs/html-book/">
+            <fileset dir="${checkout.asn.dir}/restcomm-jasn-${asn.version}/documentation/html-book/">
                 <include name="**"/>
             </fileset>
         </copy>
         <mkdir dir="${docs.dir}/ASNLibrary/pdf"/>
         <copy todir="${docs.dir}/ASNLibrary/pdf" failonerror="true">
-            <fileset dir="${checkout.asn.dir}/docs/sources-asciidoc/target/generated-docs/pdf/">
+            <fileset dir="${checkout.asn.dir}/restcomm-jasn-${asn.version}/documentation/pdf/">
                 <include name="**.pdf"/>
             </fileset>
         </copy>
@@ -316,29 +358,16 @@
         <mkdir dir="${docs.dir}/SCTPLibrary"/>
         <mkdir dir="${docs.dir}/SCTPLibrary/html-book"/>
         <copy todir="${docs.dir}/SCTPLibrary/html-book" failonerror="true">
-            <fileset dir="${checkout.sctp.dir}/docs/sources-asciidoc/target/generated-docs/html-book/">
+            <fileset dir="${checkout.sctp.dir}/restcomm-sctp-${sctp.version}/documentation/html-book/">
                 <include name="**"/>
             </fileset>
         </copy>
         <mkdir dir="${docs.dir}/SCTPLibrary/pdf"/>
         <copy todir="${docs.dir}/SCTPLibrary/pdf" failonerror="true">
-            <fileset dir="${checkout.sctp.dir}/docs/sources-asciidoc/target/generated-docs/pdf/">
+            <fileset dir="${checkout.sctp.dir}/restcomm-sctp-${sctp.version}/documentation/pdf/">
                 <include name="**.pdf"/>
             </fileset>
         </copy>
-
-        <!--
-        <copy todir="${docs.dir}" failonerror="true">
-            <fileset dir="${checkout.asn.dir}/docs/jdocbook-mobicents/target/docbook/publish/en-US/pdf">
-                    <include name="*.pdf" />
-            </fileset>
-        </copy>
-        <copy todir="${docs.dir}" failonerror="true">
-            <fileset dir="${checkout.sctp.dir}/docs/jdocbook-mobicents/target/docbook/publish/en-US/pdf">
-                    <include name="*.pdf" />
-            </fileset>
-        </copy>
-        -->
 
         <mkdir dir="${docs.dir}/userguide"/>
         <mkdir dir="${docs.dir}/installationguide"/>
