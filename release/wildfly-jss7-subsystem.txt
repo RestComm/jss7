@@ -53,6 +53,7 @@
                     <entry key="2" type="Bean" value="Mtp3UserPart_Dialogic"/>
 -->
                 </property>
+                <property name="rspProhibitedByDefault" type="bool" value="false"/>
             </mbean>
             <mbean name="SccpExecutor" type="SCTPShellExecutor" class="org.restcomm.protocols.ss7.sccp.impl.oam.SccpExecutor" enabled="true" reflection="false"/>
 
