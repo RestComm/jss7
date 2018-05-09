@@ -1104,12 +1104,14 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
                 mtp3UserPartsTemp.put(key, mtp3UserPart);
             }
         }
+        boolean rspProhibitedByDefault = getPropertyBoolean(beanName, "rspProhibitedByDefault", false);
 
         SccpStackImpl sccpStack = null;
         try {
             sccpStack = new SccpStackImpl(beanName);
             sccpStack.setPersistDir(dataDir);
             sccpStack.setMtp3UserParts(mtp3UserPartsTemp);
+            sccpStack.setRspProhibitedByDefault(rspProhibitedByDefault);
 
             this.beanSccpStacks.put(beanName, sccpStack);
         } catch (Exception e) {
