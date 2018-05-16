@@ -43,6 +43,23 @@
 	<property name="test.client.clientAddress" value="1111112" />
 	<property name="test.client.serverAddress" value="9960639999" />
 
+	<property name="test.srimt.client.numOfDialogs" value="10000" />
+	<property name="test.srimt.client.concurrentDialog" value="128" />
+
+	<property name="test.sri.client.numOfDialogs" value="50000" />
+	<property name="test.sri.client.concurrentDialog" value="512" />
+	<property name="test.sri.client.channelType" value="tcp" />
+	<property name="test.sri.client.clientIp" value="127.0.0.1" />
+	<property name="test.sri.client.clientPort" value="10000" />
+	<property name="test.sri.client.serverIp" value="127.0.0.1" />
+	<property name="test.sri.client.serverPort" value="11000" />
+	<property name="test.sri.client.clientPc" value="123" />
+	<property name="test.sri.client.serverPc" value="321" />
+	<property name="test.sri.client.ni" value="2" />
+	<property name="test.sri.client.si" value="3" />
+	<property name="test.sri.client.ssn" value="8" />
+	<property name="test.sri.client.rc" value="0" />
+
 	<path id="project.class.path">
 		<pathelement location="${assemble.dir}/sctp-api.jar" />
 		<pathelement location="${assemble.dir}/sctp-impl.jar" />
@@ -198,6 +215,66 @@
 			<arg value="${test.client.clientAddress}" /> <!-- client sccp address -->
 			<arg value="${test.client.serverAddress}" /> <!-- server sccp address -->
 			<arg value="1" /> <!-- routing indicator -->
+		</java>
+	</target>
+	<target name="sriclient" description="run the Load Test SRIClient">
+		<echo message="${cp.property}" />
+		<delete dir="client" />
+		<mkdir dir="client" />
+		<java classname="${packageprefix}.SriClient" fork="true" maxmemory="2048m" classpathref="project.class.path" dir="client">
+			<jvmarg value="-Dlog.file.name=log4j-client.log"/>
+			<jvmarg value="-Xms2048m"/>
+			<jvmarg value="-Xmx2048m"/>
+			<jvmarg value="-Xmn128m"/>
+			<jvmarg value="-XX:PermSize=256m"/>
+			<jvmarg value="-XX:MaxPermSize=256m"/>
+			<jvmarg value="-XX:+HeapDumpOnOutOfMemoryError"/>
+			<jvmarg value="-XX:+UseParallelOldGC"/>
+
+			<arg value="${test.sri.client.numOfDialogs}" /> <!-- number of Dialogs -->
+			<arg value="${test.sri.client.concurrentDialog}" /> <!-- Concurrent Dialogs -->
+			<arg value="${test.sri.client.channelType}" /> <!-- socket type -->
+			<arg value="${test.sri.client.clientIp}" /> <!-- Client IP -->
+			<arg value="${test.sri.client.clientPort}" /> <!-- Client Port -->
+			<arg value="${test.sri.client.serverIp}" /> <!-- Server Ip -->
+			<arg value="${test.sri.client.serverPort}" /> <!-- Server Port -->
+			<arg value="${test.sri.client.clientPc}" /> <!-- Client PC -->
+			<arg value="${test.sri.client.serverPc}" /> <!-- Server PC -->
+			<arg value="${test.sri.client.ni}" /> <!-- NI -->
+			<arg value="${test.sri.client.si}" /> <!-- SI -->
+			<arg value="${test.sri.client.ssn}" /> <!-- SSN -->
+			<arg value="${test.sri.client.rc}" /> <!-- RC -->
+			<arg value="16" /> <!-- deliveryTransferMessageThreadCount -->
+		</java>
+	</target>
+	<target name="sriwithmtclient" description="run the Load Test SRI+MTFsm client">
+		<echo message="${cp.property}" />
+		<delete dir="client" />
+		<mkdir dir="client" />
+		<java classname="${packageprefix}.SriWithMTFsmClient" fork="true" maxmemory="2048m" classpathref="project.class.path" dir="client">
+			<jvmarg value="-Dlog.file.name=log4j-client.log"/>
+			<jvmarg value="-Xms2048m"/>
+			<jvmarg value="-Xmx2048m"/>
+			<jvmarg value="-Xmn128m"/>
+			<jvmarg value="-XX:PermSize=256m"/>
+			<jvmarg value="-XX:MaxPermSize=256m"/>
+			<jvmarg value="-XX:+HeapDumpOnOutOfMemoryError"/>
+			<jvmarg value="-XX:+UseParallelOldGC"/>
+
+			<arg value="${test.srimt.client.numOfDialogs}" /> <!-- number of Dialogs -->
+			<arg value="${test.srimt.client.concurrentDialog}" /> <!-- Concurrent Dialogs -->
+			<arg value="${test.sri.client.channelType}" /> <!-- socket type -->
+			<arg value="${test.sri.client.clientIp}" /> <!-- Client IP -->
+			<arg value="${test.sri.client.clientPort}" /> <!-- Client Port -->
+			<arg value="${test.sri.client.serverIp}" /> <!-- Server Ip -->
+			<arg value="${test.sri.client.serverPort}" /> <!-- Server Port -->
+			<arg value="${test.sri.client.clientPc}" /> <!-- Client PC -->
+			<arg value="${test.sri.client.serverPc}" /> <!-- Server PC -->
+			<arg value="${test.sri.client.ni}" /> <!-- NI -->
+			<arg value="${test.sri.client.si}" /> <!-- SI -->
+			<arg value="${test.sri.client.ssn}" /> <!-- SSN -->
+			<arg value="${test.sri.client.rc}" /> <!-- RC -->
+			<arg value="16" /> <!-- deliveryTransferMessageThreadCount -->
 		</java>
 	</target>
 
