@@ -65,6 +65,7 @@ public class TCAPStackImpl implements TCAPStack {
     private static final String PREVIEW_MODE = "previewmode";
     private static final String STATISTICS_ENABLED = "statisticsenabled";
     private static final String SLS_RANGE = "slsrange";
+    private static final String SWAP_TCAP_ID_BYTES = "swaptcapidbytes";
 
 
     // default value of idle timeout and after TC_END remove of task.
@@ -99,6 +100,7 @@ public class TCAPStackImpl implements TCAPStack {
     private boolean previewMode = false;
     private List<Integer> extraSsns = new FastList<Integer>();
     private boolean statisticsEnabled = false;
+    private boolean isSwapTcapIdBytes = true;  // for now configurable only via XML file
 
     private int ssn = -1;
 
@@ -411,6 +413,11 @@ public class TCAPStackImpl implements TCAPStack {
         return this.slsRange.toString();
     }
 
+    @Override
+    public boolean isSwapTcapIdBytes() {
+        return isSwapTcapIdBytes;
+    }
+
     public SlsRangeType getSlsRangeType() {
         return this.slsRange;
     }
@@ -454,6 +461,9 @@ public class TCAPStackImpl implements TCAPStack {
 
             writer.write(this.statisticsEnabled, STATISTICS_ENABLED, Boolean.class);
 
+            writer.write(this.isSwapTcapIdBytes, SWAP_TCAP_ID_BYTES, Boolean.class);
+
+
             writer.close();
         } catch (Exception e) {
             this.logger.error(
@@ -491,6 +501,10 @@ public class TCAPStackImpl implements TCAPStack {
             Boolean volb = reader.read(STATISTICS_ENABLED, Boolean.class);
             if (volb != null)
                 this.statisticsEnabled = volb;
+
+            volb = reader.read(SWAP_TCAP_ID_BYTES, Boolean.class);
+            if (volb != null)
+                this.isSwapTcapIdBytes = volb;
 
             reader.close();
         } catch (XMLStreamException ex) {

@@ -174,6 +174,7 @@ public class DialogImpl implements Dialog {
     protected PrevewDialogData prevewDialogData;
     private long startDialogTime;
     private int networkId;
+    private boolean isSwapTcapIdBytes;
 
     private static int getIndexFromInvokeId(Long l) {
         int tmp = l.intValue();
@@ -215,6 +216,7 @@ public class DialogImpl implements Dialog {
 
         TCAPStack stack = this.provider.getStack();
         this.idleTaskTimeout = stack.getDialogIdleTimeout();
+        this.isSwapTcapIdBytes = stack.isSwapTcapIdBytes();
 
         startDialogTime = System.currentTimeMillis();
 
@@ -306,7 +308,7 @@ public class DialogImpl implements Dialog {
      */
     public Long getRemoteDialogId() {
         if (this.remoteTransactionId != null && this.remoteTransactionIdObject == null) {
-            this.remoteTransactionIdObject = Utils.decodeTransactionId(this.remoteTransactionId);
+            this.remoteTransactionIdObject = Utils.decodeTransactionId(this.remoteTransactionId, isSwapTcapIdBytes);
         }
 
         return this.remoteTransactionIdObject;
@@ -563,9 +565,9 @@ public class DialogImpl implements Dialog {
 
             // now comps
             if (this.localRelayedTransactionIdObject!=null) {
-                tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localRelayedTransactionIdObject));
+                tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localRelayedTransactionIdObject, isSwapTcapIdBytes));
             } else {
-                tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
+                tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId, isSwapTcapIdBytes));
             }
             if (this.scheduledComponentList.size() > 0) {
                 Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
@@ -642,7 +644,7 @@ public class DialogImpl implements Dialog {
 
                 }
 
-                tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
+                tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId, isSwapTcapIdBytes));
                 tcbm.setDestinationTransactionId(this.remoteTransactionId);
                 if (this.scheduledComponentList.size() > 0) {
                     Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
@@ -678,7 +680,7 @@ public class DialogImpl implements Dialog {
                 // in this we ignore acn and passed args(except qos)
                 TCContinueMessageImpl tcbm = (TCContinueMessageImpl) TcapFactory.createTCContinueMessage();
 
-                tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
+                tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId, isSwapTcapIdBytes));
                 tcbm.setDestinationTransactionId(this.remoteTransactionId);
                 if (this.scheduledComponentList.size() > 0) {
                     Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
@@ -1137,7 +1139,7 @@ public class DialogImpl implements Dialog {
         }
 
         // now comps
-        tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
+        tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId, isSwapTcapIdBytes));
         if (this.scheduledComponentList.size() > 0) {
             Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
             for (int index = 0; index < this.scheduledComponentList.size(); index++) {
@@ -1186,7 +1188,7 @@ public class DialogImpl implements Dialog {
 
         }
 
-        tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
+        tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId, isSwapTcapIdBytes));
         tcbm.setDestinationTransactionId(this.remoteTransactionId);
         if (this.scheduledComponentList.size() > 0) {
             Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
