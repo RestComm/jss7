@@ -131,7 +131,11 @@ public class ProcessUnstructuredSSResponseImpl extends SupplementaryMessageImpl 
                     MAPParsingComponentExceptionReason.MistypedParameter);
 
         this.ussdString = new USSDStringImpl(this.ussdDataCodingSch);
-        ((USSDStringImpl) this.ussdString).decodeAll(ais);
+        try {
+            ((USSDStringImpl) this.ussdString).decodeAll(ais);
+        } catch (MAPParsingComponentException e) {
+            this.ussdString = null;
+        }
 
     }
 
