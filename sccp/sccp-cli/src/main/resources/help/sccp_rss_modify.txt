@@ -2,7 +2,7 @@ Name
 	sccp rss modify
 
 SYNOPSIS
-	sccp rss modify <id> <remote-spc> <remote-ssn> <rss-flag> 
+	sccp rss modify <id> remote-spc <remote-spc> remote-ssn <remote-ssn> rss-flag <rss-flag>
 	<mark-prohibited-when-spc-resuming> stackname <stack-name>
 
 DESCRIPTION
@@ -16,14 +16,6 @@ PARAMETERS
 	<id>			-	Identifier of the Remote Sub-System to be 
 					modified.
 
-	<remote-spc>		-	The Remote Signaling Point where this Remote 
-					Sub-System is deployed.
-
-	<remote-ssn>		-	The Remote Sub-System number.
-
-	<rss-flag>		-	32 bit value. Not used for now. 
-					Reserved for future.
-
 	Optional Parameters
 
 	<mark-prohibited-when-spc-resuming>
@@ -32,6 +24,14 @@ PARAMETERS
 					subsystem is marked as prohibited when its 
 					corresponding signaling point code has been 
 					resumed.
+	<remote-spc>-	The Remote Signaling Point where this Remote 
+					Sub-System is deployed.
+
+	<remote-ssn>-	The Remote Sub-System number.
+
+	<rss-flag>	-	32 bit value. Not used for now. 
+					Reserved for future.
+					
 					
 	Optional Parameters
 

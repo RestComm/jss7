@@ -87,7 +87,7 @@ Sap can be modified by issuing command with following structure:
 
 [source]
 ----
-sccp sap modify <id> <mtp3-id> <opc> <ni>
+sccp sap modify <id> mtp3-id <mtp3-id> opc <opc> ni <ni>
 ----
 
 Meaning of parameters is the same.
@@ -332,8 +332,10 @@ Rule can be modified by issuing command with following structure:
 
 [source]
 ----
-sccp rule modify <id> <mask> <address-indicator> <point-code> <subsystem-number> <translation-type> <numbering-plan>  
-<nature-of-address-indicator> <digits> <ruleType> <primary-address-id> <backup-address-id>
+sccp rule modify <id> mask <mask> address-indicator <address-indicator> point-code <point-code> 
+subsystem-number <subsystem-number> translation-type <translation-type> numbering-plan <numbering-plan>  
+nature-of-address-indicator <nature-of-address-indicator> digits <digits> rule-type <rule-type> 
+primary-address-id <primary-address-id> backup-address-id <backup-address-id>
 ----
 
 Meaning of parameters is the same.
@@ -626,7 +628,7 @@ Remote Signaling Point can be modified by issuing command with following structu
 
 [source]
 ----
-sccp rsp modify <id> <remote-spc> <rspc-flag> <mask>
+sccp rsp modify <id> remote-spc <remote-spc> rspc-flag <rspc-flag> mask <mask>
 ----
 
 Meaning of parameters is the same.
@@ -728,7 +730,7 @@ Remote Sub-System can be modified by issuing command with following structure:
 
 [source]
 ----
-sccp rss modify <id> <remote-spc> <remote-ssn> <rss-flag> <mark-prohibited-when-spc-resuming>
+sccp rss modify <id> remote-spc <remote-spc> remote-ssn <remote-ssn> rss-flag <rss-flag> prohibitedwhenspcresuming <mark-prohibited-when-spc-resuming>
 ----
 
 Meaning of parameters is the same.
@@ -825,7 +827,7 @@ Long message rule can be modified by issuing command with following structure:
 
 [source]
 ----
-sccp lmr modify <id> <first-spc> <last-spc> <long-message-rule-type>
+sccp lmr modify <id> first-spc <first-spc> last-spc <last-spc> rule-type <long-message-rule-type>
 ----
 
 Meaning of parameters is the same.

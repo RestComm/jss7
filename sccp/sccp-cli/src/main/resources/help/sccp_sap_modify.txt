@@ -2,7 +2,7 @@ Name
 	sccp sap modify
 
 SYNOPSIS
-	sccp sap modify <id> <mtp3-id> <opc> <ni> stackname <stack-name> networkid <networkId>
+	sccp sap modify <id> mtp3-id <mtp3-id> opc <opc> ni <ni> stackname <stack-name> networkid <networkId>
 	localgtdigits <localGtDigits>
 
 DESCRIPTION
@@ -14,6 +14,8 @@ PARAMETERS
 
 	<id>			-	The id of the SAP whose values are being modified.
 
+	Optional Parameters
+
 	<mtp3-id>		-	Mtp3UserPart index - used as an index of 'mtp3UserPart' 
 					property of the SccpStack Bean. For each Mtp3UserPart, a
 					sap must be configured.
@@ -23,9 +25,7 @@ PARAMETERS
 
 	<ni>			-	Network indicator that forms part of the Service
 					Information Octet (SIO).
-				
-	Optional Parameters
-						
+
 	<stack-name>	-	Name of the stack on which this command is executed. 
 					If not passed, the first stack configured in ShellExecutor
 					will be used.		
@@ -41,7 +41,7 @@ PARAMETERS
 
 
 EXAMPLES
-	sccp sap modify 1 2 102 2 networkid 2 localgtdigits 999888777
+	sccp sap modify 1 mtp3-id 2 opc 102 ni 2 networkid 2 localgtdigits 999888777
 
 	The above command will modify the values of the Service Access Point identified 
 	by the number '1'. The new values for 'mtp3-id', 'opc' and 'ni' are 2, 102 and 2 

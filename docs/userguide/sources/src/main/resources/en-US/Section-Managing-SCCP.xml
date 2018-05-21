@@ -1244,7 +1244,7 @@ Name
 	sccp sap modify
 
 SYNOPSIS
-	sccp sap modify <id> <mtp3-id> <opc> <ni> stackname <stack-name> networkid <networkId>
+	sccp sap modify <id> mtp3-id <mtp3-id> opc <opc> ni <ni> stackname <stack-name> networkid <networkId>
 
 DESCRIPTION
 	This command is used to modify a previously defined Service Access Point.
@@ -1255,6 +1255,8 @@ PARAMETERS
 
 	<id>			-	The id of the SAP whose values are being modified.
 
+	Optional Parameters
+	
 	<mtp3-id>		-	Mtp3UserPart index - used as an index of 'mtp3UserPart'
 					property of the SccpStack Bean. For each Mtp3UserPart, a
 					sap must be configured.
@@ -1264,8 +1266,6 @@ PARAMETERS
 
 	<ni>			-	Network indicator that forms part of the Service
 					Information Octet (SIO).
-
-	Optional Parameters
 
 	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
@@ -1278,7 +1278,7 @@ PARAMETERS
 
 
 EXAMPLES
-	sccp sap modify 1 2 102 2
+	sccp sap modify 1 mtp3-id 2 opc 102 ni 2
 
 	The above command will modify the values of the Service Access Point identified
 	by the number '1'. The new values for 'mtp3-id', 'opc' and 'ni' are 2, 102 and 2
@@ -1475,8 +1475,8 @@ Name
 	sccp dest modify
 
 SYNOPSIS
-	sccp dest modify <sap-id> <id> <first-dpc> <last-dpc> <first-sls> <last-sls>
-	<sls-mask> stackname <stack-name>
+	sccp dest modify <sap-id> <id> first-dpc <first-dpc> last-dpc <last-dpc> first-sls <first-sls> last-sls <last-sls>
+	sls-mask <sls-mask> stackname <stack-name>
 
 
 DESCRIPTION
@@ -1492,6 +1492,8 @@ PARAMETERS
 
 	<id>		-	The identifier of the Destination that is being modified.
 
+	Optional Parameters
+	
 	<first-dpc>	-	The first value of the remote signaling point codes range.
 
 	<last-dpc>	-	The last value of the remote signaling point codes range.
@@ -1508,14 +1510,12 @@ PARAMETERS
 				performing a bitwise AND operation with this mask prior to
 				comparing it with first-sls and last-sls values.
 
-	Optional Parameters
-
 	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
 					will be used.
 
 EXAMPLES
-	sccp dest modify 1 1 201 299 0 255 255
+	sccp dest modify 1 1 first-dpc 201 last-dpc 299 first-sls 0 last-sls 255 sls-mask 255
 
 	The above command will modify the values of the Destination identified by the
 	number '1' within the Service Access Point identified by the number '1'.
@@ -1810,8 +1810,8 @@ Name
 	sccp address modify
 
 SYNOPSIS
-	sccp address modify <id> <address-indicator> <point-code> <subsystem-number>
-	<translation-type> <numbering-plan> <nature-of-address-indicator> <digits>
+	sccp address modify <id> address-indicator <address-indicator> point-code <point-code> subsystem-number <subsystem-number>
+	translation-type <translation-type> numbering-plan <numbering-plan> nature-of-address-indicator <nature-of-address-indicator> digits <digits>
 	stackname <stack-name>
 
 DESCRIPTION
@@ -1824,6 +1824,7 @@ PARAMETERS
 
 	<id>			-	Identifier of the address to be modified.
 
+	Optional Parameters
 	<address-indicator>	-	The address indicator is the first field in a SCCP
 					Party Address (called/calling) and is one octet in
 					length. Its function is to indicate which
@@ -1956,8 +1957,7 @@ PARAMETERS
                     mask contains "R" (replace) value. Else set this field
                     to "0". If this field is needed it should contain the
                     same subsections as the rule mask has.
-
-	Optional Parameters
+	
 
 	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor
@@ -2480,9 +2480,9 @@ Name
 	sccp rule modify
 
 SYNOPSIS
-	sccp rule modify <id> <mask> <address-indicator> <point-code> <subsystem-number>
-	<translation-type> <numbering-plan> <nature-of-address-indicator> <digits>
-	<ruleType> <primary-address-id> backup-addressid <backup-address-id>
+	sccp rule modify <id> mask <mask> address-indicator <address-indicator> point-code <point-code> subsystem-number <subsystem-number>
+	translation-type <translation-type> numbering-plan <numbering-plan> nature-of-address-indicator <nature-of-address-indicator> digits <digits>
+	rule-type <rule-type> primary-address-id <primary-address-id> backup-addressid <backup-address-id>
 	loadsharing-algo <loadsharing-algorithm> newcgparty-addressid
 	<new-callingPartyAddress-id> origination-type <originationType>
 	stackname <stack-name> networkid <networkId>
@@ -2496,6 +2496,8 @@ PARAMETERS
 
 	<id>			-	A unique number to identify this Rule.
 
+	Optional Parameters
+	
 	<mask>			-	A mask defines which part of the originally dialed
 					digits remains in the translated digits and which
 					part is replaced by the digits from primary or
@@ -2749,8 +2751,6 @@ PARAMETERS
 	<primary-address-id>	-	Identifies the SCCP Address used as the primary
 					translation.
 
-	Optional Parameters
-
 	<backup-address-id>	-	Identifies the SCCP Address used as the backup
 					translation in case the pointcode specified by the
 					primary address is not available. Backup address
@@ -2973,7 +2973,7 @@ Name
 	sccp rsp modify
 
 SYNOPSIS
-	sccp rsp modify <id> <remote-spc> <rspc-flag> <mask> stackname <stack-name>
+	sccp rsp modify <id> remote-spc <remote-spc> rspc-flag <rspc-flag> mask <mask> stackname <stack-name>
 
 DESCRIPTION
 	This command is used to modify the values of a Remote Signaling Point previously
@@ -3163,8 +3163,8 @@ Name
 	sccp rss modify
 
 SYNOPSIS
-	sccp rss modify <id> <remote-spc> <remote-ssn> <rss-flag>
-	<mark-prohibited-when-spc-resuming> stackname <stack-name>
+	sccp rss modify <id> remote-spc <remote-spc> remote-ssn <remote-ssn> rss-flag <rss-flag>
+	prohibitedwhenspcresuming <mark-prohibited-when-spc-resuming> stackname <stack-name>
 
 DESCRIPTION
 	This command is used to modify the values of a Remote Sub-System previously
@@ -3177,6 +3177,7 @@ PARAMETERS
 	<id>			-	Identifier of the Remote Sub-System to be
 					modified.
 
+	Optional Parameters
 	<remote-spc>		-	The Remote Signaling Point where this Remote
 					Sub-System is deployed.
 
@@ -3184,17 +3185,6 @@ PARAMETERS
 
 	<rss-flag>		-	32 bit value. Not used for now.
 					Reserved for future.
-
-	Optional Parameters
-
-	<mark-prohibited-when-spc-resuming>
-				-	Possible value: prohibitedWhenSpcResuming.
-					When this parameter is specified, the configured
-					subsystem is marked as prohibited when its
-					corresponding signaling point code has been
-					resumed.
-
-	Optional Parameters
 
 	<mark-prohibited-when-spc-resuming>
 				-	Possible value: prohibitedWhenSpcResuming.
@@ -3370,7 +3360,7 @@ Name
 	sccp lmr modify
 
 SYNOPSIS
-	sccp lmr modify <id> <first-spc> <last-spc> <long-message-rule-type>
+	sccp lmr modify <id> first-spc <first-spc> last-spc <last-spc> rule-type <long-message-rule-type>
 	stackname <stack-name>
 
 DESCRIPTION
@@ -3384,6 +3374,8 @@ PARAMETERS
 	<id>			-	Identifier of the Long Message Rule to be
 					modified.
 
+	Optional Parameters
+	
 	<first-spc>		-	The first value of the remote signaling
 					point code range, for which this Long message Rule
 					will apply.
@@ -3396,8 +3388,6 @@ PARAMETERS
 	<long-message-rule-type>-	Message types used for the remote signaling point
 					codes range.
 					Possible values : udt, xudt and ludt.
-
-	Optional Parameters
 
 	<stack-name>	-	Name of the stack on which this command is executed.
 					If not passed, the first stack configured in ShellExecutor

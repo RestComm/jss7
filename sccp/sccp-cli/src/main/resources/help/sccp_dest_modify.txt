@@ -2,8 +2,8 @@ Name
 	sccp dest modify
 
 SYNOPSIS
-	sccp dest modify <sap-id> <id> <first-dpc> <last-dpc> <first-sls> <last-sls> 
-	<sls-mask> stackname <stack-name>
+	sccp dest modify <sap-id> <id> first-dpc <first-dpc> last-dpc <last-dpc> first-sls <first-sls> last-sls <last-sls> 
+	sls-mask <sls-mask> stackname <stack-name>
 
 
 DESCRIPTION
@@ -18,6 +18,8 @@ PARAMETERS
 				modified. 
 
 	<id>		-	The identifier of the Destination that is being modified.
+
+	Optional Parameters
 
 	<first-dpc>	-	The first value of the remote signaling point codes range.
 
@@ -34,15 +36,13 @@ PARAMETERS
 	<sls-mask>	-	The mask value. SLS of a message will be exposed by 
 				performing a bitwise AND operation with this mask prior to
 				comparing it with first-sls and last-sls values.
-				
-	Optional Parameters
 
 	<stack-name>	-	Name of the stack on which this command is executed. 
 					If not passed, the first stack configured in ShellExecutor
 					will be used.				
 
 EXAMPLES
-	sccp dest modify 1 1 201 299 0 255 255 
+	sccp dest modify 1 1 first-dpc 201 last-dpc 299 first-sls 0 last-sls 255 sls-mask 255 
 
 	The above command will modify the values of the Destination identified by the
 	number '1' within the Service Access Point identified by the number '1'. 

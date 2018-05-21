@@ -2,7 +2,7 @@ Name
 	sccp lmr modify
 
 SYNOPSIS
-	sccp lmr modify <id> <first-spc> <last-spc> <long-message-rule-type>
+	sccp lmr modify <id> first-spc <first-spc> last-spc <last-spc> rule-type <long-message-rule-type>
 	stackname <stack-name>
 
 DESCRIPTION
@@ -16,6 +16,8 @@ PARAMETERS
 	<id>			-	Identifier of the Long Message Rule to be 
 					modified.
 
+	Optional Parameters
+	
 	<first-spc>		-	The first value of the remote signaling
 					point code range, for which this Long message Rule
 					will apply.
@@ -28,8 +30,6 @@ PARAMETERS
 	<long-message-rule-type>-	Message types used for the remote signaling point 
 					codes range.
 					Possible values : udt, xudt, ludt and ludt_segm.
-					
-	Optional Parameters
 
 	<stack-name>	-	Name of the stack on which this command is executed. 
 					If not passed, the first stack configured in ShellExecutor
