@@ -189,18 +189,19 @@ public class SccpExecutor implements ShellExecutor {
                     markProhibitedWhenSpcResuming);
             return String.format(SccpOAMMessage.RSS_SUCCESSFULLY_ADDED, this.sccpStack.getName());
         } else if (command.equals("modify")) {
-            // sccp rss modify <id> <remote-spc> <remote-ssn> <rss-flag> prohibitedwhenspcresuming
-            // <mark-prohibited-when-spc-resuming> stackname <stack-name>
-            if (options.length < 7) {
+            // sccp rss modify <id> remote-spc <remote-spc> remote-ssn <remote-ssn> rss-flag <rss-flag>
+            // prohibitedwhenspcresuming <mark-prohibited-when-spc-resuming> stackname <stack-name>
+            if (options.length < 6) {
                 return SccpOAMMessage.INVALID_COMMAND;
             }
             int remoteSsId = Integer.parseInt(options[3]);
-            int remoteSpc = Integer.parseInt(options[4]);
-            int remoteSs = Integer.parseInt(options[5]);
-            int remoteSsFlag = Integer.parseInt(options[6]);
-            boolean markProhibitedWhenSpcResuming = false;
 
-            int count = 7;
+            Integer remoteSpc = null;
+            Integer remoteSs = null;
+            Integer remoteSsFlag = null;
+            Boolean markProhibitedWhenSpcResuming = null;
+
+            int count = 4;
 
             while (count < options.length) {
                 String key = options[count++];
@@ -218,8 +219,14 @@ public class SccpExecutor implements ShellExecutor {
                     }
 
                     this.sccpStack = sccpStaclImpl;
+                } else if (key.equals("remote-spc")) {
+                    remoteSpc = Integer.valueOf(options[count++]);
+                }  else if (key.equals("remote-ssn")) {
+                    remoteSs = Integer.valueOf(options[count++]);
+                } else if (key.equals("rss-flag")) {
+                    remoteSsFlag = Integer.valueOf(options[count++]);
                 } else if (key.equals("prohibitedwhenspcresuming")) {
-                    markProhibitedWhenSpcResuming = Boolean.parseBoolean(options[count++]);
+                    markProhibitedWhenSpcResuming = Boolean.valueOf(options[count++]);
                 } else {
                     return SccpOAMMessage.INVALID_COMMAND;
                 }
@@ -378,18 +385,18 @@ public class SccpExecutor implements ShellExecutor {
 
             return String.format(SccpOAMMessage.RSPC_SUCCESSFULLY_ADDED, this.sccpStack.getName());
         } else if (command.equals("modify")) {
-            // sccp rsp modify <id> <remote-spc> <rspc-flag> <mask> stackname <stack-name>
-            if (options.length < 7) {
+            // sccp rsp modify <id> remote-spc <remote-spc> rspc-flag <rspc-flag> mask <mask> stackname <stack-name>
+            if (options.length < 6) {
                 return SccpOAMMessage.INVALID_COMMAND;
             }
 
             int remoteSpcId = Integer.parseInt(options[3]);
 
-            int remoteSpc = Integer.parseInt(options[4]);
-            int remoteSpcFlag = Integer.parseInt(options[5]);
-            int mask = Integer.parseInt(options[6]);
+            Integer remoteSpc = null;
+            Integer remoteSpcFlag = null;
+            Integer mask = null;
 
-            int count = 7;
+            int count = 4;
 
             while (count < options.length) {
                 String key = options[count++];
@@ -407,6 +414,12 @@ public class SccpExecutor implements ShellExecutor {
                     }
 
                     this.sccpStack = sccpStaclImpl;
+                } else if (key.equals("remote-spc")) {
+                    remoteSpc = Integer.valueOf(options[count++]);
+                }  else if (key.equals("rspc-flag")) {
+                    remoteSpcFlag = Integer.valueOf(options[count++]);
+                }  else if (key.equals("mask")) {
+                    mask = Integer.valueOf(options[count++]);
                 } else {
                     return SccpOAMMessage.INVALID_COMMAND;
                 }
@@ -581,29 +594,17 @@ public class SccpExecutor implements ShellExecutor {
             this.sccpStack.getRouter().addLongMessageRule(lmrId, firstSpc, lastSpc, ruleType);
             return String.format(SccpOAMMessage.LMR_SUCCESSFULLY_ADDED, this.sccpStack.getName());
         } else if (command.equals("modify")) {
-            // sccp lmr modify <id> <first-spc> <last-spc> <long-message-rule-type> stackname <stack-name>
-            if (options.length < 7) {
+            // sccp lmr modify <id> first-spc <first-spc> last-spc <last-spc> rule-type <long-message-rule-type> stackname <stack-name>
+            if (options.length < 6) {
                 return SccpOAMMessage.INVALID_COMMAND;
             }
             int lmrId = Integer.parseInt(options[3]);
-            int firstSpc = Integer.parseInt(options[4]);
-            int lastSpc = Integer.parseInt(options[5]);
 
-            LongMessageRuleType ruleType;
-            String s1 = options[6].toLowerCase();
-            if (s1.equals("udt")) {
-                ruleType = LongMessageRuleType.LONG_MESSAGE_FORBBIDEN;
-            } else if (s1.equals("xudt")) {
-                ruleType = LongMessageRuleType.XUDT_ENABLED;
-            } else if (s1.equals("ludt")) {
-                ruleType = LongMessageRuleType.LUDT_ENABLED;
-            } else if (s1.equals("ludt_segm")) {
-                ruleType = LongMessageRuleType.LUDT_ENABLED_WITH_SEGMENTATION;
-            } else {
-                return SccpOAMMessage.INVALID_COMMAND;
-            }
+            Integer firstSpc = null;
+            Integer lastSpc = null;
+            LongMessageRuleType ruleType = null;
 
-            int count = 7;
+            int count = 4;
 
             while (count < options.length) {
                 String key = options[count++];
@@ -621,6 +622,23 @@ public class SccpExecutor implements ShellExecutor {
                     }
 
                     this.sccpStack = sccpStaclImpl;
+                } else if(key.equals("first-spc")) {
+                    firstSpc = Integer.valueOf(options[count++]);
+                } else if(key.equals("last-spc")) {
+                    lastSpc = Integer.valueOf(options[count++]);
+                }  else if(key.equals("rule-type")) {
+                    String s1 = options[count++].toLowerCase();
+                    if (s1.equals("udt")) {
+                        ruleType = LongMessageRuleType.LONG_MESSAGE_FORBBIDEN;
+                    } else if (s1.equals("xudt")) {
+                        ruleType = LongMessageRuleType.XUDT_ENABLED;
+                    } else if (s1.equals("ludt")) {
+                        ruleType = LongMessageRuleType.LUDT_ENABLED;
+                    } else if (s1.equals("ludt_segm")) {
+                        ruleType = LongMessageRuleType.LUDT_ENABLED_WITH_SEGMENTATION;
+                    } else {
+                        return SccpOAMMessage.INVALID_COMMAND;
+                    }
                 } else {
                     return SccpOAMMessage.INVALID_COMMAND;
                 }
@@ -786,19 +804,20 @@ public class SccpExecutor implements ShellExecutor {
 
             return String.format(SccpOAMMessage.SAP_SUCCESSFULLY_ADDED, this.sccpStack.getName());
         } else if (command.equals("modify")) {
-            // sccp sap modify <id> <mtp3-id> <opc> <ni> stackname <stack-named> networkid <networkId> localgtdigits <localGtDigits>
-            if (options.length < 7) {
+            // sccp sap modify <id> mtp3-id <mtp3-id> opc <opc> ni <ni> stackname <stack-named>
+            //networkid <networkId> localgtdigits <localGtDigits>
+            if (options.length < 6) {
                 return SccpOAMMessage.INVALID_COMMAND;
             }
             int sapId = Integer.parseInt(options[3]);
 
-            int mtp3Id = Integer.parseInt(options[4]);
-            int opc = Integer.parseInt(options[5]);
-            int ni = Integer.parseInt(options[6]);
+            Integer mtp3Id = null;
+            Integer opc = null;
+            Integer ni = null;
+            Integer networkId = null;
+            String localGtDigits = null;
 
-            int count = 7;
-            int networkId = 0;
-            String localGtDigits = "";
+            int count = 4;
 
             while (count < options.length - 1) {
                 String key = options[count++];
@@ -816,9 +835,14 @@ public class SccpExecutor implements ShellExecutor {
                     }
 
                     this.sccpStack = sccpStaclImpl;
+                } else if (key.equals("mtp3-id")) {
+                    mtp3Id = Integer.valueOf(options[count++]);
+                } else if (key.equals("opc")) {
+                    opc = Integer.valueOf(options[count++]);
+                } else if (key.equals("ni")) {
+                    ni = Integer.valueOf(options[count++]);
                 } else if (key.equals("networkid")) {
-                    String networkIdS = options[count++];
-                    networkId = Integer.parseInt(networkIdS);
+                    networkId = Integer.valueOf(options[count++]);
                 } else if (key.equals("localgtdigits")) {
                     localGtDigits = options[count++];
                 } else {
@@ -984,19 +1008,20 @@ public class SccpExecutor implements ShellExecutor {
             this.sccpStack.getRouter().addMtp3Destination(sapId, destId, firstDpc, lastDpc, firstSls, lastSls, slsMask);
             return String.format(SccpOAMMessage.DEST_SUCCESSFULLY_ADDED, this.sccpStack.getName());
         } else if (command.equals("modify")) {
-            // sccp dest modify <sap-id> <id> <first-dpc> <last-dpc> <first-sls> <lastsls> <sls-mask> stackname <stack-name>
-            if (options.length < 10) {
+            // sccp dest modify <sap-id> <id> first-dpc <first-dpc> last-dpc <last-dpc> first-sls <first-sls> last-sls <last-sls> sls-mask <sls-mask> stackname <stack-name>
+            if (options.length < 7) {
                 return SccpOAMMessage.INVALID_COMMAND;
             }
             int sapId = Integer.parseInt(options[3]);
             int destId = Integer.parseInt(options[4]);
-            int firstDpc = Integer.parseInt(options[5]);
-            int lastDpc = Integer.parseInt(options[6]);
-            int firstSls = Integer.parseInt(options[7]);
-            int lastSls = Integer.parseInt(options[8]);
-            int slsMask = Integer.parseInt(options[9]);
 
-            int count = 10;
+            Integer firstDpc = null;
+            Integer lastDpc = null;
+            Integer firstSls = null;
+            Integer lastSls = null;
+            Integer slsMask = null;
+
+            int count = 5;
 
             while (count < options.length) {
                 String key = options[count++];
@@ -1014,10 +1039,19 @@ public class SccpExecutor implements ShellExecutor {
                     }
 
                     this.sccpStack = sccpStaclImpl;
-                } else {
+                } else if (key.equals("first-dpc")) {
+                    firstDpc = Integer.valueOf(options[count++]);
+                } else if (key.equals("last-dpc")) {
+                    lastDpc = Integer.valueOf(options[count++]);
+                } else if (key.equals("first-sls")) {
+                    firstSls = Integer.valueOf(options[count++]);
+                } else if (key.equals("last-sls")) {
+                    lastSls = Integer.valueOf(options[count++]);
+                } else if (key.equals("sls-mask")) {
+                    slsMask = Integer.valueOf(options[count++]);
+                }  else {
                     return SccpOAMMessage.INVALID_COMMAND;
                 }
-
             }
 
             this.setDefaultValue();

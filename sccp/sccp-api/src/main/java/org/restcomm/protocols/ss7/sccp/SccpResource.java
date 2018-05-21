@@ -46,6 +46,9 @@ public interface SccpResource {
     void modifyRemoteSsn(int remoteSsnid, int remoteSpc, int remoteSsn, int remoteSsnFlag,
             boolean markProhibitedWhenSpcResuming) throws Exception;
 
+    void modifyRemoteSsn(int remoteSsnid, Integer remoteSpc, Integer remoteSsn, Integer remoteSsnFlag,
+            Boolean markProhibitedWhenSpcResuming) throws Exception;
+
     void removeRemoteSsn(int remoteSsnid) throws Exception;
 
     RemoteSubSystem getRemoteSsn(int remoteSsnid);
@@ -57,6 +60,8 @@ public interface SccpResource {
     void addRemoteSpc(int remoteSpcId, int remoteSpc, int remoteSpcFlag, int mask) throws Exception;
 
     void modifyRemoteSpc(int remoteSpcId, int remoteSpc, int remoteSpcFlag, int mask) throws Exception;
+
+    void modifyRemoteSpc(int remoteSpcId, Integer remoteSpc, Integer remoteSpcFlag, Integer mask) throws Exception;
 
     void removeRemoteSpc(int remoteSpcId) throws Exception;
 

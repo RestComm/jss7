@@ -357,6 +357,31 @@ public class RouterImpl implements Router {
         }
     }
 
+    public void modifyLongMessageRule(int id, Integer firstSpc, Integer lastSpc, LongMessageRuleType ruleType) throws Exception {
+
+        LongMessageRule oldLmr = this.getLongMessageRule(id);
+        if (oldLmr == null) {
+            throw new Exception(String.format(SccpOAMMessage.LMR_DOESNT_EXIST, name));
+        }
+
+        if(firstSpc == null)
+            firstSpc = oldLmr.getFirstSpc();
+        if(lastSpc == null)
+            lastSpc = oldLmr.getLastSpc();
+        if(ruleType == null)
+            ruleType = oldLmr.getLongMessageRuleType();
+
+        LongMessageRuleImpl longMessageRule = new LongMessageRuleImpl(firstSpc, lastSpc, ruleType);
+
+        synchronized (this) {
+            LongMessageRuleMap<Integer, LongMessageRule> newLongMessageRule = new LongMessageRuleMap<Integer, LongMessageRule>();
+            newLongMessageRule.putAll(this.longMessageRules);
+            newLongMessageRule.put(id, longMessageRule);
+            this.longMessageRules = newLongMessageRule;
+            this.store();
+        }
+    }
+
     public void removeLongMessageRule(int id) throws Exception {
 
         if (this.getLongMessageRule(id) == null) {
@@ -391,6 +416,32 @@ public class RouterImpl implements Router {
             throw new Exception(String.format(SccpOAMMessage.SAP_DOESNT_EXIST, name));
         }
         // TODO Synchronize??
+        sap.modifyMtp3Destination(destId, firstDpc, lastDpc, firstSls, lastSls, slsMask);
+        this.store();
+    }
+
+    public void modifyMtp3Destination(int sapId, int destId, Integer firstDpc, Integer lastDpc, Integer firstSls, Integer lastSls, Integer slsMask)
+            throws Exception {
+        Mtp3ServiceAccessPoint sap = this.getMtp3ServiceAccessPoint(sapId);
+        if (sap == null)
+            throw new Exception(String.format(SccpOAMMessage.SAP_DOESNT_EXIST, name));
+
+        Mtp3DestinationImpl dest = (Mtp3DestinationImpl) sap.getMtp3Destination(destId);
+
+        if(dest == null)
+            throw new Exception(String.format(SccpOAMMessage.DEST_DOESNT_EXIST, name));
+
+        if(firstDpc == null)
+            firstDpc = dest.getFirstDpc();
+        if(lastDpc == null)
+            lastDpc = dest.getLastDpc();
+        if(firstSls == null)
+            firstSls = dest.getFirstSls();
+        if(lastSls == null)
+            lastSls = dest.getLastSls();
+        if(slsMask == null)
+            slsMask = dest.getSlsMask();
+
         sap.modifyMtp3Destination(destId, firstDpc, lastDpc, firstSls, lastSls, slsMask);
         this.store();
     }
@@ -451,6 +502,43 @@ public class RouterImpl implements Router {
             this.store();
         }
     }
+
+    public void modifyMtp3ServiceAccessPoint(int id, Integer mtp3Id, Integer opc, Integer ni, Integer networkId, String localGtDigits) throws Exception {
+        Mtp3ServiceAccessPointImpl sap = (Mtp3ServiceAccessPointImpl) this.getMtp3ServiceAccessPoint(id);
+        if (sap == null) {
+            throw new Exception(String.format(SccpOAMMessage.SAP_DOESNT_EXIST, name));
+        }
+
+        if (mtp3Id != null && this.sccpStack.getMtp3UserPart(mtp3Id) == null) {
+            throw new Exception(SccpOAMMessage.MUP_DOESNT_EXIST);
+        }
+
+        if (localGtDigits != null && (localGtDigits.equals("null") || localGtDigits.equals("")))
+            localGtDigits = null;
+
+        if(mtp3Id == null)
+            mtp3Id = sap.getMtp3Id();
+        if(opc == null)
+            opc = sap.getOpc();
+        if(ni == null)
+            ni = sap.getNi();
+        if(networkId == null)
+            networkId = sap.getNetworkId();
+        if(localGtDigits == null)
+            localGtDigits = sap.getLocalGtDigits();
+
+        Mtp3ServiceAccessPointImpl newSap = new Mtp3ServiceAccessPointImpl(mtp3Id, opc, ni, this.name, networkId, localGtDigits);
+
+        synchronized (this) {
+            Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint> newSaps = new Mtp3ServiceAccessPointMap<Integer, Mtp3ServiceAccessPoint>();
+            newSaps.putAll(this.saps);
+            newSaps.put(id, newSap);
+            this.saps = newSaps;
+            this.store();
+            this.store();
+        }
+    }
+
 
     public void removeMtp3ServiceAccessPoint(int id) throws Exception {
 

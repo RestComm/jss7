@@ -150,6 +150,27 @@ public class SccpResourceImpl implements SccpResource {
         }
     }
 
+    public void modifyRemoteSsn(int remoteSsnid, Integer remoteSpc, Integer remoteSsn, Integer remoteSsnFlag,
+            Boolean markProhibitedWhenSpcResuming) throws Exception {
+        RemoteSubSystemImpl rsscObj = (RemoteSubSystemImpl) this.remoteSsns.get(remoteSsnid);
+        if (rsscObj == null) {
+            throw new Exception(String.format(SccpOAMMessage.RSS_DOESNT_EXIST, this.name));
+        }
+
+        synchronized (this) {
+            if(remoteSsn!=null)
+                rsscObj.setRemoteSsn(remoteSsn);
+            if(remoteSpc!=null)
+                rsscObj.setRemoteSpc(remoteSpc);
+            if(remoteSsnFlag!=null)
+                rsscObj.setRemoteSsnFlag(remoteSsnFlag);
+            if(markProhibitedWhenSpcResuming != null)
+                rsscObj.setMarkProhibitedWhenSpcResuming(markProhibitedWhenSpcResuming);
+
+            this.store();
+        }
+    }
+
     public void removeRemoteSsn(int remoteSsnid) throws Exception {
 
         if (this.getRemoteSsn(remoteSsnid) == null) {
@@ -216,6 +237,24 @@ public class SccpResourceImpl implements SccpResource {
             remoteSignalingPointCode.setRemoteSpc(remoteSpc);
             remoteSignalingPointCode.setRemoteSpcFlag(remoteSpcFlag);
             remoteSignalingPointCode.setMask(mask);
+
+            this.store();
+        }
+    }
+
+    public void modifyRemoteSpc(int remoteSpcId, Integer remoteSpc, Integer remoteSpcFlag, Integer mask) throws Exception {
+        RemoteSignalingPointCodeImpl remoteSignalingPointCode = (RemoteSignalingPointCodeImpl) this.getRemoteSpc(remoteSpcId);
+        if (remoteSignalingPointCode == null) {
+            throw new Exception(String.format(SccpOAMMessage.RSPC_DOESNT_EXIST, this.name));
+        }
+
+        synchronized (this) {
+            if(remoteSpc != null)
+                remoteSignalingPointCode.setRemoteSpc(remoteSpc);
+            if(remoteSpcFlag != null)
+                remoteSignalingPointCode.setRemoteSpcFlag(remoteSpcFlag);
+            if(mask != null)
+                remoteSignalingPointCode.setMask(mask);
 
             this.store();
         }
