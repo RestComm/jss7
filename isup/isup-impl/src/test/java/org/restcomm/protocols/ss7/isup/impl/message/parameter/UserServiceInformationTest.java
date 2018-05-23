@@ -75,7 +75,7 @@ public class UserServiceInformationTest {
     }
 
     private byte[] getData4() {
-        return new byte[] { -112, -112, 35, 96, 6, -69 };
+        return new byte[] { -112, -112, 35, 96, 6, 59, -128 };
     }
 
     private byte[] getData5() {
@@ -207,21 +207,20 @@ public class UserServiceInformationTest {
         assertEquals(prim.getNicOnTx(), UserServiceInformation._NICTX_NOT_REQUIRED);
         assertEquals(prim.getNicOnRx(), UserServiceInformation._NICRX_CANNOT_ACCEPT);
 
-        // TODO: fix unit test
-//        assertEquals(prim.getFlowControlOnTx(), UserServiceInformation._FCTX_REQUIRED);
-//        assertEquals(prim.getFlowControlOnRx(), UserServiceInformation._FCRX_CAN_ACCEPT);
-//        assertEquals(prim.getHDR(), 0);
-//        assertEquals(prim.getMultiframe(), 0);
-//        assertEquals(prim.getMode(), 0);
-//        assertEquals(prim.getLLINegotiation(), 0);
-//        assertEquals(prim.getAssignor(), 0);
-//        assertEquals(prim.getInBandNegotiation(), 0);
-//        assertEquals(prim.getStopBits(), UserServiceInformation._SB_1BIT);
-//        assertEquals(prim.getDataBits(), UserServiceInformation._DB_8BITS);
-//        assertEquals(prim.getParity(), UserServiceInformation._PAR_NONE);
-//        assertEquals(prim.getDuplexMode(), 0);
-//        assertEquals(prim.getModemType(), 0);
-//        assertEquals(prim.getL3Protocol(), 0);
+        assertEquals(prim.getFlowControlOnTx(), UserServiceInformation._FCTX_REQUIRED);
+        assertEquals(prim.getFlowControlOnRx(), UserServiceInformation._FCRX_CAN_ACCEPT);
+        assertEquals(prim.getHDR(), 0);
+        assertEquals(prim.getMultiframe(), 0);
+        assertEquals(prim.getMode(), 0);
+        assertEquals(prim.getLLINegotiation(), 0);
+        assertEquals(prim.getAssignor(), 0);
+        assertEquals(prim.getInBandNegotiation(), 0);
+        assertEquals(prim.getStopBits(), UserServiceInformation._SB_1BIT);
+        assertEquals(prim.getDataBits(), UserServiceInformation._DB_8BITS);
+        assertEquals(prim.getParity(), UserServiceInformation._PAR_NONE);
+        assertEquals(prim.getDuplexMode(), 0);
+        assertEquals(prim.getModemType(), 0);
+        assertEquals(prim.getL3Protocol(), 0);
 
 
         // 213605
@@ -240,25 +239,24 @@ public class UserServiceInformationTest {
         assertEquals(prim.getSyncMode(), UserServiceInformation._SA_ASYNC);
         assertEquals(prim.getNegotiation(), UserServiceInformation._NG_INBAND_NOT_POSSIBLE);
         assertEquals(prim.getUserRate(), UserServiceInformation._UR_9_6);
-        
-        // TODO: fix unit test
-//        assertEquals(prim.getIntermediateRate(), UserServiceInformation._IR_16_0);
-//        assertEquals(prim.getNicOnTx(), UserServiceInformation._NICTX_NOT_REQUIRED);
-//        assertEquals(prim.getNicOnRx(), UserServiceInformation._NICRX_CANNOT_ACCEPT);
-//        assertEquals(prim.getFlowControlOnTx(), UserServiceInformation._FCTX_REQUIRED);
-//        assertEquals(prim.getFlowControlOnRx(), UserServiceInformation._FCRX_CAN_ACCEPT);
-//        assertEquals(prim.getHDR(), 0);
-//        assertEquals(prim.getMultiframe(), 0);
-//        assertEquals(prim.getMode(), 0);
-//        assertEquals(prim.getLLINegotiation(), 0);
-//        assertEquals(prim.getAssignor(), 0);
-//        assertEquals(prim.getInBandNegotiation(), 0);
-//        assertEquals(prim.getStopBits(), UserServiceInformation._SB_1BIT);
-//        assertEquals(prim.getDataBits(), UserServiceInformation._DB_8BITS);
-//        assertEquals(prim.getParity(), UserServiceInformation._PAR_NONE);
-//        assertEquals(prim.getDuplexMode(), UserServiceInformation._DUP_FULL);
-//        assertEquals(prim.getModemType(), 28);
-//        assertEquals(prim.getL3Protocol(), 0);
+
+        assertEquals(prim.getIntermediateRate(), UserServiceInformation._IR_16_0);
+        assertEquals(prim.getNicOnTx(), UserServiceInformation._NICTX_NOT_REQUIRED);
+        assertEquals(prim.getNicOnRx(), UserServiceInformation._NICRX_CANNOT_ACCEPT);
+        assertEquals(prim.getFlowControlOnTx(), UserServiceInformation._FCTX_REQUIRED);
+        assertEquals(prim.getFlowControlOnRx(), UserServiceInformation._FCRX_CAN_ACCEPT);
+        assertEquals(prim.getHDR(), 0);
+        assertEquals(prim.getMultiframe(), 0);
+        assertEquals(prim.getMode(), 0);
+        assertEquals(prim.getLLINegotiation(), 0);
+        assertEquals(prim.getAssignor(), 0);
+        assertEquals(prim.getInBandNegotiation(), 0);
+        assertEquals(prim.getStopBits(), UserServiceInformation._SB_1BIT);
+        assertEquals(prim.getDataBits(), UserServiceInformation._DB_8BITS);
+        assertEquals(prim.getParity(), UserServiceInformation._PAR_NONE);
+        assertEquals(prim.getDuplexMode(), UserServiceInformation._DUP_FULL);
+        assertEquals(prim.getModemType(), 28);
+        assertEquals(prim.getL3Protocol(), 0);
 
     }
 

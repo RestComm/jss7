@@ -279,14 +279,14 @@ public abstract class UserServiceInformationBaseImpl extends AbstractISUPParamet
                             this.userRate = v & 0x1F;
                             extBit = v & 0x80;
                             if (extBit == 0) {
-                                // 5b - TODO: not sure that this is a correct decoding
-//                                v = b[index++];
-//                                this.intermediateRate = (v >> 5) & 0x3;
-//                                this.nicOnTx = (v >> 4) & 0x1;
-//                                this.nicOnRx = (v >> 3) & 0x1;
-//                                this.fcOnTx = (v >> 2) & 0x1;
-//                                this.fcOnRx = (v >> 1) & 0x1;
-//                                extBit = v & 0x80;
+                                // 5b
+                                v = b[index++];
+                                this.intermediateRate = (v >> 5) & 0x3;
+                                this.nicOnTx = (v >> 4) & 0x1;
+                                this.nicOnRx = (v >> 3) & 0x1;
+                                this.fcOnTx = (v >> 2) & 0x1;
+                                this.fcOnRx = (v >> 1) & 0x1;
+                                extBit = v & 0x80;
 
                                 if (extBit == 0) {
                                     // 5c
