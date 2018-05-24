@@ -752,7 +752,7 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
                     dm.tcapMessage = "TC-BEGIN";
                     try {
                         TCBeginMessage tbm = TcapFactory.createTCBeginMessage(ais2);
-                        dm.dialogId1 = Utils.decodeTransactionId(tbm.getOriginatingTransactionId(), tcapStack.isSwapTcapIdBytes());
+                        dm.dialogId1 = Utils.decodeTransactionId(tbm.getOriginatingTransactionId(), tcapStack.getSwapTcapIdBytes());
                     } catch (Exception e) {
                     }
                     break;
@@ -760,8 +760,8 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
                     dm.tcapMessage = "TC-CONTINUE";
                     try {
                         TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais2);
-                        dm.dialogId1 = Utils.decodeTransactionId(tcm.getOriginatingTransactionId(), tcapStack.isSwapTcapIdBytes());
-                        dm.dialogId2 = Utils.decodeTransactionId(tcm.getDestinationTransactionId(), tcapStack.isSwapTcapIdBytes());
+                        dm.dialogId1 = Utils.decodeTransactionId(tcm.getOriginatingTransactionId(), tcapStack.getSwapTcapIdBytes());
+                        dm.dialogId2 = Utils.decodeTransactionId(tcm.getDestinationTransactionId(), tcapStack.getSwapTcapIdBytes());
                     } catch (Exception e) {
                     }
                     break;
@@ -769,7 +769,7 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
                     dm.tcapMessage = "TC-END";
                     try {
                         TCEndMessage tbm = TcapFactory.createTCEndMessage(ais2);
-                        dm.dialogId1 = Utils.decodeTransactionId(tbm.getDestinationTransactionId(), tcapStack.isSwapTcapIdBytes());
+                        dm.dialogId1 = Utils.decodeTransactionId(tbm.getDestinationTransactionId(), tcapStack.getSwapTcapIdBytes());
                     } catch (Exception e) {
                     }
                     break;
@@ -777,7 +777,7 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
                     dm.tcapMessage = "TC-ABORT";
                     try {
                         TCAbortMessage tbm = TcapFactory.createTCAbortMessage(ais2);
-                        dm.dialogId1 = Utils.decodeTransactionId(tbm.getDestinationTransactionId(), tcapStack.isSwapTcapIdBytes());
+                        dm.dialogId1 = Utils.decodeTransactionId(tbm.getDestinationTransactionId(), tcapStack.getSwapTcapIdBytes());
                     } catch (Exception e) {
                     }
                     break;
@@ -820,8 +820,8 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
                 case TCContinueMessage._TAG:
                     if (this.pw != null) {
                         TCContinueMessage tcm = TcapFactory.createTCContinueMessage(ais);
-                        long originatingTransactionId = Utils.decodeTransactionId(tcm.getOriginatingTransactionId(), tcapStack.isSwapTcapIdBytes());
-                        long destinationTransactionId = Utils.decodeTransactionId(tcm.getDestinationTransactionId(), tcapStack.isSwapTcapIdBytes());
+                        long originatingTransactionId = Utils.decodeTransactionId(tcm.getOriginatingTransactionId(), tcapStack.getSwapTcapIdBytes());
+                        long destinationTransactionId = Utils.decodeTransactionId(tcm.getDestinationTransactionId(), tcapStack.getSwapTcapIdBytes());
 
                         if (!CheckTransactionIdFilter(this.curTcapDialog.getApplicationContextName()))
                             return;
@@ -841,7 +841,7 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
                 case TCBeginMessage._TAG:
                     if (this.pw != null) {
                         TCBeginMessage tcb = TcapFactory.createTCBeginMessage(ais);
-                        long originatingTransactionId = Utils.decodeTransactionId(tcb.getOriginatingTransactionId(), tcapStack.isSwapTcapIdBytes());
+                        long originatingTransactionId = Utils.decodeTransactionId(tcb.getOriginatingTransactionId(), tcapStack.getSwapTcapIdBytes());
 
                         if (!CheckTransactionIdFilter(this.curTcapDialog.getApplicationContextName()))
                             return;
@@ -861,7 +861,7 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
                 case TCEndMessage._TAG:
                     if (this.pw != null) {
                         TCEndMessage teb = TcapFactory.createTCEndMessage(ais);
-                        long destinationTransactionId = Utils.decodeTransactionId(teb.getDestinationTransactionId(), tcapStack.isSwapTcapIdBytes());
+                        long destinationTransactionId = Utils.decodeTransactionId(teb.getDestinationTransactionId(), tcapStack.getSwapTcapIdBytes());
 
                         if (!CheckTransactionIdFilter(this.curTcapDialog.getApplicationContextName()))
                             return;
@@ -881,7 +881,7 @@ public class SS7TraceParser implements TraceReaderListener, MAPDialogListener, C
                 case TCAbortMessage._TAG:
                     if (this.pw != null) {
                         TCAbortMessage tub = TcapFactory.createTCAbortMessage(ais);
-                        long destinationTransactionId = Utils.decodeTransactionId(tub.getDestinationTransactionId(), tcapStack.isSwapTcapIdBytes());
+                        long destinationTransactionId = Utils.decodeTransactionId(tub.getDestinationTransactionId(), tcapStack.getSwapTcapIdBytes());
 
                         if (!CheckTransactionIdFilter(this.curTcapDialog.getApplicationContextName()))
                             return;

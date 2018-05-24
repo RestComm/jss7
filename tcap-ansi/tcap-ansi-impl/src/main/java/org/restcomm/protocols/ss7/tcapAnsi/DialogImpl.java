@@ -197,7 +197,7 @@ public class DialogImpl implements Dialog {
 
         TCAPStack stack = this.provider.getStack();
         this.idleTaskTimeout = stack.getDialogIdleTimeout();
-        this.isSwapTcapIdBytes = stack.isSwapTcapIdBytes();
+        this.isSwapTcapIdBytes = stack.getSwapTcapIdBytes();
 
         startDialogTime = System.currentTimeMillis();
 

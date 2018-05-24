@@ -404,7 +404,7 @@ public interface TCAPStack {
      *
      * @return
      */
-    boolean isSwapTcapIdBytes();
+    boolean getSwapTcapIdBytes();
 
     /**
      * Set is there need to swap bytes for Txid

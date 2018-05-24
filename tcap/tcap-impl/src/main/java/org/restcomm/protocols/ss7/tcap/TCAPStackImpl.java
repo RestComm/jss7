@@ -500,7 +500,7 @@ public class TCAPStackImpl implements TCAPStack {
     }
 
     @Override
-    public boolean isSwapTcapIdBytes() {
+    public boolean getSwapTcapIdBytes() {
         return isSwapTcapIdBytes;
     }
 

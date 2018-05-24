@@ -732,7 +732,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                             } else {
                                 Dialog ddi = null;
                                 if (tcUnidentified.getDestinationTransactionId() != null) {
-                                    long dialogId = Utils.decodeTransactionId(tcUnidentified.getDestinationTransactionId(), this.stack.isSwapTcapIdBytes());
+                                    long dialogId = Utils.decodeTransactionId(tcUnidentified.getDestinationTransactionId(), this.stack.getSwapTcapIdBytes());
                                     ddi = this.dialogs.get(dialogId);
                                 }
                                 if (ddi != null && ddi.getProtocolVersion() != null)
@@ -770,14 +770,14 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                         return;
                     }
 
-                    long dialogId = Utils.decodeTransactionId(tcm.getDestinationTransactionId(), this.stack.isSwapTcapIdBytes());
+                    long dialogId = Utils.decodeTransactionId(tcm.getDestinationTransactionId(), this.stack.getSwapTcapIdBytes());
                     DialogImpl di;
                     if (this.stack.getPreviewMode()) {
                         PreviewDialogDataKey ky1 = new PreviewDialogDataKey(message.getIncomingDpc(), (message
                                 .getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress()
                                 .getGlobalTitle().getDigits() : null), message.getCalledPartyAddress().getSubsystemNumber(),
                                 dialogId);
-                        long dId = Utils.decodeTransactionId(tcm.getOriginatingTransactionId(), this.stack.isSwapTcapIdBytes());
+                        long dId = Utils.decodeTransactionId(tcm.getOriginatingTransactionId(), this.stack.getSwapTcapIdBytes());
                         PreviewDialogDataKey ky2 = new PreviewDialogDataKey(message.getIncomingOpc(), (message
                                 .getCallingPartyAddress().getGlobalTitle() != null ? message.getCallingPartyAddress()
                                 .getGlobalTitle().getDigits() : null), message.getCallingPartyAddress().getSubsystemNumber(),
@@ -854,7 +854,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                     di = null;
                     try {
                         if (this.stack.getPreviewMode()) {
-                            long dId = Utils.decodeTransactionId(tcb.getOriginatingTransactionId(), this.stack.isSwapTcapIdBytes());
+                            long dId = Utils.decodeTransactionId(tcb.getOriginatingTransactionId(), this.stack.getSwapTcapIdBytes());
                             PreviewDialogDataKey ky = new PreviewDialogDataKey(message.getIncomingOpc(), (message
                                     .getCallingPartyAddress().getGlobalTitle() != null ? message.getCallingPartyAddress()
                                     .getGlobalTitle().getDigits() : null), message.getCallingPartyAddress()
@@ -916,7 +916,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                         return;
                     }
 
-                    dialogId = Utils.decodeTransactionId(teb.getDestinationTransactionId(), this.stack.isSwapTcapIdBytes());
+                    dialogId = Utils.decodeTransactionId(teb.getDestinationTransactionId(), this.stack.getSwapTcapIdBytes());
                     if (this.stack.getPreviewMode()) {
                         PreviewDialogDataKey ky = new PreviewDialogDataKey(message.getIncomingDpc(), (message
                                 .getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress()
@@ -952,9 +952,9 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                         return;
                     }
 
-                    dialogId = Utils.decodeTransactionId(tub.getDestinationTransactionId(), this.stack.isSwapTcapIdBytes());
+                    dialogId = Utils.decodeTransactionId(tub.getDestinationTransactionId(), this.stack.getSwapTcapIdBytes());
                     if (this.stack.getPreviewMode()) {
-                        long dId = Utils.decodeTransactionId(tub.getDestinationTransactionId(), this.stack.isSwapTcapIdBytes());
+                        long dId = Utils.decodeTransactionId(tub.getDestinationTransactionId(), this.stack.getSwapTcapIdBytes());
                         PreviewDialogDataKey ky = new PreviewDialogDataKey(message.getIncomingDpc(), (message
                                 .getCalledPartyAddress().getGlobalTitle() != null ? message.getCalledPartyAddress()
                                 .getGlobalTitle().getDigits() : null), message.getCalledPartyAddress().getSubsystemNumber(),
@@ -1022,7 +1022,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             byte[] otid = tcUnidentified.getOriginatingTransactionId();
 
             if (tcUnidentified.getDestinationTransactionId() != null) {
-                Long dtid = Utils.decodeTransactionId(tcUnidentified.getDestinationTransactionId(), this.stack.isSwapTcapIdBytes());
+                Long dtid = Utils.decodeTransactionId(tcUnidentified.getDestinationTransactionId(), this.stack.getSwapTcapIdBytes());
                 this.sendProviderAbort(PAbortCause.UnrecognizedPackageType, otid, remoteAddress, localAddress, message.getSls(), networkId);
             } else {
                 this.sendProviderAbort(PAbortCause.UnrecognizedPackageType, otid, remoteAddress, localAddress, message.getSls(), networkId);
@@ -1051,7 +1051,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
             tcUnidentified.decode(ais);
 
             if (tcUnidentified.getOriginatingTransactionId() != null) {
-                long otid = Utils.decodeTransactionId(tcUnidentified.getOriginatingTransactionId(), this.stack.isSwapTcapIdBytes());
+                long otid = Utils.decodeTransactionId(tcUnidentified.getOriginatingTransactionId(), this.stack.getSwapTcapIdBytes());
                 dialog = this.dialogs.get(otid);
             }
         } catch (Exception e) {
@@ -1248,10 +1248,10 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                         return res;
                     }
                     byte[] originatingTransactionId = tid.getFirstElem();
-                    res.setOriginationDialogId(Utils.decodeTransactionId(originatingTransactionId, this.stack.isSwapTcapIdBytes()));
+                    res.setOriginationDialogId(Utils.decodeTransactionId(originatingTransactionId, this.stack.getSwapTcapIdBytes()));
 
                     byte[] destinationTransactionId = tid.getSecondElem();
-                    res.setDestinationDialogId(Utils.decodeTransactionId(destinationTransactionId, this.stack.isSwapTcapIdBytes()));
+                    res.setDestinationDialogId(Utils.decodeTransactionId(destinationTransactionId, this.stack.getSwapTcapIdBytes()));
 
                     if (tag == TCConversationMessage._TAG_CONVERSATION_WITH_PERM)
                         res.setMessageType(MessageType.ConversationWithPerm);
@@ -1270,7 +1270,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                         return res;
                     }
                     originatingTransactionId = tid.getFirstElem();
-                    res.setOriginationDialogId(Utils.decodeTransactionId(originatingTransactionId, this.stack.isSwapTcapIdBytes()));
+                    res.setOriginationDialogId(Utils.decodeTransactionId(originatingTransactionId, this.stack.getSwapTcapIdBytes()));
 
                     if (tag == TCQueryMessage._TAG_QUERY_WITH_PERM)
                         res.setMessageType(MessageType.QueryWithPerm);
@@ -1288,7 +1288,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                         return res;
                     }
                     destinationTransactionId = tid.getFirstElem();
-                    res.setDestinationDialogId(Utils.decodeTransactionId(destinationTransactionId, this.stack.isSwapTcapIdBytes()));
+                    res.setDestinationDialogId(Utils.decodeTransactionId(destinationTransactionId, this.stack.getSwapTcapIdBytes()));
 
                     res.setMessageType(MessageType.Response);
                     break;
@@ -1303,7 +1303,7 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                         return res;
                     }
                     destinationTransactionId = tid.getFirstElem();
-                    res.setDestinationDialogId(Utils.decodeTransactionId(destinationTransactionId, this.stack.isSwapTcapIdBytes()));
+                    res.setDestinationDialogId(Utils.decodeTransactionId(destinationTransactionId, this.stack.getSwapTcapIdBytes()));
 
                     res.setMessageType(MessageType.Abort);
                     break;

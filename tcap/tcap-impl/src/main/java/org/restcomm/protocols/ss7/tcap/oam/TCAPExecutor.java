@@ -281,7 +281,7 @@ public class TCAPExecutor implements ShellExecutor {
             } else if (parName.equals("statisticsenabled")) {
                 sb.append(this.tcapStack.getStatisticsEnabled());
             } else if (parName.equals("swaptcapidbytes")) {
-                sb.append(this.tcapStack.isSwapTcapIdBytes());
+                sb.append(this.tcapStack.getSwapTcapIdBytes());
             } else if (parName.equals("ssn")) {
                 sb.append(this.tcapStack.getSubSystemNumber());
 
@@ -371,7 +371,7 @@ public class TCAPExecutor implements ShellExecutor {
                 sb.append("\n");
 
                 sb.append("swaptcapidbytes = ");
-                sb.append(tcapStackImpl.isSwapTcapIdBytes());
+                sb.append(tcapStackImpl.getSwapTcapIdBytes());
                 sb.append("\n");
 
                 sb.append("subsystemnumber = ");

@@ -203,7 +203,7 @@ public class TCAPAnsiExecutor implements ShellExecutor {
             } else if (parName.equals("statisticsenabled")) {
                 sb.append(tcapStackImpl.getStatisticsEnabled());
             } else if (parName.equals("swaptcapidbytes")) {
-                sb.append(tcapStackImpl.isSwapTcapIdBytes());
+                sb.append(tcapStackImpl.getSwapTcapIdBytes());
             } else if (parName.equals("slsrange")) {
                 sb.append(tcapStackImpl.getSlsRange());
             } else {
@@ -255,7 +255,7 @@ public class TCAPAnsiExecutor implements ShellExecutor {
                 sb.append("\n");
 
                 sb.append("swaptcapidbytes = ");
-                sb.append(tcapStackImpl.isSwapTcapIdBytes());
+                sb.append(tcapStackImpl.getSwapTcapIdBytes());
                 sb.append("\n");
 
                 sb.append("slsrange = ");
