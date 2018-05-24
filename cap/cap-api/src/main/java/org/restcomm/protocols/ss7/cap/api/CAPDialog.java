@@ -42,14 +42,14 @@ import org.restcomm.protocols.ss7.tcap.asn.comp.ReturnResultLast;
  */
 public interface CAPDialog extends Serializable {
 
-    // Invoke timers
-    int _Timer_CircuitSwitchedCallControl_Short = 6000; // 1 - 10 sec
-    int _Timer_CircuitSwitchedCallControl_Medium = 30000; // 1 - 60 sec
-    int _Timer_CircuitSwitchedCallControl_Long = 300000; // 1 s - 30 minutes
-    int _Timer_Sms_Short = 10000; // 1 - 20 sec
-    int _Timer_Gprs_Short = 10000; // 1 - 20 sec
-
     int _Timer_Default = -1;
+
+    // Invoke timers
+    int getTimerCircuitSwitchedCallControlShort();
+    int getTimerCircuitSwitchedCallControlMedium();
+    int getTimerCircuitSwitchedCallControlLong();
+    int getTimerSmsShort();
+    int getTimerGprsShort();
 
     /*
      * Setting this property to true lead that all sent to TCAP messages of this Dialog will be marked as "ReturnMessageOnError"

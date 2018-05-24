@@ -91,6 +91,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
     private boolean returnMessageOnError = false;
     protected MessageType tcapMessageType;
     protected DelayedAreaState delayedAreaState;
+    private final MAPStackConfigurationManagement mapCfg;
 
     protected MAPDialogImpl(MAPApplicationContext appCntx, Dialog tcapDialog, MAPProviderImpl mapProviderImpl,
             MAPServiceBase mapService, AddressString origReference, AddressString destReference) {
@@ -100,6 +101,7 @@ public abstract class MAPDialogImpl implements MAPDialog {
         this.mapService = mapService;
         this.destReference = destReference;
         this.origReference = origReference;
+        this.mapCfg = MAPStackConfigurationManagement.getInstance();
     }
 
     public void setReturnMessageOnError(boolean val) {
@@ -700,5 +702,20 @@ public abstract class MAPDialogImpl implements MAPDialog {
 
     public void setIdleTaskTimeout(long idleTaskTimeoutMs) {
         tcapDialog.setIdleTaskTimeout(idleTaskTimeoutMs);
+    }
+
+    @Override
+    public int getShortTimer() {
+        return mapCfg.getShortTimer();
+    }
+
+    @Override
+    public int getMediumTimer() {
+        return mapCfg.getMediumTimer();
+    }
+
+    @Override
+    public int getLongTimer() {
+        return mapCfg.getLongTimer();
     }
 }
