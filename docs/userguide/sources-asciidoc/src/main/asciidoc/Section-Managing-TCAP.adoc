@@ -420,6 +420,48 @@ EXAMPLES
 On TCAP management page, click on pencil against the 'Statistics Enabled' property and text box becomes editable.
 Change value and save. 
 
+[[_tcap_property_swaptcapidbytes]]
+=== Swap TCAP id bytes Enabled
+
+[[_tcap_property_swaptcapidbytes_cli]]
+==== Using CLI
+
+You can set the 'swaptcapidbytes' by issuing the command `tcap set swaptcapidbytes` with appropriate parameters as described below.
+You can verify this by issuing the command `tcap get swaptcapidbytes` which will display the value set for this property. 
+
+----
+
+Name
+	tcap set swaptcapidbytes
+
+SYNOPSIS
+	tcap set swaptcapidbytes <true | false> stackname <stack-name>
+
+DESCRIPTION
+	If set to true, swap tcap id bytes is enabled..
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<swaptcapidbytes>	-	If true, swap tcap id bytes is enabled
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap set swaptcapidbytes false
+----
+
+[[_tcap_property_swaptcapidbytes_gui]]
+==== Using GUI
+
+On TCAP management page, click on pencil against the 'Swap tcapid bytes Enabled' property and text box becomes editable.
+Change value and save. 
+
 [[_tcap_property_executordelaythreshold]]
 === Thresholds for Executors congestion control
 

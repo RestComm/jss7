@@ -66,7 +66,7 @@ public class TCAPStackImpl implements TCAPStack {
     private static final String PREVIEW_MODE = "previewmode";
     private static final String STATISTICS_ENABLED = "statisticsenabled";
     private static final String SLS_RANGE = "slsrange";
-
+    private static final String SWAP_TCAP_ID_BYTES = "swaptcapidbytes";
 
     private static final String CONG_CONTROL_BLOCKING_INCOMING_TCAP_MESSAGES = "congControl_blockingIncomingTcapMessages";
     private static final String CONG_CONTROL_EXECUTOR_DELAY_THRESHOLD_1 = "congControl_ExecutorDelayThreshold_1";
@@ -134,6 +134,8 @@ public class TCAPStackImpl implements TCAPStack {
     // MemoryMonitor Thresholds: a percent of occupied memory after which MemoryMonitor resumes to the
     // congestion level 0, 1 or 2
     private double[] congControl_BackToNormalMemoryThreshold = new double[] { 72, 82, 92 };
+
+    private boolean isSwapTcapIdBytes = true;  // for now configurable only via XML file
 
     private int ssn = -1;
 
@@ -448,6 +450,16 @@ public class TCAPStackImpl implements TCAPStack {
         return this.slsRange.toString();
     }
 
+    @Override
+    public boolean isSwapTcapIdBytes() {
+        return isSwapTcapIdBytes;
+    }
+
+    @Override
+    public void setSwapTcapIdBytes(boolean isSwapTcapIdBytes) {
+        this.isSwapTcapIdBytes = isSwapTcapIdBytes;
+    }
+
     public SlsRangeType getSlsRangeType() {
         return this.slsRange;
     }
@@ -717,6 +729,8 @@ public class TCAPStackImpl implements TCAPStack {
 
             writer.write(this.statisticsEnabled, STATISTICS_ENABLED, Boolean.class);
 
+            writer.write(this.isSwapTcapIdBytes, SWAP_TCAP_ID_BYTES, Boolean.class);
+
             writer.close();
         } catch (Exception e) {
             this.logger.error(
@@ -792,6 +806,10 @@ public class TCAPStackImpl implements TCAPStack {
             Boolean volb = reader.read(STATISTICS_ENABLED, Boolean.class);
             if (volb != null)
                 this.statisticsEnabled = volb;
+
+            volb = reader.read(SWAP_TCAP_ID_BYTES, Boolean.class);
+            if (volb != null)
+                this.isSwapTcapIdBytes = volb;
 
             reader.close();
         } catch (XMLStreamException ex) {

@@ -155,6 +155,7 @@ public class DialogImpl implements Dialog {
     protected PreviewDialogData prevewDialogData;
     private long startDialogTime;
     private int networkId;
+    private boolean isSwapTcapIdBytes;
 
     private static int getIndexFromInvokeId(Long l) {
         int tmp = l.intValue();
@@ -196,6 +197,7 @@ public class DialogImpl implements Dialog {
 
         TCAPStack stack = this.provider.getStack();
         this.idleTaskTimeout = stack.getDialogIdleTimeout();
+        this.isSwapTcapIdBytes = stack.isSwapTcapIdBytes();
 
         startDialogTime = System.currentTimeMillis();
 
@@ -287,7 +289,7 @@ public class DialogImpl implements Dialog {
      */
     public Long getRemoteDialogId() {
         if (this.remoteTransactionId != null && this.remoteTransactionIdObject == null) {
-            this.remoteTransactionIdObject = Utils.decodeTransactionId(this.remoteTransactionId);
+            this.remoteTransactionIdObject = Utils.decodeTransactionId(this.remoteTransactionId, this.isSwapTcapIdBytes);
         }
 
         return this.remoteTransactionIdObject;
@@ -515,7 +517,7 @@ public class DialogImpl implements Dialog {
 
             // build DP
             tcbm.setDialogTermitationPermission(event.getDialogTermitationPermission());
-            tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
+            tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId, this.isSwapTcapIdBytes));
 
             if (event.getApplicationContextName() != null || event.getConfidentiality() != null
                     || event.getSecurityContext() != null || event.getUserInformation() != null) {
@@ -595,7 +597,7 @@ public class DialogImpl implements Dialog {
                 TCConversationMessageImpl tcbm = (TCConversationMessageImpl) TcapFactory.createTCConversationMessage();
 
                 tcbm.setDialogTermitationPermission(event.getDialogTermitationPermission());
-                tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
+                tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId, this.isSwapTcapIdBytes));
                 tcbm.setDestinationTransactionId(this.remoteTransactionId);
                 // local address may change, lets check it;
                 if (event.getOriginatingAddress() != null && !event.getOriginatingAddress().equals(this.localAddress)) {
@@ -646,7 +648,7 @@ public class DialogImpl implements Dialog {
                 TCConversationMessageImpl tcbm = (TCConversationMessageImpl) TcapFactory.createTCConversationMessage();
 
                 tcbm.setDialogTermitationPermission(event.getDialogTermitationPermission());
-                tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
+                tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId, this.isSwapTcapIdBytes));
                 tcbm.setDestinationTransactionId(this.remoteTransactionId);
                 if (this.scheduledComponentList.size() > 0) {
                     Component[] componentsToSend = new Component[this.scheduledComponentList.size()];
@@ -1025,7 +1027,7 @@ public class DialogImpl implements Dialog {
 
         TCQueryMessageImpl tcbm = (TCQueryMessageImpl) TcapFactory.createTCQueryMessage();
         tcbm.setDialogTermitationPermission(event.getDialogTermitationPermission());
-        tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
+        tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId, this.isSwapTcapIdBytes));
 
         if (event.getApplicationContextName() != null || event.getConfidentiality() != null
                 || event.getSecurityContext() != null || event.getUserInformation() != null) {
@@ -1064,7 +1066,7 @@ public class DialogImpl implements Dialog {
 
         TCConversationMessageImpl tcbm = (TCConversationMessageImpl) TcapFactory.createTCConversationMessage();
         tcbm.setDialogTermitationPermission(event.getDialogTermitationPermission());
-        tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId));
+        tcbm.setOriginatingTransactionId(Utils.encodeTransactionId(this.localTransactionId, this.isSwapTcapIdBytes));
         tcbm.setDestinationTransactionId(this.remoteTransactionId);
 
         if (event.getApplicationContextName() != null || event.getConfidentiality() != null

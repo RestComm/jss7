@@ -369,5 +369,18 @@ public interface TCAPStack {
      */
     String getSlsRange();
 
+    /**
+     * Returns true if there is need to swap bytes for Txid
+     *
+     * @return
+     */
+    boolean isSwapTcapIdBytes();
+
+    /**
+     * Set is there need to swap bytes for Txid
+     *
+     * @return
+     */
+    void setSwapTcapIdBytes(boolean isSwapTcapIdBytes);
 
 }

@@ -399,6 +399,47 @@ EXAMPLES
 		</section>			
 	</section>	
 	
+	<section id="tcap_property_swaptcapidbytes">
+		<title>Swap TCAP id bytes Enabled</title>
+		
+			<section id="tcap_property_swaptcapidbytes_CLI">
+			<title>Using CLI</title>
+				<para>
+					You can set the 'swaptcapidbytes' by issuing the command <command>tcap set swaptcapidbytes</command> with appropriate parameters as described below. 
+					You can verify this by issuing the command <command>tcap get swaptcapidbytes</command> which will display the value set for this property.
+				</para>
+				<screen><![CDATA[
+Name
+	tcap set swaptcapidbytes 
+
+SYNOPSIS
+	tcap set swaptcapidbytes <true | false> stackname <stack-name>
+
+DESCRIPTION
+	If set to true, swap tcap id bytes is enabled.
+	
+PARAMETERS
+
+	Standard Parameters
+
+	<swaptcapidbytes>	-	If true, swap tcap id bytes is enabled
+	
+	Optional Parameters
+
+	<stack-name>	-	Name of the stack on which this command is executed. 
+					If not passed, the first stack configured in ShellExecutor
+					will be used.	
+
+EXAMPLES
+	tcap set swaptcapidbytes false
+			]]></screen>
+		</section>
+		<section id="tcap_property_swaptcapidbytes_GUI">
+			<title>Using GUI</title>
+				<para>On TCAP management page, click on pencil against the 'Swap tcapid bytes Enabled' property and text box becomes editable. Change value and save. </para>
+		</section>			
+	</section>
+	
 	</section>		
 
 </section>

@@ -42,6 +42,7 @@ public class TcapAnsiCommandHandler extends CommandHandlerWithHelp {
         set.addChild("dialogidrangeend");
 //        set.addChild("previewmode");
         set.addChild("statisticsenabled");
+        set.addChild("swaptcapidbytes");
         set.addChild("slsrange");
 
         Node get = parent.addChild("get");
@@ -52,6 +53,7 @@ public class TcapAnsiCommandHandler extends CommandHandlerWithHelp {
         get.addChild("dialogidrangeend");
         get.addChild("previewmode");
         get.addChild("statisticsenabled");
+        get.addChild("swaptcapidbytes");
         get.addChild("slsrange");
 
     };

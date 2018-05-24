@@ -45,6 +45,7 @@ public class TcapCommandHandler extends CommandHandlerWithHelp {
 //        set.addChild("previewmode");
         set.addChild("donotsendprotocolversion");
         set.addChild("statisticsenabled");
+        set.addChild("swaptcapidbytes");
         set.addChild("executordelaythreshold_1");
         set.addChild("executordelaythreshold_2");
         set.addChild("executordelaythreshold_3");
@@ -69,6 +70,7 @@ public class TcapCommandHandler extends CommandHandlerWithHelp {
         get.addChild("previewmode");
         get.addChild("donotsendprotocolversion");
         get.addChild("statisticsenabled");
+        get.addChild("swaptcapidbytes");
         get.addChild("ssn");
         get.addChild("executordelaythreshold_1");
         get.addChild("executordelaythreshold_2");
