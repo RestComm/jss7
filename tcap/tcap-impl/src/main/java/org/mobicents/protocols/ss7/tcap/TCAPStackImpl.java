@@ -66,6 +66,7 @@ public class TCAPStackImpl implements TCAPStack {
     private static final String DO_NOT_SEND_PROTOCOL_VERSION = "donotsendprotocolversion";
     private static final String STATISTICS_ENABLED = "statisticsenabled";
     private static final String SLS_RANGE = "slsrange";
+    private static final String SWAP_TCAP_ID_BYTES = "swaptcapidbytes";
 
 
     private static final XMLBinding binding = new XMLBinding();
@@ -101,6 +102,7 @@ public class TCAPStackImpl implements TCAPStack {
     private List<Integer> extraSsns = new FastList<Integer>();
     private boolean doNotSendProtocolVersion = false;
     private boolean statisticsEnabled = false;
+    private boolean isSwapTcapIdBytes = true;  // for now configurable only via XML file
 
     private int ssn = -1;
 
@@ -452,6 +454,11 @@ public class TCAPStackImpl implements TCAPStack {
         return statisticsEnabled;
     }
 
+    @Override
+    public boolean isSwapTcapIdBytes() {
+        return isSwapTcapIdBytes;
+    }
+
     /**
      * Persist
      */
@@ -480,6 +487,8 @@ public class TCAPStackImpl implements TCAPStack {
             writer.write(this.slsRange.toString(), SLS_RANGE, String.class);
 
             writer.write(this.statisticsEnabled, STATISTICS_ENABLED, Boolean.class);
+
+            writer.write(this.isSwapTcapIdBytes, SWAP_TCAP_ID_BYTES, Boolean.class);
 
 
             writer.close();
@@ -529,11 +538,14 @@ public class TCAPStackImpl implements TCAPStack {
             if (volb != null)
                 this.statisticsEnabled = volb;
 
+            volb = reader.read(SWAP_TCAP_ID_BYTES, Boolean.class);
+            if (volb != null)
+                this.isSwapTcapIdBytes = volb;
+
             reader.close();
         } catch (XMLStreamException ex) {
             // this.logger.info(
             // "Error while re-creating Linksets from persisted file", ex);
         }
     }
-
 }

@@ -202,6 +202,11 @@ public class TcapManagementJmx implements TcapManagementJmxMBean, CounterMediato
     }
 
     @Override
+    public boolean isSwapTcapIdBytes() {
+        return this.wrappedTCAPStack.isSwapTcapIdBytes();
+    }
+
+    @Override
     public void setStatisticsEnabled(boolean val) throws Exception {
         this.wrappedTCAPStack.setStatisticsEnabled(val);
     }
