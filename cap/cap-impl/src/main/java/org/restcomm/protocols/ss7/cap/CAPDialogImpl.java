@@ -79,6 +79,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
     boolean returnMessageOnError = false;
     protected MessageType tcapMessageType;
     protected DelayedAreaState delayedAreaState;
+    private CAPStackConfigurationManagement capStackConfigurationManagement;
 
     protected CAPDialogImpl(CAPApplicationContext appCntx, Dialog tcapDialog, CAPProviderImpl capProviderImpl,
             CAPServiceBase capService) {
@@ -86,6 +87,7 @@ public abstract class CAPDialogImpl implements CAPDialog {
         this.tcapDialog = tcapDialog;
         this.capProviderImpl = capProviderImpl;
         this.capService = capService;
+        this.capStackConfigurationManagement = CAPStackConfigurationManagement.getInstance();
     }
 
     public SccpAddress getLocalAddress() {
@@ -624,5 +626,30 @@ public abstract class CAPDialogImpl implements CAPDialog {
 
     public void setIdleTaskTimeout(long idleTaskTimeoutMs) {
         tcapDialog.setIdleTaskTimeout(idleTaskTimeoutMs);
+    }
+
+    @Override
+    public int getTimerCircuitSwitchedCallControlShort() {
+        return capStackConfigurationManagement.getTimerCircuitSwitchedCallControlShort();
+    }
+
+    @Override
+    public int getTimerCircuitSwitchedCallControlMedium() {
+        return capStackConfigurationManagement.getTimerCircuitSwitchedCallControlMedium();
+    }
+
+    @Override
+    public int getTimerCircuitSwitchedCallControlLong() {
+        return capStackConfigurationManagement.getTimerCircuitSwitchedCallControlLong();
+    }
+
+    @Override
+    public int getTimerSmsShort() {
+        return capStackConfigurationManagement.getTimerSmsShort();
+    }
+
+    @Override
+    public int getTimerGprsShort() {
+        return capStackConfigurationManagement.getTimerGprsShort();
     }
 }

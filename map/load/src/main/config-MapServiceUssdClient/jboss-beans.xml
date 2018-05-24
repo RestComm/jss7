@@ -241,6 +241,7 @@
 				<inject bean="TcapStack" property="provider" />
 			</parameter>
 		</constructor>
+		<property name="persistDir">${jboss.server.data.dir}</property>
 	</bean>
 
 	<!-- ==================================================================== -->

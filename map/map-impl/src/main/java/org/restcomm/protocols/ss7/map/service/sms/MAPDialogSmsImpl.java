@@ -89,7 +89,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_ml);
+            invoke.setTimeout(getLongTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -156,7 +156,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_ml);
+            invoke.setTimeout(getLongTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -240,7 +240,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_ml);
+            invoke.setTimeout(getLongTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -332,7 +332,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_m);
+            invoke.setTimeout(getMediumTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -427,7 +427,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_s);
+            invoke.setTimeout(getShortTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -520,7 +520,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory()
                 .createTCInvokeRequest(InvokeClass.Class4);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_s);
+            invoke.setTimeout(getShortTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -574,7 +574,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
         else
             invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_s);
+            invoke.setTimeout(getShortTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -646,7 +646,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_m);
+            invoke.setTimeout(getMediumTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -726,7 +726,7 @@ public class MAPDialogSmsImpl extends MAPDialogImpl implements MAPDialogSms {
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class4);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_s);
+            invoke.setTimeout(getShortTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 

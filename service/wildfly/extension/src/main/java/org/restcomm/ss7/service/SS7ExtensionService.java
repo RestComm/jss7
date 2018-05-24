@@ -953,6 +953,7 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
         MAPStackImpl mapStack = null;
         try {
             mapStack = new MAPStackImpl(mapStackName, tcapStack.getProvider());
+            mapStack.setPersistDir(dataDir);
             this.beanMapStacks.put(beanName, mapStack);
         } catch (Exception e) {
             throw new StartException("MapService MBean creating is failed: name=" + beanName + ", " + e.getMessage(), e);
@@ -1002,6 +1003,7 @@ public class SS7ExtensionService implements SS7ServiceInterface,Service<SS7Servi
         CAPStackImpl capStack = null;
         try {
             capStack = new CAPStackImpl(capStackName, tcapStack.getProvider());
+            capStack.setPersistDir(dataDir);
 
             this.beanCapStacks.put(beanName, capStack);
         } catch (Exception e) {

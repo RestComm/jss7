@@ -43,13 +43,11 @@ import org.restcomm.protocols.ss7.tcap.asn.comp.ReturnResultLast;
  *
  */
 public interface MAPDialog extends Serializable {
-
-    int _Timer_s = 10000;
-    int _Timer_m = 30000;
-    int _Timer_ml = 600000;
-    int _Timer_l = 136800000;
-
     int _Timer_Default = -1;
+
+    int getShortTimer();
+    int getMediumTimer();
+    int getLongTimer();
 
     /**
      * Returns the current {@link MAPDialogState} of this Dialog

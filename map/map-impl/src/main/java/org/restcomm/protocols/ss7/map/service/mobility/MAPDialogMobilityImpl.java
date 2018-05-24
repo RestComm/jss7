@@ -199,7 +199,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_m);
+            invoke.setTimeout(getMediumTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -325,7 +325,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_m);
+            invoke.setTimeout(getMediumTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -415,7 +415,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_m);
+            invoke.setTimeout(getMediumTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -522,7 +522,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_m);
+            invoke.setTimeout(getMediumTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -639,7 +639,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_m);
+            invoke.setTimeout(getMediumTimer());
         else
             invoke.setTimeout(customTimeout);
 
@@ -767,7 +767,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_m);
+            invoke.setTimeout(getMediumTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -886,7 +886,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default) {
-            invoke.setTimeout(_Timer_m);
+            invoke.setTimeout(getMediumTimer());
         } else {
             invoke.setTimeout(customInvokeTimeout);
         }
@@ -978,7 +978,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default) {
-            invoke.setTimeout(_Timer_m);
+            invoke.setTimeout(getMediumTimer());
         } else {
             invoke.setTimeout(customInvokeTimeout);
         }
@@ -1113,7 +1113,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default) {
-            invoke.setTimeout(_Timer_m);
+            invoke.setTimeout(getMediumTimer());
         } else {
             invoke.setTimeout(customInvokeTimeout);
         }
@@ -1257,7 +1257,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default) {
-            invoke.setTimeout(_Timer_m);
+            invoke.setTimeout(getMediumTimer());
         } else {
             invoke.setTimeout(customInvokeTimeout);
         }
@@ -1358,7 +1358,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_m);
+            invoke.setTimeout(getMediumTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1455,7 +1455,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_s);
+            invoke.setTimeout(getShortTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1568,7 +1568,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_m);
+            invoke.setTimeout(getMediumTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1668,7 +1668,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_m);
+            invoke.setTimeout(getMediumTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1757,7 +1757,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class4);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_m);
+            invoke.setTimeout(getMediumTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1806,7 +1806,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest(InvokeClass.Class4);
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_s);
+            invoke.setTimeout(getShortTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1844,7 +1844,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_m);
+            invoke.setTimeout(getMediumTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 
@@ -1945,7 +1945,7 @@ public class MAPDialogMobilityImpl extends MAPDialogImpl implements MAPDialogMob
 
         Invoke invoke = this.mapProviderImpl.getTCAPProvider().getComponentPrimitiveFactory().createTCInvokeRequest();
         if (customInvokeTimeout == _Timer_Default)
-            invoke.setTimeout(_Timer_m);
+            invoke.setTimeout(getMediumTimer());
         else
             invoke.setTimeout(customInvokeTimeout);
 

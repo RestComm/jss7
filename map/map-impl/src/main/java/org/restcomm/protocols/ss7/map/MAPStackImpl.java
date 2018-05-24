@@ -43,6 +43,9 @@ public class MAPStackImpl implements MAPStack {
     private State state = State.IDLE;
 
     private final String name;
+    private final MAPStackConfigurationManagement mapCfg;
+
+    private String persistDir = null;
 
     public MAPStackImpl(String name, SccpProvider sccpPprovider, int ssn) {
         this.name = name;
@@ -51,6 +54,9 @@ public class MAPStackImpl implements MAPStack {
         mapProvider = new MAPProviderImpl(name, tcapProvider);
 
         this.state = State.CONFIGURED;
+
+        this.mapCfg = MAPStackConfigurationManagement.getInstance();
+        this.mapCfg.setConfigFileName(this.name);
     }
 
     public MAPStackImpl(String name, TCAPProvider tcapProvider) {
@@ -58,6 +64,9 @@ public class MAPStackImpl implements MAPStack {
         mapProvider = new MAPProviderImpl(name, tcapProvider);
         this.tcapStack = tcapProvider.getStack();
         this.state = State.CONFIGURED;
+
+        this.mapCfg = MAPStackConfigurationManagement.getInstance();
+        this.mapCfg.setConfigFileName(this.name);
     }
 
     @Override
@@ -65,11 +74,16 @@ public class MAPStackImpl implements MAPStack {
         return name;
     }
 
+    @Override
     public MAPProvider getMAPProvider() {
         return this.mapProvider;
     }
 
+    @Override
     public void start() throws Exception {
+        this.mapCfg.setPersistDir(this.persistDir);
+        this.mapCfg.load();
+
         if (state != State.CONFIGURED) {
             throw new IllegalStateException("Stack has not been configured or is already running!");
         }
@@ -83,6 +97,7 @@ public class MAPStackImpl implements MAPStack {
 
     }
 
+    @Override
     public void stop() {
         if (state != State.RUNNING) {
             throw new IllegalStateException("Stack is not running!");
@@ -93,6 +108,11 @@ public class MAPStackImpl implements MAPStack {
         }
 
         this.state = State.CONFIGURED;
+        mapCfg.store();
+    }
+
+    public void setPersistDir(String persistDir) {
+        this.persistDir = persistDir;
     }
 
     // // ///////////////
@@ -117,6 +137,7 @@ public class MAPStackImpl implements MAPStack {
         IDLE, CONFIGURED, RUNNING;
     }
 
+    @Override
     public TCAPStack getTCAPStack() {
         return this.tcapStack;
     }
