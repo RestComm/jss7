@@ -507,11 +507,12 @@ For `dahdi` need to declare `LinksetExecutor` bean and add in [class]`FastList` 
                 <inject bean="TcapStackMap" property="provider" />
             </parameter>
         </constructor>
+        <property name="persistDir">${jboss.server.data.dir}</property>
     </bean>
 ----
 [class]`org.restcomm.protocols.ss7.tcap.MAPStackImpl` takes [class]`String` as a first constructor argument.
 The name is prepend to `xml` file created by MAP stack for persisting state of MAP resources.
-The `xml` is stored in path specified by `persistDir` property above. As for now MAP stack does not store any XML files.
+The `xml` is stored in path specified by `persistDir` property above.
 The second constructor argument is [class]`TcapStack`. MAP uses passed TCAP stack.
 
 
@@ -534,11 +535,12 @@ Feel free to delete declaration of this bean if your service is not consuming MA
                 <inject bean="TcapStackCap" property="provider" />
             </parameter>
         </constructor>
+        <property name="persistDir">${jboss.server.data.dir}</property>
     </bean>
 ----
 [class]`org.restcomm.protocols.ss7.tcap.CAPStackImpl` takes [class]`String` as a first constructor argument.
 The name is prepend to `xml` file created by CAP stack for persisting state of CAP resources.
-The `xml` is stored in path specified by `persistDir` property above. As for now CAP stack does not store any XML files.
+The `xml` is stored in path specified by `persistDir` property above.
 The second constructor argument is [class]`TcapStack`. CAP uses passed TCAP stack.
 
 
