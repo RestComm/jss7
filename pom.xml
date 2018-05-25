@@ -36,7 +36,7 @@
 		<!-- restcomm but not strictly ss7 -->
 		<asn.version>2.2.0-143</asn.version>
 		<stream.version>1.0.0.CR1</stream.version>
-		<sctp.version>2.0.0-158</sctp.version>
+		<sctp.version>2.0.0-162</sctp.version>
 		<commons.version>1.0.0.CR1</commons.version>
 		<netty.version>4.0.33.Final</netty.version>
 
