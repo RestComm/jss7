@@ -17,12 +17,3 @@ All Restcomm [docs](https://www.restcomm.com/docs/) and [downloads](https://www.
 Open Source Java SS7 stack that allows Java apps to communicate with legacy SS7 communications equipment. 
 
 jSS7 provides an open source software solution implementing M3UA, SCCP, TCAP, CAMEL, MAP, ISUP protocols for a dedicated equipment (Dialogic) and also M3UA (SIGTRAN) over IP.
-
-Download the [jSS7 Data Sheet](http://telestax.files.wordpress.com/2012/10/telscalejss7datasheet.pdf) for more high level information.
-
-jSS7 uses 
-* jASN library https://github.com/RestComm/jasn 
-* SCTP library https://github.com/RestComm/sctp
-
-jSS7 is lead by [TeleStax, Inc.](http://www.telestax.com/) and developed collaboratively by a [community of individual and enterprise contributors](https://www.restcomm.com/acknowledgements/).
-
