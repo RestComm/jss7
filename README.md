@@ -3,7 +3,7 @@
 [Try Restcomm Cloud NOW for FREE!](https://www.restcomm.com/sign-up/) Zero download and install required.
 
 
-
+All Restcomm [docs](https://www.restcomm.com/docs/) and [downloads](https://www.restcomm.com/downloads/) are now available at [Restcomm.com](https://www.restcomm.com).
 
 
 
@@ -26,46 +26,3 @@ jSS7 uses
 
 jSS7 is lead by [TeleStax, Inc.](http://www.telestax.com/) and developed collaboratively by a [community of individual and enterprise contributors](https://www.restcomm.com/acknowledgements/).
 
-## License
-
-RestComm jSS7 is licensed under dual license policy. The default license is the Free Open Source [GNU Affero GPL v3.0](http://www.gnu.org/licenses/agpl-3.0.html). Alternatively a commercial license can be obtained from Telestax ([contact form](https://www.restcomm.com/contact/))
-
-
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2FRestComm%2Fjss7.svg?type=large)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2FRestComm%2Fjss7?ref=badge_large)
-
-## Downloads
-
-Download binary from [the Restcomm site Downloads section](https://www.restcomm.com/downloads/).
-
-## Maven Repository
-
-Artifacts are available at [Sonatype Maven Repo](https://oss.sonatype.org/content/repositories/releases/org/restcomm) which are also synched to central
-
-## Wiki
-
-Read our [RestComm jSS7 wiki](https://github.com/RestComm/jss7/wiki) 
-
-## Build From Source
-
-Read [the instructions](https://github.com/RestComm/jss7/wiki/Build-jSS7-from-Source) to build RestComm jSS7 from Source 
-
-## Other Open Source Projects that leverages jSS7
-
-*  SMSC Gateway https://github.com/RestComm/smscgateway
-*  USSD Gateway https://github.com/RestComm/ussdgateway
-*  EIR https://github.com/RestComm/jeir/
-*  GMLC https://github.com/RestComm/gmlc/
-*  JAIN SLEE Resource Adaptors https://github.com/RestComm/jain-slee.ss7
-*  MMSC https://github.com/RestComm/mmscgateway
-
-## All Open Source RestComm Projects
-
-Open Source https://www.restcomm.com/open-source/
-
-
-## Acknowledgements
-
-* [![JProfiler](https://www.ej-technologies.com/images/product_banners/jprofiler_large.png)](https://www.ej-technologies.com/products/jprofiler/overview.html) JProfiler Open Source License
-
----
-We also maintain a list of [all Restcomm contributors](http://www.telestax.com/opensource/acknowledgments/) on the Restcomm website, to acknowledge contributions by the broad open source community.
