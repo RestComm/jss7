@@ -40,8 +40,8 @@ import org.restcomm.protocols.ss7.tools.simulator.tests.cap.TestCapScfConfigurat
 import org.restcomm.protocols.ss7.tools.simulator.tests.cap.TestCapSsfConfigurationData;
 import org.restcomm.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiClientConfigurationData;
 import org.restcomm.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiServerConfigurationData;
-import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientConfigurationData;
-import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsServerConfigurationData;
+import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestLcsClientConfigurationData;
+import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestLcsServerConfigurationData;
 import org.restcomm.protocols.ss7.tools.simulator.tests.sms.TestSmsClientConfigurationData;
 import org.restcomm.protocols.ss7.tools.simulator.tests.sms.TestSmsServerConfigurationData;
 import org.restcomm.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientConfigurationData;
@@ -74,8 +74,8 @@ public class ConfigurationData {
     public static final String TEST_ATI_SERVER = "testAtiServer";
     public static final String TEST_CHECK_IMEI_CLIENT = "testCheckImeiClient";
     public static final String TEST_CHECK_IMEI_SERVER = "testCheckImeiServer";
-    public static final String TEST_MAP_LCS_CLIENT = "testMapLcsClient";
-    public static final String TEST_MAP_LCS_SERVER = "testMapLcsServer";
+    public static final String TEST_MAP_LCS_CLIENT = "testLcsClient";
+    public static final String TEST_MAP_LCS_SERVER = "testLcsServer";
 
     private Instance_L1 instance_L1 = new Instance_L1(Instance_L1.VAL_NO);
     private Instance_L2 instance_L2 = new Instance_L2(Instance_L2.VAL_NO);
@@ -98,8 +98,8 @@ public class ConfigurationData {
     private TestAtiServerConfigurationData testAtiServerConfigurationData = new TestAtiServerConfigurationData();
     private TestCheckImeiClientConfigurationData testCheckImeiClientConfigurationData = new TestCheckImeiClientConfigurationData();
     private TestCheckImeiServerConfigurationData testCheckImeiServerConfigurationData = new TestCheckImeiServerConfigurationData();
-    private TestMapLcsClientConfigurationData testMapLcsClientConfigurationData = new TestMapLcsClientConfigurationData();
-    private TestMapLcsServerConfigurationData testMapLcsServerConfigurationData = new TestMapLcsServerConfigurationData();
+    private TestLcsClientConfigurationData testLcsClientConfigurationData = new TestLcsClientConfigurationData();
+    private TestLcsServerConfigurationData testLcsServerConfigurationData = new TestLcsServerConfigurationData();
 
 
 
@@ -256,21 +256,21 @@ public class ConfigurationData {
     }
 
 
-    public TestMapLcsClientConfigurationData getTestMapLcsClientConfigurationData() {
-        return testMapLcsClientConfigurationData;
+    public TestLcsClientConfigurationData getTestLcsClientConfigurationData() {
+        return testLcsClientConfigurationData;
     }
 
-    public void setTestMapLcsClientConfigurationData(TestMapLcsClientConfigurationData testMapLcsClientConfigurationData) {
-        this.testMapLcsClientConfigurationData = testMapLcsClientConfigurationData;
+    public void setTestLcsClientConfigurationData(TestLcsClientConfigurationData testLcsClientConfigurationData) {
+        this.testLcsClientConfigurationData = testLcsClientConfigurationData;
     }
 
 
-    public TestMapLcsServerConfigurationData getTestMapLcsServerConfigurationData() {
-        return testMapLcsServerConfigurationData;
+    public TestLcsServerConfigurationData getTestLcsServerConfigurationData() {
+        return testLcsServerConfigurationData;
     }
 
-    public void setTestMapLcsServerConfigurationData(TestMapLcsServerConfigurationData testMapLcsServerConfigurationData) {
-        this.testMapLcsServerConfigurationData = testMapLcsServerConfigurationData;
+    public void setTestLcsServerConfigurationData(TestLcsServerConfigurationData testLcsServerConfigurationData) {
+        this.testLcsServerConfigurationData = testLcsServerConfigurationData;
     }
 
 
@@ -347,13 +347,13 @@ public class ConfigurationData {
             if (checkImeiServer != null)
                 data.setTestCheckImeiServerConfigurationData(checkImeiServer);
 
-            TestMapLcsClientConfigurationData mapLcsClient = xml.get(TEST_MAP_LCS_CLIENT, TestMapLcsClientConfigurationData.class);
+            TestLcsClientConfigurationData mapLcsClient = xml.get(TEST_MAP_LCS_CLIENT, TestLcsClientConfigurationData.class);
             if (mapLcsClient != null)
-                data.setTestMapLcsClientConfigurationData(mapLcsClient);
+                data.setTestLcsClientConfigurationData(mapLcsClient);
 
-            TestMapLcsServerConfigurationData mapLcsServer = xml.get(TEST_MAP_LCS_SERVER, TestMapLcsServerConfigurationData.class);
+            TestLcsServerConfigurationData mapLcsServer = xml.get(TEST_MAP_LCS_SERVER, TestLcsServerConfigurationData.class);
             if (mapLcsServer != null)
-                data.setTestMapLcsServerConfigurationData(mapLcsServer);
+                data.setTestLcsServerConfigurationData(mapLcsServer);
 
             // while (xml.hasNext()) {
             // Object o = xml.getNext();
@@ -383,8 +383,8 @@ public class ConfigurationData {
             xml.add(data.getTestCapSsfConfigurationData(), TEST_CAP_SSF, TestCapSsfConfigurationData.class);
             xml.add(data.getTestCheckImeiClientConfigurationData(), TEST_CHECK_IMEI_CLIENT, TestCheckImeiClientConfigurationData.class);
             xml.add(data.getTestCheckImeiServerConfigurationData(), TEST_CHECK_IMEI_SERVER, TestCheckImeiServerConfigurationData.class);
-            xml.add(data.getTestMapLcsClientConfigurationData(), TEST_MAP_LCS_CLIENT, TestMapLcsClientConfigurationData.class);
-            xml.add(data.getTestMapLcsServerConfigurationData(), TEST_MAP_LCS_SERVER, TestMapLcsServerConfigurationData.class);
+            xml.add(data.getTestLcsClientConfigurationData(), TEST_MAP_LCS_CLIENT, TestLcsClientConfigurationData.class);
+            xml.add(data.getTestLcsServerConfigurationData(), TEST_MAP_LCS_SERVER, TestLcsServerConfigurationData.class);
         }
     };
 

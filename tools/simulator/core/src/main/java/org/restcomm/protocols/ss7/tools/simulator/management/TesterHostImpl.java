@@ -64,8 +64,10 @@ import org.restcomm.protocols.ss7.tools.simulator.tests.cap.TestCapSsfMan;
 import org.restcomm.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiClientConfigurationData;
 import org.restcomm.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiClientMan;
 import org.restcomm.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiServerMan;
-import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientMan;
-import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsServerMan;
+import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestLcsClientConfigurationData;
+import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestLcsClientMan;
+import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestLcsServerConfigurationData;
+import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestLcsServerMan;
 import org.restcomm.protocols.ss7.tools.simulator.tests.sms.NumberingPlanIdentificationType;
 import org.restcomm.protocols.ss7.tools.simulator.tests.sms.TestSmsClientConfigurationData_OldFormat;
 import org.restcomm.protocols.ss7.tools.simulator.tests.sms.TestSmsClientMan;
@@ -130,8 +132,8 @@ public class TesterHostImpl extends NotificationBroadcasterSupport implements Te
     TestAtiServerMan testAtiServerMan;
     TestCheckImeiClientMan testCheckImeiClientMan;
     TestCheckImeiServerMan testCheckImeiServerMan;
-    TestMapLcsClientMan testMapLcsClientMan;
-    TestMapLcsServerMan testMapLcsServerMan;
+    TestLcsClientMan testLcsClientMan;
+    TestLcsServerMan testLcsServerMan;
 
     // testers
 
@@ -201,11 +203,11 @@ public class TesterHostImpl extends NotificationBroadcasterSupport implements Te
         this.testCheckImeiServerMan = new TestCheckImeiServerMan(appName);
         this.testCheckImeiServerMan.setTesterHost(this);
 
-        this.testMapLcsClientMan = new TestMapLcsClientMan(appName);
-        this.testMapLcsClientMan.setTesterHost(this);
+        this.testLcsClientMan = new TestLcsClientMan(appName);
+        this.testLcsClientMan.setTesterHost(this);
 
-        this.testMapLcsServerMan = new TestMapLcsServerMan(appName);
-        this.testMapLcsServerMan.setTesterHost(this);
+        this.testLcsServerMan = new TestLcsServerMan(appName);
+        this.testLcsServerMan.setTesterHost(this);
 
         this.setupLog4j(appName);
 
@@ -303,12 +305,12 @@ public class TesterHostImpl extends NotificationBroadcasterSupport implements Te
         return this.testCheckImeiServerMan;
     }
 
-    public TestMapLcsClientMan getTestMapLcsClientMan() {
-        return this.testMapLcsClientMan;
+    public TestLcsClientMan getTestLcsClientMan() {
+        return this.testLcsClientMan;
     }
 
-    public TestMapLcsServerMan getTestMapLcsServerMan() {
-        return this.testMapLcsServerMan;
+    public TestLcsServerMan getTestLcsServerMan() {
+        return this.testLcsServerMan;
     }
 
     private void setupLog4j(String appName) {
@@ -710,23 +712,23 @@ public class TesterHostImpl extends NotificationBroadcasterSupport implements Te
 
             case Instance_TestTask.VAL_MAP_LCS_TEST_CLIENT:
                 if (curMap == null) {
-                    this.sendNotif(TesterHostImpl.SOURCE_NAME, "Error initializing MAP_LCS_TEST_CLIENT: No MAP stack is defined at L3",
+                    this.sendNotif(TesterHostImpl.SOURCE_NAME, "Error initializing MAP_LCS_TEST_SERVER: No MAP stack is defined at L3",
                             "", Level.WARN);
                 } else {
-                    this.instance_TestTask_B = this.testMapLcsClientMan;
-                    this.testMapLcsClientMan.setMapMan(curMap);
-                    started = this.testMapLcsClientMan.start();
+                    this.instance_TestTask_B = this.testLcsClientMan;
+                    this.testLcsClientMan.setMapMan(curMap);
+                    started = this.testLcsClientMan.start();
                 }
                 break;
 
             case Instance_TestTask.VAL_MAP_LCS_TEST_SERVER:
                 if (curMap == null) {
-                    this.sendNotif(TesterHostImpl.SOURCE_NAME, "Error initializing MAP_LCS_TEST_SERVER: No MAP stack is defined at L3",
+                    this.sendNotif(TesterHostImpl.SOURCE_NAME, "Error initializing MAP_LCS_TEST_CLIENT: No MAP stack is defined at L3",
                             "", Level.WARN);
                 } else {
-                    this.instance_TestTask_B = this.testMapLcsServerMan;
-                    this.testMapLcsServerMan.setMapMan(curMap);
-                    started = this.testMapLcsServerMan.start();
+                    this.instance_TestTask_B = this.testLcsServerMan;
+                    this.testLcsServerMan.setMapMan(curMap);
+                    started = this.testLcsServerMan.start();
                 }
                 break;
 
@@ -1032,6 +1034,48 @@ public class TesterHostImpl extends NotificationBroadcasterSupport implements Te
             /* TestCheckImeiServerConfigurationData _TestCheckImeiServerMan = reader.read(ConfigurationData.TEST_CHECK_IMEI_SERVER,
                     TestCheckImeiServerConfigurationData.class);
              */
+
+            TestLcsServerConfigurationData _TestLcsClientMan = reader.read(ConfigurationData.TEST_MAP_LCS_SERVER,
+                    TestLcsServerConfigurationData.class);
+            this.testLcsServerMan.setAddressNature(new AddressNatureType(_TestLcsClientMan.getAddressNature().getIndicator()));
+            this.testLcsServerMan.setNumberingPlanType(new NumberingPlanMapType(_TestLcsClientMan.getNumberingPlanType().getIndicator()));
+            this.testLcsServerMan.setNumberingPlan(_TestLcsClientMan.getNumberingPlan());
+            this.testLcsServerMan.setMlcNumber(_TestLcsClientMan.getMlcNumber());
+            this.testLcsServerMan.setMSISDN(_TestLcsClientMan.getMSISDN());
+            this.testLcsServerMan.setIMSI(_TestLcsClientMan.getIMSI());
+            this.testLcsServerMan.setLMSI(_TestLcsClientMan.getLMSI());
+            this.testLcsServerMan.setHGMLCAddress(_TestLcsClientMan.getHGMLCAddress());
+            this.testLcsServerMan.setNetworkNodeNumber(_TestLcsClientMan.getNetworkNodeNumber());
+            this.testLcsServerMan.setLocationEstimateLatitude(_TestLcsClientMan.getLatitude());
+            this.testLcsServerMan.setLocationEstimateLongitude(_TestLcsClientMan.getLongitude());
+            this.testLcsServerMan.setAgeOfLocationEstimate(_TestLcsClientMan.getAgeOfLocationEstimate());
+            this.testLcsServerMan.setIMEI(_TestLcsClientMan.getIMEI());
+            this.testLcsServerMan.setLCSReferenceNumber(_TestLcsClientMan.getLcsReferenceNumber());
+            this.testLcsServerMan.setLcsServiceTypeID(_TestLcsClientMan.getLcsServiceTypeID());
+            this.testLcsServerMan.setMCC(_TestLcsClientMan.getMCC());
+            this.testLcsServerMan.setMNC(_TestLcsClientMan.getMNC());
+            this.testLcsServerMan.setLAC(_TestLcsClientMan.getLAC());
+            this.testLcsServerMan.setCellId(_TestLcsClientMan.getCellId());
+            this.testLcsServerMan.setReportingInterval(_TestLcsClientMan.getReportingInterval());
+            this.testLcsServerMan.setDataCodingScheme(_TestLcsClientMan.getDataCodingScheme());
+            this.testLcsServerMan.setNaESRDAddress(_TestLcsClientMan.getNaESRDAddress());
+
+            TestLcsClientConfigurationData _TestLcsServerMan = reader.read(ConfigurationData.TEST_MAP_LCS_SERVER,
+                    TestLcsClientConfigurationData.class);
+            this.testLcsClientMan.setAddressNature(new AddressNatureType(_TestLcsServerMan.getAddressNature().getIndicator()));
+            this.testLcsClientMan.setNumberingPlanType(new NumberingPlanMapType(_TestLcsServerMan.getNumberingPlanType().getIndicator()));
+            this.testLcsClientMan.setMSISDN(_TestLcsServerMan.getMSISDN());
+            this.testLcsClientMan.setIMSI(_TestLcsServerMan.getIMSI());
+            this.testLcsClientMan.setNetworkNodeNumber(_TestLcsServerMan.getNetworkNodeNumberAddress());
+            this.testLcsClientMan.setAgeOfLocationEstimate(_TestLcsServerMan.getAgeOfLocationEstimate());
+            this.testLcsClientMan.setMCC(_TestLcsServerMan.getMCC());
+            this.testLcsClientMan.setMNC(_TestLcsServerMan.getMNC());
+            this.testLcsClientMan.setLAC(_TestLcsServerMan.getLAC());
+            this.testLcsClientMan.setCellId(_TestLcsServerMan.getCellId());
+            this.testLcsClientMan.setLCSReferenceNumber(_TestLcsServerMan.getLCSReferenceNumber());
+            this.testLcsClientMan.setHGMLCAddress(_TestLcsServerMan.getHGMLCAddress());
+            this.testLcsClientMan.setIMEI(_TestLcsServerMan.getIMEI());
+            this.testLcsClientMan.setNaESRDAddress(_TestLcsServerMan.getNaESRDAddress());
 
             reader.close();
 

@@ -27,6 +27,7 @@ import org.restcomm.protocols.ss7.map.api.primitives.GSNAddress;
 import org.restcomm.protocols.ss7.map.api.primitives.IMEI;
 import org.restcomm.protocols.ss7.map.api.primitives.IMSI;
 import org.restcomm.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.restcomm.protocols.ss7.map.api.primitives.LMSI;
 
 /**
  *
@@ -184,5 +185,9 @@ public interface SubscriberLocationReportRequest extends LsmMessage {
     UtranGANSSpositioningData getUtranGANSSpositioningData();
 
     ServingNodeAddress getTargetServingNodeForHandover();
+
+    LMSI getLMSI();
+
+    ReportingPLMNList getReportingPLMNList();
 
 }

@@ -52,8 +52,8 @@ public class TestAtiServerConfigurationData {
         }
 
         public void read(InputElement xml, TestAtiServerConfigurationData clt) throws XMLStreamException {
-            String sriR = (String) xml.get(ATI_REACTION, String.class);
-            clt.atiReaction = ATIReaction.createInstance(sriR);
+            String atiR = (String) xml.get(ATI_REACTION, String.class);
+            clt.atiReaction = ATIReaction.createInstance(atiR);
         }
     };
 

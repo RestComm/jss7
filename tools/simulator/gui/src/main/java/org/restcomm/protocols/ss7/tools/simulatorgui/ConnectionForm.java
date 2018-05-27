@@ -61,8 +61,8 @@ import org.restcomm.protocols.ss7.tools.simulator.tests.cap.TestCapScfManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.tests.cap.TestCapSsfManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiClientManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiServerManMBean;
-import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientManMBean;
-import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsServerManMBean;
+import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestLcsClientManMBean;
+import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestLcsServerManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.tests.sms.TestSmsClientManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.tests.sms.TestSmsServerManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientManMBean;
@@ -188,7 +188,7 @@ public class ConnectionForm extends JFrame {
                 host.getMapMan(), host.getCapMan(), host.getTestUssdClientMan(), host.getTestUssdServerMan(),
                 host.getTestSmsClientMan(), host.getTestSmsServerMan(), host.getTestCapScfMan(), host.getTestCapSsfMan(),
                 host.getTestAtiClientMan(), host.getTestAtiServerMan(), host.getTestCheckImeiClientMan(),
-                host.getTestCheckImeiServerMan(), host.getTestMapLcsClientMan(), host.getTestMapLcsServerMan());
+                host.getTestCheckImeiServerMan(), host.getTestLcsClientMan(), host.getTestLcsServerMan());
         frame.setVisible(true);
 
         // closing the connection form
@@ -252,11 +252,10 @@ public class ConnectionForm extends JFrame {
             TestCheckImeiClientManMBean checkImeiClient = JMX.newMBeanProxy(mbsc, mbeanNameCheckImeiClient, TestCheckImeiClientManMBean.class, false);
             ObjectName mbeanNameCheckImeiServer = new ObjectName(tagDomain + ":type=TestCheckImeiServerMan");
             TestCheckImeiServerManMBean checkImeiServer = JMX.newMBeanProxy(mbsc, mbeanNameCheckImeiServer, TestCheckImeiServerManMBean.class, false);
-            ObjectName mbeanNameMapLcsClient = new ObjectName(tagDomain + ":type=TestMapLcsClientMan");
-            TestMapLcsClientManMBean checkMapLcsClient = JMX.newMBeanProxy(mbsc, mbeanNameMapLcsClient, TestMapLcsClientManMBean.class, false);
-            ObjectName mbeanNameMapLcsServer = new ObjectName(tagDomain + ":type=TestMapLcsServerMan");
-            TestMapLcsServerManMBean checkMapLcsServer = JMX.newMBeanProxy(mbsc, mbeanNameMapLcsServer, TestMapLcsServerManMBean.class, false);
-
+            ObjectName mbeanNameLcsClient = new ObjectName(tagDomain + ":type=TestMapLcsClientMan");
+            TestLcsClientManMBean lcsClient = JMX.newMBeanProxy(mbsc, mbeanNameLcsClient, TestLcsClientManMBean.class, false);
+            ObjectName mbeanNameLcsServer = new ObjectName(tagDomain + ":type=TestLcsClientMan");
+            TestLcsServerManMBean lcsServer = JMX.newMBeanProxy(mbsc, mbeanNameLcsServer, TestLcsServerManMBean.class, false);
             // checking if MBean is workable
             host.getInstance_L1_Value();
 
@@ -264,8 +263,7 @@ public class ConnectionForm extends JFrame {
             SimulatorGuiForm frame = new SimulatorGuiForm();
             mbsc.addNotificationListener(mbeanNameTesterHost, frame, null, null);
             frame.startHost(appName + "-remote", true, null, host, m3ua, dialogic, sccp, map, cap, ussdClient, ussdServer,
-                    smsClient, smsServer, capScf, capSsf, atiClient, atiServer, checkImeiClient, checkImeiServer,
-                    checkMapLcsClient,checkMapLcsServer);
+                    smsClient, smsServer, capScf, capSsf, atiClient, atiServer, checkImeiClient, checkImeiServer, lcsClient, lcsServer);
             frame.setVisible(true);
 
             // closing the connection form

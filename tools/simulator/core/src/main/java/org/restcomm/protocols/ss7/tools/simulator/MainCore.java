@@ -64,10 +64,10 @@ import org.restcomm.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiC
 import org.restcomm.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiClientStandardManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiServerManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiServerStandardManMBean;
-import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientManMBean;
-import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientStandardManMBean;
-import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsServerManMBean;
-import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsServerStandardManMBean;
+import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestLcsClientManMBean;
+import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestLcsClientStandardManMBean;
+import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestLcsServerManMBean;
+import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestLcsServerStandardManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.tests.sms.TestSmsClientManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.tests.sms.TestSmsClientStandardManMBean;
 import org.restcomm.protocols.ss7.tools.simulator.tests.sms.TestSmsServerManMBean;
@@ -235,8 +235,8 @@ public class MainCore {
         ObjectName nameAtiServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestAtiServerMan");
         ObjectName nameCheckImeiClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestCheckImeiClientMan");
         ObjectName nameCheckImeiServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestCheckImeiServerMan");
-        ObjectName nameMapLcsClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestMapLcsClientMan");
-        ObjectName nameMapLcsServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestMapLcsServerMan");
+        ObjectName nameMapLcsClientManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestLcsClientMan");
+        ObjectName nameMapLcsServerManMan = new ObjectName("SS7_Simulator_" + appName + ":type=TestLcsServerMan");
 
 
         // HtmlAdaptorServer
@@ -314,12 +314,12 @@ public class MainCore {
                     TestCheckImeiServerManMBean.class);
             mbs.registerMBean(checkImeiServerManMBean, nameCheckImeiServerManMan);
 
-            TestMapLcsClientStandardManMBean mapLcsClientManMBean = new TestMapLcsClientStandardManMBean(host.getTestMapLcsClientMan(),
-                    TestMapLcsClientManMBean.class);
+            TestLcsClientStandardManMBean mapLcsClientManMBean = new TestLcsClientStandardManMBean(host.getTestLcsClientMan(),
+                    TestLcsClientManMBean.class);
             mbs.registerMBean(mapLcsClientManMBean, nameMapLcsClientManMan);
 
-            TestMapLcsServerStandardManMBean mapLcsServerManMBean = new TestMapLcsServerStandardManMBean(host.getTestMapLcsServerMan(),
-                    TestMapLcsServerManMBean.class);
+            TestLcsServerStandardManMBean mapLcsServerManMBean = new TestLcsServerStandardManMBean(host.getTestLcsServerMan(),
+                    TestLcsServerManMBean.class);
             mbs.registerMBean(mapLcsServerManMBean, nameMapLcsServerManMan);
 
 
@@ -399,6 +399,8 @@ public class MainCore {
         mbs.unregisterMBean(nameAtiServerManMan);
         mbs.unregisterMBean(nameCheckImeiClientManMan);
         mbs.unregisterMBean(nameCheckImeiServerManMan);
+        mbs.unregisterMBean(nameMapLcsClientManMan);
+        mbs.unregisterMBean(nameMapLcsServerManMan);
 
 
         // Registry.unbind(key);

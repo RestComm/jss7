@@ -37,12 +37,12 @@ import org.restcomm.protocols.ss7.tools.simulator.tests.cap.TestCapScfMan;
 import org.restcomm.protocols.ss7.tools.simulator.tests.cap.TestCapSsfMan;
 import org.restcomm.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiClientMan;
 import org.restcomm.protocols.ss7.tools.simulator.tests.checkimei.TestCheckImeiServerMan;
-import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsClientMan;
-import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestMapLcsServerMan;
 import org.restcomm.protocols.ss7.tools.simulator.tests.sms.TestSmsClientMan;
 import org.restcomm.protocols.ss7.tools.simulator.tests.sms.TestSmsServerMan;
 import org.restcomm.protocols.ss7.tools.simulator.tests.ussd.TestUssdClientMan;
 import org.restcomm.protocols.ss7.tools.simulator.tests.ussd.TestUssdServerMan;
+import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestLcsClientMan;
+import org.restcomm.protocols.ss7.tools.simulator.tests.lcs.TestLcsServerMan;
 
 /**
 *
@@ -83,9 +83,9 @@ public interface TesterHostInterface extends TesterHostMBean, NotificationEmitte
 
     TestCheckImeiServerMan getTestCheckImeiServerMan();
 
-    TestMapLcsClientMan getTestMapLcsClientMan();
+    TestLcsClientMan getTestLcsClientMan();
 
-    TestMapLcsServerMan getTestMapLcsServerMan();
+    TestLcsServerMan getTestLcsServerMan();
 
     boolean isNeedQuit();
 

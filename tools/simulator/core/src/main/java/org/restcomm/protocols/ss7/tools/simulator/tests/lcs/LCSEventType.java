@@ -1,8 +1,7 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012.
- * and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2011-2018, Telestax Inc and individual contributors
+ * by the @authors tag.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -22,15 +21,14 @@
 
 package org.restcomm.protocols.ss7.tools.simulator.tests.lcs;
 
-import java.util.Hashtable;
-
 import org.restcomm.protocols.ss7.map.api.service.lsm.LCSEvent;
 import org.restcomm.protocols.ss7.tools.simulator.common.EnumeratedBase;
 
+import java.util.Hashtable;
+
 /**
- *
- * @author sergey vetyutnev
- *
+ * @author <a href="mailto:serg.vetyutnev@gmail.com"> Sergey Vetyutnev </a>
+ * @author <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>
  */
 public class LCSEventType extends EnumeratedBase {
 
@@ -64,11 +62,11 @@ public class LCSEventType extends EnumeratedBase {
     }
 
     public static LCSEventType createInstance(String s) {
-        Integer i1 = doCreateInstance(s, stringMap, intMap);
-        if (i1 == null)
+        Integer instance = doCreateInstance(s, stringMap, intMap);
+        if (instance == null)
             return new LCSEventType(LCSEvent.deferredmtlrResponse.getEvent());
         else
-            return new LCSEventType(i1);
+            return new LCSEventType(instance);
     }
 
     @Override
@@ -81,3 +79,4 @@ public class LCSEventType extends EnumeratedBase {
         return stringMap;
     }
 }
+
