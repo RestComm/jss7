@@ -38,6 +38,7 @@ import org.restcomm.protocols.ss7.map.api.primitives.GSNAddress;
 import org.restcomm.protocols.ss7.map.api.primitives.IMEI;
 import org.restcomm.protocols.ss7.map.api.primitives.IMSI;
 import org.restcomm.protocols.ss7.map.api.primitives.ISDNAddressString;
+import org.restcomm.protocols.ss7.map.api.primitives.LMSI;
 import org.restcomm.protocols.ss7.map.api.service.lsm.AccuracyFulfilmentIndicator;
 import org.restcomm.protocols.ss7.map.api.service.lsm.AddGeographicalInformation;
 import org.restcomm.protocols.ss7.map.api.service.lsm.DeferredmtlrData;
@@ -54,18 +55,18 @@ import org.restcomm.protocols.ss7.map.api.service.lsm.SubscriberLocationReportRe
 import org.restcomm.protocols.ss7.map.api.service.lsm.UtranGANSSpositioningData;
 import org.restcomm.protocols.ss7.map.api.service.lsm.UtranPositioningDataInfo;
 import org.restcomm.protocols.ss7.map.api.service.lsm.VelocityEstimate;
+import org.restcomm.protocols.ss7.map.api.service.lsm.ReportingPLMNList;
 import org.restcomm.protocols.ss7.map.primitives.CellGlobalIdOrServiceAreaIdOrLAIImpl;
 import org.restcomm.protocols.ss7.map.primitives.GSNAddressImpl;
 import org.restcomm.protocols.ss7.map.primitives.IMEIImpl;
 import org.restcomm.protocols.ss7.map.primitives.IMSIImpl;
 import org.restcomm.protocols.ss7.map.primitives.ISDNAddressStringImpl;
+import org.restcomm.protocols.ss7.map.primitives.LMSIImpl;
 import org.restcomm.protocols.ss7.map.service.mobility.subscriberInformation.LocationInformationGPRSImpl;
 
 /**
- *
- *
- * @author amit bhayani
- *
+ * @author <a href="mailto:abhayani@gmail.com"> Amit Bhayani </a>
+ * @author <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>
  */
 public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implements SubscriberLocationReportRequest {
 
@@ -95,6 +96,8 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     private static final int _TAG_geranGANSSpositioningData = 24;
     private static final int _TAG_utranGANSSpositioningData = 25;
     private static final int _TAG_targetServingNodeForHandover = 26;
+    private static final int _TAG_LMSI = 27;
+    private static final int _TAG_reportingPLMNList = 28;
 
     public static final String _PrimitiveName = "SubscriberLocationReportRequest";
 
@@ -127,6 +130,8 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     private GeranGANSSpositioningData geranGANSSpositioningData;
     private UtranGANSSpositioningData utranGANSSpositioningData;
     private ServingNodeAddress targetServingNodeForHandover;
+    private LMSI lmsi;
+    private ReportingPLMNList reportingPLMNList;
 
     /**
      *
@@ -160,16 +165,16 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
      * @param accuracyFulfilmentIndicator
      */
     public SubscriberLocationReportRequestImpl(LCSEvent lcsEvent, LCSClientID lcsClientID, LCSLocationInfo lcsLocationInfo,
-            ISDNAddressString msisdn, IMSI imsi, IMEI imei, ISDNAddressString naEsrd, ISDNAddressString naEsrk,
-            ExtGeographicalInformation locationEstimate, Integer ageOfLocationEstimate,
-            SLRArgExtensionContainer slrArgExtensionContainer, AddGeographicalInformation addLocationEstimate,
-            DeferredmtlrData deferredmtlrData, Integer lcsReferenceNumber, PositioningDataInformation geranPositioningData,
-            UtranPositioningDataInfo utranPositioningData, CellGlobalIdOrServiceAreaIdOrLAI cellIdOrSai,
-            GSNAddress hgmlcAddress, Integer lcsServiceTypeID, boolean saiPresent, boolean pseudonymIndicator,
-            AccuracyFulfilmentIndicator accuracyFulfilmentIndicator, VelocityEstimate velocityEstimate, Integer sequenceNumber,
-            PeriodicLDRInfo periodicLDRInfo, boolean moLrShortCircuitIndicator,
-            GeranGANSSpositioningData geranGANSSpositioningData, UtranGANSSpositioningData utranGANSSpositioningData,
-            ServingNodeAddress targetServingNodeForHandover) {
+                                               ISDNAddressString msisdn, IMSI imsi, IMEI imei, ISDNAddressString naEsrd, ISDNAddressString naEsrk,
+                                               ExtGeographicalInformation locationEstimate, Integer ageOfLocationEstimate,
+                                               SLRArgExtensionContainer slrArgExtensionContainer, AddGeographicalInformation addLocationEstimate,
+                                               DeferredmtlrData deferredmtlrData, Integer lcsReferenceNumber, PositioningDataInformation geranPositioningData,
+                                               UtranPositioningDataInfo utranPositioningData, CellGlobalIdOrServiceAreaIdOrLAI cellIdOrSai,
+                                               GSNAddress hgmlcAddress, Integer lcsServiceTypeID, boolean saiPresent, boolean pseudonymIndicator,
+                                               AccuracyFulfilmentIndicator accuracyFulfilmentIndicator, VelocityEstimate velocityEstimate, Integer sequenceNumber,
+                                               PeriodicLDRInfo periodicLDRInfo, boolean moLrShortCircuitIndicator,
+                                               GeranGANSSpositioningData geranGANSSpositioningData, UtranGANSSpositioningData utranGANSSpositioningData,
+                                               ServingNodeAddress targetServingNodeForHandover) {
         super();
         this.lcsEvent = lcsEvent;
         this.lcsClientID = lcsClientID;
@@ -202,6 +207,76 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
         this.targetServingNodeForHandover = targetServingNodeForHandover;
     }
 
+    /**
+     * @param lcsEvent
+     * @param lcsClientID
+     * @param lcsLocationInfo
+     * @param msisdn
+     * @param imsi
+     * @param imei
+     * @param naEsrd
+     * @param naEsrk
+     * @param locationEstimate
+     * @param ageOfLocationEstimate
+     * @param slrArgExtensionContainer
+     * @param addLocationEstimate
+     * @param deferredmtlrData
+     * @param lcsReferenceNumber
+     * @param geranPositioningData
+     * @param utranPositioningData
+     * @param cellIdOrSai
+     * @param hgmlcAddress
+     * @param lcsServiceTypeID
+     * @param saiPresent
+     * @param pseudonymIndicator
+     * @param accuracyFulfilmentIndicator
+     * @param lmsi
+     * @param reportingPLMNList
+     */
+    public SubscriberLocationReportRequestImpl(LCSEvent lcsEvent, LCSClientID lcsClientID, LCSLocationInfo lcsLocationInfo, ISDNAddressString msisdn, IMSI imsi,
+                                               IMEI imei, ISDNAddressString naEsrd, ISDNAddressString naEsrk, ExtGeographicalInformation locationEstimate,
+                                               Integer ageOfLocationEstimate, SLRArgExtensionContainer slrArgExtensionContainer,
+                                               AddGeographicalInformation addLocationEstimate, DeferredmtlrData deferredmtlrData, Integer lcsReferenceNumber,
+                                               PositioningDataInformation geranPositioningData, UtranPositioningDataInfo utranPositioningData,
+                                               CellGlobalIdOrServiceAreaIdOrLAI cellIdOrSai, GSNAddress hgmlcAddress, Integer lcsServiceTypeID, boolean saiPresent,
+                                               boolean pseudonymIndicator, AccuracyFulfilmentIndicator accuracyFulfilmentIndicator, VelocityEstimate velocityEstimate,
+                                               Integer sequenceNumber, PeriodicLDRInfo periodicLDRInfo, boolean moLrShortCircuitIndicator, GeranGANSSpositioningData geranGANSSpositioningData,
+                                               UtranGANSSpositioningData utranGANSSpositioningData, ServingNodeAddress targetServingNodeForHandover, LMSI lmsi,
+                                               ReportingPLMNList reportingPLMNList) {
+        super();
+        this.lcsEvent = lcsEvent;
+        this.lcsClientID = lcsClientID;
+        this.lcsLocationInfo = lcsLocationInfo;
+        this.msisdn = msisdn;
+        this.imsi = imsi;
+        this.imei = imei;
+        this.naEsrd = naEsrd;
+        this.naEsrk = naEsrk;
+        this.locationEstimate = locationEstimate;
+        this.ageOfLocationEstimate = ageOfLocationEstimate;
+        this.slrArgExtensionContainer = slrArgExtensionContainer;
+        this.addLocationEstimate = addLocationEstimate;
+        this.deferredmtlrData = deferredmtlrData;
+        this.lcsReferenceNumber = lcsReferenceNumber;
+        this.geranPositioningData = geranPositioningData;
+        this.utranPositioningData = utranPositioningData;
+        this.cellIdOrSai = cellIdOrSai;
+        this.hgmlcAddress = hgmlcAddress;
+        this.lcsServiceTypeID = lcsServiceTypeID;
+        this.saiPresent = saiPresent;
+        this.pseudonymIndicator = pseudonymIndicator;
+        this.accuracyFulfilmentIndicator = accuracyFulfilmentIndicator;
+        this.velocityEstimate = velocityEstimate;
+        this.sequenceNumber = sequenceNumber;
+        this.periodicLDRInfo = periodicLDRInfo;
+        this.moLrShortCircuitIndicator = moLrShortCircuitIndicator;
+        this.geranGANSSpositioningData = geranGANSSpositioningData;
+        this.utranGANSSpositioningData = utranGANSSpositioningData;
+        this.targetServingNodeForHandover = targetServingNodeForHandover;
+        this.lmsi = lmsi;
+        this.reportingPLMNList = reportingPLMNList;
+    }
+
     public MAPMessageType getMessageType() {
         return MAPMessageType.subscriberLocationReport_Request;
     }
@@ -213,7 +288,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getLCSEvent()
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getLCSEvent()
      */
     public LCSEvent getLCSEvent() {
         return this.lcsEvent;
@@ -222,7 +297,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getLCSClientID()
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getLCSClientID()
      */
     public LCSClientID getLCSClientID() {
         return this.lcsClientID;
@@ -231,7 +306,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getLCSLocationInfo()
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getLCSLocationInfo()
      */
     public LCSLocationInfo getLCSLocationInfo() {
         return this.lcsLocationInfo;
@@ -240,7 +315,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getMSISDN()
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getMSISDN()
      */
     public ISDNAddressString getMSISDN() {
         return this.msisdn;
@@ -249,7 +324,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getIMSI()
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getIMSI()
      */
     public IMSI getIMSI() {
         return this.imsi;
@@ -258,7 +333,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getIMEI()
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getIMEI()
      */
     public IMEI getIMEI() {
         return this.imei;
@@ -267,7 +342,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getNaESRD()
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getNaESRD()
      */
     public ISDNAddressString getNaESRD() {
         return this.naEsrd;
@@ -276,7 +351,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getNaESRK()
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getNaESRK()
      */
     public ISDNAddressString getNaESRK() {
         return this.naEsrk;
@@ -285,7 +360,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getLocationEstimate()
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getLocationEstimate()
      */
     public ExtGeographicalInformation getLocationEstimate() {
         return this.locationEstimate;
@@ -294,7 +369,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm.
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm.
      * SubscriberLocationReportRequestIndication#getAgeOfLocationEstimate()
      */
     public Integer getAgeOfLocationEstimate() {
@@ -304,7 +379,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm.
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm.
      * SubscriberLocationReportRequestIndication#getSLRArgExtensionContainer()
      */
     public SLRArgExtensionContainer getSLRArgExtensionContainer() {
@@ -314,7 +389,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm.
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm.
      * SubscriberLocationReportRequestIndication#getAdditionalLocationEstimate()
      */
     public AddGeographicalInformation getAdditionalLocationEstimate() {
@@ -324,7 +399,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getDeferredmtlrData()
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getDeferredmtlrData()
      */
     public DeferredmtlrData getDeferredmtlrData() {
         return this.deferredmtlrData;
@@ -333,7 +408,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getLCSReferenceNumber()
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getLCSReferenceNumber()
      */
     public Integer getLCSReferenceNumber() {
         return this.lcsReferenceNumber;
@@ -342,7 +417,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getGeranPositioningData()
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getGeranPositioningData()
      */
     public PositioningDataInformation getGeranPositioningData() {
         return this.geranPositioningData;
@@ -351,7 +426,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getUtranPositioningData()
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getUtranPositioningData()
      */
     public UtranPositioningDataInfo getUtranPositioningData() {
         return this.utranPositioningData;
@@ -360,7 +435,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication
      * #getCellGlobalIdOrServiceAreaIdOrLAI()
      */
     public CellGlobalIdOrServiceAreaIdOrLAI getCellGlobalIdOrServiceAreaIdOrLAI() {
@@ -370,7 +445,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getSaiPresent()
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getSaiPresent()
      */
     public boolean getSaiPresent() {
         return this.saiPresent;
@@ -379,7 +454,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getHGMLCAddress()
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getHGMLCAddress()
      */
     public GSNAddress getHGMLCAddress() {
         return this.hgmlcAddress;
@@ -388,7 +463,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getLCSServiceTypeID()
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getLCSServiceTypeID()
      */
     public Integer getLCSServiceTypeID() {
         return this.lcsServiceTypeID;
@@ -397,7 +472,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getPseudonymIndicator()
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication#getPseudonymIndicator()
      */
     public boolean getPseudonymIndicator() {
         return this.pseudonymIndicator;
@@ -406,7 +481,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication
+     * @see org.mobicents.protocols.ss7.map.api.service.lsm. SubscriberLocationReportRequestIndication
      * #getAccuracyFulfilmentIndicator()
      */
     public AccuracyFulfilmentIndicator getAccuracyFulfilmentIndicator() {
@@ -441,10 +516,22 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
         return targetServingNodeForHandover;
     }
 
+    public LMSI getLMSI() {
+        return lmsi;
+    }
+
+    public void setLmsi(LMSI lmsi) {
+        this.lmsi = lmsi;
+    }
+
+    public ReportingPLMNList getReportingPLMNList() {
+        return reportingPLMNList;
+    }
+
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
+     * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTag()
      */
     public int getTag() throws MAPException {
         return Tag.SEQUENCE;
@@ -453,7 +540,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass ()
+     * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getTagClass ()
      */
     public int getTagClass() {
         return Tag.CLASS_UNIVERSAL;
@@ -462,7 +549,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive ()
+     * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#getIsPrimitive ()
      */
     public boolean getIsPrimitive() {
         return false;
@@ -471,7 +558,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll
+     * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeAll
      * (org.mobicents.protocols.asn.AsnInputStream)
      */
     public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
@@ -490,7 +577,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData
+     * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#decodeData
      * (org.mobicents.protocols.asn.AsnInputStream, int)
      */
     public void decodeData(AsnInputStream ansIS, int length) throws MAPParsingComponentException {
@@ -536,6 +623,8 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
         this.geranGANSSpositioningData = null;
         this.utranGANSSpositioningData = null;
         this.targetServingNodeForHandover = null;
+        this.lmsi = null;
+        this.reportingPLMNList = null;
 
         AsnInputStream ais = ansIS.readSequenceStreamData(length);
         int tag = ais.readTag();
@@ -854,6 +943,26 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
                         ais2.readTag();
                         ((ServingNodeAddressImpl) this.targetServingNodeForHandover).decodeAll(ais2);
                         break;
+                    case _TAG_LMSI:
+                        // lmsi
+                        if (!ais.isTagPrimitive()) {
+                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ": Parameter [lmsi [27] LMSI TC-U OPTIONAL, ] is not primitive",
+                                    MAPParsingComponentExceptionReason.MistypedParameter);
+                        }
+                        this.lmsi = new LMSIImpl();
+                        ((LMSIImpl) this.lmsi).decodeAll(ais);
+                        break;
+                    case _TAG_reportingPLMNList:
+                        // lmsi
+                        if (!ais.isTagPrimitive()) {
+                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                    + ": Parameter reportingPLMNList is not primitive",
+                                    MAPParsingComponentExceptionReason.MistypedParameter);
+                        }
+                        this.reportingPLMNList = new ReportingPLMNListImpl();
+                        ((ReportingPLMNImpl) this.reportingPLMNList).decodeAll(ais);
+                        break;
                     default:
                         ais.advanceElement();
                         break;
@@ -868,7 +977,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+     * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
      * (org.mobicents.protocols.asn.AsnOutputStream)
      */
     public void encodeAll(AsnOutputStream asnOs) throws MAPException {
@@ -878,7 +987,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
+     * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeAll
      * (org.mobicents.protocols.asn.AsnOutputStream, int, int)
      */
     public void encodeAll(AsnOutputStream asnOs, int tagClass, int tag) throws MAPException {
@@ -895,7 +1004,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
     /*
      * (non-Javadoc)
      *
-     * @see org.restcomm.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
+     * @see org.mobicents.protocols.ss7.map.api.primitives.MAPAsnPrimitive#encodeData
      * (org.mobicents.protocols.asn.AsnOutputStream)
      */
     public void encodeData(AsnOutputStream asnOs) throws MAPException {
@@ -990,7 +1099,7 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
             // lcs-ReferenceNumber [10] LCS-ReferenceNumber
             try {
                 asnOs.writeOctetString(Tag.CLASS_CONTEXT_SPECIFIC, _TAG_LCS_REFERENCE_NUMBER,
-                        new byte[] { (byte) (int) this.lcsReferenceNumber });
+                        new byte[]{(byte) (int) this.lcsReferenceNumber});
             } catch (IOException e) {
                 throw new MAPException("IOException while encoding parameter lcs-ReferenceNumber", e);
             } catch (AsnException e) {
@@ -1128,6 +1237,11 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
                 throw new MAPException("AsnException while encoding parameter targetServingNodeForHandover", e);
             }
         }
+
+        if (this.lmsi != null) {
+            // lmsi [27] LMSI OPTIONAL,
+            ((IMSIImpl) this.imsi).encodeAll(asnOs, Tag.CLASS_CONTEXT_SPECIFIC, _TAG_IMSI);
+        }
     }
 
     @Override
@@ -1248,6 +1362,14 @@ public class SubscriberLocationReportRequestImpl extends LsmMessageImpl implemen
         if (this.targetServingNodeForHandover != null) {
             sb.append(", targetServingNodeForHandover=");
             sb.append(this.targetServingNodeForHandover);
+        }
+        if (this.lmsi != null) {
+            sb.append(", lmsi=");
+            sb.append(this.lmsi);
+        }
+        if (this.reportingPLMNList != null) {
+            sb.append(", reportingPLMNList=");
+            sb.append(this.reportingPLMNList);
         }
 
         sb.append("]");

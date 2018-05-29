@@ -38,6 +38,7 @@ import org.restcomm.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.restcomm.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.restcomm.protocols.ss7.sccp.parameter.ParameterFactory;
 import org.restcomm.protocols.ss7.sccp.parameter.SccpAddress;
+import org.restcomm.protocols.ss7.sccp.LongMessageRuleType;
 import org.restcomm.protocols.ss7.tools.simulator.Stoppable;
 import org.restcomm.protocols.ss7.tools.simulator.management.TesterHostInterface;
 
@@ -375,6 +376,7 @@ public class SccpMan implements SccpManMBean, Stoppable {
         this.sccpStack.setSccpProtocolVersion(sccpProtocolVersion);
         this.sccpStack.getRouter().addMtp3ServiceAccessPoint(1, 1, opc, ni, 0, null);
         this.sccpStack.getRouter().addMtp3Destination(1, 1, dpc, dpc, 0, 255, 255);
+        this.sccpStack.getRouter().addLongMessageRule(1, 1, 16384, LongMessageRuleType.XUDT_ENABLED);
         if (dpc2 > 0)
             this.sccpStack.getRouter().addMtp3Destination(1, 2, dpc2, dpc2, 0, 255, 255);
 

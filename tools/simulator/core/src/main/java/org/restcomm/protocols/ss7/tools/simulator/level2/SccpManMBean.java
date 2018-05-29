@@ -93,7 +93,6 @@ public interface SccpManMBean {
 
     void setSccpProtocolVersion(SccpProtocolVersionType val);
 
-
     void putGlobalTitleType(String val);
 
     void putNatureOfAddress(String val);

@@ -21,53 +21,48 @@
 
 package org.restcomm.protocols.ss7.tools.simulator.tests.lcs;
 
-import org.restcomm.protocols.ss7.map.api.service.lsm.LCSClientType;
+import org.restcomm.protocols.ss7.map.api.service.lsm.AccuracyFulfilmentIndicator;
 import org.restcomm.protocols.ss7.tools.simulator.common.EnumeratedBase;
 
 import java.util.Hashtable;
 
 /**
- * @author <a href="mailto:serg.vetyutnev@gmail.com"> Sergey Vetyutnev </a>
  * @author <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>
  */
-public class LCSClientTypeEnumerated extends EnumeratedBase {
+public class AccuracyFulfilmentIndicatorEnumerated extends EnumeratedBase {
 
     private static Hashtable<String, Integer> stringMap = new Hashtable<String, Integer>();
     private static Hashtable<Integer, String> intMap = new Hashtable<Integer, String>();
 
     static {
-        intMap.put(LCSClientType.emergencyServices.getType(), LCSClientType.emergencyServices.toString());
-        intMap.put(LCSClientType.valueAddedServices.getType(), LCSClientType.valueAddedServices.toString());
-        intMap.put(LCSClientType.plmnOperatorServices.getType(), LCSClientType.plmnOperatorServices.toString());
-        intMap.put(LCSClientType.lawfulInterceptServices.getType(), LCSClientType.lawfulInterceptServices.toString());
+        intMap.put(AccuracyFulfilmentIndicator.requestedAccuracyFulfilled.getIndicator(), AccuracyFulfilmentIndicator.requestedAccuracyFulfilled.toString());
+        intMap.put(AccuracyFulfilmentIndicator.requestedAccuracyNotFulfilled.getIndicator(), AccuracyFulfilmentIndicator.requestedAccuracyNotFulfilled.toString());
 
-        stringMap.put(LCSClientType.emergencyServices.toString(), LCSClientType.emergencyServices.getType());
-        stringMap.put(LCSClientType.valueAddedServices.toString(), LCSClientType.valueAddedServices.getType());
-        stringMap.put(LCSClientType.plmnOperatorServices.toString(), LCSClientType.plmnOperatorServices.getType());
-        stringMap.put(LCSClientType.lawfulInterceptServices.toString(), LCSClientType.lawfulInterceptServices.getType());
+        stringMap.put(AccuracyFulfilmentIndicator.requestedAccuracyFulfilled.toString(), AccuracyFulfilmentIndicator.requestedAccuracyFulfilled.getIndicator());
+        stringMap.put(AccuracyFulfilmentIndicator.requestedAccuracyNotFulfilled.toString(), AccuracyFulfilmentIndicator.requestedAccuracyNotFulfilled.getIndicator());
     }
 
-    public LCSClientTypeEnumerated() {
+    public AccuracyFulfilmentIndicatorEnumerated() {
     }
 
-    public LCSClientTypeEnumerated(int val) throws java.lang.IllegalArgumentException {
+    public AccuracyFulfilmentIndicatorEnumerated(int val) throws java.lang.IllegalArgumentException {
         super(val);
     }
 
-    public LCSClientTypeEnumerated(Integer val) throws java.lang.IllegalArgumentException {
+    public AccuracyFulfilmentIndicatorEnumerated(Integer val) throws java.lang.IllegalArgumentException {
         super(val);
     }
 
-    public LCSClientTypeEnumerated(String val) throws java.lang.IllegalArgumentException {
+    public AccuracyFulfilmentIndicatorEnumerated(String val) throws java.lang.IllegalArgumentException {
         super(val);
     }
 
-    public static LCSClientTypeEnumerated createInstance(String s) {
+    public static AccuracyFulfilmentIndicatorEnumerated createInstance(String s) {
         Integer instance = doCreateInstance(s, stringMap, intMap);
         if (instance == null)
-            return new LCSClientTypeEnumerated(LCSClientType.emergencyServices.getType());
+            return new AccuracyFulfilmentIndicatorEnumerated(AccuracyFulfilmentIndicator.requestedAccuracyFulfilled.getIndicator());
         else
-            return new LCSClientTypeEnumerated(instance);
+            return new AccuracyFulfilmentIndicatorEnumerated(instance);
     }
 
     @Override
@@ -79,4 +74,6 @@ public class LCSClientTypeEnumerated extends EnumeratedBase {
     protected Hashtable<String, Integer> getStringTable() {
         return stringMap;
     }
+
+
 }

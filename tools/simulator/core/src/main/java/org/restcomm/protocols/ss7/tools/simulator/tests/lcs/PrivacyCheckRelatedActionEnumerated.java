@@ -1,8 +1,7 @@
 /*
- * TeleStax, Open Source Cloud Communications  Copyright 2012.
- * and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2011-2018, Telestax Inc and individual contributors
+ * by the @authors tag.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -22,15 +21,14 @@
 
 package org.restcomm.protocols.ss7.tools.simulator.tests.lcs;
 
-import java.util.Hashtable;
-
 import org.restcomm.protocols.ss7.map.api.service.lsm.PrivacyCheckRelatedAction;
 import org.restcomm.protocols.ss7.tools.simulator.common.EnumeratedBase;
 
+import java.util.Hashtable;
+
 /**
- *
- * @author sergey vetyutnev
- *
+ * @author <a href="mailto:serg.vetyutnev@gmail.com"> Sergey Vetyutnev </a>
+ * @author <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>
  */
 public class PrivacyCheckRelatedActionEnumerated extends EnumeratedBase {
 
@@ -38,16 +36,16 @@ public class PrivacyCheckRelatedActionEnumerated extends EnumeratedBase {
     private static Hashtable<Integer, String> intMap = new Hashtable<Integer, String>();
 
     static {
-        intMap.put(PrivacyCheckRelatedAction.allowedWithoutNotification.getAction(),PrivacyCheckRelatedAction.allowedWithoutNotification.toString());
-        intMap.put(PrivacyCheckRelatedAction.allowedWithNotification.getAction(),PrivacyCheckRelatedAction.allowedWithNotification.toString());
-        intMap.put(PrivacyCheckRelatedAction.allowedIfNoResponse.getAction(),PrivacyCheckRelatedAction.allowedIfNoResponse.toString());
-        intMap.put(PrivacyCheckRelatedAction.restrictedIfNoResponse.getAction(),PrivacyCheckRelatedAction.restrictedIfNoResponse.toString());
-        intMap.put(PrivacyCheckRelatedAction.notAllowed.getAction(),PrivacyCheckRelatedAction.notAllowed.toString());
-        stringMap.put(PrivacyCheckRelatedAction.allowedWithoutNotification.toString(),PrivacyCheckRelatedAction.allowedWithoutNotification.getAction());
-        stringMap.put(PrivacyCheckRelatedAction.allowedWithNotification.toString(),PrivacyCheckRelatedAction.allowedWithNotification.getAction());
-        stringMap.put(PrivacyCheckRelatedAction.allowedIfNoResponse.toString(),PrivacyCheckRelatedAction.allowedIfNoResponse.getAction());
-        stringMap.put(PrivacyCheckRelatedAction.restrictedIfNoResponse.toString(),PrivacyCheckRelatedAction.restrictedIfNoResponse.getAction());
-        stringMap.put(PrivacyCheckRelatedAction.notAllowed.toString(),PrivacyCheckRelatedAction.notAllowed.getAction());
+        intMap.put(PrivacyCheckRelatedAction.allowedWithoutNotification.getAction(), PrivacyCheckRelatedAction.allowedWithoutNotification.toString());
+        intMap.put(PrivacyCheckRelatedAction.allowedWithNotification.getAction(), PrivacyCheckRelatedAction.allowedWithNotification.toString());
+        intMap.put(PrivacyCheckRelatedAction.allowedIfNoResponse.getAction(), PrivacyCheckRelatedAction.allowedIfNoResponse.toString());
+        intMap.put(PrivacyCheckRelatedAction.restrictedIfNoResponse.getAction(), PrivacyCheckRelatedAction.restrictedIfNoResponse.toString());
+        intMap.put(PrivacyCheckRelatedAction.notAllowed.getAction(), PrivacyCheckRelatedAction.notAllowed.toString());
+        stringMap.put(PrivacyCheckRelatedAction.allowedWithoutNotification.toString(), PrivacyCheckRelatedAction.allowedWithoutNotification.getAction());
+        stringMap.put(PrivacyCheckRelatedAction.allowedWithNotification.toString(), PrivacyCheckRelatedAction.allowedWithNotification.getAction());
+        stringMap.put(PrivacyCheckRelatedAction.allowedIfNoResponse.toString(), PrivacyCheckRelatedAction.allowedIfNoResponse.getAction());
+        stringMap.put(PrivacyCheckRelatedAction.restrictedIfNoResponse.toString(), PrivacyCheckRelatedAction.restrictedIfNoResponse.getAction());
+        stringMap.put(PrivacyCheckRelatedAction.notAllowed.toString(), PrivacyCheckRelatedAction.notAllowed.getAction());
     }
 
     public PrivacyCheckRelatedActionEnumerated() {
@@ -66,11 +64,11 @@ public class PrivacyCheckRelatedActionEnumerated extends EnumeratedBase {
     }
 
     public static PrivacyCheckRelatedActionEnumerated createInstance(String s) {
-        Integer i1 = doCreateInstance(s, stringMap, intMap);
-        if (i1 == null)
+        Integer instance = doCreateInstance(s, stringMap, intMap);
+        if (instance == null)
             return new PrivacyCheckRelatedActionEnumerated(PrivacyCheckRelatedAction.allowedWithoutNotification.getAction());
         else
-            return new PrivacyCheckRelatedActionEnumerated(i1);
+            return new PrivacyCheckRelatedActionEnumerated(instance);
     }
 
     @Override

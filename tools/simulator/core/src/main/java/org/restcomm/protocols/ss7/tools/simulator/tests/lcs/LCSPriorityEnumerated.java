@@ -21,53 +21,48 @@
 
 package org.restcomm.protocols.ss7.tools.simulator.tests.lcs;
 
-import org.restcomm.protocols.ss7.map.api.service.lsm.LCSClientType;
 import org.restcomm.protocols.ss7.tools.simulator.common.EnumeratedBase;
+import org.restcomm.protocols.ss7.map.api.service.lsm.LCSPriority;
 
 import java.util.Hashtable;
 
 /**
- * @author <a href="mailto:serg.vetyutnev@gmail.com"> Sergey Vetyutnev </a>
  * @author <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>
  */
-public class LCSClientTypeEnumerated extends EnumeratedBase {
+public class LCSPriorityEnumerated extends EnumeratedBase {
 
     private static Hashtable<String, Integer> stringMap = new Hashtable<String, Integer>();
     private static Hashtable<Integer, String> intMap = new Hashtable<Integer, String>();
 
     static {
-        intMap.put(LCSClientType.emergencyServices.getType(), LCSClientType.emergencyServices.toString());
-        intMap.put(LCSClientType.valueAddedServices.getType(), LCSClientType.valueAddedServices.toString());
-        intMap.put(LCSClientType.plmnOperatorServices.getType(), LCSClientType.plmnOperatorServices.toString());
-        intMap.put(LCSClientType.lawfulInterceptServices.getType(), LCSClientType.lawfulInterceptServices.toString());
+        intMap.put(LCSPriority.highestPriority.getCode(), LCSPriority.highestPriority.toString());
+        intMap.put(LCSPriority.normalPriority.getCode(), LCSPriority.normalPriority.toString());
 
-        stringMap.put(LCSClientType.emergencyServices.toString(), LCSClientType.emergencyServices.getType());
-        stringMap.put(LCSClientType.valueAddedServices.toString(), LCSClientType.valueAddedServices.getType());
-        stringMap.put(LCSClientType.plmnOperatorServices.toString(), LCSClientType.plmnOperatorServices.getType());
-        stringMap.put(LCSClientType.lawfulInterceptServices.toString(), LCSClientType.lawfulInterceptServices.getType());
+        stringMap.put(LCSPriority.highestPriority.toString(), LCSPriority.highestPriority.getCode());
+        stringMap.put(LCSPriority.normalPriority.toString(), LCSPriority.normalPriority.getCode());
     }
 
-    public LCSClientTypeEnumerated() {
+    public LCSPriorityEnumerated() {
     }
 
-    public LCSClientTypeEnumerated(int val) throws java.lang.IllegalArgumentException {
+    public LCSPriorityEnumerated(int val) throws java.lang.IllegalArgumentException {
         super(val);
     }
 
-    public LCSClientTypeEnumerated(Integer val) throws java.lang.IllegalArgumentException {
+    public LCSPriorityEnumerated(Integer val) throws java.lang.IllegalArgumentException {
         super(val);
     }
 
-    public LCSClientTypeEnumerated(String val) throws java.lang.IllegalArgumentException {
+    public LCSPriorityEnumerated(String val) throws java.lang.IllegalArgumentException {
         super(val);
     }
 
-    public static LCSClientTypeEnumerated createInstance(String s) {
+    public static LCSPriorityEnumerated createInstance(String s) {
         Integer instance = doCreateInstance(s, stringMap, intMap);
         if (instance == null)
-            return new LCSClientTypeEnumerated(LCSClientType.emergencyServices.getType());
+            return new LCSPriorityEnumerated(LCSPriority.highestPriority.getCode());
         else
-            return new LCSClientTypeEnumerated(instance);
+            return new LCSPriorityEnumerated(instance);
     }
 
     @Override
