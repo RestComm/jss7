@@ -23,6 +23,7 @@
 package org.restcomm.protocols.ss7.m3ua.impl;
 
 import static org.testng.Assert.assertEquals;
+
 import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
@@ -68,13 +69,13 @@ public class GatewayTest {
 
     private static final String SERVER_NAME = "testserver";
     private static final String SERVER_HOST = "127.0.0.1";
-    private static final int SERVER_PORT = 2345;
+    private static final int SERVER_PORT = 2365;
 
     private static final String SERVER_ASSOCIATION_NAME = "serverAsscoiation";
     private static final String CLIENT_ASSOCIATION_NAME = "clientAsscoiation";
 
     private static final String CLIENT_HOST = "127.0.0.1";
-    private static final int CLIENT_PORT = 2346;
+    private static final int CLIENT_PORT = 2366;
 
     private Management sctpManagement = null;
     private M3UAManagementImpl m3uaMgmt = null;
@@ -103,7 +104,6 @@ public class GatewayTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-
         mtp3UserPartListener = new Mtp3UserPartListenerImpl();
 
         client = new Client();
@@ -144,9 +144,10 @@ public class GatewayTest {
         System.out.println("Starting Client");
         client.start();
 
-        Thread.sleep(12000);
+        Thread.sleep(12000); // 12000
 
         // Both AS and ASP should be ACTIVE now
+        AspState st = AspState.getState(remAsp.getPeerFSM().getState().getName());
         assertEquals(AspState.getState(remAsp.getPeerFSM().getState().getName()), AspState.ACTIVE);
         assertEquals(AsState.getState(remAs.getLocalFSM().getState().getName()), AsState.ACTIVE);
 
