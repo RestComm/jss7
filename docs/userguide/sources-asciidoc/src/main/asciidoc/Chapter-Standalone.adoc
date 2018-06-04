@@ -10,7 +10,8 @@ SccpExtModule sccpExtModule = new SccpExtModuleImpl();
 ss7ExtInterfaceTelscale.setSs7ExtSccpInterface(sccpExtModule);
 ----
 
-this object will be used crating M3UA, SCCP, Dialogic instances
+this object will be used creating M3UA, SCCP, Dialogic instances.
+For a public version (that does not contain an extended functionality) we need to use `null` instead of a Ss7ExtInterfaceTelscale implementation. 
 
 [[_standalone_sctp]]
 == Building SCTP
