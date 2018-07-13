@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>statistics-parent</artifactId>
 		<groupId>org.restcomm.protocols.ss7.statistics</groupId>
-		<version>8.0.0-SNAPSHOT</version>
+		<version>8.0.0-176</version>
 	</parent>
 
 	<artifactId>statistics-impl</artifactId>
