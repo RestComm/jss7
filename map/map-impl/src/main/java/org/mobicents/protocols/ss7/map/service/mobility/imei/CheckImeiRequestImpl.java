@@ -35,11 +35,13 @@ import org.mobicents.protocols.ss7.map.api.MAPParsingComponentException;
 import org.mobicents.protocols.ss7.map.api.MAPParsingComponentExceptionReason;
 import org.mobicents.protocols.ss7.map.api.primitives.IMEI;
 import org.mobicents.protocols.ss7.map.api.primitives.IMSI;
+import org.mobicents.protocols.ss7.map.api.primitives.ISDNAddressString;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.CheckImeiRequest;
 import org.mobicents.protocols.ss7.map.api.service.mobility.imei.RequestedEquipmentInfo;
 import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
+import org.mobicents.protocols.ss7.map.primitives.ISDNAddressStringImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerImpl;
 import org.mobicents.protocols.ss7.map.service.mobility.MobilityMessageImpl;
 
@@ -56,6 +58,7 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
     private MAPExtensionContainer extensionContainer = null;
 
     private IMSI imsi = null;
+    private ISDNAddressString msisdn = null;
 
     private long mapProtocolVersion;
     private int encodedLength;
@@ -113,6 +116,14 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
         this.imsi = imsi;
     }
 
+    public ISDNAddressString getMsisdn() {
+        return msisdn;
+    }
+
+    public void setMsisdn(ISDNAddressString msisdn) {
+        this.msisdn = msisdn;
+    }
+
     @Override
     public void decodeAll(AsnInputStream ansIS) throws MAPParsingComponentException {
         try {
@@ -144,12 +155,13 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
         this.requestedEquipmentInfo = null;
         this.extensionContainer = null;
         this.imsi = null;
+        this.msisdn = null;
 
         if (mapProtocolVersion >= 3) {
             AsnInputStream ais = ansIS.readSequenceStreamData(length);
             int num = 0;
             while (true) {
-                if (ais.available() == 0) {
+                if (ais.available() == 0 || num > 2) {
                     break;
                 }
 
@@ -168,24 +180,34 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
                         break;
                     case 1:
                         // requestedEquipmentInfo
-                        if (tag != Tag.STRING_BIT || ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive()) {
-                            throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                    + ".requestedEquipmentInfo: bad tag or tag class or is not primitive: TagClass="
-                                    + ais.getTagClass() + ", tag=" + tag, MAPParsingComponentExceptionReason.MistypedParameter);
+                        if(tag == Tag.STRING_BIT) {
+                            if (ais.getTagClass() != Tag.CLASS_UNIVERSAL || !ais.isTagPrimitive()) {
+                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                        + ".requestedEquipmentInfo: bad tag or tag class or is not primitive: TagClass="
+                                        + ais.getTagClass() + ", tag=" + tag, MAPParsingComponentExceptionReason.MistypedParameter);
+                            }
+                            this.requestedEquipmentInfo = new RequestedEquipmentInfoImpl();
+                            ((RequestedEquipmentInfoImpl) this.requestedEquipmentInfo).decodeAll(ais);
+                        } else if (tag == 0){
+                            this.imsi = new IMSIImpl();
+                            ((IMSIImpl) this.imsi).decodeAll(ais);
                         }
-                        this.requestedEquipmentInfo = new RequestedEquipmentInfoImpl();
-                        ((RequestedEquipmentInfoImpl) this.requestedEquipmentInfo).decodeAll(ais);
                         break;
                     default:
-                        if (tag == Tag.SEQUENCE && ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
-                            if (ais.isTagPrimitive())
-                                throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
-                                        + ": Parameter extensionContainer is primitive",
-                                        MAPParsingComponentExceptionReason.MistypedParameter);
-                            this.extensionContainer = new MAPExtensionContainerImpl();
-                            ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                        if(tag == 1){
+                            this.msisdn = new ISDNAddressStringImpl();
+                            ((ISDNAddressStringImpl) this.msisdn).decodeAll(ais);
                         } else {
-                            ais.advanceElement();
+                            if (tag == Tag.SEQUENCE && ais.getTagClass() == Tag.CLASS_UNIVERSAL) {
+                                if (ais.isTagPrimitive())
+                                    throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                                            + ": Parameter extensionContainer is primitive",
+                                            MAPParsingComponentExceptionReason.MistypedParameter);
+                                this.extensionContainer = new MAPExtensionContainerImpl();
+                                ((MAPExtensionContainerImpl) this.extensionContainer).decodeAll(ais);
+                            } else {
+                                ais.advanceElement();
+                            }
                         }
                         break;
                 }
@@ -213,6 +235,20 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
 
                 this.imsi = new IMSIImpl();
                 ((IMSIImpl) this.imsi).decodeData(ansIS, length);
+            }
+
+            // To decode MSISDN in Huawei package
+            if (ansIS.available() != 0) {
+                int tag = ansIS.readTag();
+                length = ansIS.readLength();
+                if (tag != 0 && ansIS.getTagClass() != Tag.CLASS_UNIVERSAL && !ansIS.isTagPrimitive()) {
+                    throw new MAPParsingComponentException("Error while decoding " + _PrimitiveName
+                            + ".imsi: bad tag or tag class or is not primitive: TagClass=" + ansIS.getTagClass() + ", tag="
+                            + tag, MAPParsingComponentExceptionReason.MistypedParameter);
+                }
+
+                this.msisdn = new ISDNAddressStringImpl();
+                ((ISDNAddressStringImpl) this.msisdn).decodeData(ansIS, length);
             }
         }
     }
@@ -319,6 +355,12 @@ public class CheckImeiRequestImpl extends MobilityMessageImpl implements CheckIm
         if (this.imsi != null) {
             sb.append("imsi=");
             sb.append(imsi.toString());
+            sb.append(", ");
+        }
+
+        if(this.msisdn != null) {
+            sb.append("msisdn=");
+            sb.append(msisdn.toString());
             sb.append(", ");
         }
 

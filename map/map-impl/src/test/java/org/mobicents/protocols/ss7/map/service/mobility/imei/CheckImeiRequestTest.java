@@ -32,7 +32,9 @@ import java.util.Arrays;
 import org.mobicents.protocols.asn.AsnInputStream;
 import org.mobicents.protocols.asn.AsnOutputStream;
 import org.mobicents.protocols.asn.Tag;
+import org.mobicents.protocols.ss7.map.api.primitives.AddressNature;
 import org.mobicents.protocols.ss7.map.api.primitives.MAPExtensionContainer;
+import org.mobicents.protocols.ss7.map.api.primitives.NumberingPlan;
 import org.mobicents.protocols.ss7.map.primitives.IMEIImpl;
 import org.mobicents.protocols.ss7.map.primitives.IMSIImpl;
 import org.mobicents.protocols.ss7.map.primitives.MAPExtensionContainerTest;
@@ -54,6 +56,23 @@ public class CheckImeiRequestTest {
         // TODO this is self generated trace. We need trace from operator
         return new byte[] { 48, 14, 4, 8, 83, 8, 25, 16, -122, 53, 85, -16, 3, 2, 6, -128 };
     }
+    
+    //Huawei trace with IMSI
+    private byte[] getEncodedDataV3_Huawei() {
+        return new byte[] { 0x30, 0x18, 
+                0x04, 0x08, 0x68, (byte) 0x96, 0x34, 0x30, 0x69, 0x43, 0x44, (byte) 0xF0,//imei 
+                (byte) 0x80, 0x08, 0x14, 0x00, (byte) 0x81, 0x75, 0x68, 0x31, 0x15, (byte) 0xF0,//imsi 
+                0x03, 0x02, 0x06, (byte) 0x80, 0x00, 0x00 };
+    }
+    
+    //Huawei trace with IMSI+MSISDN
+    private byte[] getEncodedDataV3_Huawei2() {
+        return new byte[] { 0x30, 32, 
+                0x04, 0x08, 0x53, (byte) 0x92, 0x24, (byte) 0x80, 0x35, 0x39, 0x76, (byte) 0xf0,//imei 
+                (byte) 0x80, 0x08, 0x14, 0x00, (byte) 0x81, 0x60, 0x38, (byte) 0x84, 0x49, (byte) 0xf9,//imsi 
+                (byte) 0x81, 0x06, 0x29, 0x03, (byte) 0x90, 0x16, (byte) 0x82, 0x16,
+                0x03, 0x02, 0x06, (byte) 0x80, 0x00, 0x00};
+    }
 
     private byte[] getEncodedDataV3Full() {
         // TODO this is self generated trace. We need trace from operator
@@ -64,8 +83,15 @@ public class CheckImeiRequestTest {
 
     // Huawei trace with IMSI
     private byte[] getEncodedDataV2_Huawei() {
-        return new byte[] { 0x04, 0x08, 0x53, 0x46, 0x76, 0x40, (byte) 0x94, (byte) 0x98, 0x19, (byte) 0xf0, 0x00, 0x08, 0x27,
-                0x34, 0x04, 0x03, 0x30, 0x58, 0x67, (byte) 0xf3 };
+        return new byte[] { 0x04, 0x08, 0x53, 0x46, 0x76, 0x40, (byte) 0x94, (byte) 0x98, 0x19, (byte) 0xf0, 
+                0x00, 0x08, 0x27, 0x34, 0x04, 0x03, 0x30, 0x58, 0x67, (byte) 0xf3 };
+    }
+    
+    // Huawei trace with IMSI+MSISDN (last 3 bytes leave like was in capture)
+    private byte[] getEncodedDataV2_Huawei2() {
+        return new byte[] { 0x04, 0x07, 0x53, 0x14, 0x74, 0x40, 0x32, 0x63, 0x53, //IMEI
+                0x01, 0x08, 0x14, 0x00, (byte) 0x81, (byte) 0x84, (byte) 0x88, 0x15, 0x56, (byte) 0xf7,//IMSI 
+                0x02, 0x06, 0x29, 0x03, 0x52, 0x54, 0x28, 0x18, 0x00, 0x00, 0x00}; //MSISDN
     }
 
     private byte[] getEncodedDataImeiLengthLessThan15() {
@@ -88,6 +114,34 @@ public class CheckImeiRequestTest {
         assertTrue(checkImeiImpl.getRequestedEquipmentInfo().getEquipmentStatus());
         assertFalse(checkImeiImpl.getRequestedEquipmentInfo().getBmuef());
         assertNull(checkImeiImpl.getIMSI());
+        
+        // Testing version 3 with Huawei trace IMSI
+        rawData = getEncodedDataV3_Huawei();
+        asnIS = new AsnInputStream(rawData);
+
+        tag = asnIS.readTag();
+        assertEquals(tag, Tag.SEQUENCE);
+
+        checkImeiImpl = new CheckImeiRequestImpl(3);
+        checkImeiImpl.decodeAll(asnIS);
+        assertTrue(checkImeiImpl.getIMEI().getIMEI().equals("866943039634440"));
+        assertTrue(checkImeiImpl.getIMSI().getData().equals("410018578613510"));
+        
+        // Testing version 3 with Huawei trace IMSI+MSISDN
+        rawData = getEncodedDataV3_Huawei2();
+        asnIS = new AsnInputStream(rawData);
+
+        tag = asnIS.readTag();
+        assertEquals(tag, Tag.SEQUENCE);
+
+        checkImeiImpl = new CheckImeiRequestImpl(3);
+        checkImeiImpl.decodeAll(asnIS);
+        System.out.println(checkImeiImpl);
+        assertTrue(checkImeiImpl.getIMEI().getIMEI().equals("352942085393670"));
+        assertTrue(checkImeiImpl.getIMSI().getData().equals("410018068348949"));
+        assertTrue(checkImeiImpl.getMsisdn().getAddress().equals("3009612861"));
+        assertTrue(checkImeiImpl.getMsisdn().getNumberingPlan().equals(NumberingPlan.private_plan));
+        assertTrue(checkImeiImpl.getMsisdn().getAddressNature().equals(AddressNature.national_significant_number));
 
         // Testing version 3 Full
         rawData = getEncodedDataV3Full();
@@ -117,7 +171,7 @@ public class CheckImeiRequestTest {
         assertTrue(checkImeiImpl.getIMEI().getIMEI().equals("358091016853550"));
         assertNull(checkImeiImpl.getIMSI());
 
-        // Testing version 1 and 2 with Huawei trace
+        // Testing version 1 and 2 with Huawei trace IMSI+MSISDN 
         rawData = getEncodedDataV2_Huawei();
         asnIS = new AsnInputStream(rawData);
 
@@ -128,7 +182,21 @@ public class CheckImeiRequestTest {
 
         assertTrue(checkImeiImpl.getIMEI().getIMEI().equals("356467044989910"));
         assertTrue(checkImeiImpl.getIMSI().getData().equals("724340300385763"));
+        
+        // Testing version 1 and 2 with Huawei trace
+        rawData = getEncodedDataV2_Huawei2();
+        asnIS = new AsnInputStream(rawData);
+        tag = asnIS.readTag();
+        assertEquals(tag, Tag.STRING_OCTET);
+        checkImeiImpl = new CheckImeiRequestImpl(2);
+        checkImeiImpl.decodeAll(asnIS);
 
+        assertTrue(checkImeiImpl.getIMEI().getIMEI().equals("35414704233635"));
+        assertTrue(checkImeiImpl.getIMSI().getData().equals("410018488851657"));
+        assertTrue(checkImeiImpl.getMsisdn().getAddress().equals("3025458281"));
+        assertTrue(checkImeiImpl.getMsisdn().getNumberingPlan().equals(NumberingPlan.private_plan));
+        assertTrue(checkImeiImpl.getMsisdn().getAddressNature().equals(AddressNature.national_significant_number));
+        
         // Testing IMEI length != 15
         rawData = getEncodedDataImeiLengthLessThan15();
         asnIS = new AsnInputStream(rawData);

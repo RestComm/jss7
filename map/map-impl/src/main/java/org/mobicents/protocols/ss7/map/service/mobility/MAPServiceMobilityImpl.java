@@ -1258,7 +1258,7 @@ public class MAPServiceMobilityImpl extends MAPServiceBaseImpl implements MAPSer
                         "Error while decoding CheckImeiRequest: Bad tag or tagClass or parameter is primitive, received tag="
                                 + parameter.getTag(), MAPParsingComponentExceptionReason.MistypedParameter);
         } else {
-            if (parameter.getTag() != Tag.STRING_OCTET || parameter.getTagClass() != Tag.CLASS_UNIVERSAL
+            if ((parameter.getTag() != Tag.SEQUENCE && parameter.getTag() != Tag.STRING_OCTET) || parameter.getTagClass() != Tag.CLASS_UNIVERSAL
                     || !parameter.isPrimitive())
                 throw new MAPParsingComponentException(
                         "Error while decoding CheckImeiRequest V1 or V2: Bad tag or tagClass or parameter is not primitive, received tag="
