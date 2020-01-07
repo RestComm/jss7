@@ -51,8 +51,8 @@ public class USSDStringImpl extends OctetStringBase implements USSDString {
     private CBSDataCodingScheme dataCodingScheme;
 
     private static GSMCharset gsm7Charset = new GSMCharset("GSM", new String[] {});
-    private static GSMCharset gsm7Charset_Urdu = new GSMCharset("GSM", new String[] {}, GSMCharset.BYTE_TO_CHAR_UrduAlphabet,
-            GSMCharset.BYTE_TO_CHAR_UrduAlphabetExtentionTable);
+    private static GSMCharset gsm7Charset_Urdu = new GSMCharset("GSM", new String[] {}, GSMCharset.urduMap,
+            GSMCharset.urduExtentionMap);
     private static Charset ucs2Charset = Charset.forName("UTF-16BE");
 
     public USSDStringImpl(CBSDataCodingScheme dataCodingScheme) {
