@@ -426,7 +426,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     }
 
     public void deliver(DialogImpl dialogImpl, TCContinueIndicationImpl tcContinueIndication) {
-
         if (this.stack.getStatisticsEnabled()) {
             this.stack.getCounterProviderImpl().updateTcContinueReceivedCount(dialogImpl);
         }
@@ -443,7 +442,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
     }
 
     public void deliver(DialogImpl dialogImpl, TCEndIndicationImpl tcEndIndication) {
-
         if (this.stack.getStatisticsEnabled()) {
             this.stack.getCounterProviderImpl().updateTcEndReceivedCount(dialogImpl);
         }
@@ -899,7 +897,6 @@ public class TCAPProviderImpl implements TCAPProvider, SccpListener {
                         logger.warn("TC-END: No dialog/transaction for id: " + dialogId);
                     } else {
                         di.processEnd(teb, localAddress, remoteAddress);
-
                         if (this.stack.getPreviewMode()) {
                             this.removePreviewDialog(di);
                         }

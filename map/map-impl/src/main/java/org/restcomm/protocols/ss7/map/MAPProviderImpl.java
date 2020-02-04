@@ -1487,7 +1487,6 @@ public class MAPProviderImpl implements MAPProvider, TCListener {
     }
 
     private void doProcessComponent(MAPDialogImpl mapDialogImpl, Component c) {
-
         // Getting the MAP Service that serves the MAP Dialog
         MAPServiceBaseImpl perfSer = (MAPServiceBaseImpl) mapDialogImpl.getService();
 
