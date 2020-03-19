@@ -128,43 +128,43 @@ public class GSMCharset extends Charset {
         } else
             switch (nationalLanguageSingleShiftIdentifier) {
                 case Spanish:
-                    this.mainTable = spanishExtentionMap;
+                    this.extensionTable = spanishExtentionMap;
                     break;
                 case Portuguese:
-                    this.mainTable = portugeseExtentionMap;
+                    this.extensionTable = portugeseExtentionMap;
                     break;
                 case Turkish:
-                    this.mainTable = turkishExtentionMap;
+                    this.extensionTable = turkishExtentionMap;
                     break;
                 case Urdu:
-                    this.mainTable = urduExtentionMap;
+                    this.extensionTable = urduExtentionMap;
                     break;
                 case Hindi:
-                    this.mainTable = hindiExtentionMap;
+                    this.extensionTable = hindiExtentionMap;
                     break;
                 case Bengali:
-                    this.mainTable = bengaliExtentionMap;
+                    this.extensionTable = bengaliExtentionMap;
                     break;
                 case Punjabi:
-                    this.mainTable = punjabiExtentionMap;
+                    this.extensionTable = punjabiExtentionMap;
                     break;
                 case Gujarati:
-                    this.mainTable = gujaratiExtentionMap;
+                    this.extensionTable = gujaratiExtentionMap;
                     break;
                 case Oriya:
-                    this.mainTable = oriyaExtentionMap;
+                    this.extensionTable = oriyaExtentionMap;
                     break;
                 case Tamil:
-                    this.mainTable = tamilExtentionMap;
+                    this.extensionTable = tamilExtentionMap;
                     break;
                 case Telugu:
-                    this.mainTable = teluguExtentionMap;
+                    this.extensionTable = teluguExtentionMap;
                     break;
                 case Kannada:
-                    this.mainTable = kannadaExtentionMap;
+                    this.extensionTable = kannadaExtentionMap;
                     break;
                 case Malayalam:
-                    this.mainTable = malayalamExtentionMap;
+                    this.extensionTable = malayalamExtentionMap;
                     break;
                 default:
                     this.extensionTable = basicExtentionMap;
