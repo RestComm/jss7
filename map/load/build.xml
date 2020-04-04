@@ -10,7 +10,7 @@
 	<property name="packageprefix" value="org.restcomm.protocols.ss7.map.load" />
 	<!-- <property name="packageprefix" value="org.restcomm.protocols.ss7.map.loadDialogic" /> -->
 
-	<property name="javac.source" value="1.7" />
+	<property name="javac.source" value="1.8" />
 	<property name="srcroot" value="${root}/src" />
 
 	<property name="assemble.dir" value="${ant.file.restcomm.release}/../target/load" />
@@ -90,11 +90,10 @@
 
 		<echo message="Java Version: ${java.version}" />
 		<echo message="Java home: ${java.home}" />
-		<fail message="Unsupported Java version: ${java.version}. Make sure that the version of the Java compiler is 1.7 (7.0) or greater.">
+		<fail message="Unsupported Java version: ${java.version}. Make sure that the version of the Java compiler is 1.8 (8.0) or greater.">
 			<condition>
 				<not>
 					<or>
-						<contains string="${java.version}" substring="1.7" casesensitive="false" />
 						<contains string="${java.version}" substring="1.8" casesensitive="false" />
 					</or>
 				</not>

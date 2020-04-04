@@ -89,7 +89,7 @@ BUILD SUCCESSFUL
  <para>Pre-Requisites:</para>
  <substeps>
     <step>
-      <para>You must have JDK 1.7 and lksctp library installed on your machine.
+      <para>You must have JDK 1.8 and lksctp library installed on your machine.
       </para>
     </step>
  </substeps>
@@ -168,7 +168,7 @@ BUILD SUCCESSFUL
  <para>Pre-Requisites:</para>
  <substeps>
     <step>
-      <para>You must have JDK 1.7 installed on your machine.
+      <para>You must have JDK 1.8 installed on your machine.
       </para>
     </step>
  </substeps>

@@ -31,8 +31,8 @@
 		<junit.version>3.8.1</junit.version>
 		<testng.version>6.2</testng.version>
 		<javolution.version>5.5.1</javolution.version>
-		<compiler.plugin.version>2.0.2</compiler.plugin.version>
-		<compile.source>1.7</compile.source>
+		<compiler.plugin.version>3.0</compiler.plugin.version>
+		<compile.source>1.8</compile.source>
 		<!-- restcomm but not strictly ss7 -->
 		<asn.version>2.2.0-143</asn.version>
 		<stream.version>1.0.0.CR1</stream.version>
@@ -304,6 +304,15 @@
 		<profile>
 			<id>release</id>
 			<modules />
+		</profile>
+		<profile>
+			<id>disable-java8-doclint</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<properties>
+				<additionalparam>-Xdoclint:none</additionalparam>
+			</properties>
 		</profile>
 		<profile>
 			<id>docs</id>

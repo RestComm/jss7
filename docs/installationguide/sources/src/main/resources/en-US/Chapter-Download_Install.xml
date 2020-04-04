@@ -73,7 +73,7 @@ The major functional modules of the &THIS.APPLICATION; are:
 		<para>&THIS.PLATFORM; &THIS.APPLICATION; is an open source project and you have the freedom to build from source. Building from source means you can stay on top with the latest features. Whilst aspects of &THIS.PLATFORM; &THIS.APPLICATION; are quite 
 		complicated, you may find ways to become contributors.</para>
 		
-		<para>You must have JDK1.7 installed. In addition you must have the following tools installed.</para>
+		<para>You must have JDK1.8 installed. In addition you must have the following tools installed.</para>
 		<table
 						frame="all"
 						pgwide="1">
