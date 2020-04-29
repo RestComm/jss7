@@ -95,24 +95,25 @@ import com.google.common.util.concurrent.RateLimiter;
  */
 public class Client extends TestHarness {
 
+    protected static final String ASP_NAME = "ASP1";
     private static Logger logger = Logger.getLogger(Client.class);
 
     // TCAP
-    private TCAPStack tcapStack;
+    protected TCAPStack tcapStack;
 
     // MAP
-    private MAPStackImpl mapStack;
-    private MAPProvider mapProvider;
+    protected MAPStackImpl mapStack;
+    protected MAPProvider mapProvider;
 
     // SCCP
-    private SccpStackImpl sccpStack;
+    protected SccpStackImpl sccpStack;
     private SccpResource sccpResource;
 
     // M3UA
-    private M3UAManagementImpl clientM3UAMgmt;
+    protected M3UAManagementImpl clientM3UAMgmt;
 
     // SCTP
-    private NettySctpManagementImpl sctpManagement;
+    protected NettySctpManagementImpl sctpManagement;
 
     // a ramp-up period is required for performance testing.
     int endCount;
@@ -126,10 +127,19 @@ public class Client extends TestHarness {
 
     private CsvWriter csvWriter;
 
-    protected void initializeStack(IpChannelType ipChannelType) throws Exception {
-
+    private void initializeStack(IpChannelType ipChannelType) throws Exception {
         this.rateLimiterObj = RateLimiter.create(MAXCONCURRENTDIALOGS); // rate
 
+        initializeStackNoReport(ipChannelType);
+
+        this.csvWriter = new CsvWriter("map");
+        this.csvWriter.addCounter(CREATED_DIALOGS);
+        this.csvWriter.addCounter(SUCCESSFUL_DIALOGS);
+        this.csvWriter.addCounter(ERROR_DIALOGS);
+        this.csvWriter.start(TEST_START_DELAY, PRINT_WRITER_PERIOD);
+    }
+
+    protected void initializeStackNoReport(IpChannelType ipChannelType) throws Exception {
         this.initSCTP(ipChannelType);
 
         // Initialize M3UA first
@@ -146,13 +156,7 @@ public class Client extends TestHarness {
 
         // FInally start ASP
         // Set 5: Finally start ASP
-        this.clientM3UAMgmt.startAsp("ASP1");
-
-        this.csvWriter = new CsvWriter("map");
-        this.csvWriter.addCounter(CREATED_DIALOGS);
-        this.csvWriter.addCounter(SUCCESSFUL_DIALOGS);
-        this.csvWriter.addCounter(ERROR_DIALOGS);
-        this.csvWriter.start(TEST_START_DELAY, PRINT_WRITER_PERIOD);
+        this.clientM3UAMgmt.startAsp(ASP_NAME);
     }
 
     private void initSCTP(IpChannelType ipChannelType) throws Exception {
@@ -167,7 +171,7 @@ public class Client extends TestHarness {
                 null);
     }
 
-    private void initM3UA() throws Exception {
+    protected void initM3UA() throws Exception {
         this.clientM3UAMgmt = new M3UAManagementImpl("Client", null, null);
         this.clientM3UAMgmt.setTransportManagement(this.sctpManagement);
         this.clientM3UAMgmt.setDeliveryMessageThreadCount(DELIVERY_TRANSFER_MESSAGE_THREAD_COUNT);
@@ -298,15 +302,55 @@ public class Client extends TestHarness {
     }
 
     public static void main(String[] args) {
+        IpChannelType ipChannelType = collectClientArgs(args);
 
+        final Client client = new Client();
+        client.endCount = TestHarness.RAMP_UP_PERIOD;
+
+        try {
+            client.initializeStack(ipChannelType);
+
+            Thread.sleep(TestHarness.TEST_START_DELAY);
+
+            while (client.endCount < NDIALOGS) {
+                // while (client.nbConcurrentDialogs.intValue() >= MAXCONCURRENTDIALOGS) {
+
+                // logger.warn("Number of concurrent MAP dialog's = " +
+                // client.nbConcurrentDialogs.intValue()
+                // + " Waiting for max dialog count to go down!");
+
+                // synchronized (client) {
+                // try {
+                // client.wait();
+                // } catch (Exception ex) {
+                // }
+                // }
+                // }// end of while (client.nbConcurrentDialogs.intValue() >=
+                // MAXCONCURRENTDIALOGS)
+
+                if (client.endCount < 0) {
+                    client.start = System.currentTimeMillis();
+                    client.prev = client.start;
+                    // logger.warn("StartTime = " + client.start);
+                }
+
+                client.initiateUSSD();
+            }
+
+            client.terminate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected static IpChannelType collectClientArgs(String[] args) {
         int noOfCalls = Integer.parseInt(args[0]);
         int noOfConcurrentCalls = Integer.parseInt(args[1]);
 
         IpChannelType ipChannelType = IpChannelType.SCTP;
         if (args.length >= 3 && args[2].toLowerCase().equals("tcp")) {
             ipChannelType = IpChannelType.TCP;
-        } else {
-            ipChannelType = IpChannelType.SCTP;
         }
 
         System.out.println("IpChannelType=" + ipChannelType);
@@ -401,10 +445,6 @@ public class Client extends TestHarness {
 
         System.out.println("ROUTING_INDICATOR=" + TestHarness.ROUTING_INDICATOR);
 
-        // logger.info("Number of calls to be completed = " + noOfCalls +
-        // " Number of concurrent calls to be maintained = " +
-        // noOfConcurrentCalls);
-
         NDIALOGS = noOfCalls;
 
         System.out.println("NDIALOGS=" + NDIALOGS);
@@ -412,45 +452,7 @@ public class Client extends TestHarness {
         MAXCONCURRENTDIALOGS = noOfConcurrentCalls;
 
         System.out.println("MAXCONCURRENTDIALOGS=" + MAXCONCURRENTDIALOGS);
-
-        final Client client = new Client();
-        client.endCount = TestHarness.RAMP_UP_PERIOD;
-
-        try {
-            client.initializeStack(ipChannelType);
-
-            Thread.sleep(TestHarness.TEST_START_DELAY);
-
-            while (client.endCount < NDIALOGS) {
-                // while (client.nbConcurrentDialogs.intValue() >= MAXCONCURRENTDIALOGS) {
-
-                // logger.warn("Number of concurrent MAP dialog's = " +
-                // client.nbConcurrentDialogs.intValue()
-                // + " Waiting for max dialog count to go down!");
-
-                // synchronized (client) {
-                // try {
-                // client.wait();
-                // } catch (Exception ex) {
-                // }
-                // }
-                // }// end of while (client.nbConcurrentDialogs.intValue() >=
-                // MAXCONCURRENTDIALOGS)
-
-                if (client.endCount < 0) {
-                    client.start = System.currentTimeMillis();
-                    client.prev = client.start;
-                    // logger.warn("StartTime = " + client.start);
-                }
-
-                client.initiateUSSD();
-            }
-
-            client.terminate();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        return ipChannelType;
     }
 
     /*
