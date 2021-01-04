@@ -8,7 +8,7 @@ You can either download the binary release or download the source code and set u
 [[_downloading_binary]]
 == Binary Download
 
-The binary release is available for download at the following link: {this-release-binary-url}
+The binary release is available for download at the following link: {https://github.com/RestComm/jss7/releases/tag/7.3.1398}
 
 .Procedure: Binary Download
 . Download the zip file _{path}.zip_ to any folder of your choice.
