@@ -206,7 +206,7 @@ public class MAPPrivateExtensionImpl implements MAPPrivateExtension, MAPAsnPrimi
         StringBuilder sb = new StringBuilder();
         sb.append("PrivateExtension [");
 
-        if (this.oId != null || this.oId.length > 0) {
+        if (this.oId != null && this.oId.length > 0) {
             sb.append("Oid=");
             sb.append(this.ArrayToString(this.oId));
         }
